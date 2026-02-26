@@ -1,0 +1,54 @@
+name: Feature / Extension Request
+description: Propose a new capability with SDD constraints and verification plan.
+title: "Feature: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this feature needed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope / Out of scope
+      description: Define boundaries for the requested work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Compatibility/security/performance/process constraints.
+      placeholder: |
+        - Maintain implementability and external verifiability
+        - No untracked registry collisions
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Verifiable checklist for completion.
+      placeholder: |
+        - [ ] Spec/docs updated
+        - [ ] Schemas/fixtures/conformance updated if semantics changed
+    validations:
+      required: true
+
+  - type: textarea
+    id: how_to_verify
+    attributes:
+      label: How to verify
+      description: Exact commands and expected outputs.
+      placeholder: |
+        make validate
+        make test
+    validations:
+      required: true
