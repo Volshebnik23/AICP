@@ -1,0 +1,12 @@
+{
+  "agent:A": {
+    "kid": "A1",
+    "public_key_b64url": "V5pgWElBX4X_RQR4juCKyFWmM1e6owCARcy4uWcC9tc",
+    "alg": "ed25519"
+  },
+  "agent:B": {
+    "kid": "B1",
+    "public_key_b64url": "YLl6MXt1PASLx2lL6SmwlkT_5EebAb4ftXK60EZvpOY",
+    "alg": "ed25519"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/aicp-core-payloads.schema.json",
+  "title": "AICP Core Payloads (loose)",
+  "type": "object",
+  "description": "Payload schemas are intentionally permissive in Core package v0.1.0 to remain compatible with fixtures; normative MUST/SHOULD rules live in the spec doc.",
+  "additionalProperties": true
+}

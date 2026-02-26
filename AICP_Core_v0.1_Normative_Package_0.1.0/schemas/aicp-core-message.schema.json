@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/aicp-core-message.schema.json",
+  "title": "AICP Core Message Envelope",
+  "type": "object",
+  "required": [
+    "session_id",
+    "message_id",
+    "timestamp",
+    "sender",
+    "message_type",
+    "payload"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "message_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sender": {
+      "type": "string",
+      "minLength": 1
+    },
+    "message_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    },
+    "contract_id": {
+      "type": "string"
+    },
+    "contract_ref": {
+      "type": "object",
+      "required": [
+        "branch_id",
+        "base_version",
+        "head_version"
+      ],
+      "properties": {
+        "branch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "prev_msg_hash": {
+      "type": "string"
+    },
+    "message_hash": {
+      "type": "string"
+    },
+    "signatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "signer",
+          "kid",
+          "object_type",
+          "object_hash",
+          "sig_b64url"
+        ],
+        "properties": {
+          "signer": {
+            "type": "string"
+          },
+          "kid": {
+            "type": "string"
+          },
+          "object_type": {
+            "type": "string"
+          },
+          "object_hash": {
+            "type": "string"
+          },
+          "sig_b64url": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "extensions": {
+      "type": "object"
+    },
+    "ext": {
+      "type": "object"
+    },
+    "in_reply_to": {
+      "type": "string"
+    },
+    "related_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

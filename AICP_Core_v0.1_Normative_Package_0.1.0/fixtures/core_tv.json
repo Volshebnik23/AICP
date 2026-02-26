@@ -1,0 +1,45 @@
+{
+  "TV-01": {
+    "object_type": "contract",
+    "object": {"contract_id": "c1", "goal": "demo", "roles": ["initiator", "responder"]},
+    "canonical_json": "{\"contract_id\":\"c1\",\"goal\":\"demo\",\"roles\":[\"initiator\",\"responder\"]}",
+    "object_hash": "sha256:3atge33khhRmVABSaXgxtgzqVMv0oFe5SFv_zCaiq_g"
+  },
+  "TV-02": {
+    "alg": "ed25519",
+    "public_key_b64url": "A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg",
+    "object_hash": "sha256:3atge33khhRmVABSaXgxtgzqVMv0oFe5SFv_zCaiq_g",
+    "signature_b64url": "wlwZ7y5oTek1lFLDpzbaSQtZyFM7UHo77KLrv8qEAcz_L_4tAchGrzbR27eY2dp1oKp-2sEebKrf4LbPYF5WAw"
+  },
+  "TV-03": {
+    "m1": {
+      "object_type": "message",
+      "object": {
+        "contract_id": "c1",
+        "contract_ref": {"base_version": "v1", "branch_id": "main", "head_version": "v1"},
+        "message_id": "m1",
+        "message_type": "CONTRACT_PROPOSE",
+        "payload": {"note": "hello"},
+        "sender": "agent:A",
+        "session_id": "s1",
+        "timestamp": "2026-01-01T00:00:00Z"
+      },
+      "message_hash": "sha256:95ujQaZblvWlvBzYQWbM9K1JHJC2VjZJWRzsmXfrss0"
+    },
+    "m2": {
+      "object_type": "message",
+      "object": {
+        "contract_id": "c1",
+        "contract_ref": {"base_version": "v1", "branch_id": "main", "head_version": "v1"},
+        "message_id": "m2",
+        "message_type": "CONTRACT_ACCEPT",
+        "payload": {"accepted": true},
+        "prev_msg_hash": "sha256:95ujQaZblvWlvBzYQWbM9K1JHJC2VjZJWRzsmXfrss0",
+        "sender": "agent:B",
+        "session_id": "s1",
+        "timestamp": "2026-01-01T00:00:05Z"
+      },
+      "message_hash": "sha256:u5K09B7_w80ZGSaQvH-vNmPgfTWVVgREX3wf_yc7-fI"
+    }
+  }
+}
