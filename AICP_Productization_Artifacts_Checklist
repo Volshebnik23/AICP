@@ -1,0 +1,320 @@
+AICP Protocol Productization — Full Artifacts Checklist (Documents + Folders)
+Version: draft checklist v1
+Purpose: one-stop checklist to verify the protocol is fully “productized” (implementable, testable, adoptable).
+
+================================================================================
+0) Repository / Archive Top Level
+================================================================================
+/ (root)
+  README.md
+    - Quickstart (validator-only, agent implementation, external enforcer)
+    - Compatibility marks (AICP-Core-0.1, +EXT-..., supported bindings)
+    - How to run schemas validation + conformance runner + golden transcripts
+    - How to report issues / submit extensions
+
+  CHANGELOG.md
+    - Release notes and compatibility guidance
+
+  RELEASE_NOTES.md
+    - Current release summary (RC/GA), known issues, migration notes
+
+  VERSION
+    - Single source of truth for release version (e.g., 0.1.0-rc.1)
+
+  LICENSE
+    - Code license (e.g., Apache-2.0 / MIT)
+
+  SPEC-LICENSE
+    - Specification text license (e.g., CC-BY-4.0) if separate from code
+
+  PATENT-POLICY.md
+    - Patent/non-assert policy (if applicable)
+
+  CODE_OF_CONDUCT.md
+    - Community participation rules
+
+  CONTRIBUTING.md
+    - How to contribute specs, tests, registries, implementations
+
+  SECURITY.md
+    - Vulnerability disclosure policy and security contact
+
+  GOVERNANCE.md
+    - Stewardship model, decision-making, roles, release process
+
+  .gitignore
+  .editorconfig
+  .gitattributes
+
+  /assets
+    - Logos, badges, diagrams used in docs
+
+================================================================================
+1) Specifications (Docs)
+================================================================================
+/docs
+  /suite
+    AICP_Suite_Overview.md (or .docx/.pdf)
+      - Umbrella overview: positioning, layers, Core + Registered Extensions catalog
+      - Pointers to normative Core + individual extension RFCs
+
+  /core
+    AICP_Core_v0.1_Normative.md (and/or .docx/.pdf)
+      - Normative language (MUST/SHOULD), Core message types, state machine
+      - Crypto/canonicalization profiles (Core)
+      - Conformance requirements (Core)
+
+    AICP_Core_v0.1_Schemas_Reference.md
+      - Human-readable commentary mapping Core concepts to JSON Schemas
+
+  /rfc
+    RFC_Registries_and_Change_Control.md
+    RFC_Error_Model_and_Recovery.md
+    RFC_Interop_Plugfest_and_Security_Review.md
+    RFC_Governance_and_IPR.md (if not in root GOVERNANCE/PATENT-POLICY)
+
+  /extensions
+    RFC_EXT_CAPNEG.md               (Capability & Profile Negotiation)
+    RFC_EXT_OBJECT_RESYNC.md        (Object/State resync & retrieval)
+    RFC_EXT_POLICY_EVAL.md          (Policy evaluation semantics/bindings)
+    RFC_EXT_IDENTITY_LIFECYCLE.md   (Key rotation, revocation, migration, attestations)
+    RFC_EXT_WORKFLOW_SYNC.md        (Workflow sync primitives, enforceable hooks)
+    RFC_EXT_DELEGATION.md           (Hierarchical, purpose-oriented delegation)
+    RFC_EXT_DISPUTES.md             (Challenge/claim/arbitration)
+    RFC_EXT_SECURITY_ALERTS.md      (Security alerts, evidence bundles)
+
+  /bindings
+    RFC_BIND_MCP.md                 (AICP over MCP binding)
+    RFC_BIND_HTTP_WS.md             (AICP over HTTP/WebSocket binding)
+    RFC_BIND_MESSAGE_BUS.md         (AICP over message bus binding)
+
+  /guides
+    Implementers_Guide.md
+      - Common pitfalls, recipes, examples, migration guidance
+    Enforcer_Guide.md
+      - How third-party enforcement works; verification checklist
+    Threat_Model.md
+      - Threats, mitigations, assumptions, out-of-scope
+    Glossary.md
+      - Central glossary aligned with Core
+
+================================================================================
+2) Machine-Readable Schemas
+================================================================================
+/schemas
+  /core
+    aicp-core-message.schema.json
+    aicp-core-contract.schema.json
+    aicp-core-payloads.schema.json
+
+  /extensions
+    ext-capneg.schema.json
+    ext-object-resync.schema.json
+    ext-policy-eval.schema.json
+    ext-identity-lifecycle.schema.json
+    ext-workflow-sync.schema.json
+    ext-delegation.schema.json
+    ext-disputes.schema.json
+    ext-security-alerts.schema.json
+
+  /bindings
+    bind-mcp.schema.json           (if any binding-specific structures exist)
+    bind-http-ws.schema.json
+    bind-message-bus.schema.json
+
+  schema_versioning.md
+    - Policy for schema evolution (backward compatible vs breaking)
+
+================================================================================
+3) Registries (IANA-like)
+================================================================================
+/registry
+  message_types.json
+  crypto_profiles.json
+  canonicalization_profiles.json
+  hash_domains.json
+  policy_categories.json
+  policy_reason_codes.json
+  transport_bindings.json
+  extension_ids.json
+  mime_types_allowed.json (optional if you constrain artifacts)
+  security_alert_categories.json
+  dispute_claim_types.json
+
+  registry_process.md
+    - How to request IDs, review process, compatibility rules
+
+================================================================================
+4) Fixtures & Golden Transcripts
+================================================================================
+/fixtures
+  core_tv.json
+    - Test vectors TV-01..TV-xx (canonicalization, hashes, signatures, chains)
+
+  /golden_transcripts
+    GT-01_happy_path_signed.jsonl
+    GT-02_conflict_choose_signed.jsonl
+    GT-03_conflict_merge_signed.jsonl (if merge is supported)
+    GT-04_consent_required_and_grant.jsonl
+    GT-05_consent_revoke.jsonl
+    GT-06_unknown_base_and_resync.jsonl
+    GT-07_invalid_signature_reject.jsonl
+    GT-08_replay_duplicate_message_id.jsonl
+
+  /keys
+    GT_public_keys.json
+    GT_test_private_keys.json (optional; keep separate/private if needed)
+
+  fixtures_readme.md
+    - How fixtures are generated, how to verify them
+
+================================================================================
+5) Conformance Test Suite (as a product)
+================================================================================
+/conformance
+  /core
+    CT_CORE_0.1.yaml (or JSON)   - Test catalog
+    tests/                      - Implementation-specific tests if needed
+    expected/                   - Expected outputs
+
+  /extensions
+    CN_CAPNEG_0.1.yaml
+    OR_OBJECT_RESYNC_0.1.yaml
+    PE_POLICY_EVAL_0.1.yaml
+    IL_IDENTITY_LC_0.1.yaml
+    WF_WORKFLOW_SYNC_0.1.yaml
+    DG_DELEGATION_0.1.yaml
+    DP_DISPUTES_0.1.yaml
+    SA_SECURITY_ALERTS_0.1.yaml
+
+  /bindings
+    TB_MCP_0.1.yaml
+    TB_HTTP_WS_0.1.yaml
+    TB_BUS_0.1.yaml
+
+  conformance_spec.md
+    - Rules for pass/fail, required artifacts, compatibility report format
+
+  conformance_report_schema.json
+    - Machine-readable output from the runner
+
+  /runner
+    aicp_conformance_runner.py (or ts)
+    README.md (how to run; produces compatibility report)
+
+================================================================================
+6) Reference Implementations (minimal but correct)
+================================================================================
+/reference
+  /python
+    /aicp_ref
+      __init__.py
+      canonicalization.py
+      hashing.py
+      signatures.py
+      message_chain.py
+      contract_replica.py
+      errors.py
+      policy_eval_stub.py (if needed for demos)
+    /tests
+      test_core_vectors.py
+      test_chain.py
+      test_state_machine.py
+      test_schema_validation.py
+    /examples
+      minimal_agent_demo.py
+      external_enforcer_demo.py
+
+  /typescript
+    /aicp_ref
+      canonicalization.ts
+      hashing.ts
+      signatures.ts
+      messageChain.ts
+      contractReplica.ts
+      errors.ts
+    /tests
+    /examples
+
+  reference_readme.md
+    - What is “reference” vs “production”; how to use as a template
+
+================================================================================
+7) Examples (Adoption accelerators)
+================================================================================
+/examples
+  /minimal
+    agent_to_agent_core_only/            (no platform, direct)
+    agent_plus_external_enforcer/        (third-party enforcement)
+    conflict_resolution_choose/
+    conflict_resolution_merge/
+
+  /integrations
+    mcp_binding_demo/
+    http_ws_binding_demo/
+    message_bus_binding_demo/
+
+  /applied
+    workflow_sync_demo/
+    delegation_with_claims_demo/
+    security_alert_evidence_demo/
+
+  examples_index.md
+    - Links and expected outputs
+
+================================================================================
+8) CI / Tooling / Release Automation
+================================================================================
+/ci
+  github_actions.yml (or equivalent)
+    - Validate schemas
+    - Run conformance runner
+    - Run reference tests
+    - Build docs (optional)
+    - Produce release artifacts
+
+/tools
+  build_release.py (or ts)
+    - Assembles zip/tarball, checks versions, generates checksums
+
+  validate_registry.py
+    - Ensures registry entries are unique, well-formed, consistent
+
+  generate_fixtures.py
+    - Deterministically regenerates fixtures/golden transcripts
+
+/checksums
+  SHA256SUMS
+  SIGNATURES (optional)
+    - Signed release checksums
+
+================================================================================
+9) Interop & Security Review Artifacts
+================================================================================
+/interop
+  plugfest_plan.md
+  plugfest_results.md
+  interop_matrix.csv
+    - Implementations vs features (Core + EXT + bindings)
+
+/security_review
+  review_scope.md
+  findings.md
+  remediation_log.md
+  final_summary.md
+
+================================================================================
+10) Website / Distribution (optional but helpful)
+================================================================================
+/site (optional)
+  index.md / docs website config
+  download_links.md
+  registry_viewer.md
+
+================================================================================
+11) “Definition of Done” Checklist (meta)
+================================================================================
+/checklists
+  productization_dod.md
+    - What must be true to claim “AICP v0.1.0 is ready”
+    - Links to required artifacts above
