@@ -351,7 +351,7 @@ A protocol becomes real when independent implementations can prove compatibility
 •	CT-04: RESOLVE_CONFLICT choose with quorum -> Active on chosen head; superseded refs stop progressing if policy requires.
 •	CT-05: RESOLVE_CONFLICT merge -> new head_version with merge_parents; parties converge to same resulting contract_hash.
 •	CT-06: Unknown-base: accept/propose referencing unknown base_version -> buffered/rejected; MUST NOT silently change active head.
-•	CT-07: CLOSE_SESSION with required confirmations -> Closed; AMENDMENT_* after Closed are rejected.
+•	CT-07: CLOSE_SESSION with required confirmations -> Closed; CONTEXT_AMEND after Closed is rejected.
 •	CT-08: ATTEST_ACTION in Conflict MUST include explicit head_version (and conflict_context via ext if used).
 •	CT-09: JCS canonicalization matches TV-01 canonical_json.
 •	CT-10: object_hash matches TV-01 object_hash.
@@ -418,4 +418,4 @@ Summary: Defines interop event procedure, outputs, and external security review 
 Canonical sources note: Standalone RFC documents under `docs/rfc/`, `docs/extensions/`, and `docs/bindings/` are the canonical locations for Sections 8–18 content. This Suite document is an umbrella index.
 
 Roadmap and current status
-See `ROADMAP.md` for repo-backed status. Current milestone: M7.4 (BINDINGS productization, starting with MCP).
+See `ROADMAP.md` for repo-backed status. Current milestone: M8.0 (Interop Plugfest & Security Review).

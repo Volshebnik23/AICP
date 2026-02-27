@@ -80,8 +80,8 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Naming consistency enforcement in canonical Markdown sources (DOCX removed from PR-critical gates)
 - Core taxonomy alignment on `CONTEXT_AMEND`
 - Core payload schema enforcement in conformance/tests
-### 🟡 Current milestone (M7.4): BINDINGS productization (starting with MCP)
-### ⏳ Planned milestone (M7.5): Developer Experience & Adoption Kit (DX)
+### ✅ Completed milestone (M7.4): BINDINGS productization (starting with MCP)
+### ✅ Completed milestone (M7.5): Developer Experience & Adoption Kit (DX)
 - Canonical naming/tagline consistency and discoverability landing pages.
 - SDK/template/sandbox workflows that reduce adoption friction for agent developers and enforcers.
 - DX hardening should complete before plugfest-focused milestones.
@@ -97,4 +97,6 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M7.4 (BINDINGS productization, starting with MCP)** is current.
+**M8.0 (Interop Plugfest & Security Review)** is current.
+
+Older PR branches for M7.4 may be superseded; use `main` as source-of-truth.

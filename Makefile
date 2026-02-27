@@ -8,6 +8,7 @@ validate:
 	$(PYTHON) scripts/validate_schema_instances.py
 	$(PYTHON) scripts/validate_registry.py
 	$(PYTHON) scripts/check_naming.py
+	$(PYTHON) scripts/check_terms.py
 	$(PYTHON) scripts/check_no_binary_changes.py
 
 test:
