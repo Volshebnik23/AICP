@@ -47,10 +47,10 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Keep standalone RFCs as canonical sources under `docs/rfc/`, `docs/extensions/`, `docs/bindings/`.
 - Ensure release-check verifies canonical Core artifacts in addition to hygiene files.
 
-### 🔜 Next milestone (M3): Machine-readable registries as first-class artifacts
+### 🟡 Current milestone (M3): Machine-readable registries as first-class artifacts
 **Goal:** prevent collisions and enable third-party ecosystems.
 - Create `registry/*.json` per the Registry RFC (message types, profiles, bindings, codes, etc.).
-- Add a lightweight `scripts/validate_registry.py` + CI check.
+- Add `scripts/validate_registry.py` and run it in `make validate` + CI.
 **Acceptance:** registry validation runs in CI; changes are reviewed and collision-free.
 
 ### 🔜 Next milestone (M4): Conformance as a product (runner + reports)

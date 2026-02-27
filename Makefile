@@ -6,6 +6,7 @@ validate:
 	$(PYTHON) scripts/validate_json.py
 	$(PYTHON) scripts/validate_jsonl.py
 	$(PYTHON) scripts/validate_schema_instances.py
+	$(PYTHON) scripts/validate_registry.py
 
 test:
 	$(PYTHON) -c "from pathlib import Path; import subprocess, sys; tests = list(Path('.').rglob('test_*.py')); raise SystemExit(subprocess.call(['pytest', '-q']) if tests else (print('No pytest tests found; skipping.') or 0))"
