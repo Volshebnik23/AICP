@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-policy-eval-payloads.schema.json",
+  "title": "AICP EXT-POLICY-EVAL payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "ReasonCodes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "PolicyBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_bundle_id", "version", "language_id"],
+      "properties": {
+        "policy_bundle_id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "language_id": { "type": "string", "minLength": 1 },
+        "content": {},
+        "artifact_ref": { "type": "string", "minLength": 1 },
+        "content_hash": { "type": "string", "minLength": 1 }
+      }
+    },
+    "PolicyBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_id", "input_schema_version"],
+      "properties": {
+        "binding_id": { "type": "string", "minLength": 1 },
+        "input_schema_version": { "type": "string", "minLength": 1 },
+        "parameters": { "type": "object" }
+      }
+    },
+    "EvaluationContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_id",
+        "contract_head_version",
+        "subject",
+        "action",
+        "resource",
+        "context_hash"
+      ],
+      "properties": {
+        "context_id": { "type": "string", "minLength": 1 },
+        "contract_head_version": { "type": "string", "minLength": 1 },
+        "subject": { "type": "string", "minLength": 1 },
+        "action": { "type": "string", "minLength": 1 },
+        "resource": { "type": "string", "minLength": 1 },
+        "environment": { "type": "object" },
+        "context_hash": { "type": "string", "minLength": 1 }
+      }
+    },
+    "PolicyDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "reason_codes", "evaluated_at", "context_hash"],
+      "properties": {
+        "decision": { "type": "string", "enum": ["ALLOW", "DENY", "INCONCLUSIVE"] },
+        "reason_codes": { "$ref": "#/$defs/ReasonCodes" },
+        "obligations": { "type": "array" },
+        "advice": { "type": "array" },
+        "evaluated_at": { "type": "string", "minLength": 1 },
+        "engine_info": { "type": "object" },
+        "context_hash": { "type": "string", "minLength": 1 }
+      }
+    },
+    "POLICY_EVAL_REQUEST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eval_id", "policy_bundle_ref", "policy_binding_ref", "evaluation_context"],
+      "properties": {
+        "eval_id": { "type": "string", "minLength": 1 },
+        "policy_bundle_ref": { "$ref": "#/$defs/PolicyBundle" },
+        "policy_binding_ref": { "$ref": "#/$defs/PolicyBinding" },
+        "evaluation_context": { "$ref": "#/$defs/EvaluationContext" },
+        "requested_action_id": { "type": "string", "minLength": 1 },
+        "dry_run": { "type": "boolean" },
+        "deadline": { "type": "string", "minLength": 1 }
+      }
+    },
+    "POLICY_EVAL_RESULT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eval_id", "policy_decision"],
+      "properties": {
+        "eval_id": { "type": "string", "minLength": 1 },
+        "policy_decision": { "$ref": "#/$defs/PolicyDecision" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "POLICY_DECISION_ATTEST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eval_id", "policy_decision_ref"],
+      "properties": {
+        "eval_id": { "type": "string", "minLength": 1 },
+        "policy_decision_ref": { "type": "string", "minLength": 1 },
+        "attestation_ref": { "type": "string", "minLength": 1 },
+        "related_action_id": { "type": "string", "minLength": 1 }
+      },
+      "anyOf": [
+        { "required": ["attestation_ref"] },
+        { "required": ["related_action_id"] }
+      ]
+    }
+  }
+}

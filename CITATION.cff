@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "AICP — Agent Interaction Content Protocol"
+version: "0.1.0-dev"
+abstract: >-
+  AICP is an open content-layer protocol for agent-to-agent interaction.
+  It provides enforceable, machine-checkable artifacts for policy-aware
+  interoperability, attestations, and conformance.
+authors:
+  - family-names: "Volshebnik23"
+keywords:
+  - agent-to-agent
+  - multi-agent
+  - LLM agents
+  - content-layer protocol
+  - policy enforcement
+  - orchestration
+  - governance
+  - attestations
+  - interoperability standard
+license: "Apache-2.0"

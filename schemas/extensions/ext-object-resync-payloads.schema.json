@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-object-resync-payloads.schema.json",
+  "title": "AICP EXT-OBJECT-RESYNC payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "ObjectHash": { "type": "string", "pattern": "^sha256:[A-Za-z0-9_-]+$" },
+    "OBJECT_REQUEST_ITEM": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_hash"],
+      "properties": {
+        "object_hash": { "$ref": "#/$defs/ObjectHash" },
+        "want_type": { "type": "string", "minLength": 1 },
+        "max_bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "OBJECT_REQUEST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "objects"],
+      "properties": {
+        "request_id": { "type": "string", "minLength": 1 },
+        "objects": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/OBJECT_REQUEST_ITEM" } },
+        "allow_redaction": { "type": "boolean" },
+        "allow_encrypted": { "type": "boolean" },
+        "max_total_bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "OBJECT_RESPONSE_ENTRY": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_hash", "status"],
+      "properties": {
+        "object_hash": { "$ref": "#/$defs/ObjectHash" },
+        "status": {
+          "type": "string",
+          "enum": ["FOUND", "NOT_FOUND", "ACCESS_DENIED", "TOO_LARGE", "REDACTED", "ERROR"]
+        },
+        "object_type": { "type": "string", "minLength": 1 },
+        "object": { "type": ["object", "array", "string", "number", "boolean", "null"] },
+        "artifact_ref": { "type": "string", "minLength": 1 },
+        "redaction_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "OBJECT_RESPONSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "entries"],
+      "properties": {
+        "request_id": { "type": "string", "minLength": 1 },
+        "entries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/OBJECT_RESPONSE_ENTRY" } }
+      }
+    },
+    "STATE_SYNC_REQUEST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id"],
+      "properties": {
+        "request_id": { "type": "string", "minLength": 1 },
+        "known_heads": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "known_message_hash": { "$ref": "#/$defs/ObjectHash" },
+        "want_closed_status": { "type": "boolean" }
+      }
+    },
+    "STATE_SYNC_RESPONSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id", "session_state", "branch_heads"],
+      "properties": {
+        "request_id": { "type": "string", "minLength": 1 },
+        "session_state": { "type": "string", "minLength": 1 },
+        "branch_heads": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "active_head_version": { "type": "string", "minLength": 1 },
+        "final_head_version": { "type": "string", "minLength": 1 },
+        "replication_hints": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cursor": { "type": "string", "minLength": 1 },
+            "next_request_after_s": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+conformance/report.json
+conformance/report_ext_*.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# JS/TS SDK artifacts
+sdk/typescript/node_modules/
