@@ -1,0 +1,35 @@
+{
+  "suite_id": "OR-OBJECT-RESYNC-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-OBJECT-RESYNC conformance checks for object retrieval and state sync.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-object-resync-payloads.schema.json",
+  "payload_schema_map": {
+    "OBJECT_REQUEST": "#/$defs/OBJECT_REQUEST",
+    "OBJECT_RESPONSE": "#/$defs/OBJECT_RESPONSE",
+    "STATE_SYNC_REQUEST": "#/$defs/STATE_SYNC_REQUEST",
+    "STATE_SYNC_RESPONSE": "#/$defs/STATE_SYNC_RESPONSE"
+  },
+  "transcripts": [
+    {
+      "id": "OR-01",
+      "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
+      "expected_message_types": ["OBJECT_REQUEST", "OBJECT_RESPONSE"]
+    },
+    {
+      "id": "OR-02",
+      "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
+      "expected_message_types": ["STATE_SYNC_REQUEST", "STATE_SYNC_RESPONSE"]
+    }
+  ],
+  "checks": [
+    { "test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema" },
+    { "test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-OBJECT-RESYNC payload schema" },
+    { "test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present" },
+    { "test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript" },
+    { "test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript" },
+    { "test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare" },
+    { "test_id": "OR-OBJECT-HASH-01", "description": "recompute payload object_hash triples when present and compare" }
+  ]
+}
