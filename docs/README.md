@@ -1,6 +1,8 @@
-# Documentation Layout
+# AICP — Agent Interaction Content Protocol (Docs)
 
-This repository follows an SDD-first docs structure:
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
+
+This documentation tree is the canonical human-readable specification set for AICP.
 
 - `docs/suite/` — suite-level umbrella overview and pointers to standalone RFC specifications.
 - `docs/core/` — normative Core specification text.

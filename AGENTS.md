@@ -1,4 +1,5 @@
-# AGENTS.md — AICP Protocol Repo (Agent-First SDD)
+# AGENTS.md — AICP — Agent Interaction Content Protocol Repo (Agent-First SDD)
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
 
 This repository is run using **Agent-First SDD (Spec-Driven Development)**:
 humans define intent + constraints + acceptance criteria; agents implement via PRs.

@@ -7,6 +7,7 @@ validate:
 	$(PYTHON) scripts/validate_jsonl.py
 	$(PYTHON) scripts/validate_schema_instances.py
 	$(PYTHON) scripts/validate_registry.py
+	$(PYTHON) scripts/check_naming.py
 
 test:
 	$(PYTHON) -c "import importlib.util, subprocess, sys; spec=importlib.util.find_spec('pytest'); raise SystemExit((print('pytest not installed; skipping make test.') or 0) if spec is None else subprocess.call(['pytest','-q','reference/python/tests']))"

@@ -1,4 +1,6 @@
-AICP — AI Interconnector Protocol
+AICP — Agent Interaction Content Protocol
+
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
 
 Context-Accurate and Safe Agent-to-Agent Interaction
 Suite Overview and v0.1 Specification Skeleton (RFC frame + Core v0.1 + Registered Extensions)
@@ -411,4 +413,4 @@ Summary: Defines interop event procedure, outputs, and external security review 
 Canonical sources note: Standalone RFC documents under `docs/rfc/`, `docs/extensions/`, and `docs/bindings/` are the canonical locations for Sections 8–18 content. This Suite document is an umbrella index.
 
 Roadmap and current status
-See `ROADMAP.md` for repo-backed status. Current milestone: M7.3 (EXT-POLICY-EVAL productization).
+See `ROADMAP.md` for repo-backed status. Current milestone: M7.5 (Developer Experience & Adoption Kit).

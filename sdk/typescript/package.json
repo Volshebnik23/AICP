@@ -1,0 +1,10 @@
+{
+  "name": "@aicp/sdk-core-helpers",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "description": "Minimal AICP core helpers for TypeScript/JavaScript implementers.",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

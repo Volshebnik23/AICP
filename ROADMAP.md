@@ -1,3 +1,7 @@
+## AICP — Agent Interaction Content Protocol
+
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
+
 ## Roadmap and current status (repo-backed)
 
 This roadmap reflects the **actual repository artifacts**, not only content embedded in the Suite index.
@@ -72,8 +76,12 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Add extension conformance suite under `conformance/extensions/`.
 
 ### ✅ Completed (M7.2): EXT-OBJECT-RESYNC productization
-### 🟡 Current milestone (M7.3): EXT-POLICY-EVAL productization
+### ✅ Completed (M7.3): EXT-POLICY-EVAL productization
 ### 🔜 Next milestone (M7.4): BINDINGS productization (starting with MCP)
+### 🟡 Current milestone (M7.5): Developer Experience & Adoption Kit (DX)
+- Canonical naming/tagline consistency and discoverability landing pages.
+- SDK/template/sandbox workflows that reduce adoption friction for agent developers and enforcers.
+- DX hardening is required before plugfest-focused milestones.
 
 ### ⏳ Later milestones (productization hardening)
 - ⏳ M8 Plugfest kit + Interop report + Errata process:
@@ -86,4 +94,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M7.3 (EXT-POLICY-EVAL productization)** is current.
+**M7.5 (Developer Experience & Adoption Kit)** is current.

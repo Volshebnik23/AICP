@@ -1,5 +1,7 @@
 # AICP Python Reference (Core v0.1, minimal)
 
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
+
 This reference implementation provides correctness-first helpers for:
 
 - Deterministic canonicalization (`aicp_ref/jcs.py`)
@@ -11,7 +13,7 @@ This reference implementation provides correctness-first helpers for:
 ## Notes
 
 Canonicalization currently matches existing fixtures using sorted-key JSON encoding.
-Full RFC8785 numeric edge-case handling is intentionally out of scope and unsupported
+Full RFC8785 numeric edge-case handling is intentionally out of scope and unsupported;
 float cases raise explicit exceptions.
 
 ## Run tests

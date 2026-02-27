@@ -5,3 +5,6 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+
+# JS/TS SDK artifacts
+sdk/typescript/node_modules/
