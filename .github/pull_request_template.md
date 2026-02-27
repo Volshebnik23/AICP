@@ -3,13 +3,13 @@
 ## Solution
 
 ## Acceptance Criteria
-- [ ]
+- [ ] Criteria 1
+- [ ] Criteria 2
 
 ## How Verified
-Commands:
-- `...`
-
-Outputs / notes:
+Commands and outputs:
+- `make validate`
+- `make test`
 
 ## Risk Level
 - [ ] Low

@@ -1,20 +1,18 @@
-# AICP Core v0.1 (Normative) - Package
+# AICP Protocol Repository
 
-This package contains:
-- Normative spec document (DOCX)
-- JSON Schemas (Envelope, Contract, Payloads)
-- Test vectors (TV-01..TV-03)
-- Golden transcripts (JSONL) + public keys
+This repository is the canonical source of truth for AICP artifacts under Agent-First SDD.
+
+## Canonical layout
+
+- Core normative document: `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
+- Core schemas: `schemas/core/`
+- Core fixtures and golden transcripts: `fixtures/`
 
 ## Quickstart
 
-1) Validate message envelopes against `schemas/aicp-core-message.schema.json`.
-2) Validate contract objects against `schemas/aicp-core-contract.schema.json`.
-3) Verify `fixtures/core_tv.json` with the reference implementation.
-4) Replay `fixtures/golden_transcripts/*.jsonl`:
-   - recompute `message_hash` for each envelope excluding `signatures` and `message_hash`
-   - check `prev_msg_hash` chaining
-   - verify Ed25519 signatures over signing input:
-     `AICP1\0SIG\0` + `<object_hash>` (UTF-8)
+- `make validate`
+- `make test`
 
-Reference implementation: see `aicp_reference_v0.1.0.zip` (separate artifact).
+## Notes
+
+Release bundles belong under `dist/` and should not be used as the working source of truth.

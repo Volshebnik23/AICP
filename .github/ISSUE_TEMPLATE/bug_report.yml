@@ -1,0 +1,51 @@
+name: Bug Report
+description: Report a defect with enough detail for reproducible, verifiable fixes.
+title: "Bug: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What were you doing when this happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope / Impact
+      description: Which components are affected (docs/schemas/registry/fixtures/conformance/reference)?
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Any constraints for the fix (compatibility, deadlines, security, no semantic changes).
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: What must be true to consider this fixed?
+      placeholder: |
+        - [ ] Repro no longer occurs
+        - [ ] Added/updated test or fixture
+    validations:
+      required: true
+
+  - type: textarea
+    id: how_to_verify
+    attributes:
+      label: How to verify
+      description: Exact commands and/or steps to reproduce and confirm fix.
+      placeholder: |
+        make validate
+        make test
+    validations:
+      required: true

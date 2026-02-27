@@ -1,0 +1,71 @@
+name: SDD Task
+description: Create a spec-driven implementation task with verifiable acceptance criteria.
+title: "SDD Task: "
+labels:
+  - sdd
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this needed now?
+      placeholder: Describe the background and motivation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope / Out of scope
+      description: Define exactly what should and should not change.
+      placeholder: |
+        In scope:
+        - ...
+
+        Out of scope:
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Compatibility, security, privacy, performance, and process constraints.
+      placeholder: |
+        - No protocol semantics changes
+        - No hand edits to golden transcripts
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Checklist of verifiable outcomes.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: how_to_verify
+    attributes:
+      label: How to verify
+      description: Exact commands and expected outputs.
+      placeholder: |
+        make validate
+        make test
+    validations:
+      required: true
+
+  - type: textarea
+    id: deliverable
+    attributes:
+      label: Deliverable
+      description: What should be produced?
+      placeholder: PR with summary + verification notes.
+    validations:
+      required: true
