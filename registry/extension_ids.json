@@ -70,5 +70,14 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md",
     "security_considerations": "Incident signaling must avoid sensitive data overexposure."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-ENFORCEMENT",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md",
+    "security_considerations": "Verdict authenticity and mediator integrity are required to prevent unauthorized delivery or suppression."
   }
 ]
