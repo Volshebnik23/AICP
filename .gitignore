@@ -1,0 +1,7 @@
+conformance/report.json
+conformance/report_ext_capneg.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
