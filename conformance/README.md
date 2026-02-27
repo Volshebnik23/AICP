@@ -16,3 +16,5 @@ make conformance
 `make conformance` generates `conformance/report.json` locally (ignored/untracked by git).
 
 `make test` runs Python reference tests from `reference/python/tests`.
+
+`make conformance-ext` runs extension conformance suites (currently EXT-CAPNEG).

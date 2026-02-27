@@ -62,19 +62,28 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Optionally add `/reference/typescript` with parity notes.
 **Acceptance:** reference implementation tests are runnable via the one-command standard.
 
-### 🟡 Current milestone (M6): Expanded golden transcripts + negative conformance
-- Expand Core golden coverage for revoke, unknown-base+resync, invalid signature, and duplicate message_id replay scenarios.
-- Harden conformance expectations for controlled negative-case outcomes.
+### ✅ Completed (M6): Expanded golden transcripts + negative conformance
+- Core golden coverage now includes revoke, unknown-base+resync, invalid signature, and duplicate message_id replay scenarios.
+- Conformance supports expected-failure handling for controlled negative outcomes.
+
+### 🟡 Current milestone (M7.1): EXT-CAPNEG productization
+- Add EXT-CAPNEG payload schemas under `schemas/extensions/`.
+- Add CAPNEG extension fixtures under `fixtures/extensions/capneg/`.
+- Add extension conformance suite under `conformance/extensions/`.
+
+### 🔜 Next milestone (M7.2): EXT-OBJECT-RESYNC productization
+### 🔜 Next milestone (M7.3): EXT-POLICY-EVAL productization
+### 🔜 Next milestone (M7.4): BINDINGS productization (starting with MCP)
 
 ### ⏳ Later milestones (productization hardening)
-- ⏳ M7 Plugfest kit + Interop report + Errata process:
+- ⏳ M8 Plugfest kit + Interop report + Errata process:
   - `/interop/*` artifacts
-- ⏳ M8 External security review artifacts and remediation log:
+- ⏳ M9 External security review artifacts and remediation log:
   - `/security_review/*`
-- ⏳ M9 Release Candidate → v0.1.0:
+- ⏳ M10 Release Candidate → v0.1.0:
   - feature freeze, registry snapshot, final compatibility marks, release packaging, checksums
 
 ---
 
 ## Immediate next step
-**M6 (Expanded golden coverage + negative conformance hardening)** is current.
+**M7.1 (EXT-CAPNEG productization)** is current.

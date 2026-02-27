@@ -30,6 +30,48 @@ def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
 
 
+def _resolve_json_pointer(doc: dict[str, Any], pointer: str) -> Any:
+    if pointer == "":
+        return doc
+    if not pointer.startswith("/"):
+        raise ValueError(f"Invalid JSON pointer: {pointer}")
+    cur: Any = doc
+    for raw in pointer.lstrip("/").split("/"):
+        token = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(cur, dict):
+            cur = cur[token]
+        elif isinstance(cur, list):
+            cur = cur[int(token)]
+        else:
+            raise KeyError(token)
+    return cur
+
+
+def _validate_payload_schema(
+    msg: dict[str, Any],
+    line_no: int,
+    rel_file: str,
+    t_failures: list[dict[str, Any]],
+    payload_schema: dict[str, Any] | None,
+    payload_schema_map: dict[str, str] | None,
+) -> None:
+    if payload_schema is None or payload_schema_map is None or Draft202012Validator is None:
+        return
+    mtype = msg.get("message_type")
+    schema_pointer = payload_schema_map.get(mtype)
+    if not schema_pointer:
+        return
+    try:
+        payload_subschema = _resolve_json_pointer(payload_schema, schema_pointer)
+    except Exception as exc:
+        add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", f"invalid schema map pointer {schema_pointer}: {exc}", rel_file, line_no)
+        return
+    validator = Draft202012Validator(payload_subschema)
+    payload = msg.get("payload")
+    for err in sorted(validator.iter_errors(payload), key=lambda e: list(e.path)):
+        add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", err.message, rel_file, line_no)
+
+
 def _message_body_without_hash_and_signatures(message: dict[str, Any]) -> dict[str, Any]:
     body = dict(message)
     body.pop("message_hash", None)
@@ -79,6 +121,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
     key_map = load_json(ROOT / "fixtures/keys/GT_public_keys.json")
     can_verify_signatures = signature_verifier_available()
+    payload_schema_ref = suite.get("payload_schema_ref")
+    payload_schema = load_json(ROOT / payload_schema_ref) if payload_schema_ref else None
+    payload_schema_map = suite.get("payload_schema_map")
 
     failures: list[dict[str, Any]] = []
 
@@ -100,6 +145,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             if validator is not None:
                 for err in sorted(validator.iter_errors(obj), key=lambda e: list(e.path)):
                     add_failure(t_failures, "CT-SCHEMA-JSONL-01", err.message, rel_file, i)
+            _validate_payload_schema(obj, i, rel_file, t_failures, payload_schema, payload_schema_map)
 
         if not rows:
             add_failure(t_failures, "CT-INVARIANTS-01", "Transcript has no JSONL records", rel_file, None)

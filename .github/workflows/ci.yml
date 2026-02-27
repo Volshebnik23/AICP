@@ -36,6 +36,10 @@ jobs:
       - name: Run make test
         run: make test
 
+      - name: Run make conformance-ext on main branch
+        if: github.ref == 'refs/heads/main'
+        run: make conformance-ext
+
       - name: Run make release-check on main branch
         if: github.ref == 'refs/heads/main'
         run: make release-check
