@@ -13,6 +13,12 @@ try:
 except Exception:  # pragma: no cover - environment dependent
     Draft202012Validator = None
 
+try:
+    from referencing import Registry, Resource
+except Exception:  # pragma: no cover - environment dependent
+    Registry = None
+    Resource = None
+
 ROOT = Path(__file__).resolve().parents[2]
 REF_PY = ROOT / "reference/python"
 if str(REF_PY) not in sys.path:
@@ -28,6 +34,70 @@ def load_json(path: Path) -> Any:
 
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
+
+def _collect_refs(node: Any) -> list[str]:
+    refs: list[str] = []
+    if isinstance(node, dict):
+        ref = node.get("$ref")
+        if isinstance(ref, str):
+            refs.append(ref)
+        for v in node.values():
+            refs.extend(_collect_refs(v))
+    elif isinstance(node, list):
+        for v in node:
+            refs.extend(_collect_refs(v))
+    return refs
+
+
+def _schema_aliases(schema: dict[str, Any], schema_path: Path) -> set[str]:
+    aliases = {schema_path.resolve().as_uri()}
+    schema_id = schema.get("$id")
+    if isinstance(schema_id, str) and schema_id:
+        aliases.add(schema_id)
+    for legacy in schema.get("x-legacy-ids", []):
+        if isinstance(legacy, str) and legacy:
+            aliases.add(legacy)
+    return aliases
+
+
+def _core_schema_resources() -> dict[str, Any]:
+    if Resource is None:
+        return {}
+    core_path = ROOT / "schemas/core/aicp-core-message.schema.json"
+    core_schema = load_json(core_path)
+    resource = Resource.from_contents(core_schema)
+    return {alias: resource for alias in _schema_aliases(core_schema, core_path)}
+
+
+def _build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
+    if Draft202012Validator is None:
+        return None
+
+    remote_refs = {
+        ref for ref in _collect_refs(schema)
+        if ref.startswith("http://") or ref.startswith("https://")
+    }
+
+    if Registry is None or Resource is None:
+        if remote_refs:
+            raise ValueError("Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:.")
+        return Draft202012Validator(schema)
+
+    resources = _core_schema_resources()
+    schema_resource = Resource.from_contents(schema)
+    for alias in _schema_aliases(schema, schema_path):
+        resources[alias] = schema_resource
+
+    allowed_remote = {u for u in resources if u.startswith("http://") or u.startswith("https://")}
+    unresolved = sorted(remote_refs - allowed_remote)
+    if unresolved:
+        raise ValueError(
+            "Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:. "
+            f"Unmapped refs: {', '.join(unresolved)}"
+        )
+
+    registry = Registry().with_resources(resources.items())
+    return Draft202012Validator(schema, registry=registry)
 
 
 def _normalize_pointer(pointer: str) -> str:
@@ -418,7 +488,11 @@ def main() -> int:
     suite_path = (ROOT / args.suite).resolve() if not Path(args.suite).is_absolute() else Path(args.suite)
     out_path = (ROOT / args.out).resolve() if not Path(args.out).is_absolute() else Path(args.out)
 
-    report = run_suite(suite_path)
+    try:
+        report = run_suite(suite_path)
+    except Exception as exc:
+        print(f"[FAIL] {exc}")
+        return 1
 
     if Draft202012Validator is None:
         print("[WARN] jsonschema is not installed. Skipping message/schema payload validation checks.")
@@ -426,8 +500,9 @@ def main() -> int:
         print("[WARN] cryptography is not installed. Signature verification checks are limited.")
 
     if Draft202012Validator is not None:
-        report_schema = load_json(ROOT / "conformance/conformance_report_schema.json")
-        Draft202012Validator(report_schema).validate(report)
+        report_schema_path = ROOT / "conformance/conformance_report_schema.json"
+        report_schema = load_json(report_schema_path)
+        _build_validator(report_schema, report_schema_path).validate(report)
     else:
         print("[WARN] jsonschema is not installed. Skipping conformance report schema validation.")
 

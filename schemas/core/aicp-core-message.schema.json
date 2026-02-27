@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://aicp.dev/schemas/aicp-core-message.schema.json",
+  "$id": "aicp:schemas/core/aicp-core-message.schema.json",
   "title": "AICP Core Message Envelope",
   "type": "object",
   "required": [
@@ -114,5 +114,9 @@
       }
     }
   },
-  "additionalProperties": true
+  "additionalProperties": true,
+  "x-legacy-ids": [
+    "https://aicp.dev/schemas/aicp-core-message.schema.json",
+    "https://aicp.dev/schemas/core/aicp-core-message.schema.json"
+  ]
 }
