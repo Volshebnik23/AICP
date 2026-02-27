@@ -17,7 +17,9 @@ def should_skip(path: Path) -> bool:
 def load_records(root: Path) -> list[tuple[Path, int, object]]:
     records: list[tuple[Path, int, object]] = []
     for path in sorted(root.rglob("*.jsonl")):
-        if should_skip(path) or "golden_transcripts" not in path.parts:
+        if should_skip(path):
+            continue
+        if "fixtures" not in path.parts:
             continue
         for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             if not line.strip():
@@ -63,7 +65,7 @@ def main() -> int:
         return 1
 
     print(
-        f"OK: {len(records)} golden transcript record(s) validated against "
+        f"OK: {len(records)} fixture JSONL record(s) validated against "
         f"{schema_path.relative_to(root)}."
     )
     return 0

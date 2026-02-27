@@ -1,0 +1,29 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "agent_authority",
+    "type": "policy_categories",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Prevents unauthorized agent actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "user_consent",
+    "type": "policy_categories",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Ensures user-approved actions only."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "scope_boundaries",
+    "type": "policy_categories",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Contains data/tool usage within agreed boundaries."
+  }
+]
