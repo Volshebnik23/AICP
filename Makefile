@@ -14,6 +14,9 @@ test:
 conformance:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --out conformance/report.json
 
+conformance:
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --out conformance/report.json
+
 lint:
 	@echo "Lint target placeholder: no lint checks configured."
 
