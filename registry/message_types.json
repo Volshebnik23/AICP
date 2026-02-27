@@ -1,0 +1,128 @@
+[
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ERROR",
+    "type": "message_types",
+    "spec_ref": "docs/rfc/RFC_Error_Model_and_Recovery.md#92-error-message-core-v01-should",
+    "security_considerations": "Error payloads must avoid leaking secrets/PII."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Capability declarations are inputs to security-sensitive negotiation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_PROPOSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Proposals must resist downgrade and spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Accepted profile should be bound to signed context."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_EVAL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Evaluation context may contain sensitive policy inputs."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_EVAL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Decisions should be signed when enforcement-relevant."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBJECT_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "Requests can leak object existence and amplify traffic."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBJECT_RESPONSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "Responses must preserve object hash integrity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "IDENTITY_ANNOUNCE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Identity metadata must be authenticated before trust update."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "KEY_ROTATION",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Cross-signatures are required to prevent key substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#151-ext-workflow-sync--workflow-synchronization-registered-extension",
+    "security_considerations": "Workflow artifacts must be hash-bound to contract head."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#152-ext-delegation--hierarchical-purpose-oriented-delegation-registered-extension",
+    "security_considerations": "Delegation scope and expiry must be enforced."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHALLENGE_ASSERTION",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#153-ext-disputes--challenges-breach-claims-arbitration-hooks-registered-extension",
+    "security_considerations": "Challenge evidence must be verifiable and tamper-evident."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SECURITY_ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#154-ext-security-alert--security-events-and-escalation-registered-extension",
+    "security_considerations": "Alerts should avoid exposing sensitive incident details beyond policy."
+  }
+]
