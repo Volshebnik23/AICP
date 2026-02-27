@@ -81,10 +81,24 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Core taxonomy alignment on `CONTEXT_AMEND`
 - Core payload schema enforcement in conformance/tests
 ### 🟡 Current milestone (M7.4): BINDINGS productization (starting with MCP)
-### ⏳ Planned milestone (M7.5): Developer Experience & Adoption Kit (DX)
-- Canonical naming/tagline consistency and discoverability landing pages.
-- SDK/template/sandbox workflows that reduce adoption friction for agent developers and enforcers.
-- DX hardening should complete before plugfest-focused milestones.
+**Goal:** make at least one transport binding adoptable with the same rigor as Core/EXT:
+schemas + fixtures + binding conformance suite + tests + docs.
+**Target (MCP first):**
+- `schemas/bindings/` (binding schema for MCP tools/call wrappers)
+- `fixtures/bindings/mcp/` (binding cases)
+- `conformance/bindings/` (TB_MCP suite) + runner support
+- tests (pytest) that execute the binding suite
+- docs updates in `docs/bindings/RFC_BIND_MCP.md` and `conformance/README.md`
+
+### ✅ Completed (M7.5): Developer Experience & Adoption Kit (DX)
+**Goal:** reduce perceived ceremony for agent builders and enforcer platform builders.
+**Shipped artifacts:**
+- `docs/index.md` (landing page), `docs/branding.md` (canonical terms), `CITATION.cff`
+- TS SDK starter: `sdk/typescript/` (TV-01 test)
+- copy-paste template: `templates/ts-agent/`
+- sandbox debug thread: `sandbox/`
+
+(After M7.4, proceed to plugfest/security-review milestones.)
 
 ### ⏳ Later milestones (productization hardening)
 - ⏳ M8 Plugfest kit + Interop report + Errata process:
