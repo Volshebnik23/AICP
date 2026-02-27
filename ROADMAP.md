@@ -55,13 +55,18 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 
 ### 🔜 Next milestone (M4): Conformance as a product (runner + reports)
 **Goal:** “AICP-compatible” becomes measurable.
-- Add `/conformance` test catalogs (Core + opt-in EXT suites).
+- Add `/conformance` suite catalogs (Core + opt-in EXT suites).
 - Add a conformance runner CLI that outputs a **compatibility report** (machine-readable).
+- Run conformance in CI.
 **Acceptance:** one command produces pass/fail + report; CI runs Core suite.
 
+### 🔜 Next milestone (M5): Reference implementations in-repo
+**Goal:** provide minimal, correct reference implementations that are easy to adopt and test.
+- Add `/reference/python` (minimum correct implementation).
+- Optionally add `/reference/typescript` with parity notes.
+**Acceptance:** reference implementation tests are runnable via the one-command standard.
+
 ### ⏳ Later milestones (productization hardening)
-- ⏳ M5 Reference implementations in-repo:
-  - `/reference/python` (minimum correct) and optionally `/reference/typescript`
 - ⏳ M6 Expand golden transcripts to cover real-world recovery and consent flows:
   - revoke, unknown-base+resync, invalid signature, duplicate message_id, etc.
 - ⏳ M7 Plugfest kit + Interop report + Errata process:

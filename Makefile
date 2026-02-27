@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate test lint release-check
+.PHONY: validate test conformance lint release-check
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -10,6 +10,9 @@ validate:
 
 test:
 	$(PYTHON) -c "from pathlib import Path; import subprocess, sys; tests = list(Path('.').rglob('test_*.py')); raise SystemExit(subprocess.call(['pytest', '-q']) if tests else (print('No pytest tests found; skipping.') or 0))"
+
+conformance:
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --out conformance/report.json
 
 lint:
 	@echo "Lint target placeholder: no lint checks configured."
