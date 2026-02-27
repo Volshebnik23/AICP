@@ -1,6 +1,6 @@
-# AICP — Agent Interaction Content Protocol
+# AICP - Agent Interaction Content Protocol
 
-“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
+An open content-layer protocol for agent-to-agent interaction with enforceable policies.
 
 AICP is a practical, implementable protocol repo for teams building multi-agent platforms.
 
