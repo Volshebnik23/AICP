@@ -1,0 +1,20 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESULT_DISTORTION",
+    "type": "dispute_claim_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#153-ext-disputes--challenges-breach-claims-arbitration-hooks-registered-extension",
+    "security_considerations": "Claims require auditable evidence references."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_BREACH",
+    "type": "dispute_claim_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#153-ext-disputes--challenges-breach-claims-arbitration-hooks-registered-extension",
+    "security_considerations": "Tracks obligation non-fulfillment with signed context."
+  }
+]
