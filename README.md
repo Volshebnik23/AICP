@@ -1,5 +1,5 @@
 # AICP Protocol Repository
-(AI) Agent Interaction Content-level Protocol
+(AI) Agent Interaction Content-layer Protocol
 Open content-level protocol for AI agent-to-agent communication with enforceable policies.
 This repository is the canonical source of truth for AICP artifacts under Agent-First SDD.
 
