@@ -21,6 +21,7 @@ A suite **passes** when all configured transcript checks pass:
 5. If `signatures[*].object_hash` is present, it equals `message_hash`.
 6. `CT-MESSAGE-HASH-01`: `message_hash` recomputes from message body (without `signatures` and `message_hash`) using Core object-hash algorithm.
 7. `CT-SIGNATURE-VERIFY-01`: when signatures are present, Ed25519 verification succeeds against `fixtures/keys/GT_public_keys.json`.
+8. `CT-PAYLOAD-SCHEMA-01` (when configured): mapped Core payloads validate against `schemas/core/aicp-core-payloads.schema.json`.
 
 ## Runner usage
 
@@ -38,9 +39,9 @@ Suite catalogs may mark transcripts as expected-failure cases via `expect_pass: 
 A negative transcript passes only when all expected failure test IDs occur at least `min_count` and no unexpected failures are present.
 
 
-## Extension payload schema suites
+## Payload schema suites (Core + extensions)
 
-Extension suites may specify `payload_schema_ref` and `payload_schema_map`. The runner validates payloads using a wrapper schema that preserves root `$defs` and references mapped payload definitions by JSON Pointer (`/$defs/X` or `#/$defs/X`).
+Suites may specify `payload_schema_ref`, `payload_schema_map`, and optional `payload_schema_check_id` (default `CN-PAYLOAD-SCHEMA-01`). The runner validates payloads using a wrapper schema that preserves root `$defs` and references mapped payload definitions by JSON Pointer (`/$defs/X` or `#/$defs/X`). Core suites use `CT-PAYLOAD-SCHEMA-01`; extension suites typically use `CN-PAYLOAD-SCHEMA-01`.
 
 For EXT-OBJECT-RESYNC, `OR-OBJECT-HASH-01` verifies any payload object tuple `{object_type, object, object_hash}` by recomputing `object_hash`.
 

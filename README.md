@@ -1,6 +1,6 @@
-# AICP - Agent Interaction Content Protocol
+# AICP — Agent Interaction Content Protocol
 
-An open content-layer protocol for agent-to-agent interaction with enforceable policies.
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
 
 AICP is a practical, implementable protocol repo for teams building multi-agent platforms.
 
@@ -26,7 +26,8 @@ AICP is a practical, implementable protocol repo for teams building multi-agent 
 
 ## Canonical layout
 
-- Core normative document: `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
+- Core normative document (canonical): `docs/core/AICP_Core_v0.1_Normative.md`
+- Optional release artifact (not edited in normal PRs): `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
 - Core schemas: `schemas/core/`
 - Core fixtures and golden transcripts: `fixtures/`
 - Conformance suite and runner: `conformance/`

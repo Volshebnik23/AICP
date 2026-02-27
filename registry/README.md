@@ -31,3 +31,5 @@ Validate registry integrity with:
 Do not introduce untracked identifiers outside `registry/`.
 
 `policy_languages.json` and `policy_bindings.json` register valid `language_id` and `binding_id` values for EXT-POLICY-EVAL artifacts.
+
+`message_types.json` includes both Core message types and Registered Extension message types. Core entries are expected to be `stable`; extension entries may remain `experimental` until their wave is fully productized.

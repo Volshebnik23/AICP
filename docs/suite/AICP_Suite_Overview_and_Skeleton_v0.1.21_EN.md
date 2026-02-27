@@ -8,6 +8,10 @@ Suite Overview and v0.1 Specification Skeleton (RFC frame + Core v0.1 + Register
 Version: 0.1.21 (English master)
 Date: 2026-02-25
 Status: Draft
+
+Canonical Core normative source (Markdown): `docs/core/AICP_Core_v0.1_Normative.md`
+Optional release artifact: `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
+
  
 Change log
  
@@ -146,7 +150,7 @@ Core v0.1 defines a replicated state machine (RSM) model: session state and the 
 •	pending_amendments (amendments proposed but not yet quorum-accepted)
 •	conflict_sets (detected conflicts awaiting RESOLVE_CONFLICT)
 •	Core invariants:
-•	Any message that changes the contract state (CONTRACT_ACCEPT, AMENDMENT_ACCEPT, RESOLVE_CONFLICT, CLOSE_SESSION) MUST reference a specific contract_ref and MUST satisfy signature_policy.
+•	Any message that changes the contract state (CONTRACT_ACCEPT, CONTEXT_AMEND, RESOLVE_CONFLICT, CLOSE_SESSION) MUST reference a specific contract_ref and MUST satisfy signature_policy.
 •	Version numbering MUST be monotonic within a branch.
 •	Distinct contract states MUST have distinct contract_hash values.
 3.2 Roles (normative)
@@ -160,8 +164,8 @@ session_state is derived. Implementations MAY add local substates, but MUST pres
 State	Meaning	Entry condition	Typical exit / transition
 Draft (local)	Initiator prepared a draft before first proposal.	Before CONTRACT_PROPOSE is sent.	CONTRACT_PROPOSE -> Proposed
 Proposed	Contract proposal delivered; acceptance ongoing.	Valid CONTRACT_PROPOSE received.	Quorum CONTRACT_ACCEPT -> Active[v1]; or close/reject by policy
-Active[vN]	A canonical contract head is active.	Quorum for the current head is achieved.	AMENDMENT_PROPOSE -> Amendment-in-flight; concurrent accepts -> Conflict; CLOSE_SESSION -> Closing/Closed
-Amendment-in-flight	There are proposed amendments pending acceptance.	AMENDMENT_PROPOSE received referencing active head.	Quorum AMENDMENT_ACCEPT -> Active[vN+1]; concurrent accepts -> Conflict; reject/timeout by policy
+Active[vN]	A canonical contract head is active.	Quorum for the current head is achieved.	CONTEXT_AMEND -> Amendment-in-flight; concurrent accepts -> Conflict; CLOSE_SESSION -> Closing/Closed
+Amendment-in-flight	There are proposed amendments pending acceptance.	CONTEXT_AMEND received referencing active head.	Quorum CONTEXT_AMEND -> Active[vN+1]; concurrent accepts -> Conflict; reject/timeout by policy
 Conflict	Two or more incompatible accepted heads exist.	Any conflict class in 3.5 detected.	RESOLVE_CONFLICT -> Active; CLOSE_SESSION may terminate if policy allows
 Closing (optional)	Close requested; waiting for confirmations if required.	CLOSE_SESSION received.	Quorum close confirmations -> Closed
 Closed	Session is terminated; contract immutable.	Close completed per policy.	Terminal
@@ -170,9 +174,9 @@ Non-contract-changing messages (e.g., ATTEST_ACTION, POLICY_VIOLATION) MAY be em
 Core v0.1 uses branch_id (default 'main') and monotonic version strings formatted as 'vN' per branch. Implementations MAY additionally compute contract_hash over the canonical contract representation for auditability. Core messages reference versions via contract_ref.{base_version, head_version} (and MAY include contract_hash). Amendments MUST specify base_version (the head_version they apply to).
 3.5 Conflict classes and detection (normative minimum)
 •	An implementation MUST detect at minimum:
-•	Concurrent-accept: two different AMENDMENT_ACCEPT create different children from the same base_version.
+•	Concurrent-accept: two different CONTEXT_AMEND create different children from the same base_version.
 •	Divergent-quorum: different signer subsets reach quorum for different heads (split-brain by signatures).
-•	Non-head-accept: an AMENDMENT_ACCEPT references a known base_version that is not the current active head (fork).
+•	Non-head-accept: an CONTEXT_AMEND references a known base_version that is not the current active head (fork).
 •	Unknown-base: an amendment/accept references an unknown base_version (buffer or reject; MUST NOT silently change active head).
 •	Incompatible-close: CLOSE_SESSION references a final head that does not match the known canonical head.
 3.6 Conflict resolution (RESOLVE_CONFLICT) (normative)
@@ -226,7 +230,8 @@ Payload (minimum fields):
 •	accepted_contract_hash or accepted_head_ref (MUST): exact version being accepted.
 •	consent_artifacts (MAY): references to user consent proofs if required.
 •	capabilities_declared (MAY): updated capabilities declaration.
-4.3 AMENDMENT_PROPOSE — Propose an amendment
+Note (non-normative): Earlier drafts used AMENDMENT_* labels; Core v0.1 uses CONTEXT_AMEND.
+4.3 CONTEXT_AMEND — Propose an amendment
 Purpose: Propose a contract change (diff/patch) on top of a base_version.
 Trigger / conditions: Sent in Active[vN] by a party authorized to amend. Creates Amendment-in-flight.
 Payload (minimum fields):
@@ -235,7 +240,7 @@ Payload (minimum fields):
 •	diff/patch (MUST): machine-readable change.
 •	rationale (SHOULD): reason/intent.
 •	proposed_version (SHOULD): next version number or deterministic rule.
-4.4 AMENDMENT_ACCEPT — Accept an amendment
+4.4 CONTEXT_AMEND — Accept an amendment
 Purpose: Accept a proposed amendment and move the branch head forward.
 Trigger / conditions: Sent by required signers. Quorum advances to Active[vN+1] or creates Conflict if concurrent.
 Payload (minimum fields):
@@ -341,8 +346,8 @@ TV-03 (message chain):
 A protocol becomes real when independent implementations can prove compatibility via conformance tests, fixtures, and deterministic outcomes. Core v0.1 defines a minimal conformance matrix; extensions define their own.
 7.1 Core v0.1 conformance matrix (normative minimum)
 •	CT-01: CONTRACT_PROPOSE + quorum CONTRACT_ACCEPT -> Proposed -> Active[v1].
-•	CT-02: AMENDMENT_PROPOSE (base=head) -> Amendment-in-flight; quorum AMENDMENT_ACCEPT -> Active[v2].
-•	CT-03: Concurrent-accept: two different AMENDMENT_ACCEPT on same base_version -> Conflict detected by all parties.
+•	CT-02: CONTEXT_AMEND (base=head) -> Amendment-in-flight; quorum CONTEXT_AMEND -> Active[v2].
+•	CT-03: Concurrent-accept: two different CONTEXT_AMEND on same base_version -> Conflict detected by all parties.
 •	CT-04: RESOLVE_CONFLICT choose with quorum -> Active on chosen head; superseded refs stop progressing if policy requires.
 •	CT-05: RESOLVE_CONFLICT merge -> new head_version with merge_parents; parties converge to same resulting contract_hash.
 •	CT-06: Unknown-base: accept/propose referencing unknown base_version -> buffered/rejected; MUST NOT silently change active head.
@@ -413,4 +418,4 @@ Summary: Defines interop event procedure, outputs, and external security review 
 Canonical sources note: Standalone RFC documents under `docs/rfc/`, `docs/extensions/`, and `docs/bindings/` are the canonical locations for Sections 8–18 content. This Suite document is an umbrella index.
 
 Roadmap and current status
-See `ROADMAP.md` for repo-backed status. Current milestone: M7.5 (Developer Experience & Adoption Kit).
+See `ROADMAP.md` for repo-backed status. Current milestone: M7.4 (BINDINGS productization, starting with MCP).

@@ -1,6 +1,6 @@
 ## AICP — Agent Interaction Content Protocol
 
-An open content-layer protocol for agent-to-agent interaction with enforceable policies.
+“An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
 
 ## Roadmap and current status (repo-backed)
 
@@ -22,7 +22,7 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 
 - ✅ Suite overview/index is present at `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`.
 - ✅ Core v0.1 normative artifacts are present at canonical paths:
-  - `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
+  - `docs/core/AICP_Core_v0.1_Normative.md`
   - `schemas/core/`
   - `fixtures/`
 - ✅ Standalone RFC documents for registries/error model/extensions/bindings/governance/interop are present under:
@@ -76,12 +76,15 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Add extension conformance suite under `conformance/extensions/`.
 
 ### ✅ Completed (M7.2): EXT-OBJECT-RESYNC productization
-### ✅ Completed (M7.3): EXT-POLICY-EVAL productization
-### 🔜 Next milestone (M7.4): BINDINGS productization (starting with MCP)
-### 🟡 Current milestone (M7.5): Developer Experience & Adoption Kit (DX)
+### ✅ Completed (M7.3): EXT-POLICY-EVAL productization + hardening
+- Naming consistency enforcement in canonical Markdown sources (DOCX removed from PR-critical gates)
+- Core taxonomy alignment on `CONTEXT_AMEND`
+- Core payload schema enforcement in conformance/tests
+### 🟡 Current milestone (M7.4): BINDINGS productization (starting with MCP)
+### ⏳ Planned milestone (M7.5): Developer Experience & Adoption Kit (DX)
 - Canonical naming/tagline consistency and discoverability landing pages.
 - SDK/template/sandbox workflows that reduce adoption friction for agent developers and enforcers.
-- DX hardening is required before plugfest-focused milestones.
+- DX hardening should complete before plugfest-focused milestones.
 
 ### ⏳ Later milestones (productization hardening)
 - ⏳ M8 Plugfest kit + Interop report + Errata process:
@@ -94,4 +97,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M7.5 (Developer Experience & Adoption Kit)** is current.
+**M7.4 (BINDINGS productization, starting with MCP)** is current.

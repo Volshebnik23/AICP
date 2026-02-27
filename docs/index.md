@@ -23,6 +23,7 @@ AICP Core is minimal and stable; extensions are optional and productized in wave
 ## Primary links
 
 - Suite index: `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`
+- Core normative markdown: `docs/core/AICP_Core_v0.1_Normative.md`
 - Core docs: `docs/core/`
 - Conformance: `conformance/`
 - References: `reference/`

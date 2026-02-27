@@ -63,8 +63,12 @@ def _validate_payload_schema(
     t_failures: list[dict[str, Any]],
     payload_schema: dict[str, Any] | None,
     payload_schema_map: dict[str, str] | None,
+    payload_schema_check_id: str,
+    enabled_checks: set[str],
 ) -> None:
     if payload_schema is None or payload_schema_map is None or Draft202012Validator is None:
+        return
+    if payload_schema_check_id not in enabled_checks:
         return
 
     mtype = msg.get("message_type")
@@ -83,12 +87,12 @@ def _validate_payload_schema(
         }
         validator = Draft202012Validator(wrapper)
     except Exception as exc:
-        add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", f"invalid payload schema configuration for {mtype}: {exc}", rel_file, line_no)
+        add_failure(t_failures, payload_schema_check_id, f"invalid payload schema configuration for {mtype}: {exc}", rel_file, line_no)
         return
 
     payload = msg.get("payload")
     for err in sorted(validator.iter_errors(payload), key=lambda e: list(e.path)):
-        add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", err.message, rel_file, line_no)
+        add_failure(t_failures, payload_schema_check_id, err.message, rel_file, line_no)
 
 
 def _collect_object_hash_triples(value: Any) -> list[tuple[str, Any, str]]:
@@ -149,6 +153,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_ref = suite.get("payload_schema_ref")
     payload_schema = load_json(ROOT / payload_schema_ref) if payload_schema_ref else None
     payload_schema_map = suite.get("payload_schema_map")
+    payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
 
     failures: list[dict[str, Any]] = []
@@ -171,7 +176,16 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             if validator is not None:
                 for err in sorted(validator.iter_errors(obj), key=lambda e: list(e.path)):
                     add_failure(t_failures, "CT-SCHEMA-JSONL-01", err.message, rel_file, i)
-            _validate_payload_schema(obj, i, rel_file, t_failures, payload_schema, payload_schema_map)
+            _validate_payload_schema(
+                obj,
+                i,
+                rel_file,
+                t_failures,
+                payload_schema,
+                payload_schema_map,
+                payload_schema_check_id,
+                enabled_checks,
+            )
 
         if not rows:
             add_failure(t_failures, "CT-INVARIANTS-01", "Transcript has no JSONL records", rel_file, None)

@@ -95,6 +95,10 @@
       "description": "Validate each JSONL record against Core message schema"
     },
     {
+      "test_id": "CT-PAYLOAD-SCHEMA-01",
+      "description": "Validate mapped Core payloads against core payload schema"
+    },
+    {
       "test_id": "CT-HASH-CHAIN-01",
       "description": "prev_msg_hash equals previous message_hash when present"
     },
@@ -118,5 +122,14 @@
       "test_id": "CT-SIGNATURE-VERIFY-01",
       "description": "verify Ed25519 signatures using fixtures/keys/GT_public_keys.json"
     }
-  ]
+  ],
+  "payload_schema_ref": "schemas/core/aicp-core-payloads.schema.json",
+  "payload_schema_map": {
+    "CONTRACT_PROPOSE": "#/$defs/CONTRACT_PROPOSE",
+    "CONTRACT_ACCEPT": "#/$defs/CONTRACT_ACCEPT",
+    "CONTEXT_AMEND": "#/$defs/CONTEXT_AMEND",
+    "ATTEST_ACTION": "#/$defs/ATTEST_ACTION",
+    "RESOLVE_CONFLICT": "#/$defs/RESOLVE_CONFLICT"
+  },
+  "payload_schema_check_id": "CT-PAYLOAD-SCHEMA-01"
 }

@@ -9,6 +9,15 @@
     "security_considerations": "Migration claims should be attested to prevent impersonation."
   },
   {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ATTEST_ACTION",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Attestations should bind actions, authorities, and result hashes for auditability."
+  },
+  {
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -52,6 +61,33 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#153-ext-disputes--challenges-breach-claims-arbitration-hooks-registered-extension",
     "security_considerations": "Challenge evidence must be verifiable and tamper-evident."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTEXT_AMEND",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Amendments must reference an explicit base version to prevent ambiguous forks."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTRACT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Acceptances must bind to the exact proposed contract head/hash."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTRACT_PROPOSE",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Contract proposals must be hash-bound and explicitly version-referenced."
   },
   {
     "status": "experimental",
@@ -142,6 +178,15 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
     "security_considerations": "Decisions should be signed when enforcement-relevant."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESOLVE_CONFLICT",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Conflict resolution must be quorum-signed and reference full conflict context."
   },
   {
     "status": "experimental",
