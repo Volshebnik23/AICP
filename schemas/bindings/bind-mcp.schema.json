@@ -1,31 +1,61 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://aicp.dev/schemas/bindings/bind-mcp.schema.json",
+  "$id": "aicp:schemas/bindings/bind-mcp.schema.json",
   "title": "AICP MCP Binding Test Case",
   "type": "object",
-  "required": ["case_id", "mcp_request", "mcp_response"],
+  "required": [
+    "case_id",
+    "mcp_request",
+    "mcp_response"
+  ],
   "properties": {
-    "case_id": { "type": "string", "minLength": 1 },
-    "notes": { "type": "string" },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notes": {
+      "type": "string"
+    },
     "mcp_request": {
       "type": "object",
-      "required": ["jsonrpc", "id", "method", "params"],
+      "required": [
+        "jsonrpc",
+        "id",
+        "method",
+        "params"
+      ],
       "properties": {
-        "jsonrpc": { "const": "2.0" },
+        "jsonrpc": {
+          "const": "2.0"
+        },
         "id": {
           "oneOf": [
-            { "type": "string", "minLength": 1 },
-            { "type": "integer" }
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "integer"
+            }
           ]
         },
-        "method": { "const": "tools/call" },
+        "method": {
+          "const": "tools/call"
+        },
         "params": {
           "type": "object",
-          "required": ["name", "arguments"],
+          "required": [
+            "name",
+            "arguments"
+          ],
           "properties": {
             "name": {
               "type": "string",
-              "enum": ["aicp.sendMessage", "aicp.getHead", "aicp.getObject"]
+              "enum": [
+                "aicp.sendMessage",
+                "aicp.getHead",
+                "aicp.getObject"
+              ]
             },
             "arguments": {
               "type": "object",
@@ -37,16 +67,22 @@
             {
               "if": {
                 "properties": {
-                  "name": { "const": "aicp.sendMessage" }
+                  "name": {
+                    "const": "aicp.sendMessage"
+                  }
                 }
               },
               "then": {
                 "properties": {
                   "arguments": {
                     "type": "object",
-                    "required": ["message"],
+                    "required": [
+                      "message"
+                    ],
                     "properties": {
-                      "message": { "$ref": "aicp:schemas/core/aicp-core-message.schema.json" }
+                      "message": {
+                        "$ref": "aicp:schemas/core/aicp-core-message.schema.json"
+                      }
                     },
                     "additionalProperties": true
                   }
@@ -60,20 +96,38 @@
     },
     "mcp_response": {
       "type": "object",
-      "required": ["jsonrpc", "id", "result"],
+      "required": [
+        "jsonrpc",
+        "id",
+        "result"
+      ],
       "properties": {
-        "jsonrpc": { "const": "2.0" },
+        "jsonrpc": {
+          "const": "2.0"
+        },
         "id": {
           "oneOf": [
-            { "type": "string", "minLength": 1 },
-            { "type": "integer" }
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "integer"
+            }
           ]
         },
-        "result": { "type": "object" },
-        "error": { "type": "object" }
+        "result": {
+          "type": "object"
+        },
+        "error": {
+          "type": "object"
+        }
       },
       "additionalProperties": true
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-legacy-ids": [
+    "https://aicp.dev/schemas/bindings/bind-mcp.schema.json"
+  ]
 }

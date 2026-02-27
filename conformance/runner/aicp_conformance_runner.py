@@ -49,21 +49,24 @@ def _collect_refs(node: Any) -> list[str]:
     return refs
 
 
+def _schema_aliases(schema: dict[str, Any], schema_path: Path) -> set[str]:
+    aliases = {schema_path.resolve().as_uri()}
+    schema_id = schema.get("$id")
+    if isinstance(schema_id, str) and schema_id:
+        aliases.add(schema_id)
+    for legacy in schema.get("x-legacy-ids", []):
+        if isinstance(legacy, str) and legacy:
+            aliases.add(legacy)
+    return aliases
+
+
 def _core_schema_resources() -> dict[str, Any]:
     if Resource is None:
         return {}
     core_path = ROOT / "schemas/core/aicp-core-message.schema.json"
     core_schema = load_json(core_path)
-    uris = {
-        "aicp:schemas/core/aicp-core-message.schema.json",
-        "https://aicp.dev/schemas/core/aicp-core-message.schema.json",
-        "https://aicp.dev/schemas/aicp-core-message.schema.json",
-        core_path.resolve().as_uri(),
-    }
-    schema_id = core_schema.get("$id")
-    if isinstance(schema_id, str):
-        uris.add(schema_id)
-    return {uri: Resource.from_contents(core_schema) for uri in uris}
+    resource = Resource.from_contents(core_schema)
+    return {alias: resource for alias in _schema_aliases(core_schema, core_path)}
 
 
 def _build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
@@ -77,20 +80,19 @@ def _build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
 
     if Registry is None or Resource is None:
         if remote_refs:
-            raise ValueError("Remote schema retrieval is disabled; add a local registry mapping.")
+            raise ValueError("Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:.")
         return Draft202012Validator(schema)
 
     resources = _core_schema_resources()
-    resources[schema_path.resolve().as_uri()] = Resource.from_contents(schema)
-    schema_id = schema.get("$id")
-    if isinstance(schema_id, str):
-        resources[schema_id] = Resource.from_contents(schema)
+    schema_resource = Resource.from_contents(schema)
+    for alias in _schema_aliases(schema, schema_path):
+        resources[alias] = schema_resource
 
     allowed_remote = {u for u in resources if u.startswith("http://") or u.startswith("https://")}
     unresolved = sorted(remote_refs - allowed_remote)
     if unresolved:
         raise ValueError(
-            "Remote schema retrieval is disabled; add a local registry mapping. "
+            "Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:. "
             f"Unmapped refs: {', '.join(unresolved)}"
         )
 
