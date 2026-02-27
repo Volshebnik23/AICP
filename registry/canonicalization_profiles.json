@@ -1,0 +1,11 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "aicp.c14n.jcs.rfc8785.v1",
+    "type": "canonicalization_profiles",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#6-attestations-and-crypto-minimum-core-v01",
+    "security_considerations": "Canonicalization mismatches break hash/signature reproducibility."
+  }
+]
