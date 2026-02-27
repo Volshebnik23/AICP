@@ -13,6 +13,12 @@ try:
 except Exception:  # pragma: no cover - environment dependent
     Draft202012Validator = None
 
+try:
+    from referencing import Registry, Resource
+except Exception:  # pragma: no cover - environment dependent
+    Registry = None
+    Resource = None
+
 ROOT = Path(__file__).resolve().parents[2]
 REF_PY = ROOT / "reference/python"
 if str(REF_PY) not in sys.path:
@@ -28,6 +34,68 @@ def load_json(path: Path) -> Any:
 
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
+
+def _collect_refs(node: Any) -> list[str]:
+    refs: list[str] = []
+    if isinstance(node, dict):
+        ref = node.get("$ref")
+        if isinstance(ref, str):
+            refs.append(ref)
+        for v in node.values():
+            refs.extend(_collect_refs(v))
+    elif isinstance(node, list):
+        for v in node:
+            refs.extend(_collect_refs(v))
+    return refs
+
+
+def _core_schema_resources() -> dict[str, Any]:
+    if Resource is None:
+        return {}
+    core_path = ROOT / "schemas/core/aicp-core-message.schema.json"
+    core_schema = load_json(core_path)
+    uris = {
+        "aicp:schemas/core/aicp-core-message.schema.json",
+        "https://aicp.dev/schemas/core/aicp-core-message.schema.json",
+        "https://aicp.dev/schemas/aicp-core-message.schema.json",
+        core_path.resolve().as_uri(),
+    }
+    schema_id = core_schema.get("$id")
+    if isinstance(schema_id, str):
+        uris.add(schema_id)
+    return {uri: Resource.from_contents(core_schema) for uri in uris}
+
+
+def _build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
+    if Draft202012Validator is None:
+        return None
+
+    remote_refs = {
+        ref for ref in _collect_refs(schema)
+        if ref.startswith("http://") or ref.startswith("https://")
+    }
+
+    if Registry is None or Resource is None:
+        if remote_refs:
+            raise ValueError("Remote schema retrieval is disabled; add a local registry mapping.")
+        return Draft202012Validator(schema)
+
+    resources = _core_schema_resources()
+    resources[schema_path.resolve().as_uri()] = Resource.from_contents(schema)
+    schema_id = schema.get("$id")
+    if isinstance(schema_id, str):
+        resources[schema_id] = Resource.from_contents(schema)
+
+    allowed_remote = {u for u in resources if u.startswith("http://") or u.startswith("https://")}
+    unresolved = sorted(remote_refs - allowed_remote)
+    if unresolved:
+        raise ValueError(
+            "Remote schema retrieval is disabled; add a local registry mapping. "
+            f"Unmapped refs: {', '.join(unresolved)}"
+        )
+
+    registry = Registry().with_resources(resources.items())
+    return Draft202012Validator(schema, registry=registry)
 
 
 def _normalize_pointer(pointer: str) -> str:
@@ -141,12 +209,91 @@ def _evaluate_transcript_expectations(
     return errors
 
 
+def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> dict[str, Any]:
+    case_validator = _build_validator(schema, ROOT / suite["schema_ref"]) if schema is not None else None
+    core_schema_path = ROOT / "schemas/core/aicp-core-message.schema.json"
+    core_schema = load_json(core_schema_path)
+    core_validator = _build_validator(core_schema, core_schema_path)
+    can_verify_signatures = signature_verifier_available()
+    key_map = load_json(ROOT / "fixtures/keys/GT_public_keys.json")
+
+    failures: list[dict[str, Any]] = []
+
+    for rel_case in suite.get("cases", []):
+        case_path = ROOT / rel_case
+        try:
+            case_obj = load_json(case_path)
+        except Exception as exc:
+            add_failure(failures, "TB-CASE-JSON-01", f"invalid JSON case file: {exc}", rel_case, None)
+            continue
+
+        if case_validator is not None:
+            for err in sorted(case_validator.iter_errors(case_obj), key=lambda e: list(e.path)):
+                add_failure(failures, "TB-SCHEMA-01", err.message, rel_case, None)
+
+        msg = (
+            (case_obj.get("mcp_request") or {})
+            .get("params", {})
+            .get("arguments", {})
+            .get("message")
+        )
+        if not isinstance(msg, dict):
+            continue
+
+        if core_validator is not None:
+            for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
+                add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
+
+        stored_hash = msg.get("message_hash")
+        if stored_hash is not None:
+            try:
+                computed_hash = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
+            except Exception as exc:
+                add_failure(failures, "TB-EMBEDDED-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_case, None)
+            else:
+                if computed_hash != stored_hash:
+                    add_failure(
+                        failures,
+                        "TB-EMBEDDED-MESSAGE-HASH-01",
+                        f"embedded message_hash mismatch (expected {stored_hash}, got {computed_hash})",
+                        rel_case,
+                        None,
+                    )
+
+        if can_verify_signatures:
+            for sig in msg.get("signatures", []) or []:
+                signer = sig.get("signer")
+                key = key_map.get(signer)
+                if not key:
+                    add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_case, None)
+                    continue
+                if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
+                    add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
+
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    passed = not failures
+    marks = ["AICP-BIND-MCP-0.1"] if passed else []
+    return {
+        "aicp_version": version,
+        "suite_id": suite["suite_id"],
+        "suite_version": suite["suite_version"],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "passed": passed,
+        "failures": failures,
+        "compatibility_marks": marks,
+    }
+
+
 def run_suite(suite_path: Path) -> dict[str, Any]:
     suite = load_json(suite_path)
     enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     schema_path = ROOT / suite["schema_ref"]
     schema = load_json(schema_path)
-    validator = Draft202012Validator(schema) if Draft202012Validator is not None else None
+
+    if "cases" in suite:
+        return _run_binding_suite(suite, schema)
+
+    validator = _build_validator(schema, schema_path)
 
     key_map = load_json(ROOT / "fixtures/keys/GT_public_keys.json")
     can_verify_signatures = signature_verifier_available()
@@ -340,7 +487,11 @@ def main() -> int:
     suite_path = (ROOT / args.suite).resolve() if not Path(args.suite).is_absolute() else Path(args.suite)
     out_path = (ROOT / args.out).resolve() if not Path(args.out).is_absolute() else Path(args.out)
 
-    report = run_suite(suite_path)
+    try:
+        report = run_suite(suite_path)
+    except Exception as exc:
+        print(f"[FAIL] {exc}")
+        return 1
 
     if Draft202012Validator is None:
         print("[WARN] jsonschema is not installed. Skipping message/schema payload validation checks.")
@@ -348,8 +499,9 @@ def main() -> int:
         print("[WARN] cryptography is not installed. Signature verification checks are limited.")
 
     if Draft202012Validator is not None:
-        report_schema = load_json(ROOT / "conformance/conformance_report_schema.json")
-        Draft202012Validator(report_schema).validate(report)
+        report_schema_path = ROOT / "conformance/conformance_report_schema.json"
+        report_schema = load_json(report_schema_path)
+        _build_validator(report_schema, report_schema_path).validate(report)
     else:
         print("[WARN] jsonschema is not installed. Skipping conformance report schema validation.")
 

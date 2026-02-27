@@ -40,6 +40,9 @@ jobs:
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}
         run: make conformance-ext
 
+      - name: Run make conformance-bindings
+        run: make conformance-bindings
+
       - name: Run make release-check on main branch
         if: github.ref == 'refs/heads/main'
         run: make release-check
@@ -47,7 +50,6 @@ jobs:
   typescript-sdk:
     name: TypeScript SDK tests
     runs-on: ubuntu-latest
-    continue-on-error: ${{ github.ref != 'refs/heads/main' }}
 
     steps:
       - uses: actions/checkout@v4

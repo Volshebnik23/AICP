@@ -1,5 +1,6 @@
 conformance/report.json
 conformance/report_ext_*.json
+conformance/report_bind_*.json
 __pycache__/
 *.pyc
 .venv/
