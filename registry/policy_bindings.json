@@ -1,0 +1,11 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "opa.input.v1",
+    "type": "policy_bindings",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
+    "security_considerations": "Binding must preserve canonical input construction and context hash integrity."
+  }
+]

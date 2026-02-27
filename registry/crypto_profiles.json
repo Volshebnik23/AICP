@@ -1,0 +1,11 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "aicp.crypto.ed25519.v1",
+    "type": "crypto_profiles",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#6-attestations-and-crypto-minimum-core-v01",
+    "security_considerations": "Signature verification required on contract-changing operations."
+  }
+]
