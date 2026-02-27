@@ -1,0 +1,12 @@
+{
+  "suite_id": "TB-MCP-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "MCP binding conformance for tools/call transport mapping of AICP operations.",
+  "schema_ref": "schemas/bindings/bind-mcp.schema.json",
+  "cases": [
+    "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
+    "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
+    "fixtures/bindings/mcp/TB-MCP-03_getObject.json"
+  ]
+}

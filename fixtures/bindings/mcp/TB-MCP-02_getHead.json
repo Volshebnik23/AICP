@@ -1,0 +1,25 @@
+{
+  "case_id": "TB-MCP-02",
+  "notes": "getHead returns active branch/version head metadata",
+  "mcp_request": {
+    "jsonrpc": "2.0",
+    "id": "tb-mcp-02",
+    "method": "tools/call",
+    "params": {
+      "name": "aicp.getHead",
+      "arguments": {
+        "session_id": "sGT1",
+        "branch_id": "main"
+      }
+    }
+  },
+  "mcp_response": {
+    "jsonrpc": "2.0",
+    "id": "tb-mcp-02",
+    "result": {
+      "branch_id": "main",
+      "head_version": "v1",
+      "head_message_id": "m3"
+    }
+  }
+}
