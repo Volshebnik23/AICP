@@ -3,6 +3,7 @@
 This roadmap reflects the **actual repository artifacts**, not only content embedded in the Suite index.
 It separates: (A) Spec authoring (text), and (B) Productization (executable, enforceable deliverables).
 
+**Repo snapshot:** AICP-main_v3  
 **Suite document:** `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`  
 **Core canonical paths:** `docs/core/`, `schemas/core/`, `fixtures/`
 
@@ -40,10 +41,11 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
   - `make test`
   - `make release-check`
 
-### ✅ Completed (M2): Standalone RFC docs + roadmap sync + release-check hardening
-- Suite maintained as umbrella index in `docs/suite/`.
-- Standalone RFCs maintained under `docs/rfc/`, `docs/extensions/`, `docs/bindings/`.
-- `release-check` verifies canonical Core artifacts in addition to hygiene files.
+### 🟡 Current milestone (M2): Standalone RFC docs + roadmap sync + release-check hardening
+**Goal:** reduce monolith-spec risk and keep status/release gates repo-verifiable.
+- Maintain Suite as umbrella index in `docs/suite/`.
+- Keep standalone RFCs as canonical sources under `docs/rfc/`, `docs/extensions/`, `docs/bindings/`.
+- Ensure release-check verifies canonical Core artifacts in addition to hygiene files.
 
 ### 🟡 Current milestone (M3): Machine-readable registries as first-class artifacts
 **Goal:** prevent collisions and enable third-party ecosystems.
@@ -72,4 +74,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M3 (Machine-readable registries as first-class artifacts)** is current.
+**M2 (Standalone RFC docs + roadmap sync + release-check hardening)** is current.

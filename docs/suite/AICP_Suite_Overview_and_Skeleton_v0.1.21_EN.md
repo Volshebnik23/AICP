@@ -411,4 +411,4 @@ Summary: Defines interop event procedure, outputs, and external security review 
 Canonical sources note: Standalone RFC documents under `docs/rfc/`, `docs/extensions/`, and `docs/bindings/` are the canonical locations for Sections 8–18 content. This Suite document is an umbrella index.
 
 Roadmap and current status
-See `ROADMAP.md` for repo-backed status. Current milestone: M3 (Machine-readable registries as first-class artifacts).
+See `ROADMAP.md` for repo-backed status. Current milestone: M2 (Standalone RFC docs + roadmap sync + release-check hardening).
