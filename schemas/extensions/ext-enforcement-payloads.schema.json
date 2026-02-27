@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-enforcement-payloads.schema.json",
+  "title": "AICP EXT-ENFORCEMENT payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "CONTENT_MESSAGE": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "content_format": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ENFORCEMENT_SANCTION": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "duration_seconds": {
+          "type": "number"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ENFORCEMENT_VERDICT": {
+      "type": "object",
+      "required": [
+        "verdict_id",
+        "decision",
+        "reason_codes",
+        "sanctions",
+        "issued_at"
+      ],
+      "properties": {
+        "verdict_id": {
+          "type": "string"
+        },
+        "target_message_hash": {
+          "type": "string"
+        },
+        "target_message_id": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "INCONCLUSIVE"
+          ]
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sanctions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ENFORCEMENT_SANCTION"
+          }
+        },
+        "issued_at": {
+          "type": "string"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "target_message_hash"
+          ]
+        },
+        {
+          "required": [
+            "target_message_id"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "CONTENT_DELIVER": {
+      "type": "object",
+      "required": [
+        "delivery_id",
+        "original_message",
+        "original_message_hash",
+        "verdict_message_id",
+        "delivered_at"
+      ],
+      "properties": {
+        "delivery_id": {
+          "type": "string"
+        },
+        "original_message": {
+          "type": "object"
+        },
+        "original_message_hash": {
+          "type": "string"
+        },
+        "verdict_message_id": {
+          "type": "string"
+        },
+        "delivered_at": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

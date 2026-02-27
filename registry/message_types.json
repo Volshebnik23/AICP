@@ -63,6 +63,24 @@
     "security_considerations": "Challenge evidence must be verifiable and tamper-evident."
   },
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_DELIVER",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#42-blocking-rule-normative",
+    "security_considerations": "Delivery wrappers must bind original and verdict references to preserve auditability."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_MESSAGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
+    "security_considerations": "Content payloads should be mediated to avoid bypassing enforcement in blocking mode."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -97,6 +115,15 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#152-ext-delegation--hierarchical-purpose-oriented-delegation-registered-extension",
     "security_considerations": "Delegation scope and expiry must be enforced."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ENFORCEMENT_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
+    "security_considerations": "Verdicts are enforcement-critical and should be authenticated to prevent spoofing."
   },
   {
     "status": "stable",

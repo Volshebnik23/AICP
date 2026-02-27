@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -304,6 +305,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_map = suite.get("payload_schema_map")
     payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
+    enforcement_sanction_codes = {e.get("id") for e in load_json(ROOT / "registry/enforcement_sanction_codes.json")}
 
     failures: list[dict[str, Any]] = []
 
@@ -462,6 +464,73 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             continue
                         if computed_ctx_hash != stored_ctx_hash:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
+
+        if "ENF-SANCTION-CODES-01" in enabled_checks:
+            namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
+            namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                    continue
+                sanctions = (msg.get("payload") or {}).get("sanctions", []) or []
+                for sanction in sanctions:
+                    code = sanction.get("code") if isinstance(sanction, dict) else None
+                    if not isinstance(code, str):
+                        add_failure(t_failures, "ENF-SANCTION-CODES-01", "sanctions[].code must be a string", rel_file, line_no)
+                        continue
+                    if code in enforcement_sanction_codes:
+                        continue
+                    if namespaced_dash.match(code) or namespaced_colon.match(code):
+                        continue
+                    add_failure(t_failures, "ENF-SANCTION-CODES-01", f"unknown sanction code '{code}'", rel_file, line_no)
+
+        if "ENF-GATE-01" in enabled_checks:
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            enforcement_cfg = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    enforcement_cfg = ext.get("enforcement")
+                if enforcement_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
+
+            if isinstance(enforcement_cfg, dict) and enforcement_cfg.get("mode") == "blocking":
+                verdicts_by_id = {
+                    msg.get("message_id"): msg
+                    for _, msg in rows
+                    if msg.get("message_type") == "ENFORCEMENT_VERDICT"
+                }
+                gated_types = enforcement_cfg.get("gated_message_types")
+                for line_no, msg in rows:
+                    if msg.get("message_type") != "CONTENT_DELIVER":
+                        continue
+                    payload = msg.get("payload") or {}
+                    verdict_message_id = payload.get("verdict_message_id")
+                    verdict_msg = verdicts_by_id.get(verdict_message_id)
+                    if verdict_msg is None:
+                        add_failure(t_failures, "ENF-GATE-01", f"missing ENFORCEMENT_VERDICT for verdict_message_id '{verdict_message_id}'", rel_file, line_no)
+                        continue
+
+                    verdict_payload = verdict_msg.get("payload") or {}
+                    if verdict_payload.get("decision") != "ALLOW":
+                        add_failure(t_failures, "ENF-GATE-01", "CONTENT_DELIVER references non-ALLOW verdict", rel_file, line_no)
+
+                    original_hash = payload.get("original_message_hash")
+                    if verdict_payload.get("target_message_hash") != original_hash:
+                        add_failure(t_failures, "ENF-GATE-01", "verdict target_message_hash does not match delivery original_message_hash", rel_file, line_no)
+
+                    original_message = payload.get("original_message") or {}
+                    if original_message.get("message_hash") != original_hash:
+                        add_failure(t_failures, "ENF-GATE-01", "embedded original_message.message_hash does not match original_message_hash", rel_file, line_no)
+
+                    if gated_types is not None and original_message.get("message_type") not in gated_types:
+                        add_failure(t_failures, "ENF-GATE-01", "embedded original_message.message_type is not listed in gated_message_types", rel_file, line_no)
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 
