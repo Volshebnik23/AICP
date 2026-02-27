@@ -2,12 +2,6 @@
 
 Fixtures and golden transcripts are verification artifacts.
 
-## Layout
-
-- Core test vectors: `fixtures/core_tv.json`
-- Golden transcripts: `fixtures/golden_transcripts/`
-- Verification keys: `fixtures/keys/`
-
 ## Rules
 
 - Do not hand-edit golden transcripts.

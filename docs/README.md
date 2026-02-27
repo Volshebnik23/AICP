@@ -3,7 +3,7 @@
 This repository follows an SDD-first docs structure:
 
 - `docs/suite/` — suite-level overview and pointers to included specifications.
-- `docs/core/` — normative Core specification text and supporting notes.
+- `docs/core/` — normative Core specification text.
 - `docs/extensions/` — extension RFCs that register optional capabilities.
 - `docs/bindings/` — binding RFCs that define transport/runtime mappings.
 

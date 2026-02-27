@@ -2,10 +2,6 @@
 
 Schemas are machine-readable truth for protocol artifacts.
 
-## Layout
-
-- Core schemas live in `schemas/core/`.
-
 ## Principles
 
 - Keep schema updates aligned with normative docs.

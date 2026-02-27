@@ -26,17 +26,6 @@ def load_records(root: Path) -> list[tuple[Path, int, object]]:
     return records
 
 
-def select_core_schema(root: Path) -> Path | None:
-    preferred = root / "schemas" / "core" / "aicp-core-message.schema.json"
-    if preferred.exists():
-        return preferred
-
-    candidates = [
-        path for path in sorted(root.rglob("aicp-core-message.schema.json")) if not should_skip(path)
-    ]
-    return candidates[0] if candidates else None
-
-
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
 
@@ -46,11 +35,15 @@ def main() -> int:
         print("[WARN] jsonschema is not installed. Skipping schema instance validation.")
         return 0
 
-    schema_path = select_core_schema(root)
-    if schema_path is None:
+    schema_candidates = [
+        p for p in sorted(root.rglob("aicp-core-message.schema.json")) if not should_skip(p)
+    ]
+
+    if not schema_candidates:
         print("[WARN] No aicp-core-message.schema.json found. Skipping schema instance validation.")
         return 0
 
+    schema_path = schema_candidates[0]
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = Draft202012Validator(schema)
 
