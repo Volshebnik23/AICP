@@ -3,7 +3,6 @@
 This roadmap reflects the **actual repository artifacts**, not only content embedded in the Suite index.
 It separates: (A) Spec authoring (text), and (B) Productization (executable, enforceable deliverables).
 
-**Repo snapshot:** AICP-main_v3  
 **Suite document:** `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`  
 **Core canonical paths:** `docs/core/`, `schemas/core/`, `fixtures/`
 
@@ -41,26 +40,23 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
   - `make test`
   - `make release-check`
 
-### 🟡 Current milestone (M2): Standalone RFC docs + roadmap sync + release-check hardening
-**Goal:** reduce monolith-spec risk and keep status/release gates repo-verifiable.
-- Maintain Suite as umbrella index in `docs/suite/`.
-- Keep standalone RFCs as canonical sources under `docs/rfc/`, `docs/extensions/`, `docs/bindings/`.
-- Ensure release-check verifies canonical Core artifacts in addition to hygiene files.
+### ✅ Completed (M2): Standalone RFC docs + roadmap sync + release-check hardening
+- Suite maintained as umbrella index in `docs/suite/`.
+- Standalone RFCs maintained under `docs/rfc/`, `docs/extensions/`, `docs/bindings/`.
+- `release-check` verifies canonical Core artifacts in addition to hygiene files.
 
-### 🟡 Current milestone (M3): Machine-readable registries as first-class artifacts
-**Goal:** prevent collisions and enable third-party ecosystems.
-- Create `registry/*.json` per the Registry RFC (message types, profiles, bindings, codes, etc.).
-- Add `scripts/validate_registry.py` and run it in `make validate` + CI.
-**Acceptance:** registry validation runs in CI; changes are reviewed and collision-free.
+### ✅ Completed (M3): Machine-readable registries as first-class artifacts
+- Registry artifacts are available under `registry/*.json`.
+- Registry validation is enforced via `scripts/validate_registry.py` in `make validate` and CI.
 
-### 🔜 Next milestone (M4): Conformance as a product (runner + reports)
+### ✅ Completed (M4): Conformance as a product (runner + reports)
 **Goal:** “AICP-compatible” becomes measurable.
 - Add `/conformance` suite catalogs (Core + opt-in EXT suites).
 - Add a conformance runner CLI that outputs a **compatibility report** (machine-readable).
 - Run conformance in CI.
 **Acceptance:** one command produces pass/fail + report; CI runs Core suite.
 
-### 🔜 Next milestone (M5): Reference implementations in-repo
+### 🟡 Current milestone (M5): Reference implementations in-repo
 **Goal:** provide minimal, correct reference implementations that are easy to adopt and test.
 - Add `/reference/python` (minimum correct implementation).
 - Optionally add `/reference/typescript` with parity notes.
@@ -79,4 +75,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M2 (Standalone RFC docs + roadmap sync + release-check hardening)** is current.
+**M5 (Reference implementations + expanded golden coverage)** is current.

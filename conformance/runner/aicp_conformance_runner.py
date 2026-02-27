@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,11 @@ except Exception:  # pragma: no cover - environment dependent
     Draft202012Validator = None
 
 ROOT = Path(__file__).resolve().parents[2]
+REF_PY = ROOT / "reference/python"
+if str(REF_PY) not in sys.path:
+    sys.path.insert(0, str(REF_PY))
+
+from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 
 
 def load_json(path: Path) -> Any:
@@ -21,6 +27,13 @@ def load_json(path: Path) -> Any:
 
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
+
+
+def _message_body_without_hash_and_signatures(message: dict[str, Any]) -> dict[str, Any]:
+    body = dict(message)
+    body.pop("message_hash", None)
+    body.pop("signatures", None)
+    return body
 
 
 def run_suite(suite_path: Path) -> dict[str, Any]:
@@ -44,9 +57,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 add_failure(failures, "CT-SCHEMA-JSONL-01", f"Invalid JSON line: {exc}", rel_file, i)
                 continue
             rows.append((i, obj))
-            if validator is None:
-                pass
-            else:
+            if validator is not None:
                 for err in sorted(validator.iter_errors(obj), key=lambda e: list(e.path)):
                     add_failure(failures, "CT-SCHEMA-JSONL-01", err.message, rel_file, i)
 
@@ -105,6 +116,23 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         rel_file,
                         line_no,
                     )
+
+        # recompute message hash from message body
+        for line_no, msg in rows:
+            stored = msg.get("message_hash")
+            try:
+                computed = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
+            except Exception as exc:
+                add_failure(failures, "CT-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_file, line_no)
+                continue
+            if computed != stored:
+                add_failure(
+                    failures,
+                    "CT-MESSAGE-HASH-01",
+                    f"message_hash mismatch (expected {stored}, got {computed})",
+                    rel_file,
+                    line_no,
+                )
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     passed = not failures

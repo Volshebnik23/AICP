@@ -19,6 +19,7 @@ A suite **passes** when all configured transcript checks pass:
 3. `session_id` is constant and `message_id` values are unique per transcript.
 4. `message_type` sequence matches the catalog expectation.
 5. If `signatures[*].object_hash` is present, it equals `message_hash`.
+6. `CT-MESSAGE-HASH-01`: `message_hash` recomputes from message body (without `signatures` and `message_hash`) using Core object-hash algorithm.
 
 ## Runner usage
 

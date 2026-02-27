@@ -8,6 +8,7 @@ This repository is the canonical source of truth for AICP artifacts under Agent-
 - Core schemas: `schemas/core/`
 - Core fixtures and golden transcripts: `fixtures/`
 - Conformance suite and runner: `conformance/`
+- Python reference implementation: `reference/python/`
 
 ## Quickstart
 
