@@ -1,0 +1,74 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-CAPNEG",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Negotiation must prevent downgrade and spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-POLICY-EVAL",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md",
+    "security_considerations": "Decision provenance should be auditable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-OBJECT-RESYNC",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md",
+    "security_considerations": "Resync can leak existence and amplify traffic if unbounded."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-IDENTITY-LC",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md",
+    "security_considerations": "Identity lifecycle actions affect trust roots."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-WORKFLOW-SYNC",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md",
+    "security_considerations": "Workflow attestations must bind to contract head."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-DELEGATION",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md",
+    "security_considerations": "Delegation chains must enforce scope, depth, and expiry."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-DISPUTES",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md",
+    "security_considerations": "Dispute artifacts should be tamper-evident and reviewable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-SECURITY-ALERT",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md",
+    "security_considerations": "Incident signaling must avoid sensitive data overexposure."
+  }
+]

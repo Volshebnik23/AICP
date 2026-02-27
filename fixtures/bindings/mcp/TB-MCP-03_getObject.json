@@ -1,0 +1,32 @@
+{
+  "case_id": "TB-MCP-03",
+  "notes": "getObject fetches object by hash and object_type",
+  "mcp_request": {
+    "jsonrpc": "2.0",
+    "id": "tb-mcp-03",
+    "method": "tools/call",
+    "params": {
+      "name": "aicp.getObject",
+      "arguments": {
+        "object_type": "contract",
+        "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+      }
+    }
+  },
+  "mcp_response": {
+    "jsonrpc": "2.0",
+    "id": "tb-mcp-03",
+    "result": {
+      "found": true,
+      "object_type": "contract",
+      "object": {
+        "contract_id": "cGT1",
+        "goal": "golden_demo",
+        "roles": [
+          "initiator",
+          "responder"
+        ]
+      }
+    }
+  }
+}
