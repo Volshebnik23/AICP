@@ -43,3 +43,5 @@ A negative transcript passes only when all expected failure test IDs occur at le
 Extension suites may specify `payload_schema_ref` and `payload_schema_map`. The runner validates payloads using a wrapper schema that preserves root `$defs` and references mapped payload definitions by JSON Pointer (`/$defs/X` or `#/$defs/X`).
 
 For EXT-OBJECT-RESYNC, `OR-OBJECT-HASH-01` verifies any payload object tuple `{object_type, object, object_hash}` by recomputing `object_hash`.
+
+For EXT-POLICY-EVAL, `PE-REASON-CODES-01` validates `policy_decision.reason_codes` against `registry/policy_reason_codes.json`, and `PE-CONTEXT-HASH-01` recomputes `evaluation_context.context_hash` using object_type `evaluation_context`.

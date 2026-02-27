@@ -12,6 +12,8 @@ Machine-readable registries live in this directory:
 - `hash_domains.json`
 - `transport_bindings.json`
 - `policy_reason_codes.json`
+- `policy_languages.json`
+- `policy_bindings.json`
 - `extension_ids.json`
 - `security_alert_categories.json`
 - `dispute_claim_types.json`
@@ -27,3 +29,5 @@ Validate registry integrity with:
 4. Keep entries machine-readable and deterministic for external validation.
 
 Do not introduce untracked identifiers outside `registry/`.
+
+`policy_languages.json` and `policy_bindings.json` register valid `language_id` and `binding_id` values for EXT-POLICY-EVAL artifacts.

@@ -71,8 +71,8 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Add CAPNEG extension fixtures under `fixtures/extensions/capneg/`.
 - Add extension conformance suite under `conformance/extensions/`.
 
-### 🟡 Current milestone (M7.2): EXT-OBJECT-RESYNC productization
-### 🔜 Next milestone (M7.3): EXT-POLICY-EVAL productization
+### ✅ Completed (M7.2): EXT-OBJECT-RESYNC productization
+### 🟡 Current milestone (M7.3): EXT-POLICY-EVAL productization
 ### 🔜 Next milestone (M7.4): BINDINGS productization (starting with MCP)
 
 ### ⏳ Later milestones (productization hardening)
@@ -86,4 +86,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M7.2 (EXT-OBJECT-RESYNC productization)** is current.
+**M7.3 (EXT-POLICY-EVAL productization)** is current.

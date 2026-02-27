@@ -139,6 +139,7 @@ def _evaluate_transcript_expectations(
 
 def run_suite(suite_path: Path) -> dict[str, Any]:
     suite = load_json(suite_path)
+    enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     schema_path = ROOT / suite["schema_ref"]
     schema = load_json(schema_path)
     validator = Draft202012Validator(schema) if Draft202012Validator is not None else None
@@ -148,6 +149,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_ref = suite.get("payload_schema_ref")
     payload_schema = load_json(ROOT / payload_schema_ref) if payload_schema_ref else None
     payload_schema_map = suite.get("payload_schema_map")
+    policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
 
     failures: list[dict[str, Any]] = []
 
@@ -256,21 +258,47 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
 
         # Extension-specific object hash checks (OR-OBJECT-HASH-01)
-        for line_no, msg in rows:
-            for otype, obj, stored_hash in _collect_object_hash_triples(msg.get("payload")):
-                try:
-                    computed_hash = object_hash(otype, obj)
-                except Exception as exc:
-                    add_failure(t_failures, "OR-OBJECT-HASH-01", f"object_hash recompute error: {exc}", rel_file, line_no)
-                    continue
-                if computed_hash != stored_hash:
-                    add_failure(
-                        t_failures,
-                        "OR-OBJECT-HASH-01",
-                        f"object_hash mismatch (expected {stored_hash}, got {computed_hash})",
-                        rel_file,
-                        line_no,
-                    )
+        if "OR-OBJECT-HASH-01" in enabled_checks:
+            for line_no, msg in rows:
+                for otype, obj, stored_hash in _collect_object_hash_triples(msg.get("payload")):
+                    try:
+                        computed_hash = object_hash(otype, obj)
+                    except Exception as exc:
+                        add_failure(t_failures, "OR-OBJECT-HASH-01", f"object_hash recompute error: {exc}", rel_file, line_no)
+                        continue
+                    if computed_hash != stored_hash:
+                        add_failure(
+                            t_failures,
+                            "OR-OBJECT-HASH-01",
+                            f"object_hash mismatch (expected {stored_hash}, got {computed_hash})",
+                            rel_file,
+                            line_no,
+                        )
+
+
+        # PE-REASON-CODES-01 + PE-CONTEXT-HASH-01
+        if "PE-REASON-CODES-01" in enabled_checks or "PE-CONTEXT-HASH-01" in enabled_checks:
+            for line_no, msg in rows:
+                payload = msg.get("payload") or {}
+                if msg.get("message_type") == "POLICY_EVAL_RESULT":
+                    decision = payload.get("policy_decision") or {}
+                    if "PE-REASON-CODES-01" in enabled_checks:
+                        for code in decision.get("reason_codes", []) or []:
+                            if code not in policy_reason_codes:
+                                add_failure(t_failures, "PE-REASON-CODES-01", f"unknown reason_code '{code}'", rel_file, line_no)
+                if msg.get("message_type") == "POLICY_EVAL_REQUEST" and "PE-CONTEXT-HASH-01" in enabled_checks:
+                    ctx = (payload.get("evaluation_context") or {})
+                    if "context_hash" in ctx:
+                        stored_ctx_hash = ctx.get("context_hash")
+                        context_obj = dict(ctx)
+                        context_obj.pop("context_hash", None)
+                        try:
+                            computed_ctx_hash = object_hash("evaluation_context", context_obj)
+                        except Exception as exc:
+                            add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash recompute error: {exc}", rel_file, line_no)
+                            continue
+                        if computed_ctx_hash != stored_ctx_hash:
+                            add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 

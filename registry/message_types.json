@@ -120,6 +120,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "POLICY_DECISION_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Attestation references must bind policy decisions to verifiable artifacts/actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "POLICY_EVAL_REQUEST",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
