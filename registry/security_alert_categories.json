@@ -1,0 +1,20 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "KEY_SUBSTITUTION",
+    "type": "security_alert_categories",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#154-ext-security-alert--security-events-and-escalation-registered-extension",
+    "security_considerations": "Indicates possible trust-anchor compromise."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REPLAY_OR_FORGERY",
+    "type": "security_alert_categories",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#154-ext-security-alert--security-events-and-escalation-registered-extension",
+    "security_considerations": "Potential unauthorized action replay/forgery risk."
+  }
+]

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   validate-artifacts:
-    name: Validate schemas + fixtures
+    name: Validate artifacts via one-command standard
     runs-on: ubuntu-latest
 
     steps:
@@ -27,84 +27,15 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install jsonschema
 
-      - name: Validate JSON/JSONL + validate golden transcripts against Core schema (if present)
-        run: |
-          python - <<'PY'
-          import json
-          import sys
-          from pathlib import Path
+      - name: Run make validate
+        run: make validate
 
-          from jsonschema import Draft202012Validator
+      - name: Run make conformance
+        run: make conformance
 
-          root = Path(".").resolve()
-
-          # Collect JSON files in common machine-readable folders
-          json_roots = []
-          for candidate in ["schemas", "registry", "fixtures"]:
-            p = root / candidate
-            if p.exists():
-              json_roots.append(p)
-
-          # 1) Validate JSON parses
-          json_files = []
-          for base in json_roots:
-            json_files.extend(list(base.rglob("*.json")))
-
-          errors = 0
-          for fp in sorted(json_files):
-            try:
-              json.loads(fp.read_text(encoding="utf-8"))
-            except Exception as e:
-              print(f"[FAIL] Invalid JSON: {fp}: {e}")
-              errors += 1
-
-          # 2) Validate JSONL parses (golden transcripts)
-          golden_dirs = []
-          for base in json_roots:
-            gd = base / "golden_transcripts"
-            if gd.exists():
-              golden_dirs.append(gd)
-
-          jsonl_files = []
-          for gd in golden_dirs:
-            jsonl_files.extend(list(gd.rglob("*.jsonl")))
-
-          golden_objects = []  # (file, line_no, obj)
-          for fp in sorted(jsonl_files):
-            for i, line in enumerate(fp.read_text(encoding="utf-8").splitlines(), start=1):
-              if not line.strip():
-                continue
-              try:
-                obj = json.loads(line)
-                golden_objects.append((fp, i, obj))
-              except Exception as e:
-                print(f"[FAIL] Invalid JSONL: {fp}:{i}: {e}")
-                errors += 1
-
-          # 3) If Core message schema exists, validate each golden message instance
-          schema_candidates = list(root.rglob("aicp-core-message.schema.json"))
-          core_schema = None
-          if schema_candidates:
-            schema_path = sorted(schema_candidates)[0]
-            try:
-              core_schema = json.loads(schema_path.read_text(encoding="utf-8"))
-              validator = Draft202012Validator(core_schema)
-              for fp, i, obj in golden_objects:
-                for err in sorted(validator.iter_errors(obj), key=lambda e: e.path):
-                  print(f"[FAIL] Schema violation: {fp}:{i}: {err.message}")
-                  errors += 1
-            except Exception as e:
-              print(f"[FAIL] Could not load/validate using schema {schema_path}: {e}")
-              errors += 1
-          else:
-            print("[WARN] Core message schema not found (aicp-core-message.schema.json). Skipping schema validation of golden transcripts.")
-
-          if errors:
-            print(f"\nValidation failed with {errors} error(s).")
-            sys.exit(1)
-
-          print("OK: JSON/JSONL parsed; golden transcripts validated against Core schema (if present).")
-          PY
+      - name: Run make release-check on main branch
+        if: github.ref == 'refs/heads/main'
+        run: make release-check
 
   python-reference-tests:
     name: Reference tests (optional)
@@ -133,7 +64,7 @@ jobs:
         if: steps.detect.outputs.has_ref == 'true'
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pytest jsonschema
+          python -m pip install pytest jsonschema cryptography
 
       - name: Run pytest (if tests exist)
         if: steps.detect.outputs.has_ref == 'true'
