@@ -16,6 +16,7 @@ conformance:
 
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CN_CAPNEG_0.1.json --out conformance/report_ext_capneg.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/OR_OBJECT_RESYNC_0.1.json --out conformance/report_ext_object_resync.json
 
 conformance-all:
 	$(MAKE) conformance
@@ -28,4 +29,4 @@ release-check:
 	$(PYTHON) -c "from pathlib import Path; req=['VERSION','RELEASE_NOTES.md','SECURITY.md','CONTRIBUTING.md','CODE_OF_CONDUCT.md','docs/core/AICP_Core_v0.1_Normative_0.1.0.docx','schemas/core/aicp-core-message.schema.json','schemas/core/aicp-core-contract.schema.json','schemas/core/aicp-core-payloads.schema.json','fixtures/core_tv.json','fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl','fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl','fixtures/keys/GT_public_keys.json']; missing=[p for p in req if not Path(p).exists()]; print('All required release hygiene and canonical Core artifacts are present.' if not missing else 'Missing required files: ' + ', '.join(missing)); raise SystemExit(1 if missing else 0)"
 
 clean:
-	rm -f conformance/report.json conformance/report_ext_capneg.json
+	rm -f conformance/report.json conformance/report_ext_capneg.json conformance/report_ext_object_resync.json

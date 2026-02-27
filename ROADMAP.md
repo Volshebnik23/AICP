@@ -66,12 +66,12 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Core golden coverage now includes revoke, unknown-base+resync, invalid signature, and duplicate message_id replay scenarios.
 - Conformance supports expected-failure handling for controlled negative outcomes.
 
-### 🟡 Current milestone (M7.1): EXT-CAPNEG productization
+### ✅ Completed (M7.1): EXT-CAPNEG productization
 - Add EXT-CAPNEG payload schemas under `schemas/extensions/`.
 - Add CAPNEG extension fixtures under `fixtures/extensions/capneg/`.
 - Add extension conformance suite under `conformance/extensions/`.
 
-### 🔜 Next milestone (M7.2): EXT-OBJECT-RESYNC productization
+### 🟡 Current milestone (M7.2): EXT-OBJECT-RESYNC productization
 ### 🔜 Next milestone (M7.3): EXT-POLICY-EVAL productization
 ### 🔜 Next milestone (M7.4): BINDINGS productization (starting with MCP)
 
@@ -86,4 +86,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M7.1 (EXT-CAPNEG productization)** is current.
+**M7.2 (EXT-OBJECT-RESYNC productization)** is current.

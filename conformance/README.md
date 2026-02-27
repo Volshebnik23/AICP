@@ -17,4 +17,4 @@ make conformance
 
 `make test` runs Python reference tests from `reference/python/tests`.
 
-`make conformance-ext` runs extension conformance suites (currently EXT-CAPNEG).
+`make conformance-ext` runs extension conformance suites (EXT-CAPNEG + EXT-OBJECT-RESYNC).

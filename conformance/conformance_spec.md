@@ -36,3 +36,10 @@ Exit code is `0` on pass and `1` on fail.
 
 Suite catalogs may mark transcripts as expected-failure cases via `expect_pass: false` and `expected_failures`.
 A negative transcript passes only when all expected failure test IDs occur at least `min_count` and no unexpected failures are present.
+
+
+## Extension payload schema suites
+
+Extension suites may specify `payload_schema_ref` and `payload_schema_map`. The runner validates payloads using a wrapper schema that preserves root `$defs` and references mapped payload definitions by JSON Pointer (`/$defs/X` or `#/$defs/X`).
+
+For EXT-OBJECT-RESYNC, `OR-OBJECT-HASH-01` verifies any payload object tuple `{object_type, object, object_hash}` by recomputing `object_hash`.

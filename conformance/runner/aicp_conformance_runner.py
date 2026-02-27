@@ -18,7 +18,7 @@ REF_PY = ROOT / "reference/python"
 if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
-from aicp_ref.hashing import message_hash_from_body  # noqa: E402
+from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
@@ -30,11 +30,20 @@ def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
 
 
+def _normalize_pointer(pointer: str) -> str:
+    if pointer.startswith("#"):
+        pointer = pointer[1:]
+    if pointer == "":
+        return ""
+    if not pointer.startswith("/"):
+        raise ValueError(f"Invalid JSON pointer format: {pointer}")
+    return pointer
+
+
 def _resolve_json_pointer(doc: dict[str, Any], pointer: str) -> Any:
+    pointer = _normalize_pointer(pointer)
     if pointer == "":
         return doc
-    if not pointer.startswith("/"):
-        raise ValueError(f"Invalid JSON pointer: {pointer}")
     cur: Any = doc
     for raw in pointer.lstrip("/").split("/"):
         token = raw.replace("~1", "/").replace("~0", "~")
@@ -57,19 +66,43 @@ def _validate_payload_schema(
 ) -> None:
     if payload_schema is None or payload_schema_map is None or Draft202012Validator is None:
         return
+
     mtype = msg.get("message_type")
     schema_pointer = payload_schema_map.get(mtype)
     if not schema_pointer:
         return
+
     try:
-        payload_subschema = _resolve_json_pointer(payload_schema, schema_pointer)
+        pointer = _normalize_pointer(schema_pointer)
+        _resolve_json_pointer(payload_schema, pointer)
+        wrapper = {
+            "$schema": payload_schema.get("$schema"),
+            "$id": payload_schema.get("$id"),
+            "$ref": f"#{pointer}" if pointer else "#",
+            "$defs": payload_schema.get("$defs", {}),
+        }
+        validator = Draft202012Validator(wrapper)
     except Exception as exc:
-        add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", f"invalid schema map pointer {schema_pointer}: {exc}", rel_file, line_no)
+        add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", f"invalid payload schema configuration for {mtype}: {exc}", rel_file, line_no)
         return
-    validator = Draft202012Validator(payload_subschema)
+
     payload = msg.get("payload")
     for err in sorted(validator.iter_errors(payload), key=lambda e: list(e.path)):
         add_failure(t_failures, "CN-PAYLOAD-SCHEMA-01", err.message, rel_file, line_no)
+
+
+def _collect_object_hash_triples(value: Any) -> list[tuple[str, Any, str]]:
+    found: list[tuple[str, Any, str]] = []
+    if isinstance(value, dict):
+        if {"object_type", "object", "object_hash"}.issubset(value.keys()):
+            if isinstance(value.get("object_type"), str) and isinstance(value.get("object_hash"), str):
+                found.append((value["object_type"], value.get("object"), value["object_hash"]))
+        for v in value.values():
+            found.extend(_collect_object_hash_triples(v))
+    elif isinstance(value, list):
+        for v in value:
+            found.extend(_collect_object_hash_triples(v))
+    return found
 
 
 def _message_body_without_hash_and_signatures(message: dict[str, Any]) -> dict[str, Any]:
@@ -87,12 +120,9 @@ def _evaluate_transcript_expectations(
     expected_failures = transcript.get("expected_failures", [])
 
     if expect_pass:
-        if transcript_failures:
-            for f in transcript_failures:
-                errors.append(f)
+        errors.extend(transcript_failures)
         return errors
 
-    # expected-failure transcript: must match expectations, no unexpected failures
     expected_map = {e["test_id"]: int(e.get("min_count", 1)) for e in expected_failures}
     counts: dict[str, int] = {}
     for f in transcript_failures:
@@ -102,13 +132,7 @@ def _evaluate_transcript_expectations(
 
     for test_id, min_count in expected_map.items():
         if counts.get(test_id, 0) < min_count:
-            add_failure(
-                errors,
-                test_id,
-                f"expected failure missing or below min_count={min_count}",
-                rel_file,
-                None,
-            )
+            add_failure(errors, test_id, f"expected failure missing or below min_count={min_count}", rel_file, None)
 
     return errors
 
@@ -216,7 +240,6 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     line_no,
                 )
 
-        # Signature verification
         if can_verify_signatures:
             for line_no, msg in rows:
                 for sig in msg.get("signatures", []) or []:
@@ -228,11 +251,26 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
                         add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
         else:
-            # In environments without cryptography support, keep behavior deterministic:
-            # synthesize expected signature-failure checks only for negative transcripts that explicitly require them.
             expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
             if "CT-SIGNATURE-VERIFY-01" in expected:
                 add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+
+        # Extension-specific object hash checks (OR-OBJECT-HASH-01)
+        for line_no, msg in rows:
+            for otype, obj, stored_hash in _collect_object_hash_triples(msg.get("payload")):
+                try:
+                    computed_hash = object_hash(otype, obj)
+                except Exception as exc:
+                    add_failure(t_failures, "OR-OBJECT-HASH-01", f"object_hash recompute error: {exc}", rel_file, line_no)
+                    continue
+                if computed_hash != stored_hash:
+                    add_failure(
+                        t_failures,
+                        "OR-OBJECT-HASH-01",
+                        f"object_hash mismatch (expected {stored_hash}, got {computed_hash})",
+                        rel_file,
+                        line_no,
+                    )
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 
@@ -263,7 +301,7 @@ def main() -> int:
     report = run_suite(suite_path)
 
     if Draft202012Validator is None:
-        print("[WARN] jsonschema is not installed. Skipping message schema validation checks.")
+        print("[WARN] jsonschema is not installed. Skipping message/schema payload validation checks.")
     if not signature_verifier_available():
         print("[WARN] cryptography is not installed. Signature verification checks are limited.")
 

@@ -13,3 +13,4 @@ Fixtures and golden transcripts are verification artifacts.
 Generation note: GT-04..GT-08 were generated deterministically using `reference/python/aicp_ref/hashing.py` for `message_hash` recomputation and serialized as JSONL in canonical field order from Python dict insertion order used by generation scripts.
 
 Extension note: CAPNEG fixtures (`fixtures/extensions/capneg/CN-01*`, `CN-02*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` for message hash computation.
+Extension note: OBJECT-RESYNC fixtures (`fixtures/extensions/object_resync/OR-01*`, `OR-02*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` and `object_hash(...)` for payload object hash binding.
