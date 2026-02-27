@@ -1,0 +1,38 @@
+[
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BIND-MCP-0.1",
+    "type": "transport_bindings",
+    "spec_ref": "docs/bindings/RFC_BIND_MCP.md",
+    "security_considerations": "MCP bridge implementations must preserve message integrity and enforce access controls on tools/call endpoints."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-BIND-BUS",
+    "type": "transport_bindings",
+    "spec_ref": "docs/bindings/RFC_BIND_MESSAGE_BUS.md",
+    "security_considerations": "Consumers must tolerate duplicates and reordering safely."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-BIND-HTTP",
+    "type": "transport_bindings",
+    "spec_ref": "docs/bindings/RFC_BIND_HTTP_WS.md",
+    "security_considerations": "Endpoints must enforce idempotency and auth profile externally."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-BIND-MCP",
+    "type": "transport_bindings",
+    "spec_ref": "docs/bindings/RFC_BIND_MCP.md",
+    "security_considerations": "Remote bridges may observe content unless payload is protected."
+  }
+]

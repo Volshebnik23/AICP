@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/conformance-report-0.1.json",
+  "title": "AICP Conformance Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "aicp_version",
+    "suite_id",
+    "suite_version",
+    "timestamp",
+    "passed",
+    "failures",
+    "compatibility_marks"
+  ],
+  "properties": {
+    "aicp_version": { "type": "string", "minLength": 1 },
+    "suite_id": { "type": "string", "minLength": 1 },
+    "suite_version": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "passed": { "type": "boolean" },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["test_id", "message", "file", "line"],
+        "properties": {
+          "test_id": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "file": { "type": "string" },
+          "line": { "type": ["integer", "null"], "minimum": 1 }
+        }
+      }
+    },
+    "compatibility_marks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

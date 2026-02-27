@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-capneg-payloads.schema.json",
+  "title": "AICP EXT-CAPNEG payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "StringArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "Limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_message_bytes": { "type": "integer", "minimum": 1 },
+        "max_object_bytes": { "type": "integer", "minimum": 1 },
+        "max_objects_per_request": { "type": "integer", "minimum": 1 },
+        "max_clock_skew_s": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "Selected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["crypto_profile", "privacy_mode"],
+      "properties": {
+        "crypto_profile": { "$ref": "#/$defs/StringArray" },
+        "privacy_mode": { "type": "string", "minLength": 1 },
+        "required_extensions": { "$ref": "#/$defs/StringArray" },
+        "required_policy_categories": { "$ref": "#/$defs/StringArray" },
+        "limits": { "$ref": "#/$defs/Limits" }
+      }
+    },
+    "NegotiationResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "negotiation_id",
+        "session_id",
+        "contract_id",
+        "participants",
+        "selected"
+      ],
+      "properties": {
+        "negotiation_id": { "type": "string", "minLength": 1 },
+        "session_id": { "type": "string", "minLength": 1 },
+        "contract_id": { "type": "string", "minLength": 1 },
+        "participants": { "$ref": "#/$defs/StringArray" },
+        "selected": { "$ref": "#/$defs/Selected" },
+        "transcript_binding": { "type": "string", "minLength": 1 }
+      }
+    },
+    "CAPABILITIES_DECLARE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capabilities_id",
+        "party_id",
+        "supported_profiles",
+        "supported_privacy_modes"
+      ],
+      "properties": {
+        "capabilities_id": { "type": "string", "minLength": 1 },
+        "party_id": { "type": "string", "minLength": 1 },
+        "supported_profiles": { "$ref": "#/$defs/StringArray" },
+        "supported_privacy_modes": { "$ref": "#/$defs/StringArray" },
+        "supported_extensions": { "$ref": "#/$defs/StringArray" },
+        "supported_policy_categories": { "$ref": "#/$defs/StringArray" },
+        "limits": { "$ref": "#/$defs/Limits" },
+        "bindings": { "$ref": "#/$defs/StringArray" },
+        "languages": { "$ref": "#/$defs/StringArray" },
+        "supersedes_capabilities_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "CAPABILITIES_PROPOSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["negotiation_result"],
+      "properties": {
+        "negotiation_result": { "$ref": "#/$defs/NegotiationResult" }
+      }
+    },
+    "CAPABILITIES_ACCEPT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["negotiation_id", "accepted"],
+      "properties": {
+        "negotiation_id": { "type": "string", "minLength": 1 },
+        "accepted": { "const": true },
+        "negotiation_result": { "$ref": "#/$defs/NegotiationResult" },
+        "negotiation_result_hash": { "type": "string", "minLength": 1 }
+      },
+      "anyOf": [
+        { "required": ["negotiation_result"] },
+        { "required": ["negotiation_result_hash"] }
+      ]
+    },
+    "CAPABILITIES_REJECT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["negotiation_id", "reason_code"],
+      "properties": {
+        "negotiation_id": { "type": "string", "minLength": 1 },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "reason_detail": { "type": "string", "minLength": 1 },
+        "alternative_constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "minimum_crypto_profile": { "$ref": "#/$defs/StringArray" },
+            "required_extensions": { "$ref": "#/$defs/StringArray" },
+            "required_privacy_mode": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}
