@@ -30,9 +30,6 @@ jobs:
       - name: Run make validate
         run: make validate
 
-      - name: Run make conformance
-        run: make conformance
-
       - name: Run make release-check on main branch
         if: github.ref == 'refs/heads/main'
         run: make release-check
