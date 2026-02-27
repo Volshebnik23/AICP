@@ -1,0 +1,55 @@
+{
+  "suite_id": "CT-CORE-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Core v0.1 transcript checks over canonical golden fixtures.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {
+      "id": "GT-01",
+      "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION"
+      ]
+    },
+    {
+      "id": "GT-02",
+      "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTEXT_AMEND",
+        "CONTEXT_AMEND",
+        "RESOLVE_CONFLICT"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-SIGNATURE-HASH-01",
+      "description": "if signatures[*].object_hash is present, it equals message_hash"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body (excluding signatures/message_hash) and compare"
+    }
+  ]
+}

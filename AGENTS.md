@@ -129,3 +129,5 @@ If an agent loops >2 iterations, add capability:
 - unclear norm → clarify normative text (MUST/SHOULD) + add test
 
 Keep moving with small PRs.
+
+If ambiguity or inconsistency is discovered during implementation, record it in `OPEN_QUESTIONS.md` or `ERRATA.md` and reference it in the PR.
