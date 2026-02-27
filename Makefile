@@ -9,7 +9,10 @@ validate:
 	$(PYTHON) scripts/validate_registry.py
 
 test:
-	$(PYTHON) -c "from pathlib import Path; import subprocess, sys; tests = list(Path('.').rglob('test_*.py')); raise SystemExit(subprocess.call(['pytest', '-q']) if tests else (print('No pytest tests found; skipping.') or 0))"
+	$(PYTHON) -c "import importlib.util, subprocess, sys; spec=importlib.util.find_spec('pytest'); raise SystemExit((print('pytest not installed; skipping make test.') or 0) if spec is None else subprocess.call(['pytest','-q','reference/python/tests']))"
+
+conformance:
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --out conformance/report.json
 
 conformance:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --out conformance/report.json

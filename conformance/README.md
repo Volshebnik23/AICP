@@ -12,3 +12,7 @@ Run:
 ```bash
 make conformance
 ```
+
+`make conformance` generates `conformance/report.json` locally (ignored/untracked by git).
+
+`make test` runs Python reference tests from `reference/python/tests`.

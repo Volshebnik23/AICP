@@ -22,10 +22,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install validation deps
+      - name: Install validation and test deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install jsonschema
+          python -m pip install jsonschema pytest cryptography
 
       - name: Run make validate
         run: make validate
@@ -33,45 +33,9 @@ jobs:
       - name: Run make conformance
         run: make conformance
 
+      - name: Run make test
+        run: make test
+
       - name: Run make release-check on main branch
         if: github.ref == 'refs/heads/main'
         run: make release-check
-
-  python-reference-tests:
-    name: Reference tests (optional)
-    runs-on: ubuntu-latest
-    needs: [ validate-artifacts ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Detect python reference suite
-        id: detect
-        run: |
-          if [ -d "reference/python" ] || [ -d "reference" ]; then
-            echo "has_ref=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_ref=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Set up Python
-        if: steps.detect.outputs.has_ref == 'true'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install test deps
-        if: steps.detect.outputs.has_ref == 'true'
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest jsonschema cryptography
-
-      - name: Run pytest (if tests exist)
-        if: steps.detect.outputs.has_ref == 'true'
-        run: |
-          set -e
-          if ls **/test_*.py 1> /dev/null 2>&1; then
-            pytest -q
-          else
-            echo "No pytest tests found; skipping."
-          fi
