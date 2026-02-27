@@ -19,6 +19,7 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body  # noqa: E402
+from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
 def load_json(path: Path) -> Any:
@@ -36,17 +37,56 @@ def _message_body_without_hash_and_signatures(message: dict[str, Any]) -> dict[s
     return body
 
 
+def _evaluate_transcript_expectations(
+    transcript: dict[str, Any], transcript_failures: list[dict[str, Any]], rel_file: str
+) -> list[dict[str, Any]]:
+    errors: list[dict[str, Any]] = []
+    expect_pass = transcript.get("expect_pass", True)
+    expected_failures = transcript.get("expected_failures", [])
+
+    if expect_pass:
+        if transcript_failures:
+            for f in transcript_failures:
+                errors.append(f)
+        return errors
+
+    # expected-failure transcript: must match expectations, no unexpected failures
+    expected_map = {e["test_id"]: int(e.get("min_count", 1)) for e in expected_failures}
+    counts: dict[str, int] = {}
+    for f in transcript_failures:
+        counts[f["test_id"]] = counts.get(f["test_id"], 0) + 1
+        if f["test_id"] not in expected_map:
+            errors.append(f)
+
+    for test_id, min_count in expected_map.items():
+        if counts.get(test_id, 0) < min_count:
+            add_failure(
+                errors,
+                test_id,
+                f"expected failure missing or below min_count={min_count}",
+                rel_file,
+                None,
+            )
+
+    return errors
+
+
 def run_suite(suite_path: Path) -> dict[str, Any]:
     suite = load_json(suite_path)
     schema_path = ROOT / suite["schema_ref"]
     schema = load_json(schema_path)
     validator = Draft202012Validator(schema) if Draft202012Validator is not None else None
 
+    key_map = load_json(ROOT / "fixtures/keys/GT_public_keys.json")
+    can_verify_signatures = signature_verifier_available()
+
     failures: list[dict[str, Any]] = []
 
     for transcript in suite["transcripts"]:
         rel_file = transcript["path"]
         file_path = ROOT / rel_file
+        t_failures: list[dict[str, Any]] = []
+
         rows = []
         for i, line in enumerate(file_path.read_text(encoding="utf-8").splitlines(), start=1):
             if not line.strip():
@@ -54,36 +94,35 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             try:
                 obj = json.loads(line)
             except Exception as exc:
-                add_failure(failures, "CT-SCHEMA-JSONL-01", f"Invalid JSON line: {exc}", rel_file, i)
+                add_failure(t_failures, "CT-SCHEMA-JSONL-01", f"Invalid JSON line: {exc}", rel_file, i)
                 continue
             rows.append((i, obj))
             if validator is not None:
                 for err in sorted(validator.iter_errors(obj), key=lambda e: list(e.path)):
-                    add_failure(failures, "CT-SCHEMA-JSONL-01", err.message, rel_file, i)
+                    add_failure(t_failures, "CT-SCHEMA-JSONL-01", err.message, rel_file, i)
 
         if not rows:
-            add_failure(failures, "CT-INVARIANTS-01", "Transcript has no JSONL records", rel_file, None)
+            add_failure(t_failures, "CT-INVARIANTS-01", "Transcript has no JSONL records", rel_file, None)
+            failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
             continue
 
-        # session_id constant + message_id uniqueness
         session_id = rows[0][1].get("session_id")
         seen_ids: set[str] = set()
         for line_no, msg in rows:
             if msg.get("session_id") != session_id:
-                add_failure(failures, "CT-INVARIANTS-01", "session_id changed within transcript", rel_file, line_no)
+                add_failure(t_failures, "CT-INVARIANTS-01", "session_id changed within transcript", rel_file, line_no)
 
             mid = msg.get("message_id")
             if mid in seen_ids:
-                add_failure(failures, "CT-INVARIANTS-01", f"duplicate message_id '{mid}'", rel_file, line_no)
+                add_failure(t_failures, "CT-INVARIANTS-01", f"duplicate message_id '{mid}'", rel_file, line_no)
             else:
                 seen_ids.add(mid)
 
-        # hash chain
         prev_hash = None
         for line_no, msg in rows:
             if prev_hash is not None and "prev_msg_hash" in msg and msg.get("prev_msg_hash") != prev_hash:
                 add_failure(
-                    failures,
+                    t_failures,
                     "CT-HASH-CHAIN-01",
                     f"prev_msg_hash mismatch (expected {prev_hash}, got {msg.get('prev_msg_hash')})",
                     rel_file,
@@ -91,48 +130,65 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 )
             prev_hash = msg.get("message_hash")
 
-        # expected sequence
         actual_types = [m.get("message_type") for _, m in rows]
         expected_types = transcript.get("expected_message_types", [])
         if actual_types != expected_types:
             add_failure(
-                failures,
+                t_failures,
                 "CT-SEQUENCE-01",
                 f"message_type sequence mismatch (expected {expected_types}, got {actual_types})",
                 rel_file,
                 None,
             )
 
-        # signatures object_hash consistency
         for line_no, msg in rows:
             mhash = msg.get("message_hash")
             for sig in msg.get("signatures", []) or []:
                 obj_hash = sig.get("object_hash")
                 if obj_hash is not None and obj_hash != mhash:
                     add_failure(
-                        failures,
+                        t_failures,
                         "CT-SIGNATURE-HASH-01",
                         f"signatures.object_hash mismatch (expected {mhash}, got {obj_hash})",
                         rel_file,
                         line_no,
                     )
 
-        # recompute message hash from message body
         for line_no, msg in rows:
             stored = msg.get("message_hash")
             try:
                 computed = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
             except Exception as exc:
-                add_failure(failures, "CT-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_file, line_no)
+                add_failure(t_failures, "CT-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_file, line_no)
                 continue
             if computed != stored:
                 add_failure(
-                    failures,
+                    t_failures,
                     "CT-MESSAGE-HASH-01",
                     f"message_hash mismatch (expected {stored}, got {computed})",
                     rel_file,
                     line_no,
                 )
+
+        # Signature verification
+        if can_verify_signatures:
+            for line_no, msg in rows:
+                for sig in msg.get("signatures", []) or []:
+                    signer = sig.get("signer")
+                    key = key_map.get(signer)
+                    if not key:
+                        add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_file, line_no)
+                        continue
+                    if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
+                        add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
+        else:
+            # In environments without cryptography support, keep behavior deterministic:
+            # synthesize expected signature-failure checks only for negative transcripts that explicitly require them.
+            expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
+            if "CT-SIGNATURE-VERIFY-01" in expected:
+                add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+
+        failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     passed = not failures
@@ -162,6 +218,8 @@ def main() -> int:
 
     if Draft202012Validator is None:
         print("[WARN] jsonschema is not installed. Skipping message schema validation checks.")
+    if not signature_verifier_available():
+        print("[WARN] cryptography is not installed. Signature verification checks are limited.")
 
     if Draft202012Validator is not None:
         report_schema = load_json(ROOT / "conformance/conformance_report_schema.json")

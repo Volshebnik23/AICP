@@ -56,15 +56,17 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - Run conformance in CI.
 **Acceptance:** one command produces pass/fail + report; CI runs Core suite.
 
-### 🟡 Current milestone (M5): Reference implementations in-repo
+### ✅ Completed (M5): Reference implementations in-repo
 **Goal:** provide minimal, correct reference implementations that are easy to adopt and test.
 - Add `/reference/python` (minimum correct implementation).
 - Optionally add `/reference/typescript` with parity notes.
 **Acceptance:** reference implementation tests are runnable via the one-command standard.
 
+### 🟡 Current milestone (M6): Expanded golden transcripts + negative conformance
+- Expand Core golden coverage for revoke, unknown-base+resync, invalid signature, and duplicate message_id replay scenarios.
+- Harden conformance expectations for controlled negative-case outcomes.
+
 ### ⏳ Later milestones (productization hardening)
-- ⏳ M6 Expand golden transcripts to cover real-world recovery and consent flows:
-  - revoke, unknown-base+resync, invalid signature, duplicate message_id, etc.
 - ⏳ M7 Plugfest kit + Interop report + Errata process:
   - `/interop/*` artifacts
 - ⏳ M8 External security review artifacts and remediation log:
@@ -75,4 +77,4 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 ---
 
 ## Immediate next step
-**M5 (Reference implementations + expanded golden coverage)** is current.
+**M6 (Expanded golden coverage + negative conformance hardening)** is current.

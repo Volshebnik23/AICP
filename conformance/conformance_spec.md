@@ -20,6 +20,7 @@ A suite **passes** when all configured transcript checks pass:
 4. `message_type` sequence matches the catalog expectation.
 5. If `signatures[*].object_hash` is present, it equals `message_hash`.
 6. `CT-MESSAGE-HASH-01`: `message_hash` recomputes from message body (without `signatures` and `message_hash`) using Core object-hash algorithm.
+7. `CT-SIGNATURE-VERIFY-01`: when signatures are present, Ed25519 verification succeeds against `fixtures/keys/GT_public_keys.json`.
 
 ## Runner usage
 
@@ -30,3 +31,8 @@ python conformance/runner/aicp_conformance_runner.py \
 ```
 
 Exit code is `0` on pass and `1` on fail.
+
+## Negative transcript handling
+
+Suite catalogs may mark transcripts as expected-failure cases via `expect_pass: false` and `expected_failures`.
+A negative transcript passes only when all expected failure test IDs occur at least `min_count` and no unexpected failures are present.

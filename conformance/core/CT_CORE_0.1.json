@@ -24,6 +24,69 @@
         "CONTEXT_AMEND",
         "RESOLVE_CONFLICT"
       ]
+    },
+    {
+      "id": "GT-04",
+      "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONSENT_REQUIRED",
+        "CONSENT_GRANT",
+        "ATTEST_ACTION"
+      ]
+    },
+    {
+      "id": "GT-05",
+      "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONSENT_GRANT",
+        "CONSENT_REVOKE",
+        "POLICY_VIOLATION"
+      ]
+    },
+    {
+      "id": "GT-06",
+      "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "STATE_SYNC_REQUEST",
+        "STATE_SYNC_RESPONSE",
+        "CONTEXT_AMEND"
+      ]
+    },
+    {
+      "id": "GT-07",
+      "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "GT-08",
+      "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTRACT_ACCEPT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-INVARIANTS-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -50,6 +113,10 @@
     {
       "test_id": "CT-MESSAGE-HASH-01",
       "description": "recompute message_hash from message body (excluding signatures/message_hash) and compare"
+    },
+    {
+      "test_id": "CT-SIGNATURE-VERIFY-01",
+      "description": "verify Ed25519 signatures using fixtures/keys/GT_public_keys.json"
     }
   ]
 }

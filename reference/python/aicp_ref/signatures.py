@@ -23,3 +23,7 @@ def verify_ed25519(public_key_b64url: str, signature_b64url: str, object_hash: s
         return True
     except Exception:
         return False
+
+
+def signature_verifier_available() -> bool:
+    return Ed25519PublicKey is not None
