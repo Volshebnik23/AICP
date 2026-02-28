@@ -6,7 +6,9 @@
 
 This roadmap reflects the **actual repository artifacts**, not only content embedded in the Suite index.
 It separates: (A) Spec authoring (text), and (B) Productization (executable, enforceable deliverables).
-AICP uses versions for technical evolution, but roadmap sequencing is dependency-based (technical prerequisites first), not product-release sequencing.
+
+AICP uses versions for technical evolution, but roadmap sequencing is **dependency-based** (technical prerequisites first), not product-release sequencing.
+AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport: a standard protocol, not an infrastructure provider (e.g., not a “CA” or a hosted enforcement platform).
 
 **Suite document:** `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`  
 **Core canonical paths:** `docs/core/`, `schemas/core/`, `fixtures/`
@@ -71,47 +73,76 @@ AICP uses versions for technical evolution, but roadmap sequencing is dependency
 - Core golden coverage now includes revoke, unknown-base+resync, invalid signature, and duplicate message_id replay scenarios.
 - Conformance supports expected-failure handling for controlled negative outcomes.
 
-### ✅ Completed (M7.1): EXT-CAPNEG productization
-- Add EXT-CAPNEG payload schemas under `schemas/extensions/`.
-- Add CAPNEG extension fixtures under `fixtures/extensions/capneg/`.
-- Add extension conformance suite under `conformance/extensions/`.
+### ✅ Completed (M7.x): Extension & binding productization line
+- ✅ M7.1: EXT-CAPNEG productization
+- ✅ M7.2: EXT-OBJECT-RESYNC productization
+- ✅ M7.3: EXT-POLICY-EVAL productization + hardening
+- ✅ M7.4: BINDINGS productization (starting with MCP)
+- ✅ M7.5: Developer Experience & Adoption Kit (DX)
+- ✅ M7.6: EXT-ENFORCEMENT productization (blocking enforcement contour)
+  - `docs/extensions/RFC_EXT_ENFORCEMENT.md`
+  - `registry/enforcement_sanction_codes.json`
+  - `schemas/extensions/ext-enforcement-payloads.schema.json`
+  - `fixtures/extensions/enforcement/`
+  - `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
+- ✅ M7.7: Roadmap sync discipline (process hardening)
+  - Roadmap sync reminder added in `AGENTS.md` to require sprint-by-sprint roadmap updates when shipped artifacts change.
 
-### ✅ Completed (M7.2): EXT-OBJECT-RESYNC productization
-### ✅ Completed (M7.3): EXT-POLICY-EVAL productization + hardening
-- Naming consistency enforcement in canonical Markdown sources (DOCX removed from PR-critical gates)
-- Core taxonomy alignment on `CONTEXT_AMEND`
-- Core payload schema enforcement in conformance/tests
-### ✅ Completed milestone (M7.4): BINDINGS productization (starting with MCP)
-### ✅ Completed milestone (M7.5): Developer Experience & Adoption Kit (DX)
-- Canonical naming/tagline consistency and discoverability landing pages.
-- SDK/template/sandbox workflows that reduce adoption friction for agent developers and enforcers.
-- DX hardening should complete before plugfest-focused milestones.
+---
 
-### ✅ Completed milestone (M7.6): EXT-ENFORCEMENT productization (blocking enforcement contour)
-- `docs/extensions/RFC_EXT_ENFORCEMENT.md`
-- `registry/enforcement_sanction_codes.json`
-- `schemas/extensions/ext-enforcement-payloads.schema.json`
-- `fixtures/extensions/enforcement/`
-- `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
+## 🔜 Next: Interop readiness package (TLS-like usability & interoperability)
+**Goal:** make the protocol easy to adopt correctly: clear profiles, clear flows, clear error/recovery semantics, and “badges” for compatibility.
 
-### ✅ Completed milestone (M7.7): Roadmap sync discipline (process hardening)
-- Roadmap sync reminder added in `AGENTS.md` to require sprint-by-sprint roadmap updates when shipped artifacts change.
+- 🔜 M8.1 Personas → user stories → feature sets → profile mapping (source-of-truth)
+  - Create a canonical mapping doc that justifies profiles by real personas and use cases.
 
-### ⏳ Later milestones (productization hardening)
-- ⏳ M8 Plugfest kit + Interop report + Errata process:
-  - `/interop/*` artifacts
+- 🔜 M8.2 AICP Profiles (normative document) + conformance badges (profile-level compatibility)
+  - Define profiles as named bundles of required extensions + canonical flows.
+  - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
+
+- ⏳ M8.3 Alert/error registry + recovery semantics (“TLS alerts”-like)
+  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate).
+  - Make platform/mediator UX and operations interoperable.
+
+- ⏳ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
+  - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
+
+- ⏳ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
+  - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
+
+- ⏳ M8.6 Plugfest kit + interop report + errata workflow
+  - `/interop/*` artifacts, test vectors, interop report format.
+
+---
+
+## ⏳ Later milestones (hardening)
 - ⏳ M9 External security review artifacts and remediation log:
   - `/security_review/*`
-- ⏳ M10 Release Candidate → v0.1.0:
-  - feature freeze, registry snapshot, final compatibility marks, release packaging, checksums
-- ⏳ M11 Reception Chat Profile (rules + onboarding semantics) — platform-optional, protocol-only.
-- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly) — protocol-only; friendly to IAM/PAM/AAA/RBAC/OIDC/OAuth.
-- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce) — optional semantics: delegation, responsibilities, context retention, QA gates, human-in-the-loop optional.
-- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases (docs-only):
-  - `docs/marketing/ecosystem_use_cases.md`
+- ⏳ M10 Snapshot discipline (optional, when needed):
+  - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
+---
+
+## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
+These milestones define **optional semantics** that a platform/mediator MAY enforce, while AICP remains an open protocol.
+
+- ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
+  - Standard “reception chat” UX primitives for personal/brand agents (join/request, welcome, rules summary, role hooks).
+- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
+  - Content-layer claims/attestations linking agent ↔ authenticated user ↔ delegated authority.
+  - Friendly to IAM/PAM/AAA/RBAC/OIDC/OAuth ecosystems (AICP sits above access control; platform may integrate).
+  - Include key lifecycle guidance (expiry/rotation) and trust bootstrapping guidance (without becoming a CA/IAM system).
+- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
+  - Optional, enforceable semantics for service-chaining: delegation, responsibilities, context retention, QA gates,
+    and human-in-the-loop as an option.
+
+---
+
+## ⏳ Website & messaging (docs-only)
+- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
+  - Source: `docs/marketing/ecosystem_use_cases.md`
+
+---
 
 ## Immediate next step
-**M8 (Interop Plugfest & Security Review readiness)** is next.
-
-Older PR branches for M7.4 may be superseded; use `main` as source-of-truth.
+**M8.1 + M8.2 (Profiles foundation + badges)**.
