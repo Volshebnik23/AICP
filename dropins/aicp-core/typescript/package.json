@@ -1,0 +1,9 @@
+{
+  "name": "aicp-core-dropin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate_minimal_core_transcript.mjs --out out/minimal_core.jsonl"
+  }
+}

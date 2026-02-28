@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/demos/demo-enforcement-behavioral-payloads.schema.json",
+  "title": "AICP demo behavioral enforcement payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "CONTENT_MESSAGE": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "content_format": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ENFORCEMENT_SANCTION": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "duration_seconds": {
+          "type": "number"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ENFORCEMENT_VERDICT": {
+      "type": "object",
+      "required": [
+        "verdict_id",
+        "decision",
+        "reason_codes",
+        "sanctions",
+        "issued_at"
+      ],
+      "properties": {
+        "verdict_id": {
+          "type": "string"
+        },
+        "target_message_hash": {
+          "type": "string"
+        },
+        "target_message_id": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "INCONCLUSIVE"
+          ]
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sanctions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ENFORCEMENT_SANCTION"
+          }
+        },
+        "issued_at": {
+          "type": "string"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "target_message_hash"
+          ]
+        },
+        {
+          "required": [
+            "target_message_id"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "CONTENT_DELIVER": {
+      "type": "object",
+      "required": [
+        "delivery_id",
+        "original_message",
+        "original_message_hash",
+        "verdict_message_id",
+        "delivered_at"
+      ],
+      "properties": {
+        "delivery_id": {
+          "type": "string"
+        },
+        "original_message": {
+          "type": "object"
+        },
+        "original_message_hash": {
+          "type": "string"
+        },
+        "verdict_message_id": {
+          "type": "string"
+        },
+        "delivered_at": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ALERT": {
+      "type": "object",
+      "required": [
+        "alert_id",
+        "code",
+        "severity",
+        "recommended_actions",
+        "issued_at"
+      ],
+      "properties": {
+        "alert_id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "WARNING",
+            "FATAL"
+          ]
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "issued_at": {
+          "type": "string"
+        },
+        "target_message_hash": {
+          "type": "string"
+        },
+        "target_message_id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 280
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RESUME_REQUEST": {
+      "type": "object",
+      "required": [
+        "resume_id",
+        "session_id",
+        "last_seen_message_hash"
+      ],
+      "properties": {
+        "resume_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "last_seen_message_hash": {
+          "type": "string"
+        },
+        "contract_id": {
+          "type": "string"
+        },
+        "contract_hash": {
+          "type": "string"
+        },
+        "client_info": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RESUME_RESPONSE": {
+      "type": "object",
+      "required": [
+        "resume_id",
+        "session_id",
+        "status",
+        "current_head_hash",
+        "recommended_actions"
+      ],
+      "properties": {
+        "resume_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NEEDS_RESYNC",
+            "UNKNOWN_SESSION"
+          ]
+        },
+        "current_head_hash": {
+          "type": "string"
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

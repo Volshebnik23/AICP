@@ -18,7 +18,7 @@ A Core message MUST include:
 - `message_type`
 - `payload`
 
-Messages MAY include `contract_id`, `contract_ref`, `prev_msg_hash`, `message_hash`, `signatures`, and relation metadata.
+Messages MUST include `contract_id`. Messages MAY include `contract_ref`, `prev_msg_hash`, `message_hash`, `signatures`, and relation metadata.
 
 Implementations MUST validate incoming messages against the Core message schema at the boundary.
 

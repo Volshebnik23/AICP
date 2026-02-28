@@ -22,12 +22,16 @@ AICP Core is minimal and stable; extensions are optional and productized in wave
 
 ## Primary links
 
-- Suite index: `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`
-- Core normative markdown: `docs/core/AICP_Core_v0.1_Normative.md`
-- Core docs: `docs/core/`
-- Conformance: `conformance/`
-- References: `reference/`
-- Registries: `registry/`
+- Start Here for Implementers: [START_HERE_IMPLEMENTERS.md](../START_HERE_IMPLEMENTERS.md)
+- Suite index: [AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md](suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md)
+- Core normative markdown: [AICP_Core_v0.1_Normative.md](core/AICP_Core_v0.1_Normative.md)
+- Core docs: [docs/core/](core/)
+- Glossary (canonical): [docs/GLOSSARY.md](GLOSSARY.md)
+- Drop-ins (copy folder): [dropins/aicp-core/](../dropins/aicp-core/)
+- Sandbox validator: [sandbox/run.py](../sandbox/run.py)
+- Conformance: [conformance/](../conformance/)
+- References: [reference/](../reference/)
+- Registries: [registry/](../registry/)
 
 ## For platform builders
 
