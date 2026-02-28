@@ -4,6 +4,8 @@
 
 AICP is a practical, implementable protocol repo for teams building multi-agent platforms.
 
+➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
+
 ## What AICP is
 
 - An **agent-to-agent protocol** focused on interoperable message content, not transport lock-in.
@@ -11,6 +13,14 @@ AICP is a practical, implementable protocol repo for teams building multi-agent 
 - Built for **enforcement / enforcer** workflows (policy checks, replay checks, conformance checks).
 - Includes **policies & attestations** primitives for trust, auditability, and governance.
 - Supports **profiles / negotiation** and extension-based capability growth.
+
+
+## Quickstart
+
+- `make quickstart-ts`
+- `make quickstart-py`
+
+Both commands generate a deterministic minimal Core transcript and validate it locally.
 
 ## Implementer path
 
@@ -27,6 +37,7 @@ AICP is a practical, implementable protocol repo for teams building multi-agent 
 ## Canonical layout
 
 - Core normative document (canonical): `docs/core/AICP_Core_v0.1_Normative.md`
+- Glossary: `docs/GLOSSARY.md`
 - Optional release artifact (not edited in normal PRs): `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
 - Core schemas: `schemas/core/`
 - Core fixtures and golden transcripts: `fixtures/`

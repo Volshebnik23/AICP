@@ -24,6 +24,8 @@ REQUIRED_FILES = [
     "enforcement_sanction_codes.json",
     "security_alert_categories.json",
     "dispute_claim_types.json",
+    "alert_codes.json",
+    "alert_recommended_actions.json",
 ]
 
 REQUIRED_FIELDS = {

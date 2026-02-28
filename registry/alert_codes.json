@@ -1,0 +1,123 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INVALID_HASH_CHAIN",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Hash-chain integrity failures can indicate tampering and must be audited.",
+    "default_severity": "FATAL",
+    "recommended_actions": ["DISCONNECT", "ESCALATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DUPLICATE_MESSAGE_ID",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Duplicate IDs can indicate replay and require replay protection review.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["REMEDIATE", "ACK_REQUIRED"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SCHEMA_VALIDATION_FAILED",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Malformed payload handling should avoid parser differentials and unsafe fallbacks.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["RETRY", "REMEDIATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "UNKNOWN_MESSAGE_TYPE",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Unknown message handling should avoid unsafe dynamic execution paths.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["REMEDIATE", "ESCALATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_DENIED",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#6-relationship-to-ext-enforcement-normative",
+    "security_considerations": "Policy denial details should not expose sensitive policy internals.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["REMEDIATE", "ESCALATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_INCONCLUSIVE",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#6-relationship-to-ext-enforcement-normative",
+    "security_considerations": "Inconclusive policy states should trigger bounded retries or escalation.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["RETRY", "ESCALATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SANCTION_APPLIED",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#6-relationship-to-ext-enforcement-normative",
+    "security_considerations": "Sanction signaling must be authentic and non-repudiable.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["ACK_REQUIRED", "REMEDIATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RATE_LIMITED",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Rate-limit responses should avoid becoming an oracle for account probing.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["RETRY", "NO_ACTION"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TIMEOUT",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Timeout handling should avoid unbounded waits and retry storms.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["RETRY", "ESCALATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "MEDIATOR_UNAVAILABLE",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#2-roles-and-emission-rules-normative",
+    "security_considerations": "Availability alerts should be authenticated to prevent false failover triggers.",
+    "default_severity": "FATAL",
+    "recommended_actions": ["DISCONNECT", "ESCALATE"]
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESYNC_REQUIRED",
+    "type": "alert_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Resync flows should be integrity-checked to prevent state confusion.",
+    "default_severity": "WARNING",
+    "recommended_actions": ["RETRY", "REMEDIATE"]
+  }
+]

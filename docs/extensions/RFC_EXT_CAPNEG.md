@@ -44,3 +44,5 @@ A negotiation_result MUST be signed by the required parties (either as signature
 10.6 Registry requirements (normative intent)
 •	privacy_mode IDs and reason_code IDs MUST be registered (Section 8).
 •	If negotiation_result introduces a new hash domain, it MUST be registered (Section 8, Object Hash Domains).
+
+Security note: downgrade/inconsistent negotiation is a security concern; conformance check `CN-DOWNGRADE-01` in `conformance/extensions/CN_CAPNEG_0.1.json` provides executable detection coverage.

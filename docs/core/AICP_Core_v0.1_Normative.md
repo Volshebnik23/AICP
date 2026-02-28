@@ -18,7 +18,7 @@ A Core message MUST include:
 - `message_type`
 - `payload`
 
-Messages MAY include `contract_id`, `contract_ref`, `prev_msg_hash`, `message_hash`, `signatures`, and relation metadata.
+Messages MUST include `contract_id`. Messages MAY include `contract_ref`, `prev_msg_hash`, `message_hash`, `signatures`, and relation metadata.
 
 Implementations MUST validate incoming messages against the Core message schema at the boundary.
 
@@ -45,10 +45,26 @@ Minimum invariants:
 
 Conflict resolution MUST be represented via `RESOLVE_CONFLICT` and SHOULD be quorum/signer-policy bound.
 
+## 4.1 Transcript ordering and concurrency model (normative)
+
+An AICP transcript is an ordered sequence of messages.
+
+For verifiable transcripts:
+- The first message MAY omit `prev_msg_hash`.
+- Every message after the first MUST include `prev_msg_hash` and it MUST equal the immediately previous message's `message_hash` in transcript order.
+
+Concurrency handling:
+- In mediated channels (primary target), the mediator/host serializes events into a single global transcript order.
+- In non-mediated environments, implementations MAY choose any deterministic total order for the transcript they produce; interoperability claims apply to that produced transcript order.
+
 ## 5. Hashing and signatures (normative minimum)
 
 Hashing:
 - Object hashes MUST use deterministic canonicalization and SHA-256 over `AICP1\0<object_type>\0<canonical-json>` preimage semantics.
+- Canonical JSON serialization MUST use UTF-8 output with unescaped non-ASCII characters (`ensure_ascii=false`).
+- Object keys MUST be sorted lexicographically by Unicode code point order at every object nesting level.
+- Floats are currently unsupported in canonicalization and MUST be rejected until full RFC8785 numeric handling is implemented.
+- Executable canonicalization evidence is maintained in `fixtures/core_tv.json` (TV-04..TV-06).
 - `message_hash` MUST be recomputable from message body excluding `message_hash` and `signatures`.
 
 Signatures:

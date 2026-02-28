@@ -31,8 +31,7 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT",
-        "CONSENT_REQUIRED",
-        "CONSENT_GRANT",
+        "CONTEXT_AMEND",
         "ATTEST_ACTION"
       ]
     },
@@ -42,9 +41,9 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT",
-        "CONSENT_GRANT",
-        "CONSENT_REVOKE",
-        "POLICY_VIOLATION"
+        "CONTEXT_AMEND",
+        "CONTEXT_AMEND",
+        "ATTEST_ACTION"
       ]
     },
     {
@@ -87,6 +86,22 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "GT-09",
+      "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-PREV-MSG-REQUIRED-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -95,12 +110,20 @@
       "description": "Validate each JSONL record against Core message schema"
     },
     {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
       "test_id": "CT-PAYLOAD-SCHEMA-01",
       "description": "Validate mapped Core payloads against core payload schema"
     },
     {
       "test_id": "CT-HASH-CHAIN-01",
       "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
     },
     {
       "test_id": "CT-INVARIANTS-01",
@@ -121,6 +144,14 @@
     {
       "test_id": "CT-SIGNATURE-VERIFY-01",
       "description": "verify Ed25519 signatures using fixtures/keys/GT_public_keys.json"
+    },
+    {
+      "test_id": "CT-CONTRACT-SCHEMA-01",
+      "description": "CONTRACT_PROPOSE payload.contract must validate against core contract schema and match envelope contract_id"
+    },
+    {
+      "test_id": "CT-POLICY-CATEGORIES-01",
+      "description": "contract.policies categories must be registered or namespaced; policy_id values must be unique"
     }
   ],
   "payload_schema_ref": "schemas/core/aicp-core-payloads.schema.json",

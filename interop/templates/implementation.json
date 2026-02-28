@@ -1,0 +1,13 @@
+{
+  "implementation_id": "example-python-ref",
+  "name": "Example Python Reference",
+  "language": "python",
+  "version": "0.1.0-dev",
+  "maintainer": "Example Maintainer",
+  "contact": "@example",
+  "repo": "https://example.invalid/aicp-python-ref",
+  "notes": "Template manifest for interop submissions.",
+  "profiles_claimed": [
+    "AICP-Profile-BASE-0.1"
+  ]
+}

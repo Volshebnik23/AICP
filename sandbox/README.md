@@ -20,3 +20,14 @@ python sandbox/run.py sandbox/thread.jsonl
 - optional signature verification (when signatures exist and crypto dependency is available)
 
 Output is a concise, human-friendly failure summary with line numbers.
+
+## Additional validator options
+
+- Validate transcript outside repo:
+  - `python sandbox/run.py /tmp/minimal_core.jsonl --no-signature-verify`
+- Use custom key map JSON (or directory containing `GT_public_keys.json`):
+  - `python sandbox/run.py sandbox/thread.jsonl --keys fixtures/keys/GT_public_keys.json`
+- Skip signature verification (useful for unsigned quickstarts):
+  - `python sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify`
+
+Note: skipping signature verification is convenient for onboarding, but badge eligibility in conformance/profile reports can be degraded.

@@ -17,7 +17,7 @@ npm ci
 npm test
 ```
 
-## Usage (validator-only)
+## Minimal valid Core envelope example
 
 ```ts
 import { messageHashFromBody } from "./src/hashing.js";
@@ -25,10 +25,23 @@ import { messageHashFromBody } from "./src/hashing.js";
 const body = {
   session_id: "s1",
   message_id: "m1",
-  message_type: "CAPABILITIES_DECLARE",
-  payload: { supported_profiles: ["core.v0.1"] },
+  timestamp: "t0001",
+  sender: "agent:A",
+  message_type: "CONTRACT_ACCEPT",
+  contract_id: "c1",
+  contract_ref: { branch_id: "main", base_version: "v1", head_version: "v1" },
+  payload: { accepted: true },
 };
 
-const hash = messageHashFromBody(body);
-console.log(hash);
+const message = { ...body, message_hash: messageHashFromBody(body) };
+console.log(message);
+```
+
+## Validation
+
+From repo root, validate with:
+
+```bash
+make validate
+python sandbox/run.py sandbox/thread.jsonl
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate golden transcript messages against the Core message schema if available."""
+"""Validate fixture JSONL records against the canonical Core message schema when available."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__"}
+CANONICAL_SCHEMA = Path("schemas/core/aicp-core-message.schema.json")
 
 
 def should_skip(path: Path) -> bool:
@@ -28,6 +29,24 @@ def load_records(root: Path) -> list[tuple[Path, int, object]]:
     return records
 
 
+def resolve_schema_path(root: Path) -> Path | None:
+    canonical_path = root / CANONICAL_SCHEMA
+    if canonical_path.exists():
+        return canonical_path
+
+    candidates = [
+        p for p in sorted(root.rglob("aicp-core-message.schema.json")) if not should_skip(p)
+    ]
+    if not candidates:
+        return None
+
+    print(
+        f"[WARN] Canonical schema {CANONICAL_SCHEMA.as_posix()} was not found. "
+        f"Falling back to discovered schema {candidates[0].relative_to(root)}."
+    )
+    return candidates[0]
+
+
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
 
@@ -37,15 +56,11 @@ def main() -> int:
         print("[WARN] jsonschema is not installed. Skipping schema instance validation.")
         return 0
 
-    schema_candidates = [
-        p for p in sorted(root.rglob("aicp-core-message.schema.json")) if not should_skip(p)
-    ]
-
-    if not schema_candidates:
+    schema_path = resolve_schema_path(root)
+    if schema_path is None:
         print("[WARN] No aicp-core-message.schema.json found. Skipping schema instance validation.")
         return 0
 
-    schema_path = schema_candidates[0]
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = Draft202012Validator(schema)
 
@@ -58,16 +73,12 @@ def main() -> int:
             print(f"[FAIL] Schema violation: {rel}:{line_no}: {err.message}")
             errors += 1
 
+    schema_rel = schema_path.relative_to(root)
     if errors:
-        print(
-            f"Schema validation failed with {errors} error(s) using {schema_path.relative_to(root)}."
-        )
+        print(f"Schema validation failed with {errors} error(s) using {schema_rel}.")
         return 1
 
-    print(
-        f"OK: {len(records)} fixture JSONL record(s) validated against "
-        f"{schema_path.relative_to(root)}."
-    )
+    print(f"OK: {len(records)} fixture JSONL record(s) validated against {schema_rel}.")
     return 0
 
 

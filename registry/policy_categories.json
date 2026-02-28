@@ -18,12 +18,66 @@
     "security_considerations": "Ensures user-approved actions only."
   },
   {
-    "status": "experimental",
+    "status": "deprecated",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "scope_boundaries",
     "type": "policy_categories",
     "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
-    "security_considerations": "Contains data/tool usage within agreed boundaries."
+    "security_considerations": "Legacy combined category; use scope + boundaries for new contracts."
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Covers consent requirements tied to authenticated user context and proof of authorization.",
+    "id": "user_consent_auth"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Constrains actions/data to explicitly approved scope references.",
+    "id": "scope"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Prevents crossing tenant/system/process boundaries without explicit authority.",
+    "id": "boundaries"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Controls which tools/actions may be executed and under what constraints.",
+    "id": "tool_access"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Applies privacy controls to collection, processing, and disclosure of PII.",
+    "id": "pii_handling"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Requires traceable policy/evidence artifacts for third-party verification.",
+    "id": "auditability"
   }
 ]
