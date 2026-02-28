@@ -27,6 +27,7 @@ AICP is a practical, implementable protocol repo for teams building multi-agent 
 ## Canonical layout
 
 - Core normative document (canonical): `docs/core/AICP_Core_v0.1_Normative.md`
+- Glossary: `docs/GLOSSARY.md`
 - Optional release artifact (not edited in normal PRs): `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
 - Core schemas: `schemas/core/`
 - Core fixtures and golden transcripts: `fixtures/`

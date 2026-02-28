@@ -9,5 +9,11 @@
     "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
     "fixtures/bindings/mcp/TB-MCP-03_getObject.json"
   ],
-  "compatibility_mark": "AICP-BIND-MCP-0.1"
+  "compatibility_mark": "AICP-BIND-MCP-0.1",
+  "checks": [
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    }
+  ]
 }

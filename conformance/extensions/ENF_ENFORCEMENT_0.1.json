@@ -47,6 +47,10 @@
       "description": "Validate each JSONL record against Core message schema"
     },
     {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
       "test_id": "CN-PAYLOAD-SCHEMA-01",
       "description": "Validate payload against EXT-ENFORCEMENT payload schema"
     },
@@ -73,6 +77,10 @@
     {
       "test_id": "ENF-SANCTION-CODES-01",
       "description": "ENFORCEMENT_VERDICT sanctions codes must be registered or validly namespaced"
+    },
+    {
+      "test_id": "ENF-AUTH-01",
+      "description": "ENFORCEMENT_VERDICT sender must be listed in contract ext.enforcement.enforcers when provided"
     }
   ],
   "compatibility_mark": "AICP-EXT-ENFORCEMENT-0.1"
