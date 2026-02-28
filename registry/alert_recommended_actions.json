@@ -1,0 +1,56 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RETRY",
+    "type": "alert_recommended_actions",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Retries should be bounded to avoid amplification and abuse."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REMEDIATE",
+    "type": "alert_recommended_actions",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Remediation guidance must not leak sensitive policy internals."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DISCONNECT",
+    "type": "alert_recommended_actions",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Disconnect actions should preserve audit trails for incident review."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ESCALATE",
+    "type": "alert_recommended_actions",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Escalation paths must be authenticated to prevent spoofed escalation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ACK_REQUIRED",
+    "type": "alert_recommended_actions",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "Acknowledgement channels should prevent replay or forged confirmations."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "NO_ACTION",
+    "type": "alert_recommended_actions",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#4-severity-and-recovery-actions-normative",
+    "security_considerations": "No-action advisories should not suppress required safety controls."
+  }
+]
