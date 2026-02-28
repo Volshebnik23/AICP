@@ -1,0 +1,281 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "AGENT_MIGRATION",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Migration claims should be attested to prevent impersonation."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ATTEST_ACTION",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Attestations should bind actions, authorities, and result hashes for auditability."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Accepted profile should be bound to signed context."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Capability declarations are inputs to security-sensitive negotiation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_PROPOSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Proposals must resist downgrade and spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "CAPABILITIES_REJECT",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Reject reasons must be machine-readable and non-leaky."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHALLENGE_ASSERTION",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#153-ext-disputes--challenges-breach-claims-arbitration-hooks-registered-extension",
+    "security_considerations": "Challenge evidence must be verifiable and tamper-evident."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_DELIVER",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#42-blocking-rule-normative",
+    "security_considerations": "Delivery wrappers must bind original and verdict references to preserve auditability."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_MESSAGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
+    "security_considerations": "Content payloads should be mediated to avoid bypassing enforcement in blocking mode."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTEXT_AMEND",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Amendments must reference an explicit base version to prevent ambiguous forks."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTRACT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Acceptances must bind to the exact proposed contract head/hash."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTRACT_PROPOSE",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Contract proposals must be hash-bound and explicitly version-referenced."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#152-ext-delegation--hierarchical-purpose-oriented-delegation-registered-extension",
+    "security_considerations": "Delegation scope and expiry must be enforced."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ENFORCEMENT_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
+    "security_considerations": "Verdicts are enforcement-critical and should be authenticated to prevent spoofing."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ERROR",
+    "type": "message_types",
+    "spec_ref": "docs/rfc/RFC_Error_Model_and_Recovery.md#92-error-message-core-v01-should",
+    "security_considerations": "Error payloads must avoid leaking secrets/PII."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "IDENTITY_ANNOUNCE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Identity metadata must be authenticated before trust update."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "KEY_REVOKE",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Revocations alter trust and must be authenticated and timely."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "KEY_ROTATION",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Cross-signatures are required to prevent key substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBJECT_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "Requests can leak object existence and amplify traffic."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBJECT_RESPONSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "Responses must preserve object hash integrity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_DECISION_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Attestation references must bind policy decisions to verifiable artifacts/actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_EVAL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Evaluation context may contain sensitive policy inputs."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_EVAL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Decisions should be signed when enforcement-relevant."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESOLVE_CONFLICT",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Conflict resolution must be quorum-signed and reference full conflict context."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SECURITY_ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#154-ext-security-alert--security-events-and-escalation-registered-extension",
+    "security_considerations": "Alerts should avoid exposing sensitive incident details beyond policy."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "STATE_SYNC_REQUEST",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "State sync requests should minimize information leakage."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "STATE_SYNC_RESPONSE",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "State sync responses must avoid disclosing unauthorized state details."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#151-ext-workflow-sync--workflow-synchronization-registered-extension",
+    "security_considerations": "Workflow artifacts must be hash-bound to contract head."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Alert payloads should be authenticated and minimally disclosive."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESUME_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
+    "security_considerations": "Resume requests should bind session and last_seen hash to prevent ambiguity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESUME_RESPONSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
+    "security_considerations": "Resume responses should accurately signal sync status and safe recovery actions."
+  }
+]

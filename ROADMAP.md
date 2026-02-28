@@ -93,54 +93,47 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - submission validation (implementation_id matches folder name)
   - schema validation for changed manifests in CI
 
----
+- 🔜 M8.1 Personas → user stories → feature sets → profile mapping (source-of-truth)
+  - Create a canonical mapping doc that justifies profiles by real personas and use cases.
 
-## 🔜 Implementer onboarding (< 1 hour) & copy-paste integration kit
-**Goal:** a developer can copy/paste or drop-in AICP Core support in under an hour with a deterministic smoke test.
+- 🔜 M8.2 AICP Profiles (normative document) + conformance badges (profile-level compatibility)
+  - Define profiles as named bundles of required extensions + canonical flows.
+  - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
 
-- 🔜 M8.7 “Start Here” single entrypoint for implementers
-  - Add `START_HERE_IMPLEMENTERS.md` (or `INTEGRATE.md`) and link it at the top of `README.md`.
-  - Include a role × language table: what to copy, what to run, and the smoke check.
-- 🔜 M8.8 Self-contained drop-ins (copy folder)
-  - Add `dropins/aicp-core/typescript/` and `dropins/aicp-core/python/` as the ONLY recommended “copy this folder” artifacts.
-  - Include `assets/` (schemas + minimal registries or an aggregate) and a minimal README + “10 lines” example.
-- 🔜 M8.9 Fix TS template to generate valid Core messages
-  - `templates/ts-agent/agent.js` must include required Core fields (`timestamp`, `sender`, …) and stop using repo-relative imports.
-- 🔜 M8.10 Fix misleading TypeScript SDK docs example
-  - `sdk/typescript/README.md` examples must show a valid minimal envelope body (incl. required fields).
-- 🔜 M8.11 Sandbox validator usability for external paths + custom keys
-  - `sandbox/run.py`: do not crash on non-repo paths; add `--keys` and `--no-signature-verify`.
-  - Evolve towards an installable `aicp-validate` style CLI if feasible.
-- 🔜 M8.12 Clarify `contract_id` requirement consistently (Suite vs schema)
-  - Decide and document: “MUST for contract-scoped messages; MAY for pre-contract flows”, OR make it MUST everywhere and update everything accordingly.
-- 🔜 M8.13 Add onboarding smoke tests in Makefile/CI
-  - `make quickstart-ts` / `make quickstart-py`: generate minimal JSONL and validate it.
-  - Add a CI gate so quickstart cannot silently rot.
+- ✅ M8.3 EXT-ALERTS alert/error registry + recovery semantics (“TLS alerts”-like)
+  - Registered extension artifacts shipped: RFC, registries, schema, conformance suite, and fixtures.
+  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate) are now repo-validated.
 
----
+- ✅ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
+  - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
 
-## ✅ Security review package
-- ✅ M9: Security review scaffolding (`security_review/*`)
-- ✅ M9.1: Internal self-review dry-run (`security_review/SELF_REVIEW.md`)
-- ✅ M9.2: Behavioral enforcement demo as a conformance-backed demo suite + threat-driven negatives (malicious mediator, spoofed verdict, replay)
-- 🟡 M9.3: Threat→Tests coverage map + targeted threat-driven negatives
-  - CAPNEG downgrade/spoof negative evidence
-  - RESUME forced-loop negative evidence
+- ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
+  - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
+
+- 🟡 M8.6 Plugfest kit + interop report + errata workflow
+  - `/interop/*` artifacts, test vectors, interop report format.
+  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
+  - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
+
+- ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
+- ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
+- ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
+- ✅ M8.10 TypeScript SDK README minimal-envelope corrections shipped (`sdk/typescript/README.md`).
+- ✅ M8.11 Sandbox validator usability hardening shipped (`sandbox/run.py`, `sandbox/README.md`).
 
 ---
 
-## ⏳ Additional hardening (remaining items to fully “prove” interoperability & security posture)
-These items are not “new features”, but close important proof/interop gaps.
-
-- ⏳ M9.4 Canonicalization edge cases (unicode/number/confusables)
-  - Add dedicated fixtures and checks to prevent hash mismatches across implementations.
-- ⏳ M9.5 Concurrency / ordering model clarity
-  - Document that mediated channels assume mediator serialization.
-  - If p2p concurrency is a goal, define an explicit algorithm/profile (not “hints”).
-- ⏳ M9.6 DoS / amplification / abuse hardening guidance (+ optional lint checks)
-  - RESYNC/RESUME cadence guidance, response size guidance, loop detection patterns.
-- ⏳ M9.7 Signed-path evidence (crypto “reality”, not just format)
-  - Add at least one canonical signed transcript path (verdict/alert signed) and ensure badges are only awarded when signature verification is actually performed.
+## ⏳ Later milestones (hardening)
+- 🟡 M9 External security review artifacts and remediation log:
+  - `/security_review/*`
+  - M9 security review package scaffolding is now available in-repo.
+  - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
+  - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
+  - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
+  - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
+  - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
+- ⏳ M10 Snapshot discipline (optional, when needed):
+  - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
 ---
 
@@ -158,4 +151,4 @@ These items are not “new features”, but close important proof/interop gaps.
 ---
 
 ## Immediate next step
-Finish **M9.3** (coverage map + CAPNEG/RESUME threat negatives), then proceed with **M8.7–M8.13** (implementer onboarding <1 hour).
+**M10 (snapshot discipline + compatibility packaging hardening)** is next.

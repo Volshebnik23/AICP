@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-all interop-matrix demo-enforcement-behavioral lint release-check clean
+.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -47,6 +47,15 @@ interop-matrix:
 
 demo-enforcement-behavioral:
 	$(PYTHON) demos/enforcement_behavioral/scripts/run_demo.py
+
+
+quickstart-ts:
+	node dropins/aicp-core/typescript/scripts/generate_minimal_core_transcript.mjs --out out/quickstart/ts/minimal_core.jsonl
+	$(PYTHON) sandbox/run.py out/quickstart/ts/minimal_core.jsonl --no-signature-verify
+
+quickstart-py:
+	$(PYTHON) dropins/aicp-core/python/generate_minimal_core_transcript.py --out out/quickstart/py/minimal_core.jsonl
+	$(PYTHON) sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify
 
 lint:
 	@echo "Lint target placeholder: no lint checks configured."
