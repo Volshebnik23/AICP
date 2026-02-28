@@ -15,6 +15,8 @@ Optional release artifact: `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
 Profiles (normative + rationale):
 - `docs/profiles/AICP_Profiles.md`
 - `docs/profiles/AICP_Personas_Stories_Features_Profiles.md`
+Canonical flows (state machines + sequence diagrams):
+- `docs/flows/AICP_Canonical_Flows.md`
 
  
 Change log
@@ -107,10 +109,13 @@ To keep the protocol implementable, AICP is split into a small Core v0.1 and a r
 •	EXT-DELEGATION — Hierarchical, purpose-oriented delegation with challenge/claim.
 •	EXT-DISPUTES — Challenges, breach claims, optional arbitration hooks.
 •	EXT-SECURITY-ALERT — Standard security events and escalation messages.
+•	EXT-ALERTS — Operational warning/fatal alerts and recovery action semantics.
+  (See `docs/extensions/RFC_EXT_ALERTS.md#7-relationship-to-security-alerts-normative` for distinction from security-alert signaling.)
 •	EXT-TRACING — Trace and observability fields (e.g., OpenTelemetry compatibility).
 •	EXT-IDENTITY-LC — Identity lifecycle: rotation, revocation, migration, external attestations.
 •	EXT-QOS — Budgets, deadlines, backpressure.
 •	EXT-ENFORCEMENT — Blocking enforcement contour for mediated delivery gating with auditable verdict bindings.
+•	EXT-RESUME — Session resumption/reconnect handshake for fast rejoin semantics.
  
 2. Glossary (draft)
 Agent — An AI system capable of exchanging protocol messages and acting on behalf of a user or service.
@@ -368,7 +373,7 @@ A protocol becomes real when independent implementations can prove compatibility
 •	CT-15: DUPLICATE_MESSAGE_ID: idempotent handling (no double-apply).
 •	CT-16: INVALID_CONTRACT_REF: attestation referencing unknown head_version rejected for audit; state unchanged.
 7.2 Extension conformance suites (informative)
-Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating.
+Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating, AL-* for EXT-ALERTS, RS-* for EXT-RESUME.
 
 8. RFC: Registry and Change Control
 Canonical source: `docs/rfc/RFC_Registries_and_Change_Control.md`
@@ -411,6 +416,8 @@ Canonical sources:
 - `docs/extensions/RFC_EXT_DELEGATION.md`
 - `docs/extensions/RFC_EXT_DISPUTES.md`
 - `docs/extensions/RFC_EXT_SECURITY_ALERTS.md`
+- `docs/extensions/RFC_EXT_ALERTS.md`
+- `docs/extensions/RFC_EXT_RESUME.md`
 Summary: Defines applied extension primitives for workflow sync, delegation, disputes, and security escalation.
 
 17. RFC: Governance / IPR / Stewardship
