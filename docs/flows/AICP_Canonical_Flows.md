@@ -7,6 +7,9 @@ This catalog provides implementer-oriented canonical message flows and state mac
 - **State diagrams** show lifecycle checkpoints and transition conditions.
 - **Normative notes** under each diagram call out interoperability-critical invariants.
 - **Executable counterpart:** these diagrams are paired with conformance suites and fixtures; use those artifacts as the source of machine-verifiable behavior.
+- **Ordering model:** in mediated channels, the mediator/host serializes events into one canonical transcript order.
+- **Hash-chain binding:** `prev_msg_hash` binds each message to the immediately previous `message_hash` in that order.
+- **Non-mediated note:** implementations MAY choose any deterministic total order they publish; interoperability claims apply to that published order.
 
 ---
 

@@ -135,6 +135,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
   - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
   - ✅ M9.4 canonicalization edge-case vectors + drop-in asset anti-drift checks shipped.
+  - ✅ M9.5 ordering model clarity + linear prev_msg_hash requirement + expanded drop-in asset parity checks shipped.
 - ⏳ M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 

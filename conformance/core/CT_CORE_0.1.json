@@ -86,6 +86,22 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "GT-09",
+      "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-PREV-MSG-REQUIRED-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -104,6 +120,10 @@
     {
       "test_id": "CT-HASH-CHAIN-01",
       "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
     },
     {
       "test_id": "CT-INVARIANTS-01",

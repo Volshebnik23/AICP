@@ -17,6 +17,22 @@ CHECKS = [
         ROOT / "dropins/aicp-core/typescript/assets/schemas/core/aicp-core-message.schema.json",
     ),
     (
+        ROOT / "schemas/core/aicp-core-contract.schema.json",
+        ROOT / "dropins/aicp-core/python/assets/schemas/core/aicp-core-contract.schema.json",
+    ),
+    (
+        ROOT / "schemas/core/aicp-core-contract.schema.json",
+        ROOT / "dropins/aicp-core/typescript/assets/schemas/core/aicp-core-contract.schema.json",
+    ),
+    (
+        ROOT / "schemas/core/aicp-core-payloads.schema.json",
+        ROOT / "dropins/aicp-core/python/assets/schemas/core/aicp-core-payloads.schema.json",
+    ),
+    (
+        ROOT / "schemas/core/aicp-core-payloads.schema.json",
+        ROOT / "dropins/aicp-core/typescript/assets/schemas/core/aicp-core-payloads.schema.json",
+    ),
+    (
         ROOT / "registry/message_types.json",
         ROOT / "dropins/aicp-core/python/assets/registry/message_types.json",
     ),

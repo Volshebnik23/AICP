@@ -45,6 +45,18 @@ Minimum invariants:
 
 Conflict resolution MUST be represented via `RESOLVE_CONFLICT` and SHOULD be quorum/signer-policy bound.
 
+## 4.1 Transcript ordering and concurrency model (normative)
+
+An AICP transcript is an ordered sequence of messages.
+
+For verifiable transcripts:
+- The first message MAY omit `prev_msg_hash`.
+- Every message after the first MUST include `prev_msg_hash` and it MUST equal the immediately previous message's `message_hash` in transcript order.
+
+Concurrency handling:
+- In mediated channels (primary target), the mediator/host serializes events into a single global transcript order.
+- In non-mediated environments, implementations MAY choose any deterministic total order for the transcript they produce; interoperability claims apply to that produced transcript order.
+
 ## 5. Hashing and signatures (normative minimum)
 
 Hashing:

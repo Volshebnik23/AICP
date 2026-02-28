@@ -382,6 +382,20 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             else:
                 seen_ids.add(mid)
 
+        if "CT-PREV-MSG-REQUIRED-01" in enabled_checks:
+            for idx, (line_no, msg) in enumerate(rows):
+                if idx == 0:
+                    continue
+                prev_msg_hash = msg.get("prev_msg_hash")
+                if not isinstance(prev_msg_hash, str) or not prev_msg_hash:
+                    add_failure(
+                        t_failures,
+                        "CT-PREV-MSG-REQUIRED-01",
+                        "prev_msg_hash is required and must be a non-empty string for non-first messages",
+                        rel_file,
+                        line_no,
+                    )
+
         prev_hash = None
         for line_no, msg in rows:
             if prev_hash is not None and "prev_msg_hash" in msg and msg.get("prev_msg_hash") != prev_hash:
