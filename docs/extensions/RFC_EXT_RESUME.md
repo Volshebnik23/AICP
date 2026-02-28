@@ -38,3 +38,5 @@ This state MAY be paired with an EXT-ALERTS `ALERT` message such as code `RESYNC
 - Resume metadata should be minimal and avoid sensitive disclosure.
 - `details` / `client_info` payload fields, when present, SHOULD contain safe operational metadata only.
 - Resume responses should remain auditable via message hashes and transcript chain integrity.
+
+Security note: repeated `NEEDS_RESYNC` loops are an operational/security risk; conformance check `RS-LOOP-01` in `conformance/extensions/RS_RESUME_0.1.json` provides deterministic transcript-based detection coverage.

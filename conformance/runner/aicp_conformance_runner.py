@@ -469,6 +469,39 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
 
+        if "CN-DOWNGRADE-01" in enabled_checks:
+            accepted_extensions: dict[str, set[str]] = {}
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "CAPABILITIES_ACCEPT":
+                    result = payload.get("negotiation_result") or {}
+                    neg_id = payload.get("negotiation_id") or result.get("negotiation_id")
+                    selected = result.get("selected") or {}
+                    required_ext = selected.get("required_extensions")
+                    if isinstance(neg_id, str) and isinstance(required_ext, list):
+                        accepted_extensions[neg_id] = {e for e in required_ext if isinstance(e, str)}
+
+                elif mtype == "CAPABILITIES_PROPOSE":
+                    result = payload.get("negotiation_result") or {}
+                    neg_id = result.get("negotiation_id")
+                    selected = result.get("selected") or {}
+                    required_ext = selected.get("required_extensions")
+                    if not (isinstance(neg_id, str) and isinstance(required_ext, list)):
+                        continue
+                    proposed_set = {e for e in required_ext if isinstance(e, str)}
+                    prior_set = accepted_extensions.get(neg_id)
+                    if prior_set is not None and not prior_set.issubset(proposed_set):
+                        add_failure(
+                            t_failures,
+                            "CN-DOWNGRADE-01",
+                            f"negotiation_id '{neg_id}' removes previously accepted required_extensions (accepted={sorted(prior_set)}, proposed={sorted(proposed_set)})",
+                            rel_file,
+                            line_no,
+                        )
+
+
         if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
             for line_no, msg in rows:
                 if msg.get("message_type") != "ALERT":
@@ -538,6 +571,55 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     elif status == "NEEDS_RESYNC":
                         if current_head_hash == req_last_seen:
                             add_failure(t_failures, "RS-RESUME-MATCH-01", "NEEDS_RESYNC response.current_head_hash must differ from request.last_seen_message_hash", rel_file, resp_line_no)
+
+            if "RS-LOOP-01" in enabled_checks:
+                streak = 0
+                anchor: tuple[str, str, str] | None = None
+                idx = 0
+                while idx < len(rows):
+                    line_no, msg = rows[idx]
+                    if msg.get("message_type") != "RESUME_REQUEST":
+                        streak = 0
+                        anchor = None
+                        idx += 1
+                        continue
+
+                    req_payload = msg.get("payload") or {}
+                    if idx + 1 >= len(rows) or rows[idx + 1][1].get("message_type") != "RESUME_RESPONSE":
+                        streak = 0
+                        anchor = None
+                        idx += 1
+                        continue
+
+                    resp_line_no, resp_msg = rows[idx + 1]
+                    resp_payload = resp_msg.get("payload") or {}
+                    triple = (
+                        str(req_payload.get("session_id")),
+                        str(req_payload.get("last_seen_message_hash")),
+                        str(resp_payload.get("current_head_hash")),
+                    )
+                    same_session = str(resp_payload.get("session_id")) == triple[0]
+                    needs_resync = resp_payload.get("status") == "NEEDS_RESYNC"
+                    if same_session and needs_resync:
+                        if anchor == triple:
+                            streak += 1
+                        else:
+                            anchor = triple
+                            streak = 1
+                        if streak >= 3:
+                            add_failure(
+                                t_failures,
+                                "RS-LOOP-01",
+                                "detected repeated NEEDS_RESYNC loop without head progress (>=3 consecutive request/response cycles)",
+                                rel_file,
+                                resp_line_no,
+                            )
+                            break
+                    else:
+                        streak = 0
+                        anchor = None
+
+                    idx += 2
 
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")

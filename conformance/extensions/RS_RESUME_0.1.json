@@ -49,6 +49,28 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "RS-NEG-01",
+      "path": "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RS-LOOP-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -79,6 +101,10 @@
     {
       "test_id": "RS-ACTIONS-01",
       "description": "RESUME_RESPONSE recommended_actions values must be registered EXT-ALERTS action IDs"
+    },
+    {
+      "test_id": "RS-LOOP-01",
+      "description": "Detect repeated NEEDS_RESYNC resume cycles without head progress (suspicious forced loop)"
     }
   ],
   "compatibility_mark": "AICP-EXT-RESUME-0.1"
