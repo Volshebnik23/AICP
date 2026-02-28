@@ -49,6 +49,10 @@ Conflict resolution MUST be represented via `RESOLVE_CONFLICT` and SHOULD be quo
 
 Hashing:
 - Object hashes MUST use deterministic canonicalization and SHA-256 over `AICP1\0<object_type>\0<canonical-json>` preimage semantics.
+- Canonical JSON serialization MUST use UTF-8 output with unescaped non-ASCII characters (`ensure_ascii=false`).
+- Object keys MUST be sorted lexicographically by Unicode code point order at every object nesting level.
+- Floats are currently unsupported in canonicalization and MUST be rejected until full RFC8785 numeric handling is implemented.
+- Executable canonicalization evidence is maintained in `fixtures/core_tv.json` (TV-04..TV-06).
 - `message_hash` MUST be recomputable from message body excluding `message_hash` and `signatures`.
 
 Signatures:

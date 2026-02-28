@@ -9,6 +9,7 @@
     "timestamp",
     "sender",
     "message_type",
+    "contract_id",
     "payload"
   ],
   "properties": {

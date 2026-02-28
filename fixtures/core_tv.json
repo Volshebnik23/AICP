@@ -1,7 +1,14 @@
 {
   "TV-01": {
     "object_type": "contract",
-    "object": {"contract_id": "c1", "goal": "demo", "roles": ["initiator", "responder"]},
+    "object": {
+      "contract_id": "c1",
+      "goal": "demo",
+      "roles": [
+        "initiator",
+        "responder"
+      ]
+    },
     "canonical_json": "{\"contract_id\":\"c1\",\"goal\":\"demo\",\"roles\":[\"initiator\",\"responder\"]}",
     "object_hash": "sha256:3atge33khhRmVABSaXgxtgzqVMv0oFe5SFv_zCaiq_g"
   },
@@ -16,10 +23,16 @@
       "object_type": "message",
       "object": {
         "contract_id": "c1",
-        "contract_ref": {"base_version": "v1", "branch_id": "main", "head_version": "v1"},
+        "contract_ref": {
+          "base_version": "v1",
+          "branch_id": "main",
+          "head_version": "v1"
+        },
         "message_id": "m1",
         "message_type": "CONTRACT_PROPOSE",
-        "payload": {"note": "hello"},
+        "payload": {
+          "note": "hello"
+        },
         "sender": "agent:A",
         "session_id": "s1",
         "timestamp": "2026-01-01T00:00:00Z"
@@ -30,10 +43,16 @@
       "object_type": "message",
       "object": {
         "contract_id": "c1",
-        "contract_ref": {"base_version": "v1", "branch_id": "main", "head_version": "v1"},
+        "contract_ref": {
+          "base_version": "v1",
+          "branch_id": "main",
+          "head_version": "v1"
+        },
         "message_id": "m2",
         "message_type": "CONTRACT_ACCEPT",
-        "payload": {"accepted": true},
+        "payload": {
+          "accepted": true
+        },
         "prev_msg_hash": "sha256:95ujQaZblvWlvBzYQWbM9K1JHJC2VjZJWRzsmXfrss0",
         "sender": "agent:B",
         "session_id": "s1",
@@ -41,5 +60,78 @@
       },
       "message_hash": "sha256:u5K09B7_w80ZGSaQvH-vNmPgfTWVVgREX3wf_yc7-fI"
     }
+  },
+  "TV-04": {
+    "object_type": "canon_case",
+    "object": {
+      "A": 1,
+      "a": 2,
+      "ä": 3,
+      "Ω": 4,
+      "中": 5,
+      "value": "Привет 🌍"
+    },
+    "canonical_json": "{\"A\":1,\"a\":2,\"value\":\"Привет 🌍\",\"ä\":3,\"Ω\":4,\"中\":5}",
+    "object_hash": "sha256:4r8JjrknCSdHuO3DnoIXSAgxZEY1e351K2CTSJvwyIM"
+  },
+  "TV-05": {
+    "object_type": "canon_case",
+    "object": {
+      "nested": {
+        "z": 0,
+        "a": "He said \"hi\"\\npath\\\\to\\\\file"
+      },
+      "label": "escape_test",
+      "arr": [
+        "line1\\nline2",
+        "quote: \"q\"",
+        {
+          "k": "v\\\\x"
+        }
+      ]
+    },
+    "canonical_json": "{\"arr\":[\"line1\\\\nline2\",\"quote: \\\"q\\\"\",{\"k\":\"v\\\\\\\\x\"}],\"label\":\"escape_test\",\"nested\":{\"a\":\"He said \\\"hi\\\"\\\\npath\\\\\\\\to\\\\\\\\file\",\"z\":0}}",
+    "object_hash": "sha256:jAcSnyAJJZ_dB65kfz0usIEd4sQbvVmzSyj1ajmp-Kk"
+  },
+  "TV-06": {
+    "object_type": "canon_case",
+    "object": {
+      "z": {
+        "b": [
+          3,
+          2,
+          1
+        ],
+        "a": {
+          "中": "值",
+          "A": "x"
+        }
+      },
+      "a": [
+        {
+          "β": 2,
+          "α": 1
+        },
+        [
+          "Ω",
+          "ä",
+          "A"
+        ]
+      ],
+      "m": {
+        "k2": {
+          "y": 2,
+          "x": 1
+        },
+        "k1": [
+          {
+            "b": 2,
+            "a": 1
+          }
+        ]
+      }
+    },
+    "canonical_json": "{\"a\":[{\"α\":1,\"β\":2},[\"Ω\",\"ä\",\"A\"]],\"m\":{\"k1\":[{\"a\":1,\"b\":2}],\"k2\":{\"x\":1,\"y\":2}},\"z\":{\"a\":{\"A\":\"x\",\"中\":\"值\"},\"b\":[3,2,1]}}",
+    "object_hash": "sha256:LxHfxYQHlkybYYLSdYU7Iv1svmaRdNNkFtfccJBtkdo"
   }
 }
