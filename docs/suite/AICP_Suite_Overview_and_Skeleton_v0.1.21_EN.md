@@ -15,6 +15,8 @@ Optional release artifact: `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
 Profiles (normative + rationale):
 - `docs/profiles/AICP_Profiles.md`
 - `docs/profiles/AICP_Personas_Stories_Features_Profiles.md`
+Canonical flows (state machines + sequence diagrams):
+- `docs/flows/AICP_Canonical_Flows.md`
 
  
 Change log
