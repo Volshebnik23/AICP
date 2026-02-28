@@ -52,6 +52,8 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 #### `AICP-RESUMABLE-SESSIONS`
 - **Status:** Planned (draft).
 - **Dependencies:** Session resumption semantics and deterministic continuation conformance tests.
+  - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
+  - EXT-OBJECT-RESYNC (optional companion): `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
 
 ## 3. Conformance Badge Semantics
 A **conformance badge** is a profile-level compatibility mark issued when all required suites for the profile pass.

@@ -220,3 +220,34 @@ Normative notes:
 - Embedded AICP messages MUST remain schema/hash consistent with canonical envelope expectations.
 
 Conformance reference: `conformance/bindings/TB_MCP_0.1.json`; fixtures: `fixtures/bindings/mcp/`.
+
+
+---
+
+## 2.8 Resume / Reconnect (EXT-RESUME)
+
+```mermaid
+sequenceDiagram
+    participant C as Client / Rejoining participant
+    participant M as Mediator / Host
+
+    C->>M: RESUME_REQUEST (resume_id, session_id, last_seen_message_hash)
+    M->>C: RESUME_RESPONSE(status=OK | NEEDS_RESYNC | UNKNOWN_SESSION)
+    Note over C,M: NEEDS_RESYNC may trigger ALERT(RESYNC_REQUIRED) and/or OBJECT_RESYNC flow
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> ResumeRequested: RESUME_REQUEST
+    ResumeRequested --> InSync: RESUME_RESPONSE(status=OK)
+    ResumeRequested --> ResyncNeeded: RESUME_RESPONSE(status=NEEDS_RESYNC)
+    ResumeRequested --> UnknownSession: RESUME_RESPONSE(status=UNKNOWN_SESSION)
+    ResyncNeeded --> InSync: OBJECT_RESYNC and/or retry completed
+```
+
+Normative notes:
+- `RESUME_RESPONSE` MUST match request `resume_id` and `session_id`.
+- `status=OK` implies `current_head_hash == last_seen_message_hash`.
+- `status=NEEDS_RESYNC` implies `current_head_hash != last_seen_message_hash` and should drive deterministic recovery.
+
+Conformance reference: `conformance/extensions/RS_RESUME_0.1.json`; fixtures: `fixtures/extensions/resume/`.

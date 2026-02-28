@@ -51,3 +51,9 @@ EXT-ALERTS is orthogonal to EXT-ENFORCEMENT:
 - Alerts are protocol/operational signals.
 
 They MAY be used together in the same flow. For example, an enforcer may apply a sanction and emit an alert describing required remediation/recovery.
+
+
+## 7. Relationship to security alerts (normative)
+EXT-ALERTS covers operational/protocol recovery signaling (for example: retry, remediate, disconnect, escalate, acknowledge).
+Security-alert signaling in this repository (if present) is intended for security incidents/escalation and may use separate registries/categories.
+Implementations may use both, but should not conflate operational recovery alerts with security incident alerts.
