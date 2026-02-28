@@ -212,6 +212,7 @@ Contract.signature_policy defines required signers and thresholds for: contract 
 4.0 Message and Envelope (normative)
 An AICP Message is transport-independent and consists of a Message Envelope plus a message-type-specific Payload. The protocol defines validation rules; transports are defined by bindings (Section 11).
 Envelope fields (Core v0.1):
+All AICP messages MUST include contract_id.
 Field	Level	Meaning
 message_type	MUST	Core or registered extension message type.
 message_id	MUST	Unique identifier (UUID/ULID). Used for idempotency.

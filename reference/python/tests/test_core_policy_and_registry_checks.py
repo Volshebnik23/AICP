@@ -39,3 +39,9 @@ def test_core_suite_passes_with_structured_policies_and_registered_message_types
     assert "CT-MESSAGE-TYPE-REGISTRY-01" not in failure_ids
     assert "CT-CONTRACT-SCHEMA-01" not in failure_ids
     assert "CT-POLICY-CATEGORIES-01" not in failure_ids
+
+
+def test_core_message_schema_requires_contract_id() -> None:
+    schema = json.loads((ROOT / "schemas/core/aicp-core-message.schema.json").read_text(encoding="utf-8"))
+    required = set(schema.get("required", []))
+    assert "contract_id" in required

@@ -120,6 +120,8 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
 - ✅ M8.10 TypeScript SDK README minimal-envelope corrections shipped (`sdk/typescript/README.md`).
 - ✅ M8.11 Sandbox validator usability hardening shipped (`sandbox/run.py`, `sandbox/README.md`).
+- ✅ M8.12 contract_id envelope consistency shipped (Core schema + docs + conformance alignment).
+- ✅ M8.13 quickstart anti-rot gate shipped (`.github/workflows/ci.yml` quickstart-smoke job).
 
 ---
 

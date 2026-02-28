@@ -14,3 +14,10 @@ This drop-in is protocol-only and works alongside non-AICP chats (AICP is option
 To validate output, run the AICP sandbox validator or conformance runner, e.g.:
 - `python sandbox/run.py out/minimal_core.jsonl --no-signature-verify`
 - `python conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --out conformance/report.json`
+
+
+## Maintenance
+
+- `.mjs` files are the zero-build runnable artifacts.
+- `.ts` files are reference sources.
+- Keep `.ts` and `.mjs` logic in sync when editing (prefer updating TS first and mirroring to MJS).

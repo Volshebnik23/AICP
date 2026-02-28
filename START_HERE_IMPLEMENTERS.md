@@ -12,7 +12,7 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 
 ## Fastest path (TypeScript)
 
-1. Copy `dropins/aicp-core/typescript/` into your project.
+1. Copy [`dropins/aicp-core/typescript/`](dropins/aicp-core/typescript/) into your project.
 2. Run the generator (from repo root): `make quickstart-ts`.
 3. Inspect output: `out/quickstart/ts/minimal_core.jsonl`.
 4. Validate output: `python sandbox/run.py out/quickstart/ts/minimal_core.jsonl --no-signature-verify`.
@@ -20,7 +20,7 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 
 ## Fastest path (Python)
 
-1. Copy `dropins/aicp-core/python/` into your project.
+1. Copy [`dropins/aicp-core/python/`](dropins/aicp-core/python/) into your project.
 2. Run the generator (from repo root): `make quickstart-py`.
 3. Inspect output: `out/quickstart/py/minimal_core.jsonl`.
 4. Validate output: `python sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify`.
@@ -30,10 +30,11 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 
 ### Agent developer
 1. Start from `dropins/aicp-core/python/` or `dropins/aicp-core/typescript/`.
-2. Keep required envelope fields: `session_id`, `message_id`, `timestamp`, `sender`, `message_type`, `payload`.
-3. Compute `message_hash` from message body.
-4. Chain `prev_msg_hash` from the previous message.
-5. Validate with `sandbox/run.py`.
+2. Keep required envelope fields: `session_id`, `message_id`, `timestamp`, `sender`, `message_type`, `contract_id`, `payload`.
+3. `contract_id` is required on all messages.
+4. Compute `message_hash` from message body.
+5. Chain `prev_msg_hash` from the previous message.
+6. Validate with [sandbox/run.py](sandbox/run.py).
 
 ### Mediator/Host developer
 1. Reuse the drop-in message builder to ensure deterministic hashes.
@@ -43,6 +44,6 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 
 ### Enforcer/Moderator developer
 1. Keep decisions as protocol artifacts (`ENFORCEMENT_VERDICT`, `ALERT`) instead of ad hoc logs.
-2. Validate against extension suites in `conformance/extensions/`.
+2. Validate against extension suites in [conformance/extensions/](conformance/extensions/).
 3. Use demo suite for behavioral verification: `conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`.
 4. Treat degraded reports as non-badge-eligible.
