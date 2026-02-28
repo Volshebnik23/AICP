@@ -121,6 +121,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - 🟡 M9 External security review artifacts and remediation log:
   - `/security_review/*`
   - M9 security review package scaffolding is now available in-repo.
+  - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
 - ⏳ M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
