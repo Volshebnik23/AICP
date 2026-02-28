@@ -31,8 +31,7 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT",
-        "CONSENT_REQUIRED",
-        "CONSENT_GRANT",
+        "CONTEXT_AMEND",
         "ATTEST_ACTION"
       ]
     },
@@ -42,9 +41,9 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT",
-        "CONSENT_GRANT",
-        "CONSENT_REVOKE",
-        "POLICY_VIOLATION"
+        "CONTEXT_AMEND",
+        "CONTEXT_AMEND",
+        "ATTEST_ACTION"
       ]
     },
     {
@@ -95,6 +94,10 @@
       "description": "Validate each JSONL record against Core message schema"
     },
     {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
       "test_id": "CT-PAYLOAD-SCHEMA-01",
       "description": "Validate mapped Core payloads against core payload schema"
     },
@@ -121,6 +124,14 @@
     {
       "test_id": "CT-SIGNATURE-VERIFY-01",
       "description": "verify Ed25519 signatures using fixtures/keys/GT_public_keys.json"
+    },
+    {
+      "test_id": "CT-CONTRACT-SCHEMA-01",
+      "description": "CONTRACT_PROPOSE payload.contract must validate against core contract schema and match envelope contract_id"
+    },
+    {
+      "test_id": "CT-POLICY-CATEGORIES-01",
+      "description": "contract.policies categories must be registered or namespaced; policy_id values must be unique"
     }
   ],
   "payload_schema_ref": "schemas/core/aicp-core-payloads.schema.json",
