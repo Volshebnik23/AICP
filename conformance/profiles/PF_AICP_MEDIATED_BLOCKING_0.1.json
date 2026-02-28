@@ -1,0 +1,12 @@
+{
+  "profile_id": "AICP-MEDIATED-BLOCKING",
+  "profile_version": "0.1",
+  "description": "Mediated blocking profile requiring Core, CAPNEG, POLICY_EVAL, and ENFORCEMENT suite conformance.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CN_CAPNEG_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/ENF_ENFORCEMENT_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-0.1"
+}

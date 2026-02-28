@@ -74,5 +74,6 @@
       "test_id": "ENF-SANCTION-CODES-01",
       "description": "ENFORCEMENT_VERDICT sanctions codes must be registered or validly namespaced"
     }
-  ]
+  ],
+  "compatibility_mark": "AICP-EXT-ENFORCEMENT-0.1"
 }

@@ -12,6 +12,10 @@ Status: Draft
 Canonical Core normative source (Markdown): `docs/core/AICP_Core_v0.1_Normative.md`
 Optional release artifact: `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
 
+Profiles (normative + rationale):
+- `docs/profiles/AICP_Profiles.md`
+- `docs/profiles/AICP_Personas_Stories_Features_Profiles.md`
+
  
 Change log
  

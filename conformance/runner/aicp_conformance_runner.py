@@ -275,7 +275,8 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     passed = not failures
-    marks = ["AICP-BIND-MCP-0.1"] if passed else []
+    suite_mark = suite.get("compatibility_mark")
+    marks = [suite_mark] if passed and isinstance(suite_mark, str) else (["AICP-BIND-MCP-0.1"] if passed else [])
     return {
         "aicp_version": version,
         "suite_id": suite["suite_id"],
@@ -536,7 +537,8 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     passed = not failures
-    marks = ["AICP-Core-0.1"] if passed else []
+    suite_mark = suite.get("compatibility_mark")
+    marks = [suite_mark] if passed and isinstance(suite_mark, str) else []
 
     return {
         "aicp_version": version,

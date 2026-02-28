@@ -1,0 +1,9 @@
+{
+  "profile_id": "AICP-BASE",
+  "profile_version": "0.1",
+  "description": "Core baseline profile requiring Core suite conformance.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-BASE-0.1"
+}
