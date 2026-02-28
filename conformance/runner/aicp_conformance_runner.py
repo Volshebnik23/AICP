@@ -307,6 +307,8 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
     enforcement_sanction_codes = {e.get("id") for e in load_json(ROOT / "registry/enforcement_sanction_codes.json")}
+    alert_codes_registry = {e.get("id"): e for e in load_json(ROOT / "registry/alert_codes.json")}
+    alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
 
     failures: list[dict[str, Any]] = []
 
@@ -466,6 +468,77 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if computed_ctx_hash != stored_ctx_hash:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
+
+        if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload") or {}
+                if "AL-ALERT-CODES-01" in enabled_checks:
+                    code = payload.get("code")
+                    if code not in alert_codes_registry:
+                        add_failure(t_failures, "AL-ALERT-CODES-01", f"unknown alert code '{code}'", rel_file, line_no)
+                if "AL-ALERT-ACTIONS-01" in enabled_checks:
+                    for action in payload.get("recommended_actions", []) or []:
+                        if action not in alert_recommended_actions:
+                            add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
+
+        if "RS-ACTIONS-01" in enabled_checks or "RS-RESUME-MATCH-01" in enabled_checks:
+            request_rows: list[tuple[int, dict[str, Any]]] = []
+            response_rows: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}
+
+            for line_no, msg in rows:
+                if msg.get("message_type") == "RESUME_REQUEST":
+                    payload = msg.get("payload") or {}
+                    request_rows.append((line_no, payload))
+                elif msg.get("message_type") == "RESUME_RESPONSE":
+                    payload = msg.get("payload") or {}
+                    key = (str(payload.get("resume_id")), str(payload.get("session_id")))
+                    response_rows.setdefault(key, []).append((line_no, payload))
+
+                    if "RS-ACTIONS-01" in enabled_checks:
+                        for action in payload.get("recommended_actions", []) or []:
+                            if action not in alert_recommended_actions:
+                                add_failure(t_failures, "RS-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
+
+            if "RS-RESUME-MATCH-01" in enabled_checks:
+                for line_no, req_payload in request_rows:
+                    req_resume_id = req_payload.get("resume_id")
+                    req_session_id = req_payload.get("session_id")
+                    req_last_seen = req_payload.get("last_seen_message_hash")
+                    key = (str(req_resume_id), str(req_session_id))
+                    candidates = response_rows.get(key, [])
+                    if not candidates:
+                        add_failure(
+                            t_failures,
+                            "RS-RESUME-MATCH-01",
+                            f"missing RESUME_RESPONSE for resume_id='{req_resume_id}' session_id='{req_session_id}'",
+                            rel_file,
+                            line_no,
+                        )
+                        continue
+
+                    matching = [c for c in candidates if c[0] > line_no]
+                    resp_line_no, resp_payload = matching[0] if matching else candidates[0]
+
+                    if resp_payload.get("resume_id") != req_resume_id:
+                        add_failure(t_failures, "RS-RESUME-MATCH-01", "response.resume_id does not match request.resume_id", rel_file, resp_line_no)
+                    if resp_payload.get("session_id") != req_session_id:
+                        add_failure(t_failures, "RS-RESUME-MATCH-01", "response.session_id does not match request.session_id", rel_file, resp_line_no)
+
+                    current_head_hash = resp_payload.get("current_head_hash")
+                    if not isinstance(current_head_hash, str):
+                        add_failure(t_failures, "RS-RESUME-MATCH-01", "response.current_head_hash must be a string", rel_file, resp_line_no)
+                        continue
+
+                    status = resp_payload.get("status")
+                    if status == "OK":
+                        if current_head_hash != req_last_seen:
+                            add_failure(t_failures, "RS-RESUME-MATCH-01", "OK response.current_head_hash must equal request.last_seen_message_hash", rel_file, resp_line_no)
+                    elif status == "NEEDS_RESYNC":
+                        if current_head_hash == req_last_seen:
+                            add_failure(t_failures, "RS-RESUME-MATCH-01", "NEEDS_RESYNC response.current_head_hash must differ from request.last_seen_message_hash", rel_file, resp_line_no)
+
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
             namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
@@ -483,6 +556,40 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if namespaced_dash.match(code) or namespaced_colon.match(code):
                         continue
                     add_failure(t_failures, "ENF-SANCTION-CODES-01", f"unknown sanction code '{code}'", rel_file, line_no)
+
+        if "ENF-AUTH-01" in enabled_checks:
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            enforcement_cfg = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    enforcement_cfg = ext.get("enforcement")
+                if enforcement_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
+
+            if isinstance(enforcement_cfg, dict):
+                allowed = enforcement_cfg.get("enforcers")
+                if isinstance(allowed, list) and allowed:
+                    allowed_senders = {v for v in allowed if isinstance(v, str)}
+                    for line_no, msg in rows:
+                        if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                            continue
+                        sender = msg.get("sender")
+                        if sender not in allowed_senders:
+                            add_failure(
+                                t_failures,
+                                "ENF-AUTH-01",
+                                f"ENFORCEMENT_VERDICT sender '{sender}' is not listed in contract enforcers",
+                                rel_file,
+                                line_no,
+                            )
 
         if "ENF-GATE-01" in enabled_checks:
             first_contract = None

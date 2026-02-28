@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-resume-payloads.schema.json",
+  "title": "AICP EXT-RESUME payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "RESUME_REQUEST": {
+      "type": "object",
+      "required": [
+        "resume_id",
+        "session_id",
+        "last_seen_message_hash"
+      ],
+      "properties": {
+        "resume_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "last_seen_message_hash": {
+          "type": "string"
+        },
+        "contract_id": {
+          "type": "string"
+        },
+        "contract_hash": {
+          "type": "string"
+        },
+        "client_info": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RESUME_RESPONSE": {
+      "type": "object",
+      "required": [
+        "resume_id",
+        "session_id",
+        "status",
+        "current_head_hash",
+        "recommended_actions"
+      ],
+      "properties": {
+        "resume_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NEEDS_RESYNC",
+            "UNKNOWN_SESSION"
+          ]
+        },
+        "current_head_hash": {
+          "type": "string"
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
