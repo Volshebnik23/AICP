@@ -307,6 +307,8 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
     enforcement_sanction_codes = {e.get("id") for e in load_json(ROOT / "registry/enforcement_sanction_codes.json")}
+    alert_codes_registry = {e.get("id"): e for e in load_json(ROOT / "registry/alert_codes.json")}
+    alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
 
     failures: list[dict[str, Any]] = []
 
@@ -465,6 +467,21 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             continue
                         if computed_ctx_hash != stored_ctx_hash:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
+
+
+        if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload") or {}
+                if "AL-ALERT-CODES-01" in enabled_checks:
+                    code = payload.get("code")
+                    if code not in alert_codes_registry:
+                        add_failure(t_failures, "AL-ALERT-CODES-01", f"unknown alert code '{code}'", rel_file, line_no)
+                if "AL-ALERT-ACTIONS-01" in enabled_checks:
+                    for action in payload.get("recommended_actions", []) or []:
+                        if action not in alert_recommended_actions:
+                            add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
 
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")

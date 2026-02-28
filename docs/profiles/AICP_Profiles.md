@@ -31,6 +31,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 #### `AICP-MEDIATED-BLOCKING-OPS`
 - **Status:** Planned (draft).
 - **Dependencies:** Mediated blocking baseline plus standardized alerting/recovery operations artifacts.
+  - EXT-ALERTS: `conformance/extensions/AL_ALERTS_0.1.json`
 
 #### `AICP-RECEPTION-CHAT`
 - **Status:** Planned (draft).

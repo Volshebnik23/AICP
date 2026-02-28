@@ -100,9 +100,9 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - Define profiles as named bundles of required extensions + canonical flows.
   - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
 
-- ⏳ M8.3 Alert/error registry + recovery semantics (“TLS alerts”-like)
-  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate).
-  - Make platform/mediator UX and operations interoperable.
+- ✅ M8.3 EXT-ALERTS alert/error registry + recovery semantics (“TLS alerts”-like)
+  - Registered extension artifacts shipped: RFC, registries, schema, conformance suite, and fixtures.
+  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate) are now repo-validated.
 
 - ⏳ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
   - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
@@ -145,4 +145,4 @@ These milestones define **optional semantics** that a platform/mediator MAY enfo
 ---
 
 ## Immediate next step
-**M8.1 + M8.2 (Profiles foundation + badges)**.
+**M8.4 (Canonical state machines and flow diagrams)**, building on completed M8.1/M8.2 profile foundations and M8.3 alert semantics.

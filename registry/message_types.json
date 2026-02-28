@@ -250,5 +250,14 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#151-ext-workflow-sync--workflow-synchronization-registered-extension",
     "security_considerations": "Workflow artifacts must be hash-bound to contract head."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Alert payloads should be authenticated and minimally disclosive."
   }
 ]

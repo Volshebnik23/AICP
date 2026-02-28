@@ -107,6 +107,7 @@ To keep the protocol implementable, AICP is split into a small Core v0.1 and a r
 •	EXT-DELEGATION — Hierarchical, purpose-oriented delegation with challenge/claim.
 •	EXT-DISPUTES — Challenges, breach claims, optional arbitration hooks.
 •	EXT-SECURITY-ALERT — Standard security events and escalation messages.
+•	EXT-ALERTS — Operational warning/fatal alerts and recovery action semantics.
 •	EXT-TRACING — Trace and observability fields (e.g., OpenTelemetry compatibility).
 •	EXT-IDENTITY-LC — Identity lifecycle: rotation, revocation, migration, external attestations.
 •	EXT-QOS — Budgets, deadlines, backpressure.
@@ -368,7 +369,7 @@ A protocol becomes real when independent implementations can prove compatibility
 •	CT-15: DUPLICATE_MESSAGE_ID: idempotent handling (no double-apply).
 •	CT-16: INVALID_CONTRACT_REF: attestation referencing unknown head_version rejected for audit; state unchanged.
 7.2 Extension conformance suites (informative)
-Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating.
+Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating, AL-* for EXT-ALERTS.
 
 8. RFC: Registry and Change Control
 Canonical source: `docs/rfc/RFC_Registries_and_Change_Control.md`
@@ -411,6 +412,7 @@ Canonical sources:
 - `docs/extensions/RFC_EXT_DELEGATION.md`
 - `docs/extensions/RFC_EXT_DISPUTES.md`
 - `docs/extensions/RFC_EXT_SECURITY_ALERTS.md`
+- `docs/extensions/RFC_EXT_ALERTS.md`
 Summary: Defines applied extension primitives for workflow sync, delegation, disputes, and security escalation.
 
 17. RFC: Governance / IPR / Stewardship
