@@ -557,6 +557,40 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         continue
                     add_failure(t_failures, "ENF-SANCTION-CODES-01", f"unknown sanction code '{code}'", rel_file, line_no)
 
+        if "ENF-AUTH-01" in enabled_checks:
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            enforcement_cfg = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    enforcement_cfg = ext.get("enforcement")
+                if enforcement_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
+
+            if isinstance(enforcement_cfg, dict):
+                allowed = enforcement_cfg.get("enforcers")
+                if isinstance(allowed, list) and allowed:
+                    allowed_senders = {v for v in allowed if isinstance(v, str)}
+                    for line_no, msg in rows:
+                        if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                            continue
+                        sender = msg.get("sender")
+                        if sender not in allowed_senders:
+                            add_failure(
+                                t_failures,
+                                "ENF-AUTH-01",
+                                f"ENFORCEMENT_VERDICT sender '{sender}' is not listed in contract enforcers",
+                                rel_file,
+                                line_no,
+                            )
+
         if "ENF-GATE-01" in enabled_checks:
             first_contract = None
             for _, msg in rows:

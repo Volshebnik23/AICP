@@ -123,6 +123,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - M9 security review package scaffolding is now available in-repo.
   - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
   - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
+  - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
 - ⏳ M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
@@ -150,4 +151,4 @@ These milestones define **optional semantics** that a platform/mediator MAY enfo
 ---
 
 ## Immediate next step
-**M9 (External security review package hardening + review execution support)** is current.
+**M9.3 (external review execution + remediation triage workflow hardening)** is next.

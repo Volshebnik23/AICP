@@ -251,3 +251,8 @@ Normative notes:
 - `status=NEEDS_RESYNC` implies `current_head_hash != last_seen_message_hash` and should drive deterministic recovery.
 
 Conformance reference: `conformance/extensions/RS_RESUME_0.1.json`; fixtures: `fixtures/extensions/resume/`.
+
+## Behavioral enforcement demo pointer
+- Deterministic demo transcripts and threat-driven expected-fail cases are available under `demos/enforcement_behavioral/`.
+- Canonical machine-verifiable fixtures are in `fixtures/demos/enforcement_behavioral/` and suite catalog `conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`.
+

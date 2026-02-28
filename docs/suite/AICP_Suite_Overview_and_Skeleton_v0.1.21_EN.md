@@ -373,7 +373,7 @@ A protocol becomes real when independent implementations can prove compatibility
 •	CT-15: DUPLICATE_MESSAGE_ID: idempotent handling (no double-apply).
 •	CT-16: INVALID_CONTRACT_REF: attestation referencing unknown head_version rejected for audit; state unchanged.
 7.2 Extension conformance suites (informative)
-Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating, AL-* for EXT-ALERTS, RS-* for EXT-RESUME.
+Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating, AL-* for EXT-ALERTS, RS-* for EXT-RESUME. Demo suites MAY also be published for deterministic interoperability evidence (e.g., DEMO-* catalogs under `conformance/demos/`).
 
 8. RFC: Registry and Change Control
 Canonical source: `docs/rfc/RFC_Registries_and_Change_Control.md`
