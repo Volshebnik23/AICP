@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-alerts-payloads.schema.json",
+  "title": "AICP EXT-ALERTS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "ALERT": {
+      "type": "object",
+      "required": [
+        "alert_id",
+        "code",
+        "severity",
+        "recommended_actions",
+        "issued_at"
+      ],
+      "properties": {
+        "alert_id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "WARNING",
+            "FATAL"
+          ]
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "issued_at": {
+          "type": "string"
+        },
+        "target_message_hash": {
+          "type": "string"
+        },
+        "target_message_id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 280
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
