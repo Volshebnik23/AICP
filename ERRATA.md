@@ -2,6 +2,12 @@
 
 Track discovered inconsistencies or bugs across spec text, schemas, fixtures, tests, and tooling.
 
+## How to file an erratum
+- Open an issue or PR describing the erratum.
+- Include affected spec/doc path(s).
+- Include a minimal reproduction (transcript/fixture if possible).
+- Link related conformance failures/reports when applicable.
+
 ## Template
 - **ID:** ER-XXXX
 - **Area:** spec | schema | fixture | transcript | conformance | tooling | docs

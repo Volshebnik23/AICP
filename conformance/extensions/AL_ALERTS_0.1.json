@@ -1,0 +1,69 @@
+{
+  "suite_id": "AL-ALERTS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-ALERTS conformance checks for alert code and recommended action registry validation.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-alerts-payloads.schema.json",
+  "payload_schema_map": {
+    "ALERT": "#/$defs/ALERT"
+  },
+  "transcripts": [
+    {
+      "id": "AL-01",
+      "path": "fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ALERT"
+      ]
+    },
+    {
+      "id": "AL-02",
+      "path": "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ALERT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AL-ALERT-CODES-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against EXT-ALERTS payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "AL-ALERT-CODES-01",
+      "description": "ALERT payload code values must be registered alert codes"
+    },
+    {
+      "test_id": "AL-ALERT-ACTIONS-01",
+      "description": "ALERT payload recommended_actions values must be registered action IDs"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-ALERTS-0.1"
+}
