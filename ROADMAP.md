@@ -112,6 +112,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 - 🟡 M8.6 Plugfest kit + interop report + errata workflow
   - `/interop/*` artifacts, test vectors, interop report format.
+  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
 
 ---
 

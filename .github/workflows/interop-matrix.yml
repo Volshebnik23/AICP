@@ -1,0 +1,52 @@
+name: Interop Matrix
+
+on:
+  pull_request:
+    paths:
+      - "interop/submissions/**"
+      - "interop/tools/**"
+      - "interop/schemas/**"
+      - "interop/templates/**"
+      - "interop/README.md"
+      - "interop/submissions/README.md"
+
+permissions:
+  contents: read
+
+jobs:
+  refresh-and-check-matrix:
+    name: Refresh interop matrix and check staleness
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install minimal deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install jsonschema
+
+      - name: Run lightweight validation
+        run: make validate
+
+      - name: Regenerate interop matrix
+        run: make interop-matrix
+
+      - name: Check matrix files are committed and up to date
+        run: |
+          if ! git diff --exit-code -- interop/INTEROP_MATRIX.md interop/interop_matrix.json > /dev/null; then
+            echo "Interop matrix is out of date. Run 'make interop-matrix' and commit updated interop/INTEROP_MATRIX.md and interop/interop_matrix.json."
+            git --no-pager diff -- interop/INTEROP_MATRIX.md interop/interop_matrix.json
+            exit 1
+          fi
+
+          if [ -n "$(git ls-files --others --exclude-standard -- interop/INTEROP_MATRIX.md interop/interop_matrix.json)" ]; then
+            echo "Interop matrix is out of date. Run 'make interop-matrix' and commit updated interop/INTEROP_MATRIX.md and interop/interop_matrix.json."
+            git status --short -- interop/INTEROP_MATRIX.md interop/interop_matrix.json
+            exit 1
+          fi

@@ -24,12 +24,17 @@ def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _add_error(entry: dict[str, Any], code: str, message: str) -> None:
+    entry["errors"].append({"error_code": code, "error_message": message})
+    entry["valid"] = False
+
+
 def collect_submission(submission_dir: Path) -> dict[str, Any]:
     entry: dict[str, Any] = {
         "implementation_folder": submission_dir.name,
         "implementation": None,
         "reports": [],
-        "compatibility_marks": [],
+        "computed_marks": [],
         "profiles": {},
         "errors": [],
         "valid": True,
@@ -37,21 +42,31 @@ def collect_submission(submission_dir: Path) -> dict[str, Any]:
 
     impl_path = submission_dir / "implementation.json"
     if not impl_path.exists():
-        entry["errors"].append("missing implementation.json")
-        entry["valid"] = False
+        _add_error(entry, "MISSING_IMPLEMENTATION_MANIFEST", "missing implementation.json")
     else:
         try:
-            entry["implementation"] = _load_json(impl_path)
+            impl_obj = _load_json(impl_path)
+            if not isinstance(impl_obj, dict):
+                _add_error(entry, "INVALID_IMPLEMENTATION_MANIFEST", "implementation.json must be an object")
+            else:
+                entry["implementation"] = impl_obj
+                impl_id = impl_obj.get("implementation_id")
+                if not isinstance(impl_id, str):
+                    _add_error(entry, "INVALID_IMPLEMENTATION_ID", "implementation_id must be a string")
+                elif impl_id != submission_dir.name:
+                    _add_error(
+                        entry,
+                        "IMPLEMENTATION_ID_MISMATCH",
+                        f"implementation_id '{impl_id}' does not match folder '{submission_dir.name}'",
+                    )
         except Exception as exc:
-            entry["errors"].append(f"invalid implementation.json: {exc}")
-            entry["valid"] = False
+            _add_error(entry, "INVALID_IMPLEMENTATION_MANIFEST", f"invalid implementation.json: {exc}")
 
     reports_dir = submission_dir / "reports"
     marks: set[str] = set()
 
     if not reports_dir.exists() or not reports_dir.is_dir():
-        entry["errors"].append("missing reports directory")
-        entry["valid"] = False
+        _add_error(entry, "MISSING_REPORTS_DIR", "missing reports directory")
     else:
         for report_path in sorted(reports_dir.glob("*.json")):
             report_rec: dict[str, Any] = {"path": str(report_path.relative_to(submission_dir))}
@@ -70,11 +85,10 @@ def collect_submission(submission_dir: Path) -> dict[str, Any]:
                     entry["profiles"][profile_id] = bool(report_obj.get("passed"))
             except Exception as exc:
                 report_rec["error"] = f"malformed report: {exc}"
-                entry["errors"].append(f"{report_path.name}: malformed report")
-                entry["valid"] = False
+                _add_error(entry, "MALFORMED_REPORT", f"{report_path.name}: malformed report")
             entry["reports"].append(report_rec)
 
-    entry["compatibility_marks"] = sorted(marks)
+    entry["computed_marks"] = sorted(marks) if entry["valid"] else []
     return entry
 
 
@@ -115,15 +129,16 @@ def render_markdown(matrix: dict[str, Any]) -> str:
         lines.append("")
 
     cols = matrix["columns"]
-    header = ["Implementation"] + cols
+    header = ["Implementation", "Status"] + cols
     lines.append("| " + " | ".join(header) + " |")
     lines.append("| " + " | ".join(["---"] * len(header)) + " |")
 
     for impl in matrix.get("implementations", []):
         impl_meta = impl.get("implementation") or {}
         impl_name = impl_meta.get("implementation_id") or impl.get("implementation_folder") or "unknown"
-        marks = set(impl.get("compatibility_marks", []))
-        row = [str(impl_name)]
+        status = "VALID" if impl.get("valid") else "INVALID"
+        marks = set(impl.get("computed_marks", [])) if impl.get("valid") else set()
+        row = [str(impl_name), status]
         for col in cols:
             row.append("✅" if col in marks else "❌")
         lines.append("| " + " | ".join(row) + " |")
@@ -140,7 +155,8 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             impl_name = impl_meta.get("implementation_id") or impl.get("implementation_folder") or "unknown"
             errors = impl.get("errors", [])
             if errors:
-                lines.append(f"- `{impl_name}`: " + "; ".join(str(e) for e in errors))
+                rendered = "; ".join(f"{e.get('error_code')}: {e.get('error_message')}" for e in errors)
+                lines.append(f"- `{impl_name}`: {rendered}")
             else:
                 lines.append(f"- `{impl_name}`: no parsing errors.")
 

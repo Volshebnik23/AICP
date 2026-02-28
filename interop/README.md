@@ -39,3 +39,11 @@ make interop-matrix
 This aggregates all submission manifests and reports into:
 - `interop/interop_matrix.json` (machine-readable)
 - `interop/INTEROP_MATRIX.md` (human-readable matrix)
+
+
+## Before you submit (checklist)
+- Run `make conformance-all` (optional but recommended).
+- Copy report JSON files into `interop/submissions/<implementation_id>/reports/`.
+- Ensure folder name equals `implementation.json:implementation_id`.
+- Run `make interop-matrix`.
+- Commit `interop/INTEROP_MATRIX.md` and `interop/interop_matrix.json` (CI will enforce freshness).
