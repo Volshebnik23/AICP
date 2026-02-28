@@ -100,24 +100,38 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - Define profiles as named bundles of required extensions + canonical flows.
   - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
 
-- ⏳ M8.3 Alert/error registry + recovery semantics (“TLS alerts”-like)
-  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate).
-  - Make platform/mediator UX and operations interoperable.
+- ✅ M8.3 EXT-ALERTS alert/error registry + recovery semantics (“TLS alerts”-like)
+  - Registered extension artifacts shipped: RFC, registries, schema, conformance suite, and fixtures.
+  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate) are now repo-validated.
 
-- ⏳ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
+- ✅ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
   - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
 
-- ⏳ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
+- ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
   - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
 
-- ⏳ M8.6 Plugfest kit + interop report + errata workflow
+- 🟡 M8.6 Plugfest kit + interop report + errata workflow
   - `/interop/*` artifacts, test vectors, interop report format.
+  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
+  - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
+
+- ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
+- ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
+- ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
+- ✅ M8.10 TypeScript SDK README minimal-envelope corrections shipped (`sdk/typescript/README.md`).
+- ✅ M8.11 Sandbox validator usability hardening shipped (`sandbox/run.py`, `sandbox/README.md`).
 
 ---
 
 ## ⏳ Later milestones (hardening)
-- ⏳ M9 External security review artifacts and remediation log:
+- 🟡 M9 External security review artifacts and remediation log:
   - `/security_review/*`
+  - M9 security review package scaffolding is now available in-repo.
+  - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
+  - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
+  - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
+  - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
+  - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
 - ⏳ M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
@@ -145,4 +159,4 @@ These milestones define **optional semantics** that a platform/mediator MAY enfo
 ---
 
 ## Immediate next step
-**M8.1 + M8.2 (Profiles foundation + badges)**.
+**M10 (snapshot discipline + compatibility packaging hardening)** is next.

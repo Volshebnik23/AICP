@@ -1,0 +1,13 @@
+{
+  "submissions_dir": "interop/submissions",
+  "columns": [
+    "AICP-Profile-BASE-0.1",
+    "AICP-Profile-MEDIATED-BLOCKING-0.1",
+    "AICP-Core-0.1",
+    "AICP-EXT-ENFORCEMENT-0.1",
+    "AICP-EXT-ALERTS-0.1",
+    "AICP-EXT-RESUME-0.1"
+  ],
+  "implementations": [],
+  "note": "No submissions found."
+}

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
@@ -47,3 +48,25 @@ def test_profile_conformance_catalogs_pass() -> None:
             assert expected_mark in data["compatibility_marks"]
         finally:
             (ROOT / report).unlink(missing_ok=True)
+
+
+def test_profile_runner_prints_absolute_path_when_outside_repo() -> None:
+    with tempfile.TemporaryDirectory(prefix="aicp-profile-out-") as tmp:
+        out_path = Path(tmp) / "profile_report.json"
+        cmd = [
+            sys.executable,
+            str(RUNNER),
+            "--profile",
+            "conformance/profiles/PF_AICP_BASE_0.1.json",
+            "--out",
+            str(out_path),
+        ]
+        result = subprocess.run(cmd, cwd=ROOT, check=False, capture_output=True, text=True)
+        try:
+            assert result.returncode == 0
+            assert str(out_path) in result.stdout
+            assert out_path.exists()
+            data = json.loads(out_path.read_text(encoding="utf-8"))
+            assert data["passed"] is True
+        finally:
+            out_path.unlink(missing_ok=True)
