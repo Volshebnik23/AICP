@@ -107,10 +107,10 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
   - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
 
-- 🟡 M8.5 Session resumption / reconnect pattern (fast re-onboarding)
+- ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
   - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
 
-- ⏳ M8.6 Plugfest kit + interop report + errata workflow
+- 🟡 M8.6 Plugfest kit + interop report + errata workflow
   - `/interop/*` artifacts, test vectors, interop report format.
 
 ---
@@ -145,4 +145,4 @@ These milestones define **optional semantics** that a platform/mediator MAY enfo
 ---
 
 ## Immediate next step
-**M8.5 (Session resumption / reconnect pattern)** is current; next is **M8.6 (Plugfest kit + interop report + errata workflow)**.
+**M8.6 (Plugfest kit + interop report + errata workflow)** is current.

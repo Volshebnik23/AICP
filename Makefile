@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-all lint release-check clean
+.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-all interop-matrix lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -37,6 +37,9 @@ conformance-all:
 conformance-profiles:
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_BASE_0.1.json --out conformance/report_profile_base.json
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json --out conformance/report_profile_mediated_blocking.json
+
+interop-matrix:
+	$(PYTHON) interop/tools/interop_matrix.py --submissions interop/submissions --out-md interop/INTEROP_MATRIX.md --out-json interop/interop_matrix.json
 
 lint:
 	@echo "Lint target placeholder: no lint checks configured."
