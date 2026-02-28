@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-all interop-matrix lint release-check clean
+.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-all interop-matrix demo-enforcement-behavioral lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -40,6 +40,9 @@ conformance-profiles:
 
 interop-matrix:
 	$(PYTHON) interop/tools/interop_matrix.py --submissions interop/submissions --out-md interop/INTEROP_MATRIX.md --out-json interop/interop_matrix.json
+
+demo-enforcement-behavioral:
+	$(PYTHON) demos/enforcement_behavioral/scripts/run_demo.py
 
 lint:
 	@echo "Lint target placeholder: no lint checks configured."
