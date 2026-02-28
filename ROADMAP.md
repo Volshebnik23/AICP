@@ -61,17 +61,14 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - Add `/conformance` suite catalogs (Core + opt-in EXT suites).
 - Add a conformance runner CLI that outputs a **compatibility report** (machine-readable).
 - Run conformance in CI.
-**Acceptance:** one command produces pass/fail + report; CI runs Core suite.
 
 ### ✅ Completed (M5): Reference implementations in-repo
-**Goal:** provide minimal, correct reference implementations that are easy to adopt and test.
-- Add `/reference/python` (minimum correct implementation).
-- Optionally add `/reference/typescript` with parity notes.
-**Acceptance:** reference implementation tests are runnable via the one-command standard.
+- `/reference/python` (minimum correct implementation).
+- `/sdk/typescript` (validator/hash utilities) + templates.
 
 ### ✅ Completed (M6): Expanded golden transcripts + negative conformance
-- Core golden coverage now includes revoke, unknown-base+resync, invalid signature, and duplicate message_id replay scenarios.
-- Conformance supports expected-failure handling for controlled negative outcomes.
+- Golden coverage includes revoke, unknown-base+resync, invalid signature, duplicate message_id replay scenarios.
+- Expected-fail support in conformance.
 
 ### ✅ Completed (M7.x): Extension & binding productization line
 - ✅ M7.1: EXT-CAPNEG productization
@@ -80,18 +77,21 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M7.4: BINDINGS productization (starting with MCP)
 - ✅ M7.5: Developer Experience & Adoption Kit (DX)
 - ✅ M7.6: EXT-ENFORCEMENT productization (blocking enforcement contour)
-  - `docs/extensions/RFC_EXT_ENFORCEMENT.md`
-  - `registry/enforcement_sanction_codes.json`
-  - `schemas/extensions/ext-enforcement-payloads.schema.json`
-  - `fixtures/extensions/enforcement/`
-  - `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
 - ✅ M7.7: Roadmap sync discipline (process hardening)
-  - Roadmap sync reminder added in `AGENTS.md` to require sprint-by-sprint roadmap updates when shipped artifacts change.
 
 ---
 
-## 🔜 Next: Interop readiness package (TLS-like usability & interoperability)
-**Goal:** make the protocol easy to adopt correctly: clear profiles, clear flows, clear error/recovery semantics, and “badges” for compatibility.
+## ✅ Completed: Interop readiness package (TLS-like usability & interoperability)
+- ✅ M8.1 Personas → user stories → feature sets → profile mapping
+- ✅ M8.2 AICP Profiles (normative doc) + conformance badges
+- ✅ M8.3 EXT-ALERTS (“TLS alerts”-like) + recovery semantics
+- ✅ M8.4 Canonical state machines and flow diagrams
+- ✅ M8.5 EXT-RESUME (session resumption / reconnect)
+- ✅ M8.6 Plugfest kit scaffolding + interop matrix tool + errata workflow note
+- ✅ M8.6.1 Interop community-ready hardening:
+  - interop matrix CI staleness checks
+  - submission validation (implementation_id matches folder name)
+  - schema validation for changed manifests in CI
 
 - 🔜 M8.1 Personas → user stories → feature sets → profile mapping (source-of-truth)
   - Create a canonical mapping doc that justifies profiles by real personas and use cases.
@@ -142,17 +142,9 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
-These milestones define **optional semantics** that a platform/mediator MAY enforce, while AICP remains an open protocol.
-
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
-  - Standard “reception chat” UX primitives for personal/brand agents (join/request, welcome, rules summary, role hooks).
 - ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
-  - Content-layer claims/attestations linking agent ↔ authenticated user ↔ delegated authority.
-  - Friendly to IAM/PAM/AAA/RBAC/OIDC/OAuth ecosystems (AICP sits above access control; platform may integrate).
-  - Include key lifecycle guidance (expiry/rotation) and trust bootstrapping guidance (without becoming a CA/IAM system).
 - ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
-  - Optional, enforceable semantics for service-chaining: delegation, responsibilities, context retention, QA gates,
-    and human-in-the-loop as an option.
 
 ---
 
