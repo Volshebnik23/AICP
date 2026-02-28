@@ -6,6 +6,7 @@
 
 This roadmap reflects the **actual repository artifacts**, not only content embedded in the Suite index.
 It separates: (A) Spec authoring (text), and (B) Productization (executable, enforceable deliverables).
+AICP uses versions for technical evolution, but roadmap sequencing is dependency-based (technical prerequisites first), not product-release sequencing.
 
 **Suite document:** `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`  
 **Core canonical paths:** `docs/core/`, `schemas/core/`, `fixtures/`
@@ -86,6 +87,16 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
 - SDK/template/sandbox workflows that reduce adoption friction for agent developers and enforcers.
 - DX hardening should complete before plugfest-focused milestones.
 
+### ✅ Completed milestone (M7.6): EXT-ENFORCEMENT productization (blocking enforcement contour)
+- `docs/extensions/RFC_EXT_ENFORCEMENT.md`
+- `registry/enforcement_sanction_codes.json`
+- `schemas/extensions/ext-enforcement-payloads.schema.json`
+- `fixtures/extensions/enforcement/`
+- `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
+
+### ✅ Completed milestone (M7.7): Roadmap sync discipline (process hardening)
+- Roadmap sync reminder added in `AGENTS.md` to require sprint-by-sprint roadmap updates when shipped artifacts change.
+
 ### ⏳ Later milestones (productization hardening)
 - ⏳ M8 Plugfest kit + Interop report + Errata process:
   - `/interop/*` artifacts
@@ -93,10 +104,14 @@ It separates: (A) Spec authoring (text), and (B) Productization (executable, enf
   - `/security_review/*`
 - ⏳ M10 Release Candidate → v0.1.0:
   - feature freeze, registry snapshot, final compatibility marks, release packaging, checksums
+- ⏳ M11 Reception Chat Profile (rules + onboarding semantics) — platform-optional, protocol-only.
+- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly) — protocol-only; friendly to IAM/PAM/AAA/RBAC/OIDC/OAuth.
+- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce) — optional semantics: delegation, responsibilities, context retention, QA gates, human-in-the-loop optional.
+- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases (docs-only):
+  - `docs/marketing/ecosystem_use_cases.md`
 
----
 
 ## Immediate next step
-**M8.0 (Interop Plugfest & Security Review)** is current.
+**M8 (Interop Plugfest & Security Review readiness)** is next.
 
 Older PR branches for M7.4 may be superseded; use `main` as source-of-truth.

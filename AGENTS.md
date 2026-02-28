@@ -15,6 +15,8 @@ If something matters, it must be checkable via schemas/tests/conformance.
 
 Small PRs, fast feedback loops. Prefer incremental progress over large refactors.
 
+- **Roadmap sync is mandatory:** every sprint/PR that changes shipped artifacts MUST update `ROADMAP.md` with (a) where we are now (completed milestones), and (b) next concrete milestones.
+
 ---
 
 ## 1) Sources of truth (what is canonical)
