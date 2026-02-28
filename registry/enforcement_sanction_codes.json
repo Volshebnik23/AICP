@@ -1,0 +1,74 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WARN",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "MUTE",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "KICK",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BAN",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "QUARANTINE",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REQUIRE_ACK",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REQUIRE_REMEDIATION",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ESCALATE",
+    "type": "enforcement_sanction_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#43-sanctions-and-code-extensibility",
+    "security_considerations": "Sanctions should be applied with auditable provenance and policy controls."
+  }
+]

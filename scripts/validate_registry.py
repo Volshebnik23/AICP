@@ -21,6 +21,7 @@ REQUIRED_FILES = [
     "policy_languages.json",
     "policy_bindings.json",
     "extension_ids.json",
+    "enforcement_sanction_codes.json",
     "security_alert_categories.json",
     "dispute_claim_types.json",
 ]

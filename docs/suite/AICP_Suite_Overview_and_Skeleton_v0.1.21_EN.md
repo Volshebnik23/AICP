@@ -32,10 +32,11 @@ Contents
 14.	12. RFC: EXT-POLICY-EVAL (policy evaluation semantics)
 15.	13. RFC: EXT-OBJECT-RESYNC (object retrieval and state resync)
 16.	14. RFC: EXT-IDENTITY-LC (identity lifecycle)
-17.	15. RFC: Applied extensions (workflow, delegation, disputes, security alerts)
-18.	16. RFC: Governance / IPR / Stewardship
-19.	17. Reference implementations and conformance harness
-20.	18. Interop event and external security review
+17.	15. RFC: EXT-ENFORCEMENT (blocking enforcement contour)
+18.	16. RFC: Applied extensions (workflow, delegation, disputes, security alerts)
+19.	17. RFC: Governance / IPR / Stewardship
+20.	18. Reference implementations and conformance harness
+21.	19. Interop event and external security review
 21.	Roadmap and current status
  
 0. Protocol positioning (AI-OSI)
@@ -105,6 +106,7 @@ To keep the protocol implementable, AICP is split into a small Core v0.1 and a r
 •	EXT-TRACING — Trace and observability fields (e.g., OpenTelemetry compatibility).
 •	EXT-IDENTITY-LC — Identity lifecycle: rotation, revocation, migration, external attestations.
 •	EXT-QOS — Budgets, deadlines, backpressure.
+•	EXT-ENFORCEMENT — Blocking enforcement contour for mediated delivery gating with auditable verdict bindings.
  
 2. Glossary (draft)
 Agent — An AI system capable of exchanging protocol messages and acting on behalf of a user or service.
@@ -362,7 +364,7 @@ A protocol becomes real when independent implementations can prove compatibility
 •	CT-15: DUPLICATE_MESSAGE_ID: idempotent handling (no double-apply).
 •	CT-16: INVALID_CONTRACT_REF: attestation referencing unknown head_version rejected for audit; state unchanged.
 7.2 Extension conformance suites (informative)
-Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle.
+Each registered extension MUST ship its own conformance tests and fixtures, and register them in the registry entry. For example: CN-* for EXT-CAPNEG, TB-* for bindings, PE-* for policy evaluation, OR-* for object resync, IL-* for identity lifecycle, ENF-* for enforcement gating.
 
 8. RFC: Registry and Change Control
 Canonical source: `docs/rfc/RFC_Registries_and_Change_Control.md`
@@ -395,7 +397,11 @@ Summary: Defines deterministic object retrieval, verification, and unknown-base 
 Canonical source: `docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md`
 Summary: Defines identity announcement, rotation, revocation, and migration primitives.
 
-15. RFC: Applied extensions (workflow, delegation, disputes, security alerts)
+15. RFC: EXT-ENFORCEMENT — Blocking enforcement contour (Registered Extension)
+Canonical source: `docs/extensions/RFC_EXT_ENFORCEMENT.md`
+Summary: Defines protocol-level blocking semantics for mediated delivery, verdict binding, and interoperable sanction coding.
+
+16. RFC: Applied extensions (workflow, delegation, disputes, security alerts)
 Canonical sources:
 - `docs/extensions/RFC_EXT_WORKFLOW_SYNC.md`
 - `docs/extensions/RFC_EXT_DELEGATION.md`
@@ -403,19 +409,19 @@ Canonical sources:
 - `docs/extensions/RFC_EXT_SECURITY_ALERTS.md`
 Summary: Defines applied extension primitives for workflow sync, delegation, disputes, and security escalation.
 
-16. RFC: Governance / IPR / Stewardship
+17. RFC: Governance / IPR / Stewardship
 Canonical source: `docs/rfc/RFC_Governance_and_IPR.md`
 Summary: Defines stewardship, licensing, patent posture, security disclosure, and compatibility marks.
 
-17. Reference implementations and conformance harness
+18. Reference implementations and conformance harness
 Canonical source: `docs/rfc/RFC_Reference_Impl_and_Conformance_Harness.md`
 Summary: Defines minimal executable reference artifacts and CI-oriented conformance harness expectations.
 
-18. RFC: Interop event and external security review
+19. RFC: Interop event and external security review
 Canonical source: `docs/rfc/RFC_Interop_Plugfest_and_Security_Review.md`
 Summary: Defines interop event procedure, outputs, and external security review scope/exit criteria.
 
-Canonical sources note: Standalone RFC documents under `docs/rfc/`, `docs/extensions/`, and `docs/bindings/` are the canonical locations for Sections 8–18 content. This Suite document is an umbrella index.
+Canonical sources note: Standalone RFC documents under `docs/rfc/`, `docs/extensions/`, and `docs/bindings/` are the canonical locations for Sections 8–19 content. This Suite document is an umbrella index.
 
 Roadmap and current status
 See `ROADMAP.md` for repo-backed status. Current milestone: M8.0 (Interop Plugfest & Security Review).

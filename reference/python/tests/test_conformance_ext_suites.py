@@ -27,6 +27,7 @@ def test_extension_conformance_suites_pass() -> None:
         ("conformance/extensions/CN_CAPNEG_0.1.json", "conformance/report_ext_capneg_test.json"),
         ("conformance/extensions/OR_OBJECT_RESYNC_0.1.json", "conformance/report_ext_or_test.json"),
         ("conformance/extensions/PE_POLICY_EVAL_0.1.json", "conformance/report_ext_pe_test.json"),
+        ("conformance/extensions/ENF_ENFORCEMENT_0.1.json", "conformance/report_ext_enf_test.json"),
     ]
     for suite, report in suites:
         assert _run_suite(suite, report) == 0, f"suite failed: {suite}"
