@@ -125,6 +125,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
   - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
   - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
+  - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
 - ⏳ M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
@@ -152,4 +153,4 @@ These milestones define **optional semantics** that a platform/mediator MAY enfo
 ---
 
 ## Immediate next step
-**M9.4 (external-review issue intake + remediation triage automation)** is next.
+**M10 (snapshot discipline + compatibility packaging hardening)** is next.

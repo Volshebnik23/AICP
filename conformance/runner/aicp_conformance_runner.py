@@ -213,12 +213,14 @@ def _evaluate_transcript_expectations(
 
 
 def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> dict[str, Any]:
+    enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     case_validator = _build_validator(schema, ROOT / suite["schema_ref"]) if schema is not None else None
     core_schema_path = ROOT / "schemas/core/aicp-core-message.schema.json"
     core_schema = load_json(core_schema_path)
     core_validator = _build_validator(core_schema, core_schema_path)
     can_verify_signatures = signature_verifier_available()
     key_map = load_json(ROOT / "fixtures/keys/GT_public_keys.json")
+    registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
 
     failures: list[dict[str, Any]] = []
 
@@ -246,6 +248,11 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
         if core_validator is not None:
             for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
                 add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
+
+        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
+            mtype = msg.get("message_type")
+            if mtype not in registered_message_types:
+                add_failure(failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_case, None)
 
         stored_hash = msg.get("message_hash")
         if stored_hash is not None:
@@ -285,6 +292,9 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
         "passed": passed,
         "failures": failures,
         "compatibility_marks": marks,
+        "degraded": False,
+        "degraded_reasons": [],
+        "skipped_checks": [],
     }
 
 
@@ -309,8 +319,16 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     enforcement_sanction_codes = {e.get("id") for e in load_json(ROOT / "registry/enforcement_sanction_codes.json")}
     alert_codes_registry = {e.get("id"): e for e in load_json(ROOT / "registry/alert_codes.json")}
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
+    registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
+    policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
+    contract_schema = load_json(contract_schema_path)
+    contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
 
     failures: list[dict[str, Any]] = []
+    degraded = False
+    degraded_reasons: list[str] = []
+    skipped_checks: list[str] = []
 
     for transcript in suite["transcripts"]:
         rel_file = transcript["path"]
@@ -345,6 +363,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             add_failure(t_failures, "CT-INVARIANTS-01", "Transcript has no JSONL records", rel_file, None)
             failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
             continue
+
+        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                if mtype not in registered_message_types:
+                    add_failure(t_failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_file, line_no)
 
         session_id = rows[0][1].get("session_id")
         seen_ids: set[str] = set()
@@ -421,9 +445,70 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
                         add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
         else:
-            expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
-            if "CT-SIGNATURE-VERIFY-01" in expected:
-                add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+            if "CT-SIGNATURE-VERIFY-01" in enabled_checks:
+                degraded = True
+                reason = "signature verification unavailable"
+                if reason not in degraded_reasons:
+                    degraded_reasons.append(reason)
+                if "CT-SIGNATURE-VERIFY-01" not in skipped_checks:
+                    skipped_checks.append("CT-SIGNATURE-VERIFY-01")
+                expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
+                if "CT-SIGNATURE-VERIFY-01" in expected:
+                    add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+
+        if "CT-CONTRACT-SCHEMA-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CONTRACT_PROPOSE":
+                    continue
+                payload = msg.get("payload") or {}
+                contract_obj = payload.get("contract")
+                if not isinstance(contract_obj, dict):
+                    add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "payload.contract must be an object", rel_file, line_no)
+                    continue
+                if Draft202012Validator is None or contract_validator is None:
+                    if not isinstance(contract_obj.get("contract_id"), str) or not contract_obj.get("contract_id"):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "contract.contract_id must be a non-empty string", rel_file, line_no)
+                    if not isinstance(contract_obj.get("goal"), str) or not contract_obj.get("goal"):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "contract.goal must be a non-empty string", rel_file, line_no)
+                    roles = contract_obj.get("roles")
+                    if not isinstance(roles, list) or not roles or not all(isinstance(r, str) and r for r in roles):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "contract.roles must be a non-empty array of strings", rel_file, line_no)
+                else:
+                    for err in sorted(contract_validator.iter_errors(contract_obj), key=lambda e: list(e.path)):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", err.message, rel_file, line_no)
+                if msg.get("contract_id") != contract_obj.get("contract_id"):
+                    add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "envelope.contract_id must equal payload.contract.contract_id", rel_file, line_no)
+
+        if "CT-POLICY-CATEGORIES-01" in enabled_checks:
+            namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
+            namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CONTRACT_PROPOSE":
+                    continue
+                contract_obj = ((msg.get("payload") or {}).get("contract") or {})
+                policies = contract_obj.get("policies")
+                if policies is None:
+                    continue
+                if not isinstance(policies, list):
+                    add_failure(t_failures, "CT-POLICY-CATEGORIES-01", "contract.policies must be an array", rel_file, line_no)
+                    continue
+                seen_policy_ids: set[str] = set()
+                for ix, policy in enumerate(policies):
+                    if not isinstance(policy, dict):
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"contract.policies[{ix}] must be an object", rel_file, line_no)
+                        continue
+                    policy_id = policy.get("policy_id")
+                    category = policy.get("category")
+                    if not isinstance(policy_id, str) or not policy_id:
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"contract.policies[{ix}].policy_id must be a non-empty string", rel_file, line_no)
+                    elif policy_id in seen_policy_ids:
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"duplicate policy_id '{policy_id}'", rel_file, line_no)
+                    else:
+                        seen_policy_ids.add(policy_id)
+                    if not isinstance(category, str) or not category:
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"contract.policies[{ix}].category must be a non-empty string", rel_file, line_no)
+                    elif category not in policy_categories_registry and not namespaced_dash.match(category) and not namespaced_colon.match(category):
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"unknown policy category '{category}'", rel_file, line_no)
 
         # Extension-specific object hash checks (OR-OBJECT-HASH-01)
         if "OR-OBJECT-HASH-01" in enabled_checks:
@@ -727,7 +812,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     passed = not failures
     suite_mark = suite.get("compatibility_mark")
-    marks = [suite_mark] if passed and isinstance(suite_mark, str) else []
+    marks = [suite_mark] if (passed and not degraded and isinstance(suite_mark, str)) else []
 
     return {
         "aicp_version": version,
@@ -737,6 +822,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
         "passed": passed,
         "failures": failures,
         "compatibility_marks": marks,
+        "degraded": degraded,
+        "degraded_reasons": degraded_reasons,
+        "skipped_checks": skipped_checks,
     }
 
 
@@ -770,7 +858,10 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
-    print(f"Conformance {'PASSED' if report['passed'] else 'FAILED'}: {report['suite_id']} -> {out_path.relative_to(ROOT)}")
+    status = 'PASSED' if report['passed'] else 'FAILED'
+    if report.get('degraded'):
+        status = f"{status} (DEGRADED)"
+    print(f"Conformance {status}: {report['suite_id']} -> {out_path.relative_to(ROOT)}")
     if report["failures"]:
         for f in report["failures"]:
             print(f" - [{f['test_id']}] {f['file']}:{f['line']} {f['message']}")

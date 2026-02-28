@@ -32,6 +32,8 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
     suite_reports: list[dict[str, Any]] = []
     failures: list[dict[str, Any]] = []
     marks: list[str] = []
+    degraded = False
+    degraded_reasons: list[str] = []
 
     for rel_suite in profile.get("required_suites", []):
         suite_path = (ROOT / rel_suite).resolve() if not Path(rel_suite).is_absolute() else Path(rel_suite)
@@ -44,13 +46,21 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
             entry["suite_path"] = rel_suite
             failures.append(entry)
 
+        if suite_report.get("degraded"):
+            degraded = True
+            for reason in suite_report.get("degraded_reasons", []) or []:
+                if isinstance(reason, str) and reason not in degraded_reasons:
+                    degraded_reasons.append(reason)
+
         for mark in suite_report.get("compatibility_marks", []):
             if isinstance(mark, str) and mark not in marks:
                 marks.append(mark)
 
     passed = all(r.get("passed") for r in suite_reports)
     profile_mark = profile.get("compatibility_mark")
-    if passed and isinstance(profile_mark, str):
+    if degraded:
+        marks = []
+    elif passed and isinstance(profile_mark, str):
         marks.insert(0, profile_mark)
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
@@ -63,6 +73,8 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
         "suite_reports": suite_reports,
         "failures": failures,
         "compatibility_marks": marks,
+        "degraded": degraded,
+        "degraded_reasons": degraded_reasons,
     }
 
 
@@ -84,8 +96,11 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
+    status = 'PASSED' if report['passed'] else 'FAILED'
+    if report.get('degraded'):
+        status = f"{status} (DEGRADED)"
     print(
-        f"Profile conformance {'PASSED' if report['passed'] else 'FAILED'}: "
+        f"Profile conformance {status}: "
         f"{report['profile_id']} -> {_format_out_path(out_path)}"
     )
     return 0 if report["passed"] else 1

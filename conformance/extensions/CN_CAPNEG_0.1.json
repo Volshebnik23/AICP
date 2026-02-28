@@ -54,6 +54,10 @@
       "description": "Validate each JSONL record against Core message schema"
     },
     {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
       "test_id": "CN-PAYLOAD-SCHEMA-01",
       "description": "Validate payload against EXT-CAPNEG payload schema"
     },

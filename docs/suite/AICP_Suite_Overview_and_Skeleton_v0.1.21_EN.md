@@ -26,7 +26,11 @@ Contents
 2.	0.2 Relationship to MCP and other tool interfaces
 3.	1. RFC frame: Problem, Goals, Non-Goals, Requirements, Extension points
 4.	2. Glossary
-5.	3. Roles and state model (Core v0.1)
+Canonical glossary: `docs/GLOSSARY.md`.
+
+For suite readers, the most relevant terms are: Agent, Mediator/Host, Enforcer/Moderator, Session, Contract, Policy, Verdict, Sanction, Alert, Resume/Resync, Conformance Suite, Compatibility Mark, and Degraded mode badge semantics.
+
+3. Roles and state model (Core v0.1)
 6.	4. Message model and Core message types (Core v0.1)
 7.	5. Policy core (Core v0.1)
 8.	6. Attestations and crypto minimum (Core v0.1)
@@ -117,7 +121,7 @@ To keep the protocol implementable, AICP is split into a small Core v0.1 and a r
 •	EXT-ENFORCEMENT — Blocking enforcement contour for mediated delivery gating with auditable verdict bindings.
 •	EXT-RESUME — Session resumption/reconnect handshake for fast rejoin semantics.
  
-2. Glossary (draft)
+2. Glossary
 Agent — An AI system capable of exchanging protocol messages and acting on behalf of a user or service.
 Party — A protocol participant (agent/service) with an identity key set used for signing and verification.
 Session — A protocol interaction among 2+ parties bound to a single Context Contract. Identified by session_id.
@@ -161,7 +165,7 @@ Core v0.1 defines a replicated state machine (RSM) model: session state and the 
 •	pending_amendments (amendments proposed but not yet quorum-accepted)
 •	conflict_sets (detected conflicts awaiting RESOLVE_CONFLICT)
 •	Core invariants:
-•	Any message that changes the contract state (CONTRACT_ACCEPT, CONTEXT_AMEND, RESOLVE_CONFLICT, CLOSE_SESSION) MUST reference a specific contract_ref and MUST satisfy signature_policy.
+•	Any message that changes the contract state (CONTRACT_ACCEPT, CONTEXT_AMEND, RESOLVE_CONFLICT) MUST reference a specific contract_ref and MUST satisfy signature_policy.
 •	Version numbering MUST be monotonic within a branch.
 •	Distinct contract states MUST have distinct contract_hash values.
 3.2 Roles (normative)
@@ -169,18 +173,18 @@ Core roles are logical (not necessarily separate processes):
 •	Initiator: Creates session_id and proposes Contract v1 via CONTRACT_PROPOSE.
 •	Counterparty (1..N): Accepts/rejects contract and amendments; emits attestations.
 •	Observer (optional): Receives replicated messages for audit/analytics; MUST NOT modify the contract.
-•	Enforcer (optional): Evaluates policy compliance and can emit POLICY_VIOLATION and/or policy decisions (via extensions). The protocol does not require the enforcer to be a content MITM.
+•	Enforcer (optional): Evaluates policy compliance and can emit extension-level verdict/alert artifacts (e.g., EXT-ENFORCEMENT, EXT-ALERTS, EXT-POLICY-EVAL). The protocol does not require the enforcer to be a content MITM.
 3.3 Session lifecycle states (normative)
 session_state is derived. Implementations MAY add local substates, but MUST preserve the semantics below.
 State	Meaning	Entry condition	Typical exit / transition
 Draft (local)	Initiator prepared a draft before first proposal.	Before CONTRACT_PROPOSE is sent.	CONTRACT_PROPOSE -> Proposed
 Proposed	Contract proposal delivered; acceptance ongoing.	Valid CONTRACT_PROPOSE received.	Quorum CONTRACT_ACCEPT -> Active[v1]; or close/reject by policy
-Active[vN]	A canonical contract head is active.	Quorum for the current head is achieved.	CONTEXT_AMEND -> Amendment-in-flight; concurrent accepts -> Conflict; CLOSE_SESSION -> Closing/Closed
+Active[vN]	A canonical contract head is active.	Quorum for the current head is achieved.	CONTEXT_AMEND -> Amendment-in-flight; concurrent accepts -> Conflict
 Amendment-in-flight	There are proposed amendments pending acceptance.	CONTEXT_AMEND received referencing active head.	Quorum CONTEXT_AMEND -> Active[vN+1]; concurrent accepts -> Conflict; reject/timeout by policy
-Conflict	Two or more incompatible accepted heads exist.	Any conflict class in 3.5 detected.	RESOLVE_CONFLICT -> Active; CLOSE_SESSION may terminate if policy allows
-Closing (optional)	Close requested; waiting for confirmations if required.	CLOSE_SESSION received.	Quorum close confirmations -> Closed
+Conflict	Two or more incompatible accepted heads exist.	Any conflict class in 3.5 detected.	RESOLVE_CONFLICT -> Active
+Closing (optional)	Platform-level termination flow pending confirmations if required.	Mediated platform termination policy triggers.	Quorum confirmations -> Closed
 Closed	Session is terminated; contract immutable.	Close completed per policy.	Terminal
-Non-contract-changing messages (e.g., ATTEST_ACTION, POLICY_VIOLATION) MAY be emitted in any state unless forbidden by policy. During Conflict, any attestation MUST explicitly reference the branch/version it applies to.
+Non-contract-changing messages (e.g., ATTEST_ACTION and extension-level ALERT / ENFORCEMENT_VERDICT) MAY be emitted in any state unless forbidden by policy. During Conflict, any attestation MUST explicitly reference the branch/version it applies to.
 3.4 Versions and branches (normative)
 Core v0.1 uses branch_id (default 'main') and monotonic version strings formatted as 'vN' per branch. Implementations MAY additionally compute contract_hash over the canonical contract representation for auditability. Core messages reference versions via contract_ref.{base_version, head_version} (and MAY include contract_hash). Amendments MUST specify base_version (the head_version they apply to).
 3.5 Conflict classes and detection (normative minimum)
@@ -189,7 +193,7 @@ Core v0.1 uses branch_id (default 'main') and monotonic version strings formatte
 •	Divergent-quorum: different signer subsets reach quorum for different heads (split-brain by signatures).
 •	Non-head-accept: an CONTEXT_AMEND references a known base_version that is not the current active head (fork).
 •	Unknown-base: an amendment/accept references an unknown base_version (buffer or reject; MUST NOT silently change active head).
-•	Incompatible-close: CLOSE_SESSION references a final head that does not match the known canonical head.
+•	Incompatible termination signaling (extension/platform specific) references a final head that does not match the known canonical head.
 3.6 Conflict resolution (RESOLVE_CONFLICT) (normative)
 Conflict resolution MUST be performed via RESOLVE_CONFLICT, signed under signature_policy quorum and referencing the full conflict_set. Two resolution types are supported: choose and merge.
 •	choose: Select one head_version as canonical and mark others superseded. Implementations MUST stop accepting new amendments on superseded refs if policy requires.
@@ -268,15 +272,8 @@ Payload (minimum fields):
 •	contract_head_version (MUST): the head_version under which the action was taken.
 •	action_summary and/or result_summary (SHOULD)
 •	evidence_refs (MAY): artifact refs, tool call logs, outputs.
-4.6 POLICY_VIOLATION — Report a policy violation
-Purpose: Report suspected or confirmed policy breach (boundaries, tools, PII, audit).
-Trigger / conditions: May be emitted by any party or an Enforcer. Does not change contract state by default.
-Payload (minimum fields):
-•	policy_id or policy_category (MUST)
-•	severity (MUST): low/medium/high/critical.
-•	violated_by (MUST): references to actor/message/action.
-•	evidence_refs (SHOULD)
-•	recommended_action (MAY): block/escalate/amend/close.
+4.6 Policy denial and violation signaling (extension-scoped)
+Core does not define a POLICY_VIOLATION message type. Policy denial/inconclusive signals are conveyed via EXT-ALERTS (`POLICY_DENIED`, `POLICY_INCONCLUSIVE`), enforcement actions via EXT-ENFORCEMENT verdicts/sanctions, and evaluation outcomes via EXT-POLICY-EVAL artifacts.
 4.7 RESOLVE_CONFLICT — Resolve a conflict set
 Purpose: Resolve a detected conflict via choose or merge, restoring a canonical head.
 Trigger / conditions: Emitted when state is Conflict; requires quorum signatures.
@@ -288,14 +285,8 @@ Payload (minimum fields):
 •	merge_parents (MUST if merge)
 •	merge_amendment (MUST if merge)
 •	signatures_quorum (MUST): reference to signature_policy or explicit quorum rule.
-4.8 CLOSE_SESSION — Close the session
-Purpose: Terminate the session and freeze the contract.
-Trigger / conditions: Sent by a party authorized to close; may require confirmations per policy.
-Payload (minimum fields):
-•	final_head_version (MUST): final canonical head.
-•	close_reason (SHOULD)
-•	retention/audit_hints (MAY)
-•	final_attestations (MAY)
+4.8 Session termination guidance (extension/platform scoped)
+Session termination is not a Core message type. In mediated channels, platforms MAY model termination via EXT-ENFORCEMENT sanctions (`KICK`/`BAN`) and/or EXT-ALERTS fatal/disconnect guidance (e.g., `severity=FATAL`, `recommended_actions` includes `DISCONNECT`).
 4.9 Registered Extensions (informative index)
 All non-Core message types MUST be registered (Section 8) and specified in extension RFCs. Core implementations MAY ignore unknown extensions unless required by the contract/negotiation_result.
  
@@ -362,7 +353,7 @@ A protocol becomes real when independent implementations can prove compatibility
 •	CT-04: RESOLVE_CONFLICT choose with quorum -> Active on chosen head; superseded refs stop progressing if policy requires.
 •	CT-05: RESOLVE_CONFLICT merge -> new head_version with merge_parents; parties converge to same resulting contract_hash.
 •	CT-06: Unknown-base: accept/propose referencing unknown base_version -> buffered/rejected; MUST NOT silently change active head.
-•	CT-07: CLOSE_SESSION with required confirmations -> Closed; CONTEXT_AMEND after Closed is rejected.
+•	CT-07: Platform/extension termination marked as Closed; CONTEXT_AMEND after Closed is rejected.
 •	CT-08: ATTEST_ACTION in Conflict MUST include explicit head_version (and conflict_context via ext if used).
 •	CT-09: JCS canonicalization matches TV-01 canonical_json.
 •	CT-10: object_hash matches TV-01 object_hash.
