@@ -79,5 +79,23 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md",
     "security_considerations": "Verdict authenticity and mediator integrity are required to prevent unauthorized delivery or suppression."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-ALERTS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md",
+    "security_considerations": "Operational alerts should avoid sensitive leakage and spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-RESUME",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md",
+    "security_considerations": "Resume flows must avoid cross-session confusion and replay abuse."
   }
 ]

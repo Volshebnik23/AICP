@@ -20,6 +20,13 @@ def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _format_out_path(out_path: Path) -> str:
+    try:
+        return str(out_path.relative_to(ROOT))
+    except ValueError:
+        return str(out_path)
+
+
 def run_profile(profile_path: Path) -> dict[str, Any]:
     profile = load_json(profile_path)
     suite_reports: list[dict[str, Any]] = []
@@ -79,7 +86,7 @@ def main() -> int:
 
     print(
         f"Profile conformance {'PASSED' if report['passed'] else 'FAILED'}: "
-        f"{report['profile_id']} -> {out_path.relative_to(ROOT)}"
+        f"{report['profile_id']} -> {_format_out_path(out_path)}"
     )
     return 0 if report["passed"] else 1
 

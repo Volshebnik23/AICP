@@ -29,6 +29,23 @@
         "CAPABILITIES_PROPOSE",
         "CAPABILITIES_REJECT"
       ]
+    },
+    {
+      "id": "CN-NEG-01",
+      "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT",
+        "CAPABILITIES_PROPOSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CN-DOWNGRADE-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -55,6 +72,10 @@
     {
       "test_id": "CT-MESSAGE-HASH-01",
       "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "CN-DOWNGRADE-01",
+      "description": "Detect unilateral downgrade/inconsistent negotiated required_extensions after acceptance without mutual renegotiation"
     }
   ],
   "compatibility_mark": "AICP-EXT-CAPNEG-0.1"

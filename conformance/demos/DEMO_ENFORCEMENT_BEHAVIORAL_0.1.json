@@ -1,0 +1,206 @@
+{
+  "suite_id": "DEMO-ENFORCEMENT-BEHAVIORAL-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Behavioral enforcement demo suite (deterministic pass and expected-fail scenarios).",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/demos/demo-enforcement-behavioral-payloads.schema.json",
+  "payload_schema_map": {
+    "CONTENT_MESSAGE": "#/$defs/CONTENT_MESSAGE",
+    "ENFORCEMENT_VERDICT": "#/$defs/ENFORCEMENT_VERDICT",
+    "CONTENT_DELIVER": "#/$defs/CONTENT_DELIVER",
+    "ALERT": "#/$defs/ALERT",
+    "RESUME_REQUEST": "#/$defs/RESUME_REQUEST",
+    "RESUME_RESPONSE": "#/$defs/RESUME_RESPONSE"
+  },
+  "transcripts": [
+    {
+      "id": "DEMO-01",
+      "path": "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ]
+    },
+    {
+      "id": "DEMO-02",
+      "path": "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT"
+      ]
+    },
+    {
+      "id": "DEMO-03",
+      "path": "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ]
+    },
+    {
+      "id": "DEMO-04",
+      "path": "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ALERT"
+      ]
+    },
+    {
+      "id": "DEMO-05",
+      "path": "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_MESSAGE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "ALERT"
+      ]
+    },
+    {
+      "id": "DEMO-06",
+      "path": "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-GATE-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "DEMO-07",
+      "path": "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-AUTH-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "DEMO-08",
+      "path": "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_MESSAGE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-INVARIANTS-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against demo behavioral payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "ENF-GATE-01",
+      "description": "Blocking mode requires CONTENT_DELIVER to reference an ALLOW verdict and matching message hash bindings"
+    },
+    {
+      "test_id": "ENF-SANCTION-CODES-01",
+      "description": "ENFORCEMENT_VERDICT sanctions codes must be registered or validly namespaced"
+    },
+    {
+      "test_id": "ENF-AUTH-01",
+      "description": "ENFORCEMENT_VERDICT sender must be listed in contract ext.enforcement.enforcers when provided"
+    },
+    {
+      "test_id": "AL-ALERT-CODES-01",
+      "description": "ALERT payload code values must be registered alert codes"
+    },
+    {
+      "test_id": "AL-ALERT-ACTIONS-01",
+      "description": "ALERT payload recommended_actions values must be registered action IDs"
+    },
+    {
+      "test_id": "RS-ACTIONS-01",
+      "description": "RESUME_RESPONSE recommended_actions values must be registered EXT-ALERTS action IDs"
+    },
+    {
+      "test_id": "RS-RESUME-MATCH-01",
+      "description": "RESUME_REQUEST must have matching RESUME_RESPONSE and status/hash relationship consistency"
+    }
+  ],
+  "compatibility_mark": "AICP-DEMO-ENFORCEMENT-BEHAVIORAL-0.1"
+}
