@@ -20,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -33,6 +35,19 @@ jobs:
 
       - name: Run lightweight validation
         run: make validate
+
+      - name: Validate changed implementation manifests
+        run: |
+          CHANGED_MANIFESTS=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" | grep -E '^interop/submissions/.*/implementation\.json$' || true)
+
+          if [ -z "$CHANGED_MANIFESTS" ]; then
+            echo "No manifests changed, skipping schema validation."
+            exit 0
+          fi
+
+          echo "Validating changed manifests:"
+          echo "$CHANGED_MANIFESTS"
+          python interop/tools/validate_manifests.py --schema interop/schemas/implementation_manifest.schema.json $CHANGED_MANIFESTS
 
       - name: Regenerate interop matrix
         run: make interop-matrix
