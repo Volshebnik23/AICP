@@ -64,3 +64,31 @@ jobs:
           cd sdk/typescript
           npm ci
           npm test
+
+
+  quickstart-smoke:
+    name: Quickstart smoke (TS + Python)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install runtime deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install jsonschema pytest cryptography
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run quickstart smoke targets
+        run: |
+          make quickstart-py
+          make quickstart-ts

@@ -1,38 +1,55 @@
-import { messageHashFromBody } from "../../sdk/typescript/src/hashing.js";
+import { createHash } from "node:crypto";
 
-function buildMessage({ sessionId, messageId, messageType, payload, prevMsgHash }) {
+function sortDeep(value) {
+  if (Array.isArray(value)) return value.map(sortDeep);
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const key of Object.keys(value).sort()) out[key] = sortDeep(value[key]);
+    return out;
+  }
+  return value;
+}
+
+function messageHashFromBody(body) {
+  const canonical = JSON.stringify(sortDeep(body));
+  const preimage = Buffer.concat([Buffer.from("AICP1\0message\0", "utf-8"), Buffer.from(canonical, "utf-8")]);
+  return `sha256:${createHash("sha256").update(preimage).digest("base64url")}`;
+}
+
+function buildCoreMessage({ sessionId, messageId, timestamp, sender, contractId, contractRef, messageType, payload, prevMsgHash }) {
   const body = {
     session_id: sessionId,
     message_id: messageId,
+    timestamp,
+    sender,
     message_type: messageType,
+    contract_id: contractId,
+    contract_ref: contractRef,
     payload,
     ...(prevMsgHash ? { prev_msg_hash: prevMsgHash } : {}),
   };
-
-  const message_hash = messageHashFromBody(body);
-  return { ...body, message_hash };
+  return { ...body, message_hash: messageHashFromBody(body) };
 }
 
-// copy-paste minimal thread with chain continuity.
-const m1 = buildMessage({
-  sessionId: "demo-session-1",
-  messageId: "m-001",
-  messageType: "CAPABILITIES_DECLARE",
-  payload: { supported_profiles: ["core.v0.1"] },
+const contractId = "c-template-demo";
+const contractRef = { branch_id: "main", base_version: "v1", head_version: "v1" };
+
+const message = buildCoreMessage({
+  sessionId: "s-template-demo",
+  messageId: "m0001",
+  timestamp: "t0001",
+  sender: "agent:A",
+  contractId,
+  contractRef,
+  messageType: "CONTRACT_PROPOSE",
+  payload: {
+    contract: {
+      contract_id: contractId,
+      goal: "template_minimal_demo",
+      roles: ["initiator", "responder"],
+      policies: [{ policy_id: "pol-001", category: "user_consent", parameters: {}, status: "active" }],
+    },
+  },
 });
 
-const m2 = buildMessage({
-  sessionId: "demo-session-1",
-  messageId: "m-002",
-  messageType: "CAPABILITIES_PROPOSE",
-  payload: { proposed_profile: "core.v0.1" },
-  prevMsgHash: m1.message_hash,
-});
-
-// Enforcement hook example (integrate your own policy engine/enforcer):
-// - validate message against Core schema
-// - validate profile/extension policy
-// - verify signatures when present
-
-console.log(JSON.stringify(m1));
-console.log(JSON.stringify(m2));
+console.log(JSON.stringify(message, null, 2));

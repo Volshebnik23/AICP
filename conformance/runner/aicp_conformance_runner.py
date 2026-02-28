@@ -213,12 +213,14 @@ def _evaluate_transcript_expectations(
 
 
 def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> dict[str, Any]:
+    enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     case_validator = _build_validator(schema, ROOT / suite["schema_ref"]) if schema is not None else None
     core_schema_path = ROOT / "schemas/core/aicp-core-message.schema.json"
     core_schema = load_json(core_schema_path)
     core_validator = _build_validator(core_schema, core_schema_path)
     can_verify_signatures = signature_verifier_available()
     key_map = load_json(ROOT / "fixtures/keys/GT_public_keys.json")
+    registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
 
     failures: list[dict[str, Any]] = []
 
@@ -246,6 +248,11 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
         if core_validator is not None:
             for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
                 add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
+
+        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
+            mtype = msg.get("message_type")
+            if mtype not in registered_message_types:
+                add_failure(failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_case, None)
 
         stored_hash = msg.get("message_hash")
         if stored_hash is not None:
@@ -285,6 +292,9 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
         "passed": passed,
         "failures": failures,
         "compatibility_marks": marks,
+        "degraded": False,
+        "degraded_reasons": [],
+        "skipped_checks": [],
     }
 
 
@@ -307,8 +317,18 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
     enforcement_sanction_codes = {e.get("id") for e in load_json(ROOT / "registry/enforcement_sanction_codes.json")}
+    alert_codes_registry = {e.get("id"): e for e in load_json(ROOT / "registry/alert_codes.json")}
+    alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
+    registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
+    policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
+    contract_schema = load_json(contract_schema_path)
+    contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
 
     failures: list[dict[str, Any]] = []
+    degraded = False
+    degraded_reasons: list[str] = []
+    skipped_checks: list[str] = []
 
     for transcript in suite["transcripts"]:
         rel_file = transcript["path"]
@@ -344,6 +364,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
             continue
 
+        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                if mtype not in registered_message_types:
+                    add_failure(t_failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_file, line_no)
+
         session_id = rows[0][1].get("session_id")
         seen_ids: set[str] = set()
         for line_no, msg in rows:
@@ -355,6 +381,20 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 add_failure(t_failures, "CT-INVARIANTS-01", f"duplicate message_id '{mid}'", rel_file, line_no)
             else:
                 seen_ids.add(mid)
+
+        if "CT-PREV-MSG-REQUIRED-01" in enabled_checks:
+            for idx, (line_no, msg) in enumerate(rows):
+                if idx == 0:
+                    continue
+                prev_msg_hash = msg.get("prev_msg_hash")
+                if not isinstance(prev_msg_hash, str) or not prev_msg_hash:
+                    add_failure(
+                        t_failures,
+                        "CT-PREV-MSG-REQUIRED-01",
+                        "prev_msg_hash is required and must be a non-empty string for non-first messages",
+                        rel_file,
+                        line_no,
+                    )
 
         prev_hash = None
         for line_no, msg in rows:
@@ -419,9 +459,70 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
                         add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
         else:
-            expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
-            if "CT-SIGNATURE-VERIFY-01" in expected:
-                add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+            if "CT-SIGNATURE-VERIFY-01" in enabled_checks:
+                degraded = True
+                reason = "signature verification unavailable"
+                if reason not in degraded_reasons:
+                    degraded_reasons.append(reason)
+                if "CT-SIGNATURE-VERIFY-01" not in skipped_checks:
+                    skipped_checks.append("CT-SIGNATURE-VERIFY-01")
+                expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
+                if "CT-SIGNATURE-VERIFY-01" in expected:
+                    add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+
+        if "CT-CONTRACT-SCHEMA-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CONTRACT_PROPOSE":
+                    continue
+                payload = msg.get("payload") or {}
+                contract_obj = payload.get("contract")
+                if not isinstance(contract_obj, dict):
+                    add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "payload.contract must be an object", rel_file, line_no)
+                    continue
+                if Draft202012Validator is None or contract_validator is None:
+                    if not isinstance(contract_obj.get("contract_id"), str) or not contract_obj.get("contract_id"):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "contract.contract_id must be a non-empty string", rel_file, line_no)
+                    if not isinstance(contract_obj.get("goal"), str) or not contract_obj.get("goal"):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "contract.goal must be a non-empty string", rel_file, line_no)
+                    roles = contract_obj.get("roles")
+                    if not isinstance(roles, list) or not roles or not all(isinstance(r, str) and r for r in roles):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "contract.roles must be a non-empty array of strings", rel_file, line_no)
+                else:
+                    for err in sorted(contract_validator.iter_errors(contract_obj), key=lambda e: list(e.path)):
+                        add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", err.message, rel_file, line_no)
+                if msg.get("contract_id") != contract_obj.get("contract_id"):
+                    add_failure(t_failures, "CT-CONTRACT-SCHEMA-01", "envelope.contract_id must equal payload.contract.contract_id", rel_file, line_no)
+
+        if "CT-POLICY-CATEGORIES-01" in enabled_checks:
+            namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
+            namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CONTRACT_PROPOSE":
+                    continue
+                contract_obj = ((msg.get("payload") or {}).get("contract") or {})
+                policies = contract_obj.get("policies")
+                if policies is None:
+                    continue
+                if not isinstance(policies, list):
+                    add_failure(t_failures, "CT-POLICY-CATEGORIES-01", "contract.policies must be an array", rel_file, line_no)
+                    continue
+                seen_policy_ids: set[str] = set()
+                for ix, policy in enumerate(policies):
+                    if not isinstance(policy, dict):
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"contract.policies[{ix}] must be an object", rel_file, line_no)
+                        continue
+                    policy_id = policy.get("policy_id")
+                    category = policy.get("category")
+                    if not isinstance(policy_id, str) or not policy_id:
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"contract.policies[{ix}].policy_id must be a non-empty string", rel_file, line_no)
+                    elif policy_id in seen_policy_ids:
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"duplicate policy_id '{policy_id}'", rel_file, line_no)
+                    else:
+                        seen_policy_ids.add(policy_id)
+                    if not isinstance(category, str) or not category:
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"contract.policies[{ix}].category must be a non-empty string", rel_file, line_no)
+                    elif category not in policy_categories_registry and not namespaced_dash.match(category) and not namespaced_colon.match(category):
+                        add_failure(t_failures, "CT-POLICY-CATEGORIES-01", f"unknown policy category '{category}'", rel_file, line_no)
 
         # Extension-specific object hash checks (OR-OBJECT-HASH-01)
         if "OR-OBJECT-HASH-01" in enabled_checks:
@@ -466,6 +567,177 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if computed_ctx_hash != stored_ctx_hash:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
+
+        if "CN-DOWNGRADE-01" in enabled_checks:
+            accepted_extensions: dict[str, set[str]] = {}
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "CAPABILITIES_ACCEPT":
+                    result = payload.get("negotiation_result") or {}
+                    neg_id = payload.get("negotiation_id") or result.get("negotiation_id")
+                    selected = result.get("selected") or {}
+                    required_ext = selected.get("required_extensions")
+                    if isinstance(neg_id, str) and isinstance(required_ext, list):
+                        accepted_extensions[neg_id] = {e for e in required_ext if isinstance(e, str)}
+
+                elif mtype == "CAPABILITIES_PROPOSE":
+                    result = payload.get("negotiation_result") or {}
+                    neg_id = result.get("negotiation_id")
+                    selected = result.get("selected") or {}
+                    required_ext = selected.get("required_extensions")
+                    if not (isinstance(neg_id, str) and isinstance(required_ext, list)):
+                        continue
+                    proposed_set = {e for e in required_ext if isinstance(e, str)}
+                    prior_set = accepted_extensions.get(neg_id)
+                    if prior_set is not None and not prior_set.issubset(proposed_set):
+                        add_failure(
+                            t_failures,
+                            "CN-DOWNGRADE-01",
+                            f"negotiation_id '{neg_id}' removes previously accepted required_extensions (accepted={sorted(prior_set)}, proposed={sorted(proposed_set)})",
+                            rel_file,
+                            line_no,
+                        )
+
+
+        if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload") or {}
+                if "AL-ALERT-CODES-01" in enabled_checks:
+                    code = payload.get("code")
+                    if code not in alert_codes_registry:
+                        add_failure(t_failures, "AL-ALERT-CODES-01", f"unknown alert code '{code}'", rel_file, line_no)
+                if "AL-ALERT-ACTIONS-01" in enabled_checks:
+                    for action in payload.get("recommended_actions", []) or []:
+                        if action not in alert_recommended_actions:
+                            add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
+
+        if "RS-ACTIONS-01" in enabled_checks or "RS-RESUME-MATCH-01" in enabled_checks or "RS-PROBING-01" in enabled_checks:
+            request_rows: list[tuple[int, str | None, dict[str, Any]]] = []
+            response_rows: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}
+            probing_unknown_sessions_by_sender: dict[str, set[str]] = {}
+
+            for line_no, msg in rows:
+                if msg.get("message_type") == "RESUME_REQUEST":
+                    payload = msg.get("payload") or {}
+                    request_rows.append((line_no, msg.get("sender"), payload))
+                elif msg.get("message_type") == "RESUME_RESPONSE":
+                    payload = msg.get("payload") or {}
+                    key = (str(payload.get("resume_id")), str(payload.get("session_id")))
+                    response_rows.setdefault(key, []).append((line_no, payload))
+
+                    if "RS-ACTIONS-01" in enabled_checks:
+                        for action in payload.get("recommended_actions", []) or []:
+                            if action not in alert_recommended_actions:
+                                add_failure(t_failures, "RS-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
+
+            if "RS-RESUME-MATCH-01" in enabled_checks:
+                for line_no, req_sender, req_payload in request_rows:
+                    req_resume_id = req_payload.get("resume_id")
+                    req_session_id = req_payload.get("session_id")
+                    req_last_seen = req_payload.get("last_seen_message_hash")
+                    key = (str(req_resume_id), str(req_session_id))
+                    candidates = response_rows.get(key, [])
+                    if not candidates:
+                        add_failure(
+                            t_failures,
+                            "RS-RESUME-MATCH-01",
+                            f"missing RESUME_RESPONSE for resume_id='{req_resume_id}' session_id='{req_session_id}'",
+                            rel_file,
+                            line_no,
+                        )
+                        continue
+
+                    matching = [c for c in candidates if c[0] > line_no]
+                    resp_line_no, resp_payload = matching[0] if matching else candidates[0]
+
+                    if resp_payload.get("resume_id") != req_resume_id:
+                        add_failure(t_failures, "RS-RESUME-MATCH-01", "response.resume_id does not match request.resume_id", rel_file, resp_line_no)
+                    if resp_payload.get("session_id") != req_session_id:
+                        add_failure(t_failures, "RS-RESUME-MATCH-01", "response.session_id does not match request.session_id", rel_file, resp_line_no)
+
+                    current_head_hash = resp_payload.get("current_head_hash")
+                    if not isinstance(current_head_hash, str):
+                        add_failure(t_failures, "RS-RESUME-MATCH-01", "response.current_head_hash must be a string", rel_file, resp_line_no)
+                        continue
+
+                    status = resp_payload.get("status")
+                    if status == "OK":
+                        if current_head_hash != req_last_seen:
+                            add_failure(t_failures, "RS-RESUME-MATCH-01", "OK response.current_head_hash must equal request.last_seen_message_hash", rel_file, resp_line_no)
+                    elif status == "NEEDS_RESYNC":
+                        if current_head_hash == req_last_seen:
+                            add_failure(t_failures, "RS-RESUME-MATCH-01", "NEEDS_RESYNC response.current_head_hash must differ from request.last_seen_message_hash", rel_file, resp_line_no)
+
+                    if "RS-PROBING-01" in enabled_checks and status == "UNKNOWN_SESSION":
+                        req_session_id = req_payload.get("session_id")
+                        if isinstance(req_sender, str) and isinstance(req_session_id, str):
+                            probing_unknown_sessions_by_sender.setdefault(req_sender, set()).add(req_session_id)
+
+            if "RS-PROBING-01" in enabled_checks:
+                threshold = 5
+                for sender_id, unknown_sessions in probing_unknown_sessions_by_sender.items():
+                    if len(unknown_sessions) >= threshold:
+                        add_failure(
+                            t_failures,
+                            "RS-PROBING-01",
+                            f"sender '{sender_id}' probed {len(unknown_sessions)} distinct UNKNOWN_SESSION resume targets (threshold={threshold})",
+                            rel_file,
+                            None,
+                        )
+
+            if "RS-LOOP-01" in enabled_checks:
+                streak = 0
+                anchor: tuple[str, str, str] | None = None
+                idx = 0
+                while idx < len(rows):
+                    line_no, msg = rows[idx]
+                    if msg.get("message_type") != "RESUME_REQUEST":
+                        streak = 0
+                        anchor = None
+                        idx += 1
+                        continue
+
+                    req_payload = msg.get("payload") or {}
+                    if idx + 1 >= len(rows) or rows[idx + 1][1].get("message_type") != "RESUME_RESPONSE":
+                        streak = 0
+                        anchor = None
+                        idx += 1
+                        continue
+
+                    resp_line_no, resp_msg = rows[idx + 1]
+                    resp_payload = resp_msg.get("payload") or {}
+                    triple = (
+                        str(req_payload.get("session_id")),
+                        str(req_payload.get("last_seen_message_hash")),
+                        str(resp_payload.get("current_head_hash")),
+                    )
+                    same_session = str(resp_payload.get("session_id")) == triple[0]
+                    needs_resync = resp_payload.get("status") == "NEEDS_RESYNC"
+                    if same_session and needs_resync:
+                        if anchor == triple:
+                            streak += 1
+                        else:
+                            anchor = triple
+                            streak = 1
+                        if streak >= 3:
+                            add_failure(
+                                t_failures,
+                                "RS-LOOP-01",
+                                "detected repeated NEEDS_RESYNC loop without head progress (>=3 consecutive request/response cycles)",
+                                rel_file,
+                                resp_line_no,
+                            )
+                            break
+                    else:
+                        streak = 0
+                        anchor = None
+
+                    idx += 2
+
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
             namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
@@ -483,6 +755,99 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if namespaced_dash.match(code) or namespaced_colon.match(code):
                         continue
                     add_failure(t_failures, "ENF-SANCTION-CODES-01", f"unknown sanction code '{code}'", rel_file, line_no)
+
+        if "ENF-VERDICT-STORM-01" in enabled_checks:
+            verdict_counts: dict[str, int] = {}
+            first_line_by_target: dict[str, int] = {}
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                    continue
+                payload = msg.get("payload") or {}
+                target_hash = payload.get("target_message_hash")
+                if not isinstance(target_hash, str) or not target_hash:
+                    continue
+                verdict_counts[target_hash] = verdict_counts.get(target_hash, 0) + 1
+                first_line_by_target.setdefault(target_hash, line_no)
+
+            for target_hash, count in verdict_counts.items():
+                if count > 1:
+                    add_failure(
+                        t_failures,
+                        "ENF-VERDICT-STORM-01",
+                        f"multiple ENFORCEMENT_VERDICT messages ({count}) reference target_message_hash '{target_hash}'",
+                        rel_file,
+                        first_line_by_target.get(target_hash),
+                    )
+
+        if "AL-VERBOSITY-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload") or {}
+                message = payload.get("message")
+                if isinstance(message, str) and len(message) > 256:
+                    add_failure(
+                        t_failures,
+                        "AL-VERBOSITY-01",
+                        f"ALERT.message exceeds 256 chars (len={len(message)})",
+                        rel_file,
+                        line_no,
+                    )
+                details = payload.get("details")
+                if details is not None:
+                    try:
+                        details_canonical = json.dumps(details, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+                    except Exception as exc:
+                        add_failure(
+                            t_failures,
+                            "AL-VERBOSITY-01",
+                            f"ALERT.details is not JSON-serializable: {exc}",
+                            rel_file,
+                            line_no,
+                        )
+                    else:
+                        if len(details_canonical) > 4096:
+                            add_failure(
+                                t_failures,
+                                "AL-VERBOSITY-01",
+                                f"ALERT.details canonical length exceeds 4096 (len={len(details_canonical)})",
+                                rel_file,
+                                line_no,
+                            )
+
+        if "ENF-AUTH-01" in enabled_checks:
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            enforcement_cfg = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    enforcement_cfg = ext.get("enforcement")
+                if enforcement_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
+
+            if isinstance(enforcement_cfg, dict):
+                allowed = enforcement_cfg.get("enforcers")
+                if isinstance(allowed, list) and allowed:
+                    allowed_senders = {v for v in allowed if isinstance(v, str)}
+                    for line_no, msg in rows:
+                        if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                            continue
+                        sender = msg.get("sender")
+                        if sender not in allowed_senders:
+                            add_failure(
+                                t_failures,
+                                "ENF-AUTH-01",
+                                f"ENFORCEMENT_VERDICT sender '{sender}' is not listed in contract enforcers",
+                                rel_file,
+                                line_no,
+                            )
 
         if "ENF-GATE-01" in enabled_checks:
             first_contract = None
@@ -538,7 +903,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     passed = not failures
     suite_mark = suite.get("compatibility_mark")
-    marks = [suite_mark] if passed and isinstance(suite_mark, str) else []
+    marks = [suite_mark] if (passed and not degraded and isinstance(suite_mark, str)) else []
 
     return {
         "aicp_version": version,
@@ -548,6 +913,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
         "passed": passed,
         "failures": failures,
         "compatibility_marks": marks,
+        "degraded": degraded,
+        "degraded_reasons": degraded_reasons,
+        "skipped_checks": skipped_checks,
     }
 
 
@@ -581,7 +949,10 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
-    print(f"Conformance {'PASSED' if report['passed'] else 'FAILED'}: {report['suite_id']} -> {out_path.relative_to(ROOT)}")
+    status = 'PASSED' if report['passed'] else 'FAILED'
+    if report.get('degraded'):
+        status = f"{status} (DEGRADED)"
+    print(f"Conformance {status}: {report['suite_id']} -> {out_path.relative_to(ROOT)}")
     if report["failures"]:
         for f in report["failures"]:
             print(f" - [{f['test_id']}] {f['file']}:{f['line']} {f['message']}")

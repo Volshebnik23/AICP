@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/schemas/implementation_manifest.schema.json",
+  "title": "AICP Interop Implementation Manifest",
+  "type": "object",
+  "required": [
+    "implementation_id",
+    "name",
+    "language",
+    "version",
+    "maintainer",
+    "contact"
+  ],
+  "properties": {
+    "implementation_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "maintainer": {
+      "type": "string"
+    },
+    "contact": {
+      "type": "string"
+    },
+    "repo": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "profiles_claimed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

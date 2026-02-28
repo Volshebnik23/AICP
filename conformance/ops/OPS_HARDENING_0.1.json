@@ -1,0 +1,122 @@
+{
+  "suite_id": "OPS-HARDENING-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Deterministic operational abuse-hardening checks (loop/probing/storm/verbosity).",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/demos/demo-enforcement-behavioral-payloads.schema.json",
+  "payload_schema_map": {
+    "ALERT": "#/$defs/ALERT",
+    "RESUME_REQUEST": "#/$defs/RESUME_REQUEST",
+    "RESUME_RESPONSE": "#/$defs/RESUME_RESPONSE",
+    "ENFORCEMENT_VERDICT": "#/$defs/ENFORCEMENT_VERDICT"
+  },
+  "transcripts": [
+    {
+      "id": "OPS-01",
+      "path": "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RS-PROBING-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "OPS-02",
+      "path": "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ENFORCEMENT_VERDICT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-VERDICT-STORM-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "OPS-03",
+      "path": "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ALERT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AL-VERBOSITY-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payloads against ops suite payload schema map"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "RS-ACTIONS-01",
+      "description": "RESUME_RESPONSE recommended_actions values must be registered action IDs"
+    },
+    {
+      "test_id": "RS-RESUME-MATCH-01",
+      "description": "RESUME_REQUEST must have matching RESUME_RESPONSE and consistent status/hash relationships"
+    },
+    {
+      "test_id": "RS-LOOP-01",
+      "description": "Detect repeated NEEDS_RESYNC resume cycles without head progress"
+    },
+    {
+      "test_id": "RS-PROBING-01",
+      "description": "Detect sender probing many distinct UNKNOWN_SESSION resume targets in one transcript"
+    },
+    {
+      "test_id": "ENF-VERDICT-STORM-01",
+      "description": "Detect multiple ENFORCEMENT_VERDICT messages for same target_message_hash"
+    },
+    {
+      "test_id": "AL-VERBOSITY-01",
+      "description": "ALERT message/details must respect conservative verbosity caps"
+    }
+  ],
+  "compatibility_mark": "AICP-OPS-HARDENING-0.1"
+}

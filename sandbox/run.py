@@ -5,6 +5,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 REF_PY = ROOT / "reference/python"
@@ -13,6 +14,13 @@ if str(REF_PY) not in sys.path:
 
 from aicp_ref.hashing import message_hash_from_body
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(ROOT))
+    except ValueError:
+        return str(path.resolve())
 
 
 def load_jsonl(path: Path):
@@ -28,14 +36,25 @@ def load_jsonl(path: Path):
     return rows, errors
 
 
+def _load_keys(path: Path | None) -> dict[str, Any]:
+    if path is None:
+        path = ROOT / "fixtures/keys/GT_public_keys.json"
+    if path.is_dir():
+        path = path / "GT_public_keys.json"
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(raw, dict):
+        return raw
+    raise ValueError("keys file must be a JSON object mapping signer -> key metadata")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate a sandbox AICP thread JSONL file")
     parser.add_argument("jsonl_path")
+    parser.add_argument("--keys", help="Path to key map JSON file or directory containing GT_public_keys.json")
+    parser.add_argument("--no-signature-verify", action="store_true", help="Skip signature verification checks")
     args = parser.parse_args()
 
-    path = Path(args.jsonl_path)
-    if not path.is_absolute():
-        path = (ROOT / path).resolve()
+    path = Path(args.jsonl_path).expanduser().resolve()
 
     rows, parse_errors = load_jsonl(path)
     failures: list[str] = [f"line {ln}: {msg}" for ln, msg in parse_errors]
@@ -49,7 +68,13 @@ def main() -> int:
     except Exception:
         print("[WARN] jsonschema not installed; skipping core schema validation.")
 
-    key_map = json.loads((ROOT / "fixtures/keys/GT_public_keys.json").read_text(encoding="utf-8"))
+    key_map: dict[str, Any] = {}
+    if not args.no_signature_verify:
+        key_path = Path(args.keys).expanduser().resolve() if args.keys else None
+        try:
+            key_map = _load_keys(key_path)
+        except Exception as exc:
+            failures.append(f"failed loading keys: {exc}")
 
     if rows:
         session = rows[0][1].get("session_id")
@@ -86,6 +111,8 @@ def main() -> int:
             prev_hash = msg.get("message_hash")
 
             if msg.get("signatures"):
+                if args.no_signature_verify:
+                    continue
                 if not signature_verifier_available():
                     failures.append(f"line {line_no}: signatures present but cryptography unavailable")
                 else:
@@ -98,13 +125,16 @@ def main() -> int:
                         if not verify_ed25519(key, sig.get("sig_b64url", ""), sig.get("object_hash", "")):
                             failures.append(f"line {line_no}: signature verification failed for signer {signer}")
 
+    if args.no_signature_verify:
+        print("[WARN] --no-signature-verify enabled; badge eligibility may be affected in conformance/profile reports.")
+
     if failures:
-        print(f"Sandbox validation FAILED for {path.relative_to(ROOT)}")
+        print(f"Sandbox validation FAILED for {_display_path(path)}")
         for f in failures:
             print(f" - {f}")
         return 1
 
-    print(f"Sandbox validation PASSED for {path.relative_to(ROOT)} ({len(rows)} records)")
+    print(f"Sandbox validation PASSED for {_display_path(path)} ({len(rows)} records)")
     return 0
 
 
