@@ -1,0 +1,22 @@
+{
+  "agent:S": {
+    "kid": "S1",
+    "private_key_b64url": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA",
+    "alg": "ed25519"
+  },
+  "agent:T": {
+    "kid": "T1",
+    "private_key_b64url": "ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8",
+    "alg": "ed25519"
+  },
+  "moderator:Z": {
+    "kid": "Z1",
+    "private_key_b64url": "QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl8",
+    "alg": "ed25519"
+  },
+  "chat:mediator": {
+    "kid": "M1",
+    "private_key_b64url": "YGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn8",
+    "alg": "ed25519"
+  }
+}
