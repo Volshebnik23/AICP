@@ -18,6 +18,7 @@ recover_action	SHOULD	Recommended recovery action (Section 9.4).
 retry_after_ms	MAY	Suggested delay for retry.
 details	MAY	Human-readable explanation (no secrets/PII).
 evidence_refs	MAY	References to hashes/logs/artifacts, if safe.
+Schema note: Core payload schema models evidence_refs as an array of non-empty string references (deterministic and implementation-neutral).
 9.3 Core v0.1 error codes (minimum)
 •	VALIDATION:
 •	INVALID_ENVELOPE

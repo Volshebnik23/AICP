@@ -22,6 +22,8 @@ AICP Core is minimal and stable; extensions are optional and productized in wave
 
 ## Primary links
 
+- Standard overview (30 seconds): [docs/overview/AICP_STANDARD_OVERVIEW.md](overview/AICP_STANDARD_OVERVIEW.md)
+- Compatibility ladder & badges: [docs/adoption/COMPATIBILITY_AND_BADGES.md](adoption/COMPATIBILITY_AND_BADGES.md)
 - Start Here for Implementers: [START_HERE_IMPLEMENTERS.md](../START_HERE_IMPLEMENTERS.md)
 - Suite index: [AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md](suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md)
 - Core normative markdown: [AICP_Core_v0.1_Normative.md](core/AICP_Core_v0.1_Normative.md)
@@ -30,6 +32,9 @@ AICP Core is minimal and stable; extensions are optional and productized in wave
 - Drop-ins (copy folder): [dropins/aicp-core/](../dropins/aicp-core/)
 - Sandbox validator: [sandbox/run.py](../sandbox/run.py)
 - Conformance: [conformance/](../conformance/)
+- Platform builders guide: [docs/guides/PLATFORM_BUILDERS_GUIDE.md](guides/PLATFORM_BUILDERS_GUIDE.md)
+- Agent developers guide: [docs/guides/AGENT_DEVELOPERS_GUIDE.md](guides/AGENT_DEVELOPERS_GUIDE.md)
+- Error and recovery playbook: [docs/ops/ERROR_AND_RECOVERY.md](ops/ERROR_AND_RECOVERY.md)
 - References: [reference/](../reference/)
 - Registries: [registry/](../registry/)
 

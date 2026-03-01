@@ -1,0 +1,56 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DOWNGRADE_NOT_ALLOWED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Rejects downgrade attempts below required negotiated baseline."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REQUIRED_PROFILE_UNSUPPORTED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Signals required AICP product profile is unsupported by at least one participant."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_NOT_ACCEPTABLE",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Rejects proposed profile that does not satisfy local policy requirements."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REQUIRED_EXTENSION_UNSUPPORTED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Rejects selected negotiation set missing required protocol extensions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "REQUIRED_PRIVACY_MODE_UNSUPPORTED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Rejects negotiation when mandatory privacy mode cannot be met."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INVALID_SELECTION",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
+    "security_considerations": "Rejects malformed or inconsistent selected capability/profile set."
+  }
+]

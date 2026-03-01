@@ -68,3 +68,26 @@ A report may be `passed=true` yet `degraded=true` when critical checks are unava
 
 ## Coexistence with non-AICP chats
 AICP is optional: agents may operate in channels that do not use AICP. Enforcement semantics apply only where a mediated channel actually uses AICP artifacts.
+
+
+## Standard Overview
+A short orientation document that explains what AICP is and is not, and points implementers to first-run commands and core references.
+
+## Degraded mode
+A report state where checks pass but critical capabilities are unavailable (for example, signature verification backend missing), so compatibility marks are withheld.
+
+## Badge eligibility
+Condition where required checks both pass and are fully enforceable (non-degraded), allowing compatibility mark issuance.
+
+
+## AICP product profile
+A named interoperability bundle (for example `AICP-BASE`, `AICP-MEDIATED-BLOCKING`) negotiated as `{profile_id, profile_version}` in EXT-CAPNEG and validated by profile-level conformance evidence.
+
+## Crypto profile
+A negotiated cryptographic/canonicalization capability set represented in CAPNEG `supported_profiles` and `selected.crypto_profile`; distinct from AICP product profiles.
+
+## Profile requirement
+A declared minimum acceptable AICP product profile set (`required_aicp_profiles`) that a participant/platform demands during CAPNEG.
+
+## Downgrade (CAPNEG)
+Selection of a weaker or unacceptable negotiated set (extensions/crypto/product profile) relative to declared requirements or previously accepted baseline; MUST be rejectable and auditable.

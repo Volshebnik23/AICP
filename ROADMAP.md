@@ -122,6 +122,9 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M8.11 Sandbox validator usability hardening shipped (`sandbox/run.py`, `sandbox/README.md`).
 - ✅ M8.12 contract_id envelope consistency shipped (Core schema + docs + conformance alignment).
 - ✅ M8.13 quickstart anti-rot gate shipped (`.github/workflows/ci.yml` quickstart-smoke job).
+- ✅ AP1.1–AP1.4 adoption docs pack shipped (`docs/overview/AICP_STANDARD_OVERVIEW.md`, `docs/guides/*`, `docs/ops/ERROR_AND_RECOVERY.md`).
+- ✅ AP2.1–AP2.3 profile negotiation hardening shipped (`registry/aicp_profiles.json`, CAPNEG profile negotiation checks/fixtures, profile downgrade protection).
+- ✅ AP3.1 compatibility ladder + badge contract docs + reusable CI workflow snippet shipped (`docs/adoption/COMPATIBILITY_AND_BADGES.md`, `docs/snippets/github-actions/aicp-conformance.yml`).
 
 ---
 
@@ -136,10 +139,25 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
   - ✅ M9.4 canonicalization edge-case vectors + drop-in asset anti-drift checks shipped.
   - ✅ M9.5 ordering model clarity + linear prev_msg_hash requirement + expanded drop-in asset parity checks shipped.
-- ⏳ M10 Snapshot discipline (optional, when needed):
-  - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
+  - ✅ M9.6 DoS/amplification/abuse hardening guidance + deterministic ops checks shipped (`security_review/OPS_HARDENING_GUIDE.md`, `conformance/ops/OPS_HARDENING_0.1.json`, `fixtures/ops/`).
+  - ✅ M9.7 Signed-path security evidence shipped for mediated blocking (`conformance/security/SIG_SIGNED_PATHS_0.1.json`, `fixtures/security/signed_paths/`, deterministic TEST-only keys).
+- ✅ M10 Snapshot discipline shipped (deterministic manifest at `dist/releases/snapshots/AICP_SNAPSHOT_0.1.0-dev.json`, generator/validator scripts, and `make validate` integration).
 
 ---
+
+- ✅ M11.0 Core `ERROR` message type productized end-to-end (Core payload schema + golden fixture + Core conformance coverage).
+- ✅ M11.3 Stable message-type anti-drift governance gate shipped (`scripts/validate_productization_coverage.py`, wired into `make validate`).
+
+- ✅ M11.1 EXT-PARTICIPANTS shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
+- ✅ M11.2 EXT-TOOL-GATING shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
+
+- ✅ M12.1 EXT-IDENTITY-LC productized (payload schema + deterministic fixtures + conformance suite + session-local key verification support).
+- ✅ M12.2 EXT-DELEGATION productized (registry message types + payload schema + fixtures + conformance suite + depth/expiry/binding checks).
+- ✅ M12.3 EXT-WORKFLOW-SYNC productized (registry message types + payload schema + fixtures + conformance suite + workflow checks).
+
+- ✅ M13.1 EXT-DISPUTES + EXT-SECURITY-ALERTS productized (message-type registry coverage, payload schemas, deterministic fixtures, conformance suites, and runner checks).
+- ✅ M13.2 CAPNEG binding refinements shipped (accepted negotiation_result hash/selected bound into contract context with RFC + fixtures + conformance checks).
+- ✅ M13.3 policy_reason_codes baseline expansion + namespaced reason-code acceptance shipped.
 
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
@@ -155,4 +173,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M10 (snapshot discipline + compatibility packaging hardening)** is next.
+**M14 profile packaging** is next, followed by ecosystem-facing profile hardening line items.

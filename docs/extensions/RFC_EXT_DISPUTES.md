@@ -2,13 +2,25 @@
 
 15.3 EXT-DISPUTES — Challenges, breach claims, arbitration hooks (Registered Extension)
 Purpose: interoperable dispute primitives to challenge suspected distortion, incorrect results, or improper execution of delegated obligations, and to optionally request arbitration.
-Message types:
+### 15.3.1 Message types (normative)
 •	CHALLENGE_ASSERTION — dispute an attestation/object/message with evidence and requested remedy.
 •	CLAIM_BREACH — assert breach of delegation purpose, acceptance criteria, or contract obligation.
 •	ARBITRATION_REQUEST (optional) — request arbitration by a designated arbitrator party or profile.
 •	ARBITRATION_RESULT (optional) — publish arbitration outcome with signatures.
-CHALLENGE_ASSERTION payload (normative minimum): challenge_id (MUST), target_ref (MUST: object_hash or message_id), challenge_type (MUST, registered), claim (MUST), evidence_refs (SHOULD), requested_remedy (MAY), deadline (MAY).
+
+### 15.3.2 Payload shape (normative minimum)
+CHALLENGE_ASSERTION payload (normative minimum): challenge_id (MUST), target_ref (MUST: object_hash or message_id), challenge_type (MUST, registered), claim (MUST), evidence_refs (MUST, non-empty), requested_remedy (MAY), deadline (MAY).
 CLAIM_BREACH payload (normative minimum): claim_id (MUST), delegation_id or obligation_ref (MUST), breach_type (MUST, registered), narrative (SHOULD), evidence_refs (SHOULD), requested_remedy (MAY).
+Conformance requires evidence_refs to be present and non-empty for interoperability and auditability.
+Conformance requires at least one resolvable evidence_refs entry using `msgid:<message_id>`, `msghash:<message_hash>`, or `objhash:<object_hash>`; additional `urn:`/`url:` references are allowed but do not satisfy this requirement by themselves.
+
+### 15.3.3 CHALLENGE_ASSERTION
+
+### 15.3.4 CLAIM_BREACH
+
+### 15.3.5 ARBITRATION_REQUEST
+
+### 15.3.6 ARBITRATION_RESULT
 
 15.5 Extension conformance (normative minimum)
 •	AW-01: WORKFLOW_DECLARE + WORKFLOW_STEP_ATTEST validates head_version binding and evidence_refs hashing.
