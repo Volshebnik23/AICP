@@ -15,3 +15,6 @@ Where:
 CI validates changed implementation manifests against the schema.
 Run locally if needed:
 `python interop/tools/validate_manifests.py --schema interop/schemas/implementation_manifest.schema.json interop/submissions/<implementation_id>/implementation.json`
+
+
+If you discover a protocol inconsistency during plugfest execution, record it in `ERRATA.md` (root) with the implementation id, affected suite/profile, failing report path, and a minimal transcript snippet/reference when possible. Keep submission-specific packaging fixes in the submission PR itself.
