@@ -65,6 +65,7 @@ stateDiagram-v2
 Normative notes:
 - Conceptually this is request/response-style capability negotiation, represented by `DECLARE` + `PROPOSE` + terminal `ACCEPT`/`REJECT` messages.
 - Implementations SHOULD prevent downgrade by binding accepted profile/capabilities to negotiated context.
+- AICP product profile selection SHOULD be recorded in `negotiation_result.selected.aicp_profile`; crypto profile selection remains in `selected.crypto_profile`.
 
 Conformance reference: `conformance/extensions/CN_CAPNEG_0.1.json`; fixtures: `fixtures/extensions/capneg/`.
 
