@@ -195,6 +195,18 @@ def _message_body_without_hash_and_signatures(message: dict[str, Any]) -> dict[s
     return body
 
 
+def _baseline_keyring(key_map: dict[str, Any]) -> dict[str, dict[str, str]]:
+    keyring: dict[str, dict[str, str]] = {}
+    for signer, meta in key_map.items():
+        if not isinstance(meta, dict):
+            continue
+        kid = meta.get("kid")
+        public_key = meta.get("public_key_b64url")
+        if isinstance(signer, str) and isinstance(kid, str) and isinstance(public_key, str):
+            keyring.setdefault(signer, {})[kid] = public_key
+    return keyring
+
+
 def _evaluate_transcript_expectations(
     transcript: dict[str, Any], transcript_failures: list[dict[str, Any]], rel_file: str
 ) -> list[dict[str, Any]]:
@@ -462,18 +474,56 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     line_no,
                 )
 
-        if can_verify_signatures:
-            for line_no, msg in rows:
-                for sig in msg.get("signatures", []) or []:
-                    signer = sig.get("signer")
-                    key = key_map.get(signer)
-                    if not key:
-                        add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_file, line_no)
-                        continue
-                    if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
-                        add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
-        else:
-            if "CT-SIGNATURE-VERIFY-01" in enabled_checks:
+        if "CT-SIGNATURE-VERIFY-01" in enabled_checks:
+            if can_verify_signatures:
+                keyring = _baseline_keyring(key_map)
+                for line_no, msg in rows:
+                    mtype = msg.get("message_type")
+                    payload = msg.get("payload") or {}
+
+                    if mtype == "IDENTITY_ANNOUNCE":
+                        aid_ref = payload.get("aid_ref")
+                        if isinstance(aid_ref, dict) and aid_ref.get("object_type") == "aid":
+                            aid_obj = aid_ref.get("object")
+                            if isinstance(aid_obj, dict):
+                                agent_id = aid_obj.get("agent_id")
+                                keys = aid_obj.get("keys")
+                                if isinstance(agent_id, str) and isinstance(keys, list):
+                                    for item in keys:
+                                        if not isinstance(item, dict):
+                                            continue
+                                        kid = item.get("kid")
+                                        public_key = item.get("public_key_b64url")
+                                        status = item.get("status")
+                                        if isinstance(kid, str) and isinstance(public_key, str) and status != "revoked":
+                                            keyring.setdefault(agent_id, {})[kid] = public_key
+
+                    if mtype == "KEY_ROTATION":
+                        sender = msg.get("sender")
+                        if isinstance(sender, str):
+                            old_kid = payload.get("old_kid")
+                            new_key = payload.get("new_key") or {}
+                            cross = payload.get("cross_signatures") or {}
+                            old_sig = cross.get("old_signs_new") or {}
+                            new_sig = cross.get("new_signs_old") or {}
+                            old_public = keyring.get(sender, {}).get(old_kid) if isinstance(old_kid, str) else None
+                            new_public = new_key.get("public_key_b64url") if isinstance(new_key, dict) else None
+                            new_kid = new_key.get("kid") if isinstance(new_key, dict) else None
+                            old_ok = isinstance(old_public, str) and verify_ed25519(old_public, str(old_sig.get("sig_b64url", "")), str(old_sig.get("object_hash", "")))
+                            new_ok = isinstance(new_public, str) and verify_ed25519(str(new_public), str(new_sig.get("sig_b64url", "")), str(new_sig.get("object_hash", "")))
+                            if old_ok and new_ok and isinstance(new_kid, str) and isinstance(new_public, str):
+                                keyring.setdefault(sender, {})[new_kid] = new_public
+
+                    for sig in msg.get("signatures", []) or []:
+                        signer = sig.get("signer")
+                        kid = sig.get("kid")
+                        key = keyring.get(signer, {}).get(kid) if isinstance(signer, str) and isinstance(kid, str) else None
+                        if not key:
+                            add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", f"missing public key for signer {signer} kid {kid}", rel_file, line_no)
+                            continue
+                        if not verify_ed25519(key, sig.get("sig_b64url", ""), sig.get("object_hash", "")):
+                            add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
+            else:
                 degraded = True
                 reason = "signature verification unavailable"
                 if reason not in degraded_reasons:
@@ -688,6 +738,101 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+        if any(check in enabled_checks for check in {"ID-AID-01", "ID-ANN-01", "ID-ROT-01", "ID-REVOKE-01"}):
+            keyring = _baseline_keyring(key_map)
+            revoked_after_index: dict[str, int] = {}
+            contract_changing_types = {"CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "RESOLVE_CONFLICT"}
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "IDENTITY_ANNOUNCE":
+                    aid_ref = payload.get("aid_ref")
+                    if isinstance(aid_ref, dict):
+                        if "ID-AID-01" in enabled_checks:
+                            if aid_ref.get("object_type") != "aid" or not isinstance(aid_ref.get("object"), dict) or not isinstance(aid_ref.get("object_hash"), str):
+                                add_failure(t_failures, "ID-AID-01", "aid_ref must include object_type='aid', object, and object_hash", rel_file, line_no)
+                            else:
+                                try:
+                                    computed_aid_hash = object_hash("aid", aid_ref.get("object"))
+                                except Exception as exc:
+                                    add_failure(t_failures, "ID-AID-01", f"aid_ref object_hash recompute error: {exc}", rel_file, line_no)
+                                else:
+                                    if computed_aid_hash != aid_ref.get("object_hash"):
+                                        add_failure(t_failures, "ID-AID-01", f"aid_ref.object_hash mismatch (expected {aid_ref.get('object_hash')}, got {computed_aid_hash})", rel_file, line_no)
+                        if "ID-ANN-01" in enabled_checks and isinstance(aid_ref.get("object_hash"), str):
+                            if payload.get("aid_hash") != aid_ref.get("object_hash"):
+                                add_failure(t_failures, "ID-ANN-01", "IDENTITY_ANNOUNCE payload.aid_hash must equal aid_ref.object_hash", rel_file, line_no)
+
+                        aid_obj = aid_ref.get("object")
+                        if isinstance(aid_obj, dict):
+                            agent_id = aid_obj.get("agent_id")
+                            keys = aid_obj.get("keys")
+                            if isinstance(agent_id, str) and isinstance(keys, list):
+                                for item in keys:
+                                    if not isinstance(item, dict):
+                                        continue
+                                    kid = item.get("kid")
+                                    pub = item.get("public_key_b64url")
+                                    status = item.get("status")
+                                    if isinstance(kid, str) and isinstance(pub, str) and status != "revoked":
+                                        keyring.setdefault(agent_id, {})[kid] = pub
+
+                if mtype == "KEY_ROTATION":
+                    sender = msg.get("sender")
+                    old_kid = payload.get("old_kid")
+                    new_key = payload.get("new_key") or {}
+                    cross = payload.get("cross_signatures") or {}
+                    old_sig = cross.get("old_signs_new") or {}
+                    new_sig = cross.get("new_signs_old") or {}
+
+                    new_key_material = {
+                        "kid": new_key.get("kid"),
+                        "alg": new_key.get("alg"),
+                        "public_key_b64url": new_key.get("public_key_b64url"),
+                    }
+                    old_kid_binding = {"old_kid": old_kid}
+                    try:
+                        new_key_hash = object_hash("key", new_key_material)
+                        old_kid_hash = object_hash("kid", old_kid_binding)
+                    except Exception as exc:
+                        if "ID-ROT-01" in enabled_checks:
+                            add_failure(t_failures, "ID-ROT-01", f"rotation object_hash computation failed: {exc}", rel_file, line_no)
+                        continue
+
+                    old_public = keyring.get(sender, {}).get(old_kid) if isinstance(sender, str) and isinstance(old_kid, str) else None
+                    new_public = new_key.get("public_key_b64url") if isinstance(new_key, dict) else None
+                    new_kid = new_key.get("kid") if isinstance(new_key, dict) else None
+
+                    hash_ok = old_sig.get("object_hash") == new_key_hash and new_sig.get("object_hash") == old_kid_hash
+                    sig_old_ok = isinstance(old_public, str) and verify_ed25519(old_public, str(old_sig.get("sig_b64url", "")), str(old_sig.get("object_hash", "")))
+                    sig_new_ok = isinstance(new_public, str) and verify_ed25519(str(new_public), str(new_sig.get("sig_b64url", "")), str(new_sig.get("object_hash", "")))
+
+                    if "ID-ROT-01" in enabled_checks:
+                        if not hash_ok:
+                            add_failure(t_failures, "ID-ROT-01", "KEY_ROTATION cross_signatures object_hash values do not match required key/kid object hashes", rel_file, line_no)
+                        if not sig_old_ok:
+                            add_failure(t_failures, "ID-ROT-01", "KEY_ROTATION old_signs_new signature verification failed", rel_file, line_no)
+                        if not sig_new_ok:
+                            add_failure(t_failures, "ID-ROT-01", "KEY_ROTATION new_signs_old signature verification failed", rel_file, line_no)
+
+                    if hash_ok and sig_old_ok and sig_new_ok and isinstance(sender, str) and isinstance(new_kid, str) and isinstance(new_public, str):
+                        keyring.setdefault(sender, {})[new_kid] = new_public
+
+                if mtype == "KEY_REVOKE":
+                    target_kid = payload.get("target_kid")
+                    if isinstance(target_kid, str) and target_kid not in revoked_after_index:
+                        revoked_after_index[target_kid] = idx
+
+                if "ID-REVOKE-01" in enabled_checks and mtype in contract_changing_types:
+                    for sig in msg.get("signatures", []) or []:
+                        kid = sig.get("kid")
+                        if isinstance(kid, str):
+                            revoke_idx = revoked_after_index.get(kid)
+                            if revoke_idx is not None and idx > revoke_idx:
+                                add_failure(t_failures, "ID-REVOKE-01", f"contract-changing message signed with revoked kid '{kid}'", rel_file, line_no)
 
         if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
             first_contract = None

@@ -156,6 +156,8 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M11.1 EXT-PARTICIPANTS shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
 - ✅ M11.2 EXT-TOOL-GATING shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
 
+- ✅ M12.1 EXT-IDENTITY-LC productized (payload schema + deterministic fixtures + conformance suite + session-local key verification support).
+
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
 - ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
@@ -170,4 +172,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M11.2 (tool-gating profile hardening)** is next, then M10 snapshot discipline hardening.
+**M12.2 (delegation binding/productization)** is next, followed by M12.3 and then M10 snapshot discipline hardening.
