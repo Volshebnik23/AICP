@@ -1,0 +1,74 @@
+{
+  "suite_id": "DL-DELEGATION-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-DELEGATION conformance checks for binding, expiry, and max-depth enforcement.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-delegation-payloads.schema.json",
+  "payload_schema_map": {
+    "DELEGATION_GRANT": "#/$defs/DELEGATION_GRANT",
+    "DELEGATION_ACCEPT": "#/$defs/DELEGATION_ACCEPT",
+    "DELEGATION_REVOKE": "#/$defs/DELEGATION_REVOKE",
+    "DELEGATION_RESULT_ATTEST": "#/$defs/DELEGATION_RESULT_ATTEST"
+  },
+  "transcripts": [
+    {
+      "id": "DL-01",
+      "path": "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "DELEGATION_GRANT",
+        "DELEGATION_ACCEPT",
+        "DELEGATION_RESULT_ATTEST"
+      ]
+    },
+    {
+      "id": "DL-02",
+      "path": "fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "DELEGATION_GRANT",
+        "DELEGATION_RESULT_ATTEST"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "DL-EXPIRY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "DL-03",
+      "path": "fixtures/extensions/delegation/DL-03_depth_exceeded_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "DELEGATION_GRANT",
+        "DELEGATION_GRANT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "DL-DEPTH-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-DELEGATION payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "DL-EXPIRY-01", "description": "DELEGATION_RESULT_ATTEST must occur before referenced grant expiry"},
+    {"test_id": "DL-DEPTH-01", "description": "Child delegation depth must decrease from parent max_depth"},
+    {"test_id": "DL-BIND-01", "description": "DELEGATION_RESULT_ATTEST must bind to prior grant and matching contract head version"}
+  ],
+  "compatibility_mark": "AICP-EXT-DELEGATION-0.1"
+}

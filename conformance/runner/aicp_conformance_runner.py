@@ -207,6 +207,19 @@ def _baseline_keyring(key_map: dict[str, Any]) -> dict[str, dict[str, str]]:
     return keyring
 
 
+def _parse_iso_datetime(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        dt = datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 def _evaluate_transcript_expectations(
     transcript: dict[str, Any], transcript_failures: list[dict[str, Any]], rel_file: str
 ) -> list[dict[str, Any]]:
@@ -738,6 +751,65 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+        if any(check in enabled_checks for check in {"DL-EXPIRY-01", "DL-DEPTH-01", "DL-BIND-01"}):
+            grants_by_id: dict[str, tuple[int, int, dict[str, Any], dict[str, Any]]] = {}
+            for idx, (line_no, msg) in enumerate(rows):
+                if msg.get("message_type") != "DELEGATION_GRANT":
+                    continue
+                payload = msg.get("payload") or {}
+                delegation_id = payload.get("delegation_id")
+                if isinstance(delegation_id, str) and delegation_id not in grants_by_id:
+                    grants_by_id[delegation_id] = (idx, line_no, msg, payload)
+
+            if "DL-DEPTH-01" in enabled_checks:
+                for idx, line_no, _, payload in grants_by_id.values():
+                    parent_id = payload.get("parent_delegation_id")
+                    if not isinstance(parent_id, str):
+                        continue
+                    parent = grants_by_id.get(parent_id)
+                    if parent is None:
+                        add_failure(t_failures, "DL-DEPTH-01", f"parent_delegation_id '{parent_id}' does not reference a prior DELEGATION_GRANT", rel_file, line_no)
+                        continue
+                    parent_idx, _, _, parent_payload = parent
+                    if parent_idx >= idx:
+                        add_failure(t_failures, "DL-DEPTH-01", f"parent_delegation_id '{parent_id}' must reference an earlier DELEGATION_GRANT", rel_file, line_no)
+                        continue
+                    parent_max = parent_payload.get("max_depth") if isinstance(parent_payload.get("max_depth"), int) else 0
+                    child_max = payload.get("max_depth") if isinstance(payload.get("max_depth"), int) else 0
+                    if parent_max <= 0:
+                        add_failure(t_failures, "DL-DEPTH-01", f"parent delegation '{parent_id}' max_depth={parent_max} cannot delegate further", rel_file, line_no)
+                        continue
+                    if child_max > parent_max - 1:
+                        add_failure(t_failures, "DL-DEPTH-01", f"child delegation max_depth={child_max} exceeds allowed remaining depth {parent_max - 1}", rel_file, line_no)
+
+            for idx, (line_no, msg) in enumerate(rows):
+                if msg.get("message_type") != "DELEGATION_RESULT_ATTEST":
+                    continue
+                payload = msg.get("payload") or {}
+                delegation_id = payload.get("delegation_id")
+                grant = grants_by_id.get(delegation_id) if isinstance(delegation_id, str) else None
+
+                if "DL-BIND-01" in enabled_checks:
+                    if grant is None:
+                        add_failure(t_failures, "DL-BIND-01", f"DELEGATION_RESULT_ATTEST delegation_id '{delegation_id}' must reference a prior DELEGATION_GRANT", rel_file, line_no)
+                    else:
+                        grant_idx = grant[0]
+                        if grant_idx >= idx:
+                            add_failure(t_failures, "DL-BIND-01", f"DELEGATION_RESULT_ATTEST delegation_id '{delegation_id}' must reference an earlier DELEGATION_GRANT", rel_file, line_no)
+                    contract_ref = msg.get("contract_ref") or {}
+                    if payload.get("contract_head_version") != contract_ref.get("head_version"):
+                        add_failure(t_failures, "DL-BIND-01", "payload.contract_head_version must equal envelope contract_ref.head_version", rel_file, line_no)
+
+                if "DL-EXPIRY-01" in enabled_checks and grant is not None and grant[0] < idx:
+                    expiry = _parse_iso_datetime((grant[3] or {}).get("expiry"))
+                    attest_ts = _parse_iso_datetime(msg.get("timestamp"))
+                    if expiry is None:
+                        add_failure(t_failures, "DL-EXPIRY-01", "referenced DELEGATION_GRANT payload.expiry must be valid date-time", rel_file, line_no)
+                    elif attest_ts is None:
+                        add_failure(t_failures, "DL-EXPIRY-01", "DELEGATION_RESULT_ATTEST timestamp must be valid date-time", rel_file, line_no)
+                    elif attest_ts > expiry:
+                        add_failure(t_failures, "DL-EXPIRY-01", f"DELEGATION_RESULT_ATTEST occurs after grant expiry ({attest_ts.isoformat()} > {expiry.isoformat()})", rel_file, line_no)
 
         if any(check in enabled_checks for check in {"ID-AID-01", "ID-ANN-01", "ID-ROT-01", "ID-REVOKE-01"}):
             keyring = _baseline_keyring(key_map)

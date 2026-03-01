@@ -113,7 +113,7 @@
     "maintainer": "AICP Working Group",
     "id": "DELEGATION_GRANT",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#152-ext-delegation--hierarchical-purpose-oriented-delegation-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
     "security_considerations": "Delegation scope and expiry must be enforced."
   },
   {
@@ -340,5 +340,32 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
     "security_considerations": "Attestations should be authenticated and bind to request/result hashes to prevent replay spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Acceptance should be authenticated to bind delegatee commitment."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Revocations should be honored promptly to avoid stale delegated authority."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_RESULT_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Result attestations must bind to delegation_id and contract head to remain auditable."
   }
 ]
