@@ -24,11 +24,8 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ## A) Spec authoring status (text completeness)
 
 - ✅ Suite overview/index is present at `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`.
-- ✅ Core v0.1 normative artifacts are present at canonical paths:
-  - `docs/core/AICP_Core_v0.1_Normative.md`
-  - `schemas/core/`
-  - `fixtures/`
-- ✅ Standalone RFC documents for registries/error model/extensions/bindings/governance/interop are present under:
+- ✅ Core normative spec is diff-friendly Markdown under `docs/core/`.
+- ✅ Standalone RFC documents exist under:
   - `docs/rfc/`
   - `docs/extensions/`
   - `docs/bindings/`
@@ -37,124 +34,112 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ## B) Productization status (implementable + enforceable)
 
-### ✅ Completed (M1): Canonical repo layout
-- Core artifacts are in canonical repository locations:
-  - `docs/core/` (normative Core docs)
-  - `schemas/core/` (Core schemas)
-  - `fixtures/` (TV + golden transcripts + keys)
-- Validation and release hygiene commands are available in `Makefile`:
-  - `make validate`
-  - `make test`
-  - `make release-check`
+### ✅ Completed: Canonical repo layout + registries + conformance + references
+- Canonical paths: `docs/`, `schemas/`, `registry/`, `fixtures/`, `conformance/`, `reference/`
+- `make validate`, `make conformance-all`, and repo-local tests exist.
+- Reference implementation (Python) + TS/JS SDK and templates exist.
 
-### ✅ Completed (M2): Standalone RFC docs + roadmap sync + release-check hardening
-- Suite maintained as umbrella index in `docs/suite/`.
-- Standalone RFCs maintained under `docs/rfc/`, `docs/extensions/`, `docs/bindings/`.
-- `release-check` verifies canonical Core artifacts in addition to hygiene files.
+### ✅ Completed: Extensions and “mediated blocking” contour
+- CAPNEG, OBJECT_RESYNC, POLICY_EVAL, ENFORCEMENT, ALERTS, RESUME, MCP binding are productized with:
+  - registries
+  - schemas
+  - fixtures
+  - conformance suites
 
-### ✅ Completed (M3): Machine-readable registries as first-class artifacts
-- Registry artifacts are available under `registry/*.json`.
-- Registry validation is enforced via `scripts/validate_registry.py` in `make validate` and CI.
+### ✅ Completed: TLS-like usability layer
+- Profiles + profile runner + badges
+- Canonical flows & state machines
+- Plugfest kit + interop matrix tooling + CI enforcement
+- Security review package, self-review, threat-driven negatives
+- Canonicalization edge-case TVs (executable evidence)
+- Ordering model clarified + linear-chain required (prev_msg_hash)
 
-### ✅ Completed (M4): Conformance as a product (runner + reports)
-**Goal:** “AICP-compatible” becomes measurable.
-- Add `/conformance` suite catalogs (Core + opt-in EXT suites).
-- Add a conformance runner CLI that outputs a **compatibility report** (machine-readable).
-- Run conformance in CI.
-
-### ✅ Completed (M5): Reference implementations in-repo
-- `/reference/python` (minimum correct implementation).
-- `/sdk/typescript` (validator/hash utilities) + templates.
-
-### ✅ Completed (M6): Expanded golden transcripts + negative conformance
-- Golden coverage includes revoke, unknown-base+resync, invalid signature, duplicate message_id replay scenarios.
-- Expected-fail support in conformance.
-
-### ✅ Completed (M7.x): Extension & binding productization line
-- ✅ M7.1: EXT-CAPNEG productization
-- ✅ M7.2: EXT-OBJECT-RESYNC productization
-- ✅ M7.3: EXT-POLICY-EVAL productization + hardening
-- ✅ M7.4: BINDINGS productization (starting with MCP)
-- ✅ M7.5: Developer Experience & Adoption Kit (DX)
-- ✅ M7.6: EXT-ENFORCEMENT productization (blocking enforcement contour)
-- ✅ M7.7: Roadmap sync discipline (process hardening)
+### ✅ Completed: Adoption “< 1 hour” onboarding baseline
+- Start Here entrypoint + drop-ins (copy folder artifacts)
+- Quickstart targets + CI quickstart gate
+- Sandbox validator usability (external paths, keys, no-signature-verify)
+- Anti-drift for drop-in assets and canonical schema selection
 
 ---
 
-## ✅ Completed: Interop readiness package (TLS-like usability & interoperability)
-- ✅ M8.1 Personas → user stories → feature sets → profile mapping
-- ✅ M8.2 AICP Profiles (normative doc) + conformance badges
-- ✅ M8.3 EXT-ALERTS (“TLS alerts”-like) + recovery semantics
-- ✅ M8.4 Canonical state machines and flow diagrams
-- ✅ M8.5 EXT-RESUME (session resumption / reconnect)
-- ✅ M8.6 Plugfest kit scaffolding + interop matrix tool + errata workflow note
-- ✅ M8.6.1 Interop community-ready hardening:
-  - interop matrix CI staleness checks
-  - submission validation (implementation_id matches folder name)
-  - schema validation for changed manifests in CI
+## Adoption-ready track (public standard readiness)
+This track turns AICP from “strong repo” into an **adoption-ready standard**: clear positioning, guides, productized profiles, market-grade conformance, governance, and legal packaging.
 
-- 🔜 M8.1 Personas → user stories → feature sets → profile mapping (source-of-truth)
-  - Create a canonical mapping doc that justifies profiles by real personas and use cases.
+### 🔜 Adoption Pack 1 — “30-second understanding” + first hello session (docs-first, high ROI)
+**Goal:** A developer does NOT ask 10 clarifying questions before trying. Two audiences reach a first “hello session” in 10–20 minutes.
 
-- 🔜 M8.2 AICP Profiles (normative document) + conformance badges (profile-level compatibility)
-  - Define profiles as named bundles of required extensions + canonical flows.
-  - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
+- 🔜 AP1.1 Standard Overview (what it is / isn’t)
+  - A single short “standard overview” entry that explains:
+    - AICP = content-layer agent-to-agent protocol
+    - roles: Mediator/Host and Enforcer
+    - profiles as product feature (what you can claim/require)
+    - what AICP does NOT replace (transport, tool protocols like MCP, domain ontologies, IAM systems)
+  - Linked from README + docs/index.
 
-- ✅ M8.3 EXT-ALERTS alert/error registry + recovery semantics (“TLS alerts”-like)
-  - Registered extension artifacts shipped: RFC, registries, schema, conformance suite, and fixtures.
-  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate) are now repo-validated.
+- 🔜 AP1.2 Implementer’s Guide — Platform Builders (Mediators/Enforcers)
+  - How to build a gateway/enforcer: what to store, how to log, how to apply strikes/sanctions, how to gate side-effects.
+  - How to compute compatibility claims and what “degraded mode” means.
 
-- ✅ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
-  - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
+- 🔜 AP1.3 Implementer’s Guide — Agent Developers
+  - How to add support (SDK/drop-in), how to run quickstart, how conformance and profile badges work, what minimal session looks like.
 
-- ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
-  - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
+- 🔜 AP1.4 Error & Recovery — deterministic operational playbook
+  - One canonical doc that unifies:
+    - alerts vs fatal
+    - what to do on hash/signature/chain mismatch
+    - resync/resume behavior
+    - retry vs disconnect guidance
 
-- 🟡 M8.6 Plugfest kit + interop report + errata workflow
-  - `/interop/*` artifacts, test vectors, interop report format.
-  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
-  - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
+### ⏳ Adoption Pack 2 — Profiles as product (negotiation, downgrade protection, naming)
+**Goal:** A platform can credibly say: “We support AICP-Profile-XYZ” and mean it.
 
-- ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
-- ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
-- ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
-- ✅ M8.10 TypeScript SDK README minimal-envelope corrections shipped (`sdk/typescript/README.md`).
-- ✅ M8.11 Sandbox validator usability hardening shipped (`sandbox/run.py`, `sandbox/README.md`).
-- ✅ M8.12 contract_id envelope consistency shipped (Core schema + docs + conformance alignment).
-- ✅ M8.13 quickstart anti-rot gate shipped (`.github/workflows/ci.yml` quickstart-smoke job).
+- ⏳ AP2.1 Profile declaration & negotiation
+  - Specify how profiles are declared and negotiated (via CAPNEG or equivalent),
+  - and how a party can REQUIRE a profile.
+
+- ⏳ AP2.2 Profile downgrade protection (profile-level)
+  - Make downgrade attempts detectable/invalid when a profile is required (tie to CAPNEG checks).
+  - Provide “required profile” invariants and example fixtures.
+
+- ⏳ AP2.3 Profile capability taxonomy
+  - Explicitly define what a profile constrains:
+    - required extensions
+    - required message types (where relevant)
+    - crypto requirements (“crypto profile”)
+    - required policy categories (shape-level, not policy engine semantics)
+
+### ⏳ Adoption Pack 3 — Conformance as marketing contract + governance + legal packaging
+**Goal:** Companies integrate without fear of unstable changes or legal surprises.
+
+- ⏳ AP3.1 Compatibility scale and “AICP-compatible” story
+  - Document a clear compatibility ladder:
+    - Core-only
+    - Core+Crypto (badge-eligible, non-degraded)
+    - Mediated blocking (ENF + Alerts + Resume)
+    - Ops hardening
+  - Provide a GitHub Action or workflow snippet to publish conformance/profile badges.
+
+- ⏳ AP3.2 Governance & change control
+  - Versioning policy (SemVer-like)
+  - Deprecation policy (support window)
+  - Registry change-control RFC (who/how changes registries)
+  - Extension acceptance workflow (RFC lifecycle)
+
+- ⏳ AP3.3 Legal/standard packaging
+  - Code license + spec license (explicit)
+  - Trademark/name usage note for “AICP”
+  - Security policy (already present) and disclosure workflow clarity
 
 ---
 
-## ⏳ Later milestones (hardening)
-- 🟡 M9 External security review artifacts and remediation log:
-  - `/security_review/*`
-  - M9 security review package scaffolding is now available in-repo.
-  - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
-  - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
-  - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
-  - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
-  - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
-  - ✅ M9.4 canonicalization edge-case vectors + drop-in asset anti-drift checks shipped.
-  - ✅ M9.5 ordering model clarity + linear prev_msg_hash requirement + expanded drop-in asset parity checks shipped.
-  - ✅ M9.6 DoS/amplification/abuse hardening guidance + deterministic ops checks shipped (`security_review/OPS_HARDENING_GUIDE.md`, `conformance/ops/OPS_HARDENING_0.1.json`, `fixtures/ops/`).
-  - ✅ M9.7 Signed-path security evidence shipped for mediated blocking (`conformance/security/SIG_SIGNED_PATHS_0.1.json`, `fixtures/security/signed_paths/`, deterministic TEST-only keys).
-- 🔜 M10 Snapshot discipline (optional, when needed):
-  - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
+## Additional technical adoption enablers
+These are strongly recommended for platform adoption but can be staged.
 
----
-
-## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
-- ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
-- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
-- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
-
----
-
-## ⏳ Website & messaging (docs-only)
-- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
-  - Source: `docs/marketing/ecosystem_use_cases.md`
+- ⏳ HTTP/Webhook transport binding (pragmatic platform binding)
+  - A binding doc + minimal example of AICP envelope over HTTP requests/responses.
+  - (Optional) WS/SSE binding later.
 
 ---
 
 ## Immediate next step
-**M10 (snapshot discipline + compatibility packaging hardening)** is next, starting with a deterministic snapshot manifest and checksum gate in CI.
+Start **Adoption Pack 1 (AP1.1–AP1.4)**.
