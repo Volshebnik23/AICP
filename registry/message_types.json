@@ -9,6 +9,33 @@
     "security_considerations": "Migration claims should be attested to prevent impersonation."
   },
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Alert payloads should be authenticated and minimally disclosive."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ARBITRATION_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Arbitration requests should identify challenge linkage and designated arbitrator."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ARBITRATION_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Arbitration outcomes should include auditable remedy/evidence references."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -59,8 +86,17 @@
     "maintainer": "AICP Working Group",
     "id": "CHALLENGE_ASSERTION",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#153-ext-disputes--challenges-breach-claims-arbitration-hooks-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
     "security_considerations": "Challenge evidence must be verifiable and tamper-evident."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CLAIM_BREACH",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Breach claims should bind delegation/obligation context and evidence."
   },
   {
     "status": "experimental",
@@ -111,10 +147,37 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "DELEGATION_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Acceptance should be authenticated to bind delegatee commitment."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "DELEGATION_GRANT",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#152-ext-delegation--hierarchical-purpose-oriented-delegation-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
     "security_considerations": "Delegation scope and expiry must be enforced."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_RESULT_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Result attestations must bind to delegation_id and contract head to remain auditable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Revocations should be honored promptly to avoid stale delegated authority."
   },
   {
     "status": "experimental",
@@ -183,6 +246,33 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#32-participant_accept-semantics-normative",
+    "security_considerations": "Acceptance authority should be constrained to trusted acceptors to prevent role escalation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_JOIN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#31-participant_join-semantics-normative",
+    "security_considerations": "Join requests should be authenticated to prevent spoofed participant admission."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_LEAVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#33-participant_leave-semantics-normative",
+    "security_considerations": "Leave/removal events should be authenticated to avoid unauthorized eviction or stale membership use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "POLICY_DECISION_ATTEST",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
@@ -219,9 +309,27 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "RESUME_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
+    "security_considerations": "Resume requests should bind session and last_seen hash to prevent ambiguity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESUME_RESPONSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
+    "security_considerations": "Resume responses should accurately signal sync status and safe recovery actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "SECURITY_ALERT",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#154-ext-security-alert--security-events-and-escalation-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#1541-message-types-normative",
     "security_considerations": "Alerts should avoid exposing sensitive incident details beyond policy."
   },
   {
@@ -246,36 +354,63 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Attestations should be authenticated and bind to request/result hashes to prevent replay spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Tool requests may carry sensitive intent; constrain scope and validate sender authorization."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Results without valid bindings can bypass policy; enforce request/verdict linkage rules."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Verdicts are authorization-critical and must be authenticated and hash-bound to requests."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "WORKFLOW_DECLARE",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#151-ext-workflow-sync--workflow-synchronization-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
     "security_considerations": "Workflow artifacts must be hash-bound to contract head."
   },
   {
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "ALERT",
+    "id": "WORKFLOW_STEP_ATTEST",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
-    "security_considerations": "Alert payloads should be authenticated and minimally disclosive."
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Step attestations should bind step outputs and contract head for auditability."
   },
   {
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "RESUME_REQUEST",
+    "id": "WORKFLOW_UPDATE",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
-    "security_considerations": "Resume requests should bind session and last_seen hash to prevent ambiguity."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "RESUME_RESPONSE",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
-    "security_considerations": "Resume responses should accurately signal sync status and safe recovery actions."
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Workflow updates should bind to prior workflow hash/version to prevent drift or replay."
   }
 ]

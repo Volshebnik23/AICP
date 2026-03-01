@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-tool-gating-payloads.schema.json",
+  "title": "AICP EXT-TOOL-GATING payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "StringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "TOOL_CALL_REQUEST": {
+      "type": "object",
+      "required": [
+        "tool_id",
+        "operation"
+      ],
+      "properties": {
+        "tool_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "args": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "args_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requested_scopes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TOOL_CALL_VERDICT": {
+      "type": "object",
+      "required": [
+        "decision",
+        "target_request_hash"
+      ],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "INCONCLUSIVE"
+          ]
+        },
+        "target_request_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason_codes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "note": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TOOL_CALL_RESULT": {
+      "type": "object",
+      "required": [
+        "target_request_hash",
+        "outcome"
+      ],
+      "properties": {
+        "target_request_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "SUCCESS",
+            "FAILURE"
+          ]
+        },
+        "result_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string"
+        },
+        "verdict_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "TOOL_CALL_ATTEST": {
+      "type": "object",
+      "required": [
+        "target_request_hash",
+        "target_result_hash",
+        "attestation"
+      ],
+      "properties": {
+        "target_request_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_result_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attestation": {
+          "type": "string",
+          "enum": [
+            "EXECUTED",
+            "OBSERVED"
+          ]
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

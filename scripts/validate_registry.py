@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     "hash_domains.json",
     "transport_bindings.json",
     "policy_reason_codes.json",
+    "privacy_modes.json",
     "policy_languages.json",
     "policy_bindings.json",
     "extension_ids.json",
@@ -26,6 +27,8 @@ REQUIRED_FILES = [
     "dispute_claim_types.json",
     "alert_codes.json",
     "alert_recommended_actions.json",
+    "aicp_profiles.json",
+    "capneg_reason_codes.json",
 ]
 
 REQUIRED_FIELDS = {
