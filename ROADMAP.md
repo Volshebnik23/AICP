@@ -136,6 +136,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
   - ✅ M9.4 canonicalization edge-case vectors + drop-in asset anti-drift checks shipped.
   - ✅ M9.5 ordering model clarity + linear prev_msg_hash requirement + expanded drop-in asset parity checks shipped.
+  - ✅ M9.6 OPS hardening fixture isolation shipped (`fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl`, `conformance/ops/OPS_HARDENING_0.1.json`).
 - ⏳ M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
@@ -155,4 +156,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M10 (snapshot discipline + compatibility packaging hardening)** is next.
+**M10 (snapshot discipline + compatibility packaging hardening)** is next, starting with a deterministic snapshot manifest and checksum gate in CI.
