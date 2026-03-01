@@ -74,13 +74,6 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - submission validation (implementation_id matches folder name)
   - schema validation for changed manifests in CI
 
-- 🔜 M8.1 Personas → user stories → feature sets → profile mapping (source-of-truth)
-  - Create a canonical mapping doc that justifies profiles by real personas and use cases.
-
-- 🔜 M8.2 AICP Profiles (normative document) + conformance badges (profile-level compatibility)
-  - Define profiles as named bundles of required extensions + canonical flows.
-  - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
-
 - ✅ M8.3 EXT-ALERTS alert/error registry + recovery semantics (“TLS alerts”-like)
   - Registered extension artifacts shipped: RFC, registries, schema, conformance suite, and fixtures.
   - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate) are now repo-validated.
@@ -122,6 +115,32 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - ✅ M9.7 Signed-path security evidence shipped for mediated blocking (`conformance/security/SIG_SIGNED_PATHS_0.1.json`, `fixtures/security/signed_paths/`, deterministic TEST-only keys).
 - 🔜 M10 Snapshot discipline (optional, when needed):
   - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
+- 🔜 M11 Multi-party sessions + tool/action gating (protocol foundations)
+  - M11.0 Productize `ERROR` message type (payload schema + fixtures + conformance).
+  - M11.1 EXT-PARTICIPANTS (membership + roles) with **two contract models**:
+    - `shared_contract`: single contract governs the whole session; participant must be accepted against it.
+    - `per_participant_acceptance`: each participant is accepted against a specific contract_ref/hash; messages must be compatible with sender acceptance.
+  - M11.2 EXT-TOOL-GATING with **two enforcement modes**:
+    - `blocking`: `TOOL_CALL_RESULT` requires a prior `ALLOW` verdict bound to the request hash.
+    - `audit`: results must be post-attested/bound (no pre-blocking), per contract.
+  - M11.3 Governance gate: registry ↔ schemas ↔ fixtures ↔ conformance anti-drift
+    - Any `stable` message type (or any type required by a `shipped` profile) MUST have payload schema + at least one fixture + conformance coverage.
+    - Experimental types may exist without full productization, but MUST NOT be required by shipped profiles.
+
+- ⏳ M12 Enterprise chaining foundations (identity + delegation + workflow)
+  - M12.1 Productize EXT-IDENTITY-LC (schemas + fixtures + conformance; verify signatures via announced/rotated keys at least session-local).
+  - M12.2 Productize EXT-DELEGATION (grant/accept/revoke/result attest) with depth/expiry/scope-binding checks.
+  - M12.3 Productize EXT-WORKFLOW-SYNC (declare/update/step attest) with step monotonicity + result-hash binding.
+  - (Optional) EXT-SUBJECT-BINDING (acting-on-behalf-of): platform-controlled; if enabled by profile/contract, MUST be machine-checkable.
+
+- ⏳ M13 Ops/security interop hygiene
+  - M13.1 Productize EXT-DISPUTES and EXT-SECURITY-ALERTS (payload schemas + fixtures + conformance).
+  - M13.2 CAPNEG hardening: registry `privacy_modes` + conformance that negotiation results are bound into contract/context when required by profile.
+  - M13.3 Expand `policy_reason_codes` baseline + enforce namespacing rules (`vendor:*` / `org:*`) for non-baseline codes.
+
+- ⏳ M14 Market-facing profile packaging
+  - M14.1 `AICP-RECEPTION-CHAT` profile = MEDIATED-BLOCKING + ENFORCEMENT + POLICY_EVAL + PARTICIPANTS (with contract model selection).
+  - M14.2 `AICP-ENTERPRISE-CHAINING` profile = IDENTITY-LC + DELEGATION + WORKFLOW-SYNC + TOOL-GATING + POLICY_EVAL (with tool mode selection).
 
 - ⏳ HTTP/Webhook transport binding (pragmatic platform binding)
   - A binding doc + minimal example of AICP envelope over HTTP requests/responses.
@@ -129,5 +148,8 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ---
 
-## Immediate next step
-Start **Adoption Pack 1 (AP1.1–AP1.4)**.
+## Immediate next steps
+1) Finish **M8.6 Plugfest kit + interop report + errata workflow** (remaining in-progress items).
+2) Execute **M10 Snapshot discipline** when a compatibility freeze/packaging moment is needed.
+3) Start **M11 Multi-party sessions and tool/action gating** (P0 backlog below).
+
