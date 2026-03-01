@@ -26,11 +26,19 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
+from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 
 
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
@@ -187,6 +195,31 @@ def _message_body_without_hash_and_signatures(message: dict[str, Any]) -> dict[s
     return body
 
 
+def _baseline_keyring(key_map: dict[str, Any]) -> dict[str, dict[str, str]]:
+    keyring: dict[str, dict[str, str]] = {}
+    for signer, meta in key_map.items():
+        if not isinstance(meta, dict):
+            continue
+        kid = meta.get("kid")
+        public_key = meta.get("public_key_b64url")
+        if isinstance(signer, str) and isinstance(kid, str) and isinstance(public_key, str):
+            keyring.setdefault(signer, {})[kid] = public_key
+    return keyring
+
+
+def _parse_iso_datetime(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        dt = datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 def _evaluate_transcript_expectations(
     transcript: dict[str, Any], transcript_failures: list[dict[str, Any]], rel_file: str
 ) -> list[dict[str, Any]]:
@@ -321,6 +354,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
+    aicp_profiles_registry = {
+        (e.get("profile_id"), e.get("profile_version"))
+        for e in load_json(ROOT / "registry/aicp_profiles.json")
+        if isinstance(e, dict)
+    }
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
     contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
@@ -448,18 +487,56 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     line_no,
                 )
 
-        if can_verify_signatures:
-            for line_no, msg in rows:
-                for sig in msg.get("signatures", []) or []:
-                    signer = sig.get("signer")
-                    key = key_map.get(signer)
-                    if not key:
-                        add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_file, line_no)
-                        continue
-                    if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
-                        add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
-        else:
-            if "CT-SIGNATURE-VERIFY-01" in enabled_checks:
+        if "CT-SIGNATURE-VERIFY-01" in enabled_checks:
+            if can_verify_signatures:
+                keyring = _baseline_keyring(key_map)
+                for line_no, msg in rows:
+                    mtype = msg.get("message_type")
+                    payload = msg.get("payload") or {}
+
+                    if mtype == "IDENTITY_ANNOUNCE":
+                        aid_ref = payload.get("aid_ref")
+                        if isinstance(aid_ref, dict) and aid_ref.get("object_type") == "aid":
+                            aid_obj = aid_ref.get("object")
+                            if isinstance(aid_obj, dict):
+                                agent_id = aid_obj.get("agent_id")
+                                keys = aid_obj.get("keys")
+                                if isinstance(agent_id, str) and isinstance(keys, list):
+                                    for item in keys:
+                                        if not isinstance(item, dict):
+                                            continue
+                                        kid = item.get("kid")
+                                        public_key = item.get("public_key_b64url")
+                                        status = item.get("status")
+                                        if isinstance(kid, str) and isinstance(public_key, str) and status != "revoked":
+                                            keyring.setdefault(agent_id, {})[kid] = public_key
+
+                    if mtype == "KEY_ROTATION":
+                        sender = msg.get("sender")
+                        if isinstance(sender, str):
+                            old_kid = payload.get("old_kid")
+                            new_key = payload.get("new_key") or {}
+                            cross = payload.get("cross_signatures") or {}
+                            old_sig = cross.get("old_signs_new") or {}
+                            new_sig = cross.get("new_signs_old") or {}
+                            old_public = keyring.get(sender, {}).get(old_kid) if isinstance(old_kid, str) else None
+                            new_public = new_key.get("public_key_b64url") if isinstance(new_key, dict) else None
+                            new_kid = new_key.get("kid") if isinstance(new_key, dict) else None
+                            old_ok = isinstance(old_public, str) and verify_ed25519(old_public, str(old_sig.get("sig_b64url", "")), str(old_sig.get("object_hash", "")))
+                            new_ok = isinstance(new_public, str) and verify_ed25519(str(new_public), str(new_sig.get("sig_b64url", "")), str(new_sig.get("object_hash", "")))
+                            if old_ok and new_ok and isinstance(new_kid, str) and isinstance(new_public, str):
+                                keyring.setdefault(sender, {})[new_kid] = new_public
+
+                    for sig in msg.get("signatures", []) or []:
+                        signer = sig.get("signer")
+                        kid = sig.get("kid")
+                        key = keyring.get(signer, {}).get(kid) if isinstance(signer, str) and isinstance(kid, str) else None
+                        if not key:
+                            add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", f"missing public key for signer {signer} kid {kid}", rel_file, line_no)
+                            continue
+                        if not verify_ed25519(key, sig.get("sig_b64url", ""), sig.get("object_hash", "")):
+                            add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
+            else:
                 degraded = True
                 reason = "signature verification unavailable"
                 if reason not in degraded_reasons:
@@ -568,6 +645,81 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
 
+        if "CN-AICP-PROFILE-NEGOTIATION-01" in enabled_checks:
+            declares_by_party: dict[str, dict[str, Any]] = {}
+            for _, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_DECLARE":
+                    continue
+                payload = msg.get("payload") or {}
+                party_id = payload.get("party_id")
+                if isinstance(party_id, str):
+                    declares_by_party[party_id] = payload
+
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_PROPOSE":
+                    continue
+                result = ((msg.get("payload") or {}).get("negotiation_result") or {})
+                participants = result.get("participants") or []
+                selected = result.get("selected") or {}
+                aicp_profile = selected.get("aicp_profile")
+                if not isinstance(aicp_profile, dict):
+                    continue
+                profile_id = aicp_profile.get("profile_id")
+                profile_version = aicp_profile.get("profile_version")
+                profile_tuple = (profile_id, profile_version)
+                if profile_tuple not in aicp_profiles_registry:
+                    add_failure(
+                        t_failures,
+                        "CN-AICP-PROFILE-NEGOTIATION-01",
+                        f"selected.aicp_profile '{profile_id}@{profile_version}' is not registered",
+                        rel_file,
+                        line_no,
+                    )
+
+                for participant in participants:
+                    if not isinstance(participant, str):
+                        continue
+                    declared = declares_by_party.get(participant)
+                    if not isinstance(declared, dict):
+                        continue
+
+                    supported_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("supported_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if supported_profiles and profile_tuple not in supported_profiles:
+                        add_failure(
+                            t_failures,
+                            "CN-AICP-PROFILE-NEGOTIATION-01",
+                            f"participant '{participant}' does not support selected.aicp_profile '{profile_id}@{profile_version}'",
+                            rel_file,
+                            line_no,
+                        )
+
+                    required_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("required_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if required_profiles and profile_tuple not in required_profiles:
+                        add_failure(
+                            t_failures,
+                            "CN-AICP-PROFILE-NEGOTIATION-01",
+                            f"participant '{participant}' required_aicp_profiles does not include selected.aicp_profile '{profile_id}@{profile_version}'",
+                            rel_file,
+                            line_no,
+                        )
+
+        if "CN-REASON-CODES-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_REJECT":
+                    continue
+                payload = msg.get("payload") or {}
+                reason_code = payload.get("reason_code")
+                if reason_code not in capneg_reason_codes:
+                    add_failure(t_failures, "CN-REASON-CODES-01", f"unknown CAPNEG reason_code '{reason_code}'", rel_file, line_no)
+
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
             for line_no, msg in rows:
@@ -600,6 +752,458 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             line_no,
                         )
 
+        if any(check in enabled_checks for check in {"DL-EXPIRY-01", "DL-DEPTH-01", "DL-BIND-01", "DL-SCOPE-01"}):
+            grants_by_id: dict[str, tuple[int, int, dict[str, Any], dict[str, Any]]] = {}
+            for idx, (line_no, msg) in enumerate(rows):
+                if msg.get("message_type") != "DELEGATION_GRANT":
+                    continue
+                payload = msg.get("payload") or {}
+                delegation_id = payload.get("delegation_id")
+                if isinstance(delegation_id, str) and delegation_id not in grants_by_id:
+                    grants_by_id[delegation_id] = (idx, line_no, msg, payload)
+
+            if "DL-DEPTH-01" in enabled_checks:
+                for idx, line_no, _, payload in grants_by_id.values():
+                    parent_id = payload.get("parent_delegation_id")
+                    if not isinstance(parent_id, str):
+                        continue
+                    parent = grants_by_id.get(parent_id)
+                    if parent is None:
+                        add_failure(t_failures, "DL-DEPTH-01", f"parent_delegation_id '{parent_id}' does not reference a prior DELEGATION_GRANT", rel_file, line_no)
+                        continue
+                    parent_idx, _, _, parent_payload = parent
+                    if parent_idx >= idx:
+                        add_failure(t_failures, "DL-DEPTH-01", f"parent_delegation_id '{parent_id}' must reference an earlier DELEGATION_GRANT", rel_file, line_no)
+                        continue
+                    parent_max = parent_payload.get("max_depth") if isinstance(parent_payload.get("max_depth"), int) else 0
+                    child_max = payload.get("max_depth") if isinstance(payload.get("max_depth"), int) else 0
+                    if parent_max <= 0:
+                        add_failure(t_failures, "DL-DEPTH-01", f"parent delegation '{parent_id}' max_depth={parent_max} cannot delegate further", rel_file, line_no)
+                        continue
+                    if child_max > parent_max - 1:
+                        add_failure(t_failures, "DL-DEPTH-01", f"child delegation max_depth={child_max} exceeds allowed remaining depth {parent_max - 1}", rel_file, line_no)
+
+            if "DL-SCOPE-01" in enabled_checks:
+                for idx, line_no, _, payload in grants_by_id.values():
+                    parent_id = payload.get("parent_delegation_id")
+                    if not isinstance(parent_id, str):
+                        continue
+                    parent = grants_by_id.get(parent_id)
+                    if parent is None:
+                        continue
+                    parent_idx, _, _, parent_payload = parent
+                    if parent_idx >= idx:
+                        continue
+                    parent_scope = parent_payload.get("scope") if isinstance(parent_payload.get("scope"), list) else []
+                    child_scope = payload.get("scope") if isinstance(payload.get("scope"), list) else []
+                    parent_set = {s for s in parent_scope if isinstance(s, str)}
+                    child_set = {s for s in child_scope if isinstance(s, str)}
+                    extra = sorted(child_set - parent_set)
+                    if extra:
+                        add_failure(t_failures, "DL-SCOPE-01", f"child delegation scope is not subset of parent scope; extra={extra}", rel_file, line_no)
+
+            for idx, (line_no, msg) in enumerate(rows):
+                if msg.get("message_type") != "DELEGATION_RESULT_ATTEST":
+                    continue
+                payload = msg.get("payload") or {}
+                delegation_id = payload.get("delegation_id")
+                grant = grants_by_id.get(delegation_id) if isinstance(delegation_id, str) else None
+
+                if "DL-BIND-01" in enabled_checks:
+                    if grant is None:
+                        add_failure(t_failures, "DL-BIND-01", f"DELEGATION_RESULT_ATTEST delegation_id '{delegation_id}' must reference a prior DELEGATION_GRANT", rel_file, line_no)
+                    else:
+                        grant_idx = grant[0]
+                        if grant_idx >= idx:
+                            add_failure(t_failures, "DL-BIND-01", f"DELEGATION_RESULT_ATTEST delegation_id '{delegation_id}' must reference an earlier DELEGATION_GRANT", rel_file, line_no)
+                    contract_ref = msg.get("contract_ref") or {}
+                    if payload.get("contract_head_version") != contract_ref.get("head_version"):
+                        add_failure(t_failures, "DL-BIND-01", "payload.contract_head_version must equal envelope contract_ref.head_version", rel_file, line_no)
+
+                if "DL-EXPIRY-01" in enabled_checks and grant is not None and grant[0] < idx:
+                    expiry = _parse_iso_datetime((grant[3] or {}).get("expiry"))
+                    attest_ts = _parse_iso_datetime(msg.get("timestamp"))
+                    if expiry is None:
+                        add_failure(t_failures, "DL-EXPIRY-01", "referenced DELEGATION_GRANT payload.expiry must be valid date-time", rel_file, line_no)
+                    elif attest_ts is None:
+                        add_failure(t_failures, "DL-EXPIRY-01", "DELEGATION_RESULT_ATTEST timestamp must be valid date-time", rel_file, line_no)
+                    elif attest_ts > expiry:
+                        add_failure(t_failures, "DL-EXPIRY-01", f"DELEGATION_RESULT_ATTEST occurs after grant expiry ({attest_ts.isoformat()} > {expiry.isoformat()})", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"WF-DECL-01", "WF-UPD-01", "WF-REF-01", "WF-MONO-01", "WF-BIND-01"}):
+            workflow_state: dict[str, dict[str, Any]] = {}
+            last_step_index: dict[str, int] = {}
+
+            def _parse_version_number(value: Any) -> int | None:
+                if not isinstance(value, str) or not value:
+                    return None
+                if value.startswith("v") and value[1:].isdigit():
+                    return int(value[1:])
+                if value.isdigit():
+                    return int(value)
+                return None
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "WORKFLOW_DECLARE":
+                    workflow_id = payload.get("workflow_id")
+                    artifact_ref = payload.get("workflow_artifact_ref") or {}
+                    artifact_hash = artifact_ref.get("object_hash") if isinstance(artifact_ref, dict) else None
+                    if isinstance(workflow_id, str):
+                        workflow_state[workflow_id] = {"hash": artifact_hash, "version": payload.get("version"), "index": idx}
+
+                    if "WF-DECL-01" in enabled_checks:
+                        contract_ref = msg.get("contract_ref") or {}
+                        if payload.get("contract_head_version") != contract_ref.get("head_version"):
+                            add_failure(t_failures, "WF-DECL-01", "WORKFLOW_DECLARE payload.contract_head_version must equal envelope contract_ref.head_version", rel_file, line_no)
+                        if artifact_ref.get("object_type") != "workflow":
+                            add_failure(t_failures, "WF-DECL-01", "workflow_artifact_ref.object_type must be 'workflow'", rel_file, line_no)
+                        try:
+                            computed = object_hash("workflow", artifact_ref.get("object"))
+                        except Exception as exc:
+                            add_failure(t_failures, "WF-DECL-01", f"workflow_artifact_ref object_hash recompute error: {exc}", rel_file, line_no)
+                        else:
+                            if computed != artifact_ref.get("object_hash"):
+                                add_failure(t_failures, "WF-DECL-01", f"workflow_artifact_ref.object_hash mismatch (expected {artifact_ref.get('object_hash')}, got {computed})", rel_file, line_no)
+                            wf_hash = payload.get("workflow_hash")
+                            if wf_hash is not None and wf_hash != artifact_ref.get("object_hash"):
+                                add_failure(t_failures, "WF-DECL-01", "payload.workflow_hash must equal workflow_artifact_ref.object_hash when present", rel_file, line_no)
+
+                elif mtype == "WORKFLOW_UPDATE":
+                    workflow_id = payload.get("workflow_id")
+                    previous = workflow_state.get(workflow_id) if isinstance(workflow_id, str) else None
+                    artifact_ref = payload.get("workflow_artifact_ref") or {}
+                    artifact_hash = artifact_ref.get("object_hash") if isinstance(artifact_ref, dict) else None
+                    if isinstance(workflow_id, str):
+                        workflow_state[workflow_id] = {"hash": artifact_hash, "version": payload.get("version"), "index": idx}
+
+                    if "WF-UPD-01" in enabled_checks:
+                        if previous is None or previous.get("index", -1) >= idx:
+                            add_failure(t_failures, "WF-UPD-01", f"WORKFLOW_UPDATE workflow_id '{workflow_id}' must reference an earlier workflow declaration/update", rel_file, line_no)
+                        else:
+                            if payload.get("base_workflow_hash") != previous.get("hash"):
+                                add_failure(t_failures, "WF-UPD-01", "payload.base_workflow_hash must equal previous workflow hash", rel_file, line_no)
+                            prev_v = _parse_version_number(previous.get("version"))
+                            cur_v = _parse_version_number(payload.get("version"))
+                            if prev_v is None or cur_v is None:
+                                add_failure(t_failures, "WF-UPD-01", "workflow versions must be parseable as vN or integer string", rel_file, line_no)
+                            elif cur_v <= prev_v:
+                                add_failure(t_failures, "WF-UPD-01", f"workflow version must increase (previous={previous.get('version')}, current={payload.get('version')})", rel_file, line_no)
+
+                elif mtype == "WORKFLOW_STEP_ATTEST":
+                    workflow_id = payload.get("workflow_id")
+                    known = workflow_state.get(workflow_id) if isinstance(workflow_id, str) else None
+
+                    if "WF-REF-01" in enabled_checks:
+                        if known is None or known.get("index", -1) >= idx:
+                            add_failure(t_failures, "WF-REF-01", f"WORKFLOW_STEP_ATTEST workflow_id '{workflow_id}' must reference a previously declared workflow", rel_file, line_no)
+
+                    if "WF-MONO-01" in enabled_checks:
+                        step_index = payload.get("step_index")
+                        if isinstance(step_index, int):
+                            prev = last_step_index.get(str(workflow_id))
+                            if prev is not None and step_index < prev:
+                                add_failure(t_failures, "WF-MONO-01", f"workflow_id '{workflow_id}' step_index decreased from {prev} to {step_index}", rel_file, line_no)
+                            last_step_index[str(workflow_id)] = step_index
+
+                    if "WF-BIND-01" in enabled_checks:
+                        contract_ref = msg.get("contract_ref") or {}
+                        if payload.get("contract_head_version") != contract_ref.get("head_version"):
+                            add_failure(t_failures, "WF-BIND-01", "WORKFLOW_STEP_ATTEST payload.contract_head_version must equal envelope contract_ref.head_version", rel_file, line_no)
+                        output_hash = payload.get("output_hash")
+                        output_refs = payload.get("output_refs")
+                        has_output_hash = isinstance(output_hash, str) and bool(output_hash)
+                        has_output_refs = isinstance(output_refs, list) and any(isinstance(x, str) and x for x in output_refs)
+                        if not (has_output_hash or has_output_refs):
+                            add_failure(t_failures, "WF-BIND-01", "WORKFLOW_STEP_ATTEST requires output_hash or non-empty output_refs", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"ID-AID-01", "ID-ANN-01", "ID-ROT-01", "ID-REVOKE-01"}):
+            keyring = _baseline_keyring(key_map)
+            revoked_after_index: dict[str, int] = {}
+            contract_changing_types = {"CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "RESOLVE_CONFLICT"}
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "IDENTITY_ANNOUNCE":
+                    aid_ref = payload.get("aid_ref")
+                    if isinstance(aid_ref, dict):
+                        if "ID-AID-01" in enabled_checks:
+                            if aid_ref.get("object_type") != "aid" or not isinstance(aid_ref.get("object"), dict) or not isinstance(aid_ref.get("object_hash"), str):
+                                add_failure(t_failures, "ID-AID-01", "aid_ref must include object_type='aid', object, and object_hash", rel_file, line_no)
+                            else:
+                                try:
+                                    computed_aid_hash = object_hash("aid", aid_ref.get("object"))
+                                except Exception as exc:
+                                    add_failure(t_failures, "ID-AID-01", f"aid_ref object_hash recompute error: {exc}", rel_file, line_no)
+                                else:
+                                    if computed_aid_hash != aid_ref.get("object_hash"):
+                                        add_failure(t_failures, "ID-AID-01", f"aid_ref.object_hash mismatch (expected {aid_ref.get('object_hash')}, got {computed_aid_hash})", rel_file, line_no)
+                        if "ID-ANN-01" in enabled_checks and isinstance(aid_ref.get("object_hash"), str):
+                            if payload.get("aid_hash") != aid_ref.get("object_hash"):
+                                add_failure(t_failures, "ID-ANN-01", "IDENTITY_ANNOUNCE payload.aid_hash must equal aid_ref.object_hash", rel_file, line_no)
+
+                        aid_obj = aid_ref.get("object")
+                        if isinstance(aid_obj, dict):
+                            agent_id = aid_obj.get("agent_id")
+                            keys = aid_obj.get("keys")
+                            if isinstance(agent_id, str) and isinstance(keys, list):
+                                for item in keys:
+                                    if not isinstance(item, dict):
+                                        continue
+                                    kid = item.get("kid")
+                                    pub = item.get("public_key_b64url")
+                                    status = item.get("status")
+                                    if isinstance(kid, str) and isinstance(pub, str) and status != "revoked":
+                                        keyring.setdefault(agent_id, {})[kid] = pub
+
+                if mtype == "KEY_ROTATION":
+                    sender = msg.get("sender")
+                    old_kid = payload.get("old_kid")
+                    new_key = payload.get("new_key") or {}
+                    cross = payload.get("cross_signatures") or {}
+                    old_sig = cross.get("old_signs_new") or {}
+                    new_sig = cross.get("new_signs_old") or {}
+
+                    new_key_material = {
+                        "kid": new_key.get("kid"),
+                        "alg": new_key.get("alg"),
+                        "public_key_b64url": new_key.get("public_key_b64url"),
+                    }
+                    old_kid_binding = {"old_kid": old_kid}
+                    try:
+                        new_key_hash = object_hash("key", new_key_material)
+                        old_kid_hash = object_hash("kid", old_kid_binding)
+                    except Exception as exc:
+                        if "ID-ROT-01" in enabled_checks:
+                            add_failure(t_failures, "ID-ROT-01", f"rotation object_hash computation failed: {exc}", rel_file, line_no)
+                        continue
+
+                    old_public = keyring.get(sender, {}).get(old_kid) if isinstance(sender, str) and isinstance(old_kid, str) else None
+                    new_public = new_key.get("public_key_b64url") if isinstance(new_key, dict) else None
+                    new_kid = new_key.get("kid") if isinstance(new_key, dict) else None
+
+                    hash_ok = old_sig.get("object_hash") == new_key_hash and new_sig.get("object_hash") == old_kid_hash
+                    sig_old_ok = isinstance(old_public, str) and verify_ed25519(old_public, str(old_sig.get("sig_b64url", "")), str(old_sig.get("object_hash", "")))
+                    sig_new_ok = isinstance(new_public, str) and verify_ed25519(str(new_public), str(new_sig.get("sig_b64url", "")), str(new_sig.get("object_hash", "")))
+
+                    if "ID-ROT-01" in enabled_checks:
+                        if not hash_ok:
+                            add_failure(t_failures, "ID-ROT-01", "KEY_ROTATION cross_signatures object_hash values do not match required key/kid object hashes", rel_file, line_no)
+                        if not sig_old_ok:
+                            add_failure(t_failures, "ID-ROT-01", "KEY_ROTATION old_signs_new signature verification failed", rel_file, line_no)
+                        if not sig_new_ok:
+                            add_failure(t_failures, "ID-ROT-01", "KEY_ROTATION new_signs_old signature verification failed", rel_file, line_no)
+
+                    if hash_ok and sig_old_ok and sig_new_ok and isinstance(sender, str) and isinstance(new_kid, str) and isinstance(new_public, str):
+                        keyring.setdefault(sender, {})[new_kid] = new_public
+
+                if mtype == "KEY_REVOKE":
+                    target_kid = payload.get("target_kid")
+                    if isinstance(target_kid, str) and target_kid not in revoked_after_index:
+                        revoked_after_index[target_kid] = idx
+
+                if "ID-REVOKE-01" in enabled_checks and mtype in contract_changing_types:
+                    for sig in msg.get("signatures", []) or []:
+                        kid = sig.get("kid")
+                        if isinstance(kid, str):
+                            revoke_idx = revoked_after_index.get(kid)
+                            if revoke_idx is not None and idx > revoke_idx:
+                                add_failure(t_failures, "ID-REVOKE-01", f"contract-changing message signed with revoked kid '{kid}'", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            participants_cfg: dict[str, Any] | None = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    participants_cfg = ext.get("participants")
+                if participants_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        participants_cfg = extensions.get("EXT-PARTICIPANTS")
+
+            participants_cfg = participants_cfg if isinstance(participants_cfg, dict) else {}
+            configured_acceptors = participants_cfg.get("acceptors") if isinstance(participants_cfg.get("acceptors"), list) else None
+            model = participants_cfg.get("model") if isinstance(participants_cfg.get("model"), str) else None
+
+            joined_at: dict[str, int] = {}
+            accepted_at: dict[str, int] = {}
+            left_at: dict[str, int] = {}
+            accepted_contract_ref_by_participant: dict[str, dict[str, str]] = {}
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                sender = msg.get("sender")
+                payload = msg.get("payload") or {}
+
+                if mtype == "PARTICIPANT_JOIN":
+                    participant_id = payload.get("participant_id")
+                    if "PA-JOIN-01" in enabled_checks:
+                        if not isinstance(participant_id, str) or not participant_id:
+                            add_failure(t_failures, "PA-JOIN-01", "PARTICIPANT_JOIN payload.participant_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(sender, str) or participant_id != sender:
+                            add_failure(t_failures, "PA-JOIN-01", "PARTICIPANT_JOIN payload.participant_id must equal sender", rel_file, line_no)
+                    if isinstance(participant_id, str) and participant_id and participant_id not in joined_at:
+                        joined_at[participant_id] = idx
+
+                elif mtype == "PARTICIPANT_ACCEPT":
+                    participant_id = payload.get("participant_id")
+                    if "PA-ACCEPT-01" in enabled_checks:
+                        if not isinstance(participant_id, str) or not participant_id or participant_id not in joined_at:
+                            add_failure(t_failures, "PA-ACCEPT-01", "PARTICIPANT_ACCEPT must reference a participant_id with prior PARTICIPANT_JOIN", rel_file, line_no)
+                    if "PA-AUTH-01" in enabled_checks and configured_acceptors:
+                        if sender not in configured_acceptors:
+                            add_failure(t_failures, "PA-AUTH-01", f"PARTICIPANT_ACCEPT sender '{sender}' not in configured acceptors", rel_file, line_no)
+
+                    if isinstance(participant_id, str) and participant_id and participant_id not in accepted_at:
+                        accepted_at[participant_id] = idx
+                        if "PA-MODEL-01" in enabled_checks and model == "per_participant_acceptance":
+                            accepted_contract_ref = payload.get("accepted_contract_ref")
+                            if not isinstance(accepted_contract_ref, dict):
+                                add_failure(t_failures, "PA-MODEL-01", "per_participant_acceptance requires payload.accepted_contract_ref object", rel_file, line_no)
+                            else:
+                                required_keys = ("branch_id", "base_version", "head_version")
+                                if any(not isinstance(accepted_contract_ref.get(k), str) or not accepted_contract_ref.get(k) for k in required_keys):
+                                    add_failure(t_failures, "PA-MODEL-01", "accepted_contract_ref must include non-empty branch_id/base_version/head_version", rel_file, line_no)
+                                else:
+                                    accepted_contract_ref_by_participant[participant_id] = {
+                                        "branch_id": str(accepted_contract_ref.get("branch_id")),
+                                        "base_version": str(accepted_contract_ref.get("base_version")),
+                                        "head_version": str(accepted_contract_ref.get("head_version")),
+                                    }
+
+                elif mtype == "PARTICIPANT_LEAVE":
+                    participant_id = payload.get("participant_id")
+                    if isinstance(participant_id, str) and participant_id and participant_id not in left_at:
+                        left_at[participant_id] = idx
+
+                if "PA-MEM-01" in enabled_checks and isinstance(sender, str) and sender in joined_at:
+                    if mtype not in {"PARTICIPANT_JOIN", "PARTICIPANT_ACCEPT", "PARTICIPANT_LEAVE"}:
+                        accept_idx = accepted_at.get(sender)
+                        if accept_idx is None or idx < accept_idx:
+                            add_failure(t_failures, "PA-MEM-01", f"sender '{sender}' emitted {mtype} before PARTICIPANT_ACCEPT", rel_file, line_no)
+                        leave_idx = left_at.get(sender)
+                        if leave_idx is not None and idx > leave_idx:
+                            add_failure(t_failures, "PA-MEM-01", f"sender '{sender}' emitted {mtype} after PARTICIPANT_LEAVE", rel_file, line_no)
+
+                if "PA-MODEL-01" in enabled_checks and model == "per_participant_acceptance" and isinstance(sender, str):
+                    if mtype in {"PARTICIPANT_JOIN", "PARTICIPANT_ACCEPT", "PARTICIPANT_LEAVE"}:
+                        continue
+                    accept_idx = accepted_at.get(sender)
+                    if accept_idx is None or idx <= accept_idx:
+                        continue
+                    expected_contract_ref = accepted_contract_ref_by_participant.get(sender)
+                    if expected_contract_ref is None:
+                        continue
+                    if msg.get("contract_ref") != expected_contract_ref:
+                        add_failure(t_failures, "PA-MODEL-01", f"sender '{sender}' message contract_ref must match accepted_contract_ref", rel_file, line_no)
+
+
+        if any(check in enabled_checks for check in {"TG-REQ-01", "TG-BIND-01", "TG-AUTH-01", "TG-MODE-01"}):
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            tool_gating_cfg: dict[str, Any] | None = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    tool_gating_cfg = ext.get("tool_gating")
+                if tool_gating_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        tool_gating_cfg = extensions.get("EXT-TOOL-GATING")
+
+            tool_gating_cfg = tool_gating_cfg if isinstance(tool_gating_cfg, dict) else {}
+            mode = tool_gating_cfg.get("mode") if isinstance(tool_gating_cfg.get("mode"), str) else None
+            acceptors = tool_gating_cfg.get("acceptors") if isinstance(tool_gating_cfg.get("acceptors"), list) else None
+
+            request_hash_by_line: dict[int, str] = {}
+            prior_request_hashes: set[str] = set()
+            verdict_by_id: dict[str, dict[str, Any]] = {}
+            attest_rows: list[tuple[int, int, dict[str, Any], dict[str, Any]]] = []
+            result_rows: list[tuple[int, int, dict[str, Any], dict[str, Any], str | None]] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                sender = msg.get("sender")
+
+                if mtype == "TOOL_CALL_REQUEST":
+                    if "TG-REQ-01" in enabled_checks:
+                        tool_id = payload.get("tool_id")
+                        operation = payload.get("operation")
+                        if not isinstance(tool_id, str) or not tool_id:
+                            add_failure(t_failures, "TG-REQ-01", "TOOL_CALL_REQUEST payload.tool_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(operation, str) or not operation:
+                            add_failure(t_failures, "TG-REQ-01", "TOOL_CALL_REQUEST payload.operation must be a non-empty string", rel_file, line_no)
+                    mh = msg.get("message_hash")
+                    if isinstance(mh, str):
+                        prior_request_hashes.add(mh)
+                        request_hash_by_line[idx] = mh
+
+                if mtype == "TOOL_CALL_VERDICT":
+                    if "TG-AUTH-01" in enabled_checks and acceptors:
+                        if sender not in acceptors:
+                            add_failure(t_failures, "TG-AUTH-01", f"TOOL_CALL_VERDICT sender '{sender}' not in configured acceptors", rel_file, line_no)
+                    verdict_id = msg.get("message_id")
+                    if isinstance(verdict_id, str):
+                        verdict_by_id[verdict_id] = msg
+
+                if mtype == "TOOL_CALL_ATTEST":
+                    if "TG-AUTH-01" in enabled_checks and acceptors:
+                        if sender not in acceptors:
+                            add_failure(t_failures, "TG-AUTH-01", f"TOOL_CALL_ATTEST sender '{sender}' not in configured acceptors", rel_file, line_no)
+                    attest_rows.append((idx, line_no, msg, payload))
+
+                if mtype in {"TOOL_CALL_VERDICT", "TOOL_CALL_RESULT", "TOOL_CALL_ATTEST"}:
+                    if "TG-BIND-01" in enabled_checks:
+                        target_request_hash = payload.get("target_request_hash")
+                        if not isinstance(target_request_hash, str) or target_request_hash not in prior_request_hashes:
+                            add_failure(t_failures, "TG-BIND-01", f"{mtype} payload.target_request_hash must reference an earlier TOOL_CALL_REQUEST.message_hash", rel_file, line_no)
+
+                if mtype == "TOOL_CALL_RESULT":
+                    result_rows.append((idx, line_no, msg, payload, msg.get("message_hash") if isinstance(msg.get("message_hash"), str) else None))
+
+            if "TG-MODE-01" in enabled_checks and mode == "blocking":
+                for _, line_no, _, payload, _ in result_rows:
+                    verdict_ref = payload.get("verdict_ref")
+                    target_request_hash = payload.get("target_request_hash")
+                    if not isinstance(verdict_ref, str) or not verdict_ref:
+                        add_failure(t_failures, "TG-MODE-01", "blocking mode requires TOOL_CALL_RESULT payload.verdict_ref", rel_file, line_no)
+                        continue
+                    verdict_msg = verdict_by_id.get(verdict_ref)
+                    if verdict_msg is None:
+                        add_failure(t_failures, "TG-MODE-01", f"blocking mode verdict_ref '{verdict_ref}' not found", rel_file, line_no)
+                        continue
+                    vp = verdict_msg.get("payload") or {}
+                    if vp.get("decision") != "ALLOW" or vp.get("target_request_hash") != target_request_hash:
+                        add_failure(t_failures, "TG-MODE-01", "blocking mode requires verdict_ref to point to prior ALLOW verdict for same target_request_hash", rel_file, line_no)
+
+            if "TG-MODE-01" in enabled_checks and mode == "audit":
+                for result_idx, line_no, _, payload, result_hash in result_rows:
+                    target_request_hash = payload.get("target_request_hash")
+                    matched = False
+                    for attest_idx, _, _, attest_payload in attest_rows:
+                        if attest_idx <= result_idx:
+                            continue
+                        if attest_payload.get("target_request_hash") == target_request_hash and attest_payload.get("target_result_hash") == result_hash:
+                            matched = True
+                            break
+                    if not matched:
+                        add_failure(t_failures, "TG-MODE-01", "audit mode requires later TOOL_CALL_ATTEST bound to TOOL_CALL_RESULT.message_hash and target_request_hash", rel_file, line_no)
+
 
         if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
             for line_no, msg in rows:
@@ -615,7 +1219,30 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if action not in alert_recommended_actions:
                             add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
 
-        if "RS-ACTIONS-01" in enabled_checks or "RS-RESUME-MATCH-01" in enabled_checks:
+        if "AL-VERBOSITY-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload") or {}
+                message = payload.get("message")
+                if isinstance(message, str) and len(message) > 256:
+                    add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.message exceeds 256 characters (got {len(message)})", rel_file, line_no)
+                if "details" in payload:
+                    try:
+                        details_size = len(canonicalize_json(payload.get("details")))
+                    except Exception as exc:
+                        add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.details canonicalization failed: {exc}", rel_file, line_no)
+                        continue
+                    if details_size > 4096:
+                        add_failure(
+                            t_failures,
+                            "AL-VERBOSITY-01",
+                            f"ALERT payload.details canonical JSON exceeds 4096 bytes (got {details_size})",
+                            rel_file,
+                            line_no,
+                        )
+
+        if any(check in enabled_checks for check in {"RS-ACTIONS-01", "RS-RESUME-MATCH-01", "RS-LOOP-01", "RS-PROBING-01"}):
             request_rows: list[tuple[int, dict[str, Any]]] = []
             response_rows: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}
 
@@ -720,6 +1347,50 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
                     idx += 2
 
+            if "RS-PROBING-01" in enabled_checks:
+                probing_sessions_by_sender: dict[str, set[str]] = {}
+                successful_resume_by_sender: dict[str, bool] = {}
+
+                for idx, (_, msg) in enumerate(rows):
+                    if msg.get("message_type") != "RESUME_REQUEST":
+                        continue
+
+                    sender = msg.get("sender")
+                    req_payload = msg.get("payload") or {}
+                    session_id = req_payload.get("session_id")
+                    if not isinstance(sender, str) or not isinstance(session_id, str):
+                        continue
+
+                    matched_response = None
+                    for _, candidate in rows[idx + 1:]:
+                        if candidate.get("message_type") != "RESUME_RESPONSE":
+                            continue
+                        cand_payload = candidate.get("payload") or {}
+                        if cand_payload.get("resume_id") == req_payload.get("resume_id") and cand_payload.get("session_id") == session_id:
+                            matched_response = cand_payload
+                            break
+
+                    if matched_response is None:
+                        continue
+
+                    status = matched_response.get("status")
+                    if status in {"OK", "NEEDS_RESYNC"}:
+                        successful_resume_by_sender[sender] = True
+                    elif status == "UNKNOWN_SESSION":
+                        probing_sessions_by_sender.setdefault(sender, set()).add(session_id)
+
+                for sender, probed in probing_sessions_by_sender.items():
+                    if successful_resume_by_sender.get(sender):
+                        continue
+                    if len(probed) >= 5:
+                        add_failure(
+                            t_failures,
+                            "RS-PROBING-01",
+                            f"detected RESUME_REQUEST probing by sender '{sender}': UNKNOWN_SESSION across {len(probed)} distinct session_id values",
+                            rel_file,
+                            None,
+                        )
+
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
             namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
@@ -821,6 +1492,25 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if gated_types is not None and original_message.get("message_type") not in gated_types:
                         add_failure(t_failures, "ENF-GATE-01", "embedded original_message.message_type is not listed in gated_message_types", rel_file, line_no)
 
+        if "ENF-VERDICT-STORM-01" in enabled_checks:
+            verdict_counts: dict[str, int] = {}
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                    continue
+                payload = msg.get("payload") or {}
+                target_hash = payload.get("target_message_hash")
+                if not isinstance(target_hash, str):
+                    continue
+                verdict_counts[target_hash] = verdict_counts.get(target_hash, 0) + 1
+                if verdict_counts[target_hash] > 1:
+                    add_failure(
+                        t_failures,
+                        "ENF-VERDICT-STORM-01",
+                        f"multiple ENFORCEMENT_VERDICT messages reference target_message_hash '{target_hash}'",
+                        rel_file,
+                        line_no,
+                    )
+
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
@@ -875,7 +1565,7 @@ def main() -> int:
     status = 'PASSED' if report['passed'] else 'FAILED'
     if report.get('degraded'):
         status = f"{status} (DEGRADED)"
-    print(f"Conformance {status}: {report['suite_id']} -> {out_path.relative_to(ROOT)}")
+    print(f"Conformance {status}: {report['suite_id']} -> {_display_path(out_path)}")
     if report["failures"]:
         for f in report["failures"]:
             print(f" - [{f['test_id']}] {f['file']}:{f['line']} {f['message']}")

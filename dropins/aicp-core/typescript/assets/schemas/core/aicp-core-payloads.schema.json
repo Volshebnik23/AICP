@@ -135,6 +135,103 @@
         }
       },
       "additionalProperties": false
+    },
+    "ERROR": {
+      "type": "object",
+      "required": [
+        "error_code",
+        "error_class",
+        "severity",
+        "applies_to",
+        "disposition"
+      ],
+      "properties": {
+        "error_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error_class": {
+          "type": "string",
+          "enum": [
+            "VALIDATION",
+            "CRYPTO",
+            "STATE",
+            "POLICY",
+            "RATE",
+            "INTERNAL"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "applies_to": {
+          "type": "object",
+          "properties": {
+            "message_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "object_hash": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "message_id"
+              ]
+            },
+            {
+              "required": [
+                "object_hash"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "IGNORED",
+            "BUFFERED",
+            "REJECTED"
+          ]
+        },
+        "recover_action": {
+          "type": "string",
+          "enum": [
+            "RETRY_LATER",
+            "RESEND_MESSAGE",
+            "FETCH_OBJECT",
+            "SYNC_STATE",
+            "REQUEST_CONSENT",
+            "ROTATE_KEY",
+            "CLOSE_SESSION"
+          ]
+        },
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "details": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
