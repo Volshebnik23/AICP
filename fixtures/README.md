@@ -12,7 +12,7 @@ Fixtures and golden transcripts are verification artifacts.
 
 Generation note: GT-04..GT-08 were generated deterministically using `reference/python/aicp_ref/hashing.py` for `message_hash` recomputation and serialized as JSONL in canonical field order from Python dict insertion order used by generation scripts.
 
-Extension note: CAPNEG fixtures (`fixtures/extensions/capneg/CN-01*`, `CN-02*`, `CN-05*`, `CN-06*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` for message hash computation, including profile-negotiation pass/fail vectors.
+Extension note: CAPNEG fixtures (`fixtures/extensions/capneg/CN-01*`, `CN-02*`, `CN-05*`, `CN-06*`, `CN-07*`, `CN-08*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` for message hash computation, including profile-negotiation and contract binding pass/fail vectors (`scripts/generate_capneg_binding_fixtures.py`).
 Extension note: OBJECT-RESYNC fixtures (`fixtures/extensions/object_resync/OR-01*`, `OR-02*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` and `object_hash(...)` for payload object hash binding.
 Extension note: POLICY-EVAL fixtures (`fixtures/extensions/policy_eval/PE-01*`, `PE-02*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` and include a controlled negative transcript for unknown reason_code validation.
 Extension note: ENFORCEMENT fixtures (`fixtures/extensions/enforcement/EF-01*`, `EF-02*`) are generated deterministically using `reference/python/aicp_ref/hashing.py` for message hash and prev-hash chain binding, including a controlled negative transcript for blocking-gate violations.
@@ -22,3 +22,5 @@ Security note: signed-path fixtures (`fixtures/security/signed_paths/SP-01*`, `S
 Extension note: DISPUTES fixtures (`fixtures/extensions/disputes/DS-01*`, `DS-02*`) are generated deterministically via `scripts/generate_disputes_fixtures.py` using `reference/python/aicp_ref/hashing.py` for message hash/chain computation, including registered and unknown-claim-type vectors.
 Extension note: SECURITY-ALERTS fixtures (`fixtures/extensions/security_alerts/SA-01*`, `SA-02*`) are generated deterministically via `scripts/generate_security_alerts_fixtures.py` using `reference/python/aicp_ref/hashing.py` for message hash/chain computation, including registered and unknown-category vectors.
 Extension note: POLICY-EVAL fixture `PE-05_policy_decision_attest_presence.jsonl` was added deterministically with `reference/python/aicp_ref/hashing.py` to provide fixture-level coverage for `POLICY_DECISION_ATTEST` required by profile coverage gating.
+Extension note: DISPUTES fixtures include resolvable-evidence coverage (`DS-03`) generated deterministically via `scripts/generate_disputes_fixtures.py`.
+Extension note: SECURITY-ALERTS fixtures include resolvable-evidence coverage (`SA-03`) generated deterministically via `scripts/generate_security_alerts_fixtures.py`.

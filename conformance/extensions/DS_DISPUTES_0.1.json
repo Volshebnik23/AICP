@@ -15,29 +15,93 @@
     {
       "id": "DS-01",
       "path": "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
-      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION", "CHALLENGE_ASSERTION"]
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION",
+        "CHALLENGE_ASSERTION"
+      ]
     },
     {
       "id": "DS-02",
       "path": "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
-      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION", "CHALLENGE_ASSERTION"],
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION",
+        "CHALLENGE_ASSERTION"
+      ],
       "expect_pass": false,
       "expected_failures": [
-        {"test_id": "DS-CLAIMTYPE-01", "min_count": 1}
+        {
+          "test_id": "DS-CLAIMTYPE-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "DS-03",
+      "path": "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION",
+        "CHALLENGE_ASSERTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "DS-EVIDENCE-RESOLVE-01",
+          "min_count": 1
+        }
       ]
     }
   ],
   "checks": [
-    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
-    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
-    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-DISPUTES payload schema"},
-    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
-    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
-    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
-    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
-    {"test_id": "DS-TARGET-01", "description": "Challenge target_ref must bind to prior message_id or prior payload object_hash"},
-    {"test_id": "DS-CLAIMTYPE-01", "description": "challenge_type and breach_type must be registered or namespaced"},
-    {"test_id": "DS-EVIDENCE-01", "description": "CHALLENGE_ASSERTION must include non-empty evidence_refs"}
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against EXT-DISPUTES payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "DS-TARGET-01",
+      "description": "Challenge target_ref must bind to prior message_id or prior payload object_hash"
+    },
+    {
+      "test_id": "DS-CLAIMTYPE-01",
+      "description": "challenge_type and breach_type must be registered or namespaced"
+    },
+    {
+      "test_id": "DS-EVIDENCE-01",
+      "description": "CHALLENGE_ASSERTION must include non-empty evidence_refs"
+    },
+    {
+      "test_id": "DS-EVIDENCE-RESOLVE-01",
+      "description": "CHALLENGE_ASSERTION evidence_refs must include at least one resolvable msgid:/msghash:/objhash: reference"
+    }
   ],
   "compatibility_mark": "AICP-EXT-DISPUTES-0.1"
 }

@@ -211,6 +211,21 @@ def _is_namespaced_identifier(value: Any) -> bool:
     return isinstance(value, str) and (value.startswith("vendor:") or value.startswith("org:"))
 
 
+def _has_resolvable_evidence_ref(evidence_refs: Any, prior_message_ids: set[str], prior_message_hashes: set[str], prior_payload_object_hashes: set[str]) -> bool:
+    if not isinstance(evidence_refs, list):
+        return False
+    for ref in evidence_refs:
+        if not isinstance(ref, str) or not ref:
+            continue
+        if ref.startswith("msgid:") and ref[len("msgid:"):] in prior_message_ids:
+            return True
+        if ref.startswith("msghash:") and ref[len("msghash:"):] in prior_message_hashes:
+            return True
+        if ref.startswith("objhash:") and ref[len("objhash:"):] in prior_payload_object_hashes:
+            return True
+    return False
+
+
 def _parse_iso_datetime(value: Any) -> datetime | None:
     if not isinstance(value, str) or not value:
         return None
@@ -743,6 +758,61 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if mode not in privacy_modes_registry and not _is_namespaced_identifier(mode):
                         add_failure(t_failures, "CN-PRIVACY-MODES-01", f"selected privacy_mode '{mode}' is not registered", rel_file, line_no)
 
+        if "CN-NEGRESULT-HASH-01" in enabled_checks or "CN-CONTRACT-BIND-01" in enabled_checks:
+            proposed_negotiation_result: dict[str, Any] | None = None
+            proposed_negotiation_result_hash: str | None = None
+            accepted_indices: list[int] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                if mtype == "CAPABILITIES_PROPOSE" and proposed_negotiation_result is None:
+                    nr = payload.get("negotiation_result")
+                    if isinstance(nr, dict):
+                        proposed_negotiation_result = nr
+                        try:
+                            proposed_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        except Exception as exc:
+                            add_failure(t_failures, "CN-NEGRESULT-HASH-01", f"negotiation_result hash recompute error: {exc}", rel_file, line_no)
+                if mtype == "CAPABILITIES_ACCEPT":
+                    accepted_indices.append(idx)
+                    if "CN-NEGRESULT-HASH-01" in enabled_checks:
+                        if not proposed_negotiation_result_hash:
+                            add_failure(t_failures, "CN-NEGRESULT-HASH-01", "CAPABILITIES_ACCEPT seen before valid CAPABILITIES_PROPOSE negotiation_result", rel_file, line_no)
+                            continue
+                        nr = payload.get("negotiation_result")
+                        if isinstance(nr, dict):
+                            try:
+                                accept_hash = object_hash("capneg.negotiation_result", nr)
+                            except Exception as exc:
+                                add_failure(t_failures, "CN-NEGRESULT-HASH-01", f"accept negotiation_result hash recompute error: {exc}", rel_file, line_no)
+                            else:
+                                if accept_hash != proposed_negotiation_result_hash:
+                                    add_failure(t_failures, "CN-NEGRESULT-HASH-01", "CAPABILITIES_ACCEPT negotiation_result hash mismatch vs CAPABILITIES_PROPOSE", rel_file, line_no)
+                        nr_hash = payload.get("negotiation_result_hash")
+                        if isinstance(nr_hash, str) and nr_hash and nr_hash != proposed_negotiation_result_hash:
+                            add_failure(t_failures, "CN-NEGRESULT-HASH-01", "CAPABILITIES_ACCEPT negotiation_result_hash mismatch vs CAPABILITIES_PROPOSE", rel_file, line_no)
+
+            if "CN-CONTRACT-BIND-01" in enabled_checks and accepted_indices:
+                if not proposed_negotiation_result_hash:
+                    add_failure(t_failures, "CN-CONTRACT-BIND-01", "cannot verify contract CAPNEG binding without CAPABILITIES_PROPOSE negotiation_result", rel_file, None)
+                else:
+                    first_accept_idx = accepted_indices[0]
+                    expected_selected = (proposed_negotiation_result or {}).get("selected")
+                    for idx, (line_no, msg) in enumerate(rows):
+                        if idx <= first_accept_idx or msg.get("message_type") != "CONTRACT_PROPOSE":
+                            continue
+                        contract = ((msg.get("payload") or {}).get("contract") or {})
+                        capneg_binding = (((contract.get("ext") or {}).get("capneg")) if isinstance(contract, dict) else None)
+                        if not isinstance(capneg_binding, dict):
+                            add_failure(t_failures, "CN-CONTRACT-BIND-01", "CONTRACT_PROPOSE payload.contract.ext.capneg is required after CAPABILITIES_ACCEPT", rel_file, line_no)
+                            continue
+                        binding_hash = capneg_binding.get("negotiation_result_hash")
+                        if not isinstance(binding_hash, str) or binding_hash != proposed_negotiation_result_hash:
+                            add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.negotiation_result_hash must match accepted negotiation_result hash", rel_file, line_no)
+                        if "selected" in capneg_binding and capneg_binding.get("selected") != expected_selected:
+                            add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.selected must exactly match negotiation_result.selected", rel_file, line_no)
+
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
             for line_no, msg in rows:
@@ -775,8 +845,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             line_no,
                         )
 
-        if any(check in enabled_checks for check in {"DS-TARGET-01", "DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "SA-CAT-01", "SA-EVIDENCE-01"}):
+        if any(check in enabled_checks for check in {"DS-TARGET-01", "DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01", "SA-CAT-01", "SA-EVIDENCE-01", "SA-EVIDENCE-RESOLVE-01"}):
             prior_message_ids: set[str] = set()
+            prior_message_hashes: set[str] = set()
             prior_payload_object_hashes: set[str] = set()
             for line_no, msg in rows:
                 payload = msg.get("payload") or {}
@@ -797,11 +868,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if challenge_type not in dispute_claim_types and not _is_namespaced_identifier(challenge_type):
                             add_failure(t_failures, "DS-CLAIMTYPE-01", f"unknown challenge_type '{challenge_type}'", rel_file, line_no)
 
+                    evidence_refs = payload.get("evidence_refs")
                     if "DS-EVIDENCE-01" in enabled_checks:
-                        evidence_refs = payload.get("evidence_refs")
                         valid_evidence = isinstance(evidence_refs, list) and len(evidence_refs) > 0 and all(isinstance(ref, str) and ref for ref in evidence_refs)
                         if not valid_evidence:
                             add_failure(t_failures, "DS-EVIDENCE-01", "CHALLENGE_ASSERTION requires non-empty evidence_refs", rel_file, line_no)
+                    if "DS-EVIDENCE-RESOLVE-01" in enabled_checks and not _has_resolvable_evidence_ref(evidence_refs, prior_message_ids, prior_message_hashes, prior_payload_object_hashes):
+                        add_failure(t_failures, "DS-EVIDENCE-RESOLVE-01", "CHALLENGE_ASSERTION evidence_refs must include a resolvable msgid:/msghash:/objhash: reference", rel_file, line_no)
 
                 elif mtype == "CLAIM_BREACH" and "DS-CLAIMTYPE-01" in enabled_checks:
                     breach_type = payload.get("breach_type")
@@ -813,15 +886,20 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         category = payload.get("category")
                         if category not in security_alert_categories and not _is_namespaced_identifier(category):
                             add_failure(t_failures, "SA-CAT-01", f"unknown category '{category}'", rel_file, line_no)
+                    evidence_refs = payload.get("evidence_refs")
                     if "SA-EVIDENCE-01" in enabled_checks:
-                        evidence_refs = payload.get("evidence_refs")
                         valid_evidence = isinstance(evidence_refs, list) and len(evidence_refs) > 0 and all(isinstance(ref, str) and ref for ref in evidence_refs)
                         if not valid_evidence:
                             add_failure(t_failures, "SA-EVIDENCE-01", "SECURITY_ALERT requires non-empty evidence_refs", rel_file, line_no)
+                    if "SA-EVIDENCE-RESOLVE-01" in enabled_checks and not _has_resolvable_evidence_ref(evidence_refs, prior_message_ids, prior_message_hashes, prior_payload_object_hashes):
+                        add_failure(t_failures, "SA-EVIDENCE-RESOLVE-01", "SECURITY_ALERT evidence_refs must include a resolvable msgid:/msghash:/objhash: reference", rel_file, line_no)
 
                 msg_id = msg.get("message_id")
                 if isinstance(msg_id, str) and msg_id:
                     prior_message_ids.add(msg_id)
+                msg_hash = msg.get("message_hash")
+                if isinstance(msg_hash, str) and msg_hash:
+                    prior_message_hashes.add(msg_hash)
                 if isinstance(payload, dict):
                     for value in payload.values():
                         if isinstance(value, dict):

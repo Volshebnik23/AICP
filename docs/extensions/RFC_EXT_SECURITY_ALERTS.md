@@ -8,8 +8,7 @@ Purpose: standardize security incident reporting for agent-to-agent interaction 
 ### 15.4.2 Payload shape (normative minimum)
 SECURITY_ALERT payload (normative minimum): alert_id (MUST), category (MUST, registered), severity (MUST: low|medium|high|critical), suspected_actor (MAY), suspected_attack (MAY), indicators (SHOULD), evidence_refs (MUST, non-empty), recommended_action (MAY), disclosure_policy (MAY).
 Conformance requires evidence_refs to be present and non-empty for interoperability and auditability.
-
-### 15.4.3 SECURITY_ALERT
+Conformance requires at least one resolvable evidence_refs entry using `msgid:<message_id>`, `msghash:<message_hash>`, or `objhash:<object_hash>`; additional `urn:`/`url:` references are allowed but do not satisfy this requirement by themselves.
 
 ### 15.4.3 SECURITY_ALERT
 

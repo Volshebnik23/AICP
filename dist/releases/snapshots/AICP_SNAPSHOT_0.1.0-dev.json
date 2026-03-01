@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "7f3eb59184610deb05a2bec7d0d66026e70bcded48f6f3c97c9f8d7e406fb439",
+      "combined_sha256": "4d5cd690bfd9621a0bba1e29b15460f105df2ca75aa821779909b21feb4d73de",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -25,7 +25,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "b083edc22605d5441fcc4ab8fd6ac2730930522ef94624c2edc12b144b59a44d"
+          "sha256": "8b2fde6c500c8c0628b4c98b7169983052a4ed31c5150569378a4224b62b0c7b"
         },
         {
           "path": "conformance/extensions/DL_DELEGATION_0.1.json",
@@ -33,7 +33,7 @@
         },
         {
           "path": "conformance/extensions/DS_DISPUTES_0.1.json",
-          "sha256": "7fc9dcff1aa26dd6e8ec1b4818c50bd822cb7b5236e91e9184e3691f48c6830f"
+          "sha256": "586b151898ee1bcc2763e77d8f9129f58ec249f177a1c2982bdcc3ea944931d5"
         },
         {
           "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
@@ -61,7 +61,7 @@
         },
         {
           "path": "conformance/extensions/SA_SECURITY_ALERTS_0.1.json",
-          "sha256": "18119260d745e27b8cb7de116feca9754949db367ea60db1262cfaf987bbd4c0"
+          "sha256": "887e245c6e72438e6ec0d2867696c9b2ac10bcd086cac63c10f39813e9931315"
         },
         {
           "path": "conformance/extensions/TG_TOOL_GATING_0.1.json",
@@ -90,7 +90,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "9e32c4ada1032f817cf311b56bb89d628dc9ffc97e688941706270d63f8b6bea",
+      "combined_sha256": "afe57bc97fcebc90c10d9e8dfaaf24be3d217c9e903d9fca8b59a8d8b06d40e7",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -150,7 +150,7 @@
         },
         {
           "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
-          "sha256": "5ddf887eefd0b240089693c19d6c43df33894b82183968e9123af51f22a92633"
+          "sha256": "ebb2466696020f4709c21ca8ba7d6dfae165a86b39a95b3c60fb3553f39c8532"
         },
         {
           "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
@@ -158,11 +158,19 @@
         },
         {
           "path": "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
-          "sha256": "e335324d08a6a3449e4bfdbf3980475fa9758b67fa5d0fbce947d517890e08a1"
+          "sha256": "0e858fa9f4da695760e92da55a0e28826d30a893ac51ab083ba4eb8eb29222aa"
         },
         {
           "path": "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
           "sha256": "d702ba121282838448a6dbd0b26fb422b426eb888e6e680654600f326fab5e58"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "sha256": "b980293a3f6d13b1ef1621fa160c81daf8d04ffc974cef84db2e1cb6484a238e"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "sha256": "1541b934996b73a4047568ab22ba9a128ae983d02a5437805ae829a086c69fe9"
         },
         {
           "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
@@ -186,11 +194,15 @@
         },
         {
           "path": "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
-          "sha256": "dc52d36e31c4b1bf93b7392d777d549563551287aa9f4d3b808a9002e615cdb7"
+          "sha256": "87275104147bfe1e9f62b70f5f240d62122d33f7801fb4fb2cc0d58ad933b9da"
         },
         {
           "path": "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
-          "sha256": "cce3d76aac1d0c727f0f3c7ffa04a0c3cffcd85d0ac1a9d1311147c04c2ae39c"
+          "sha256": "959e9642bc6fc87da498674ffa30f45d0d3f312cbc29455eb28143ac4baa16d4"
+        },
+        {
+          "path": "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
+          "sha256": "1ff5edf9f9f9a03a4105173703521ee55db076b32d1114662549b7f2041d3457"
         },
         {
           "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
@@ -262,11 +274,15 @@
         },
         {
           "path": "fixtures/extensions/security_alerts/SA-01_security_alert_pass.jsonl",
-          "sha256": "ed152ade4af3f68c0755697189af5349e88203c8a97a25161e8513979f307221"
+          "sha256": "f2288bf12f3ce850097ffedd2ec40789426243cb71da56f1a520e1efd97aa367"
         },
         {
           "path": "fixtures/extensions/security_alerts/SA-02_unknown_category_expected_fail.jsonl",
-          "sha256": "4daae05c4b6c72772ee791ad19545da6cba7568c5ec92e4d5a661e36cea00cda"
+          "sha256": "f9c99cfed17ad0c3afe4f1e77e7081591033333c21eb873d8bd5b96674a77b01"
+        },
+        {
+          "path": "fixtures/extensions/security_alerts/SA-03_evidence_unresolvable_expected_fail.jsonl",
+          "sha256": "adb9673ea74dd34c98cb044869f4972b810d8d035d2c8a7b48cd91669f1374b8"
         },
         {
           "path": "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",

@@ -35,18 +35,25 @@ def main() -> None:
     sa01 = finalize([
         {"session_id": "sSA1", "message_id": "m1", "timestamp": "2026-01-08T01:00:00Z", "sender": "agent:A", "message_type": "CONTRACT_PROPOSE", "contract_id": "cSA1", "contract_ref": cref, "payload": {"contract": {"contract_id": "cSA1", "goal": "security_alert_pass", "roles": ["mediator", "agent"]}}},
         {"session_id": "sSA1", "message_id": "m2", "timestamp": "2026-01-08T01:00:02Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cSA1", "contract_ref": cref, "payload": {"accepted": True}},
-        {"session_id": "sSA1", "message_id": "m3", "timestamp": "2026-01-08T01:00:04Z", "sender": "mediator:M", "message_type": "SECURITY_ALERT", "contract_id": "cSA1", "contract_ref": cref, "payload": {"alert_id": "AL-1", "category": "REPLAY_OR_FORGERY", "severity": "high", "evidence_refs": ["urn:evidence:sa01:1"], "recommended_action": "disconnect"}},
+        {"session_id": "sSA1", "message_id": "m3", "timestamp": "2026-01-08T01:00:04Z", "sender": "mediator:M", "message_type": "SECURITY_ALERT", "contract_id": "cSA1", "contract_ref": cref, "payload": {"alert_id": "AL-1", "category": "REPLAY_OR_FORGERY", "severity": "high", "evidence_refs": ["msgid:m2", "urn:evidence:sa01:1"], "recommended_action": "disconnect"}},
     ])
 
     sa02 = finalize([
         {"session_id": "sSA2", "message_id": "m1", "timestamp": "2026-01-08T01:10:00Z", "sender": "agent:A", "message_type": "CONTRACT_PROPOSE", "contract_id": "cSA2", "contract_ref": cref, "payload": {"contract": {"contract_id": "cSA2", "goal": "security_alert_fail_category", "roles": ["mediator", "agent"]}}},
         {"session_id": "sSA2", "message_id": "m2", "timestamp": "2026-01-08T01:10:02Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cSA2", "contract_ref": cref, "payload": {"accepted": True}},
-        {"session_id": "sSA2", "message_id": "m3", "timestamp": "2026-01-08T01:10:04Z", "sender": "mediator:M", "message_type": "SECURITY_ALERT", "contract_id": "cSA2", "contract_ref": cref, "payload": {"alert_id": "AL-2", "category": "UNKNOWN_CAT", "severity": "high", "evidence_refs": ["urn:evidence:sa02:1"], "recommended_action": "disconnect"}},
+        {"session_id": "sSA2", "message_id": "m3", "timestamp": "2026-01-08T01:10:04Z", "sender": "mediator:M", "message_type": "SECURITY_ALERT", "contract_id": "cSA2", "contract_ref": cref, "payload": {"alert_id": "AL-2", "category": "UNKNOWN_CAT", "severity": "high", "evidence_refs": ["msgid:m2", "urn:evidence:sa02:1"], "recommended_action": "disconnect"}},
+    ])
+
+    sa03 = finalize([
+        {"session_id": "sSA3", "message_id": "m1", "timestamp": "2026-01-08T01:20:00Z", "sender": "agent:A", "message_type": "CONTRACT_PROPOSE", "contract_id": "cSA3", "contract_ref": cref, "payload": {"contract": {"contract_id": "cSA3", "goal": "security_alert_unresolvable_evidence", "roles": ["mediator", "agent"]}}},
+        {"session_id": "sSA3", "message_id": "m2", "timestamp": "2026-01-08T01:20:02Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cSA3", "contract_ref": cref, "payload": {"accepted": True}},
+        {"session_id": "sSA3", "message_id": "m3", "timestamp": "2026-01-08T01:20:04Z", "sender": "mediator:M", "message_type": "SECURITY_ALERT", "contract_id": "cSA3", "contract_ref": cref, "payload": {"alert_id": "AL-3", "category": "REPLAY_OR_FORGERY", "severity": "high", "evidence_refs": ["urn:evidence:sa03:1"], "recommended_action": "disconnect"}},
     ])
 
     out = ROOT / "fixtures/extensions/security_alerts"
     write(out / "SA-01_security_alert_pass.jsonl", sa01)
     write(out / "SA-02_unknown_category_expected_fail.jsonl", sa02)
+    write(out / "SA-03_evidence_unresolvable_expected_fail.jsonl", sa03)
     print("Generated security alerts fixtures")
 
 

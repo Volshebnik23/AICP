@@ -55,6 +55,12 @@ AICP product profiles (AICP-BASE, AICP-MEDIATED-BLOCKING, …) are negotiated vi
 • Receivers MUST reject downgrade attempts below their local minimum acceptable security baseline (implementation-defined), and SHOULD explain via reason_code.
 • If `selected.aicp_profile` is present, receivers MUST verify it is registered and acceptable against declared `supported_aicp_profiles`/`required_aicp_profiles` for negotiation participants.
 • If the Context Contract requires a negotiated profile for activation, CONTRACT_ACCEPT MUST reference an accepted negotiation_result (by hash or embedded copy).
+• negotiation_result_hash MUST be computed as `object_hash("capneg.negotiation_result", negotiation_result)`.
+• If a contract requires negotiated profile activation, `CONTRACT_PROPOSE.payload.contract` MUST include `contract.ext.capneg` with:
+  - `negotiation_result_hash` (MUST), matching the accepted negotiation_result hash,
+  - `selected` (MUST, copy of `negotiation_result.selected`),
+  - `negotiation_id` (MAY),
+  - `transcript_binding` (MAY).
 
 10.5 Conformance suite (CN-*) (normative minimum)
 
