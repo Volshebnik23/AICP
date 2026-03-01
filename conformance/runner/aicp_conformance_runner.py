@@ -26,6 +26,7 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
+from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
@@ -321,6 +322,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
+    aicp_profiles_registry = {
+        (e.get("profile_id"), e.get("profile_version"))
+        for e in load_json(ROOT / "registry/aicp_profiles.json")
+        if isinstance(e, dict)
+    }
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
     contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
@@ -568,6 +575,81 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
 
+        if "CN-AICP-PROFILE-NEGOTIATION-01" in enabled_checks:
+            declares_by_party: dict[str, dict[str, Any]] = {}
+            for _, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_DECLARE":
+                    continue
+                payload = msg.get("payload") or {}
+                party_id = payload.get("party_id")
+                if isinstance(party_id, str):
+                    declares_by_party[party_id] = payload
+
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_PROPOSE":
+                    continue
+                result = ((msg.get("payload") or {}).get("negotiation_result") or {})
+                participants = result.get("participants") or []
+                selected = result.get("selected") or {}
+                aicp_profile = selected.get("aicp_profile")
+                if not isinstance(aicp_profile, dict):
+                    continue
+                profile_id = aicp_profile.get("profile_id")
+                profile_version = aicp_profile.get("profile_version")
+                profile_tuple = (profile_id, profile_version)
+                if profile_tuple not in aicp_profiles_registry:
+                    add_failure(
+                        t_failures,
+                        "CN-AICP-PROFILE-NEGOTIATION-01",
+                        f"selected.aicp_profile '{profile_id}@{profile_version}' is not registered",
+                        rel_file,
+                        line_no,
+                    )
+
+                for participant in participants:
+                    if not isinstance(participant, str):
+                        continue
+                    declared = declares_by_party.get(participant)
+                    if not isinstance(declared, dict):
+                        continue
+
+                    supported_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("supported_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if supported_profiles and profile_tuple not in supported_profiles:
+                        add_failure(
+                            t_failures,
+                            "CN-AICP-PROFILE-NEGOTIATION-01",
+                            f"participant '{participant}' does not support selected.aicp_profile '{profile_id}@{profile_version}'",
+                            rel_file,
+                            line_no,
+                        )
+
+                    required_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("required_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if required_profiles and profile_tuple not in required_profiles:
+                        add_failure(
+                            t_failures,
+                            "CN-AICP-PROFILE-NEGOTIATION-01",
+                            f"participant '{participant}' required_aicp_profiles does not include selected.aicp_profile '{profile_id}@{profile_version}'",
+                            rel_file,
+                            line_no,
+                        )
+
+        if "CN-REASON-CODES-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_REJECT":
+                    continue
+                payload = msg.get("payload") or {}
+                reason_code = payload.get("reason_code")
+                if reason_code not in capneg_reason_codes:
+                    add_failure(t_failures, "CN-REASON-CODES-01", f"unknown CAPNEG reason_code '{reason_code}'", rel_file, line_no)
+
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
             for line_no, msg in rows:
@@ -615,7 +697,30 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if action not in alert_recommended_actions:
                             add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
 
-        if "RS-ACTIONS-01" in enabled_checks or "RS-RESUME-MATCH-01" in enabled_checks:
+        if "AL-VERBOSITY-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload") or {}
+                message = payload.get("message")
+                if isinstance(message, str) and len(message) > 256:
+                    add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.message exceeds 256 characters (got {len(message)})", rel_file, line_no)
+                if "details" in payload:
+                    try:
+                        details_size = len(canonicalize_json(payload.get("details")))
+                    except Exception as exc:
+                        add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.details canonicalization failed: {exc}", rel_file, line_no)
+                        continue
+                    if details_size > 4096:
+                        add_failure(
+                            t_failures,
+                            "AL-VERBOSITY-01",
+                            f"ALERT payload.details canonical JSON exceeds 4096 bytes (got {details_size})",
+                            rel_file,
+                            line_no,
+                        )
+
+        if any(check in enabled_checks for check in {"RS-ACTIONS-01", "RS-RESUME-MATCH-01", "RS-LOOP-01", "RS-PROBING-01"}):
             request_rows: list[tuple[int, dict[str, Any]]] = []
             response_rows: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}
 
@@ -720,6 +825,50 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
                     idx += 2
 
+            if "RS-PROBING-01" in enabled_checks:
+                probing_sessions_by_sender: dict[str, set[str]] = {}
+                successful_resume_by_sender: dict[str, bool] = {}
+
+                for idx, (_, msg) in enumerate(rows):
+                    if msg.get("message_type") != "RESUME_REQUEST":
+                        continue
+
+                    sender = msg.get("sender")
+                    req_payload = msg.get("payload") or {}
+                    session_id = req_payload.get("session_id")
+                    if not isinstance(sender, str) or not isinstance(session_id, str):
+                        continue
+
+                    matched_response = None
+                    for _, candidate in rows[idx + 1:]:
+                        if candidate.get("message_type") != "RESUME_RESPONSE":
+                            continue
+                        cand_payload = candidate.get("payload") or {}
+                        if cand_payload.get("resume_id") == req_payload.get("resume_id") and cand_payload.get("session_id") == session_id:
+                            matched_response = cand_payload
+                            break
+
+                    if matched_response is None:
+                        continue
+
+                    status = matched_response.get("status")
+                    if status in {"OK", "NEEDS_RESYNC"}:
+                        successful_resume_by_sender[sender] = True
+                    elif status == "UNKNOWN_SESSION":
+                        probing_sessions_by_sender.setdefault(sender, set()).add(session_id)
+
+                for sender, probed in probing_sessions_by_sender.items():
+                    if successful_resume_by_sender.get(sender):
+                        continue
+                    if len(probed) >= 5:
+                        add_failure(
+                            t_failures,
+                            "RS-PROBING-01",
+                            f"detected RESUME_REQUEST probing by sender '{sender}': UNKNOWN_SESSION across {len(probed)} distinct session_id values",
+                            rel_file,
+                            None,
+                        )
+
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
             namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
@@ -820,6 +969,25 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
                     if gated_types is not None and original_message.get("message_type") not in gated_types:
                         add_failure(t_failures, "ENF-GATE-01", "embedded original_message.message_type is not listed in gated_message_types", rel_file, line_no)
+
+        if "ENF-VERDICT-STORM-01" in enabled_checks:
+            verdict_counts: dict[str, int] = {}
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                    continue
+                payload = msg.get("payload") or {}
+                target_hash = payload.get("target_message_hash")
+                if not isinstance(target_hash, str):
+                    continue
+                verdict_counts[target_hash] = verdict_counts.get(target_hash, 0) + 1
+                if verdict_counts[target_hash] > 1:
+                    add_failure(
+                        t_failures,
+                        "ENF-VERDICT-STORM-01",
+                        f"multiple ENFORCEMENT_VERDICT messages reference target_message_hash '{target_hash}'",
+                        rel_file,
+                        line_no,
+                    )
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 

@@ -64,3 +64,16 @@ Normative rules:
 - If any required suite fails, the profile badge MUST NOT be granted.
 
 Profile runners MAY include child suite compatibility marks in profile reports for transparency, but profile-level pass/fail is determined by all required suites.
+
+## 4. Profile Declaration & Negotiation (EXT-CAPNEG)
+
+Platforms MAY require explicit AICP product profiles during capability negotiation.
+
+- Declaration path: `CAPABILITIES_DECLARE.payload.required_aicp_profiles`
+- Selection path: `CAPABILITIES_PROPOSE.payload.negotiation_result.selected.aicp_profile`
+- Rejection path: `CAPABILITIES_REJECT` with registered `reason_code` (for example, `DOWNGRADE_NOT_ALLOWED`, `PROFILE_NOT_ACCEPTABLE`).
+
+Operational guidance:
+- A platform that requires `AICP-MEDIATED-BLOCKING@0.1` SHOULD declare it in `required_aicp_profiles` and reject proposals selecting weaker profiles.
+- Product profile claims negotiated in CAPNEG are runtime claims; conformance/profile badges are separate evidence artifacts and MUST still be produced from suite/profile runners.
+- Downgrade attempts are expected to be detectable deterministically via CAPNEG conformance checks.

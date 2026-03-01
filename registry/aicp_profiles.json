@@ -1,0 +1,50 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-BASE@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Baseline profile; deployments should still enforce signature/hash verification and deterministic transcript validation.",
+    "profile_id": "AICP-BASE",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-CAPNEG"
+    ],
+    "required_policy_categories": [
+      "agent_authority",
+      "auditability"
+    ],
+    "required_crypto_profiles": [
+      "aicp.crypto.ed25519.v1"
+    ],
+    "description": "Base interoperable profile for deterministic Core + CAPNEG capability negotiation evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-MEDIATED-BLOCKING@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Mediated blocking requires strict enforcement gating, alerts, and resume controls with downgrade resistance.",
+    "profile_id": "AICP-MEDIATED-BLOCKING",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-CAPNEG",
+      "EXT-ENFORCEMENT",
+      "EXT-ALERTS",
+      "EXT-RESUME"
+    ],
+    "required_policy_categories": [
+      "agent_authority",
+      "tool_access",
+      "auditability"
+    ],
+    "required_crypto_profiles": [
+      "aicp.crypto.ed25519.v1"
+    ],
+    "description": "Mediated blocking profile with enforcement, alert-driven recovery, and resumable session behavior."
+  }
+]

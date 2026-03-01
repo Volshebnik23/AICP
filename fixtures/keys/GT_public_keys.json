@@ -8,5 +8,25 @@
     "kid": "B1",
     "public_key_b64url": "YLl6MXt1PASLx2lL6SmwlkT_5EebAb4ftXK60EZvpOY",
     "alg": "ed25519"
+  },
+  "agent:S": {
+    "kid": "S1",
+    "public_key_b64url": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ",
+    "alg": "ed25519"
+  },
+  "agent:T": {
+    "kid": "T1",
+    "public_key_b64url": "Kay64UG8yvCyLhqU000LxzYeUm0L_hLIl5S8kyKWbdc",
+    "alg": "ed25519"
+  },
+  "moderator:Z": {
+    "kid": "Z1",
+    "public_key_b64url": "JUO5L_EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0",
+    "alg": "ed25519"
+  },
+  "chat:mediator": {
+    "kid": "M1",
+    "public_key_b64url": "F0VTtFbd38aQjsqxwQH-arIeK6oGF3lbfUOmNIKZP9U",
+    "alg": "ed25519"
   }
 }
