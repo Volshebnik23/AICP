@@ -1,0 +1,14 @@
+{
+  "profile_id": "AICP-MEDIATED-BLOCKING-OPS",
+  "profile_version": "0.1",
+  "description": "Operations-hardened mediated blocking profile requiring Core plus CAPNEG, POLICY_EVAL, ENFORCEMENT, ALERTS, and RESUME suite conformance.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CN_CAPNEG_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+    "conformance/extensions/AL_ALERTS_0.1.json",
+    "conformance/extensions/RS_RESUME_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1"
+}

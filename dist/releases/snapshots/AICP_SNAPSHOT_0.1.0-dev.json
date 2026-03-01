@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "4d5cd690bfd9621a0bba1e29b15460f105df2ca75aa821779909b21feb4d73de",
+      "combined_sha256": "04a4724cb03ece1fcf367f46746e3d274428820aaf3ed07715518483263c40c2",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -84,13 +84,25 @@
           "sha256": "6cee6100ed6fb358d83cd1e04b5242da0aeb43239d50ecbf21db7b685fee3fca"
         },
         {
+          "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json",
+          "sha256": "6ebd9fd8934646181eb22a996f3a8b72e5572f7a07475c68b1de8bea6074ee50"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json",
+          "sha256": "eea65773dd04be1d2392e9c95a8d9615312e5738287820e297adfdae201e81f6"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
+          "sha256": "2c62ed75c09ddc2a7c5a707fbc9ff055dfb616edbb76b18482d1ed9c1de0da6a"
+        },
+        {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "afe57bc97fcebc90c10d9e8dfaaf24be3d217c9e903d9fca8b59a8d8b06d40e7",
+      "combined_sha256": "52cb1200ac686f583c89997e766c18a07107208a5aef3214dcb99d4c8c0eb2d2",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -205,6 +217,10 @@
           "sha256": "1ff5edf9f9f9a03a4105173703521ee55db076b32d1114662549b7f2041d3457"
         },
         {
+          "path": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
+          "sha256": "8fedd5bc46fd934f885d05fa9c6456d2c672c3362b9f6311661f72a093e8fb40"
+        },
+        {
           "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
           "sha256": "23735f224687a44494a10027a658a42e2149fe056533959ffb96a93a019828f3"
         },
@@ -243,6 +259,10 @@
         {
           "path": "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl",
           "sha256": "53f6661b3bc122a4101ee33b205c1ff59c16598a74741c8aa9af6b678feeedf3"
+        },
+        {
+          "path": "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
+          "sha256": "5007baaf2b7294e548b89eb5b34e4d4448e79dbe0dbc85b6a21815249889900f"
         },
         {
           "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
@@ -391,11 +411,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "5654e8ff8fc0434fd87a1333009c2a9cc15d639baa0bddbccf7f2792e2a11eec",
+      "combined_sha256": "919623a02eacd3d2f35c1e108c310ed77353010af473c8adec09de44a325a65e",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "b23cd5c6ebd00a5ebe1db15b88b1357074db99a4bcaaaec2bec56b663cacdb9e"
+          "sha256": "017ea0191d87734e3b90302a3d918ae92d94bbe74cba076763073a6667c75015"
         },
         {
           "path": "registry/alert_codes.json",
@@ -554,6 +574,18 @@
       {
         "mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
         "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1",
+        "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-RECEPTION-CHAT-0.1",
+        "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1",
+        "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json"
       }
     ],
     "suites": [

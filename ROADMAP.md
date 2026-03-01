@@ -140,11 +140,19 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ---
 
+## ✅ Productization milestone shipped
+- ✅ M14 Profile packaging shipped
+  - Added profile conformance artifacts for `AICP-MEDIATED-BLOCKING-OPS@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-RECEPTION-CHAT@0.1`.
+  - Wired profile execution and cleanup into `make conformance-profiles` and `make clean`.
+  - Updated profile registry and profile catalog docs to move these profiles to available status.
+
+---
+
 ## ⏳ Website & messaging (docs-only)
-- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
+- ⏳ M15 Convert ecosystem user stories into website-ready marketing use cases
   - Source: `docs/marketing/ecosystem_use_cases.md`
 
 ---
 
 ## Immediate next step
-**M14 profile packaging** is next, followed by ecosystem-facing profile hardening line items.
+**Reception chat semantics hardening line items** are next, followed by delegated identity & acting-on-behalf-of profile work.
