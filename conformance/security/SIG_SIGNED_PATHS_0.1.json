@@ -1,0 +1,101 @@
+{
+  "suite_id": "SIG-SIGNED-PATHS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Signed-path security evidence for mediated blocking flow (ENFORCEMENT + ALERTS + RESUME).",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/demos/demo-enforcement-behavioral-payloads.schema.json",
+  "payload_schema_map": {
+    "CONTENT_MESSAGE": "#/$defs/CONTENT_MESSAGE",
+    "ENFORCEMENT_VERDICT": "#/$defs/ENFORCEMENT_VERDICT",
+    "CONTENT_DELIVER": "#/$defs/CONTENT_DELIVER",
+    "ALERT": "#/$defs/ALERT",
+    "RESUME_REQUEST": "#/$defs/RESUME_REQUEST",
+    "RESUME_RESPONSE": "#/$defs/RESUME_RESPONSE"
+  },
+  "transcripts": [
+    {
+      "id": "SP-01",
+      "path": "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER",
+        "ALERT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ]
+    },
+    {
+      "id": "SP-02",
+      "path": "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER",
+        "ALERT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01"
+    },
+    {
+      "test_id": "CT-SIGNATURE-HASH-01"
+    },
+    {
+      "test_id": "CT-SIGNATURE-VERIFY-01"
+    },
+    {
+      "test_id": "ENF-GATE-01"
+    },
+    {
+      "test_id": "ENF-AUTH-01"
+    },
+    {
+      "test_id": "AL-ALERT-CODES-01"
+    },
+    {
+      "test_id": "AL-ALERT-ACTIONS-01"
+    },
+    {
+      "test_id": "RS-RESUME-MATCH-01"
+    },
+    {
+      "test_id": "RS-ACTIONS-01"
+    }
+  ],
+  "compatibility_mark": "AICP-SECURITY-SIGNED-PATH-0.1"
+}

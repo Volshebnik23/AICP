@@ -5,6 +5,14 @@
 AICP is a practical, implementable protocol repo for teams building multi-agent platforms.
 
 ➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
+➡️ **30-second standard overview:** [docs/overview/AICP_STANDARD_OVERVIEW.md](docs/overview/AICP_STANDARD_OVERVIEW.md)
+
+
+## Primary links
+
+- Standard overview: [docs/overview/AICP_STANDARD_OVERVIEW.md](docs/overview/AICP_STANDARD_OVERVIEW.md)
+- Compatibility ladder & badges: [docs/adoption/COMPATIBILITY_AND_BADGES.md](docs/adoption/COMPATIBILITY_AND_BADGES.md)
+- Start Here: [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
 
 ## What AICP is
 
