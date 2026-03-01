@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-identity-lc-payloads.schema.json",
+  "title": "AICP EXT-IDENTITY-LC payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "AIDKey": {
+      "type": "object",
+      "required": [
+        "kid",
+        "alg",
+        "public_key_b64url",
+        "status"
+      ],
+      "properties": {
+        "kid": { "type": "string", "minLength": 1 },
+        "alg": { "type": "string", "minLength": 1 },
+        "public_key_b64url": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["active", "retiring", "revoked"] },
+        "not_before": { "type": "string", "format": "date-time" },
+        "not_after": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "AID": {
+      "type": "object",
+      "required": [
+        "agent_id",
+        "issued_at",
+        "keys"
+      ],
+      "properties": {
+        "agent_id": { "type": "string", "minLength": 1 },
+        "issued_at": { "type": "string", "format": "date-time" },
+        "keys": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/AIDKey" }
+        },
+        "issuer": { "type": "string", "minLength": 1 },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "provider": { "type": "object", "additionalProperties": true },
+        "metadata": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "AIDObjectRef": {
+      "type": "object",
+      "required": ["object_type", "object", "object_hash"],
+      "properties": {
+        "object_type": { "type": "string", "const": "aid" },
+        "object": { "$ref": "#/$defs/AID" },
+        "object_hash": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "IDENTITY_ANNOUNCE": {
+      "type": "object",
+      "required": ["aid_hash"],
+      "properties": {
+        "aid_hash": { "type": "string", "minLength": 1 },
+        "aid_ref": { "$ref": "#/$defs/AIDObjectRef" },
+        "supersedes_aid_hash": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "CrossSignature": {
+      "type": "object",
+      "required": ["kid", "object_hash", "sig_b64url"],
+      "properties": {
+        "kid": { "type": "string", "minLength": 1 },
+        "object_hash": { "type": "string", "minLength": 1 },
+        "sig_b64url": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "KEY_ROTATION": {
+      "type": "object",
+      "required": ["rotation_id", "old_kid", "new_key", "cross_signatures"],
+      "properties": {
+        "rotation_id": { "type": "string", "minLength": 1 },
+        "old_kid": { "type": "string", "minLength": 1 },
+        "new_key": {
+          "type": "object",
+          "required": ["kid", "alg", "public_key_b64url"],
+          "properties": {
+            "kid": { "type": "string", "minLength": 1 },
+            "alg": { "type": "string", "minLength": 1 },
+            "public_key_b64url": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "cross_signatures": {
+          "type": "object",
+          "required": ["old_signs_new", "new_signs_old"],
+          "properties": {
+            "old_signs_new": { "$ref": "#/$defs/CrossSignature" },
+            "new_signs_old": { "$ref": "#/$defs/CrossSignature" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "KEY_REVOKE": {
+      "type": "object",
+      "required": ["revocation_id", "effective_at"],
+      "properties": {
+        "revocation_id": { "type": "string", "minLength": 1 },
+        "effective_at": { "type": "string", "format": "date-time" },
+        "target_kid": { "type": "string", "minLength": 1 },
+        "target_aid_hash": { "type": "string", "minLength": 1 },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "issuer_attestation_ref": { "type": "string", "minLength": 1 },
+        "note": { "type": "string" }
+      },
+      "anyOf": [
+        { "required": ["target_kid"] },
+        { "required": ["target_aid_hash"] }
+      ],
+      "additionalProperties": false
+    },
+    "AGENT_MIGRATION": {
+      "type": "object",
+      "required": ["migration_id", "aid_hash"],
+      "properties": {
+        "migration_id": { "type": "string", "minLength": 1 },
+        "aid_hash": { "type": "string", "minLength": 1 },
+        "from_agent_version": { "type": "string", "minLength": 1 },
+        "to_agent_version": { "type": "string", "minLength": 1 },
+        "from_environment": { "type": "string", "minLength": 1 },
+        "to_environment": { "type": "string", "minLength": 1 },
+        "external_attestations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

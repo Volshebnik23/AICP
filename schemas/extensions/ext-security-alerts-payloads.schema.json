@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-security-alerts-payloads.schema.json",
+  "title": "AICP EXT-SECURITY-ALERTS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "StringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "SECURITY_ALERT": {
+      "type": "object",
+      "required": [
+        "alert_id",
+        "category",
+        "severity"
+      ],
+      "properties": {
+        "alert_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "suspected_actor": {
+          "type": "string"
+        },
+        "suspected_attack": {
+          "type": "string"
+        },
+        "indicators": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "recommended_action": {
+          "type": "string"
+        },
+        "disclosure_policy": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

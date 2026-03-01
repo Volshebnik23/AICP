@@ -46,6 +46,33 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "CN-05",
+      "path": "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT"
+      ]
+    },
+    {
+      "id": "CN-06",
+      "path": "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_REJECT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CN-AICP-PROFILE-NEGOTIATION-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -80,6 +107,18 @@
     {
       "test_id": "CN-DOWNGRADE-01",
       "description": "Detect unilateral downgrade/inconsistent negotiated required_extensions after acceptance without mutual renegotiation"
+    },
+    {
+      "test_id": "CN-AICP-PROFILE-NEGOTIATION-01",
+      "description": "selected.aicp_profile must be registered and acceptable/supported by declared participants"
+    },
+    {
+      "test_id": "CN-REASON-CODES-01",
+      "description": "CAPABILITIES_REJECT reason_code values must be registered CAPNEG reason codes"
+    },
+    {
+      "test_id": "CN-PRIVACY-MODES-01",
+      "description": "CAPNEG privacy_mode values must be registered or namespaced"
     }
   ],
   "compatibility_mark": "AICP-EXT-CAPNEG-0.1"

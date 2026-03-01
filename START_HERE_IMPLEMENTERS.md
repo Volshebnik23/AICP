@@ -47,3 +47,8 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 2. Validate against extension suites in [conformance/extensions/](conformance/extensions/).
 3. Use demo suite for behavioral verification: `conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`.
 4. Treat degraded reports as non-badge-eligible.
+
+## What if validation fails?
+
+- Error and recovery playbook: [docs/ops/ERROR_AND_RECOVERY.md](docs/ops/ERROR_AND_RECOVERY.md)
+- Security hardening guidance: [security_review/OPS_HARDENING_GUIDE.md](security_review/OPS_HARDENING_GUIDE.md)
