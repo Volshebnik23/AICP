@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate test conformance conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py lint release-check clean
+.PHONY: validate snapshot validate-snapshot test conformance conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -9,9 +9,20 @@ validate:
 	$(PYTHON) scripts/validate_dropins_assets.py
 	$(PYTHON) scripts/validate_registry.py
 	$(PYTHON) scripts/validate_productization_coverage.py
+	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
+		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
+	else \
+		$(MAKE) validate-snapshot; \
+	fi
 	$(PYTHON) scripts/check_naming.py
 	$(PYTHON) scripts/check_terms.py
 	$(PYTHON) scripts/check_no_binary_changes.py
+
+snapshot:
+	$(PYTHON) scripts/generate_snapshot_manifest.py
+
+validate-snapshot:
+	$(PYTHON) scripts/validate_snapshot_manifest.py
 
 test:
 	$(PYTHON) -c "import importlib.util, subprocess, sys; spec=importlib.util.find_spec('pytest'); raise SystemExit((print('pytest not installed; skipping make test.') or 0) if spec is None else subprocess.call(['pytest','-q','reference/python/tests']))"

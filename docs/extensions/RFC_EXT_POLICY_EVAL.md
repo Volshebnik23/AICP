@@ -17,4 +17,5 @@ POLICY_DECISION_ATTEST (optional) MAY be used to bind a policy_decision to ATTES
 •	PE-02: Registered reason_codes used; unknown codes rejected or mapped per registry policy.
 •	PE-03: Signed POLICY_EVAL_RESULT verifies under EXT-IDENTITY-LC rules when used for enforcement.
 12.5 Registry bindings (normative)
-language_id, binding_id, and reason_codes MUST be registered (Section 8).
+language_id and binding_id MUST be registered (Section 8).
+reason_codes used in POLICY_EVAL_RESULT MUST be either registered in `registry/policy_reason_codes.json` or namespaced as `vendor:*` or `org:*`.

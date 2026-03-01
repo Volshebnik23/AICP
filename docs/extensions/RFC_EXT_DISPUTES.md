@@ -9,8 +9,17 @@ Purpose: interoperable dispute primitives to challenge suspected distortion, inc
 •	ARBITRATION_RESULT (optional) — publish arbitration outcome with signatures.
 
 ### 15.3.2 Payload shape (normative minimum)
-CHALLENGE_ASSERTION payload (normative minimum): challenge_id (MUST), target_ref (MUST: object_hash or message_id), challenge_type (MUST, registered), claim (MUST), evidence_refs (SHOULD), requested_remedy (MAY), deadline (MAY).
+CHALLENGE_ASSERTION payload (normative minimum): challenge_id (MUST), target_ref (MUST: object_hash or message_id), challenge_type (MUST, registered), claim (MUST), evidence_refs (MUST, non-empty), requested_remedy (MAY), deadline (MAY).
 CLAIM_BREACH payload (normative minimum): claim_id (MUST), delegation_id or obligation_ref (MUST), breach_type (MUST, registered), narrative (SHOULD), evidence_refs (SHOULD), requested_remedy (MAY).
+Conformance requires evidence_refs to be present and non-empty for interoperability and auditability.
+
+### 15.3.3 CHALLENGE_ASSERTION
+
+### 15.3.4 CLAIM_BREACH
+
+### 15.3.5 ARBITRATION_REQUEST
+
+### 15.3.6 ARBITRATION_RESULT
 
 ### 15.3.3 CHALLENGE_ASSERTION
 
