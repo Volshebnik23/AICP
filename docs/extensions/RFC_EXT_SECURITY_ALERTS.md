@@ -11,6 +11,8 @@ Conformance requires evidence_refs to be present and non-empty for interoperabil
 
 ### 15.4.3 SECURITY_ALERT
 
+### 15.4.3 SECURITY_ALERT
+
 15.5 Extension conformance (normative minimum)
 •	AW-01: WORKFLOW_DECLARE + WORKFLOW_STEP_ATTEST validates head_version binding and evidence_refs hashing.
 •	AD-01: DELEGATION_GRANT/ACCEPT/RESULT_ATTEST forms a verifiable chain of responsibility; max_depth enforced.
