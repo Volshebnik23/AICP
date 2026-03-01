@@ -150,8 +150,21 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ---
 
-## Immediate next steps
-1) Finish **M8.6 Plugfest kit + interop report + errata workflow** (remaining in-progress items).
-2) Execute **M10 Snapshot discipline** when a compatibility freeze/packaging moment is needed.
-3) Start **M11 Multi-party sessions and tool/action gating** (P0 backlog below).
+- ✅ M11.0 Core `ERROR` message type productized end-to-end (Core payload schema + golden fixture + Core conformance coverage).
+- ✅ M11.3 Stable message-type anti-drift governance gate shipped (`scripts/validate_productization_coverage.py`, wired into `make validate`).
 
+## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
+- ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
+- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
+- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
+
+---
+
+## ⏳ Website & messaging (docs-only)
+- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
+  - Source: `docs/marketing/ecosystem_use_cases.md`
+
+---
+
+## Immediate next step
+**M11.1–M11.2 (remaining M11 profile/productization items)** are next, followed by M10 snapshot discipline hardening.

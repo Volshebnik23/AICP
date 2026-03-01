@@ -102,6 +102,13 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "GT-10",
+      "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+      "expected_message_types": [
+        "ERROR"
+      ]
     }
   ],
   "checks": [
@@ -160,7 +167,8 @@
     "CONTRACT_ACCEPT": "#/$defs/CONTRACT_ACCEPT",
     "CONTEXT_AMEND": "#/$defs/CONTEXT_AMEND",
     "ATTEST_ACTION": "#/$defs/ATTEST_ACTION",
-    "RESOLVE_CONFLICT": "#/$defs/RESOLVE_CONFLICT"
+    "RESOLVE_CONFLICT": "#/$defs/RESOLVE_CONFLICT",
+    "ERROR": "#/$defs/ERROR"
   },
   "payload_schema_check_id": "CT-PAYLOAD-SCHEMA-01",
   "compatibility_mark": "AICP-Core-0.1"
