@@ -156,4 +156,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M10 (snapshot discipline + compatibility packaging hardening)** is next.
+**M10 (snapshot discipline + compatibility packaging hardening)** is next, starting with a deterministic snapshot manifest and checksum gate in CI.

@@ -26,6 +26,7 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
+from aicp_ref.jcs import canonicalize_to_bytes  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
