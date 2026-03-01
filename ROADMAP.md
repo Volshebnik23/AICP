@@ -158,6 +158,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 - ✅ M12.1 EXT-IDENTITY-LC productized (payload schema + deterministic fixtures + conformance suite + session-local key verification support).
 - ✅ M12.2 EXT-DELEGATION productized (registry message types + payload schema + fixtures + conformance suite + depth/expiry/binding checks).
+- ✅ M12.3 EXT-WORKFLOW-SYNC productized (registry message types + payload schema + fixtures + conformance suite + workflow checks).
 
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
@@ -173,4 +174,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M12.3 (workflow sync productization)** is next, followed by M13 and then M10 snapshot discipline hardening.
+**M13 (disputes/security-alert profile line)** is next, followed by M10 snapshot discipline hardening.

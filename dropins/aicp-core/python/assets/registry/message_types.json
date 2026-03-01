@@ -248,7 +248,7 @@
     "maintainer": "AICP Working Group",
     "id": "WORKFLOW_DECLARE",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#151-ext-workflow-sync--workflow-synchronization-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
     "security_considerations": "Workflow artifacts must be hash-bound to contract head."
   },
   {
@@ -367,5 +367,23 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
     "security_considerations": "Result attestations must bind to delegation_id and contract head to remain auditable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Workflow updates should bind to prior workflow hash/version to prevent drift or replay."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_STEP_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Step attestations should bind step outputs and contract head for auditability."
   }
 ]

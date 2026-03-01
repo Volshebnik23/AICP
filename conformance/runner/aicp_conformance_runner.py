@@ -752,7 +752,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             line_no,
                         )
 
-        if any(check in enabled_checks for check in {"DL-EXPIRY-01", "DL-DEPTH-01", "DL-BIND-01"}):
+        if any(check in enabled_checks for check in {"DL-EXPIRY-01", "DL-DEPTH-01", "DL-BIND-01", "DL-SCOPE-01"}):
             grants_by_id: dict[str, tuple[int, int, dict[str, Any], dict[str, Any]]] = {}
             for idx, (line_no, msg) in enumerate(rows):
                 if msg.get("message_type") != "DELEGATION_GRANT":
@@ -783,6 +783,25 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if child_max > parent_max - 1:
                         add_failure(t_failures, "DL-DEPTH-01", f"child delegation max_depth={child_max} exceeds allowed remaining depth {parent_max - 1}", rel_file, line_no)
 
+            if "DL-SCOPE-01" in enabled_checks:
+                for idx, line_no, _, payload in grants_by_id.values():
+                    parent_id = payload.get("parent_delegation_id")
+                    if not isinstance(parent_id, str):
+                        continue
+                    parent = grants_by_id.get(parent_id)
+                    if parent is None:
+                        continue
+                    parent_idx, _, _, parent_payload = parent
+                    if parent_idx >= idx:
+                        continue
+                    parent_scope = parent_payload.get("scope") if isinstance(parent_payload.get("scope"), list) else []
+                    child_scope = payload.get("scope") if isinstance(payload.get("scope"), list) else []
+                    parent_set = {s for s in parent_scope if isinstance(s, str)}
+                    child_set = {s for s in child_scope if isinstance(s, str)}
+                    extra = sorted(child_set - parent_set)
+                    if extra:
+                        add_failure(t_failures, "DL-SCOPE-01", f"child delegation scope is not subset of parent scope; extra={extra}", rel_file, line_no)
+
             for idx, (line_no, msg) in enumerate(rows):
                 if msg.get("message_type") != "DELEGATION_RESULT_ATTEST":
                     continue
@@ -810,6 +829,95 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         add_failure(t_failures, "DL-EXPIRY-01", "DELEGATION_RESULT_ATTEST timestamp must be valid date-time", rel_file, line_no)
                     elif attest_ts > expiry:
                         add_failure(t_failures, "DL-EXPIRY-01", f"DELEGATION_RESULT_ATTEST occurs after grant expiry ({attest_ts.isoformat()} > {expiry.isoformat()})", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"WF-DECL-01", "WF-UPD-01", "WF-REF-01", "WF-MONO-01", "WF-BIND-01"}):
+            workflow_state: dict[str, dict[str, Any]] = {}
+            last_step_index: dict[str, int] = {}
+
+            def _parse_version_number(value: Any) -> int | None:
+                if not isinstance(value, str) or not value:
+                    return None
+                if value.startswith("v") and value[1:].isdigit():
+                    return int(value[1:])
+                if value.isdigit():
+                    return int(value)
+                return None
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "WORKFLOW_DECLARE":
+                    workflow_id = payload.get("workflow_id")
+                    artifact_ref = payload.get("workflow_artifact_ref") or {}
+                    artifact_hash = artifact_ref.get("object_hash") if isinstance(artifact_ref, dict) else None
+                    if isinstance(workflow_id, str):
+                        workflow_state[workflow_id] = {"hash": artifact_hash, "version": payload.get("version"), "index": idx}
+
+                    if "WF-DECL-01" in enabled_checks:
+                        contract_ref = msg.get("contract_ref") or {}
+                        if payload.get("contract_head_version") != contract_ref.get("head_version"):
+                            add_failure(t_failures, "WF-DECL-01", "WORKFLOW_DECLARE payload.contract_head_version must equal envelope contract_ref.head_version", rel_file, line_no)
+                        if artifact_ref.get("object_type") != "workflow":
+                            add_failure(t_failures, "WF-DECL-01", "workflow_artifact_ref.object_type must be 'workflow'", rel_file, line_no)
+                        try:
+                            computed = object_hash("workflow", artifact_ref.get("object"))
+                        except Exception as exc:
+                            add_failure(t_failures, "WF-DECL-01", f"workflow_artifact_ref object_hash recompute error: {exc}", rel_file, line_no)
+                        else:
+                            if computed != artifact_ref.get("object_hash"):
+                                add_failure(t_failures, "WF-DECL-01", f"workflow_artifact_ref.object_hash mismatch (expected {artifact_ref.get('object_hash')}, got {computed})", rel_file, line_no)
+                            wf_hash = payload.get("workflow_hash")
+                            if wf_hash is not None and wf_hash != artifact_ref.get("object_hash"):
+                                add_failure(t_failures, "WF-DECL-01", "payload.workflow_hash must equal workflow_artifact_ref.object_hash when present", rel_file, line_no)
+
+                elif mtype == "WORKFLOW_UPDATE":
+                    workflow_id = payload.get("workflow_id")
+                    previous = workflow_state.get(workflow_id) if isinstance(workflow_id, str) else None
+                    artifact_ref = payload.get("workflow_artifact_ref") or {}
+                    artifact_hash = artifact_ref.get("object_hash") if isinstance(artifact_ref, dict) else None
+                    if isinstance(workflow_id, str):
+                        workflow_state[workflow_id] = {"hash": artifact_hash, "version": payload.get("version"), "index": idx}
+
+                    if "WF-UPD-01" in enabled_checks:
+                        if previous is None or previous.get("index", -1) >= idx:
+                            add_failure(t_failures, "WF-UPD-01", f"WORKFLOW_UPDATE workflow_id '{workflow_id}' must reference an earlier workflow declaration/update", rel_file, line_no)
+                        else:
+                            if payload.get("base_workflow_hash") != previous.get("hash"):
+                                add_failure(t_failures, "WF-UPD-01", "payload.base_workflow_hash must equal previous workflow hash", rel_file, line_no)
+                            prev_v = _parse_version_number(previous.get("version"))
+                            cur_v = _parse_version_number(payload.get("version"))
+                            if prev_v is None or cur_v is None:
+                                add_failure(t_failures, "WF-UPD-01", "workflow versions must be parseable as vN or integer string", rel_file, line_no)
+                            elif cur_v <= prev_v:
+                                add_failure(t_failures, "WF-UPD-01", f"workflow version must increase (previous={previous.get('version')}, current={payload.get('version')})", rel_file, line_no)
+
+                elif mtype == "WORKFLOW_STEP_ATTEST":
+                    workflow_id = payload.get("workflow_id")
+                    known = workflow_state.get(workflow_id) if isinstance(workflow_id, str) else None
+
+                    if "WF-REF-01" in enabled_checks:
+                        if known is None or known.get("index", -1) >= idx:
+                            add_failure(t_failures, "WF-REF-01", f"WORKFLOW_STEP_ATTEST workflow_id '{workflow_id}' must reference a previously declared workflow", rel_file, line_no)
+
+                    if "WF-MONO-01" in enabled_checks:
+                        step_index = payload.get("step_index")
+                        if isinstance(step_index, int):
+                            prev = last_step_index.get(str(workflow_id))
+                            if prev is not None and step_index < prev:
+                                add_failure(t_failures, "WF-MONO-01", f"workflow_id '{workflow_id}' step_index decreased from {prev} to {step_index}", rel_file, line_no)
+                            last_step_index[str(workflow_id)] = step_index
+
+                    if "WF-BIND-01" in enabled_checks:
+                        contract_ref = msg.get("contract_ref") or {}
+                        if payload.get("contract_head_version") != contract_ref.get("head_version"):
+                            add_failure(t_failures, "WF-BIND-01", "WORKFLOW_STEP_ATTEST payload.contract_head_version must equal envelope contract_ref.head_version", rel_file, line_no)
+                        output_hash = payload.get("output_hash")
+                        output_refs = payload.get("output_refs")
+                        has_output_hash = isinstance(output_hash, str) and bool(output_hash)
+                        has_output_refs = isinstance(output_refs, list) and any(isinstance(x, str) and x for x in output_refs)
+                        if not (has_output_hash or has_output_refs):
+                            add_failure(t_failures, "WF-BIND-01", "WORKFLOW_STEP_ATTEST requires output_hash or non-empty output_refs", rel_file, line_no)
 
         if any(check in enabled_checks for check in {"ID-AID-01", "ID-ANN-01", "ID-ROT-01", "ID-REVOKE-01"}):
             keyring = _baseline_keyring(key_map)
