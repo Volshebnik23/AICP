@@ -70,6 +70,7 @@ Hashing:
 Signatures:
 - Signature verification SHOULD use Ed25519 profile(s) registered for Core.
 - If signatures are present, their `object_hash` MUST match the message hash being signed.
+- Executable signed-path evidence: `fixtures/security/signed_paths/` and `conformance/security/SIG_SIGNED_PATHS_0.1.json`.
 
 ## 6. Core payload requirements (normative minimum)
 

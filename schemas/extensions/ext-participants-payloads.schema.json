@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-participants-payloads.schema.json",
+  "title": "AICP EXT-PARTICIPANTS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "ContractRef": {
+      "type": "object",
+      "required": [
+        "branch_id",
+        "base_version",
+        "head_version"
+      ],
+      "properties": {
+        "branch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "RoleArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "PARTICIPANT_JOIN": {
+      "type": "object",
+      "required": [
+        "participant_id",
+        "requested_roles"
+      ],
+      "properties": {
+        "participant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requested_roles": {
+          "$ref": "#/$defs/RoleArray"
+        },
+        "note": {
+          "type": "string"
+        },
+        "identity_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "PARTICIPANT_ACCEPT": {
+      "type": "object",
+      "required": [
+        "participant_id",
+        "granted_roles"
+      ],
+      "properties": {
+        "participant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "granted_roles": {
+          "$ref": "#/$defs/RoleArray"
+        },
+        "accepted_contract_ref": {
+          "$ref": "#/$defs/ContractRef"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PARTICIPANT_LEAVE": {
+      "type": "object",
+      "required": [
+        "participant_id"
+      ],
+      "properties": {
+        "participant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "voluntary",
+            "removed"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -277,5 +277,32 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
     "security_considerations": "Resume responses should accurately signal sync status and safe recovery actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_JOIN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#31-participant_join-semantics-normative",
+    "security_considerations": "Join requests should be authenticated to prevent spoofed participant admission."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#32-participant_accept-semantics-normative",
+    "security_considerations": "Acceptance authority should be constrained to trusted acceptors to prevent role escalation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_LEAVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#33-participant_leave-semantics-normative",
+    "security_considerations": "Leave/removal events should be authenticated to avoid unauthorized eviction or stale membership use."
   }
 ]
