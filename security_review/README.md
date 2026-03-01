@@ -13,6 +13,7 @@ This folder contains security-review scaffolding for external and community revi
 - `REMEDIATION_LOG.md`
 - `SELF_REVIEW.md` (internal dry-run against the review checklist)
 - `COVERAGE_MAP.md` (threat-to-tests coverage matrix with evidence and gaps)
+- `OPS_HARDENING_GUIDE.md` (operator-safe defaults and deterministic abuse checks)
 
 ## How external reviewers should use this package
 1. Read threat model and assumptions.

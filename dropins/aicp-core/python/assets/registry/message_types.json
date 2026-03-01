@@ -113,7 +113,7 @@
     "maintainer": "AICP Working Group",
     "id": "DELEGATION_GRANT",
     "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#152-ext-delegation--hierarchical-purpose-oriented-delegation-registered-extension",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
     "security_considerations": "Delegation scope and expiry must be enforced."
   },
   {
@@ -277,5 +277,95 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
     "security_considerations": "Resume responses should accurately signal sync status and safe recovery actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_JOIN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#31-participant_join-semantics-normative",
+    "security_considerations": "Join requests should be authenticated to prevent spoofed participant admission."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#32-participant_accept-semantics-normative",
+    "security_considerations": "Acceptance authority should be constrained to trusted acceptors to prevent role escalation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_LEAVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#33-participant_leave-semantics-normative",
+    "security_considerations": "Leave/removal events should be authenticated to avoid unauthorized eviction or stale membership use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Tool requests may carry sensitive intent; constrain scope and validate sender authorization."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Verdicts are authorization-critical and must be authenticated and hash-bound to requests."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Results without valid bindings can bypass policy; enforce request/verdict linkage rules."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Attestations should be authenticated and bind to request/result hashes to prevent replay spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Acceptance should be authenticated to bind delegatee commitment."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Revocations should be honored promptly to avoid stale delegated authority."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_RESULT_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Result attestations must bind to delegation_id and contract head to remain auditable."
   }
 ]
