@@ -26,7 +26,7 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
-from aicp_ref.jcs import canonicalize_to_bytes  # noqa: E402
+from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
@@ -617,28 +617,29 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
 
         if "AL-VERBOSITY-01" in enabled_checks:
-            max_alert_payload_canonical_len = int(suite.get("alert_payload_max_canonical_len", 4096))
             for line_no, msg in rows:
                 if msg.get("message_type") != "ALERT":
                     continue
-                payload = msg.get("payload")
-                if not isinstance(payload, dict):
-                    continue
-                try:
-                    canonical_len = len(canonicalize_to_bytes(payload))
-                except Exception as exc:
-                    add_failure(t_failures, "AL-VERBOSITY-01", f"payload canonicalization error: {exc}", rel_file, line_no)
-                    continue
-                if canonical_len > max_alert_payload_canonical_len:
-                    add_failure(
-                        t_failures,
-                        "AL-VERBOSITY-01",
-                        f"ALERT payload canonical JSON length {canonical_len} exceeds {max_alert_payload_canonical_len}",
-                        rel_file,
-                        line_no,
-                    )
+                payload = msg.get("payload") or {}
+                message = payload.get("message")
+                if isinstance(message, str) and len(message) > 256:
+                    add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.message exceeds 256 characters (got {len(message)})", rel_file, line_no)
+                if "details" in payload:
+                    try:
+                        details_size = len(canonicalize_json(payload.get("details")))
+                    except Exception as exc:
+                        add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.details canonicalization failed: {exc}", rel_file, line_no)
+                        continue
+                    if details_size > 4096:
+                        add_failure(
+                            t_failures,
+                            "AL-VERBOSITY-01",
+                            f"ALERT payload.details canonical JSON exceeds 4096 bytes (got {details_size})",
+                            rel_file,
+                            line_no,
+                        )
 
-        if "RS-ACTIONS-01" in enabled_checks or "RS-RESUME-MATCH-01" in enabled_checks:
+        if any(check in enabled_checks for check in {"RS-ACTIONS-01", "RS-RESUME-MATCH-01", "RS-LOOP-01", "RS-PROBING-01"}):
             request_rows: list[tuple[int, dict[str, Any]]] = []
             response_rows: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}
 
@@ -743,6 +744,50 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
                     idx += 2
 
+            if "RS-PROBING-01" in enabled_checks:
+                probing_sessions_by_sender: dict[str, set[str]] = {}
+                successful_resume_by_sender: dict[str, bool] = {}
+
+                for idx, (_, msg) in enumerate(rows):
+                    if msg.get("message_type") != "RESUME_REQUEST":
+                        continue
+
+                    sender = msg.get("sender")
+                    req_payload = msg.get("payload") or {}
+                    session_id = req_payload.get("session_id")
+                    if not isinstance(sender, str) or not isinstance(session_id, str):
+                        continue
+
+                    matched_response = None
+                    for _, candidate in rows[idx + 1:]:
+                        if candidate.get("message_type") != "RESUME_RESPONSE":
+                            continue
+                        cand_payload = candidate.get("payload") or {}
+                        if cand_payload.get("resume_id") == req_payload.get("resume_id") and cand_payload.get("session_id") == session_id:
+                            matched_response = cand_payload
+                            break
+
+                    if matched_response is None:
+                        continue
+
+                    status = matched_response.get("status")
+                    if status in {"OK", "NEEDS_RESYNC"}:
+                        successful_resume_by_sender[sender] = True
+                    elif status == "UNKNOWN_SESSION":
+                        probing_sessions_by_sender.setdefault(sender, set()).add(session_id)
+
+                for sender, probed in probing_sessions_by_sender.items():
+                    if successful_resume_by_sender.get(sender):
+                        continue
+                    if len(probed) >= 5:
+                        add_failure(
+                            t_failures,
+                            "RS-PROBING-01",
+                            f"detected RESUME_REQUEST probing by sender '{sender}': UNKNOWN_SESSION across {len(probed)} distinct session_id values",
+                            rel_file,
+                            None,
+                        )
+
         if "ENF-SANCTION-CODES-01" in enabled_checks:
             namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
             namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
@@ -843,6 +888,25 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
                     if gated_types is not None and original_message.get("message_type") not in gated_types:
                         add_failure(t_failures, "ENF-GATE-01", "embedded original_message.message_type is not listed in gated_message_types", rel_file, line_no)
+
+        if "ENF-VERDICT-STORM-01" in enabled_checks:
+            verdict_counts: dict[str, int] = {}
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
+                    continue
+                payload = msg.get("payload") or {}
+                target_hash = payload.get("target_message_hash")
+                if not isinstance(target_hash, str):
+                    continue
+                verdict_counts[target_hash] = verdict_counts.get(target_hash, 0) + 1
+                if verdict_counts[target_hash] > 1:
+                    add_failure(
+                        t_failures,
+                        "ENF-VERDICT-STORM-01",
+                        f"multiple ENFORCEMENT_VERDICT messages reference target_message_hash '{target_hash}'",
+                        rel_file,
+                        line_no,
+                    )
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 

@@ -2,13 +2,60 @@
   "suite_id": "OPS-HARDENING-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "Operational hardening checks for alert verbosity enforcement behavior.",
+  "description": "Operational hardening evidence suite for deterministic abuse-pattern detection in mediated channels (not a protocol compatibility badge).",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
-  "payload_schema_ref": "schemas/extensions/ext-alerts-payloads.schema.json",
+  "payload_schema_ref": "schemas/demos/demo-enforcement-behavioral-payloads.schema.json",
   "payload_schema_map": {
-    "ALERT": "#/$defs/ALERT"
+    "ALERT": "#/$defs/ALERT",
+    "RESUME_REQUEST": "#/$defs/RESUME_REQUEST",
+    "RESUME_RESPONSE": "#/$defs/RESUME_RESPONSE",
+    "ENFORCEMENT_VERDICT": "#/$defs/ENFORCEMENT_VERDICT",
+    "CONTENT_MESSAGE": "#/$defs/CONTENT_MESSAGE"
   },
   "transcripts": [
+    {
+      "id": "OPS-01",
+      "path": "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RS-PROBING-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "OPS-02",
+      "path": "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "ENFORCEMENT_VERDICT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-VERDICT-STORM-01",
+          "min_count": 1
+        }
+      ]
+    },
     {
       "id": "OPS-03",
       "path": "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
@@ -32,12 +79,8 @@
       "description": "Validate each JSONL record against Core message schema"
     },
     {
-      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
-      "description": "message_type values must be registered in registry/message_types.json"
-    },
-    {
       "test_id": "CN-PAYLOAD-SCHEMA-01",
-      "description": "Validate payload against EXT-ALERTS payload schema"
+      "description": "Validate extension payloads used by ops fixtures"
     },
     {
       "test_id": "CT-HASH-CHAIN-01",
@@ -52,8 +95,20 @@
       "description": "recompute message_hash from message body and compare"
     },
     {
+      "test_id": "RS-LOOP-01",
+      "description": "Detect repeated NEEDS_RESYNC loops without head progress"
+    },
+    {
+      "test_id": "RS-PROBING-01",
+      "description": "Detect repeated UNKNOWN_SESSION resume probing across many distinct session IDs"
+    },
+    {
+      "test_id": "ENF-VERDICT-STORM-01",
+      "description": "Detect multiple verdicts for one target_message_hash"
+    },
+    {
       "test_id": "AL-VERBOSITY-01",
-      "description": "ALERT payload canonical JSON length must not exceed 4096 bytes"
+      "description": "Detect ALERT payload verbosity over safe lint guidance caps"
     }
   ],
   "compatibility_mark": "AICP-OPS-HARDENING-0.1"
