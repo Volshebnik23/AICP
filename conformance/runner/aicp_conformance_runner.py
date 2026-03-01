@@ -1264,9 +1264,11 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
         if any(check in enabled_checks for check in {"RC-CONTRACT-01", "RC-DELIVER-01"}):
             first_contract = None
-            for _, msg in rows:
+            first_contract_line_no = 1
+            for line_no, msg in rows:
                 if msg.get("message_type") == "CONTRACT_PROPOSE":
                     first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    first_contract_line_no = line_no
                     break
 
             capneg_cfg: dict[str, Any] | None = None
@@ -1298,25 +1300,40 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
             if "RC-CONTRACT-01" in enabled_checks:
                 if capneg_cfg is None:
-                    add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg must be present", rel_file, 1)
+                    add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg must be present", rel_file, first_contract_line_no)
                 else:
                     negotiation_result_hash = capneg_cfg.get("negotiation_result_hash")
                     selected = capneg_cfg.get("selected")
                     if not isinstance(negotiation_result_hash, str) or not negotiation_result_hash:
-                        add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.negotiation_result_hash must be a non-empty string", rel_file, 1)
+                        add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.negotiation_result_hash must be a non-empty string", rel_file, first_contract_line_no)
                     if not isinstance(selected, dict):
-                        add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.selected must be an object", rel_file, 1)
+                        add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.selected must be an object", rel_file, first_contract_line_no)
+
+                    accepted_negotiation_result = None
+                    for _, candidate in rows:
+                        if candidate.get("message_type") == "CAPABILITIES_ACCEPT":
+                            cap_payload = candidate.get("payload") or {}
+                            if cap_payload.get("accepted") is True and isinstance(cap_payload.get("negotiation_result"), dict):
+                                accepted_negotiation_result = cap_payload.get("negotiation_result")
+                                break
+                    if isinstance(accepted_negotiation_result, dict):
+                        accepted_hash = object_hash("negotiation_result", accepted_negotiation_result)
+                        if isinstance(negotiation_result_hash, str) and negotiation_result_hash != accepted_hash:
+                            add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.negotiation_result_hash must match accepted CAPABILITIES_ACCEPT negotiation_result", rel_file, first_contract_line_no)
+                        accepted_selected = accepted_negotiation_result.get("selected")
+                        if isinstance(selected, dict) and isinstance(accepted_selected, dict) and selected != accepted_selected:
+                            add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.selected must match accepted CAPABILITIES_ACCEPT negotiation_result.selected", rel_file, first_contract_line_no)
 
                 if enforcement_cfg is None:
-                    add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.enforcement (or contract.extensions['EXT-ENFORCEMENT']) must be present", rel_file, 1)
+                    add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.enforcement (or contract.extensions['EXT-ENFORCEMENT']) must be present", rel_file, first_contract_line_no)
                 else:
                     if enforcement_cfg.get("mode") != "blocking":
-                        add_failure(t_failures, "RC-CONTRACT-01", "enforcement mode must be 'blocking'", rel_file, 1)
+                        add_failure(t_failures, "RC-CONTRACT-01", "enforcement mode must be 'blocking'", rel_file, first_contract_line_no)
                     if not mediators:
-                        add_failure(t_failures, "RC-CONTRACT-01", "enforcement mediators must be a non-empty array", rel_file, 1)
+                        add_failure(t_failures, "RC-CONTRACT-01", "enforcement mediators must be a non-empty array", rel_file, first_contract_line_no)
 
                 if participants_cfg is None:
-                    add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.participants (or contract.extensions['EXT-PARTICIPANTS']) must be present", rel_file, 1)
+                    add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.participants (or contract.extensions['EXT-PARTICIPANTS']) must be present", rel_file, first_contract_line_no)
 
             if "RC-DELIVER-01" in enabled_checks and mediators:
                 allowed_senders = set(mediators)

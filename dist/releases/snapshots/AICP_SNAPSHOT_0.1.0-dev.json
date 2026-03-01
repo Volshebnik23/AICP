@@ -106,7 +106,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "87e440ede634cf9631952138d30f93526de944a5c89d3de2e29a236875a46787",
+      "combined_sha256": "4978a42477bee233cf471e2902d6e133fed38fb1eb5cddaeee59e9a9ecf02dd0",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -282,11 +282,11 @@
         },
         {
           "path": "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
-          "sha256": "5120ebbd0752523c27a32dec414ea3f0dc6bfd1332215f6bf1c347e6f551afe4"
+          "sha256": "77e4868479725e757f5cafeb48e5d6ff50672472ffc9e5abfa5b2399e5c6fd44"
         },
         {
           "path": "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
-          "sha256": "4c36c1e2ee14b14043d85e0a406dc1b002be8eb188462c602e09aa6b22005b22"
+          "sha256": "a6f083cef2557c954532358423a3b345c9c49e230677e0af11b32fa6cd751735"
         },
         {
           "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",

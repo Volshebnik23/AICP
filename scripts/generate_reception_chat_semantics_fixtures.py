@@ -32,18 +32,27 @@ def write(path: Path, rows: list[dict]) -> None:
 def _base_rows(deliver_sender: str) -> list[dict]:
     cref = {"branch_id": "main", "base_version": "v1", "head_version": "v1"}
     negotiation_result = {
+        "negotiation_id": "neg-rc1",
+        "session_id": "sRC1",
+        "contract_id": "cRC1",
+        "participants": ["agent:A", "agent:B"],
         "selected": {
-            "aicp_profile": "AICP-RECEPTION-CHAT@0.1",
-            "aicp_extensions": [
+            "crypto_profile": ["AICP-JCS-1", "AICP-HASH-SHA256-1", "AICP-SIG-ED25519-1"],
+            "privacy_mode": "standard",
+            "required_extensions": [
                 "EXT-CAPNEG",
                 "EXT-PARTICIPANTS",
                 "EXT-POLICY-EVAL",
                 "EXT-ENFORCEMENT",
                 "EXT-SECURITY-ALERT",
-                "EXT-DISPUTES",
+                "EXT-DISPUTES"
             ],
+            "aicp_profile": {
+                "profile_id": "AICP-RECEPTION-CHAT",
+                "profile_version": "0.1"
+            }
         },
-        "constraints": {"privacy_mode": "standard", "required_enforcement_mode": "blocking"},
+        "transcript_binding": "chain:rc1:m3"
     }
     negotiation_hash = object_hash("negotiation_result", negotiation_result)
 
@@ -57,8 +66,12 @@ def _base_rows(deliver_sender: str) -> list[dict]:
             "contract_id": "cRC1",
             "contract_ref": cref,
             "payload": {
+                "capabilities_id": "cap-a-rc1",
+                "party_id": "agent:A",
+                "supported_profiles": ["AICP-JCS-1", "AICP-HASH-SHA256-1", "AICP-SIG-ED25519-1"],
+                "supported_privacy_modes": ["standard"],
                 "supported_extensions": ["EXT-CAPNEG", "EXT-PARTICIPANTS", "EXT-POLICY-EVAL", "EXT-ENFORCEMENT"],
-                "required_aicp_profiles": ["AICP-RECEPTION-CHAT@0.1"],
+                "required_aicp_profiles": [{"profile_id": "AICP-RECEPTION-CHAT", "profile_version": "0.1"}],
             },
         },
         {
@@ -70,15 +83,19 @@ def _base_rows(deliver_sender: str) -> list[dict]:
             "contract_id": "cRC1",
             "contract_ref": cref,
             "payload": {
+                "capabilities_id": "cap-b-rc1",
+                "party_id": "agent:B",
+                "supported_profiles": ["AICP-JCS-1", "AICP-HASH-SHA256-1", "AICP-SIG-ED25519-1"],
+                "supported_privacy_modes": ["standard"],
                 "supported_extensions": [
                     "EXT-CAPNEG",
                     "EXT-PARTICIPANTS",
                     "EXT-POLICY-EVAL",
                     "EXT-ENFORCEMENT",
                     "EXT-SECURITY-ALERT",
-                    "EXT-DISPUTES",
+                    "EXT-DISPUTES"
                 ],
-                "required_aicp_profiles": ["AICP-RECEPTION-CHAT@0.1"],
+                "required_aicp_profiles": [{"profile_id": "AICP-RECEPTION-CHAT", "profile_version": "0.1"}],
             },
         },
         {
@@ -102,6 +119,7 @@ def _base_rows(deliver_sender: str) -> list[dict]:
             "contract_id": "cRC1",
             "contract_ref": cref,
             "payload": {
+                "negotiation_id": "neg-rc1",
                 "accepted": True,
                 "negotiation_result": negotiation_result,
             },
