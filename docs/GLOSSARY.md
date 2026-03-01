@@ -68,3 +68,13 @@ A report may be `passed=true` yet `degraded=true` when critical checks are unava
 
 ## Coexistence with non-AICP chats
 AICP is optional: agents may operate in channels that do not use AICP. Enforcement semantics apply only where a mediated channel actually uses AICP artifacts.
+
+
+## Standard Overview
+A short orientation document that explains what AICP is and is not, and points implementers to first-run commands and core references.
+
+## Degraded mode
+A report state where checks pass but critical capabilities are unavailable (for example, signature verification backend missing), so compatibility marks are withheld.
+
+## Badge eligibility
+Condition where required checks both pass and are fully enforceable (non-degraded), allowing compatibility mark issuance.

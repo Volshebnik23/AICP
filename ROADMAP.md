@@ -62,78 +62,66 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ---
 
-## Adoption-ready track (public standard readiness)
-This track turns AICP from “strong repo” into an **adoption-ready standard**: clear positioning, guides, productized profiles, market-grade conformance, governance, and legal packaging.
+## ✅ Completed: Interop readiness package (TLS-like usability & interoperability)
+- ✅ M8.1 Personas → user stories → feature sets → profile mapping
+- ✅ M8.2 AICP Profiles (normative doc) + conformance badges
+- ✅ M8.3 EXT-ALERTS (“TLS alerts”-like) + recovery semantics
+- ✅ M8.4 Canonical state machines and flow diagrams
+- ✅ M8.5 EXT-RESUME (session resumption / reconnect)
+- ✅ M8.6 Plugfest kit scaffolding + interop matrix tool + errata workflow note
+- ✅ M8.6.1 Interop community-ready hardening:
+  - interop matrix CI staleness checks
+  - submission validation (implementation_id matches folder name)
+  - schema validation for changed manifests in CI
 
-### 🔜 Adoption Pack 1 — “30-second understanding” + first hello session (docs-first, high ROI)
-**Goal:** A developer does NOT ask 10 clarifying questions before trying. Two audiences reach a first “hello session” in 10–20 minutes.
+- 🔜 M8.1 Personas → user stories → feature sets → profile mapping (source-of-truth)
+  - Create a canonical mapping doc that justifies profiles by real personas and use cases.
 
-- 🔜 AP1.1 Standard Overview (what it is / isn’t)
-  - A single short “standard overview” entry that explains:
-    - AICP = content-layer agent-to-agent protocol
-    - roles: Mediator/Host and Enforcer
-    - profiles as product feature (what you can claim/require)
-    - what AICP does NOT replace (transport, tool protocols like MCP, domain ontologies, IAM systems)
-  - Linked from README + docs/index.
+- 🔜 M8.2 AICP Profiles (normative document) + conformance badges (profile-level compatibility)
+  - Define profiles as named bundles of required extensions + canonical flows.
+  - Provide machine-readable profile definitions and a profile conformance runner that aggregates suite results into a profile badge.
 
-- 🔜 AP1.2 Implementer’s Guide — Platform Builders (Mediators/Enforcers)
-  - How to build a gateway/enforcer: what to store, how to log, how to apply strikes/sanctions, how to gate side-effects.
-  - How to compute compatibility claims and what “degraded mode” means.
+- ✅ M8.3 EXT-ALERTS alert/error registry + recovery semantics (“TLS alerts”-like)
+  - Registered extension artifacts shipped: RFC, registries, schema, conformance suite, and fixtures.
+  - Standard categories/codes + recommended actions (retry / remediate / disconnect / escalate) are now repo-validated.
 
-- 🔜 AP1.3 Implementer’s Guide — Agent Developers
-  - How to add support (SDK/drop-in), how to run quickstart, how conformance and profile badges work, what minimal session looks like.
+- ✅ M8.4 Canonical state machines and flow diagrams (“handshake diagrams”-like)
+  - Core + key extensions (ENFORCEMENT, POLICY_EVAL, OBJECT_RESYNC, CAPNEG, MCP binding).
 
-- 🔜 AP1.4 Error & Recovery — deterministic operational playbook
-  - One canonical doc that unifies:
-    - alerts vs fatal
-    - what to do on hash/signature/chain mismatch
-    - resync/resume behavior
-    - retry vs disconnect guidance
+- ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
+  - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
 
-### ⏳ Adoption Pack 2 — Profiles as product (negotiation, downgrade protection, naming)
-**Goal:** A platform can credibly say: “We support AICP-Profile-XYZ” and mean it.
+- 🟡 M8.6 Plugfest kit + interop report + errata workflow
+  - `/interop/*` artifacts, test vectors, interop report format.
+  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
+  - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
 
-- ⏳ AP2.1 Profile declaration & negotiation
-  - Specify how profiles are declared and negotiated (via CAPNEG or equivalent),
-  - and how a party can REQUIRE a profile.
-
-- ⏳ AP2.2 Profile downgrade protection (profile-level)
-  - Make downgrade attempts detectable/invalid when a profile is required (tie to CAPNEG checks).
-  - Provide “required profile” invariants and example fixtures.
-
-- ⏳ AP2.3 Profile capability taxonomy
-  - Explicitly define what a profile constrains:
-    - required extensions
-    - required message types (where relevant)
-    - crypto requirements (“crypto profile”)
-    - required policy categories (shape-level, not policy engine semantics)
-
-### ⏳ Adoption Pack 3 — Conformance as marketing contract + governance + legal packaging
-**Goal:** Companies integrate without fear of unstable changes or legal surprises.
-
-- ⏳ AP3.1 Compatibility scale and “AICP-compatible” story
-  - Document a clear compatibility ladder:
-    - Core-only
-    - Core+Crypto (badge-eligible, non-degraded)
-    - Mediated blocking (ENF + Alerts + Resume)
-    - Ops hardening
-  - Provide a GitHub Action or workflow snippet to publish conformance/profile badges.
-
-- ⏳ AP3.2 Governance & change control
-  - Versioning policy (SemVer-like)
-  - Deprecation policy (support window)
-  - Registry change-control RFC (who/how changes registries)
-  - Extension acceptance workflow (RFC lifecycle)
-
-- ⏳ AP3.3 Legal/standard packaging
-  - Code license + spec license (explicit)
-  - Trademark/name usage note for “AICP”
-  - Security policy (already present) and disclosure workflow clarity
+- ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
+- ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
+- ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
+- ✅ M8.10 TypeScript SDK README minimal-envelope corrections shipped (`sdk/typescript/README.md`).
+- ✅ M8.11 Sandbox validator usability hardening shipped (`sandbox/run.py`, `sandbox/README.md`).
+- ✅ M8.12 contract_id envelope consistency shipped (Core schema + docs + conformance alignment).
+- ✅ M8.13 quickstart anti-rot gate shipped (`.github/workflows/ci.yml` quickstart-smoke job).
+- ✅ AP1.1–AP1.4 adoption docs pack shipped (`docs/overview/AICP_STANDARD_OVERVIEW.md`, `docs/guides/*`, `docs/ops/ERROR_AND_RECOVERY.md`).
 
 ---
 
-## Additional technical adoption enablers
-These are strongly recommended for platform adoption but can be staged.
+## ⏳ Later milestones (hardening)
+- 🟡 M9 External security review artifacts and remediation log:
+  - `/security_review/*`
+  - M9 security review package scaffolding is now available in-repo.
+  - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
+  - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
+  - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
+  - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
+  - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
+  - ✅ M9.4 canonicalization edge-case vectors + drop-in asset anti-drift checks shipped.
+  - ✅ M9.5 ordering model clarity + linear prev_msg_hash requirement + expanded drop-in asset parity checks shipped.
+  - ✅ M9.6 DoS/amplification/abuse hardening guidance + deterministic ops checks shipped (`security_review/OPS_HARDENING_GUIDE.md`, `conformance/ops/OPS_HARDENING_0.1.json`, `fixtures/ops/`).
+  - ✅ M9.7 Signed-path security evidence shipped for mediated blocking (`conformance/security/SIG_SIGNED_PATHS_0.1.json`, `fixtures/security/signed_paths/`, deterministic TEST-only keys).
+- 🔜 M10 Snapshot discipline (optional, when needed):
+  - feature freeze rules, registry snapshot, compatibility marks, packaging/checksums
 
 - ⏳ HTTP/Webhook transport binding (pragmatic platform binding)
   - A binding doc + minimal example of AICP envelope over HTTP requests/responses.
