@@ -1,0 +1,81 @@
+{
+  "suite_id": "RC-RECEPTION-CHAT-SEMANTICS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Cross-extension reception chat semantics checks for contract configuration and mediator-only delivery under blocking enforcement.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {
+      "id": "RC-01",
+      "path": "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT",
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "PARTICIPANT_JOIN",
+        "PARTICIPANT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ]
+    },
+    {
+      "id": "RC-02",
+      "path": "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT",
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "PARTICIPANT_JOIN",
+        "PARTICIPANT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RC-DELIVER-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "RC-CONTRACT-01",
+      "description": "Reception chat contracts must include capneg binding, blocking enforcement with mediators, and participants configuration"
+    },
+    {
+      "test_id": "RC-DELIVER-01",
+      "description": "CONTENT_DELIVER sender must be listed in contract ext.enforcement.mediators"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-RECEPTION-CHAT-SEMANTICS-0.1"
+}

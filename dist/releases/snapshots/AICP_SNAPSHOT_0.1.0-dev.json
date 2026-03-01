@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "04a4724cb03ece1fcf367f46746e3d274428820aaf3ed07715518483263c40c2",
+      "combined_sha256": "cf639c65702e50a4b981049a295264dd068d61ab374b3dbc3e3759c28b414ba3",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -56,6 +56,10 @@
           "sha256": "dba2014d3cc42487e77d956ed7bca889a34fe3abb14952cc5652be0ceb73bbd1"
         },
         {
+          "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "sha256": "ff399fa73d90d2d73b3ba8c1eebefe223d84c9eae894f20e9e76168a02c3aa43"
+        },
+        {
           "path": "conformance/extensions/RS_RESUME_0.1.json",
           "sha256": "513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
         },
@@ -89,7 +93,7 @@
         },
         {
           "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json",
-          "sha256": "eea65773dd04be1d2392e9c95a8d9615312e5738287820e297adfdae201e81f6"
+          "sha256": "04a172f94b86b176a28841cee432480ff208fc259a934155fa8960dceca75c10"
         },
         {
           "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
@@ -102,7 +106,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "52cb1200ac686f583c89997e766c18a07107208a5aef3214dcb99d4c8c0eb2d2",
+      "combined_sha256": "87e440ede634cf9631952138d30f93526de944a5c89d3de2e29a236875a46787",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -275,6 +279,14 @@
         {
           "path": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
           "sha256": "4fb2e0aa4b58966e2e5c565fbd1f95db2084fe9fa928ecb6775c70d2b8830088"
+        },
+        {
+          "path": "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "sha256": "5120ebbd0752523c27a32dec414ea3f0dc6bfd1332215f6bf1c347e6f551afe4"
+        },
+        {
+          "path": "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "sha256": "4c36c1e2ee14b14043d85e0a406dc1b002be8eb188462c602e09aa6b22005b22"
         },
         {
           "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
@@ -636,6 +648,10 @@
       {
         "mark": "AICP-EXT-POLICY-EVAL-0.1",
         "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-RECEPTION-CHAT-SEMANTICS-0.1",
+        "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
       },
       {
         "mark": "AICP-EXT-RESUME-0.1",

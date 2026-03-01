@@ -9,7 +9,8 @@
     "conformance/extensions/PE_POLICY_EVAL_0.1.json",
     "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
     "conformance/extensions/SA_SECURITY_ALERTS_0.1.json",
-    "conformance/extensions/DS_DISPUTES_0.1.json"
+    "conformance/extensions/DS_DISPUTES_0.1.json",
+    "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
   ],
   "compatibility_mark": "AICP-Profile-RECEPTION-CHAT-0.1"
 }

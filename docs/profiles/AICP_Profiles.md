@@ -70,6 +70,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
   - EXT-ENFORCEMENT: `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
   - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERTS_0.1.json`
   - EXT-DISPUTES: `conformance/extensions/DS_DISPUTES_0.1.json`
+  - Cross-suite reception semantics: `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`
 - **Intent:** Reception/chat profile for mediated blocking conversations with participant control and incident/dispute handling.
 - **Canonical flows:**
   - Mediated blocking enforcement: `docs/flows/AICP_Canonical_Flows.md#24-mediated-blocking-enforcement-ext-enforcement`
