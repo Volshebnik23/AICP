@@ -689,6 +689,99 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             line_no,
                         )
 
+        if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            participants_cfg: dict[str, Any] | None = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    participants_cfg = ext.get("participants")
+                if participants_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        participants_cfg = extensions.get("EXT-PARTICIPANTS")
+
+            participants_cfg = participants_cfg if isinstance(participants_cfg, dict) else {}
+            configured_acceptors = participants_cfg.get("acceptors") if isinstance(participants_cfg.get("acceptors"), list) else None
+            model = participants_cfg.get("model") if isinstance(participants_cfg.get("model"), str) else None
+
+            joined_at: dict[str, int] = {}
+            accepted_at: dict[str, int] = {}
+            left_at: dict[str, int] = {}
+            accepted_contract_ref_by_participant: dict[str, dict[str, str]] = {}
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                sender = msg.get("sender")
+                payload = msg.get("payload") or {}
+
+                if mtype == "PARTICIPANT_JOIN":
+                    participant_id = payload.get("participant_id")
+                    if "PA-JOIN-01" in enabled_checks:
+                        if not isinstance(participant_id, str) or not participant_id:
+                            add_failure(t_failures, "PA-JOIN-01", "PARTICIPANT_JOIN payload.participant_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(sender, str) or participant_id != sender:
+                            add_failure(t_failures, "PA-JOIN-01", "PARTICIPANT_JOIN payload.participant_id must equal sender", rel_file, line_no)
+                    if isinstance(participant_id, str) and participant_id and participant_id not in joined_at:
+                        joined_at[participant_id] = idx
+
+                elif mtype == "PARTICIPANT_ACCEPT":
+                    participant_id = payload.get("participant_id")
+                    if "PA-ACCEPT-01" in enabled_checks:
+                        if not isinstance(participant_id, str) or not participant_id or participant_id not in joined_at:
+                            add_failure(t_failures, "PA-ACCEPT-01", "PARTICIPANT_ACCEPT must reference a participant_id with prior PARTICIPANT_JOIN", rel_file, line_no)
+                    if "PA-AUTH-01" in enabled_checks and configured_acceptors:
+                        if sender not in configured_acceptors:
+                            add_failure(t_failures, "PA-AUTH-01", f"PARTICIPANT_ACCEPT sender '{sender}' not in configured acceptors", rel_file, line_no)
+
+                    if isinstance(participant_id, str) and participant_id and participant_id not in accepted_at:
+                        accepted_at[participant_id] = idx
+                        if "PA-MODEL-01" in enabled_checks and model == "per_participant_acceptance":
+                            accepted_contract_ref = payload.get("accepted_contract_ref")
+                            if not isinstance(accepted_contract_ref, dict):
+                                add_failure(t_failures, "PA-MODEL-01", "per_participant_acceptance requires payload.accepted_contract_ref object", rel_file, line_no)
+                            else:
+                                required_keys = ("branch_id", "base_version", "head_version")
+                                if any(not isinstance(accepted_contract_ref.get(k), str) or not accepted_contract_ref.get(k) for k in required_keys):
+                                    add_failure(t_failures, "PA-MODEL-01", "accepted_contract_ref must include non-empty branch_id/base_version/head_version", rel_file, line_no)
+                                else:
+                                    accepted_contract_ref_by_participant[participant_id] = {
+                                        "branch_id": str(accepted_contract_ref.get("branch_id")),
+                                        "base_version": str(accepted_contract_ref.get("base_version")),
+                                        "head_version": str(accepted_contract_ref.get("head_version")),
+                                    }
+
+                elif mtype == "PARTICIPANT_LEAVE":
+                    participant_id = payload.get("participant_id")
+                    if isinstance(participant_id, str) and participant_id and participant_id not in left_at:
+                        left_at[participant_id] = idx
+
+                if "PA-MEM-01" in enabled_checks and isinstance(sender, str) and sender in joined_at:
+                    if mtype not in {"PARTICIPANT_JOIN", "PARTICIPANT_ACCEPT", "PARTICIPANT_LEAVE"}:
+                        accept_idx = accepted_at.get(sender)
+                        if accept_idx is None or idx < accept_idx:
+                            add_failure(t_failures, "PA-MEM-01", f"sender '{sender}' emitted {mtype} before PARTICIPANT_ACCEPT", rel_file, line_no)
+                        leave_idx = left_at.get(sender)
+                        if leave_idx is not None and idx > leave_idx:
+                            add_failure(t_failures, "PA-MEM-01", f"sender '{sender}' emitted {mtype} after PARTICIPANT_LEAVE", rel_file, line_no)
+
+                if "PA-MODEL-01" in enabled_checks and model == "per_participant_acceptance" and isinstance(sender, str):
+                    if mtype in {"PARTICIPANT_JOIN", "PARTICIPANT_ACCEPT", "PARTICIPANT_LEAVE"}:
+                        continue
+                    accept_idx = accepted_at.get(sender)
+                    if accept_idx is None or idx <= accept_idx:
+                        continue
+                    expected_contract_ref = accepted_contract_ref_by_participant.get(sender)
+                    if expected_contract_ref is None:
+                        continue
+                    if msg.get("contract_ref") != expected_contract_ref:
+                        add_failure(t_failures, "PA-MODEL-01", f"sender '{sender}' message contract_ref must match accepted_contract_ref", rel_file, line_no)
+
 
         if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
             for line_no, msg in rows:

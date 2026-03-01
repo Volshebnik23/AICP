@@ -97,5 +97,14 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md",
     "security_considerations": "Resume flows must avoid cross-session confusion and replay abuse."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-PARTICIPANTS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md",
+    "security_considerations": "Membership spoofing, role escalation, and join spam should be mitigated with authenticated identities and admission controls."
   }
 ]

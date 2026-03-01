@@ -153,6 +153,8 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M11.0 Core `ERROR` message type productized end-to-end (Core payload schema + golden fixture + Core conformance coverage).
 - ✅ M11.3 Stable message-type anti-drift governance gate shipped (`scripts/validate_productization_coverage.py`, wired into `make validate`).
 
+- ✅ M11.1 EXT-PARTICIPANTS shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
+
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
 - ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
@@ -167,4 +169,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M11.1–M11.2 (remaining M11 profile/productization items)** are next, followed by M10 snapshot discipline hardening.
+**M11.2 (tool-gating profile hardening)** is next, then M10 snapshot discipline hardening.
