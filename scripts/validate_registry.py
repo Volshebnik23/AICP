@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     "hash_domains.json",
     "transport_bindings.json",
     "policy_reason_codes.json",
+    "privacy_modes.json",
     "policy_languages.json",
     "policy_bindings.json",
     "extension_ids.json",

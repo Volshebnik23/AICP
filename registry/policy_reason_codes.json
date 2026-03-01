@@ -3,6 +3,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "BRAND_RULE_VIOLATION",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "CONSENT_MISSING",
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
@@ -12,9 +21,45 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "PII_BLOCKED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PROMPT_INJECTION_SUSPECTED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RATE_LIMITED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "SCOPE_VIOLATION",
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
     "security_considerations": "Highlights boundary crossing attempts for audit."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_ACCESS_DENIED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
   }
 ]

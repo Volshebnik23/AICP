@@ -160,6 +160,10 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M12.2 EXT-DELEGATION productized (registry message types + payload schema + fixtures + conformance suite + depth/expiry/binding checks).
 - ✅ M12.3 EXT-WORKFLOW-SYNC productized (registry message types + payload schema + fixtures + conformance suite + workflow checks).
 
+- ✅ M13.1 EXT-DISPUTES + EXT-SECURITY-ALERTS productized (message-type registry coverage, payload schemas, deterministic fixtures, conformance suites, and runner checks).
+- ✅ M13.2 privacy_modes registry and CAPNEG privacy-mode validation shipped (profile/context binding refinements remain later).
+- ✅ M13.3 policy_reason_codes baseline expansion + namespaced reason-code acceptance shipped.
+
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
 - ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
@@ -174,4 +178,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M13 (disputes/security-alert profile line)** is next, followed by M10 snapshot discipline hardening.
+**M10 snapshot discipline hardening** is next, followed by remaining M13 profile-level binding refinements.

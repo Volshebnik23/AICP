@@ -207,6 +207,10 @@ def _baseline_keyring(key_map: dict[str, Any]) -> dict[str, dict[str, str]]:
     return keyring
 
 
+def _is_namespaced_identifier(value: Any) -> bool:
+    return isinstance(value, str) and (value.startswith("vendor:") or value.startswith("org:"))
+
+
 def _parse_iso_datetime(value: Any) -> datetime | None:
     if not isinstance(value, str) or not value:
         return None
@@ -355,6 +359,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
     capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
+    privacy_modes_registry = {e.get("id") for e in load_json(ROOT / "registry/privacy_modes.json")}
+    dispute_claim_types = {e.get("id") for e in load_json(ROOT / "registry/dispute_claim_types.json")}
+    security_alert_categories = {e.get("id") for e in load_json(ROOT / "registry/security_alert_categories.json")}
     aicp_profiles_registry = {
         (e.get("profile_id"), e.get("profile_version"))
         for e in load_json(ROOT / "registry/aicp_profiles.json")
@@ -628,8 +635,8 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     decision = payload.get("policy_decision") or {}
                     if "PE-REASON-CODES-01" in enabled_checks:
                         for code in decision.get("reason_codes", []) or []:
-                            if code not in policy_reason_codes:
-                                add_failure(t_failures, "PE-REASON-CODES-01", f"unknown reason_code '{code}'", rel_file, line_no)
+                            if code not in policy_reason_codes and not _is_namespaced_identifier(code):
+                                add_failure(t_failures, "PE-REASON-CODES-01", f"unknown reason_code '{code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
                 if msg.get("message_type") == "POLICY_EVAL_REQUEST" and "PE-CONTEXT-HASH-01" in enabled_checks:
                     ctx = (payload.get("evaluation_context") or {})
                     if "context_hash" in ctx:
@@ -720,6 +727,22 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 if reason_code not in capneg_reason_codes:
                     add_failure(t_failures, "CN-REASON-CODES-01", f"unknown CAPNEG reason_code '{reason_code}'", rel_file, line_no)
 
+        if "CN-PRIVACY-MODES-01" in enabled_checks:
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                if mtype == "CAPABILITIES_DECLARE":
+                    for mode in payload.get("supported_privacy_modes") or []:
+                        if mode not in privacy_modes_registry and not _is_namespaced_identifier(mode):
+                            add_failure(t_failures, "CN-PRIVACY-MODES-01", f"unsupported supported_privacy_modes entry '{mode}'", rel_file, line_no)
+                elif mtype in {"CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT"}:
+                    selected = ((payload.get("negotiation_result") or {}).get("selected") or {})
+                    mode = selected.get("privacy_mode")
+                    if mode is None:
+                        continue
+                    if mode not in privacy_modes_registry and not _is_namespaced_identifier(mode):
+                        add_failure(t_failures, "CN-PRIVACY-MODES-01", f"selected privacy_mode '{mode}' is not registered", rel_file, line_no)
+
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
             for line_no, msg in rows:
@@ -751,6 +774,60 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+        if any(check in enabled_checks for check in {"DS-TARGET-01", "DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "SA-CAT-01", "SA-EVIDENCE-01"}):
+            prior_message_ids: set[str] = set()
+            prior_payload_object_hashes: set[str] = set()
+            for line_no, msg in rows:
+                payload = msg.get("payload") or {}
+                mtype = msg.get("message_type")
+
+                if mtype == "CHALLENGE_ASSERTION":
+                    target_ref = payload.get("target_ref") if isinstance(payload.get("target_ref"), dict) else {}
+                    if "DS-TARGET-01" in enabled_checks:
+                        message_id = target_ref.get("message_id")
+                        object_hash_ref = target_ref.get("object_hash")
+                        if isinstance(message_id, str) and message_id and message_id not in prior_message_ids:
+                            add_failure(t_failures, "DS-TARGET-01", f"target_ref.message_id '{message_id}' must reference an earlier message_id", rel_file, line_no)
+                        if isinstance(object_hash_ref, str) and object_hash_ref and object_hash_ref not in prior_payload_object_hashes:
+                            add_failure(t_failures, "DS-TARGET-01", f"target_ref.object_hash '{object_hash_ref}' must reference an earlier payload object_hash", rel_file, line_no)
+
+                    if "DS-CLAIMTYPE-01" in enabled_checks:
+                        challenge_type = payload.get("challenge_type")
+                        if challenge_type not in dispute_claim_types and not _is_namespaced_identifier(challenge_type):
+                            add_failure(t_failures, "DS-CLAIMTYPE-01", f"unknown challenge_type '{challenge_type}'", rel_file, line_no)
+
+                    if "DS-EVIDENCE-01" in enabled_checks:
+                        evidence_refs = payload.get("evidence_refs")
+                        valid_evidence = isinstance(evidence_refs, list) and len(evidence_refs) > 0 and all(isinstance(ref, str) and ref for ref in evidence_refs)
+                        if not valid_evidence:
+                            add_failure(t_failures, "DS-EVIDENCE-01", "CHALLENGE_ASSERTION requires non-empty evidence_refs", rel_file, line_no)
+
+                elif mtype == "CLAIM_BREACH" and "DS-CLAIMTYPE-01" in enabled_checks:
+                    breach_type = payload.get("breach_type")
+                    if breach_type not in dispute_claim_types and not _is_namespaced_identifier(breach_type):
+                        add_failure(t_failures, "DS-CLAIMTYPE-01", f"unknown breach_type '{breach_type}'", rel_file, line_no)
+
+                elif mtype == "SECURITY_ALERT":
+                    if "SA-CAT-01" in enabled_checks:
+                        category = payload.get("category")
+                        if category not in security_alert_categories and not _is_namespaced_identifier(category):
+                            add_failure(t_failures, "SA-CAT-01", f"unknown category '{category}'", rel_file, line_no)
+                    if "SA-EVIDENCE-01" in enabled_checks:
+                        evidence_refs = payload.get("evidence_refs")
+                        valid_evidence = isinstance(evidence_refs, list) and len(evidence_refs) > 0 and all(isinstance(ref, str) and ref for ref in evidence_refs)
+                        if not valid_evidence:
+                            add_failure(t_failures, "SA-EVIDENCE-01", "SECURITY_ALERT requires non-empty evidence_refs", rel_file, line_no)
+
+                msg_id = msg.get("message_id")
+                if isinstance(msg_id, str) and msg_id:
+                    prior_message_ids.add(msg_id)
+                if isinstance(payload, dict):
+                    for value in payload.values():
+                        if isinstance(value, dict):
+                            o_hash = value.get("object_hash")
+                            if isinstance(o_hash, str) and o_hash:
+                                prior_payload_object_hashes.add(o_hash)
 
         if any(check in enabled_checks for check in {"DL-EXPIRY-01", "DL-DEPTH-01", "DL-BIND-01", "DL-SCOPE-01"}):
             grants_by_id: dict[str, tuple[int, int, dict[str, Any], dict[str, Any]]] = {}

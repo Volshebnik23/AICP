@@ -1,0 +1,39 @@
+{
+  "suite_id": "SA-SECURITY-ALERTS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-SECURITY-ALERTS conformance checks for category registration and evidence minimums.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-security-alerts-payloads.schema.json",
+  "payload_schema_map": {
+    "SECURITY_ALERT": "#/$defs/SECURITY_ALERT"
+  },
+  "transcripts": [
+    {
+      "id": "SA-01",
+      "path": "fixtures/extensions/security_alerts/SA-01_security_alert_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SECURITY_ALERT"]
+    },
+    {
+      "id": "SA-02",
+      "path": "fixtures/extensions/security_alerts/SA-02_unknown_category_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SECURITY_ALERT"],
+      "expect_pass": false,
+      "expected_failures": [
+        {"test_id": "SA-CAT-01", "min_count": 1}
+      ]
+    }
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-SECURITY-ALERTS payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "SA-CAT-01", "description": "SECURITY_ALERT category must be registered or namespaced"},
+    {"test_id": "SA-EVIDENCE-01", "description": "SECURITY_ALERT must include non-empty evidence_refs"}
+  ],
+  "compatibility_mark": "AICP-EXT-SECURITY-ALERTS-0.1"
+}

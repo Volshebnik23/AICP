@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate coverage for stable message types across schemas, fixtures, and conformance suites."""
+"""Validate coverage for stable and profile-required message types across schemas, fixtures, and conformance suites."""
 
 from __future__ import annotations
 
@@ -28,6 +28,35 @@ def _stable_message_types() -> list[str]:
                 stable_ids.append(msg_id)
     return sorted(set(stable_ids))
 
+
+
+
+def _profile_required_message_types() -> set[str]:
+    profile_files = sorted((ROOT / "conformance" / "profiles").glob("*.json"))
+    required: set[str] = set()
+    for profile_path in profile_files:
+        profile = _load_json(profile_path)
+        if not isinstance(profile, dict):
+            continue
+        for rel_suite in profile.get("required_suites", []):
+            if not isinstance(rel_suite, str) or not rel_suite:
+                continue
+            suite_path = ROOT / rel_suite
+            if not suite_path.exists():
+                continue
+            suite = _load_json(suite_path)
+            if not isinstance(suite, dict):
+                continue
+            payload_schema_map = suite.get("payload_schema_map")
+            if isinstance(payload_schema_map, dict):
+                required.update(k for k in payload_schema_map.keys() if isinstance(k, str) and k)
+            for transcript in suite.get("transcripts", []):
+                if not isinstance(transcript, dict):
+                    continue
+                for mtype in transcript.get("expected_message_types", []):
+                    if isinstance(mtype, str) and mtype:
+                        required.add(mtype)
+    return required
 
 def _walk_message_types(value: Any, out: set[str]) -> None:
     if isinstance(value, dict):
@@ -95,21 +124,24 @@ def _scan_conformance_coverage() -> tuple[set[str], set[str], list[Path]]:
 def main() -> int:
     try:
         stable_ids = _stable_message_types()
+        profile_required_types = _profile_required_message_types()
         fixture_types, fixture_files = _scan_fixture_message_types()
         payload_map_types, expected_types, suite_files = _scan_conformance_coverage()
     except Exception as exc:
         print(f"[FAIL] productization coverage check aborted: {exc}")
         return 1
 
-    missing_payload = [msg for msg in stable_ids if msg not in payload_map_types]
-    missing_fixtures = [msg for msg in stable_ids if msg not in fixture_types]
+    coverage_ids = sorted(set(stable_ids) | set(profile_required_types))
+    missing_payload = [msg for msg in coverage_ids if msg not in payload_map_types]
+    missing_fixtures = [msg for msg in coverage_ids if msg not in fixture_types]
     missing_conformance = [
-        msg for msg in stable_ids if msg not in payload_map_types and msg not in expected_types
+        msg for msg in coverage_ids if msg not in payload_map_types and msg not in expected_types
     ]
 
     if missing_payload or missing_fixtures or missing_conformance:
-        print("[FAIL] Stable message type productization coverage requirements not satisfied.")
+        print("[FAIL] Productization coverage requirements not satisfied.")
         print(f"  stable message types: {', '.join(stable_ids) if stable_ids else '(none)'}")
+        print(f"  profile-required message types: {', '.join(sorted(profile_required_types)) if profile_required_types else '(none)'}")
         print(
             f"  scanned fixtures: {len(fixture_files)} file(s) under fixtures/**/*.jsonl|json; "
             f"conformance suites: {len(suite_files)} file(s) under conformance/**/*.json"
@@ -126,8 +158,9 @@ def main() -> int:
         return 1
 
     print(
-        "OK: stable message type coverage satisfied "
-        f"({len(stable_ids)} stable ids, {len(fixture_files)} fixtures scanned, {len(suite_files)} suites scanned)."
+        "OK: productization coverage satisfied "
+        f"({len(stable_ids)} stable ids, {len(profile_required_types)} profile-required ids, "
+        f"{len(fixture_files)} fixtures scanned, {len(suite_files)} suites scanned)."
     )
     return 0
 

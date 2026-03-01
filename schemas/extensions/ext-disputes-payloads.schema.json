@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-disputes-payloads.schema.json",
+  "title": "AICP EXT-DISPUTES payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "StringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "TargetRef": {
+      "type": "object",
+      "properties": {
+        "message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "message_id"
+          ]
+        },
+        {
+          "required": [
+            "object_hash"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "CHALLENGE_ASSERTION": {
+      "type": "object",
+      "required": [
+        "challenge_id",
+        "target_ref",
+        "challenge_type",
+        "claim"
+      ],
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_ref": {
+          "$ref": "#/$defs/TargetRef"
+        },
+        "challenge_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "requested_remedy": {
+          "type": "string"
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CLAIM_BREACH": {
+      "type": "object",
+      "required": [
+        "claim_id",
+        "breach_type"
+      ],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delegation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "obligation_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "breach_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "narrative": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "requested_remedy": {
+          "type": "string"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "delegation_id"
+          ]
+        },
+        {
+          "required": [
+            "obligation_ref"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "ARBITRATION_REQUEST": {
+      "type": "object",
+      "required": [
+        "arbitration_id",
+        "related_challenge_id",
+        "arbitrator"
+      ],
+      "properties": {
+        "arbitration_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "related_challenge_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "arbitrator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/StringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ARBITRATION_RESULT": {
+      "type": "object",
+      "required": [
+        "arbitration_id",
+        "outcome"
+      ],
+      "properties": {
+        "arbitration_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "upheld",
+            "rejected",
+            "partial",
+            "inconclusive"
+          ]
+        },
+        "remedy": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

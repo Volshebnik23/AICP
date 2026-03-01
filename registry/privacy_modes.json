@@ -1,0 +1,38 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "standard",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
+    "security_considerations": "Baseline privacy mode with standard metadata exposure controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "confidential",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
+    "security_considerations": "Reduces exposure of optional context while preserving enforceability."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "opaque",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
+    "security_considerations": "Maximizes minimization and requires explicit evidence references for escalations."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "strict",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
+    "security_considerations": "Strict privacy mode minimizes optional disclosure and requires explicit negotiated allowances."
+  }
+]
