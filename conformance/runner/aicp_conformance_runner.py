@@ -26,6 +26,7 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
+from aicp_ref.jcs import canonicalize_to_bytes  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
@@ -614,6 +615,28 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     for action in payload.get("recommended_actions", []) or []:
                         if action not in alert_recommended_actions:
                             add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
+
+        if "AL-VERBOSITY-01" in enabled_checks:
+            max_alert_payload_canonical_len = int(suite.get("alert_payload_max_canonical_len", 4096))
+            for line_no, msg in rows:
+                if msg.get("message_type") != "ALERT":
+                    continue
+                payload = msg.get("payload")
+                if not isinstance(payload, dict):
+                    continue
+                try:
+                    canonical_len = len(canonicalize_to_bytes(payload))
+                except Exception as exc:
+                    add_failure(t_failures, "AL-VERBOSITY-01", f"payload canonicalization error: {exc}", rel_file, line_no)
+                    continue
+                if canonical_len > max_alert_payload_canonical_len:
+                    add_failure(
+                        t_failures,
+                        "AL-VERBOSITY-01",
+                        f"ALERT payload canonical JSON length {canonical_len} exceeds {max_alert_payload_canonical_len}",
+                        rel_file,
+                        line_no,
+                    )
 
         if "RS-ACTIONS-01" in enabled_checks or "RS-RESUME-MATCH-01" in enabled_checks:
             request_rows: list[tuple[int, dict[str, Any]]] = []
