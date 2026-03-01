@@ -783,6 +783,103 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         add_failure(t_failures, "PA-MODEL-01", f"sender '{sender}' message contract_ref must match accepted_contract_ref", rel_file, line_no)
 
 
+        if any(check in enabled_checks for check in {"TG-REQ-01", "TG-BIND-01", "TG-AUTH-01", "TG-MODE-01"}):
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            tool_gating_cfg: dict[str, Any] | None = None
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict):
+                    tool_gating_cfg = ext.get("tool_gating")
+                if tool_gating_cfg is None:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict):
+                        tool_gating_cfg = extensions.get("EXT-TOOL-GATING")
+
+            tool_gating_cfg = tool_gating_cfg if isinstance(tool_gating_cfg, dict) else {}
+            mode = tool_gating_cfg.get("mode") if isinstance(tool_gating_cfg.get("mode"), str) else None
+            acceptors = tool_gating_cfg.get("acceptors") if isinstance(tool_gating_cfg.get("acceptors"), list) else None
+
+            request_hash_by_line: dict[int, str] = {}
+            prior_request_hashes: set[str] = set()
+            verdict_by_id: dict[str, dict[str, Any]] = {}
+            attest_rows: list[tuple[int, int, dict[str, Any], dict[str, Any]]] = []
+            result_rows: list[tuple[int, int, dict[str, Any], dict[str, Any], str | None]] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                sender = msg.get("sender")
+
+                if mtype == "TOOL_CALL_REQUEST":
+                    if "TG-REQ-01" in enabled_checks:
+                        tool_id = payload.get("tool_id")
+                        operation = payload.get("operation")
+                        if not isinstance(tool_id, str) or not tool_id:
+                            add_failure(t_failures, "TG-REQ-01", "TOOL_CALL_REQUEST payload.tool_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(operation, str) or not operation:
+                            add_failure(t_failures, "TG-REQ-01", "TOOL_CALL_REQUEST payload.operation must be a non-empty string", rel_file, line_no)
+                    mh = msg.get("message_hash")
+                    if isinstance(mh, str):
+                        prior_request_hashes.add(mh)
+                        request_hash_by_line[idx] = mh
+
+                if mtype == "TOOL_CALL_VERDICT":
+                    if "TG-AUTH-01" in enabled_checks and acceptors:
+                        if sender not in acceptors:
+                            add_failure(t_failures, "TG-AUTH-01", f"TOOL_CALL_VERDICT sender '{sender}' not in configured acceptors", rel_file, line_no)
+                    verdict_id = msg.get("message_id")
+                    if isinstance(verdict_id, str):
+                        verdict_by_id[verdict_id] = msg
+
+                if mtype == "TOOL_CALL_ATTEST":
+                    if "TG-AUTH-01" in enabled_checks and acceptors:
+                        if sender not in acceptors:
+                            add_failure(t_failures, "TG-AUTH-01", f"TOOL_CALL_ATTEST sender '{sender}' not in configured acceptors", rel_file, line_no)
+                    attest_rows.append((idx, line_no, msg, payload))
+
+                if mtype in {"TOOL_CALL_VERDICT", "TOOL_CALL_RESULT", "TOOL_CALL_ATTEST"}:
+                    if "TG-BIND-01" in enabled_checks:
+                        target_request_hash = payload.get("target_request_hash")
+                        if not isinstance(target_request_hash, str) or target_request_hash not in prior_request_hashes:
+                            add_failure(t_failures, "TG-BIND-01", f"{mtype} payload.target_request_hash must reference an earlier TOOL_CALL_REQUEST.message_hash", rel_file, line_no)
+
+                if mtype == "TOOL_CALL_RESULT":
+                    result_rows.append((idx, line_no, msg, payload, msg.get("message_hash") if isinstance(msg.get("message_hash"), str) else None))
+
+            if "TG-MODE-01" in enabled_checks and mode == "blocking":
+                for _, line_no, _, payload, _ in result_rows:
+                    verdict_ref = payload.get("verdict_ref")
+                    target_request_hash = payload.get("target_request_hash")
+                    if not isinstance(verdict_ref, str) or not verdict_ref:
+                        add_failure(t_failures, "TG-MODE-01", "blocking mode requires TOOL_CALL_RESULT payload.verdict_ref", rel_file, line_no)
+                        continue
+                    verdict_msg = verdict_by_id.get(verdict_ref)
+                    if verdict_msg is None:
+                        add_failure(t_failures, "TG-MODE-01", f"blocking mode verdict_ref '{verdict_ref}' not found", rel_file, line_no)
+                        continue
+                    vp = verdict_msg.get("payload") or {}
+                    if vp.get("decision") != "ALLOW" or vp.get("target_request_hash") != target_request_hash:
+                        add_failure(t_failures, "TG-MODE-01", "blocking mode requires verdict_ref to point to prior ALLOW verdict for same target_request_hash", rel_file, line_no)
+
+            if "TG-MODE-01" in enabled_checks and mode == "audit":
+                for result_idx, line_no, _, payload, result_hash in result_rows:
+                    target_request_hash = payload.get("target_request_hash")
+                    matched = False
+                    for attest_idx, _, _, attest_payload in attest_rows:
+                        if attest_idx <= result_idx:
+                            continue
+                        if attest_payload.get("target_request_hash") == target_request_hash and attest_payload.get("target_result_hash") == result_hash:
+                            matched = True
+                            break
+                    if not matched:
+                        add_failure(t_failures, "TG-MODE-01", "audit mode requires later TOOL_CALL_ATTEST bound to TOOL_CALL_RESULT.message_hash and target_request_hash", rel_file, line_no)
+
+
         if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
             for line_no, msg in rows:
                 if msg.get("message_type") != "ALERT":

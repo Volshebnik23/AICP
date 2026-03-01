@@ -154,6 +154,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M11.3 Stable message-type anti-drift governance gate shipped (`scripts/validate_productization_coverage.py`, wired into `make validate`).
 
 - ✅ M11.1 EXT-PARTICIPANTS shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
+- ✅ M11.2 EXT-TOOL-GATING shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
 
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ⏳ M11 Reception Chat Profile (rules + onboarding semantics)

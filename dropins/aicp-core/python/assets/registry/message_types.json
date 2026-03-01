@@ -304,5 +304,41 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#33-participant_leave-semantics-normative",
     "security_considerations": "Leave/removal events should be authenticated to avoid unauthorized eviction or stale membership use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Tool requests may carry sensitive intent; constrain scope and validate sender authorization."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Verdicts are authorization-critical and must be authenticated and hash-bound to requests."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Results without valid bindings can bypass policy; enforce request/verdict linkage rules."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Attestations should be authenticated and bind to request/result hashes to prevent replay spoofing."
   }
 ]
