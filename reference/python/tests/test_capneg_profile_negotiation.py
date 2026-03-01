@@ -24,7 +24,6 @@ def test_capneg_suite_passes_with_profile_negotiation_fixtures() -> None:
     payload = json.loads(report.read_text(encoding="utf-8"))
     assert payload["passed"] is True
     report.unlink(missing_ok=True)
-    report.unlink(missing_ok=True)
 
 
 def test_capneg_profile_downgrade_negative_fixture_triggers_rule(tmp_path: Path) -> None:
@@ -73,3 +72,14 @@ def test_capneg_profile_downgrade_negative_fixture_triggers_rule(tmp_path: Path)
     assert payload["passed"] is False
     assert any(f["test_id"] == "CN-AICP-PROFILE-NEGOTIATION-01" for f in payload.get("failures", []))
     report.unlink(missing_ok=True)
+
+
+def test_selected_profile_exists_in_registry() -> None:
+    registry = json.loads((ROOT / "registry/aicp_profiles.json").read_text(encoding="utf-8"))
+    registry_set = {(e["profile_id"], e["profile_version"]) for e in registry}
+
+    fixture = ROOT / "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl"
+    rows = [json.loads(line) for line in fixture.read_text(encoding="utf-8").splitlines() if line.strip()]
+    propose = next(r for r in rows if r.get("message_type") == "CAPABILITIES_PROPOSE")
+    selected = ((propose.get("payload") or {}).get("negotiation_result") or {}).get("selected", {}).get("aicp_profile", {})
+    assert (selected.get("profile_id"), selected.get("profile_version")) in registry_set

@@ -34,6 +34,13 @@ def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
 
@@ -1043,7 +1050,7 @@ def main() -> int:
     status = 'PASSED' if report['passed'] else 'FAILED'
     if report.get('degraded'):
         status = f"{status} (DEGRADED)"
-    print(f"Conformance {status}: {report['suite_id']} -> {out_path.relative_to(ROOT)}")
+    print(f"Conformance {status}: {report['suite_id']} -> {_display_path(out_path)}")
     if report["failures"]:
         for f in report["failures"]:
             print(f" - [{f['test_id']}] {f['file']}:{f['line']} {f['message']}")

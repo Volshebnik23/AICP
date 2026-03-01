@@ -14,6 +14,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 #### `AICP-BASE`
 - **Status:** Available now.
 - **Required suites/extensions:** Core only.
+- **Registry alignment note:** `registry/aicp_profiles.json` sets `required_extensions=[]` for this profile.
   - `conformance/core/CT_CORE_0.1.json`
 - **Intent:** Minimal interoperable baseline for AICP Core v0.1 behavior.
 - **Canonical flow:** `docs/flows/AICP_Canonical_Flows.md#21-core-happy-path-signed-transcript`
@@ -21,6 +22,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 #### `AICP-MEDIATED-BLOCKING`
 - **Status:** Available now.
 - **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-POLICY-EVAL`, and `EXT-ENFORCEMENT` only.
   - Core: `conformance/core/CT_CORE_0.1.json`
   - EXT-CAPNEG: `conformance/extensions/CN_CAPNEG_0.1.json`
   - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
@@ -36,6 +38,8 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Status:** Planned (draft).
 - **Dependencies:** Mediated blocking baseline plus standardized alerting/recovery operations artifacts.
   - EXT-ALERTS: `conformance/extensions/AL_ALERTS_0.1.json`
+  - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
+- **Registry note:** present as a planned product profile ID in `registry/aicp_profiles.json`, not yet backed by a dedicated profile conformance artifact.
 
 #### `AICP-RECEPTION-CHAT`
 - **Status:** Planned (draft).
