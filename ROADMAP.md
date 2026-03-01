@@ -88,6 +88,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - `/interop/*` artifacts, test vectors, interop report format.
   - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
   - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
+  - ✅ Explicit plugfest errata workflow note is documented in `interop/README.md` and linked to `ERRATA.md`.
 
 - ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
 - ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
@@ -140,11 +141,20 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ---
 
+## ✅ Productization milestone shipped
+- ✅ M14 Profile packaging shipped
+  - Added profile conformance artifacts for `AICP-MEDIATED-BLOCKING-OPS@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-RECEPTION-CHAT@0.1`.
+  - Wired profile execution and cleanup into `make conformance-profiles` and `make clean`.
+  - Updated profile registry and profile catalog docs to move these profiles to available status.
+  - ✅ Reception chat semantics hardening shipped with cross-suite suite `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`, required by `AICP-RECEPTION-CHAT` profile.
+
+---
+
 ## ⏳ Website & messaging (docs-only)
-- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
+- ⏳ M15 Convert ecosystem user stories into website-ready marketing use cases
   - Source: `docs/marketing/ecosystem_use_cases.md`
 
 ---
 
 ## Immediate next step
-**M14 profile packaging** is next, followed by ecosystem-facing profile hardening line items.
+**Delegated identity & acting-on-behalf-of container extension + profile hardening** is next.

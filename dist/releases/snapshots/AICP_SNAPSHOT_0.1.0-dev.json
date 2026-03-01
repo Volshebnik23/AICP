@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "4d5cd690bfd9621a0bba1e29b15460f105df2ca75aa821779909b21feb4d73de",
+      "combined_sha256": "cf639c65702e50a4b981049a295264dd068d61ab374b3dbc3e3759c28b414ba3",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -56,6 +56,10 @@
           "sha256": "dba2014d3cc42487e77d956ed7bca889a34fe3abb14952cc5652be0ceb73bbd1"
         },
         {
+          "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "sha256": "ff399fa73d90d2d73b3ba8c1eebefe223d84c9eae894f20e9e76168a02c3aa43"
+        },
+        {
           "path": "conformance/extensions/RS_RESUME_0.1.json",
           "sha256": "513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
         },
@@ -84,13 +88,25 @@
           "sha256": "6cee6100ed6fb358d83cd1e04b5242da0aeb43239d50ecbf21db7b685fee3fca"
         },
         {
+          "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json",
+          "sha256": "6ebd9fd8934646181eb22a996f3a8b72e5572f7a07475c68b1de8bea6074ee50"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json",
+          "sha256": "04a172f94b86b176a28841cee432480ff208fc259a934155fa8960dceca75c10"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
+          "sha256": "2c62ed75c09ddc2a7c5a707fbc9ff055dfb616edbb76b18482d1ed9c1de0da6a"
+        },
+        {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "afe57bc97fcebc90c10d9e8dfaaf24be3d217c9e903d9fca8b59a8d8b06d40e7",
+      "combined_sha256": "87e440ede634cf9631952138d30f93526de944a5c89d3de2e29a236875a46787",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -205,6 +221,10 @@
           "sha256": "1ff5edf9f9f9a03a4105173703521ee55db076b32d1114662549b7f2041d3457"
         },
         {
+          "path": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
+          "sha256": "8fedd5bc46fd934f885d05fa9c6456d2c672c3362b9f6311661f72a093e8fb40"
+        },
+        {
           "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
           "sha256": "23735f224687a44494a10027a658a42e2149fe056533959ffb96a93a019828f3"
         },
@@ -245,6 +265,10 @@
           "sha256": "53f6661b3bc122a4101ee33b205c1ff59c16598a74741c8aa9af6b678feeedf3"
         },
         {
+          "path": "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
+          "sha256": "5007baaf2b7294e548b89eb5b34e4d4448e79dbe0dbc85b6a21815249889900f"
+        },
+        {
           "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
           "sha256": "d89b1505c9e831a95a9594e4b3d14ab76b0905a643b6de8e95c55cdd89dba9d0"
         },
@@ -255,6 +279,14 @@
         {
           "path": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
           "sha256": "4fb2e0aa4b58966e2e5c565fbd1f95db2084fe9fa928ecb6775c70d2b8830088"
+        },
+        {
+          "path": "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "sha256": "5120ebbd0752523c27a32dec414ea3f0dc6bfd1332215f6bf1c347e6f551afe4"
+        },
+        {
+          "path": "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "sha256": "4c36c1e2ee14b14043d85e0a406dc1b002be8eb188462c602e09aa6b22005b22"
         },
         {
           "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
@@ -391,11 +423,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "5654e8ff8fc0434fd87a1333009c2a9cc15d639baa0bddbccf7f2792e2a11eec",
+      "combined_sha256": "919623a02eacd3d2f35c1e108c310ed77353010af473c8adec09de44a325a65e",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "b23cd5c6ebd00a5ebe1db15b88b1357074db99a4bcaaaec2bec56b663cacdb9e"
+          "sha256": "017ea0191d87734e3b90302a3d918ae92d94bbe74cba076763073a6667c75015"
         },
         {
           "path": "registry/alert_codes.json",
@@ -554,6 +586,18 @@
       {
         "mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
         "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1",
+        "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-RECEPTION-CHAT-0.1",
+        "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1",
+        "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json"
       }
     ],
     "suites": [
@@ -604,6 +648,10 @@
       {
         "mark": "AICP-EXT-POLICY-EVAL-0.1",
         "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-RECEPTION-CHAT-SEMANTICS-0.1",
+        "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
       },
       {
         "mark": "AICP-EXT-RESUME-0.1",

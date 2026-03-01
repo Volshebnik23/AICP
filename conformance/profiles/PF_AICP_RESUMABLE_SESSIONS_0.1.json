@@ -1,0 +1,11 @@
+{
+  "profile_id": "AICP-RESUMABLE-SESSIONS",
+  "profile_version": "0.1",
+  "description": "Resumable sessions profile requiring Core plus RESUME and OBJECT_RESYNC suite conformance.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/RS_RESUME_0.1.json",
+    "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1"
+}

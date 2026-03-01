@@ -32,18 +32,52 @@ An implementation claiming profile conformance MUST satisfy all required suites 
   - Enforcement: `docs/flows/AICP_Canonical_Flows.md#24-mediated-blocking-enforcement-ext-enforcement`
   - Operational alerts (optional in current baseline): `docs/flows/AICP_Canonical_Flows.md#25-operational-alerts-ext-alerts`
 
-### 2.2 Planned (draft)
-
 #### `AICP-MEDIATED-BLOCKING-OPS`
-- **Status:** Planned (draft).
-- **Dependencies:** Mediated blocking baseline plus standardized alerting/recovery operations artifacts.
+- **Status:** Available now.
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-POLICY-EVAL`, `EXT-ENFORCEMENT`, `EXT-ALERTS`, and `EXT-RESUME`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-CAPNEG: `conformance/extensions/CN_CAPNEG_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - EXT-ENFORCEMENT: `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
   - EXT-ALERTS: `conformance/extensions/AL_ALERTS_0.1.json`
   - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
-- **Registry note:** present as a planned product profile ID in `registry/aicp_profiles.json`, not yet backed by a dedicated profile conformance artifact.
+- **Intent:** Operations-hardened mediated blocking profile for deterministic enforcement with alerts and resume continuity.
+- **Canonical flows:**
+  - Alerts: `docs/flows/AICP_Canonical_Flows.md#25-operational-alerts-ext-alerts`
+  - Resume: `docs/flows/AICP_Canonical_Flows.md#26-session-resume-ext-resume`
+
+#### `AICP-RESUMABLE-SESSIONS`
+- **Status:** Available now.
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-RESUME` and `EXT-OBJECT-RESYNC`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
+  - EXT-OBJECT-RESYNC: `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
+- **Intent:** Continuity-focused profile for session resume and deterministic object rehydration across reconnects.
+- **Canonical flows:**
+  - Resume: `docs/flows/AICP_Canonical_Flows.md#26-session-resume-ext-resume`
+  - Object resync: `docs/flows/AICP_Canonical_Flows.md#23-object-resync-ext-object_resync`
 
 #### `AICP-RECEPTION-CHAT`
-- **Status:** Planned (draft).
-- **Dependencies:** Reception/chat flow catalog and associated conformance suite definitions.
+- **Status:** Available now.
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-PARTICIPANTS`, `EXT-POLICY-EVAL`, `EXT-ENFORCEMENT`, `EXT-SECURITY-ALERT`, and `EXT-DISPUTES`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-CAPNEG: `conformance/extensions/CN_CAPNEG_0.1.json`
+  - EXT-PARTICIPANTS: `conformance/extensions/PA_PARTICIPANTS_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - EXT-ENFORCEMENT: `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
+  - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERTS_0.1.json`
+  - EXT-DISPUTES: `conformance/extensions/DS_DISPUTES_0.1.json`
+  - Cross-suite reception semantics: `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`
+- **Intent:** Reception/chat profile for mediated blocking conversations with participant control and incident/dispute handling.
+- **Canonical flows:**
+  - Mediated blocking enforcement: `docs/flows/AICP_Canonical_Flows.md#24-mediated-blocking-enforcement-ext-enforcement`
+  - Participant governance: `docs/extensions/RFC_EXT_PARTICIPANTS.md`
+  - Security alerts and disputes references: `docs/extensions/RFC_EXT_SECURITY_ALERTS.md`, `docs/extensions/RFC_EXT_DISPUTES.md`
+
+### 2.2 Planned (draft)
 
 #### `AICP-DELEGATED-IDENTITY`
 - **Status:** Planned (draft).
@@ -52,12 +86,6 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 #### `AICP-WORKFLOW-ORCHESTRATION`
 - **Status:** Planned (draft).
 - **Dependencies:** Workflow orchestration semantics, message types, and conformance suites.
-
-#### `AICP-RESUMABLE-SESSIONS`
-- **Status:** Planned (draft).
-- **Dependencies:** Session resumption semantics and deterministic continuation conformance tests.
-  - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
-  - EXT-OBJECT-RESYNC (optional companion): `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
 
 ## 3. Conformance Badge Semantics
 A **conformance badge** is a profile-level compatibility mark issued when all required suites for the profile pass.
