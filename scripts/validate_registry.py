@@ -26,6 +26,8 @@ REQUIRED_FILES = [
     "dispute_claim_types.json",
     "alert_codes.json",
     "alert_recommended_actions.json",
+    "aicp_profiles.json",
+    "capneg_reason_codes.json",
 ]
 
 REQUIRED_FIELDS = {

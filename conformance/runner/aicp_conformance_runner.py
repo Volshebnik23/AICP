@@ -322,6 +322,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
+    aicp_profiles_registry = {
+        (e.get("profile_id"), e.get("profile_version"))
+        for e in load_json(ROOT / "registry/aicp_profiles.json")
+        if isinstance(e, dict)
+    }
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
     contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
@@ -568,6 +574,81 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if computed_ctx_hash != stored_ctx_hash:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
+
+        if "CN-AICP-PROFILE-NEGOTIATION-01" in enabled_checks:
+            declares_by_party: dict[str, dict[str, Any]] = {}
+            for _, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_DECLARE":
+                    continue
+                payload = msg.get("payload") or {}
+                party_id = payload.get("party_id")
+                if isinstance(party_id, str):
+                    declares_by_party[party_id] = payload
+
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_PROPOSE":
+                    continue
+                result = ((msg.get("payload") or {}).get("negotiation_result") or {})
+                participants = result.get("participants") or []
+                selected = result.get("selected") or {}
+                aicp_profile = selected.get("aicp_profile")
+                if not isinstance(aicp_profile, dict):
+                    continue
+                profile_id = aicp_profile.get("profile_id")
+                profile_version = aicp_profile.get("profile_version")
+                profile_tuple = (profile_id, profile_version)
+                if profile_tuple not in aicp_profiles_registry:
+                    add_failure(
+                        t_failures,
+                        "CN-AICP-PROFILE-NEGOTIATION-01",
+                        f"selected.aicp_profile '{profile_id}@{profile_version}' is not registered",
+                        rel_file,
+                        line_no,
+                    )
+
+                for participant in participants:
+                    if not isinstance(participant, str):
+                        continue
+                    declared = declares_by_party.get(participant)
+                    if not isinstance(declared, dict):
+                        continue
+
+                    supported_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("supported_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if supported_profiles and profile_tuple not in supported_profiles:
+                        add_failure(
+                            t_failures,
+                            "CN-AICP-PROFILE-NEGOTIATION-01",
+                            f"participant '{participant}' does not support selected.aicp_profile '{profile_id}@{profile_version}'",
+                            rel_file,
+                            line_no,
+                        )
+
+                    required_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("required_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if required_profiles and profile_tuple not in required_profiles:
+                        add_failure(
+                            t_failures,
+                            "CN-AICP-PROFILE-NEGOTIATION-01",
+                            f"participant '{participant}' required_aicp_profiles does not include selected.aicp_profile '{profile_id}@{profile_version}'",
+                            rel_file,
+                            line_no,
+                        )
+
+        if "CN-REASON-CODES-01" in enabled_checks:
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_REJECT":
+                    continue
+                payload = msg.get("payload") or {}
+                reason_code = payload.get("reason_code")
+                if reason_code not in capneg_reason_codes:
+                    add_failure(t_failures, "CN-REASON-CODES-01", f"unknown CAPNEG reason_code '{reason_code}'", rel_file, line_no)
 
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}

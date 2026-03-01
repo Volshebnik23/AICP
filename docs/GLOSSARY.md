@@ -78,3 +78,16 @@ A report state where checks pass but critical capabilities are unavailable (for 
 
 ## Badge eligibility
 Condition where required checks both pass and are fully enforceable (non-degraded), allowing compatibility mark issuance.
+
+
+## AICP product profile
+A named interoperability bundle (for example `AICP-BASE`, `AICP-MEDIATED-BLOCKING`) negotiated as `{profile_id, profile_version}` in EXT-CAPNEG and validated by profile-level conformance evidence.
+
+## Crypto profile
+A negotiated cryptographic/canonicalization capability set represented in CAPNEG `supported_profiles` and `selected.crypto_profile`; distinct from AICP product profiles.
+
+## Profile requirement
+A declared minimum acceptable AICP product profile set (`required_aicp_profiles`) that a participant/platform demands during CAPNEG.
+
+## Downgrade (CAPNEG)
+Selection of a weaker or unacceptable negotiated set (extensions/crypto/product profile) relative to declared requirements or previously accepted baseline; MUST be rejectable and auditable.

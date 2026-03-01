@@ -97,6 +97,7 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M8.12 contract_id envelope consistency shipped (Core schema + docs + conformance alignment).
 - ✅ M8.13 quickstart anti-rot gate shipped (`.github/workflows/ci.yml` quickstart-smoke job).
 - ✅ AP1.1–AP1.4 adoption docs pack shipped (`docs/overview/AICP_STANDARD_OVERVIEW.md`, `docs/guides/*`, `docs/ops/ERROR_AND_RECOVERY.md`).
+- ✅ AP2.1–AP2.3 profile negotiation hardening shipped (`registry/aicp_profiles.json`, CAPNEG profile negotiation checks/fixtures, profile downgrade protection).
 
 ---
 
