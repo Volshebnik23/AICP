@@ -1,0 +1,18 @@
+{
+  "profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION",
+  "profile_version": "0.1",
+  "description": "Platform-moderated workflow orchestration and delegation profile for chained policy, tool-gating, sync/resume, and security signal interoperability.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CN_CAPNEG_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/TG_TOOL_GATING_0.1.json",
+    "conformance/extensions/DL_DELEGATION_0.1.json",
+    "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json",
+    "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+    "conformance/extensions/RS_RESUME_0.1.json",
+    "conformance/extensions/AL_ALERTS_0.1.json",
+    "conformance/extensions/SA_SECURITY_ALERTS_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-WORKFLOW-ORCHESTRATION-DELEGATION-0.1"
+}

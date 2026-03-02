@@ -112,5 +112,30 @@
     "required_policy_categories": [],
     "required_crypto_profiles": [],
     "description": "Resumable sessions profile aligned with PF_AICP_RESUMABLE_SESSIONS_0.1 required suites."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Workflow/delegation chaining requires strict tool-gating, delegation scope/expiry checks, tamper-evident workflow state transitions, and non-degraded evidence for badge claims.",
+    "profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-CAPNEG",
+      "EXT-POLICY-EVAL",
+      "EXT-TOOL-GATING",
+      "EXT-DELEGATION",
+      "EXT-WORKFLOW-SYNC",
+      "EXT-OBJECT-RESYNC",
+      "EXT-RESUME",
+      "EXT-ALERTS",
+      "EXT-SECURITY-ALERT"
+    ],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Workflow orchestration and delegation profile aligned with PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1 required suites; platform may enforce deployment-specific controls."
   }
 ]

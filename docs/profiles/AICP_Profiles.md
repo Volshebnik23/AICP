@@ -91,9 +91,23 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 
 ### 2.2 Planned (draft)
 
-#### `AICP-WORKFLOW-ORCHESTRATION`
-- **Status:** Planned (draft).
-- **Dependencies:** Workflow orchestration semantics, message types, and conformance suites.
+#### `AICP-WORKFLOW-ORCHESTRATION-DELEGATION`
+- **Status:** Available now.
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-POLICY-EVAL`, `EXT-TOOL-GATING`, `EXT-DELEGATION`, `EXT-WORKFLOW-SYNC`, `EXT-OBJECT-RESYNC`, `EXT-RESUME`, `EXT-ALERTS`, and `EXT-SECURITY-ALERT`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-CAPNEG: `conformance/extensions/CN_CAPNEG_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - EXT-TOOL-GATING: `conformance/extensions/TG_TOOL_GATING_0.1.json`
+  - EXT-DELEGATION: `conformance/extensions/DL_DELEGATION_0.1.json`
+  - EXT-WORKFLOW-SYNC: `conformance/extensions/WF_WORKFLOW_SYNC_0.1.json`
+  - EXT-OBJECT-RESYNC: `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
+  - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
+  - EXT-ALERTS: `conformance/extensions/AL_ALERTS_0.1.json`
+  - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERTS_0.1.json`
+- **Intent:** Platform-moderated workflow chaining with delegated authority propagation, policy evaluation, and deterministic recovery/security signaling.
+- **Platform note:** Platform runtimes may enforce additional orchestration guardrails (rate limits, step approvals, environment policies).
+- **Pairing note:** To require acting-on-behalf-of subject binding, pair with `AICP-DELEGATED-IDENTITY@0.1`.
 
 ## 3. Conformance Badge Semantics
 A **conformance badge** is a profile-level compatibility mark issued when all required suites for the profile pass.

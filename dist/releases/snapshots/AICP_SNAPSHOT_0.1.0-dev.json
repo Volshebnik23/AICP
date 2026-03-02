@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "687588472ce2cb3a79be036cd934a9f0c9188af0e8f280532dfa05c8a923b0df",
+      "combined_sha256": "ba61307706eed49081b373f05ee148364b2b434f52f8266f86ac4d9b2079f228",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -108,13 +108,17 @@
           "sha256": "2c62ed75c09ddc2a7c5a707fbc9ff055dfb616edbb76b18482d1ed9c1de0da6a"
         },
         {
+          "path": "conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json",
+          "sha256": "e74d4d191ec32e774ece2d95063310e8445bc280113396d051923525011c0b51"
+        },
+        {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "7831d5aa1a7c9a4f8e83b67ee0b7eb3cbf629ad54ce01311823a3ead182c6b72",
+      "combined_sha256": "67953089129ca3041d677fd69fb906e3bd5020727e98a2eed0e8b46800a6e564",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -227,6 +231,10 @@
         {
           "path": "fixtures/extensions/delegation/DL-03_depth_exceeded_expected_fail.jsonl",
           "sha256": "d947e6fbd7620c22bd64690dfe4af05950a040172f8e15a24d7e2de452327df2"
+        },
+        {
+          "path": "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl",
+          "sha256": "0ba918e9bffa442d88b5881800d77ea6acbea1ffcc92b7dfa66e43d5c69497da"
         },
         {
           "path": "fixtures/extensions/delegation/DL-04_scope_not_subset_expected_fail.jsonl",
@@ -451,11 +459,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "e15e60ec7b8a48b0969050be8aaaa85d4ec2fd8a686606ebd145fa6355b33365",
+      "combined_sha256": "22447d74dd1f0d65362263f8398bf9eb0974b55b204ff337996861bb1b775bd0",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "2f12758811acdf509e2c323fde660f3b6537040faa1680e82736b0fceb3b7fb7"
+          "sha256": "782b09133ecf7bf1da9260a4159ceb1b58102b91e14f4ed7b0639bcc6e49a201"
         },
         {
           "path": "registry/alert_codes.json",
@@ -634,6 +642,10 @@
       {
         "mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1",
         "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-WORKFLOW-ORCHESTRATION-DELEGATION-0.1",
+        "path": "conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json"
       }
     ],
     "suites": [

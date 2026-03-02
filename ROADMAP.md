@@ -131,7 +131,16 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
 - ✅ M11 Reception Chat Profile shipped (`AICP-RECEPTION-CHAT@0.1`, plus `RC-RECEPTION-CHAT-SEMANTICS-0.1` conformance suite).
 - ✅ M12 Delegated Identity & Acting-on-behalf-of Binding shipped (`EXT-DELEGATED-IDENTITY`, `DI-DELEGATED-IDENTITY-0.1`, `AICP-DELEGATED-IDENTITY@0.1`).
-- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
+- ✅ M13 Workflow Orchestration & Delegation Profile shipped (`conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json`, `Makefile` conformance-profiles wiring, `registry/aicp_profiles.json`, and `docs/profiles/AICP_Profiles.md`).
+
+---
+
+## ✅ Productization milestone shipped
+- ✅ M14 Profile packaging shipped
+  - Added profile conformance artifacts for `AICP-MEDIATED-BLOCKING-OPS@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-RECEPTION-CHAT@0.1`.
+  - Wired profile execution and cleanup into `make conformance-profiles` and `make clean`.
+  - Updated profile registry and profile catalog docs to move these profiles to available status.
+  - ✅ Reception chat semantics hardening shipped with cross-suite suite `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`, required by `AICP-RECEPTION-CHAT` profile.
 
 ---
 
@@ -151,4 +160,4 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ---
 
 ## Immediate next step
-**M13 Workflow orchestration & delegation profile hardening** is next.
+**M15 Website & messaging conversion** is next (docs-only milestone).
