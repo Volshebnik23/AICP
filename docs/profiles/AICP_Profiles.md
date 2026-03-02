@@ -68,7 +68,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
   - EXT-PARTICIPANTS: `conformance/extensions/PA_PARTICIPANTS_0.1.json`
   - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
   - EXT-ENFORCEMENT: `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
-  - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERTS_0.1.json`
+  - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERT_0.1.json`
   - EXT-DISPUTES: `conformance/extensions/DS_DISPUTES_0.1.json`
   - Cross-suite reception semantics: `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`
 - **Intent:** Reception/chat profile for mediated blocking conversations with participant control and incident/dispute handling.
@@ -104,7 +104,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
   - EXT-OBJECT-RESYNC: `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
   - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
   - EXT-ALERTS: `conformance/extensions/AL_ALERTS_0.1.json`
-  - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERTS_0.1.json`
+  - EXT-SECURITY-ALERT: `conformance/extensions/SA_SECURITY_ALERT_0.1.json`
 - **Intent:** Platform-moderated workflow chaining with delegated authority propagation, policy evaluation, and deterministic recovery/security signaling.
 - **Platform note:** Platform runtimes may enforce additional orchestration guardrails (rate limits, step approvals, environment policies).
 - **Pairing note:** To require acting-on-behalf-of subject binding, pair with `AICP-DELEGATED-IDENTITY@0.1`.

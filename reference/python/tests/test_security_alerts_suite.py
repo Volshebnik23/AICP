@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
-SUITE_PATH = ROOT / "conformance/extensions/SA_SECURITY_ALERTS_0.1.json"
+SUITE_PATH = ROOT / "conformance/extensions/SA_SECURITY_ALERT_0.1.json"
 
 
 def _run_suite(suite: Path, report: Path) -> subprocess.CompletedProcess[str]:
@@ -20,5 +20,5 @@ def test_security_alerts_suite_passes() -> None:
     assert result.returncode == 0, result.stdout + result.stderr
     payload = json.loads(report.read_text(encoding="utf-8"))
     assert payload["passed"] is True
-    assert "AICP-EXT-SECURITY-ALERTS-0.1" in payload.get("compatibility_marks", [])
+    assert "AICP-EXT-SECURITY-ALERT-0.1" in payload.get("compatibility_marks", [])
     report.unlink(missing_ok=True)

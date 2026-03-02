@@ -8,6 +8,7 @@ validate:
 	$(PYTHON) scripts/validate_schema_instances.py
 	$(PYTHON) scripts/validate_dropins_assets.py
 	$(PYTHON) scripts/validate_registry.py
+	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_productization_coverage.py
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
@@ -37,7 +38,7 @@ conformance-core:
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CN_CAPNEG_0.1.json --out conformance/report_ext_capneg.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DS_DISPUTES_0.1.json --out conformance/report_ext_disputes.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SA_SECURITY_ALERTS_0.1.json --out conformance/report_ext_security_alerts.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SA_SECURITY_ALERT_0.1.json --out conformance/report_ext_security_alerts.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PA_PARTICIPANTS_0.1.json --out conformance/report_ext_participants.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TG_TOOL_GATING_0.1.json --out conformance/report_ext_tool_gating.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ID_IDENTITY_LC_0.1.json --out conformance/report_ext_identity_lc.json

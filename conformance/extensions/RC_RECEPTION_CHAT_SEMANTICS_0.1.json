@@ -77,5 +77,5 @@
       "description": "CONTENT_DELIVER sender must be listed in contract ext.enforcement.mediators"
     }
   ],
-  "compatibility_mark": "AICP-EXT-RECEPTION-CHAT-SEMANTICS-0.1"
+  "compatibility_mark": "AICP-SUITE-RECEPTION-CHAT-SEMANTICS-0.1"
 }

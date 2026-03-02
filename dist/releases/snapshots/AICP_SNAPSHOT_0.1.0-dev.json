@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "e09a0bdffde8c57cfc4afeb5865b82d0160fec9ddd15817c90c0fb7489e21268",
+      "combined_sha256": "37d37664f80324dafbbb16ffb754644677b8dbc4eaecd927de2abd4c70794370",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -65,15 +65,15 @@
         },
         {
           "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
-          "sha256": "ff399fa73d90d2d73b3ba8c1eebefe223d84c9eae894f20e9e76168a02c3aa43"
+          "sha256": "da85e34b12b06a103e902b13d54716f71a9ee8a6310e420e861c8e6dbf514951"
         },
         {
           "path": "conformance/extensions/RS_RESUME_0.1.json",
           "sha256": "513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
         },
         {
-          "path": "conformance/extensions/SA_SECURITY_ALERTS_0.1.json",
-          "sha256": "887e245c6e72438e6ec0d2867696c9b2ac10bcd086cac63c10f39813e9931315"
+          "path": "conformance/extensions/SA_SECURITY_ALERT_0.1.json",
+          "sha256": "cd5020edf9aafc4dfc5dcf8a0067ac9b3fedd1b05ce4cda43e933ba58f934d38"
         },
         {
           "path": "conformance/extensions/TG_TOOL_GATING_0.1.json",
@@ -105,7 +105,7 @@
         },
         {
           "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json",
-          "sha256": "04a172f94b86b176a28841cee432480ff208fc259a934155fa8960dceca75c10"
+          "sha256": "825f9e2b8f21ab000f2b7ea69301da2e13b308ce9d10aaf001c17b22ed00e055"
         },
         {
           "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
@@ -113,7 +113,7 @@
         },
         {
           "path": "conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json",
-          "sha256": "e74d4d191ec32e774ece2d95063310e8445bc280113396d051923525011c0b51"
+          "sha256": "8272cd5f5e9ec09e96f8790d9833407df7aefdba835cb49b49763e159fd5099f"
         },
         {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
@@ -714,7 +714,7 @@
         "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json"
       },
       {
-        "mark": "AICP-EXT-RECEPTION-CHAT-SEMANTICS-0.1",
+        "mark": "AICP-SUITE-RECEPTION-CHAT-SEMANTICS-0.1",
         "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
       },
       {
@@ -722,8 +722,8 @@
         "path": "conformance/extensions/RS_RESUME_0.1.json"
       },
       {
-        "mark": "AICP-EXT-SECURITY-ALERTS-0.1",
-        "path": "conformance/extensions/SA_SECURITY_ALERTS_0.1.json"
+        "mark": "AICP-EXT-SECURITY-ALERT-0.1",
+        "path": "conformance/extensions/SA_SECURITY_ALERT_0.1.json"
       },
       {
         "mark": "AICP-EXT-TOOL-GATING-0.1",
