@@ -1,195 +1,276 @@
-# AICP v71 — Protocol Backlog (repo-backed)
+# AICP v69 — Protocol Backlog (repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
 
-This backlog translates consumer adoption needs into **repo-shippable** deliverables:
-- RFC/Docs (normative where needed)
+This backlog translates consumer adoption needs into **protocol deliverables** that can be shipped in-repo:
+- RFC/Docs (normative)
 - Registries
 - JSON Schemas
 - Golden fixtures (JSONL transcripts)
 - Conformance suites + runner checks
 - Profiles (bundle suites)
-- Implementer guides + adapter templates (no hosted infra)
+- Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Shipped baseline (as of v71)
-- Core productized: envelope, hash-chain, message_hash, signature verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
-- Extensions productized: CAPNEG, ENFORCEMENT, POLICY_EVAL, PARTICIPANTS, TOOL_GATING, IDENTITY_LC, DELEGATION, WORKFLOW_SYNC, DISPUTES, SECURITY_ALERT(S), ALERTS, RESUME, OBJECT_RESYNC, DELEGATED_IDENTITY.
-- Profiles shipped (still mostly `experimental`): BASE, MEDIATED-BLOCKING, MEDIATED-BLOCKING-OPS, RECEPTION-CHAT, RESUMABLE-SESSIONS, DELEGATED-IDENTITY, WORKFLOW-ORCHESTRATION-DELEGATION.
-- Governance: coverage gate, dropins asset sync, snapshot manifest + validator.
+## Current shipped baseline (as of v69)
+- Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
+- Extensions productized: CAPNEG, ENFORCEMENT, POLICY_EVAL, PARTICIPANTS, TOOL_GATING, IDENTITY_LC, DELEGATION, WORKFLOW_SYNC, DISPUTES, SECURITY_ALERTS, ALERTS, RESUME, OBJECT_RESYNC, DELEGATED_IDENTITY.
+- Profiles shipped (experimental status): AICP-BASE, AICP-MEDIATED-BLOCKING, AICP-MEDIATED-BLOCKING-OPS, AICP-RECEPTION-CHAT, AICP-RESUMABLE-SESSIONS, AICP-DELEGATED-IDENTITY, AICP-WORKFLOW-ORCHESTRATION-DELEGATION.
+- Snapshot discipline exists (manifest + validate gate).
 
 ---
 
-# M15 — Website & messaging (docs-only)
-**Goal:** convert repo-backed ecosystem stories into website-ready marketing pages without inventing features.
+# Backlog epics and milestones
+
+## M16 — Numeric canonicalization: RFC8785 numeric handling & safe number policy (OQ-0001)
+**Problem:** Core rejects floats until RFC8785 numeric handling exists, but real-world payloads contain floats/decimals unexpectedly. Also JS “number” makes big integers lossy → interop hazards.
 
 **Deliverables**
-- “What is AICP” page (protocol-only)
-- “What is a profile” page (ties to `conformance/profiles/`)
-- Use-case pages sourced from `docs/marketing/ecosystem_use_cases.md`
-- FAQ: conformance badges, “transport-agnostic”, “who enforces?”
-
----
-
-# M16 — Numeric canonicalization & safe number policy (closes OQ-0001)
-**Problem:** numbers/float appear in real payloads (timings, scores, prices). Cross-language JSON number semantics are a major interop hazard.
-
-## M16.1 (shipped in v71): float rejection parity + guardrails
-- Reject all floats consistently across reference + dropins.
-- Add numeric guardrail conformance suite to prevent float creep.
-- Align dropins CORE_MESSAGE_TYPES to include ERROR.
-
-## M16.2 (next): RFC8785 numeric canonicalization + safe-integer policy
-**Deliverables**
-1) Normative decision:
-   - Either implement full RFC8785 numeric normalization, OR define a strict “safe number” profile (integers only + explicit decimal encoding).
-2) “Big integer policy”:
-   - explicit rules for values beyond JS safe integer range (string encoding or decimal object).
-3) Cross-language numeric fixtures + conformance suite:
-   - `1` vs `1.0`, exponent forms, `-0`, boundary ints, decimal strings/object policy.
-4) Implementation parity:
-   - reference python + TS SDK + both dropins match.
+1) **Policy decision doc** (normative):
+   - Define “safe integer range” policy (e.g., require JSON numbers to be within IEEE-754 safe integer range OR require integers to be encoded as strings beyond that).
+   - Define interim guidance: how to represent decimals now (string/decimal object) until numeric handling ships.
+2) **RFC: Numeric Handling**:
+   - Adopt RFC8785 numeric normalization rules (or subset) for canonicalization, including exponent normalization, -0, etc.
+   - Specify handling of NaN/Infinity (reject), and precision expectations.
+3) **Implementation parity**:
+   - Update Python + TypeScript canonicalizers to support the chosen numeric policy.
+   - Add conformance fixtures that include:
+     - decimals, exponents, edge cases (-0), large ints near boundary.
+4) **Conformance gates**:
+   - New conformance suite verifying cross-language canonical hashes for numeric edge fixtures.
+   - Update Core spec text + OPEN_QUESTIONS.md: close OQ-0001 or downgrade scope with explicit constraints.
 
 **Acceptance**
-- Hashes match across python & TS for numeric fixtures.
-- OQ-0001 closed with concrete spec.
+- Canonicalization yields identical hashes across reference Python + TS dropins for numeric fixtures.
+- A clear migration story: “what changes in v0.2 vs v0.1-dev”.
+
+**Notes**
+- This may be a **breaking** behavior change → coordinate with Release discipline (M18).
 
 ---
 
-# M17 — Anti-drift alignment + stability graduation program
-**Problem:** a protocol can be “implemented” but still drift between registries, marks, suites, and docs, creating ecosystem risk.
-
-## M17.1 (near-term): ID & compatibility-mark alignment (anti-drift)
-**Inputs (observed drift)**
-- EXT-SECURITY-ALERT (registry) vs “SECURITY-ALERTS” suite_id/marks/file naming.
-- RC_RECEPTION_CHAT_SEMANTICS uses `AICP-EXT-*` mark but is not a registered extension (cross-suite semantics).
+## M17 — Stability graduation program (reduce “experimental sprawl” safely)
+**Problem:** Most entries in `registry/extension_ids.json` and many in `registry/message_types.json` are `experimental`. That’s OK for 0.1, but blocks “market trust”: vendors hesitate to bet on “formally changeable”.
 
 **Deliverables**
-1) Canonicalize naming for SECURITY_ALERT(S):
-   - extension_id, suite_id, suite filename, compatibility_mark, docs references, profiles required_extensions.
-2) Canonicalize classification for cross-suite semantics suites:
-   - marks must not claim `AICP-EXT-*` unless extension exists in registry.
-   - either register a real extension + RFC, OR mark as `AICP-SUITE-*` (recommended).
-3) Add a small anti-drift validator:
-   - if a suite mark starts with `AICP-EXT-...`, the corresponding `EXT-...` MUST exist in `registry/extension_ids.json`.
-   - gate it in `make validate`.
+1) **Compatibility & stability policy doc**:
+   - Define meanings of: experimental / stable (and optionally “candidate” if you decide to add it).
+   - Define “graduation checklist”: schema+fixtures+conformance+profile inclusion+interop evidence.
+2) **Registry schema rule**:
+   - Update `scripts/validate_registry.py` to enforce required fields for stable entries:
+     - `introduced_in`, `spec_ref` anchors, `security_considerations`, and “compatibility notes”.
+3) **Graduation plan & first promotions**:
+   - Promote a minimal baseline to stable:
+     - Core message types
+     - CAPNEG + ENFORCEMENT + POLICY_EVAL (if you’re ready) OR only CAPNEG.
+   - Document why each is safe to freeze.
+4) **Anti-drift enforcement**:
+   - Update snapshot/release checklist: changing any stable entry must add RELEASE_NOTES compatibility section.
 
-## M17.2: experimental → stable graduation policy
-**Deliverables**
-- `docs/ops/STABILITY_POLICY.md` (meaning of experimental/stable; graduation checklist)
-- Registry validation rules for stable entries (required fields, spec_ref anchors)
-- First stable promotions (small baseline set; start with CAPNEG or CAPNEG+ENF+PE)
+**Acceptance**
+- `make validate` enforces the stability policy rules.
+- Roadmap explicitly lists “stable baseline set”.
 
 ---
 
-# M18 — Release discipline + “adoption packaging” (changelog, compatibility, legal)
-**Problems**
-- `RELEASE_NOTES.md` is a skeleton; mass adopters need strict changelog + compatibility policy.
-- Legal packaging missing (LICENSE/spec license/trademark usage).
-- Error & recovery guidance appears in multiple places and can drift.
+## M18 — Release discipline: changelog + compatibility policy + errata cadence
+**Problem:** `RELEASE_NOTES.md` is a template; for mass adoption you need strict changelog + compatibility policy.
 
 **Deliverables**
-1) Release artifacts:
-   - Fill `RELEASE_NOTES.md` with repo-backed milestones and compatibility notes.
-   - `docs/ops/COMPATIBILITY_POLICY.md`
-   - `docs/ops/RELEASE_CHECKLIST.md`
-   - `VERSIONING.md`, `DEPRECATION.md` (can be short but explicit)
-2) Legal packaging:
-   - `LICENSE` (code)
-   - `LICENSE-SPEC` or explicit spec license statement
-   - `TRADEMARK.md` (AICP name usage)
-3) Error & Recovery canonicalization:
-   - Fix `docs/ops/ERROR_AND_RECOVERY.md` to avoid implying `DENY` is an action id.
-   - Declare “one source of truth” relationship between `docs/rfc/RFC_Error_Model_and_Recovery.md` and ops guide (RFC canonical; ops is non-normative summary).
+1) **Fill `RELEASE_NOTES.md`** with repo-backed entries:
+   - Added/Changed/Fixed + Compatibility notes for each shipped milestone (M8–M15 and later).
+2) **`docs/ops/COMPATIBILITY_POLICY.md`**:
+   - Define what counts as breaking vs non-breaking for:
+     - Core schema
+     - Hashing/canonicalization
+     - Registries
+     - Conformance suites
+     - Profiles
+   - Define deprecation/transition process.
+3) **Release checklist**:
+   - `docs/ops/RELEASE_CHECKLIST.md` (snapshot update, conformance pass, registry checks, errata updates).
+4) **Errata workflow alignment**:
+   - Ensure interop errata notes + ERRATA.md are consistent with policy.
+
+**Acceptance**
+- A new contributor can answer: “will this change break existing implementers?” from docs alone.
 
 ---
 
-# M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-**Goal:** standardize “adapter-first” integration path without touching agent core logic.
+## M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
+**Problem:** Critical adopter wants **Adapter/Gateway** approach: parse/validate AICP, verify hashes/signatures, map to internal event model, run conformance in CI, use CAPNEG as inbound filter.
 
 **Deliverables**
-- `docs/guides/Protocol_Adapter_Gateway.md` (patterns: validate+hash+sig, map to internal events, CAPNEG filter)
-- `templates/protocol-adapter/` minimal deployable skeleton + config (no hosted dependencies)
-- CI snippets: run `make conformance-profiles` for chosen profile
+1) **Adapter architecture guide**:
+   - `docs/guides/Protocol_Adapter_Gateway.md`:
+     - recommended module boundaries
+     - how to map envelope/payload to internal events
+     - CAPNEG as “input filter” pattern with machine-readable failure.
+2) **Minimal deployable skeleton** (reference, not a hosted platform):
+   - `templates/protocol-adapter/`:
+     - minimal service skeleton + config
+     - runs validator + conformance in CI
+     - example translation “AICP message -> internal event”.
+3) **CI templates**:
+   - example GitHub Actions snippet: run `make conformance-profiles` for chosen profile.
+4) **“< 1 hour onboarding” update**:
+   - Update `START_HERE_IMPLEMENTERS.md` to include adapter path as first-class option.
+
+**Acceptance**
+- A new adopter can:
+  - copy template
+  - run conformance for a chosen profile
+  - get a working validation gateway without touching their agent core logic.
 
 ---
 
-# M20 — Trust anchors and issuer attestations (internet-scale trust)
+## M20 — Trust anchors & attestations (internet-scale trust signals)
+**Problem:** Identity lifecycle exists, but no standardized “trust network”: trust anchors, issuer attestation formats, trust signals.
+
 **Deliverables**
-- Trust anchor artifact format (hashable object) + signing rules
-- Issuer attestation object (provider asserts identity/profile compliance)
-- Registries for trust signal types
-- Fixtures + conformance
+1) **RFC: Trust Anchors & Issuer Attestations**
+   - define “trust anchor list” artifact format (hashable object)
+   - define “issuer attestation” object (agent belongs to provider X; profile compliance Y; etc.)
+2) **Registries**
+   - trust signal types registry (minimal interoperable signals)
+   - attestation types registry
+3) **Schemas + fixtures + conformance**
+   - validate attestation object hashing, signature requirements, and attachment to transcripts.
+
+**Acceptance**
+- Implementer can verify: “this issuer is trusted under anchor set A” without platform-specific magic.
 
 ---
 
-# M21 — Revocation/status channel (OCSP/CRL analog)
+## M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
+**Problem:** Delegated identity & key revoke exist, but no “real-time status” mechanism.
+
 **Deliverables**
-- Signed status request/response object/message format
-- Cache/staleness semantics
-- Conformance fixtures
+1) **RFC + extension** for status responses:
+   - status request/response messages or object format
+   - cache lifetimes, staleness, replay protections at protocol level (transport-binding may complement).
+2) **Conformance**:
+   - validate status object hashing/signing and “revoked as-of” semantics.
+
+**Acceptance**
+- An agent can machine-check “binding/key is revoked as of now” with verifiable artifacts.
 
 ---
 
-# M22 — Transport bindings & channel properties (HTTP/WS + anti-replay + quotas)
+## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas)
+**Problem:** AICP is transport-agnostic, but interop in practice needs canonical bindings.
+
 **Deliverables**
-- Binding profiles (HTTP/WS) with canonical endpoints and error mapping
-- Anti-replay/session binding (nonce/idempotency patterns)
-- Rate limits/backpressure signals
+1) **Bindings RFCs**:
+   - HTTP binding: endpoints, idempotency, error mapping, retry semantics
+   - WS binding: session lifecycle and reconnect (align with RESUME)
+2) **Anti-replay & session-binding**:
+   - define canonical request ids / nonce usage at binding layer
+3) **Rate limits / backpressure**:
+   - standard error/alert patterns to communicate quotas and overload.
+
+**Acceptance**
+- Two vendors can connect via a binding profile without bespoke integration docs.
 
 ---
 
-# M23 — Confidentiality & selective disclosure modes
+## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
+**Problem:** Enforcement assumes content-visible moderation; enterprise needs privacy modes.
+
 **Deliverables**
-- Enforcer visibility modes (full/redacted/metadata-only/classification-only)
-- Contract + CAPNEG binding
-- Conformance checks for mode declaration + required artifacts
+1) **Selective disclosure modes**:
+   - standardize what enforcer sees: full/redacted/metadata-only/classification-only
+   - bind to contract + CAPNEG privacy modes
+2) **Conformance**:
+   - validate mode declarations and that required redaction artifacts exist where mandated.
+
+**Acceptance**
+- “Privacy mode” becomes verifiable protocol behavior, not platform promise.
 
 ---
 
-# M24 — Redaction standard + retention/deletion policies
+## M24 — Redaction standard + retention/deletion policies
+**Problem:** Redaction must keep transcript verifiable; retention must be contractual.
+
 **Deliverables**
-- EXT-REDACTION: verifiable redaction linked to original message_hash
-- Retention policy conventions in contract/policies
-- Fixtures + conformance
+1) **EXT-REDACTION**:
+   - redacted content message referencing original message_hash + redaction policy + redaction proof object.
+2) **Retention policy in contract**:
+   - standard fields/policy category for retention TTL, delete semantics, audit retention.
+
+**Acceptance**
+- A transcript can be shared with content redacted while preserving integrity/auditability.
 
 ---
 
-# M25 — Policy semantic interoperability profiles (OPA/Rego, ABAC/RBAC, LLM-safety)
+## M25 — Policy semantic interoperability profiles (OPA/Rego, ABAC, LLM-safety)
+**Problem:** Policy-eval avoids a single language, but market needs stable semantic profiles.
+
 **Deliverables**
-- Stable semantic profiles for policy interpretation
-- Registry stabilization tied to profiles
-- Interop fixtures demonstrating consistent decisions
+1) **Policy language/binding profiles**:
+   - OPA/Rego profile
+   - ABAC/RBAC profile
+   - LLM-safety profile (minimal taxonomy + interpretation)
+2) **Registry stabilization**
+   - promote key registries from experimental to stable (after M17 policy).
+
+**Acceptance**
+- Two vendors interpreting “the same policy bundle” get the same decision.
 
 ---
 
-# M26 — Human-in-the-loop primitive (approval / step-up)
+## M26 — Human-in-the-loop primitive (approval / step-up)
+**Problem:** Can be modeled indirectly, but market wants explicit primitive.
+
 **Deliverables**
-- Approval request/grant/deny primitives bound to tool_call/content hash
-- Step-up pattern integration points
-- Fixtures + conformance
+1) **EXT-HUMAN-APPROVAL**:
+   - approval request/grant/deny messages
+   - binding to tool call or content message hash
+2) **Step-up auth pattern**:
+   - tie to delegated identity / OAuth bridge in later milestones.
+
+**Acceptance**
+- Human approval becomes a first-class, machine-checkable step in workflows.
 
 ---
 
-# M27 — Production attributes: tracing, SLA signals, metering
+## M27 — Production attributes: tracing, SLA signals, metering
+**Problem:** For PaaS adoption, production-grade signals matter.
+
 **Deliverables**
-- Minimal tracing/correlation extension (W3C trace context compatible)
-- Standard overload/drop reasons (machine-readable)
-- Optional metering objects
+1) **EXT-OBSERVABILITY**:
+   - minimal tracing headers (align with W3C trace context)
+   - correlating messages/tool calls/workflow steps
+2) **Standard SLA/error signals**
+   - structured reasons for drop/throttle/deny (reusable taxonomy)
+3) **Metering events** (optional):
+   - standardized usage accounting objects.
+
+**Acceptance**
+- Operators can debug and audit workflows across vendor boundaries.
 
 ---
 
-# M28 — IAM bridge (OAuth/OIDC mapping)
+## M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
+**Problem:** Need standard mapping between AICP authority grants and real IAM.
+
 **Deliverables**
-- Mapping rules for delegation/tool scopes to OAuth scopes/roles/groups
-- Step-up mapping to OIDC ACR/AMR-like attributes
-- Examples + conformance-guided fixtures
+- Binding RFC: OAuth scopes/roles/groups ↔ delegation scopes/authority_subset
+- Step-up patterns mapping to OIDC ACR/AMR (or equivalent).
+
+**Acceptance**
+- Enterprise can connect AICP workflows to existing IAM without bespoke mapping.
 
 ---
 
-# M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
+## M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
+**Problem:** AICP is not a domain ontology; bindings make it “usable at scale”.
+
 **Deliverables**
-- OpenAPI binding for tool operations
-- OData binding for query semantics
-- Cross-references to policy/IAM profiles for enterprise adoption
+- OpenAPI binding for tool operations (tool_id/operation mapping)
+- OData binding for data retrieval semantics
+- ABAC/RBAC/OPA binding cross-references (align with M25/M28).
+
+**Acceptance**
+- “AICP in the real enterprise stack” becomes an adoptable recipe, not research.
