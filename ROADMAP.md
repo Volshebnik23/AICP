@@ -79,10 +79,20 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 These milestones are driven by **real adoption constraints** observed in implementer onboarding and enterprise workflows. They remain protocol-scoped (RFC/registries/schemas/fixtures/conformance/profiles/bindings).
 
-## ⏳ M16 Numeric canonicalization and safe number policy (RFC8785; closes OQ-0001)
-- Goal: make numeric handling interop-safe across languages.
-- Deliverables: numeric RFC + canonical fixtures + parity implementations + conformance suite.
-- Outcome: avoid surprise float/bigint incompatibilities.
+## 🟡 M16 Numeric canonicalization and safe number policy (RFC8785; closes OQ-0001)
+- **Part 1 (shipped):** strict float rejection parity across reference + drop-ins + a numeric guardrail conformance suite (prevents float creep).
+- **Part 2 (next):** define and implement RFC8785 numeric normalization + a safe integer/decimal policy, with cross-language parity fixtures and conformance.
+- Outcome: avoid surprise float/bigint incompatibilities across languages.
+
+## 🔜 M17.1 Protocol ID & compatibility mark alignment (anti-drift)
+- Fix **SECURITY ALERT** naming drift across artifacts:
+  - Keep registry extension id canonical as `EXT-SECURITY-ALERT` (singular)
+  - Align suite filename/suite_id/compatibility_mark to singular (currently plural in SA suite)
+  - Update all references (profiles, Makefile wiring, docs, snapshot)
+- Fix **Reception Chat semantics** classification:
+  - `RC_RECEPTION_CHAT_SEMANTICS` is a cross-suite semantics suite, not an extension; update its compatibility mark to a non-extension prefix (e.g., `AICP-SUITE-*`) **or** register a matching extension id + RFC (choose one path, but be consistent).
+- Add an **anti-drift lint**: if a suite compatibility mark starts with `AICP-EXT-...`, the corresponding `EXT-...` must exist in `registry/extension_ids.json`.
+
 
 ## ⏳ M17 Stability graduation program (reduce “experimental sprawl” responsibly)
 - Goal: define and enforce criteria for promoting entries from experimental → stable.
@@ -91,6 +101,12 @@ These milestones are driven by **real adoption constraints** observed in impleme
 ## ⏳ M18 Release discipline (changelog + compatibility policy + release checklist)
 - Goal: make protocol adoption safe for mass deployment.
 - Deliverables: filled RELEASE_NOTES, compatibility policy doc, release checklist, deprecation rules.
+
+## 🔜 M18.1 Error & Recovery canonicalization
+- Fix adoption-ready docs drift:
+  - In `docs/ops/ERROR_AND_RECOVERY.md`, remove `DENY` as if it were an `EXT-ALERTS` action id; keep only the EXT-ALERTS action taxonomy (`RETRY/REMEDIATE/DISCONNECT/ESCALATE/ACK_REQUIRED/NO_ACTION`), and describe deny as platform behavior in plain language.
+- Declare **one source of truth**:
+  - RFC `docs/rfc/RFC_Error_Model_and_Recovery.md` is normative; `docs/ops/ERROR_AND_RECOVERY.md` is a non-normative implementer guide (add reciprocal links).
 
 ## ⏳ M19 Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
 - Goal: standardized “adapter-first” integration path (parse/validate AICP, map to internal events, run conformance in CI, CAPNEG as filter).
@@ -139,6 +155,6 @@ These milestones are driven by **real adoption constraints** observed in impleme
 ---
 
 ## Immediate next step
-- **Next technical milestone:** M16 Numeric canonicalization & safe number policy (closes OQ-0001).
-## later
-- **Docs:** M15 Website & messaging conversion (docs-only).
+- **Next technical milestone:** M17.1 Protocol ID & compatibility mark alignment (anti-drift) + M18.1 Error & Recovery canonicalization.
+- After that: M16 Part 2 (RFC8785 numeric handling + safe number policy).
+- Docs-only track: M15 Website & messaging conversion.
