@@ -1,4 +1,4 @@
-# AICP v74 — Protocol Backlog (repo-backed)
+# AICP v78 — Protocol Backlog (repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
@@ -13,7 +13,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Current shipped baseline (as of v74)
+## Current shipped baseline (as of v78)
 - Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
 - Extensions productized: CAPNEG, ENFORCEMENT, POLICY_EVAL, PARTICIPANTS, TOOL_GATING, IDENTITY_LC, DELEGATION, WORKFLOW_SYNC, DISPUTES, SECURITY_ALERTS, ALERTS, RESUME, OBJECT_RESYNC, DELEGATED_IDENTITY.
 - Profiles shipped (experimental status): AICP-BASE, AICP-MEDIATED-BLOCKING, AICP-MEDIATED-BLOCKING-OPS, AICP-RECEPTION-CHAT, AICP-RESUMABLE-SESSIONS, AICP-DELEGATED-IDENTITY, AICP-WORKFLOW-ORCHESTRATION-DELEGATION.
@@ -408,5 +408,158 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 
 **Acceptance**
 - A new adopter can deploy a safe baseline by following one doc set, without reverse-engineering fixtures.
+
+---
+
+## M35 — Bazaar-scale admission, crowd control & content-level queuing (public “bird bazaar” readiness)
+**Problem:** Open receptions and bazaars attract *crowds* of heterogeneous agents (and Sybil/spam). Platforms need interoperable, content-layer mechanisms to **admit, throttle, queue, and sanction** participants without bespoke integrations, while keeping transcripts auditable and portable.
+
+**Deliverables**
+1) **EXT-ADMISSION (optional, crowd-ready)**
+   - `ADMISSION_REQUEST` (agent intent, requested roles, declared risk tier, requested scopes, optional stake/bond attestation ref).
+   - `ADMISSION_OFFER` (granted roles, constraints, quota lease terms, required approvals, queue endpoints/refs).
+   - `ADMISSION_ACCEPT` / `ADMISSION_REJECT` with standardized `reason_code`.
+   - `ADMISSION_RENEW` / `ADMISSION_REVOKE` for short-lived sessions (leases).
+2) **EXT-QUEUE-LEASES (optional)**
+   - Content-layer queue primitives for “reception desks”:
+     - `QUEUE_ENQUEUE` (request object ref + priority class + deadline)
+     - `QUEUE_LEASE_GRANT` (lease_id, TTL, max_msgs, max_tool_calls)
+     - `QUEUE_ACK` / `QUEUE_NACK` (retry_after, backoff hints)
+     - `QUEUE_RELEASE` (explicit release)
+   - Cursor semantics for large queues (compatible with RESUME/OBJECT_RESYNC).
+3) **Adaptive overload/backpressure signals**
+   - Standard signals usable across transports (ties to M22):
+     - `OVERLOAD_SIGNAL` (severity, retry_after, allowed message types)
+     - `THROTTLE_UPDATE` (current quotas, allowed burst, degradation mode)
+4) **Sybil/spam hooks (protocol-level, policy-driven)**
+   - Standard attestation slots in admission messages (ties to M20/M21):
+     - issuer attestations (“verified developer”, “paid partner”, “human-backed”)
+     - optional stake/bond reference object (non-crypto-specific)
+   - Normative guidance: *no silent drops*; require machine-readable sanction codes.
+5) **Registries + schemas**
+   - Registry: admission reason codes, quota classes, overload severity levels.
+   - Schemas for admission/queue objects, lease terms, and overload signals.
+6) **Fixtures + conformance**
+   - expected-pass: lease grant → bounded interaction → clean release.
+   - expected-fail: message/tool call without lease in required profiles; lease overrun; silent-drop detection (missing sanction).
+
+**Acceptance**
+- A strict platform can run an open reception with crowds and still provide interoperable “why you were throttled/kicked” evidence.
+- Agents can adapt behavior (backoff, retry, degrade) without proprietary heuristics.
+
+---
+
+## M36 — Bazaar marketplace & multi-agent orchestration exchange (RFW→Bids→Award, auctions, blackboards, subchats)
+**Problem:** In “bird bazaars” agents don’t just chat — they **solicit work**, **bid**, **compose chains**, and **coordinate** across many participants. Without interoperable marketplace and orchestration primitives, ecosystems fragment into one-off APIs and spam.
+
+**Deliverables**
+1) **EXT-MARKETPLACE (optional)**
+   - `RFW_POST` (Request-for-Work): task spec ref, constraints, policy class, budget/limit hints, required attestations, deadlines.
+   - `BID_SUBMIT`: offer terms (SLA, price/rate limits, data needs, tool requirements, risk class).
+   - `BID_UPDATE` / `BID_WITHDRAW`
+   - `AWARD_ISSUE` / `AWARD_ACCEPT` / `AWARD_DECLINE`
+   - `WORK_ORDER` object: binds award to workflow/contract scope, with responsibility fields.
+2) **Auction modes (content-level)**
+   - Registry: `auction_mode` (sealed-bid, English, Dutch, fixed-price, priority routing).
+   - `AUCTION_OPEN` / `AUCTION_CLOSE` events with deterministic winner selection evidence (where applicable).
+3) **Blackboard workspace (shared coordination surface)**
+   - `BLACKBOARD_DECLARE` (workspace object ref; access constraints; retention)
+   - `BLACKBOARD_POST` / `BLACKBOARD_UPDATE` / `BLACKBOARD_REMOVE`
+   - Subscription to blackboard events (integrates with M38 subscription primitives).
+4) **Subchats/subthreads/topical routing**
+   - Minimal primitives to create scoped threads under a reception:
+     - `SUBCHAT_CREATE` (topic/subject tags, access policy ref, parent chat binding)
+     - `SUBCHAT_INVITE` / `SUBCHAT_JOIN`
+   - Registry: topic/subject tag taxonomy (extensible), plus “routing keys”.
+5) **Group & individual orchestration policies (protocol hooks)**
+   - Policy bundle categories to express routing rules:
+     - group policies (brand reception rules per partner tier / region / product line)
+     - per-agent preferences (max budget, preferred vendors, risk tolerance)
+   - `ROUTING_DECISION_ATTEST` (optional): signed/policy-evaluated explanation for why a request was routed/awarded (ties into POLICY_EVAL and DISPUTES).
+6) **Fixtures + conformance**
+   - expected-pass: RFW → bids → award → work order → workflow sync.
+   - expected-fail: out-of-policy bid, auction winner without evidence when required, subchat created without required admission/roles.
+
+**Acceptance**
+- Platforms can host “market-like” agent collaboration without turning chats into spam.
+- Third-party agents can participate with predictable semantics across hosts.
+
+---
+
+## M37 — Service chaining in production: provenance DAG, responsibility transfer, escrow actions & failure semantics
+**Problem:** Multi-agent service chaining fails in production because of unclear **provenance**, **responsibility**, and **side-effect control** (especially when tools act on external systems). AICP needs standard objects so chains are auditable, enforceable, and debuggable across domains.
+
+**Deliverables**
+1) **EXT-PROVENANCE (optional)**
+   - Provenance graph (DAG) object types:
+     - `artifact_node` (content_hash/artifact_ref, type, originator)
+     - `transform_node` (inputs[], operation descriptor, outputs[])
+     - `decision_node` (policy decision refs, approvals, constraints)
+   - `PROVENANCE_DECLARE` / `PROVENANCE_APPEND` events (append-only by default).
+2) **Responsibility transfer & warranties (content-layer hints)**
+   - `RESPONSIBILITY_ASSIGN` / `RESPONSIBILITY_ACCEPT` / `RESPONSIBILITY_REVOKE`
+   - Warranty/liability hints registry (non-legal, but operational):
+     - best-effort, audited, regulated-domain, no-personal-data, etc.
+3) **Escrow / two-phase actions for risky tools**
+   - `ACTION_PREPARE` → `ACTION_APPROVE` → `ACTION_COMMIT` (ties into TOOL_GATING + M26 approvals)
+   - Commit must bind to: tool call request hash + approval hash + policy context hash.
+4) **Failure semantics and rollback hints**
+   - Standard failure classes for chained workflows:
+     - transient vs permanent, retry_after, compensating_action_ref
+   - `CHAIN_FAILURE_ATTEST` to anchor failure analysis in transcripts (ties into M27 tracing).
+5) **Fixtures + conformance**
+   - expected-pass: DAG provenance across 3 agents, escrowed tool action with approval, clean commit.
+   - expected-fail: missing provenance linkage, commit without prepare/approve, responsibility mismatch in chain.
+
+**Acceptance**
+- Multi-agent chains become portable and auditable across platforms.
+- Hosts can enforce “no irreversible action without approval” without bespoke glue code.
+
+---
+
+## M38 — Agent media & brand reception feeds: channels/topics, subscriptions, content CDN primitives, and distribution/orchestration policies
+**Problem:** Brand receptions will become **communication hubs for agents** (support updates, product changes, security advisories, pricing changes). Without standard feeds/subscriptions and scalable distribution semantics, brands revert to spammy outreach and agents cannot reliably stay informed.
+
+**Deliverables**
+1) **EXT-CHANNELS (hierarchy: org → product → topic → subtopic)**
+   - `CHANNEL_DECLARE` (channel metadata, policy class, retention, visibility)
+   - `CHANNEL_UPDATE` / `CHANNEL_DEPRECATE`
+   - Channel hierarchy fields: `parent_channel_id`, `subject_tags`, `topic_keys`.
+   - Registries: subject/topic taxonomy (extensible), channel visibility classes.
+2) **EXT-SUBSCRIPTIONS (agents subscribe to brands, not humans)**
+   - `SUBSCRIBE` / `UNSUBSCRIBE`
+   - Delivery preferences:
+     - `delivery_mode` (realtime, digest, critical-only)
+     - filters by subject/topic, severity, locale, partner tier
+   - `SUBSCRIPTION_STATE` snapshots (cursor-based) for RESUME compatibility.
+3) **Content distribution & content-level CDN primitives**
+   - `PUBLICATION_PUBLISH` / `PUBLICATION_UPDATE` / `PUBLICATION_RETRACT` (with mandatory reason codes)
+   - Publication objects include:
+     - content_hash, TTL/cache hints, ETag-equivalent version id, mirror_refs
+     - integrity requirements (must validate hash), optional signature requirements
+   - “Content-level CDN” is transport-agnostic: caches store by content_hash + policy class, not by URL.
+4) **Inbox queues for receptions (anti-spam + better UX)**
+   - Standard “brand inbox” semantics compatible with M35 leases:
+     - per-channel inbound queues, priority classes, batching/digest windows
+   - `INBOX_ENQUEUE` / `INBOX_ROUTE` / `INBOX_LEASE_GRANT` / `INBOX_ACK`
+5) **Group policies for distribution and orchestration**
+   - Policy categories for:
+     - distribution groups (regions, partner tiers, product owners)
+     - embargo windows and staged rollout (“canary for agents”)
+     - mandatory notifications (security advisories) with required delivery proof
+   - Optional `DELIVERY_ATTEST` objects for “must-reach” announcements.
+6) **Agent-media editorial workflow (optional profile)**
+   - Roles: reporter/editor/fact-checker/publisher as required roles in contract.
+   - Gated publish: publish requires `ALLOW` verdicts and/or approval signatures (ties to ENFORCEMENT + M26).
+   - Mandatory correction propagation:
+     - “retract/update must reference original publication id and be delivered to active subscribers”.
+7) **Fixtures + conformance**
+   - expected-pass: subscribe → receive publish → receive update → retract; cursor resumption.
+   - expected-fail: silent update without version bump, retraction without reason, critical publication not delivered when “must-reach” required.
+   - scale fixture: many subscribers with digest mode + cursor resumption + overload signals.
+
+**Acceptance**
+- Brands can run reception feeds that agents can reliably subscribe to (support/news/security) without spam.
+- Platforms can scale distribution with portable semantics (channels/topics/subscriptions/cursors) and enforce policy-driven delivery.
 
 ---
