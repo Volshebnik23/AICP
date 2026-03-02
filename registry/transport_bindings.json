@@ -1,5 +1,23 @@
 [
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BIND-BUS-0.1",
+    "type": "transport_bindings",
+    "spec_ref": "docs/bindings/RFC_BIND_MESSAGE_BUS.md#registry-entry",
+    "security_considerations": "Message bus delivery semantics require replay handling, partition/ordering controls, and duplicate-safe processing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BIND-HTTP-0.1",
+    "type": "transport_bindings",
+    "spec_ref": "docs/bindings/RFC_BIND_HTTP_WS.md#registry-entry",
+    "security_considerations": "HTTP/WS endpoints must enforce authentication, anti-replay controls, and idempotent message ingestion semantics."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -10,22 +28,26 @@
     "compatibility_notes": "Stable canonical binding identifier for MCP transport semantics."
   },
   {
-    "status": "experimental",
+    "status": "deprecated",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-BIND-BUS",
     "type": "transport_bindings",
-    "spec_ref": "docs/bindings/RFC_BIND_MESSAGE_BUS.md",
-    "security_considerations": "Consumers must tolerate duplicates and reordering safely."
+    "spec_ref": "docs/bindings/RFC_BIND_MESSAGE_BUS.md#registry-entry",
+    "security_considerations": "Consumers must tolerate duplicates and reordering safely.",
+    "deprecation_notes": "Deprecated alias; use BIND-BUS-0.1 for canonical negotiation and compatibility evidence.",
+    "canonical_id": "BIND-BUS-0.1"
   },
   {
-    "status": "experimental",
+    "status": "deprecated",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-BIND-HTTP",
     "type": "transport_bindings",
-    "spec_ref": "docs/bindings/RFC_BIND_HTTP_WS.md",
-    "security_considerations": "Endpoints must enforce idempotency and auth profile externally."
+    "spec_ref": "docs/bindings/RFC_BIND_HTTP_WS.md#registry-entry",
+    "security_considerations": "Endpoints must enforce idempotency and auth profile externally.",
+    "deprecation_notes": "Deprecated alias; use BIND-HTTP-0.1 for canonical negotiation and compatibility evidence.",
+    "canonical_id": "BIND-HTTP-0.1"
   },
   {
     "status": "deprecated",

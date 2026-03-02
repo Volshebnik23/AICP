@@ -8,6 +8,7 @@ validate:
 	$(PYTHON) scripts/validate_schema_instances.py
 	$(PYTHON) scripts/validate_dropins_assets.py
 	$(PYTHON) scripts/validate_registry.py
+	$(PYTHON) scripts/validate_channel_properties_alignment.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_productization_coverage.py
 	$(PYTHON) scripts/validate_errata.py

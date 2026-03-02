@@ -479,7 +479,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "44bf8c54e5453fae472d33b634894a8a03a7abd24e8325e6694cce594139f008",
+      "combined_sha256": "89022b9f6f1fc1ef5a5d0120ed03212f6a975856a49adc559378b70c0a7e1bd8",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -555,7 +555,7 @@
         },
         {
           "path": "registry/transport_bindings.json",
-          "sha256": "57ae337e544ed758751bb232f4a344e0d796efb98b07c9662e4e6aa33482df33"
+          "sha256": "a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
         }
       ]
     },

@@ -1,4 +1,4 @@
-# AICP v80 — Roadmap Items (repo-backed)
+# AICP v81 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
@@ -22,6 +22,8 @@ _Last updated: 2026-03-02_
 ### 🚧 M22 — Transport bindings and channel properties (started)
 - **Step 1 complete:** channel properties registry + canonical schema landed, and CAPNEG now carries binding/channel-property negotiation fields.
 - **Step 2 partial:** MCP-backed CAPNEG conformance evidence added (CN-09) with binding/channel-property negotiation invariant checks in runner.
+- **Step 2 hardening:** binding ID normalization shipped for HTTP/BUS (`BIND-HTTP-0.1` / `BIND-BUS-0.1`) with deprecated alias mapping retained for compatibility.
+- **Step 2 guardrails:** schema/registry alignment validator added to prevent channel-properties drift between canonical binding schema and CAPNEG embedded defs.
 - **Next concrete step:** extend transport conformance to HTTP/WS streaming/chunking/backpressure and overload handling semantics.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
