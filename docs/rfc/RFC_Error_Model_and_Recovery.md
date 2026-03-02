@@ -1,5 +1,6 @@
 9. RFC: Error model and recovery
 The error model makes integrations predictable. A protocol ERROR does not change contract state; it reports a failure to validate or apply a message, using machine-readable codes and recovery hints.
+Implementation-oriented operational summary: [docs/ops/ERROR_AND_RECOVERY.md](../ops/ERROR_AND_RECOVERY.md).
 9.1 Principles (normative)
 •	Errors MUST NOT change the contract state; they describe refusal or inability to apply a message.
 •	Receivers MUST be idempotent by message_id.
