@@ -84,11 +84,6 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
   - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
 
-- 🟡 M8.6 Plugfest kit + interop report + errata workflow
-  - `/interop/*` artifacts, test vectors, interop report format.
-  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
-  - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
-
 - ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
 - ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
 - ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
@@ -134,17 +129,26 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M13.3 policy_reason_codes baseline expansion + namespaced reason-code acceptance shipped.
 
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
-- ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
-- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
+- ✅ M11 Reception Chat Profile shipped (`AICP-RECEPTION-CHAT@0.1`, plus `RC-RECEPTION-CHAT-SEMANTICS-0.1` conformance suite).
+- ✅ M12 Delegated Identity & Acting-on-behalf-of Binding shipped (`EXT-DELEGATED-IDENTITY`, `DI-DELEGATED-IDENTITY-0.1`, `AICP-DELEGATED-IDENTITY@0.1`).
 - ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
 
 ---
 
+## ✅ Productization milestone shipped
+- ✅ M14 Profile packaging shipped
+  - Added profile conformance artifacts for `AICP-MEDIATED-BLOCKING-OPS@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-RECEPTION-CHAT@0.1`.
+  - Wired profile execution and cleanup into `make conformance-profiles` and `make clean`.
+  - Updated profile registry and profile catalog docs to move these profiles to available status.
+  - ✅ Reception chat semantics hardening shipped with cross-suite suite `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`, required by `AICP-RECEPTION-CHAT` profile.
+
+---
+
 ## ⏳ Website & messaging (docs-only)
-- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
+- ⏳ M15 Convert ecosystem user stories into website-ready marketing use cases
   - Source: `docs/marketing/ecosystem_use_cases.md`
 
 ---
 
 ## Immediate next step
-**M14 profile packaging** is next, followed by ecosystem-facing profile hardening line items.
+**M13 Workflow orchestration & delegation profile hardening** is next.
