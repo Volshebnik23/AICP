@@ -1,4 +1,4 @@
-# AICP v74 — Roadmap Items (repo-backed)
+# AICP v76 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
@@ -80,12 +80,28 @@ _Last updated: 2026-03-02_
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
 - **Exit:** Security best practices + deployment cookbooks + security-considerations completion.
 
+
+### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
+- **Exit:** EXT-ADMISSION + EXT-QUEUE-LEASES + overload reason codes + conformance for crowded-room stability.
+
+### ⏳ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
+- **Exit:** EXT-MARKETPLACE + EXT-BLACKBOARD + subchat semantics, with fixtures showing RFW→bid→award→workflow→close at scale.
+
+### ⏳ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
+- **Exit:** EXT-PROVENANCE-GRAPH + EXT-RESPONSIBILITY + escrowed action flow binding to TOOL_GATING/M26, with audit-ready conformance.
+
+### ⏳ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, content-level CDN, group policies)
+- **Exit:** EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-FEEDS + CDN/inbox primitives + profiles for brand receptions and agent-media distribution.
+
+
 ## Suggested dependency order (high level)
 1) M16 → M17.1 → M17 → M18 → M33  
 2) Interop hardening: M22 + M19  
 3) Trust & tooling: M20 + M21 + M30  
 4) Enterprise controls: M23 + M24 + M26 + M28  
-5) Internet-scale audit: M31  
-6) Optional platform interop: M32  
-7) Ops + docs completeness: M27 + M34 + M29
-
+5) Crowd-ready bazaars: M35  
+6) Coordination & service chaining: M36 + M37  
+7) Internet-scale audit (recommended before large public feeds): M31  
+8) Agent media & brand reception feeds: M38  
+9) Optional platform interop: M32  
+10) Ops + docs completeness: M27 + M34 + M29
