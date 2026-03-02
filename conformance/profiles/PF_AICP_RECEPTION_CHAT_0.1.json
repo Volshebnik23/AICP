@@ -1,0 +1,16 @@
+{
+  "profile_id": "AICP-RECEPTION-CHAT",
+  "profile_version": "0.1",
+  "description": "Reception chat profile requiring Core plus mediation, participant, policy, enforcement, security-alert, and dispute suite conformance.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CN_CAPNEG_0.1.json",
+    "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+    "conformance/extensions/SA_SECURITY_ALERTS_0.1.json",
+    "conformance/extensions/DS_DISPUTES_0.1.json",
+    "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-RECEPTION-CHAT-0.1"
+}

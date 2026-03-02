@@ -11,6 +11,7 @@ CORE_MESSAGE_TYPES = {
     "CONTEXT_AMEND",
     "ATTEST_ACTION",
     "RESOLVE_CONFLICT",
+    "ERROR",
 }
 
 
@@ -20,9 +21,7 @@ def _reject_unsupported_numbers(value: Any) -> None:
     if isinstance(value, (int,)):
         return
     if isinstance(value, float):
-        if not value.is_integer():
-            raise ValueError("Float canonicalization beyond fixture scope is not implemented")
-        return
+        raise ValueError("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling")
     if isinstance(value, list):
         for item in value:
             _reject_unsupported_numbers(item)

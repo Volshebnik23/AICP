@@ -6,12 +6,13 @@ const CORE_MESSAGE_TYPES = new Set([
   "CONTEXT_AMEND",
   "ATTEST_ACTION",
   "RESOLVE_CONFLICT",
+  "ERROR",
 ]);
 
 function rejectUnsupportedNumbers(value) {
   if (typeof value === "number") {
     if (!Number.isFinite(value)) throw new Error("Unsupported non-finite float");
-    if (!Number.isInteger(value)) throw new Error("Float canonicalization beyond fixture scope is not implemented");
+    if (!Number.isInteger(value)) throw new Error("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling");
     return;
   }
   if (Array.isArray(value)) {
