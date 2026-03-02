@@ -1,8 +1,8 @@
 {
-  "suite_id": "SA-SECURITY-ALERTS-0.1",
+  "suite_id": "SA-SECURITY-ALERT-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "EXT-SECURITY-ALERTS conformance checks for category registration and evidence minimums.",
+  "description": "EXT-SECURITY-ALERT conformance checks for category registration and evidence minimums.",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
   "payload_schema_ref": "schemas/extensions/ext-security-alerts-payloads.schema.json",
   "payload_schema_map": {
@@ -62,7 +62,7 @@
     },
     {
       "test_id": "CN-PAYLOAD-SCHEMA-01",
-      "description": "Validate payload against EXT-SECURITY-ALERTS payload schema"
+      "description": "Validate payload against EXT-SECURITY-ALERT payload schema"
     },
     {
       "test_id": "CT-HASH-CHAIN-01",
@@ -93,5 +93,5 @@
       "description": "SECURITY_ALERT evidence_refs must include at least one resolvable msgid:/msghash:/objhash: reference"
     }
   ],
-  "compatibility_mark": "AICP-EXT-SECURITY-ALERTS-0.1"
+  "compatibility_mark": "AICP-EXT-SECURITY-ALERT-0.1"
 }

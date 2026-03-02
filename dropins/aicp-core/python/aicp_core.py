@@ -3,6 +3,8 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import math
+import re
 from typing import Any
 
 CORE_MESSAGE_TYPES = {
@@ -11,37 +13,70 @@ CORE_MESSAGE_TYPES = {
     "CONTEXT_AMEND",
     "ATTEST_ACTION",
     "RESOLVE_CONFLICT",
+    "ERROR",
 }
 
+SAFE_INTEGER_MAX = 9007199254740991
+_EXP_RE = re.compile(r"^(?P<mantissa>.*)[eE](?P<exp>[+-]?\d+)$")
 
-def _reject_unsupported_numbers(value: Any) -> None:
-    if isinstance(value, bool) or value is None:
-        return
-    if isinstance(value, (int,)):
-        return
+
+def canonicalize_number(value: int | float) -> str:
+    if isinstance(value, bool):
+        raise TypeError("boolean is not a canonical numeric value")
+
+    if isinstance(value, int):
+        if abs(value) > SAFE_INTEGER_MAX:
+            raise ValueError("Unsafe integer for AICP canonicalization (must be within IEEE-754 safe integer range)")
+        return str(value)
+
+    if not math.isfinite(value):
+        raise ValueError("Unsupported non-finite number for canonicalization")
+
+    if value == 0.0 or value.is_integer():
+        int_value = int(value)
+        if abs(int_value) > SAFE_INTEGER_MAX:
+            raise ValueError("Unsafe integer for AICP canonicalization (must be within IEEE-754 safe integer range)")
+        return str(int_value)
+
+    raw = repr(value)
+    match = _EXP_RE.match(raw)
+    if not match:
+        if raw.endswith(".0"):
+            raw = raw[:-2]
+        return raw
+
+    mantissa = match.group("mantissa")
+    exponent = int(match.group("exp"))
+    return f"{mantissa}e{exponent}"
+
+
+def _serialize(value: Any) -> str:
+    if value is None:
+        return "null"
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    if isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    if isinstance(value, int) and not isinstance(value, bool):
+        return canonicalize_number(value)
     if isinstance(value, float):
-        if not value.is_integer():
-            raise ValueError("Float canonicalization beyond fixture scope is not implemented")
-        return
+        return canonicalize_number(value)
     if isinstance(value, list):
-        for item in value:
-            _reject_unsupported_numbers(item)
-    elif isinstance(value, dict):
-        for item in value.values():
-            _reject_unsupported_numbers(item)
-
-
-def _sort_deep(value: Any) -> Any:
-    if isinstance(value, list):
-        return [_sort_deep(v) for v in value]
+        return "[" + ",".join(_serialize(item) for item in value) + "]"
     if isinstance(value, dict):
-        return {k: _sort_deep(value[k]) for k in sorted(value.keys())}
-    return value
+        parts = []
+        for key in sorted(value.keys()):
+            if not isinstance(key, str):
+                raise TypeError("Object keys must be strings for canonical JSON")
+            parts.append(f"{json.dumps(key, ensure_ascii=False, separators=(',', ':'))}:{_serialize(value[key])}")
+        return "{" + ",".join(parts) + "}"
+    raise TypeError(f"Unsupported value type for canonicalization: {type(value)!r}")
 
 
 def canonicalize_json(value: Any) -> str:
-    _reject_unsupported_numbers(value)
-    return json.dumps(_sort_deep(value), separators=(",", ":"), ensure_ascii=False)
+    return _serialize(value)
 
 
 def object_hash(object_type: str, obj: Any) -> str:

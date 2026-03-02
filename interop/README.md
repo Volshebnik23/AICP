@@ -47,3 +47,15 @@ This aggregates all submission manifests and reports into:
 - Ensure folder name equals `implementation.json:implementation_id`.
 - Run `make interop-matrix`.
 - Commit `interop/INTEROP_MATRIX.md` and `interop/interop_matrix.json` (CI will enforce freshness).
+
+## Errata workflow during plugfest
+If a finding indicates a protocol/spec/schema/conformance inconsistency, file it in [`ERRATA.md`](../ERRATA.md) and link the related submission PR.
+
+Use `ERRATA.md` for cross-implementation protocol/tooling inconsistencies (spec ambiguity, schema mismatch, conformance runner defect). Use a submission issue/PR comment for implementation-local packaging mistakes (missing report file, malformed manifest, wrong folder naming).
+
+When filing plugfest errata, include:
+- `implementation_id`
+- affected suite/profile id(s)
+- failing report path under `interop/submissions/<implementation_id>/reports/`
+- minimal transcript snippet or fixture reference when possible
+- cross-reference to the corresponding `interop/INTEROP_MATRIX.md` row and submission path
