@@ -35,30 +35,23 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 ## B) Productization status (implementable + enforceable)
 
 ### ✅ Completed: Canonical repo layout + registries + conformance + references
-- Canonical paths: `docs/`, `schemas/`, `registry/`, `fixtures/`, `conformance/`, `reference/`
-- `make validate`, `make conformance-all`, and repo-local tests exist.
-- Reference implementation (Python) + TS/JS SDK and templates exist.
+- ✅ Core schemas, registries, fixtures, conformance runner and reports
+- ✅ Reference implementations and drop-ins
+- ✅ Anti-drift gates (registry/schema/fixtures/conformance coverage) + snapshot discipline
 
 ### ✅ Completed: Extensions and “mediated blocking” contour
-- CAPNEG, OBJECT_RESYNC, POLICY_EVAL, ENFORCEMENT, ALERTS, RESUME, MCP binding are productized with:
-  - registries
-  - schemas
-  - fixtures
-  - conformance suites
+- ✅ CAPNEG, ENFORCEMENT, POLICY_EVAL, ALERTS, RESUME, OBJECT_RESYNC
+- ✅ Participants, tool gating, identity lifecycle, delegation, workflow sync
+- ✅ Disputes, security alerts, delegated identity (optional)
 
 ### ✅ Completed: TLS-like usability layer
-- Profiles + profile runner + badges
-- Canonical flows & state machines
-- Plugfest kit + interop matrix tooling + CI enforcement
-- Security review package, self-review, threat-driven negatives
-- Canonicalization edge-case TVs (executable evidence)
-- Ordering model clarified + linear-chain required (prev_msg_hash)
+- ✅ Profiles catalog + profile conformance runner
+- ✅ Plugfest kit scaffolding + interop matrix tool + errata workflow note
+- ✅ Implementer quickstarts
 
 ### ✅ Completed: Adoption “< 1 hour” onboarding baseline
-- Start Here entrypoint + drop-ins (copy folder artifacts)
-- Quickstart targets + CI quickstart gate
-- Sandbox validator usability (external paths, keys, no-signature-verify)
-- Anti-drift for drop-in assets and canonical schema selection
+- ✅ drop-ins, START_HERE_IMPLEMENTERS, sandbox validation, templates
+- ✅ CI gates (validate + conformance-all + conformance-profiles + snapshot)
 
 ---
 
@@ -97,32 +90,20 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 
 ---
 
-## ⏳ Later milestones (hardening)
-- 🟡 M9 External security review artifacts and remediation log:
-  - `/security_review/*`
-  - M9 security review package scaffolding is now available in-repo.
-  - ✅ M9.1 Internal dry-run security self-review completed (`security_review/SELF_REVIEW.md`).
-  - ✅ M9.2 Behavioral enforcement simulation demo added (`demos/enforcement_behavioral/`).
-  - ✅ M9.2 threat-driven demo conformance expansion shipped (`conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`, `ENF-AUTH-01`).
-  - ✅ M9.3 threat-to-tests coverage map + CAPNEG/RESUME negative checks shipped (`security_review/COVERAGE_MAP.md`, `CN-DOWNGRADE-01`, `RS-LOOP-01`).
-  - ✅ M9.3 anti-drift + Policy Core formalization + strict badge semantics + glossary update shipped.
-  - ✅ M9.4 canonicalization edge-case vectors + drop-in asset anti-drift checks shipped.
-  - ✅ M9.5 ordering model clarity + linear prev_msg_hash requirement + expanded drop-in asset parity checks shipped.
-  - ✅ M9.6 DoS/amplification/abuse hardening guidance + deterministic ops checks shipped (`security_review/OPS_HARDENING_GUIDE.md`, `conformance/ops/OPS_HARDENING_0.1.json`, `fixtures/ops/`).
-  - ✅ M9.7 Signed-path security evidence shipped for mediated blocking (`conformance/security/SIG_SIGNED_PATHS_0.1.json`, `fixtures/security/signed_paths/`, deterministic TEST-only keys).
-- ✅ M10 Snapshot discipline shipped (deterministic manifest at `dist/releases/snapshots/AICP_SNAPSHOT_0.1.0-dev.json`, generator/validator scripts, and `make validate` integration).
+## ✅ Productization milestone shipped
+- ✅ M13 Workflow Orchestration & Delegation Profile shipped
+  - Profile: `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1`
+  - Bundles: POLICY_EVAL, TOOL_GATING, DELEGATION, WORKFLOW_SYNC, RESUME/OBJECT_RESYNC, ALERTS, SECURITY_ALERTS (+ Core + CAPNEG)
 
 ---
 
-- ✅ M11.0 Core `ERROR` message type productized end-to-end (Core payload schema + golden fixture + Core conformance coverage).
-- ✅ M11.3 Stable message-type anti-drift governance gate shipped (`scripts/validate_productization_coverage.py`, wired into `make validate`).
+## ⏳ Website & messaging (docs-only)
+- ⏳ M15 Convert ecosystem user stories into website-ready marketing use cases
+  - Source: `docs/marketing/ecosystem_use_cases.md`
 
-- ✅ M11.1 EXT-PARTICIPANTS shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
-- ✅ M11.2 EXT-TOOL-GATING shipped (RFC + registry IDs + payload schema + fixtures + conformance suite + runner enforcement).
+---
 
-- ✅ M12.1 EXT-IDENTITY-LC productized (payload schema + deterministic fixtures + conformance suite + session-local key verification support).
-- ✅ M12.2 EXT-DELEGATION productized (registry message types + payload schema + fixtures + conformance suite + depth/expiry/binding checks).
-- ✅ M12.3 EXT-WORKFLOW-SYNC productized (registry message types + payload schema + fixtures + conformance suite + workflow checks).
+# C) Next growth milestones (protocol maturity & ecosystem scale)
 
 - ✅ M13.1 EXT-DISPUTES + EXT-SECURITY-ALERT productized (message-type registry coverage, payload schemas, deterministic fixtures, conformance suites, and runner checks).
 - ✅ M13.2 CAPNEG binding refinements shipped (accepted negotiation_result hash/selected bound into contract context with RFC + fixtures + conformance checks).
@@ -142,7 +123,14 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
   - Updated profile registry and profile catalog docs to move these profiles to available status.
   - ✅ Reception chat semantics hardening shipped with cross-suite suite `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`, required by `AICP-RECEPTION-CHAT` profile.
 
----
+## 🔜 M17.1 Protocol ID & compatibility mark alignment (anti-drift)
+- Fix **SECURITY ALERT** naming drift across artifacts:
+  - Keep registry extension id canonical as `EXT-SECURITY-ALERT` (singular)
+  - Align suite filename/suite_id/compatibility_mark to singular (currently plural in SA suite)
+  - Update all references (profiles, Makefile wiring, docs, snapshot)
+- Fix **Reception Chat semantics** classification:
+  - `RC_RECEPTION_CHAT_SEMANTICS` is a cross-suite semantics suite, not an extension; update its compatibility mark to a non-extension prefix (e.g., `AICP-SUITE-*`) **or** register a matching extension id + RFC (choose one path, but be consistent).
+- Add an **anti-drift lint**: if a suite compatibility mark starts with `AICP-EXT-...`, the corresponding `EXT-...` must exist in `registry/extension_ids.json`.
 
 ## ⏳ Website & messaging (docs-only)
 - ⏳ M15 Convert ecosystem user stories into website-ready marketing use cases
