@@ -10,6 +10,7 @@ validate:
 	$(PYTHON) scripts/validate_registry.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_productization_coverage.py
+	$(PYTHON) scripts/validate_errata.py
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \

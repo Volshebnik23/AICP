@@ -332,12 +332,12 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                 if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
                     add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
 
-    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    protocol_version = suite["aicp_version"]
     passed = not failures
     suite_mark = suite.get("compatibility_mark")
     marks = [suite_mark] if passed and isinstance(suite_mark, str) else (["AICP-BIND-MCP-0.1"] if passed else [])
     return {
-        "aicp_version": version,
+        "aicp_version": protocol_version,
         "suite_id": suite["suite_id"],
         "suite_version": suite["suite_version"],
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -1858,13 +1858,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 
-    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    protocol_version = suite["aicp_version"]
     passed = not failures
     suite_mark = suite.get("compatibility_mark")
     marks = [suite_mark] if (passed and not degraded and isinstance(suite_mark, str)) else []
 
     return {
-        "aicp_version": version,
+        "aicp_version": protocol_version,
         "suite_id": suite["suite_id"],
         "suite_version": suite["suite_version"],
         "timestamp": datetime.now(timezone.utc).isoformat(),

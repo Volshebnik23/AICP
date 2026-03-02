@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import pytest
 
 DROPIN_PATH = Path(__file__).resolve().parents[3] / "dropins/aicp-core/python/aicp_core.py"
 
@@ -15,15 +16,16 @@ def _load_dropin_module():
     return module
 
 
-def test_dropin_rejects_float_numbers() -> None:
+def test_dropin_accepts_finite_float_numbers() -> None:
     mod = _load_dropin_module()
-    for value in (1.0, 0.1):
-        try:
+    assert mod.canonicalize_json({"score": 0.1}) == '{"score":0.1}'
+
+
+def test_dropin_rejects_non_finite_numbers() -> None:
+    mod = _load_dropin_module()
+    for value in (float("inf"), float("-inf"), float("nan")):
+        with pytest.raises(ValueError, match="non-finite"):
             mod.canonicalize_json({"score": value})
-        except ValueError as exc:
-            assert "Floats are not supported by AICP Core v0.1" in str(exc)
-        else:
-            raise AssertionError("expected float canonicalization to be rejected")
 
 
 def test_dropin_core_message_types_include_error() -> None:

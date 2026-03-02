@@ -1,12 +1,12 @@
 {
   "aicp_version": "0.1",
-  "suite_id": "CT-CORE-0.1",
+  "suite_id": "CT-NUMERIC-GUARDRAILS-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-03-02T11:51:31.515113+00:00",
+  "timestamp": "2026-03-02T11:51:32.351096+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [
-    "AICP-Core-0.1"
+    "AICP-Core-NUMERIC-GUARDRAILS-0.1"
   ],
   "degraded": false,
   "degraded_reasons": [],
