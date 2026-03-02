@@ -1,4 +1,4 @@
-# AICP v74 — Roadmap Items (repo-backed)
+# AICP v76 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
@@ -7,30 +7,22 @@ _Last updated: 2026-03-02_
 
 ## Current / Next
 
-### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
-- **Why:** Eliminate cross-language drift from unsafe integers while keeping current float-rejection baseline.
-- **Progress:** Canonicalization now enforces integers within ±(2^53−1), unsafe integer expected-fail fixtures are covered in conformance, and OQ-0001 is closed as a staged decision.
-- **Exit:** Safe-integer policy implemented across reference/SDK + conformance guardrails + docs.
+### 🟡 M16 — Numeric canonicalization & safe number policy (Part 2)
+- **Why:** Cross-language numeric interop (RFC8785 canonicalization; safe-integer policy).
+- **Source:** Already marked current in `ROADMAP.md`.
+- **Exit:** RFC8785 numeric canonicalization + safe number policy + fixtures + conformance.
 
-### 🔜 M16b — RFC8785 float canonicalization
-- **Why:** Complete numeric canonicalization beyond integer-only mode.
-- **Next concrete step:** Implement RFC8785 float handling with cross-language parity tests and compatibility notes under release policy.
-
-### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
+### 🔜 M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
 - **Why:** Prevent drift between registries/suites/profile marks.
-- **Progress:** Conformance reports now emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes a single anti-drift lint gate for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
-- **Source:** Implemented in this sprint.
+- **Source:** Already marked next in `ROADMAP.md`.
 - **Exit:** Lint gates + aligned names/marks across repo.
-
-### 🔜 Next milestone — M17 Stability graduation program
-- **Next concrete step:** Define the first stable baseline set and add validator rules for promotion eligibility metadata in registries.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
 ### ⏳ M17 — Stability graduation program (reduce experimental sprawl safely)
 - **Exit:** “Stable baseline set” defined + validator rules enforce stable metadata + first promotions.
 
-### 🟡 M18 — Release discipline (changelog + compatibility policy + errata cadence)
+### ⏳ M18 — Release discipline (changelog + compatibility policy + errata cadence)
 - **Exit:** RELEASE_NOTES filled; compatibility policy; release checklist; errata cadence.
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
@@ -78,12 +70,28 @@ _Last updated: 2026-03-02_
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
 - **Exit:** Security best practices + deployment cookbooks + security-considerations completion.
 
+
+### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
+- **Exit:** EXT-ADMISSION + EXT-QUEUE-LEASES + overload reason codes + conformance for crowded-room stability.
+
+### ⏳ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
+- **Exit:** EXT-MARKETPLACE + EXT-BLACKBOARD + subchat semantics, with fixtures showing RFW→bid→award→workflow→close at scale.
+
+### ⏳ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
+- **Exit:** EXT-PROVENANCE-GRAPH + EXT-RESPONSIBILITY + escrowed action flow binding to TOOL_GATING/M26, with audit-ready conformance.
+
+### ⏳ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, content-level CDN, group policies)
+- **Exit:** EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-FEEDS + CDN/inbox primitives + profiles for brand receptions and agent-media distribution.
+
+
 ## Suggested dependency order (high level)
 1) M16 → M17.1 → M17 → M18 → M33  
 2) Interop hardening: M22 + M19  
 3) Trust & tooling: M20 + M21 + M30  
 4) Enterprise controls: M23 + M24 + M26 + M28  
-5) Internet-scale audit: M31  
-6) Optional platform interop: M32  
-7) Ops + docs completeness: M27 + M34 + M29
-
+5) Crowd-ready bazaars: M35  
+6) Coordination & service chaining: M36 + M37  
+7) Internet-scale audit (recommended before large public feeds): M31  
+8) Agent media & brand reception feeds: M38  
+9) Optional platform interop: M32  
+10) Ops + docs completeness: M27 + M34 + M29
