@@ -67,3 +67,7 @@ To preserve interoperability while allowing vendor-defined semantics, custom san
 Verdict spoofing is a primary risk: mediators MUST authenticate verdict sender identity before applying a verdict.
 Implementations SHOULD sign enforcement verdict messages and SHOULD verify signatures prior to applying blocking decisions.
 For this sprint, signatures are not mandatory in conformance fixtures.
+
+
+## Registry entry {#registry-entry}
+This RFC defines the stable registry entry for this extension; compatibility-impacting changes require explicit migration notes and conformance updates.
