@@ -73,5 +73,6 @@
       "description": "evaluation_context.context_hash must recompute under object_type evaluation_context"
     }
   ],
-  "compatibility_mark": "AICP-EXT-POLICY-EVAL-0.1"
+  "compatibility_mark": "AICP-EXT-POLICY-EVAL-0.1",
+  "extension_id": "EXT-POLICY-EVAL"
 }

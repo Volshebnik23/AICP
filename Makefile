@@ -8,8 +8,10 @@ validate:
 	$(PYTHON) scripts/validate_schema_instances.py
 	$(PYTHON) scripts/validate_dropins_assets.py
 	$(PYTHON) scripts/validate_registry.py
+	$(PYTHON) scripts/validate_channel_properties_alignment.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_productization_coverage.py
+	$(PYTHON) scripts/validate_errata.py
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \
@@ -23,6 +25,7 @@ snapshot:
 	$(PYTHON) scripts/generate_snapshot_manifest.py
 
 validate-snapshot:
+	$(PYTHON) -m py_compile scripts/validate_snapshot_manifest.py
 	$(PYTHON) scripts/validate_snapshot_manifest.py
 
 test:

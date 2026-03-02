@@ -8,7 +8,7 @@
 
 ### Changed
 - Conformance reports now emit protocol `aicp_version` from suite/profile inputs while preserving artifact `suite_version`.
-- Numeric canonicalization policy staged as M16a: integers must be IEEE-754 safe integers; floats remain rejected pending M16b.
+- Numeric canonicalization updated to M16b: finite floats are now supported using deterministic ECMAScript/RFC8785-aligned tokens; non-finite values remain rejected.
 - CAPNEG guidance now treats `BIND-MCP-0.1` as canonical negotiated binding ID (with `EXT-BIND-MCP` as deprecated alias).
 
 ### Fixed
@@ -18,4 +18,5 @@
 - Stability graduation: `EXT-CAPNEG` and `AICP-BASE@0.1` are now marked stable (non-breaking; signals stricter compatibility expectations).
 - **Backward compatible** for current Core schema shapes.
 - **Policy tightening**: unsafe integers are now rejected during canonicalization; encode out-of-range values as strings.
-- M16b (future RFC8785 float support) MUST follow compatibility policy and include migration notes.
+
+- Compatibility note: implementations may now exchange finite float payload values in canonical JSON. Integer values still MUST remain within IEEE-754 safe integer range (±(2^53-1)).
