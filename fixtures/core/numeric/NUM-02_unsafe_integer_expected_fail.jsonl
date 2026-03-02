@@ -1,0 +1,1 @@
+{"session_id":"sNUM2","message_id":"m1","timestamp":"2026-01-03T00:00:00Z","sender":"agent:num","message_type":"CONTRACT_PROPOSE","contract_id":"cNUM2","payload":{"contract":{"contract_id":"cNUM2","goal":"unsafe_integer_guardrail","roles":["initiator"],"limits":{"max_tokens":9007199254740993}}},"message_hash":"sha256:placeholder-unsafe-int"}

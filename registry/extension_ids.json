@@ -9,13 +9,14 @@
     "security_considerations": "Operational alerts should avoid sensitive leakage and spoofing."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-CAPNEG",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
-    "security_considerations": "Negotiation must prevent downgrade and spoofing."
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#registry-entry",
+    "security_considerations": "Negotiation must prevent downgrade and spoofing.",
+    "compatibility_notes": "Stable baseline extension for capability negotiation; incompatible changes require migration notes and conformance updates."
   },
   {
     "status": "experimental",

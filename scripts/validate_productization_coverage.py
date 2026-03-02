@@ -31,6 +31,48 @@ def _stable_message_types() -> list[str]:
 
 
 
+
+
+def _stable_extension_entries() -> list[dict[str, str]]:
+    registry = _load_json(ROOT / "registry" / "extension_ids.json")
+    if not isinstance(registry, list):
+        raise ValueError("registry/extension_ids.json must be a JSON list")
+    out: list[dict[str, str]] = []
+    for entry in registry:
+        if not isinstance(entry, dict) or entry.get("status") != "stable":
+            continue
+        ext_id = entry.get("id")
+        spec_ref = entry.get("spec_ref")
+        if isinstance(ext_id, str) and isinstance(spec_ref, str):
+            out.append({"id": ext_id, "spec_ref": spec_ref})
+    return out
+
+
+def _stable_extension_coverage_failures(entries: list[dict[str, str]]) -> list[str]:
+    failures: list[str] = []
+    ext_suites = sorted((ROOT / "conformance" / "extensions").glob("*.json"))
+    suite_texts = {p: p.read_text(encoding="utf-8") for p in ext_suites}
+    for entry in entries:
+        ext_id = entry["id"]
+        slug = ext_id.replace("EXT-", "").lower().replace("-", "_")
+        spec_path = entry["spec_ref"].split("#", 1)[0]
+        if not (ROOT / spec_path).exists():
+            failures.append(f"stable extension {ext_id}: spec_ref target missing ({spec_path})")
+
+        fixtures_dir = ROOT / "fixtures" / "extensions" / slug
+        fixtures_match = sorted(fixtures_dir.glob("*.jsonl")) + sorted(fixtures_dir.glob("*.json"))
+        if not fixtures_match:
+            # fallback fuzzy check for capneg naming or other historical aliases
+            all_ext_fixtures = list((ROOT / "fixtures" / "extensions").glob("**/*"))
+            fixtures_match = [p for p in all_ext_fixtures if p.is_file() and slug.replace("_", "") in p.as_posix().replace("_", "")]
+        if not fixtures_match:
+            failures.append(f"stable extension {ext_id}: no fixtures found under fixtures/extensions/{slug}/")
+
+        suite_hits = [p for p, text in suite_texts.items() if ext_id in text]
+        if not suite_hits:
+            failures.append(f"stable extension {ext_id}: no conformance/extensions suite references this id")
+    return failures
+
 def _profile_required_message_types() -> set[str]:
     profile_files = sorted((ROOT / "conformance" / "profiles").glob("*.json"))
     required: set[str] = set()
@@ -124,9 +166,11 @@ def _scan_conformance_coverage() -> tuple[set[str], set[str], list[Path]]:
 def main() -> int:
     try:
         stable_ids = _stable_message_types()
+        stable_extensions = _stable_extension_entries()
         profile_required_types = _profile_required_message_types()
         fixture_types, fixture_files = _scan_fixture_message_types()
         payload_map_types, expected_types, suite_files = _scan_conformance_coverage()
+        stable_extension_failures = _stable_extension_coverage_failures(stable_extensions)
     except Exception as exc:
         print(f"[FAIL] productization coverage check aborted: {exc}")
         return 1
@@ -138,7 +182,7 @@ def main() -> int:
         msg for msg in coverage_ids if msg not in payload_map_types and msg not in expected_types
     ]
 
-    if missing_payload or missing_fixtures or missing_conformance:
+    if missing_payload or missing_fixtures or missing_conformance or stable_extension_failures:
         print("[FAIL] Productization coverage requirements not satisfied.")
         print(f"  stable message types: {', '.join(stable_ids) if stable_ids else '(none)'}")
         print(f"  profile-required message types: {', '.join(sorted(profile_required_types)) if profile_required_types else '(none)'}")
@@ -155,11 +199,13 @@ def main() -> int:
                 "  - Missing conformance coverage (expected_message_types or payload_schema_map): "
                 + ", ".join(missing_conformance)
             )
+        for failure in stable_extension_failures:
+            print("  - " + failure)
         return 1
 
     print(
         "OK: productization coverage satisfied "
-        f"({len(stable_ids)} stable ids, {len(profile_required_types)} profile-required ids, "
+        f"({len(stable_ids)} stable ids, {len(stable_extensions)} stable extensions, {len(profile_required_types)} profile-required ids, "
         f"{len(fixture_files)} fixtures scanned, {len(suite_files)} suites scanned)."
     )
     return 0

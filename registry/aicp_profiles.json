@@ -1,18 +1,19 @@
 [
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "AICP-BASE@0.1",
     "type": "aicp_profiles",
-    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "spec_ref": "docs/profiles/AICP_Profiles.md#registry-entry",
     "security_considerations": "Core-only baseline; badge eligibility remains subject to non-degraded conformance execution.",
     "profile_id": "AICP-BASE",
     "profile_version": "0.1",
     "required_extensions": [],
     "required_policy_categories": [],
     "required_crypto_profiles": [],
-    "description": "Core-only baseline profile aligned with PF_AICP_BASE_0.1 and Core suite evidence."
+    "description": "Core-only baseline profile aligned with PF_AICP_BASE_0.1 and Core suite evidence.",
+    "compatibility_notes": "Stable baseline profile; maintain backward compatibility for core-only profile semantics."
   },
   {
     "status": "experimental",

@@ -7,22 +7,32 @@ _Last updated: 2026-03-02_
 
 ## Current / Next
 
-### 🟡 M16 — Numeric canonicalization & safe number policy (Part 2)
-- **Why:** Cross-language numeric interop (RFC8785 canonicalization; safe-integer policy).
-- **Source:** Already marked current in `ROADMAP.md`.
-- **Exit:** RFC8785 numeric canonicalization + safe number policy + fixtures + conformance.
+### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
+- **Why:** Eliminate cross-language drift from unsafe integers while keeping current float-rejection baseline.
+- **Progress:** Canonicalization now enforces integers within ±(2^53−1), unsafe integer expected-fail fixtures are covered in conformance, and OQ-0001 is closed as a staged decision.
+- **Exit:** Safe-integer policy implemented across reference/SDK + conformance guardrails + docs.
 
-### 🔜 M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
+### 🔜 M16b — RFC8785 float canonicalization
+- **Why:** Complete numeric canonicalization beyond integer-only mode.
+- **Next concrete step:** Implement RFC8785 float handling with cross-language parity tests and compatibility notes under release policy.
+
+### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
 - **Why:** Prevent drift between registries/suites/profile marks.
-- **Source:** Already marked next in `ROADMAP.md`.
+- **Progress:** Conformance reports now emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes a single anti-drift lint gate for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
+- **Source:** Implemented in this sprint.
 - **Exit:** Lint gates + aligned names/marks across repo.
+
+### 🔜 Next milestone — M17 Stability graduation program
+- **Next concrete step:** Define the first stable baseline set and add validator rules for promotion eligibility metadata in registries.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
-### ⏳ M17 — Stability graduation program (reduce experimental sprawl safely)
+### ✅ M17 — Stability graduation baseline (first promotions)
+- **Progress:** Stable baseline set established with `EXT-CAPNEG` and `AICP-BASE@0.1` promoted to stable, with registry lint rules for stable/deprecated metadata and productization checks for stable extensions.
+- **Next promotion candidates:** `EXT-ENFORCEMENT`, `EXT-POLICY-EVAL`.
 - **Exit:** “Stable baseline set” defined + validator rules enforce stable metadata + first promotions.
 
-### ⏳ M18 — Release discipline (changelog + compatibility policy + errata cadence)
+### 🟡 M18 — Release discipline (changelog + compatibility policy + errata cadence)
 - **Exit:** RELEASE_NOTES filled; compatibility policy; release checklist; errata cadence.
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
