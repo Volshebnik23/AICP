@@ -12,10 +12,14 @@ _Last updated: 2026-03-02_
 - **Source:** Already marked current in `ROADMAP.md`.
 - **Exit:** RFC8785 numeric canonicalization + safe number policy + fixtures + conformance.
 
-### 🔜 M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
+### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
 - **Why:** Prevent drift between registries/suites/profile marks.
-- **Source:** Already marked next in `ROADMAP.md`.
+- **Progress:** Conformance reports now emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes a single anti-drift lint gate for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
+- **Source:** Implemented in this sprint.
 - **Exit:** Lint gates + aligned names/marks across repo.
+
+### 🔜 Next milestone — M17 Stability graduation program
+- **Next concrete step:** Define the first stable baseline set and add validator rules for promotion eligibility metadata in registries.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 

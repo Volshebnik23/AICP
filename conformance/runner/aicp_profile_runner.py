@@ -63,9 +63,18 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
     elif passed and isinstance(profile_mark, str):
         marks.insert(0, profile_mark)
 
-    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    protocol_version = profile.get("aicp_version")
+    if not isinstance(protocol_version, str):
+        protocol_versions = {r.get("aicp_version") for r in suite_reports if isinstance(r.get("aicp_version"), str)}
+        if len(protocol_versions) == 1:
+            protocol_version = next(iter(protocol_versions))
+        elif not protocol_versions:
+            raise ValueError("Profile has no suites to infer aicp_version; set profile['aicp_version'] explicitly.")
+        else:
+            raise ValueError(f"Profile suites disagree on aicp_version: {sorted(protocol_versions)}")
+
     return {
-        "aicp_version": version,
+        "aicp_version": protocol_version,
         "profile_id": profile.get("profile_id"),
         "profile_version": profile.get("profile_version"),
         "timestamp": datetime.now(timezone.utc).isoformat(),

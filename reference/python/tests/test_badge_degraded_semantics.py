@@ -46,6 +46,7 @@ def test_profile_degraded_mode_removes_profile_badges(monkeypatch, tmp_path: Pat
     responses = [
         {
             "suite_id": "CT-CORE-0.1",
+            "aicp_version": "0.1",
             "passed": True,
             "failures": [],
             "compatibility_marks": [],
@@ -54,6 +55,7 @@ def test_profile_degraded_mode_removes_profile_badges(monkeypatch, tmp_path: Pat
         },
         {
             "suite_id": "CN-CAPNEG-0.1",
+            "aicp_version": "0.1",
             "passed": True,
             "failures": [],
             "compatibility_marks": ["AICP-EXT-CAPNEG-0.1"],
