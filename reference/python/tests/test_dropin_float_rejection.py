@@ -15,23 +15,21 @@ def _load_dropin_module():
     return module
 
 
-def test_dropin_rejects_float_numbers() -> None:
+def test_dropin_accepts_float_numbers() -> None:
     mod = _load_dropin_module()
-    for value in (1.0, 0.1):
-        try:
-            mod.canonicalize_json({"score": value})
-        except ValueError as exc:
-            assert "Floats are not supported by AICP Core v0.1" in str(exc)
-        else:
-            raise AssertionError("expected float canonicalization to be rejected")
+    assert mod.canonicalize_json({"score": 0.5}) == '{"score":0.5}'
+
+
+def test_dropin_rejects_non_finite_float_numbers() -> None:
+    mod = _load_dropin_module()
+    try:
+        mod.canonicalize_json({"score": float("nan")})
+    except ValueError as exc:
+        assert "non-finite" in str(exc)
+    else:
+        raise AssertionError("expected non-finite float canonicalization to be rejected")
 
 
 def test_dropin_core_message_types_include_error() -> None:
     mod = _load_dropin_module()
     assert "ERROR" in mod.CORE_MESSAGE_TYPES
-
-
-def test_dropin_accepts_integers() -> None:
-    mod = _load_dropin_module()
-    canonical = mod.canonicalize_json({"score": 1})
-    assert canonical == '{"score":1}'

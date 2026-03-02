@@ -14,4 +14,4 @@ Core contributors SHOULD provide a royalty-free patent grant or equivalent to re
 16.5 Security disclosure
 A public vulnerability disclosure process MUST exist (e.g., SECURITY.md and a security contact). Crypto- and identity-related changes MUST include new fixtures/test vectors.
 16.6 Compatibility marks
-Implementations SHOULD declare compatibility in the form: 'AICP-Core-0.1' plus a list of supported extensions and profiles (e.g., '+ EXT-CAPNEG + EXT-BIND-MCP').
+Implementations SHOULD declare compatibility in the form: 'AICP-Core-0.1' plus a list of supported extensions and profiles (e.g., '+ EXT-CAPNEG + BIND-MCP-0.1 (deprecated alias EXT-BIND-MCP may be accepted for legacy input)').

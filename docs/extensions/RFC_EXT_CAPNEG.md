@@ -23,6 +23,7 @@ CAPABILITIES_DECLARE payload MUST include:
 • limits (SHOULD): max_message_bytes, max_object_bytes, max_objects_per_request, max_clock_skew_s.
 • bindings (MAY): supported transport bindings using canonical versioned IDs (e.g., BIND-MCP-0.1). Deprecated aliases such as EXT-BIND-MCP MAY be accepted for backward compatibility but MUST NOT be emitted as canonical negotiated values.
 • languages (MAY): supported natural languages for human-facing text.
+• supported_channel_properties (MAY): object advertising channel-property support ranges/enums (CP-* IDs).
 
 AICP product profile negotiation additions (backward compatible):
 
@@ -40,6 +41,8 @@ CAPABILITIES_PROPOSE MUST carry negotiation_result. negotiation_result is a hash
 • selected.crypto_profile (MUST): selected set of crypto/profile IDs.
 • selected.privacy_mode (MUST): selected privacy_mode.
 • selected.aicp_profile (MAY): selected AICP product profile as `{profile_id, profile_version}`.
+• selected.binding (MAY): selected canonical transport binding ID (for example `BIND-MCP-0.1`).
+• selected.channel_properties (MAY): selected channel property map using CP-* IDs and values.
 • selected.required_extensions (MAY): extensions required for this session/contract.
 • selected.required_policy_categories (MAY): policy categories that MUST be enforceable.
 • selected.limits (MAY): negotiated limits.
@@ -54,6 +57,8 @@ AICP product profiles (AICP-BASE, AICP-MEDIATED-BLOCKING, …) are negotiated vi
 • Receivers MUST reject proposals that select a profile not included in their most recent CAPABILITIES_DECLARE.
 • Receivers MUST reject downgrade attempts below their local minimum acceptable security baseline (implementation-defined), and SHOULD explain via reason_code.
 • If `selected.aicp_profile` is present, receivers MUST verify it is registered and acceptable against declared `supported_aicp_profiles`/`required_aicp_profiles` for negotiation participants.
+• If `selected.binding` is present, it MUST be a canonical (non-deprecated) transport binding ID registered in `registry/transport_bindings.json`.
+• If `selected.channel_properties` is present, each selected CP-* value MUST be within each participant's declared `supported_channel_properties`.
 • If the Context Contract requires a negotiated profile for activation, CONTRACT_ACCEPT MUST reference an accepted negotiation_result (by hash or embedded copy).
 • negotiation_result_hash MUST be computed as `object_hash("capneg.negotiation_result", negotiation_result)`.
 • If a contract requires negotiated profile activation, `CONTRACT_PROPOSE.payload.contract` MUST include `contract.ext.capneg` with:

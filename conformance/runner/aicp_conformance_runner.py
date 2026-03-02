@@ -288,49 +288,57 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
             for err in sorted(case_validator.iter_errors(case_obj), key=lambda e: list(e.path)):
                 add_failure(failures, "TB-SCHEMA-01", err.message, rel_case, None)
 
-        msg = (
-            (case_obj.get("mcp_request") or {})
-            .get("params", {})
-            .get("arguments", {})
-            .get("message")
-        )
-        if not isinstance(msg, dict):
-            continue
+        extracted_messages: list[dict[str, Any]] = []
+        embedded_messages = case_obj.get("embedded_messages")
+        if isinstance(embedded_messages, list):
+            extracted_messages = [m for m in embedded_messages if isinstance(m, dict)]
+        elif isinstance(case_obj.get("embedded_message"), dict):
+            extracted_messages = [case_obj.get("embedded_message")]
+        else:
+            mcp_msg = (
+                (case_obj.get("mcp_request") or {})
+                .get("params", {})
+                .get("arguments", {})
+                .get("message")
+            )
+            if isinstance(mcp_msg, dict):
+                extracted_messages = [mcp_msg]
 
-        if core_validator is not None:
-            for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
-                add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
+        for msg in extracted_messages:
+            if core_validator is not None:
+                for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
+                    add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
 
-        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
-            mtype = msg.get("message_type")
-            if mtype not in registered_message_types:
-                add_failure(failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_case, None)
+            if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
+                mtype = msg.get("message_type")
+                if mtype not in registered_message_types:
+                    add_failure(failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_case, None)
 
-        stored_hash = msg.get("message_hash")
-        if stored_hash is not None:
-            try:
-                computed_hash = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
-            except Exception as exc:
-                add_failure(failures, "TB-EMBEDDED-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_case, None)
-            else:
-                if computed_hash != stored_hash:
-                    add_failure(
-                        failures,
-                        "TB-EMBEDDED-MESSAGE-HASH-01",
-                        f"embedded message_hash mismatch (expected {stored_hash}, got {computed_hash})",
-                        rel_case,
-                        None,
-                    )
+            stored_hash = msg.get("message_hash")
+            if stored_hash is not None:
+                try:
+                    computed_hash = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
+                except Exception as exc:
+                    add_failure(failures, "TB-EMBEDDED-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_case, None)
+                else:
+                    if computed_hash != stored_hash:
+                        add_failure(
+                            failures,
+                            "TB-EMBEDDED-MESSAGE-HASH-01",
+                            f"embedded message_hash mismatch (expected {stored_hash}, got {computed_hash})",
+                            rel_case,
+                            None,
+                        )
 
-        if can_verify_signatures:
-            for sig in msg.get("signatures", []) or []:
-                signer = sig.get("signer")
-                key = key_map.get(signer)
-                if not key:
-                    add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_case, None)
-                    continue
-                if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
-                    add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
+            if can_verify_signatures:
+                for sig in msg.get("signatures", []) or []:
+                    signer = sig.get("signer")
+                    key = key_map.get(signer)
+                    if not key:
+                        add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_case, None)
+                        continue
+                    if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
+                        add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
 
     protocol_version = suite["aicp_version"]
     passed = not failures
@@ -375,6 +383,17 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
     capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
     privacy_modes_registry = {e.get("id") for e in load_json(ROOT / "registry/privacy_modes.json")}
+    transport_bindings_registry = {
+        e.get("id"): e for e in load_json(ROOT / "registry/transport_bindings.json") if isinstance(e, dict)
+    }
+    deprecated_binding_aliases = {
+        binding_id: str(entry.get("canonical_id"))
+        for binding_id, entry in transport_bindings_registry.items()
+        if isinstance(binding_id, str)
+        and isinstance(entry.get("canonical_id"), str)
+        and entry.get("status") == "deprecated"
+    }
+    channel_property_ids = {e.get("id") for e in load_json(ROOT / "registry/channel_properties.json") if isinstance(e, dict)}
     dispute_claim_types = {e.get("id") for e in load_json(ROOT / "registry/dispute_claim_types.json")}
     security_alert_categories = {e.get("id") for e in load_json(ROOT / "registry/security_alert_categories.json")}
     aicp_profiles_registry = {
@@ -757,6 +776,105 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         continue
                     if mode not in privacy_modes_registry and not _is_namespaced_identifier(mode):
                         add_failure(t_failures, "CN-PRIVACY-MODES-01", f"selected privacy_mode '{mode}' is not registered", rel_file, line_no)
+
+        if "CN-BINDINGS-01" in enabled_checks or "CN-CHANNEL-PROPERTIES-01" in enabled_checks:
+            declares_by_party: dict[str, dict[str, Any]] = {}
+            for _, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_DECLARE":
+                    continue
+                payload = msg.get("payload") or {}
+                party_id = payload.get("party_id")
+                if isinstance(party_id, str) and party_id:
+                    declares_by_party[party_id] = payload
+
+            def _canonical_declared_bindings(bindings: list[Any]) -> set[str]:
+                out: set[str] = set()
+                for binding in bindings:
+                    if not isinstance(binding, str) or not binding:
+                        continue
+                    out.add(deprecated_binding_aliases.get(binding, binding))
+                return out
+
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_PROPOSE":
+                    continue
+                payload = msg.get("payload") or {}
+                negotiation_result = payload.get("negotiation_result") or {}
+                if not isinstance(negotiation_result, dict):
+                    continue
+                selected = negotiation_result.get("selected") or {}
+                if not isinstance(selected, dict):
+                    continue
+                participants = negotiation_result.get("participants")
+                participants = participants if isinstance(participants, list) else []
+
+                selected_binding = selected.get("binding")
+                if "CN-BINDINGS-01" in enabled_checks and selected_binding is not None:
+                    if not isinstance(selected_binding, str) or not selected_binding:
+                        add_failure(t_failures, "CN-BINDINGS-01", "selected.binding must be a non-empty string", rel_file, line_no)
+                    else:
+                        binding_entry = transport_bindings_registry.get(selected_binding)
+                        if binding_entry is None:
+                            add_failure(t_failures, "CN-BINDINGS-01", f"selected.binding '{selected_binding}' is not in registry/transport_bindings.json", rel_file, line_no)
+                        elif binding_entry.get("status") == "deprecated":
+                            add_failure(t_failures, "CN-BINDINGS-01", f"selected.binding '{selected_binding}' is deprecated; use canonical ID", rel_file, line_no)
+
+                        participant_sets: list[set[str]] = []
+                        for participant in participants:
+                            if not isinstance(participant, str):
+                                continue
+                            declared = declares_by_party.get(participant)
+                            if not isinstance(declared, dict):
+                                continue
+                            declared_bindings = declared.get("bindings")
+                            declared_list = declared_bindings if isinstance(declared_bindings, list) else []
+                            participant_sets.append(_canonical_declared_bindings(declared_list))
+                        if participant_sets:
+                            intersection = set.intersection(*participant_sets)
+                            if selected_binding not in intersection:
+                                add_failure(t_failures, "CN-BINDINGS-01", f"selected.binding '{selected_binding}' is not in participant binding intersection", rel_file, line_no)
+
+                selected_props = selected.get("channel_properties")
+                if "CN-CHANNEL-PROPERTIES-01" in enabled_checks and selected_props is not None:
+                    if not isinstance(selected_props, dict):
+                        add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", "selected.channel_properties must be an object", rel_file, line_no)
+                        continue
+                    for key in selected_props.keys():
+                        if isinstance(key, str) and key.startswith("vendor:/"):
+                            continue
+                        if key not in channel_property_ids:
+                            add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"unknown channel property key '{key}'", rel_file, line_no)
+                    for participant in participants:
+                        if not isinstance(participant, str):
+                            continue
+                        declared = declares_by_party.get(participant)
+                        if not isinstance(declared, dict):
+                            continue
+                        support = declared.get("supported_channel_properties")
+                        if not isinstance(support, dict):
+                            add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"participant '{participant}' missing supported_channel_properties", rel_file, line_no)
+                            continue
+                        for key, value in selected_props.items():
+                            if isinstance(key, str) and key.startswith("vendor:/"):
+                                continue
+                            rule = support.get(key)
+                            if key == "CP-REPLAY-WINDOW-0.1":
+                                if not isinstance(value, int) or value < 0:
+                                    add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"selected {key} must be integer >= 0", rel_file, line_no)
+                                    continue
+                                if not isinstance(rule, dict):
+                                    add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"participant '{participant}' missing range for {key}", rel_file, line_no)
+                                    continue
+                                mn = rule.get("min")
+                                mx = rule.get("max")
+                                if not isinstance(mn, int) or not isinstance(mx, int) or mn < 0 or mx < 0 or mn > mx:
+                                    add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"participant '{participant}' has invalid {key} range", rel_file, line_no)
+                                    continue
+                                if value < mn or value > mx:
+                                    add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"selected {key}={value} outside participant '{participant}' range [{mn},{mx}]", rel_file, line_no)
+                            else:
+                                if not isinstance(rule, list) or value not in rule:
+                                    add_failure(t_failures, "CN-CHANNEL-PROPERTIES-01", f"selected {key}='{value}' not supported by participant '{participant}'", rel_file, line_no)
 
         if "CN-NEGRESULT-HASH-01" in enabled_checks or "CN-CONTRACT-BIND-01" in enabled_checks:
             proposed_negotiation_result: dict[str, Any] | None = None
