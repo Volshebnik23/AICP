@@ -471,11 +471,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "abe04c9c0001f20538f6179a46235a3b1ac41ba57c18f6a8066a237dd561a6b8",
+      "combined_sha256": "6a2118f8dd9cf231abb04659d8fc5f0b90b5c9f7d6a8655512525f542cdcf1f0",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "782b09133ecf7bf1da9260a4159ceb1b58102b91e14f4ed7b0639bcc6e49a201"
+          "sha256": "5dcb9570d4517e8e4fdbd001c19ac3d43ffc8e6772c0b57cbcdbea33187fcab2"
         },
         {
           "path": "registry/alert_codes.json",
@@ -507,7 +507,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "b40f2dd81843410f23c557e40fbf207226cbd52013a3f71aaf86a47a4966e24b"
+          "sha256": "4b36921aba95257d0442bb6b3a44920bcf7d7be20be028d778355976e4e18e5d"
         },
         {
           "path": "registry/hash_domains.json",
@@ -515,7 +515,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "b639d1b3cda3f0fad718d636abc676f4fae112340ee23eabacd7ebca4ab00c7a"
+          "sha256": "17c9d61d4521e50fcf59de73e78e0e7337ff4b9db1fd32422bf7a72a35d3a5c0"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -523,7 +523,7 @@
         },
         {
           "path": "registry/policy_categories.json",
-          "sha256": "667b20562db391fc56fa22c3352e13f4547a4857c9afd721583589fec1ca1abe"
+          "sha256": "b9e195bfb3f525d88191ea457130a4e92561374e1490d085189acd27f7293e42"
         },
         {
           "path": "registry/policy_languages.json",
@@ -543,7 +543,7 @@
         },
         {
           "path": "registry/transport_bindings.json",
-          "sha256": "5c8cf36e3979d3805526f0dc9688c2f5bb14939a3853bc3834f78d3973c2fa7c"
+          "sha256": "159424faf82d33b252738645195f4e22fceffdc2e520f8e2810f6aaeca3db895"
         }
       ]
     },

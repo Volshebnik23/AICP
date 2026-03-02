@@ -52,3 +52,12 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 
 - Error and recovery playbook: [docs/ops/ERROR_AND_RECOVERY.md](docs/ops/ERROR_AND_RECOVERY.md)
 - Security hardening guidance: [security_review/OPS_HARDENING_GUIDE.md](security_review/OPS_HARDENING_GUIDE.md)
+
+
+## Protocol Adapter / Gateway path
+
+If you are integrating AICP with an existing platform gateway, start with:
+- Guide: `docs/guides/Protocol_Adapter_Gateway.md`
+- Template: `templates/protocol-adapter/`
+
+Recommended CI baseline: `make validate` + `make conformance-profiles`.

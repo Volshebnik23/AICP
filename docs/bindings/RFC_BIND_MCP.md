@@ -20,3 +20,10 @@ Verification command:
 
 
 Compatibility note: `EXT-BIND-MCP` is a deprecated alias retained only for backward compatibility. New negotiations and evidence MUST use `BIND-MCP-0.1`.
+
+
+## BIND-MCP stable compatibility notes {#bind-mcp-stable}
+- `BIND-MCP-0.1` is the canonical stable identifier for MCP transport negotiation and compatibility evidence.
+
+## EXT-BIND-MCP deprecation notes {#bind-mcp-compatibility-note}
+- `EXT-BIND-MCP` is a deprecated alias retained only for backward compatibility during migration.

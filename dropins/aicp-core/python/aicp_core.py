@@ -14,11 +14,16 @@ CORE_MESSAGE_TYPES = {
     "ERROR",
 }
 
+SAFE_INTEGER_MAX = (2 ** 53) - 1
+SAFE_INTEGER_MIN = -SAFE_INTEGER_MAX
+
 
 def _reject_unsupported_numbers(value: Any) -> None:
     if isinstance(value, bool) or value is None:
         return
-    if isinstance(value, (int,)):
+    if isinstance(value, int):
+        if value < SAFE_INTEGER_MIN or value > SAFE_INTEGER_MAX:
+            raise ValueError("Integers outside IEEE-754 safe range are not supported by AICP Core v0.1")
         return
     if isinstance(value, float):
         raise ValueError("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling")

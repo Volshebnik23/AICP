@@ -15,6 +15,7 @@
 - Pytest degraded-badge test mocks now include protocol version fields required by profile aggregation.
 
 ### Compatibility
+- Stability graduation: `EXT-CAPNEG` and `AICP-BASE@0.1` are now marked stable (non-breaking; signals stricter compatibility expectations).
 - **Backward compatible** for current Core schema shapes.
 - **Policy tightening**: unsafe integers are now rejected during canonicalization; encode out-of-range values as strings.
 - M16b (future RFC8785 float support) MUST follow compatibility policy and include migration notes.

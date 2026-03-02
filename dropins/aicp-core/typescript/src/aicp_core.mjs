@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-const CORE_MESSAGE_TYPES = new Set([
+export const CORE_MESSAGE_TYPES = new Set([
   "CONTRACT_PROPOSE",
   "CONTRACT_ACCEPT",
   "CONTEXT_AMEND",
@@ -12,7 +12,12 @@ const CORE_MESSAGE_TYPES = new Set([
 function rejectUnsupportedNumbers(value) {
   if (typeof value === "number") {
     if (!Number.isFinite(value)) throw new Error("Unsupported non-finite float");
-    if (!Number.isInteger(value)) throw new Error("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling");
+    if (!Number.isSafeInteger(value)) {
+      if (Number.isInteger(value)) {
+        throw new Error("Integers outside IEEE-754 safe range are not supported by AICP Core v0.1");
+      }
+      throw new Error("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling");
+    }
     return;
   }
   if (Array.isArray(value)) {
