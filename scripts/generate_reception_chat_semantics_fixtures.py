@@ -54,7 +54,7 @@ def _base_rows(deliver_sender: str) -> list[dict]:
         },
         "transcript_binding": "chain:rc1:m3"
     }
-    negotiation_hash = object_hash("negotiation_result", negotiation_result)
+    negotiation_hash = object_hash("capneg.negotiation_result", negotiation_result)
 
     return [
         {

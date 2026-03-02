@@ -77,11 +77,19 @@ An implementation claiming profile conformance MUST satisfy all required suites 
   - Participant governance: `docs/extensions/RFC_EXT_PARTICIPANTS.md`
   - Security alerts and disputes references: `docs/extensions/RFC_EXT_SECURITY_ALERTS.md`, `docs/extensions/RFC_EXT_DISPUTES.md`
 
-### 2.2 Planned (draft)
 
 #### `AICP-DELEGATED-IDENTITY`
-- **Status:** Planned (draft).
-- **Dependencies:** Delegated identity claims container extension and verification suite.
+- **Status:** Available now.
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-IDENTITY-LC`, and `EXT-DELEGATED-IDENTITY`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-CAPNEG: `conformance/extensions/CN_CAPNEG_0.1.json`
+  - EXT-IDENTITY-LC: `conformance/extensions/ID_IDENTITY_LC_0.1.json`
+  - EXT-DELEGATED-IDENTITY: `conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json`
+- **Intent:** Bind agent senders to issuer-attested account identities with explicit scope/expiry/revocation checks for acting-on-behalf-of semantics.
+- **Canonical refs:** `docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md`, `docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md`
+
+### 2.2 Planned (draft)
 
 #### `AICP-WORKFLOW-ORCHESTRATION`
 - **Status:** Planned (draft).

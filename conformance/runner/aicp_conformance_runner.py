@@ -1169,6 +1169,90 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             if revoke_idx is not None and idx > revoke_idx:
                                 add_failure(t_failures, "ID-REVOKE-01", f"contract-changing message signed with revoked kid '{kid}'", rel_file, line_no)
 
+        if any(check in enabled_checks for check in {"DI-OBJ-01", "DI-ISSUE-01", "DI-SIGNED-01", "DI-ACT-01", "DI-EXPIRY-01", "DI-REVOKE-01"}):
+            issued_bindings: dict[str, dict[str, Any]] = {}
+            revoked_effective_at: dict[str, datetime] = {}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                sender = msg.get("sender")
+
+                if mtype == "SUBJECT_BINDING_ISSUE":
+                    signatures = msg.get("signatures") or []
+                    if "DI-SIGNED-01" in enabled_checks and (not isinstance(signatures, list) or len(signatures) == 0):
+                        add_failure(t_failures, "DI-SIGNED-01", "SUBJECT_BINDING_ISSUE must include non-empty signatures", rel_file, line_no)
+
+                    binding_hash = payload.get("binding_hash")
+                    binding_ref = payload.get("binding_ref")
+                    binding_obj = None
+                    if isinstance(binding_ref, dict):
+                        binding_obj = binding_ref.get("object")
+                        if "DI-OBJ-01" in enabled_checks:
+                            if binding_ref.get("object_type") != "subject_binding":
+                                add_failure(t_failures, "DI-OBJ-01", "binding_ref.object_type must be 'subject_binding'", rel_file, line_no)
+                            elif isinstance(binding_obj, dict):
+                                computed = object_hash("subject_binding", binding_obj)
+                                if binding_ref.get("object_hash") != computed:
+                                    add_failure(t_failures, "DI-OBJ-01", "binding_ref.object_hash must equal object_hash('subject_binding', binding_ref.object)", rel_file, line_no)
+                            else:
+                                add_failure(t_failures, "DI-OBJ-01", "binding_ref.object must be an object", rel_file, line_no)
+
+                        if "DI-ISSUE-01" in enabled_checks:
+                            ref_hash = binding_ref.get("object_hash")
+                            if isinstance(ref_hash, str) and isinstance(binding_hash, str) and binding_hash != ref_hash:
+                                add_failure(t_failures, "DI-ISSUE-01", "payload.binding_hash must equal binding_ref.object_hash", rel_file, line_no)
+                            issuer = binding_obj.get("issuer") if isinstance(binding_obj, dict) else None
+                            if isinstance(issuer, str) and issuer != sender:
+                                add_failure(t_failures, "DI-ISSUE-01", "SUBJECT_BINDING_ISSUE sender must equal binding_ref.object.issuer", rel_file, line_no)
+
+                    if isinstance(binding_hash, str) and binding_hash:
+                        issued_bindings[binding_hash] = {
+                            "object": binding_obj if isinstance(binding_obj, dict) else None,
+                            "line_no": line_no,
+                        }
+
+                if mtype == "SUBJECT_BINDING_REVOKE":
+                    signatures = msg.get("signatures") or []
+                    if "DI-SIGNED-01" in enabled_checks and (not isinstance(signatures, list) or len(signatures) == 0):
+                        add_failure(t_failures, "DI-SIGNED-01", "SUBJECT_BINDING_REVOKE must include non-empty signatures", rel_file, line_no)
+
+                    binding_hash = payload.get("binding_hash")
+                    eff = _parse_iso_datetime(payload.get("effective_at"))
+                    if isinstance(binding_hash, str) and binding_hash and eff is not None:
+                        prev = revoked_effective_at.get(binding_hash)
+                        if prev is None or eff < prev:
+                            revoked_effective_at[binding_hash] = eff
+
+                ext = msg.get("ext") or {}
+                if "DI-ACT-01" in enabled_checks and isinstance(ext, dict):
+                    binding_hash = ext.get("subject_binding_hash")
+                    if isinstance(binding_hash, str) and binding_hash:
+                        issued = issued_bindings.get(binding_hash)
+                        if issued is None:
+                            add_failure(t_failures, "DI-ACT-01", "ext.subject_binding_hash must reference a prior SUBJECT_BINDING_ISSUE", rel_file, line_no)
+                            continue
+
+                        binding_obj = issued.get("object")
+                        if not isinstance(binding_obj, dict):
+                            add_failure(t_failures, "DI-ACT-01", "issued binding_ref.object must be present for acting-on-behalf-of validation", rel_file, line_no)
+                            continue
+
+                        agent_id = binding_obj.get("agent_id")
+                        if not isinstance(agent_id, str) or agent_id != sender:
+                            add_failure(t_failures, "DI-ACT-01", "message sender must equal binding agent_id", rel_file, line_no)
+
+                        msg_ts = _parse_iso_datetime(msg.get("timestamp"))
+                        exp_ts = _parse_iso_datetime(binding_obj.get("expires_at"))
+                        if msg_ts is None or exp_ts is None:
+                            add_failure(t_failures, "DI-EXPIRY-01", "binding/message timestamps must be valid date-time", rel_file, line_no)
+                        elif msg_ts > exp_ts:
+                            add_failure(t_failures, "DI-EXPIRY-01", "ext.subject_binding_hash used after binding expires", rel_file, line_no)
+
+                        revoked_at = revoked_effective_at.get(binding_hash)
+                        if revoked_at is not None and msg_ts is not None and revoked_at <= msg_ts:
+                            add_failure(t_failures, "DI-REVOKE-01", "ext.subject_binding_hash used at/after effective revocation", rel_file, line_no)
+
         if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
             first_contract = None
             for _, msg in rows:
@@ -1309,20 +1393,38 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if not isinstance(selected, dict):
                         add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.selected must be an object", rel_file, first_contract_line_no)
 
-                    accepted_negotiation_result = None
+                    expected_negotiation_result = None
                     for _, candidate in rows:
-                        if candidate.get("message_type") == "CAPABILITIES_ACCEPT":
-                            cap_payload = candidate.get("payload") or {}
-                            if cap_payload.get("accepted") is True and isinstance(cap_payload.get("negotiation_result"), dict):
-                                accepted_negotiation_result = cap_payload.get("negotiation_result")
+                        if candidate.get("message_type") == "CAPABILITIES_PROPOSE":
+                            nr = (candidate.get("payload") or {}).get("negotiation_result")
+                            if isinstance(nr, dict):
+                                expected_negotiation_result = nr
                                 break
-                    if isinstance(accepted_negotiation_result, dict):
-                        accepted_hash = object_hash("negotiation_result", accepted_negotiation_result)
-                        if isinstance(negotiation_result_hash, str) and negotiation_result_hash != accepted_hash:
-                            add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.negotiation_result_hash must match accepted CAPABILITIES_ACCEPT negotiation_result", rel_file, first_contract_line_no)
-                        accepted_selected = accepted_negotiation_result.get("selected")
-                        if isinstance(selected, dict) and isinstance(accepted_selected, dict) and selected != accepted_selected:
-                            add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.selected must match accepted CAPABILITIES_ACCEPT negotiation_result.selected", rel_file, first_contract_line_no)
+
+                    expected_hash = None
+                    if isinstance(expected_negotiation_result, dict):
+                        expected_hash = object_hash("capneg.negotiation_result", expected_negotiation_result)
+                        if isinstance(negotiation_result_hash, str) and negotiation_result_hash != expected_hash:
+                            add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.negotiation_result_hash must match CAPABILITIES_PROPOSE negotiation_result hash", rel_file, first_contract_line_no)
+                        expected_selected = expected_negotiation_result.get("selected")
+                        if isinstance(selected, dict) and isinstance(expected_selected, dict) and selected != expected_selected:
+                            add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.capneg.selected must match CAPABILITIES_PROPOSE negotiation_result.selected", rel_file, first_contract_line_no)
+
+                    for line_no, candidate in rows:
+                        if candidate.get("message_type") != "CAPABILITIES_ACCEPT":
+                            continue
+                        cap_payload = candidate.get("payload") or {}
+                        if cap_payload.get("accepted") is not True:
+                            continue
+                        accept_nr = cap_payload.get("negotiation_result")
+                        accept_hash = cap_payload.get("negotiation_result_hash")
+                        if isinstance(expected_hash, str):
+                            if isinstance(accept_nr, dict):
+                                computed_accept = object_hash("capneg.negotiation_result", accept_nr)
+                                if computed_accept != expected_hash:
+                                    add_failure(t_failures, "RC-CONTRACT-01", "CAPABILITIES_ACCEPT negotiation_result must match CAPABILITIES_PROPOSE negotiation_result hash", rel_file, line_no)
+                            if isinstance(accept_hash, str) and accept_hash != expected_hash:
+                                add_failure(t_failures, "RC-CONTRACT-01", "CAPABILITIES_ACCEPT negotiation_result_hash must match CAPABILITIES_PROPOSE negotiation_result hash", rel_file, line_no)
 
                 if enforcement_cfg is None:
                     add_failure(t_failures, "RC-CONTRACT-01", "contract.ext.enforcement (or contract.extensions['EXT-ENFORCEMENT']) must be present", rel_file, first_contract_line_no)

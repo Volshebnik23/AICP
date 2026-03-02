@@ -18,20 +18,20 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "AICP-MEDIATED-BLOCKING@0.1",
+    "id": "AICP-DELEGATED-IDENTITY@0.1",
     "type": "aicp_profiles",
     "spec_ref": "docs/profiles/AICP_Profiles.md",
-    "security_considerations": "Mediated blocking requires deterministic CAPNEG, policy-eval, and enforcement gate checks with downgrade resistance.",
-    "profile_id": "AICP-MEDIATED-BLOCKING",
+    "security_considerations": "Delegated identity claims must be issuer-signed, expiry-bounded, and revocation-enforced for acting-on-behalf-of use.",
+    "profile_id": "AICP-DELEGATED-IDENTITY",
     "profile_version": "0.1",
     "required_extensions": [
       "EXT-CAPNEG",
-      "EXT-POLICY-EVAL",
-      "EXT-ENFORCEMENT"
+      "EXT-IDENTITY-LC",
+      "EXT-DELEGATED-IDENTITY"
     ],
     "required_policy_categories": [],
     "required_crypto_profiles": [],
-    "description": "Mediated blocking profile aligned with PF_AICP_MEDIATED_BLOCKING_0.1 required suites."
+    "description": "Delegated identity profile aligned with PF_AICP_DELEGATED_IDENTITY_0.1 required suites."
   },
   {
     "status": "experimental",
@@ -58,19 +58,20 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "AICP-RESUMABLE-SESSIONS@0.1",
+    "id": "AICP-MEDIATED-BLOCKING@0.1",
     "type": "aicp_profiles",
     "spec_ref": "docs/profiles/AICP_Profiles.md",
-    "security_considerations": "Resume and object resync flows must prevent replay, cross-session confusion, and unbounded recovery amplification.",
-    "profile_id": "AICP-RESUMABLE-SESSIONS",
+    "security_considerations": "Mediated blocking requires deterministic CAPNEG, policy-eval, and enforcement gate checks with downgrade resistance.",
+    "profile_id": "AICP-MEDIATED-BLOCKING",
     "profile_version": "0.1",
     "required_extensions": [
-      "EXT-RESUME",
-      "EXT-OBJECT-RESYNC"
+      "EXT-CAPNEG",
+      "EXT-POLICY-EVAL",
+      "EXT-ENFORCEMENT"
     ],
     "required_policy_categories": [],
     "required_crypto_profiles": [],
-    "description": "Resumable sessions profile aligned with PF_AICP_RESUMABLE_SESSIONS_0.1 required suites."
+    "description": "Mediated blocking profile aligned with PF_AICP_MEDIATED_BLOCKING_0.1 required suites."
   },
   {
     "status": "experimental",
@@ -93,5 +94,23 @@
     "required_policy_categories": [],
     "required_crypto_profiles": [],
     "description": "Reception chat profile aligned with PF_AICP_RECEPTION_CHAT_0.1 required suites."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-RESUMABLE-SESSIONS@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Resume and object resync flows must prevent replay, cross-session confusion, and unbounded recovery amplification.",
+    "profile_id": "AICP-RESUMABLE-SESSIONS",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-RESUME",
+      "EXT-OBJECT-RESYNC"
+    ],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Resumable sessions profile aligned with PF_AICP_RESUMABLE_SESSIONS_0.1 required suites."
   }
 ]
