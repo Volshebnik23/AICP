@@ -1,0 +1,282 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/bindings/bind-http-ws.schema.json",
+  "title": "AICP HTTP/WS binding conformance case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "operation",
+    "http_request",
+    "http_response",
+    "embedded_messages"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^TB-HTTP-\\d{2}$"
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "sendMessage",
+        "pollMessages",
+        "getHead",
+        "overload"
+      ]
+    },
+    "http_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "path"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/aicp/v1/sessions/.+"
+        },
+        "query": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "body": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "http_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "integer"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "body": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "embedded_messages": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "minItems": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "sendMessage"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "required": [
+              "method",
+              "path",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "pattern": "/messages$"
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "application/json"
+                  }
+                }
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "message_id"
+                ]
+              }
+            }
+          },
+          "http_response": {
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": 202
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "pollMessages"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "required": [
+              "method",
+              "path",
+              "query"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              }
+            }
+          },
+          "http_response": {
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 200
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "messages",
+                  "next_cursor"
+                ],
+                "properties": {
+                  "messages": {
+                    "type": "array"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "getHead"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "required": [
+              "method",
+              "path"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/head$"
+              }
+            }
+          },
+          "http_response": {
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": 200
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "overload"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_response": {
+            "required": [
+              "status",
+              "headers"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  429,
+                  503
+                ]
+              },
+              "headers": {
+                "required": [
+                  "Retry-After"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

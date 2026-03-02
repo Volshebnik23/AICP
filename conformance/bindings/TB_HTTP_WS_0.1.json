@@ -1,0 +1,20 @@
+{
+  "suite_id": "TB-HTTP-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, and overload signaling.",
+  "schema_ref": "schemas/bindings/bind-http-ws.schema.json",
+  "cases": [
+    "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
+    "fixtures/bindings/http-ws/TB-HTTP-02_pollMessages.json",
+    "fixtures/bindings/http-ws/TB-HTTP-03_getHead.json",
+    "fixtures/bindings/http-ws/TB-HTTP-04_overload.json"
+  ],
+  "compatibility_mark": "AICP-BIND-HTTP-0.1",
+  "checks": [
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    }
+  ]
+}

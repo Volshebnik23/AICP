@@ -10,7 +10,7 @@ AICP requires public, mirrorable registries and a transparent change-control pro
 •	Policy Categories Registry (machine-checkable schemas and semantics).
 •	Security and Crypto Profiles Registry (canonicalization/hash/sign/encryption profiles).
 •	Object Hash Domains Registry (domain separation strings).
-•	Transport Bindings Registry (EXT-BIND-*).
+•	Transport Bindings Registry (canonical BIND-*-<ver>, deprecated aliases EXT-BIND-*).
 •	Policy Languages and Bindings Registry (for EXT-POLICY-EVAL).
 •	Policy Reason Codes Registry (stable reason identifiers).
 •	Attestation Types and Identity Providers Registry (for identity lifecycle).

@@ -288,49 +288,57 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
             for err in sorted(case_validator.iter_errors(case_obj), key=lambda e: list(e.path)):
                 add_failure(failures, "TB-SCHEMA-01", err.message, rel_case, None)
 
-        msg = (
-            (case_obj.get("mcp_request") or {})
-            .get("params", {})
-            .get("arguments", {})
-            .get("message")
-        )
-        if not isinstance(msg, dict):
-            continue
+        extracted_messages: list[dict[str, Any]] = []
+        embedded_messages = case_obj.get("embedded_messages")
+        if isinstance(embedded_messages, list):
+            extracted_messages = [m for m in embedded_messages if isinstance(m, dict)]
+        elif isinstance(case_obj.get("embedded_message"), dict):
+            extracted_messages = [case_obj.get("embedded_message")]
+        else:
+            mcp_msg = (
+                (case_obj.get("mcp_request") or {})
+                .get("params", {})
+                .get("arguments", {})
+                .get("message")
+            )
+            if isinstance(mcp_msg, dict):
+                extracted_messages = [mcp_msg]
 
-        if core_validator is not None:
-            for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
-                add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
+        for msg in extracted_messages:
+            if core_validator is not None:
+                for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):
+                    add_failure(failures, "TB-EMBEDDED-MESSAGE-SCHEMA-01", err.message, rel_case, None)
 
-        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
-            mtype = msg.get("message_type")
-            if mtype not in registered_message_types:
-                add_failure(failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_case, None)
+            if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
+                mtype = msg.get("message_type")
+                if mtype not in registered_message_types:
+                    add_failure(failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_case, None)
 
-        stored_hash = msg.get("message_hash")
-        if stored_hash is not None:
-            try:
-                computed_hash = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
-            except Exception as exc:
-                add_failure(failures, "TB-EMBEDDED-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_case, None)
-            else:
-                if computed_hash != stored_hash:
-                    add_failure(
-                        failures,
-                        "TB-EMBEDDED-MESSAGE-HASH-01",
-                        f"embedded message_hash mismatch (expected {stored_hash}, got {computed_hash})",
-                        rel_case,
-                        None,
-                    )
+            stored_hash = msg.get("message_hash")
+            if stored_hash is not None:
+                try:
+                    computed_hash = message_hash_from_body(_message_body_without_hash_and_signatures(msg))
+                except Exception as exc:
+                    add_failure(failures, "TB-EMBEDDED-MESSAGE-HASH-01", f"hash recompute error: {exc}", rel_case, None)
+                else:
+                    if computed_hash != stored_hash:
+                        add_failure(
+                            failures,
+                            "TB-EMBEDDED-MESSAGE-HASH-01",
+                            f"embedded message_hash mismatch (expected {stored_hash}, got {computed_hash})",
+                            rel_case,
+                            None,
+                        )
 
-        if can_verify_signatures:
-            for sig in msg.get("signatures", []) or []:
-                signer = sig.get("signer")
-                key = key_map.get(signer)
-                if not key:
-                    add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_case, None)
-                    continue
-                if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
-                    add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
+            if can_verify_signatures:
+                for sig in msg.get("signatures", []) or []:
+                    signer = sig.get("signer")
+                    key = key_map.get(signer)
+                    if not key:
+                        add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", f"missing public key for signer {signer}", rel_case, None)
+                        continue
+                    if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
+                        add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
 
     protocol_version = suite["aicp_version"]
     passed = not failures

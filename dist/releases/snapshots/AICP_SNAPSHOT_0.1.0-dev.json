@@ -1,8 +1,12 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "be014b3447e6c4ee6f37c689359e27dc466d9957564add286ffdc0967529969d",
+      "combined_sha256": "ddf8ef3151d29045a37cf975e3970f69faffe4baf904ac0d5c171ba3e464537c",
       "files": [
+        {
+          "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
+          "sha256": "67bc3845d4c8b853d8eeba109f36428fe6ff682183899f5545920f5f12957b19"
+        },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
           "sha256": "2a93e947a2184b9da494d9c8404fa30c61fc5a193514690422ef1c8419ecb35f"
@@ -126,8 +130,24 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "dbbc2543d2a0adfec4090a61d3833b2d56eb486fb350d69ab97d381896ee8520",
+      "combined_sha256": "585cb6733ef05760cb71a741be1cbfe103d3f4bcd0f3121a185a97fcd0387797",
       "files": [
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
+          "sha256": "3bcfda51a1ca05cf074a1e61cf55cf40d729c1935e5ee8f7d3c7b18ad58e5151"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-02_pollMessages.json",
+          "sha256": "9ed83ec4c04323b27052feefe68f8f69304ec832d4608af0d77e644ff894b67f"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-03_getHead.json",
+          "sha256": "1b8d1ea19cbbfaa7ed177d2e58a0c1172591bd4beaa88474ca713e2a28f1df94"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-04_overload.json",
+          "sha256": "4c30f239c7bca4288974250d46dfff3530724a2cf16c7b236273b6c7cfa0ca6b"
+        },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
           "sha256": "ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
@@ -560,8 +580,12 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "60ef104eb2d1e7518b70293576a3f8ade9a742bcfbb6119a412aef897850102a",
+      "combined_sha256": "d06b12cf4089a20c1280c7454acfe5bddb9505942f05c70ad5ed8c46066a243c",
       "files": [
+        {
+          "path": "schemas/bindings/bind-http-ws.schema.json",
+          "sha256": "02c1aabe857deb604681917711aad01c33aaaac5daab8333efe4cb05d804a784"
+        },
         {
           "path": "schemas/bindings/bind-mcp.schema.json",
           "sha256": "7bb7801ef0a0af4a60e2d1d8fb57510a859283658b08efee35128d63cd668f23"
@@ -677,6 +701,10 @@
       }
     ],
     "suites": [
+      {
+        "mark": "AICP-BIND-HTTP-0.1",
+        "path": "conformance/bindings/TB_HTTP_WS_0.1.json"
+      },
       {
         "mark": "AICP-BIND-MCP-0.1",
         "path": "conformance/bindings/TB_MCP_0.1.json"

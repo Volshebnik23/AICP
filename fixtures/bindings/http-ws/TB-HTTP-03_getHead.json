@@ -1,0 +1,17 @@
+{
+  "case_id": "TB-HTTP-03",
+  "operation": "getHead",
+  "http_request": {
+    "method": "GET",
+    "path": "/aicp/v1/sessions/sGT1/head"
+  },
+  "http_response": {
+    "status": 200,
+    "body": {
+      "branch_id": "main",
+      "head_version": "v1",
+      "head_message_id": "m3"
+    }
+  },
+  "embedded_messages": []
+}

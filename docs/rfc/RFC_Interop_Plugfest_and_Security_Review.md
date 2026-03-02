@@ -36,7 +36,7 @@ This roadmap tracks progress from positioning to an executable protocol suite. C
 •	[Done] 8) Registry and change control.
 •	[Done] 9) Error model and recovery.
 •	[Done] 10) EXT-CAPNEG.
-•	[Done] 11) Transport bindings (EXT-BIND-*).
+•	[Done] 11) Transport bindings (canonical BIND-*-<ver>, deprecated aliases EXT-BIND-*).
 •	[Done] 12) EXT-POLICY-EVAL.
 •	[Done] 13) EXT-OBJECT-RESYNC.
 •	[Done] 14) EXT-IDENTITY-LC.
