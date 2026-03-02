@@ -4,7 +4,7 @@ function rejectUnsupportedNumbers(value) {
       throw new Error("Unsupported non-finite float for canonicalization");
     }
     if (!Number.isInteger(value)) {
-      throw new Error("Float canonicalization beyond current fixture scope is not implemented");
+      throw new Error("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling");
     }
     return;
   }

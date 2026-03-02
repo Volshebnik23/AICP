@@ -1,0 +1,40 @@
+{
+  "suite_id": "CT-NUMERIC-GUARDRAILS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Core numeric guardrails ensuring float-bearing payloads fail deterministic message-hash checks.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {
+      "id": "NUM-01",
+      "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-MESSAGE-HASH-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    }
+  ],
+  "compatibility_mark": "AICP-Core-NUMERIC-GUARDRAILS-0.1"
+}

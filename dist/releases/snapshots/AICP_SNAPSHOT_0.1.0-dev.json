@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ba61307706eed49081b373f05ee148364b2b434f52f8266f86ac4d9b2079f228",
+      "combined_sha256": "e09a0bdffde8c57cfc4afeb5865b82d0160fec9ddd15817c90c0fb7489e21268",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -14,6 +14,10 @@
         {
           "path": "conformance/core/CT_CORE_0.1.json",
           "sha256": "05c3c707575d5cedef26101f376b66eddddc01134ea169b6d35164d90b7a73d6"
+        },
+        {
+          "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
+          "sha256": "b3d7990015041ab387ea06d376bc980cf3313612b55b25a6bfc8745c593332c5"
         },
         {
           "path": "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
@@ -118,7 +122,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "67953089129ca3041d677fd69fb906e3bd5020727e98a2eed0e8b46800a6e564",
+      "combined_sha256": "0cc8236d241312541664e3612a5dbb856d3e9e91fb55ca63e6bf7842b577d798",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -131,6 +135,10 @@
         {
           "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
           "sha256": "b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+        },
+        {
+          "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
+          "sha256": "219aefa2a62108f10392cdc181e6b526c49dfa4a9edf352d62095e8655330b0e"
         },
         {
           "path": "fixtures/core_tv.json",
@@ -656,6 +664,10 @@
       {
         "mark": "AICP-Core-0.1",
         "path": "conformance/core/CT_CORE_0.1.json"
+      },
+      {
+        "mark": "AICP-Core-NUMERIC-GUARDRAILS-0.1",
+        "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json"
       },
       {
         "mark": "AICP-DEMO-ENFORCEMENT-BEHAVIORAL-0.1",
