@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "0d4b42562dd1d7e535881f290861d555f372d08d256762d4f42db441c45e2f42",
+      "combined_sha256": "be014b3447e6c4ee6f37c689359e27dc466d9957564add286ffdc0967529969d",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -29,7 +29,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "8b2fde6c500c8c0628b4c98b7169983052a4ed31c5150569378a4224b62b0c7b"
+          "sha256": "1e45fdb44485c20ecfeeee6d98dc4a705a87b13b534ed0b6f61f7d0261e44d63"
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -126,7 +126,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "8e1acd9c570d0871f510df5cd64105f30c1bec6d27328f34485fbbc75cb93bdd",
+      "combined_sha256": "dbbc2543d2a0adfec4090a61d3833b2d56eb486fb350d69ab97d381896ee8520",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -215,6 +215,10 @@
         {
           "path": "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "sha256": "1541b934996b73a4047568ab22ba9a128ae983d02a5437805ae829a086c69fe9"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+          "sha256": "250bc11684fa3b1c3cedef0930c464b82574397debd46ab86518ad90ab5c4f03"
         },
         {
           "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
@@ -475,7 +479,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "144bb56bab9f1c098f91e0e0106317bca74111337eb768b01c16af219fbfdd4e",
+      "combined_sha256": "44bf8c54e5453fae472d33b634894a8a03a7abd24e8325e6694cce594139f008",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -496,6 +500,10 @@
         {
           "path": "registry/capneg_reason_codes.json",
           "sha256": "5107fe8f3bd3c1f4d648cadb8a0ebc6b6a0b66dd37ee228043bc060b27f7ee89"
+        },
+        {
+          "path": "registry/channel_properties.json",
+          "sha256": "585792b40e2bf76912c2adb804d3e8ddd8fac9c3e8cffd92eea829eb2cec50ae"
         },
         {
           "path": "registry/crypto_profiles.json",
@@ -547,16 +555,20 @@
         },
         {
           "path": "registry/transport_bindings.json",
-          "sha256": "159424faf82d33b252738645195f4e22fceffdc2e520f8e2810f6aaeca3db895"
+          "sha256": "57ae337e544ed758751bb232f4a344e0d796efb98b07c9662e4e6aa33482df33"
         }
       ]
     },
     "schemas": {
-      "combined_sha256": "66ba4f7ff85981ff54be8f92f4e1233745c37d9db84efa5a38b2033e9c58b96c",
+      "combined_sha256": "60ef104eb2d1e7518b70293576a3f8ade9a742bcfbb6119a412aef897850102a",
       "files": [
         {
           "path": "schemas/bindings/bind-mcp.schema.json",
           "sha256": "7bb7801ef0a0af4a60e2d1d8fb57510a859283658b08efee35128d63cd668f23"
+        },
+        {
+          "path": "schemas/bindings/channel-properties.schema.json",
+          "sha256": "ceaceb92e12eb6c078ea227ecae58098a868675203faef5415d065d256566746"
         },
         {
           "path": "schemas/core/aicp-core-contract.schema.json",
@@ -580,7 +592,7 @@
         },
         {
           "path": "schemas/extensions/ext-capneg-payloads.schema.json",
-          "sha256": "208306863decd94d12a00efee58fd5674a6d2febf50e9cf3a971517fe63143bd"
+          "sha256": "a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
         },
         {
           "path": "schemas/extensions/ext-delegated-identity-payloads.schema.json",

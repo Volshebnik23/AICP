@@ -1,4 +1,4 @@
-# AICP v76 — Roadmap Items (repo-backed)
+# AICP v80 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
@@ -19,9 +19,10 @@ _Last updated: 2026-03-02_
 ### ✅ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
 - **Progress:** Adapter/gateway artifacts are present and roadmap state is now aligned to shipped repo reality.
 
-### 🔜 Next milestone — M22 (Transport bindings and channel properties)
-- **Next concrete step 1:** Define normative channel property schema (reliability, ordering, replay window, ack semantics) with registry IDs + validation.
-- **Next concrete step 2:** Add binding conformance fixtures/suites proving channel-property negotiation and enforcement across at least one transport binding.
+### 🚧 M22 — Transport bindings and channel properties (started)
+- **Step 1 complete:** channel properties registry + canonical schema landed, and CAPNEG now carries binding/channel-property negotiation fields.
+- **Step 2 partial:** MCP-backed CAPNEG conformance evidence added (CN-09) with binding/channel-property negotiation invariant checks in runner.
+- **Next concrete step:** extend transport conformance to HTTP/WS streaming/chunking/backpressure and overload handling semantics.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
