@@ -27,6 +27,20 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "NUM-02",
+      "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-MESSAGE-HASH-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
