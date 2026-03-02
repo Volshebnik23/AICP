@@ -20,11 +20,11 @@ def _load_dropin_module():
 
 def test_dropin_numeric_policy_matches_reference() -> None:
     mod = _load_dropin_module()
-    payload = {"z": [1, {"a": -9007199254740991}], "b": 2}
+    payload = {"z": [1, {"a": -9007199254740991, "f": 0.1}], "b": 2}
     assert mod.canonicalize_json(payload) == ref_canonicalize_json(payload)
 
 
-@pytest.mark.parametrize("value", [9007199254740993, -9007199254740993, 0.1, 1.0])
+@pytest.mark.parametrize("value", [9007199254740993, -9007199254740993, float("inf")])
 def test_dropin_rejections_match_reference(value: float | int) -> None:
     mod = _load_dropin_module()
     with pytest.raises(ValueError):

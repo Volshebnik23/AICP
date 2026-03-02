@@ -1,0 +1,38 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CP-RELIABILITY-0.1",
+    "type": "channel_properties",
+    "spec_ref": "docs/bindings/RFC_BIND_CHANNEL_PROPERTIES.md#registry-entry",
+    "security_considerations": "Reliability mode affects duplicate delivery and replay handling; implementations must enforce idempotency where at_least_once is used."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CP-ORDERING-0.1",
+    "type": "channel_properties",
+    "spec_ref": "docs/bindings/RFC_BIND_CHANNEL_PROPERTIES.md#registry-entry",
+    "security_considerations": "Ordering mode impacts causality assumptions and conflict handling under concurrent delivery."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CP-ACK-0.1",
+    "type": "channel_properties",
+    "spec_ref": "docs/bindings/RFC_BIND_CHANNEL_PROPERTIES.md#registry-entry",
+    "security_considerations": "Acknowledgement signaling can leak traffic metadata and must be authenticated to prevent spoofed delivery claims."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CP-REPLAY-WINDOW-0.1",
+    "type": "channel_properties",
+    "spec_ref": "docs/bindings/RFC_BIND_CHANNEL_PROPERTIES.md#registry-entry",
+    "security_considerations": "Replay-window duration determines tolerance for delayed/replayed frames and must align with anti-replay policy."
+  }
+]

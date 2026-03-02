@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "504396ac878812e804f17450636cd5c42d690dfd10cb699b282fec8465afdb1f",
+      "combined_sha256": "be014b3447e6c4ee6f37c689359e27dc466d9957564add286ffdc0967529969d",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -17,7 +17,7 @@
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
-          "sha256": "8c93cda3ee25b15241f463e45c1a3247c0ecb6706a76bcb2901dffd38a02904e"
+          "sha256": "6bc2838bead99a2a72ceff8d23c8cf737a157ea5106655a08f8afbbea8bcb91a"
         },
         {
           "path": "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
@@ -29,7 +29,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "8b2fde6c500c8c0628b4c98b7169983052a4ed31c5150569378a4224b62b0c7b"
+          "sha256": "1e45fdb44485c20ecfeeee6d98dc4a705a87b13b534ed0b6f61f7d0261e44d63"
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -45,7 +45,7 @@
         },
         {
           "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
-          "sha256": "fdd4fb537b237c00f5c1ed9eb1d47c1b6d237804210c611fddcb44c6b30bf2fe"
+          "sha256": "51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
         },
         {
           "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -61,7 +61,7 @@
         },
         {
           "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-          "sha256": "dba2014d3cc42487e77d956ed7bca889a34fe3abb14952cc5652be0ceb73bbd1"
+          "sha256": "f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
         },
         {
           "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
@@ -118,11 +118,15 @@
         {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
+        },
+        {
+          "path": "conformance/vectors/rfc8785_float64_vectors.json",
+          "sha256": "8d9ef197022297a538da8693897fdbe0808592b491cf7aecad337f55642a2b99"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "3215e2d96d512c3ed0aed253d31522a593156f786c6c013286a030c1e7eb49f0",
+      "combined_sha256": "dbbc2543d2a0adfec4090a61d3833b2d56eb486fb350d69ab97d381896ee8520",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -137,8 +141,8 @@
           "sha256": "b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
         },
         {
-          "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
-          "sha256": "219aefa2a62108f10392cdc181e6b526c49dfa4a9edf352d62095e8655330b0e"
+          "path": "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "sha256": "43324e39e27dfec2ad804c87d903607746b3ec7d6005766e972b930dac9b2eb4"
         },
         {
           "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
@@ -211,6 +215,10 @@
         {
           "path": "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "sha256": "1541b934996b73a4047568ab22ba9a128ae983d02a5437805ae829a086c69fe9"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+          "sha256": "250bc11684fa3b1c3cedef0930c464b82574397debd46ab86518ad90ab5c4f03"
         },
         {
           "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
@@ -471,7 +479,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "6a2118f8dd9cf231abb04659d8fc5f0b90b5c9f7d6a8655512525f542cdcf1f0",
+      "combined_sha256": "44bf8c54e5453fae472d33b634894a8a03a7abd24e8325e6694cce594139f008",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -494,6 +502,10 @@
           "sha256": "5107fe8f3bd3c1f4d648cadb8a0ebc6b6a0b66dd37ee228043bc060b27f7ee89"
         },
         {
+          "path": "registry/channel_properties.json",
+          "sha256": "585792b40e2bf76912c2adb804d3e8ddd8fac9c3e8cffd92eea829eb2cec50ae"
+        },
+        {
           "path": "registry/crypto_profiles.json",
           "sha256": "b9289040aba693cfcb2c67a1aa1896a2247b00dcb92913dc7912d92d5ff44722"
         },
@@ -507,7 +519,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "4b36921aba95257d0442bb6b3a44920bcf7d7be20be028d778355976e4e18e5d"
+          "sha256": "5a7a3e61180bafad876888d54a53b506304a65490c70f09edabb7029bdaa0359"
         },
         {
           "path": "registry/hash_domains.json",
@@ -543,16 +555,20 @@
         },
         {
           "path": "registry/transport_bindings.json",
-          "sha256": "159424faf82d33b252738645195f4e22fceffdc2e520f8e2810f6aaeca3db895"
+          "sha256": "57ae337e544ed758751bb232f4a344e0d796efb98b07c9662e4e6aa33482df33"
         }
       ]
     },
     "schemas": {
-      "combined_sha256": "66ba4f7ff85981ff54be8f92f4e1233745c37d9db84efa5a38b2033e9c58b96c",
+      "combined_sha256": "60ef104eb2d1e7518b70293576a3f8ade9a742bcfbb6119a412aef897850102a",
       "files": [
         {
           "path": "schemas/bindings/bind-mcp.schema.json",
           "sha256": "7bb7801ef0a0af4a60e2d1d8fb57510a859283658b08efee35128d63cd668f23"
+        },
+        {
+          "path": "schemas/bindings/channel-properties.schema.json",
+          "sha256": "ceaceb92e12eb6c078ea227ecae58098a868675203faef5415d065d256566746"
         },
         {
           "path": "schemas/core/aicp-core-contract.schema.json",
@@ -576,7 +592,7 @@
         },
         {
           "path": "schemas/extensions/ext-capneg-payloads.schema.json",
-          "sha256": "208306863decd94d12a00efee58fd5674a6d2febf50e9cf3a971517fe63143bd"
+          "sha256": "a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
         },
         {
           "path": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
