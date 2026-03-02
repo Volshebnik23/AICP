@@ -64,7 +64,7 @@ Hashing:
 - Canonical JSON serialization MUST use UTF-8 output with unescaped non-ASCII characters (`ensure_ascii=false`).
 - Object keys MUST be sorted lexicographically by Unicode code point order at every object nesting level.
 - JSON numbers in canonicalized AICP payloads MUST be integers within IEEE-754 safe integer range (±(2^53−1)).
-- Floats are currently unsupported in canonicalization and MUST be rejected until full RFC8785 numeric handling is implemented (planned in M16b).
+- Finite floats are supported and MUST be canonicalized deterministically using ECMAScript/RFC8785-compatible numeric token formatting; non-finite values (`NaN`, `Infinity`, `-Infinity`) MUST be rejected.
 - Integers outside the safe range MUST be encoded as strings (or a future decimal representation when standardized).
 - Executable canonicalization evidence is maintained in `fixtures/core_tv.json` (TV-04..TV-06).
 - `message_hash` MUST be recomputable from message body excluding `message_hash` and `signatures`.

@@ -1,0 +1,20 @@
+{
+  "case_id": "TB-HTTP-08",
+  "operation": "wsOverloadFrame",
+  "channel_properties": {
+    "CP-RELIABILITY-0.1": "at_least_once"
+  },
+  "http_request": null,
+  "http_response": null,
+  "ws_session": {
+    "url": "wss://example.test/aicp/v1/sessions/sGT1/stream",
+    "protocol": "aicp-0.1"
+  },
+  "ws_frames_out": [
+    {
+      "type": "overload",
+      "retry_after": "15"
+    }
+  ],
+  "embedded_messages": []
+}

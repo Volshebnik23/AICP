@@ -29,6 +29,7 @@ REQUIRED_FILES = [
     "alert_recommended_actions.json",
     "aicp_profiles.json",
     "capneg_reason_codes.json",
+    "channel_properties.json",
 ]
 
 REQUIRED_FIELDS = {

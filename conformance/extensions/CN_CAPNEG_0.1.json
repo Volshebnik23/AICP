@@ -104,6 +104,16 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "CN-09",
+      "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT"
+      ]
     }
   ],
   "checks": [
@@ -158,6 +168,14 @@
     {
       "test_id": "CN-CONTRACT-BIND-01",
       "description": "CONTRACT_PROPOSE must bind accepted negotiation_result hash/selected in contract.ext.capneg"
+    },
+    {
+      "test_id": "CN-BINDINGS-01",
+      "description": "selected.binding must be canonical registered and mutually declared across participants"
+    },
+    {
+      "test_id": "CN-CHANNEL-PROPERTIES-01",
+      "description": "selected.channel_properties must satisfy each participant supported_channel_properties constraints"
     }
   ],
   "compatibility_mark": "AICP-EXT-CAPNEG-0.1"

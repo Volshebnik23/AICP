@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/bindings/channel-properties.schema.json",
+  "title": "AICP Channel Properties",
+  "$defs": {
+    "ReplayWindowRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "description": "min and max bounds for replay window support; producers MUST ensure min <= max."
+    },
+    "ChannelProperties": {
+      "type": "object",
+      "properties": {
+        "CP-RELIABILITY-0.1": {
+          "type": "string",
+          "enum": [
+            "at_least_once",
+            "at_most_once"
+          ]
+        },
+        "CP-ORDERING-0.1": {
+          "type": "string",
+          "enum": [
+            "ordered",
+            "unordered"
+          ]
+        },
+        "CP-ACK-0.1": {
+          "type": "string",
+          "enum": [
+            "none",
+            "explicit"
+          ]
+        },
+        "CP-REPLAY-WINDOW-0.1": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "patternProperties": {
+        "^vendor:/.+": true
+      },
+      "additionalProperties": false
+    },
+    "SupportedChannelProperties": {
+      "type": "object",
+      "properties": {
+        "CP-RELIABILITY-0.1": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "at_least_once",
+              "at_most_once"
+            ]
+          }
+        },
+        "CP-ORDERING-0.1": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "ordered",
+              "unordered"
+            ]
+          }
+        },
+        "CP-ACK-0.1": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "explicit"
+            ]
+          }
+        },
+        "CP-REPLAY-WINDOW-0.1": {
+          "$ref": "#/$defs/ReplayWindowRange"
+        }
+      },
+      "patternProperties": {
+        "^vendor:/.+": true
+      },
+      "additionalProperties": false
+    }
+  },
+  "$ref": "#/$defs/ChannelProperties"
+}

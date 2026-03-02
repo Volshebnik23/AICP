@@ -1,0 +1,24 @@
+{
+  "case_id": "TB-HTTP-04",
+  "operation": "overload",
+  "http_request": {
+    "method": "POST",
+    "path": "/aicp/v1/sessions/sGT1/messages",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "message_id": "m-overload"
+    }
+  },
+  "http_response": {
+    "status": 429,
+    "headers": {
+      "Retry-After": "30"
+    },
+    "body": {
+      "error": "overload"
+    }
+  },
+  "embedded_messages": []
+}

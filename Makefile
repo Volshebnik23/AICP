@@ -8,8 +8,11 @@ validate:
 	$(PYTHON) scripts/validate_schema_instances.py
 	$(PYTHON) scripts/validate_dropins_assets.py
 	$(PYTHON) scripts/validate_registry.py
+	$(PYTHON) scripts/validate_binding_case_instances.py
+	$(PYTHON) scripts/validate_channel_properties_alignment.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_productization_coverage.py
+	$(PYTHON) scripts/validate_errata.py
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \
@@ -23,6 +26,7 @@ snapshot:
 	$(PYTHON) scripts/generate_snapshot_manifest.py
 
 validate-snapshot:
+	$(PYTHON) -m py_compile scripts/validate_snapshot_manifest.py
 	$(PYTHON) scripts/validate_snapshot_manifest.py
 
 test:
@@ -54,6 +58,7 @@ conformance-ext:
 
 conformance-bindings:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/bindings/TB_MCP_0.1.json --out conformance/report_bind_mcp.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/bindings/TB_HTTP_WS_0.1.json --out conformance/report_bind_http_ws.json
 
 conformance-all:
 	$(MAKE) conformance
@@ -104,4 +109,4 @@ release-check:
 	$(PYTHON) -c "from pathlib import Path; req=['VERSION','RELEASE_NOTES.md','SECURITY.md','CONTRIBUTING.md','CODE_OF_CONDUCT.md','docs/core/AICP_Core_v0.1_Normative.md','schemas/core/aicp-core-message.schema.json','schemas/core/aicp-core-contract.schema.json','schemas/core/aicp-core-payloads.schema.json','fixtures/core_tv.json','fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl','fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl','fixtures/keys/GT_public_keys.json']; missing=[p for p in req if not Path(p).exists()]; print('All required release hygiene and canonical Core artifacts are present.' if not missing else 'Missing required files: ' + ', '.join(missing)); raise SystemExit(1 if missing else 0)"
 
 clean:
-	rm -f conformance/report.json conformance/report_core_numeric_guardrails.json conformance/report_ext_capneg.json conformance/report_ext_disputes.json conformance/report_ext_security_alerts.json conformance/report_ext_participants.json conformance/report_ext_tool_gating.json conformance/report_ext_identity_lc.json conformance/report_ext_delegation.json conformance/report_ext_workflow_sync.json conformance/report_ext_object_resync.json conformance/report_ext_policy_eval.json conformance/report_ext_enforcement.json conformance/report_ext_alerts.json conformance/report_ext_resume.json conformance/report_ext_delegated_identity.json conformance/report_ext_reception_chat_semantics.json conformance/report_bind_mcp.json conformance/report_profile_base.json conformance/report_profile_mediated_blocking.json conformance/report_profile_mediated_blocking_ops.json conformance/report_profile_resumable_sessions.json conformance/report_profile_reception_chat.json conformance/report_profile_delegated_identity.json conformance/report_profile_workflow_orchestration_delegation.json conformance/report_demo_enforcement_behavioral.json conformance/report_ops_hardening.json conformance/report_security_signed_path.json
+	rm -f conformance/report.json conformance/report_core_numeric_guardrails.json conformance/report_ext_capneg.json conformance/report_ext_disputes.json conformance/report_ext_security_alerts.json conformance/report_ext_participants.json conformance/report_ext_tool_gating.json conformance/report_ext_identity_lc.json conformance/report_ext_delegation.json conformance/report_ext_workflow_sync.json conformance/report_ext_object_resync.json conformance/report_ext_policy_eval.json conformance/report_ext_enforcement.json conformance/report_ext_alerts.json conformance/report_ext_resume.json conformance/report_ext_delegated_identity.json conformance/report_ext_reception_chat_semantics.json conformance/report_bind_mcp.json conformance/report_bind_http_ws.json conformance/report_profile_base.json conformance/report_profile_mediated_blocking.json conformance/report_profile_mediated_blocking_ops.json conformance/report_profile_resumable_sessions.json conformance/report_profile_reception_chat.json conformance/report_profile_delegated_identity.json conformance/report_profile_workflow_orchestration_delegation.json conformance/report_demo_enforcement_behavioral.json conformance/report_ops_hardening.json conformance/report_security_signed_path.json

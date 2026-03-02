@@ -1,0 +1,91 @@
+{
+  "case_id": "TB-HTTP-01",
+  "operation": "sendMessage",
+  "http_request": {
+    "method": "POST",
+    "path": "/aicp/v1/sessions/sGT1/messages",
+    "headers": {
+      "Content-Type": "application/json",
+      "Idempotency-Key": "sGT1-m1"
+    },
+    "body": {
+      "session_id": "sGT1",
+      "message_id": "m1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "sender": "agent:A",
+      "message_type": "CONTRACT_PROPOSE",
+      "contract_id": "cGT1",
+      "contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v1"
+      },
+      "payload": {
+        "contract": {
+          "contract_id": "cGT1",
+          "goal": "golden_demo",
+          "roles": [
+            "initiator",
+            "responder"
+          ]
+        },
+        "contract_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4",
+        "note": "propose contract v1"
+      },
+      "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+      "signatures": [
+        {
+          "signer": "agent:A",
+          "kid": "A1",
+          "object_type": "message",
+          "object_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "sig_b64url": "Kc-w_l9sUC3A40zH2LyqFliHdPfbQDZZud9swZ-zLc-WNqCiV1mjGC2moZ48KNR5YQJwU02GlLzCKplqUIccCw"
+        }
+      ]
+    }
+  },
+  "http_response": {
+    "status": 202,
+    "body": {
+      "accepted": true,
+      "message_id": "m1"
+    }
+  },
+  "embedded_messages": [
+    {
+      "session_id": "sGT1",
+      "message_id": "m1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "sender": "agent:A",
+      "message_type": "CONTRACT_PROPOSE",
+      "contract_id": "cGT1",
+      "contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v1"
+      },
+      "payload": {
+        "contract": {
+          "contract_id": "cGT1",
+          "goal": "golden_demo",
+          "roles": [
+            "initiator",
+            "responder"
+          ]
+        },
+        "contract_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4",
+        "note": "propose contract v1"
+      },
+      "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+      "signatures": [
+        {
+          "signer": "agent:A",
+          "kid": "A1",
+          "object_type": "message",
+          "object_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "sig_b64url": "Kc-w_l9sUC3A40zH2LyqFliHdPfbQDZZud9swZ-zLc-WNqCiV1mjGC2moZ48KNR5YQJwU02GlLzCKplqUIccCw"
+        }
+      ]
+    }
+  ]
+}
