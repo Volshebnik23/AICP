@@ -10,6 +10,7 @@ validate:
 	$(PYTHON) scripts/validate_registry.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_productization_coverage.py
+	$(PYTHON) scripts/validate_errata.py
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \
@@ -23,6 +24,9 @@ snapshot:
 	$(PYTHON) scripts/generate_snapshot_manifest.py
 
 validate-snapshot:
+	git rev-parse HEAD
+	$(PYTHON) -c "from pathlib import Path; p=Path('scripts/validate_snapshot_manifest.py'); lines=p.read_text(encoding='utf-8').splitlines(); print('validator snippet (55-75):'); [print(f'{i+1:04d} {lines[i]}') for i in range(54, min(75, len(lines)))]"
+	$(PYTHON) -m py_compile scripts/validate_snapshot_manifest.py
 	$(PYTHON) scripts/validate_snapshot_manifest.py
 
 test:

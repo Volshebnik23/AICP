@@ -114,6 +114,24 @@ def main() -> int:
                     fail(f"{ctx}.spec_ref path does not exist: {spec_path}")
                     errors += 1
 
+            if status == "stable":
+                compatibility_notes = entry.get("compatibility_notes")
+                if not isinstance(compatibility_notes, str) or not compatibility_notes.strip():
+                    fail(f"{ctx}.compatibility_notes must be a non-empty string for stable entries")
+                    errors += 1
+                if isinstance(spec_ref, str) and "#" not in spec_ref:
+                    fail(f"{ctx}.spec_ref must include an anchor (#...) for stable entries")
+                    errors += 1
+
+            if status == "deprecated":
+                deprecation_notes = entry.get("deprecation_notes")
+                if not isinstance(deprecation_notes, str) or not deprecation_notes.strip():
+                    fail(f"{ctx}.deprecation_notes must be a non-empty string for deprecated entries")
+                    errors += 1
+                if isinstance(spec_ref, str) and "#" not in spec_ref:
+                    fail(f"{ctx}.spec_ref must include an anchor (#...) for deprecated entries")
+                    errors += 1
+
     if errors:
         print(f"\nRegistry validation failed with {errors} error(s).")
         return 1

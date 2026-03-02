@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "37d37664f80324dafbbb16ffb754644677b8dbc4eaecd927de2abd4c70794370",
+      "combined_sha256": "6e33820844766934d2f0a158603cdc3b9836bb87a322c592e6fb307c8940997d",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -17,7 +17,7 @@
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
-          "sha256": "b3d7990015041ab387ea06d376bc980cf3313612b55b25a6bfc8745c593332c5"
+          "sha256": "02d0ba2a712597e5696e1af1af365124248f144e83480185e553937812b4b3db"
         },
         {
           "path": "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
@@ -29,7 +29,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "8b2fde6c500c8c0628b4c98b7169983052a4ed31c5150569378a4224b62b0c7b"
+          "sha256": "262c4390c7bcde9514f6985b25db4b52b23be07115c3c74ac8960977064306a1"
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -45,7 +45,7 @@
         },
         {
           "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
-          "sha256": "fdd4fb537b237c00f5c1ed9eb1d47c1b6d237804210c611fddcb44c6b30bf2fe"
+          "sha256": "51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
         },
         {
           "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -61,7 +61,7 @@
         },
         {
           "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-          "sha256": "dba2014d3cc42487e77d956ed7bca889a34fe3abb14952cc5652be0ceb73bbd1"
+          "sha256": "f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
         },
         {
           "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
@@ -118,11 +118,15 @@
         {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
+        },
+        {
+          "path": "conformance/vectors/rfc8785_float64_vectors.json",
+          "sha256": "0ff964f1ed75a33f6176afe16a46148a4b143121f6ebb1ac1cbd42c6f94a55e9"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "0cc8236d241312541664e3612a5dbb856d3e9e91fb55ca63e6bf7842b577d798",
+      "combined_sha256": "8e1acd9c570d0871f510df5cd64105f30c1bec6d27328f34485fbbc75cb93bdd",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -137,8 +141,12 @@
           "sha256": "b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
         },
         {
-          "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
-          "sha256": "219aefa2a62108f10392cdc181e6b526c49dfa4a9edf352d62095e8655330b0e"
+          "path": "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "sha256": "43324e39e27dfec2ad804c87d903607746b3ec7d6005766e972b930dac9b2eb4"
+        },
+        {
+          "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
+          "sha256": "edaf3a5cc13b098233b8c66796f6075ea69157b3450408c9151f0f024f9accf6"
         },
         {
           "path": "fixtures/core_tv.json",
@@ -186,7 +194,7 @@
         },
         {
           "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
-          "sha256": "ebb2466696020f4709c21ca8ba7d6dfae165a86b39a95b3c60fb3553f39c8532"
+          "sha256": "da612d4ccbc99b97344a5b85836ef7466c661275428cf1f03ca93a6a2c75259e"
         },
         {
           "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
@@ -467,11 +475,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "22447d74dd1f0d65362263f8398bf9eb0974b55b204ff337996861bb1b775bd0",
+      "combined_sha256": "36375ed0406bfcfa7ac4e80ec0fc430605e2179147dd1bbbfbaebf120509e126",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "782b09133ecf7bf1da9260a4159ceb1b58102b91e14f4ed7b0639bcc6e49a201"
+          "sha256": "5dcb9570d4517e8e4fdbd001c19ac3d43ffc8e6772c0b57cbcdbea33187fcab2"
         },
         {
           "path": "registry/alert_codes.json",
@@ -503,7 +511,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "b40f2dd81843410f23c557e40fbf207226cbd52013a3f71aaf86a47a4966e24b"
+          "sha256": "23ece932798b41a2797ccdff5af34ba76dd0cd16e2dfac2e8e4b781a90b2e661"
         },
         {
           "path": "registry/hash_domains.json",
@@ -511,7 +519,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "b639d1b3cda3f0fad718d636abc676f4fae112340ee23eabacd7ebca4ab00c7a"
+          "sha256": "17c9d61d4521e50fcf59de73e78e0e7337ff4b9db1fd32422bf7a72a35d3a5c0"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -519,7 +527,7 @@
         },
         {
           "path": "registry/policy_categories.json",
-          "sha256": "667b20562db391fc56fa22c3352e13f4547a4857c9afd721583589fec1ca1abe"
+          "sha256": "b9e195bfb3f525d88191ea457130a4e92561374e1490d085189acd27f7293e42"
         },
         {
           "path": "registry/policy_languages.json",
@@ -539,7 +547,7 @@
         },
         {
           "path": "registry/transport_bindings.json",
-          "sha256": "b75fdc3ff715f03a2a1804f39fb637626ce49f42393d6121a10ba57e9fea950f"
+          "sha256": "159424faf82d33b252738645195f4e22fceffdc2e520f8e2810f6aaeca3db895"
         }
       ]
     },
