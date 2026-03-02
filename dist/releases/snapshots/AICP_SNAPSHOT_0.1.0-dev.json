@@ -149,6 +149,10 @@
           "sha256": "edaf3a5cc13b098233b8c66796f6075ea69157b3450408c9151f0f024f9accf6"
         },
         {
+          "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
+          "sha256": "edaf3a5cc13b098233b8c66796f6075ea69157b3450408c9151f0f024f9accf6"
+        },
+        {
           "path": "fixtures/core_tv.json",
           "sha256": "b51aa2706efb482f6fe283e34bcd269f0e940ac2e198f58c9f7e57bb77b74ffc"
         },
