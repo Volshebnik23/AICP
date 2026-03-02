@@ -10,6 +10,13 @@ test("canonicalizeJson rejects float values", () => {
   );
 });
 
-test("canonicalizeJson allows integer values", () => {
-  assert.equal(canonicalizeJson({ score: 1 }), '{"score":1}');
+test("canonicalizeJson rejects unsafe integers", () => {
+  assert.throws(
+    () => canonicalizeJson({ score: 9007199254740993 }),
+    /safe range/
+  );
+});
+
+test("canonicalizeJson allows safe integer values", () => {
+  assert.equal(canonicalizeJson({ score: 9007199254740991 }), '{"score":9007199254740991}');
 });

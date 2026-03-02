@@ -5,14 +5,22 @@ import math
 from typing import Any
 
 
+SAFE_INTEGER_MAX = (2 ** 53) - 1
+SAFE_INTEGER_MIN = -SAFE_INTEGER_MAX
+
+
 def _reject_unsupported_numbers(value: Any) -> None:
     if isinstance(value, bool):
+        return
+    if isinstance(value, int):
+        if value < SAFE_INTEGER_MIN or value > SAFE_INTEGER_MAX:
+            raise ValueError("Integers outside IEEE-754 safe range are not supported by AICP Core v0.1")
         return
     if isinstance(value, float):
         if not math.isfinite(value):
             raise ValueError("Unsupported non-finite float for canonicalization")
         # Current fixtures avoid float edge cases; disallow until full RFC8785 handling is added.
-        raise ValueError("Float canonicalization beyond current fixture scope is not implemented")
+        raise ValueError("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling")
     if isinstance(value, dict):
         for v in value.values():
             _reject_unsupported_numbers(v)

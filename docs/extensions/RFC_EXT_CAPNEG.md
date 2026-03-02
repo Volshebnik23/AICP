@@ -21,7 +21,7 @@ CAPABILITIES_DECLARE payload MUST include:
 • supported_extensions (SHOULD): list of extension IDs supported by the party.
 • supported_policy_categories (SHOULD): list of policy category IDs supported for evaluation/enforcement.
 • limits (SHOULD): max_message_bytes, max_object_bytes, max_objects_per_request, max_clock_skew_s.
-• bindings (MAY): supported transport bindings (e.g., EXT-BIND-MCP, EXT-BIND-HTTP).
+• bindings (MAY): supported transport bindings using canonical versioned IDs (e.g., BIND-MCP-0.1). Deprecated aliases such as EXT-BIND-MCP MAY be accepted for backward compatibility but MUST NOT be emitted as canonical negotiated values.
 • languages (MAY): supported natural languages for human-facing text.
 
 AICP product profile negotiation additions (backward compatible):

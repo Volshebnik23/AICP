@@ -1,11 +1,14 @@
 {
-  "aicp_version": "0.1.0-dev",
+  "aicp_version": "0.1",
   "suite_id": "CT-CORE-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-02-27T02:07:29.489998+00:00",
+  "timestamp": "2026-03-02T05:56:44.065518+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [
     "AICP-Core-0.1"
-  ]
+  ],
+  "degraded": false,
+  "degraded_reasons": [],
+  "skipped_checks": []
 }

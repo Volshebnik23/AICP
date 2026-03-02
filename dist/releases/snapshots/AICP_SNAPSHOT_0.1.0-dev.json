@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "37d37664f80324dafbbb16ffb754644677b8dbc4eaecd927de2abd4c70794370",
+      "combined_sha256": "504396ac878812e804f17450636cd5c42d690dfd10cb699b282fec8465afdb1f",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -17,7 +17,7 @@
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
-          "sha256": "b3d7990015041ab387ea06d376bc980cf3313612b55b25a6bfc8745c593332c5"
+          "sha256": "8c93cda3ee25b15241f463e45c1a3247c0ecb6706a76bcb2901dffd38a02904e"
         },
         {
           "path": "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
@@ -122,7 +122,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "0cc8236d241312541664e3612a5dbb856d3e9e91fb55ca63e6bf7842b577d798",
+      "combined_sha256": "3215e2d96d512c3ed0aed253d31522a593156f786c6c013286a030c1e7eb49f0",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -139,6 +139,10 @@
         {
           "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
           "sha256": "219aefa2a62108f10392cdc181e6b526c49dfa4a9edf352d62095e8655330b0e"
+        },
+        {
+          "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
+          "sha256": "edaf3a5cc13b098233b8c66796f6075ea69157b3450408c9151f0f024f9accf6"
         },
         {
           "path": "fixtures/core_tv.json",
@@ -186,7 +190,7 @@
         },
         {
           "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
-          "sha256": "ebb2466696020f4709c21ca8ba7d6dfae165a86b39a95b3c60fb3553f39c8532"
+          "sha256": "da612d4ccbc99b97344a5b85836ef7466c661275428cf1f03ca93a6a2c75259e"
         },
         {
           "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
@@ -467,7 +471,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "22447d74dd1f0d65362263f8398bf9eb0974b55b204ff337996861bb1b775bd0",
+      "combined_sha256": "abe04c9c0001f20538f6179a46235a3b1ac41ba57c18f6a8066a237dd561a6b8",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -539,7 +543,7 @@
         },
         {
           "path": "registry/transport_bindings.json",
-          "sha256": "b75fdc3ff715f03a2a1804f39fb637626ce49f42393d6121a10ba57e9fea950f"
+          "sha256": "5c8cf36e3979d3805526f0dc9688c2f5bb14939a3853bc3834f78d3973c2fa7c"
         }
       ]
     },

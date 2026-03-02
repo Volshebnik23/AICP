@@ -23,6 +23,6 @@ Track unresolved specification/productization questions here.
   - Option A: Keep strict float rejection as the baseline until full RFC8785 numeric handling lands.
   - Option B: Implement full RFC8785 float canonicalization now.
 - **Decision owner:** AICP Working Group
-- **Status:** open
-- **Target milestone:** M16
-- **Notes / links:** Current policy is to reject all floats across reference + dropins; conformance numeric guardrail suite tracks this until full RFC8785 support is implemented.
+- **Status:** decided (staged)
+- **Target milestone:** M16a (completed), M16b (planned)
+- **Notes / links:** Staged decision: M16a enforces safe-integer-only canonicalization (integers MUST be within ±(2^53−1), floats rejected). M16b will address full RFC8785 float canonicalization.
