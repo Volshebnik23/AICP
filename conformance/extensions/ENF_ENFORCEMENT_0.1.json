@@ -83,5 +83,6 @@
       "description": "ENFORCEMENT_VERDICT sender must be listed in contract ext.enforcement.enforcers when provided"
     }
   ],
-  "compatibility_mark": "AICP-EXT-ENFORCEMENT-0.1"
+  "compatibility_mark": "AICP-EXT-ENFORCEMENT-0.1",
+  "extension_id": "EXT-ENFORCEMENT"
 }

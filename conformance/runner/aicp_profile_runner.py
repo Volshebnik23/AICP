@@ -34,11 +34,21 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
     marks: list[str] = []
     degraded = False
     degraded_reasons: list[str] = []
+    observed_protocol_versions: set[str] = set()
 
     for rel_suite in profile.get("required_suites", []):
         suite_path = (ROOT / rel_suite).resolve() if not Path(rel_suite).is_absolute() else Path(rel_suite)
         suite_report = run_suite(suite_path)
         suite_reports.append(suite_report)
+
+        suite_protocol_version = suite_report.get("aicp_version")
+        if isinstance(suite_protocol_version, str):
+            observed_protocol_versions.add(suite_protocol_version)
+        else:
+            suite_catalog = load_json(suite_path)
+            fallback_protocol_version = suite_catalog.get("aicp_version")
+            if isinstance(fallback_protocol_version, str):
+                observed_protocol_versions.add(fallback_protocol_version)
 
         for failure in suite_report.get("failures", []):
             entry = dict(failure)
@@ -63,9 +73,17 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
     elif passed and isinstance(profile_mark, str):
         marks.insert(0, profile_mark)
 
-    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    protocol_version = profile.get("aicp_version")
+    if not isinstance(protocol_version, str):
+        if len(observed_protocol_versions) == 1:
+            protocol_version = next(iter(observed_protocol_versions))
+        elif not observed_protocol_versions:
+            raise ValueError("Profile has no suites to infer aicp_version; set profile['aicp_version'] explicitly.")
+        else:
+            raise ValueError(f"Profile suites disagree on aicp_version: {sorted(observed_protocol_versions)}")
+
     return {
-        "aicp_version": version,
+        "aicp_version": protocol_version,
         "profile_id": profile.get("profile_id"),
         "profile_version": profile.get("profile_version"),
         "timestamp": datetime.now(timezone.utc).isoformat(),

@@ -1,0 +1,7 @@
+{
+  "allowed_profiles": [
+    { "profile_id": "AICP-BASE", "profile_version": "0.1" }
+  ],
+  "allowed_extensions": ["EXT-CAPNEG"],
+  "allowed_bindings": ["BIND-MCP-0.1"]
+}
