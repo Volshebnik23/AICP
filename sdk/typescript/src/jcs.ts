@@ -3,8 +3,8 @@ function rejectUnsupportedNumbers(value: unknown): void {
     if (!Number.isFinite(value)) {
       throw new Error("Unsupported non-finite float for canonicalization");
     }
-    if (!Number.isInteger(value)) {
-      throw new Error("Floats are not supported by AICP Core v0.1; see OQ-0001 / RFC8785 numeric handling");
+    if (Number.isInteger(value) && !Number.isSafeInteger(value)) {
+      throw new Error("Integers outside IEEE-754 safe range are not supported by AICP Core v0.1");
     }
     return;
   }

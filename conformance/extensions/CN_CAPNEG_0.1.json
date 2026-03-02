@@ -160,5 +160,6 @@
       "description": "CONTRACT_PROPOSE must bind accepted negotiation_result hash/selected in contract.ext.capneg"
     }
   ],
-  "compatibility_mark": "AICP-EXT-CAPNEG-0.1"
+  "compatibility_mark": "AICP-EXT-CAPNEG-0.1",
+  "extension_id": "EXT-CAPNEG"
 }

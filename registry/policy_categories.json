@@ -24,7 +24,8 @@
     "id": "scope_boundaries",
     "type": "policy_categories",
     "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
-    "security_considerations": "Legacy combined category; use scope + boundaries for new contracts."
+    "security_considerations": "Legacy combined category; use scope + boundaries for new contracts.",
+    "deprecation_notes": "Deprecated; use the documented replacement and plan migration before removal."
   },
   {
     "type": "policy_categories",
