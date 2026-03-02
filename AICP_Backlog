@@ -1,495 +1,412 @@
-# AICP v51 — Protocol Backlog from Consumer Use-Case Needs
+# AICP v74 — Protocol Backlog (repo-backed)
 
-> Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles).  
-> Out of scope: platform/enforcer implementations, chat UX, agent internals.
+> Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
+> Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
 
-This backlog translates the five consumer needs (brand-safe public agent chat; enterprise service-chaining; reception chat as PaaS; auth provider; agent-agent automation) into **missing protocol capabilities** in the current repo state (AICP-main_v51).
+This backlog translates consumer adoption needs into **protocol deliverables** that can be shipped in-repo:
+- RFC/Docs (normative)
+- Registries
+- JSON Schemas
+- Golden fixtures (JSONL transcripts)
+- Conformance suites + runner checks
+- Profiles (bundle suites)
+- Implementer tooling/quickstarts (adapter skeletons, CI templates)
+- Snapshot + release discipline
 
-## Conventions
-- **Productized extension/message** = has: (1) RFC doc, (2) schema(s), (3) registry entries, (4) fixtures, (5) conformance suite(s), and (6) profile wiring (if claimed as interoperable bundle).
-- **Option** = selectable via `contract.ext.*` (or profile requirement). If enabled, MUST be machine-checkable.
-- **Namespacing**: keep vendor-specific values as `vendor:*` or `org:*` where appropriate.
-
-## Priority order (recommended)
-P0 = adoption blockers / interop integrity; P1 = enterprise chain foundations; P2 = ops/security/interop hygiene; P3 = profile packaging.
-
-
----
-
-## P0.0 — Productize `ERROR` message type (stable, but missing payload schema)
-
-### Goal
-Make `ERROR` fully interoperable and machine-checkable: define payload schema + fixtures + conformance coverage.
-
-### Why (consumer need)
-All use-cases rely on deterministic failure semantics (rejection reasons, security events, policy denials). `ERROR` is **stable** in `registry/message_types.json` but currently has **no payload schema**, so different implementations can drift.
-
-### Deliverables
-
-- Define canonical `ERROR` payload object (error_code, message, details?, correlation refs).
-- Register/confirm error_code taxonomy source of truth (reuse existing docs Error Model; optionally add `registry/error_codes.json` if needed).
-- Conformance suite additions: payload schema validation + minimal invariants (e.g., machine-readable code, safe message, optional references).
-
-### Files to add
-- `schemas/core/aicp-core-error-payload.schema.json (or extend `aicp-core-payloads.schema.json` with `$defs/ERROR`)`
-- `fixtures/core/ER-01_error_message.jsonl (new minimal transcript)`
-
-### Files to modify
-- `schemas/core/aicp-core-payloads.schema.json (if embedding ERROR there)`
-- `conformance/core/CT_CORE_0.1.json (extend `payload_schema_map` for `ERROR`, or add new suite `ER_ERROR_0.1.json`)`
-- `registry/message_types.json (ensure `ERROR` spec_ref points to concrete section + status remains stable)`
-- `docs/core/AICP_Core_v0.1_Normative.md and/or `docs/suite/...` (add normative ERROR payload definition if missing)`
-
-### Conformance & fixtures
-- If added to CT_CORE_0.1: include `CN-PAYLOAD-SCHEMA-01`-style check for ERROR via payload_schema_map.
-- Add at least one negative fixture: malformed ERROR without `error_code` should fail payload schema check.
-
-### Acceptance criteria
-- `make validate` passes.
-- `make conformance` passes.
-- New fixture(s) pass schema validation and hash invariants.
-- Negative fixture fails for the right reason (payload schema).
-
-### Notes
-- Keep ERROR minimal; avoid leaking sensitive info. Prefer `details` as structured but optional.
+## Current shipped baseline (as of v74)
+- Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
+- Extensions productized: CAPNEG, ENFORCEMENT, POLICY_EVAL, PARTICIPANTS, TOOL_GATING, IDENTITY_LC, DELEGATION, WORKFLOW_SYNC, DISPUTES, SECURITY_ALERTS, ALERTS, RESUME, OBJECT_RESYNC, DELEGATED_IDENTITY.
+- Profiles shipped (experimental status): AICP-BASE, AICP-MEDIATED-BLOCKING, AICP-MEDIATED-BLOCKING-OPS, AICP-RECEPTION-CHAT, AICP-RESUMABLE-SESSIONS, AICP-DELEGATED-IDENTITY, AICP-WORKFLOW-ORCHESTRATION-DELEGATION.
+- Snapshot discipline exists (manifest + validate gate).
 
 ---
 
-## P0.1 — Add a CI/Make gate: 'stable or in-profile message types must be productized'
+# Backlog epics and milestones
 
-### Goal
-Prevent future drift by enforcing: any message type that is **stable** OR required by any **Available now** profile must have a payload schema definition + at least one fixture + conformance coverage.
+## M16 — Numeric canonicalization: RFC8785 numeric handling & safe number policy (OQ-0001)
+**Problem:** Core rejects floats until RFC8785 numeric handling exists, but real-world payloads contain floats/decimals unexpectedly. Also JS “number” makes big integers lossy → interop hazards.
 
-### Why (consumer need)
-Consumers will treat registry/profile claims as truth. Currently several experimental types exist without schemas; that's fine, but **stable/in-profile** types without schemas break interoperability promises.
+**Deliverables**
+1) **Policy decision doc** (normative):
+   - Define “safe integer range” policy (e.g., require JSON numbers to be within IEEE-754 safe integer range OR require integers to be encoded as strings beyond that).
+   - Define interim guidance: how to represent decimals now (string/decimal object) until numeric handling ships.
+2) **RFC: Numeric Handling**:
+   - Adopt RFC8785 numeric normalization rules (or subset) for canonicalization, including exponent normalization, -0, etc.
+   - Specify handling of NaN/Infinity (reject), and precision expectations.
+3) **Implementation parity**:
+   - Update Python + TypeScript canonicalizers to support the chosen numeric policy.
+   - Add conformance fixtures that include:
+     - decimals, exponents, edge cases (-0), large ints near boundary.
+4) **Conformance gates**:
+   - New conformance suite verifying cross-language canonical hashes for numeric edge fixtures.
+   - Update Core spec text + OPEN_QUESTIONS.md: close OQ-0001 or downgrade scope with explicit constraints.
 
-### Deliverables
+**Acceptance**
+- Canonicalization yields identical hashes across reference Python + TS dropins for numeric fixtures.
+- A clear migration story: “what changes in v0.2 vs v0.1-dev”.
 
-- A script/validator that scans: registries + profiles + conformance suite maps + schemas `$defs` to compute coverage.
-- Rules: 
-  - stable OR required-by-available-profile => MUST have schema `$defs/<MSGTYPE>`.
-  - and MUST appear in at least one conformance suite `payload_schema_map`.
-  - and MUST have at least one fixture JSONL in an expected directory.
-  - experimental types MAY be uncovered, but then MUST NOT be required by an 'Available now' profile.
-- Integrate into `make validate` and CI workflow.
-
-### Files to add
-- `tools/registry_productization_gate.py (or similar)`
-- `docs/registry/Productization_Gate.md (short explanation + how to mark experimental)`
-
-### Files to modify
-- `Makefile (add target, e.g. `make productization-gate` and include in `validate`)`
-- `.github/workflows/ci.yml (ensure the new target runs)`
-
-### Conformance & fixtures
-- The gate is itself a conformance-for-repo check; it should fail fast with actionable messages listing missing artifacts per message type.
-
-### Acceptance criteria
-- `make validate` fails if a stable/in-profile message type lacks schema/fixtures/conformance mapping.
-- Current repo passes after adding P0.0 and/or demoting/removing any unstable claims.
-
-### Notes
-- This is the single best 'anti-regression' investment for keeping AICP implementable.
+**Notes**
+- This may be a **breaking** behavior change → coordinate with Release discipline (M18).
 
 ---
 
-## P0.2 — New extension: `EXT-PARTICIPANTS` (membership/roles) with **two selectable models**
+## M17 — Stability graduation program (reduce “experimental sprawl” safely)
+**Problem:** Most entries in `registry/extension_ids.json` and many in `registry/message_types.json` are `experimental`. That’s OK for 0.1, but blocks “market trust”: vendors hesitate to bet on “formally changeable”.
 
-### Goal
-Standardize multi-party session membership and role assignment so a validator can prove who is a participant and with what role(s). Support two options: (A) shared contract per session, (B) per-participant acceptance.
+**Deliverables**
+1) **Compatibility & stability policy doc**:
+   - Define meanings of: experimental / stable (and optionally “candidate” if you decide to add it).
+   - Define “graduation checklist”: schema+fixtures+conformance+profile inclusion+interop evidence.
+2) **Registry schema rule**:
+   - Update `scripts/validate_registry.py` to enforce required fields for stable entries:
+     - `introduced_in`, `spec_ref` anchors, `security_considerations`, and “compatibility notes”.
+3) **Graduation plan & first promotions**:
+   - Promote a minimal baseline to stable:
+     - Core message types
+     - CAPNEG + ENFORCEMENT + POLICY_EVAL (if you’re ready) OR only CAPNEG.
+   - Document why each is safe to freeze.
+4) **Anti-drift enforcement**:
+   - Update snapshot/release checklist: changing any stable entry must add RELEASE_NOTES compatibility section.
 
-### Why (consumer need)
-Use-cases 1/3/5 require user agents joining a moderated chat. Without protocol-level membership, implementers will invent incompatible join/leave semantics, undermining enforcement guarantees and auditability.
-
-### Deliverables
-
-- Extension ID registration: `EXT-PARTICIPANTS`.
-- Message types: `PARTICIPANT_JOIN`, `PARTICIPANT_ACCEPT`, `PARTICIPANT_LEAVE`, optional `PARTICIPANT_UPDATE_ACCEPTANCE`.
-- Payload schema defining: party_id (agent id), requested/assigned roles, acceptance authority, and which contract/version is accepted.
-- Contract option: `contract.ext.participants.model: "shared" | "per_participant"`.
-  - shared: acceptance binds to session contract.
-  - per_participant: acceptance binds to participant-specific contract_ref/hash; messages must be compatible with sender acceptance.
-- Conformance suite implementing normative invariants (see below).
-
-### Files to add
-- `docs/extensions/RFC_EXT_PARTICIPANTS.md`
-- `schemas/extensions/ext-participants-payloads.schema.json`
-- `conformance/extensions/PT_PARTICIPANTS_0.1.json`
-- `fixtures/extensions/participants/PT-01_shared_model_happy.jsonl`
-- `fixtures/extensions/participants/PT-02_per_participant_happy.jsonl`
-- `fixtures/extensions/participants/PT-03_unaccepted_sender_expected_fail.jsonl`
-
-### Files to modify
-- `registry/extension_ids.json (add EXT-PARTICIPANTS)`
-- `registry/message_types.json (add participant message types, mark experimental or stable as appropriate)`
-- `docs/profiles/AICP_Profiles.md (add planned profile wiring; see P3 tasks)`
-
-### Conformance & fixtures
-- Add new runner checks:
-  - `PT-MEMBERSHIP-01`: messages from a participant MUST occur after `PARTICIPANT_ACCEPT`.
-  - `PT-ROLES-01`: if contract defines roles, assigned roles MUST be subset and MUST be checkable.
-  - `PT-CONTRACT-BIND-01`: shared vs per_participant invariants.
-
-- Sequence expectations in PT suite transcripts (like ENF suite does).
-
-### Acceptance criteria
-- `make validate` passes (including productization gate).
-- `make conformance-ext` passes and includes the new PT suite.
-- Negative fixture fails with `PT-MEMBERSHIP-01` (or schema) as expected.
-
-### Notes
-- Keep identity/auth provider out of scope here; party_id can be an opaque agent identifier. Identity lifecycle is handled in P1 tasks.
-- Role strings should stay compatible with existing `contract.roles`.
+**Acceptance**
+- `make validate` enforces the stability policy rules.
+- Roadmap explicitly lists “stable baseline set”.
 
 ---
 
-## P0.3 — New extension: `EXT-TOOL-GATING` with **two selectable modes** (`blocking` vs `audit`)
+## M18 — Release discipline: changelog + compatibility policy + errata cadence
+**Problem:** `RELEASE_NOTES.md` is a template; for mass adoption you need strict changelog + compatibility policy.
 
-### Goal
-Standardize 'side-effect / tool-call' steps so service-chained workflows can be moderated and audited at the content layer. Support both: (A) blocking pre-ALLOW gating, (B) audit-only post-attestation.
+**Deliverables**
+1) **Fill `RELEASE_NOTES.md`** with repo-backed entries:
+   - Added/Changed/Fixed + Compatibility notes for each shipped milestone (M8–M15 and later).
+2) **`docs/ops/COMPATIBILITY_POLICY.md`**:
+   - Define what counts as breaking vs non-breaking for:
+     - Core schema
+     - Hashing/canonicalization
+     - Registries
+     - Conformance suites
+     - Profiles
+   - Define deprecation/transition process.
+3) **Release checklist**:
+   - `docs/ops/RELEASE_CHECKLIST.md` (snapshot update, conformance pass, registry checks, errata updates).
+4) **Errata workflow alignment**:
+   - Ensure interop errata notes + ERRATA.md are consistent with policy.
 
-### Why (consumer need)
-Use-cases 2/5 require orchestrated agent workflows over corporate systems and code changes. If AICP gates only chat content, implementers will invent incompatible 'tool call' semantics and lose end-to-end control.
-
-### Deliverables
-
-- Extension ID registration: `EXT-TOOL-GATING`.
-- Message types (minimal): `TOOL_CALL_REQUEST`, `TOOL_CALL_RESULT`.
-  - Blocking mode adds `TOOL_CALL_VERDICT` **or** formally reuses `POLICY_EVAL_RESULT` with strict binding to request hash.
-- Contract option: `contract.ext.tool_gating.mode: "blocking" | "audit"`.
-- Canonical hash bindings:
-  - verdict binds `target_request_hash`.
-  - result binds `request_hash` and (when blocking) references `ALLOW` verdict.
-- Conformance suite + runner checks.
-
-### Files to add
-- `docs/extensions/RFC_EXT_TOOL_GATING.md`
-- `schemas/extensions/ext-tool-gating-payloads.schema.json`
-- `conformance/extensions/TG_TOOL_GATING_0.1.json`
-- `fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl`
-- `fixtures/extensions/tool_gating/TG-02_blocking_result_without_allow_expected_fail.jsonl`
-- `fixtures/extensions/tool_gating/TG-03_audit_mode_with_post_attest.jsonl`
-
-### Files to modify
-- `registry/extension_ids.json (add EXT-TOOL-GATING)`
-- `registry/message_types.json (add tool gating message types)`
-- `conformance/runner/aicp_conformance_runner.py (implement `TG-*` checks)`
-
-### Conformance & fixtures
-- Runner checks:
-  - `TG-BLOCK-01`: in blocking mode, `TOOL_CALL_RESULT` MUST reference an `ALLOW` verdict bound to the request.
-  - `TG-AUDIT-01`: in audit mode, `TOOL_CALL_RESULT` MUST be followed (or accompanied) by an attestation binding to result_hash (reuse `ATTEST_ACTION` or add `TOOL_CALL_ATTEST`).
-  - `TG-HASH-BIND-01`: request/verdict/result bindings must match.
-- Suite-level schema validation via payload_schema_map.
-
-### Acceptance criteria
-- `make conformance-ext` passes with new TG suite.
-- Blocking negative fixture fails with `TG-BLOCK-01`.
-
-### Notes
-- Do not model platform-specific tool adapters; treat tools as typed identifiers and hashed params/results.
-- Allow vendor namespacing for tool_id if needed (`vendor:crm.query`).
+**Acceptance**
+- A new contributor can answer: “will this change break existing implementers?” from docs alone.
 
 ---
 
-## P1.0 — Productize `EXT-IDENTITY-LC` (schemas + fixtures + conformance) and key-based signature resolution
+## M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
+**Problem:** Critical adopter wants **Adapter/Gateway** approach: parse/validate AICP, verify hashes/signatures, map to internal event model, run conformance in CI, use CAPNEG as inbound filter.
 
-### Goal
-Turn identity lifecycle from RFC-only into interoperable protocol: announce/rotate/revoke keys and validate signatures accordingly (at least within a transcript).
+**Deliverables**
+1) **Adapter architecture guide**:
+   - `docs/guides/Protocol_Adapter_Gateway.md`:
+     - recommended module boundaries
+     - how to map envelope/payload to internal events
+     - CAPNEG as “input filter” pattern with machine-readable failure.
+2) **Minimal deployable skeleton** (reference, not a hosted platform):
+   - `templates/protocol-adapter/`:
+     - minimal service skeleton + config
+     - runs validator + conformance in CI
+     - example translation “AICP message -> internal event”.
+3) **CI templates**:
+   - example GitHub Actions snippet: run `make conformance-profiles` for chosen profile.
+4) **“< 1 hour onboarding” update**:
+   - Update `START_HERE_IMPLEMENTERS.md` to include adapter path as first-class option.
 
-### Why (consumer need)
-Use-cases 2/4/5 rely on authenticated agent identities and rotation/revocation. Without schemas + conformance, identity becomes platform-specific and cannot be validated independently.
-
-### Deliverables
-
-- Payload schema for: `IDENTITY_ANNOUNCE`, `KEY_ROTATION`, `KEY_REVOKE`, `AGENT_MIGRATION`.
-- Conformance suite that verifies:
-  - announce defines keys (kid, alg, pubkey).
-  - rotate/revoke update key status.
-  - signatures in subsequent messages verify against current valid key set.
-- Update runner to support resolving public keys from identity messages (fallback to fixture key map only when suite opts in).
-
-### Files to add
-- `schemas/extensions/ext-identity-lc-payloads.schema.json`
-- `conformance/extensions/ID_IDENTITY_LC_0.1.json`
-- `fixtures/extensions/identity_lc/ID-01_announce_and_signed_messages.jsonl`
-- `fixtures/extensions/identity_lc/ID-02_rotate_and_verify.jsonl`
-- `fixtures/extensions/identity_lc/ID-03_revoke_then_signature_fail_expected_fail.jsonl`
-
-### Files to modify
-- `conformance/runner/aicp_conformance_runner.py (key resolution support)`
-- `registry/message_types.json (ensure spec_ref points to payload defs; consider promoting to stable later)`
-- `docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md (align payload fields with schema; update section anchors if needed)`
-
-### Conformance & fixtures
-- New runner checks:
-  - `ID-KEYSET-01`: maintain active keyset per agent_id.
-  - `ID-SIG-VERIFY-01`: verify signatures using derived keyset.
-  - `ID-REVOKE-01`: revoked key cannot validate later messages.
-
-### Acceptance criteria
-- `make conformance-ext` passes (ID suite included).
-- Negative revoke fixture fails at signature verification.
-
-### Notes
-- Keep it transcript-local first; cross-session identity anchoring can be future work.
+**Acceptance**
+- A new adopter can:
+  - copy template
+  - run conformance for a chosen profile
+  - get a working validation gateway without touching their agent core logic.
 
 ---
 
-## P1.1 — Productize `EXT-DELEGATION` (grant/accept/revoke/result attestation)
+## M20 — Trust anchors & attestations (internet-scale trust signals)
+**Problem:** Identity lifecycle exists, but no standardized “trust network”: trust anchors, issuer attestation formats, trust signals.
 
-### Goal
-Standardize delegations for service-chaining: who may do what, for how long, at what depth, and how results are attested.
+**Deliverables**
+1) **RFC: Trust Anchors & Issuer Attestations**
+   - define “trust anchor list” artifact format (hashable object)
+   - define “issuer attestation” object (agent belongs to provider X; profile compliance Y; etc.)
+2) **Registries**
+   - trust signal types registry (minimal interoperable signals)
+   - attestation types registry
+3) **Schemas + fixtures + conformance**
+   - validate attestation object hashing, signature requirements, and attachment to transcripts.
 
-### Why (consumer need)
-Use-cases 2/5 require dividing responsibilities among multiple agents inside one workflow. Without interoperable delegation artifacts, chains become vendor-specific.
-
-### Deliverables
-
-- Complete message type set: `DELEGATION_GRANT`, `DELEGATION_ACCEPT`, `DELEGATION_REVOKE`, `DELEGATION_RESULT_ATTEST` (names per RFC; align if already specified).
-- Payload schema with: delegator, delegatee, scopes/roles, expiry, max_depth, purpose, and binding to contract_ref/version.
-- Conformance verifying: expiry, max_depth, and that result attestations bind to a specific grant + workflow/context head_version.
-
-### Files to add
-- `schemas/extensions/ext-delegation-payloads.schema.json`
-- `conformance/extensions/DL_DELEGATION_0.1.json`
-- `fixtures/extensions/delegation/DL-01_grant_accept_happy.jsonl`
-- `fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl`
-- `fixtures/extensions/delegation/DL-03_depth_exceeded_expected_fail.jsonl`
-
-### Files to modify
-- `registry/message_types.json (add missing delegation message types)`
-- `docs/extensions/RFC_EXT_DELEGATION.md (align payload fields; add stable anchors)`
-
-### Conformance & fixtures
-- Runner checks:
-  - `DL-EXPIRY-01` (deny if expired)
-  - `DL-DEPTH-01` (deny if chain depth exceeded)
-  - `DL-BIND-01` (result attest references grant + contract_ref/head_version)
-
-### Acceptance criteria
-- `make conformance-ext` passes including DL suite.
-- Negative fixtures fail for the intended check.
+**Acceptance**
+- Implementer can verify: “this issuer is trusted under anchor set A” without platform-specific magic.
 
 ---
 
-## P1.2 — Productize `EXT-WORKFLOW-SYNC` (declare/update/step attest)
+## M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
+**Problem:** Delegated identity & key revoke exist, but no “real-time status” mechanism.
 
-### Goal
-Make workflow artifacts interoperable so multiple agents can coordinate steps, attach evidence, and recover context deterministically.
+**Deliverables**
+1) **RFC + extension** for status responses:
+   - status request/response messages or object format
+   - cache lifetimes, staleness, replay protections at protocol level (transport-binding may complement).
+2) **Conformance**:
+   - validate status object hashing/signing and “revoked as-of” semantics.
 
-### Why (consumer need)
-Use-case 2 is essentially multi-agent workflow orchestration with accountability. Without standardized workflow messages, 'service chaining' won't be portable across platforms.
-
-### Deliverables
-
-- Message types: `WORKFLOW_DECLARE`, `WORKFLOW_UPDATE`, `WORKFLOW_STEP_ATTEST` (align with RFC naming).
-- Payload schema: workflow_id, steps, dependencies, state transitions, and artifact hashes.
-- Conformance: monotonic step progression; step attestation binds to step_id + artifact hashes + contract head_version.
-
-### Files to add
-- `schemas/extensions/ext-workflow-sync-payloads.schema.json`
-- `conformance/extensions/WF_WORKFLOW_SYNC_0.1.json`
-- `fixtures/extensions/workflow_sync/WF-01_declare_update_steps.jsonl`
-- `fixtures/extensions/workflow_sync/WF-02_out_of_order_step_expected_fail.jsonl`
-
-### Files to modify
-- `registry/message_types.json (add missing workflow message types)`
-- `docs/extensions/RFC_EXT_WORKFLOW_SYNC.md (align payload fields; normative anchors)`
-
-### Conformance & fixtures
-- Runner checks:
-  - `WF-ORDER-01`: step/order invariants.
-  - `WF-BIND-01`: step attest binds to artifacts and head_version.
-
-### Acceptance criteria
-- `make conformance-ext` passes including WF suite.
+**Acceptance**
+- An agent can machine-check “binding/key is revoked as of now” with verifiable artifacts.
 
 ---
 
-## P2.0 — Productize `EXT-DISPUTES` and `EXT-SECURITY-ALERT` (schemas + fixtures + conformance)
+## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
+**Problem:** AICP is transport-agnostic, but interop in practice needs canonical bindings and production-grade delivery semantics.
 
-### Goal
-Standardize security/dispute events so they are interoperable, auditable, and machine-classifiable across platforms.
+**Current repo state**
+- ✅ Draft normative doc exists: `docs/bindings/RFC_BIND_HTTP_WS.md` (baseline endpoints + basic error patterns).
+- ❌ Missing: streaming/chunking norms, anti-replay semantics, quota/overload signaling, and conformance.
 
-### Why (consumer need)
-Use-cases 1/2/5 require externally visible 'security events' and escalation hooks that survive vendor boundaries.
+**Deliverables**
+1) **Binding hardening (HTTP/S + WS)**:
+   - Define **SSE/streaming** mode for message replication (polling vs SSE), including ordering guarantees.
+   - Define **chunking** for large payloads/artifacts (e.g., `artifact_ref` + chunk index + total + hash).
+   - Define canonical **webhook** option (optional) with signature binding.
+2) **Anti-replay & session binding**:
+   - Define nonce/timestamp windows and replay cache guidance.
+   - Define idempotency semantics (HTTP headers or envelope fields) for retransmits.
+3) **Rate limits / backpressure / overload**:
+   - Standard error mapping and optional **ALERT** patterns for quotas/overload (retry-after, degrade mode).
+4) **Cross-binding conformance**:
+   - A new binding suite (e.g., `TB_HTTP_WS_0.1`) validating:
+     - idempotent resend behavior
+     - replay rejection
+     - ordering under SSE vs poll
+     - chunk reassembly integrity
+5) **Reference adapter snippets**:
+   - Minimal client/server examples (Python + TS) for POST + poll and POST + SSE.
 
-### Deliverables
+**Acceptance**
+- Two vendors can connect via a binding profile (HTTP+SSE or WS) without bespoke integration docs.
+- Replay and retransmit behavior is deterministic and testable across languages.
 
-- Payload schema for `CHALLENGE_ASSERTION` (disputes) and `SECURITY_ALERT`.
-- Conformance verifying registry-coded fields (claim types, alert categories) and required bindings to message_hashes/evidence.
-- At least one fixture per extension.
+---
+## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
+**Problem:** Enforcement assumes content-visible moderation; enterprise needs privacy modes.
 
-### Files to add
-- `schemas/extensions/ext-disputes-payloads.schema.json`
-- `schemas/extensions/ext-security-alert-payloads.schema.json`
-- `conformance/extensions/DS_DISPUTES_0.1.json`
-- `conformance/extensions/SA_SECURITY_ALERT_0.1.json`
-- `fixtures/extensions/disputes/DS-01_challenge_assertion.jsonl`
-- `fixtures/extensions/security_alert/SA-01_security_alert.jsonl`
+**Deliverables**
+1) **Selective disclosure modes**:
+   - standardize what enforcer sees: full/redacted/metadata-only/classification-only
+   - bind to contract + CAPNEG privacy modes
+2) **Conformance**:
+   - validate mode declarations and that required redaction artifacts exist where mandated.
 
-### Files to modify
-- `registry/message_types.json (ensure spec_ref points to these payload definitions)`
-- `docs/extensions/RFC_EXT_DISPUTES.md`
-- `docs/extensions/RFC_EXT_SECURITY_ALERTS.md`
-
-### Conformance & fixtures
-- Checks:
-  - disputes: claim type must be registered; evidence refs must exist.
-  - security alert: category must be registered; severity format must match spec; optional recommended actions may reference registry.
-
-### Acceptance criteria
-- `make conformance-ext` passes including DS + SA suites.
+**Acceptance**
+- “Privacy mode” becomes verifiable protocol behavior, not platform promise.
 
 ---
 
-## P2.1 — CAPNEG hardening: registry `privacy_modes` + bind negotiation result to contract/context
+## M24 — Redaction standard + retention/deletion policies
+**Problem:** Redaction must keep transcript verifiable; retention must be contractual.
 
-### Goal
-Make capability negotiation outcomes explicit, typed, and enforceable by conformance: avoid ambiguous `privacy_mode` strings and 'handshake that isn't committed'.
+**Deliverables**
+1) **EXT-REDACTION**:
+   - redacted content message referencing original message_hash + redaction policy + redaction proof object.
+2) **Retention policy in contract**:
+   - standard fields/policy category for retention TTL, delete semantics, audit retention.
 
-### Why (consumer need)
-Use-cases 2/5 require predictable privacy/security semantics and downgrade resistance when multiple agents/platforms interoperate.
-
-### Deliverables
-
-- Add registry `privacy_modes.json` with baseline modes and namespacing rules.
-- Update CAPNEG schema to reference registry (or document + conformance check validating values).
-- Add a check: negotiation result MUST be committed into contract or context (define one canonical place) before proceeding under a profile that depends on CAPNEG.
-
-### Files to add
-- `registry/privacy_modes.json`
-
-### Files to modify
-- `schemas/extensions/ext-capneg-payloads.schema.json (optional: restrict privacy_mode to enum + namespaced values)`
-- `conformance/extensions/CN_CAPNEG_0.1.json (add transcript showing commitment into contract/context)`
-- `conformance/runner/aicp_conformance_runner.py (add `CN-COMMIT-01` check if missing)`
-- `docs/extensions/RFC_EXT_CAPNEG.md (normative commitment step)`
-
-### Conformance & fixtures
-- New check `CN-PRIVACY-MODE-01`: value must be registered or namespaced.
-- New check `CN-COMMIT-01`: enforce commitment for profiles that require CAPNEG.
-
-### Acceptance criteria
-- `make conformance-ext` passes.
-- A negative fixture with unregistered privacy_mode fails `CN-PRIVACY-MODE-01`.
+**Acceptance**
+- A transcript can be shared with content redacted while preserving integrity/auditability.
 
 ---
 
-## P2.2 — Expand `policy_reason_codes` baseline and formalize namespacing rule
+## M25 — Policy semantic interoperability profiles (OPA/Rego, ABAC, LLM-safety)
+**Problem:** Policy-eval avoids a single language, but market needs stable semantic profiles.
 
-### Goal
-Provide a minimal common vocabulary for denial/block reasons so policy-eval and enforcement can interoperate meaningfully.
+**Deliverables**
+1) **Policy language/binding profiles**:
+   - OPA/Rego profile
+   - ABAC/RBAC profile
+   - LLM-safety profile (minimal taxonomy + interpretation)
+2) **Registry stabilization**
+   - promote key registries from experimental to stable (after M17 policy).
 
-### Why (consumer need)
-Brand-safety, tool access, PII and injection detection require machine-readable reasons. With only 2 reason codes today, implementers will fork into incompatible semantics.
-
-### Deliverables
-
-- Add baseline reason codes for common domains: brand/safety/pii/tool-access/injection/sandboxing/etc.
-- Update RFC_EXT_POLICY_EVAL.md and registry with clear namespacing guidance for vendor/org codes.
-
-### Files to modify
-- `registry/policy_reason_codes.json`
-- `docs/extensions/RFC_EXT_POLICY_EVAL.md`
-
-### Acceptance criteria
-- `make validate` passes.
-- Conformance PE suite still passes (no breaking changes).
-
-### Notes
-- Do not over-specify; keep baseline small but useful.
+**Acceptance**
+- Two vendors interpreting “the same policy bundle” get the same decision.
 
 ---
 
-## P2.3 — Contract/context versioning conformance: enforce `vN` format + monotonicity + base/head invariants
+## M26 — Human-in-the-loop primitive (approval / step-up)
+**Problem:** Can be modeled indirectly, but market wants an explicit, machine-checkable approval primitive that cannot be “UX-skipped”.
 
-### Goal
-Make context evolution and conflict resolution predictable across implementations by adding explicit versioning rules to conformance.
+**Deliverables**
+1) **EXT-HUMAN-APPROVAL (normative)**:
+   - `APPROVAL_CHALLENGE` (what is being approved; human-readable + machine-readable fields)
+   - `APPROVAL_GRANT` / `APPROVAL_DENY` (signed by approver)
+   - Bindings:
+     - MUST bind to **target** (`tool_call_id`/`tool_call_hash` OR `message_hash`)
+     - MUST include **actor** (`approver_id`) and **scope** (what changes are permitted)
+     - MUST include **TTL/expiry** and optional **revocation handle**
+2) **Step-up patterns**:
+   - Risk-triggered step-up (e.g., amount threshold, data-classification escalation)
+   - “Dual control” / two-person rule (optional)
+3) **Conformance + fixtures**
+   - expected-fail for: missing binding, expired approval, wrong signer, approval reuse across targets
+   - expected-pass for: correct binding + signer + TTL
+4) **Bridge hooks**
+   - Provide a mapping note to OAuth/OIDC / delegated identity (ties into M28 IAM bridge).
 
-### Why (consumer need)
-Use-case 2/5: multi-agent workflows depend on consistent context/head_version semantics; otherwise agents diverge silently.
+**Acceptance**
+- Human approval becomes a first-class, verifiable step in workflows (content and/or tool execution).
+- A mediator/enforcer can deterministically reject actions that lack a valid approval grant.
 
-### Deliverables
+---
+## M27 — Production attributes: tracing, SLA signals, metering
+**Problem:** For PaaS adoption, production-grade signals matter.
 
-- Normative rules (core or profile):
-  - version format `vN` (N integer >= 1)
-  - `CONTEXT_AMEND` increments head_version
-  - base_version must equal previous head_version for linear history
-  - fork/conflict must be resolved via `RESOLVE_CONFLICT` with defined behavior
-- Fixtures demonstrating v1→v2→v3 progression and a fork resolution.
-- Conformance checks enforcing these invariants.
+**Deliverables**
+1) **EXT-OBSERVABILITY**:
+   - minimal tracing headers (align with W3C trace context)
+   - correlating messages/tool calls/workflow steps
+2) **Standard SLA/error signals**
+   - structured reasons for drop/throttle/deny (reusable taxonomy)
+3) **Metering events** (optional):
+   - standardized usage accounting objects.
 
-### Files to add
-- `fixtures/core/VS-01_version_progression.jsonl`
-- `fixtures/core/VS-02_fork_and_resolve.jsonl`
-
-### Files to modify
-- `docs/core/AICP_Core_v0.1_Normative.md (versioning section)`
-- `conformance/core/CT_CORE_0.1.json (add transcripts + enable new checks)`
-- `conformance/runner/aicp_conformance_runner.py (add `CT-VERSION-*` checks)`
-
-### Acceptance criteria
-- `make conformance` passes including new versioning fixtures.
-- At least one negative fixture fails on version monotonicity/base mismatch.
+**Acceptance**
+- Operators can debug and audit workflows across vendor boundaries.
 
 ---
 
-## P3.0 — Add planned profiles: `AICP-RECEPTION-CHAT` and `AICP-ENTERPRISE-CHAINING` as protocol bundles
+## M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
+**Problem:** Need standard mapping between AICP authority grants and real IAM.
 
-### Goal
-Package the above extensions into consumer-understandable interoperability claims, each with required suites.
+**Deliverables**
+- Binding RFC: OAuth scopes/roles/groups ↔ delegation scopes/authority_subset
+- Step-up patterns mapping to OIDC ACR/AMR (or equivalent).
 
-### Why (consumer need)
-Consumers (your use-cases) are not buying 'a JSON format'; they need a clear 'this profile guarantees moderated chat' or 'this profile guarantees orchestrated workflows'.
-
-### Deliverables
-
-- `AICP-RECEPTION-CHAT` profile bundling: Core + CAPNEG + POLICY-EVAL + ENFORCEMENT + PARTICIPANTS (+ optional OPS).
-- `AICP-ENTERPRISE-CHAINING` profile bundling: Core + IDENTITY-LC + DELEGATION + WORKFLOW-SYNC + TOOL-GATING (+ POLICY-EVAL).
-- Profile conformance suites: `conformance/profiles/PF_*.json` referencing required suites.
-- Update docs and roadmap linkage as needed.
-
-### Files to add
-- `conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json`
-- `conformance/profiles/PF_AICP_ENTERPRISE_CHAINING_0.1.json`
-
-### Files to modify
-- `docs/profiles/AICP_Profiles.md`
-- `ROADMAP.md (ensure profile milestones align with shipped artifacts)`
-
-### Acceptance criteria
-- `make conformance-profiles` passes once dependencies (P0–P2) are implemented.
+**Acceptance**
+- Enterprise can connect AICP workflows to existing IAM without bespoke mapping.
 
 ---
 
-## P3.1 (optional) — Optional extension: `EXT-SUBJECT-BINDING` (acting-on-behalf-of)
+## M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
+**Problem:** AICP is not a domain ontology; bindings make it “usable at scale”.
 
-### Goal
-Provide a strict, machine-checkable way to attach 'agent acts for account' credentials to messages, but keep it optional and platform-selectable.
+**Deliverables**
+- OpenAPI binding for tool operations (tool_id/operation mapping)
+- OData binding for data retrieval semantics
+- ABAC/RBAC/OPA binding cross-references (align with M25/M28).
 
-### Why (consumer need)
-Use-case 4 (auth provider) + enterprise needs benefit from portable subject binding; however you requested it remain optional and platform-decided.
+**Acceptance**
+- “AICP in the real enterprise stack” becomes an adoptable recipe, not research.
+## M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
+**Problem:** In MCP-style ecosystems, tools and their metadata can change (“rug pull”), and tool namespaces can collide (“shadowing”). AICP has TOOL_GATING, but lacks a protocol-level way to make tool catalogs **immutable, attributable, and pinned** to a chat contract.
 
-### Deliverables
+**Deliverables**
+1) **EXT-ARTIFACT-MANIFESTS (or EXT-TOOL-MANIFEST)** (normative):
+   - Signed manifest objects for **Tools**, **Resources**, and **Prompts**:
+     - `id`, `issuer`, `version`, `schema`, `description`, `risk_class`, `content_hash`
+   - Namespacing rules: `issuer_scoped_id` to prevent collisions/shadowing.
+2) **Contract pinning**
+   - Contract fields to pin:
+     - manifest set digest(s)
+     - allowed tool/resource/prompt ids + versions
+   - Any change requires explicit `CONTEXT_AMEND` / renegotiation.
+3) **Tool gating integration**
+   - TOOL_CALL_REQUEST MUST reference a pinned manifest id/version/digest.
+   - Conformance: expected-fail if tool call refers to unpinned or changed manifest.
+4) **Golden fixtures + conformance**
+   - Rug-pull attempt (manifest changed mid-session) → expected-fail
+   - Shadowing attempt (same tool_id different issuer) → expected-fail
+   - Valid upgrade via renegotiation → expected-pass
 
-- Define canonical 'subject binding' object and payload schema.
-- Registry entries if new identifiers are needed (subject types, credential formats).
-- Conformance suite validating structure and cryptographic binding (at least hash binding; signature verification optional if relying on IDENTITY-LC).
+**Acceptance**
+- A platform can enforce “no silent tool changes” with protocol evidence.
+- Two vendors interpret the same pinned toolset deterministically.
 
-### Files to add
-- `docs/extensions/RFC_EXT_SUBJECT_BINDING.md`
-- `schemas/extensions/ext-subject-binding.schema.json`
-- `conformance/extensions/SB_SUBJECT_BINDING_0.1.json`
-- `fixtures/extensions/subject_binding/SB-01_basic_binding.jsonl`
+---
 
-### Files to modify
-- `registry/extension_ids.json (add EXT-SUBJECT-BINDING)`
-- `registry/message_types.json (if new message types are introduced; otherwise attach as `ext` object in envelope)`
+## M31 — Anti-equivocation & transparency witnessing (optional, internet-scale)
+**Problem:** Hash-chains validate local consistency, but a malicious/compromised mediator can show different valid histories (“split transcript equivocation”) to different participants. This blocks strong auditability across domains.
 
-### Acceptance criteria
-- `make conformance-ext` passes when SB suite enabled; base profiles remain unaffected unless they require SB.
+**Deliverables**
+1) **EXT-TRANSCRIPT-WITNESS (optional)**:
+   - Signed **checkpoint commitments** (periodic head-hash commitments) with timestamp and session binding.
+   - `WITNESS_SUBMIT` / `WITNESS_RECEIPT` messages or witness objects (transport-agnostic).
+2) **Gossip / head exchange**
+   - Lightweight message type to exchange latest known head hashes between participants.
+3) **Inclusion proofs**
+   - Witness log inclusion proof format for critical events (contract accept, delegation grants, tool actions).
+4) **Non-repudiation strengthening (optional sub-profile)**
+   - Define an optional rule: delivered content/tool results MUST reference sender-signed originals (when deployments require it).
+5) **Conformance + fixtures**
+   - Split-history expected-fail when witness proofs are required.
+   - Valid checkpoint + inclusion proof expected-pass.
 
-### Notes
-- Do not make SB mandatory in Core; only in enterprise profiles if desired.
+**Acceptance**
+- A deployment can require “single canonical history” evidence across domains.
+- Participants can detect mediator equivocation without bespoke integrations.
+
+---
+
+## M32 — Agent execution interoperability profile (optional): Runs / Threads / Stores
+**Problem:** Some adopters want portability not only of chat transcripts, but also of agent execution lifecycle (runs/threads) and long-lived context references across platforms.
+
+**Deliverables**
+1) **EXT-EXECUTION-LIFECYCLE (optional)**:
+   - `RUN_CREATE`, `RUN_UPDATE`, `RUN_CANCEL`, `RUN_COMPLETE`
+   - `THREAD_CREATE`, `THREAD_APPEND`, `THREAD_CLOSE` (or equivalent minimal set)
+   - Store references: `store_ref` / `memory_ref` objects with hashing + access constraints
+2) **Bindings guidance**
+   - How execution objects map to RESUME/OBJECT_RESYNC and to binding transports.
+3) **Profile**
+   - `AICP-EXECUTION-INTEROP@0.1` bundling the extension with RESUME/OBJECT_RESYNC and (optionally) TOOL_GATING.
+4) **Fixtures + conformance**
+   - expected-pass for run lifecycle ordering
+   - expected-fail for invalid state transitions and dangling store refs
+
+**Acceptance**
+- Two platforms can exchange run/thread metadata and store references in a consistent way (if they opt in).
+
+---
+
+## M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
+**Problem:** Mass adoption requires clear licensing and patent posture to legally ship reference code, schemas, fixtures, and docs in commercial distributions.
+
+**Deliverables**
+1) **Licensing**
+   - `LICENSE` for code (recommended: Apache-2.0)
+   - Spec/doc license (recommended: CC BY 4.0 or CC0 for schemas/fixtures as appropriate)
+   - `NOTICE` + third-party attributions (if needed)
+2) **Patent / IPR posture**
+   - `PATENTS.md` (royalty-free patent grant/commitment; defensive termination)
+   - IPR disclosure process (inbound=outbound; align with common standards bodies patterns)
+3) **Contribution clarity**
+   - CLA or DCO policy (explicit) + `Developer Certificate of Origin` process if chosen
+4) **Trademark & compatibility marks**
+   - Trademark/usage policy for “AICP-compatible” marks and badges.
+
+**Acceptance**
+- A vendor can legally vendor the drop-in SDK, schemas, fixtures, and conformance runner with no ambiguity.
+
+---
+
+## M34 — Security & implementer playbooks (MCP-level doc completeness)
+**Problem:** Implementers repeatedly ask for concrete security guidance (not just normative rules): threat classes, safe defaults, and “gotchas” for deployments with tools, OAuth, on-prem enforcement, and delegated identity.
+
+**Deliverables**
+1) **`docs/security/SECURITY_BEST_PRACTICES.md`**
+   - Confused-deputy patterns, token passthrough, SSRF via tools/resources
+   - Tool poisoning / rug pull mitigation (ties into M30)
+   - Session hijack and replay guidance (ties into M22/M21)
+   - Mediator equivocation considerations (ties into M31)
+2) **Implementer tutorials**
+   - “Mediated blocking in prod” (observability + failures)
+   - “OAuth bridge cookbook” (ties into M28)
+   - “Tool catalog pinning cookbook” (ties into M30)
+3) **Security considerations section completion**
+   - Ensure each extension RFC has a minimal “Security Considerations” section with concrete examples.
+
+**Acceptance**
+- A new adopter can deploy a safe baseline by following one doc set, without reverse-engineering fixtures.
+
+---
