@@ -46,13 +46,14 @@
     "security_considerations": "Dispute artifacts should be tamper-evident and reviewable."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-ENFORCEMENT",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md",
-    "security_considerations": "Verdict authenticity and mediator integrity are required to prevent unauthorized delivery or suppression."
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#registry-entry",
+    "security_considerations": "Verdict authenticity and mediator integrity are required to prevent unauthorized delivery or suppression.",
+    "compatibility_notes": "Stable extension for mediated blocking enforcement semantics and sanction interoperability."
   },
   {
     "status": "experimental",
@@ -82,13 +83,14 @@
     "security_considerations": "Membership spoofing, role escalation, and join spam should be mitigated with authenticated identities and admission controls."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-POLICY-EVAL",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md",
-    "security_considerations": "Decision provenance should be auditable."
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#registry-entry",
+    "security_considerations": "Decision provenance should be auditable.",
+    "compatibility_notes": "Stable extension for policy evaluation request/result payloads with auditable reason codes and context binding."
   },
   {
     "status": "experimental",

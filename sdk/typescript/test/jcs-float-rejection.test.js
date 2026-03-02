@@ -3,10 +3,15 @@ import assert from "node:assert/strict";
 
 import { canonicalizeJson } from "../src/jcs.js";
 
-test("canonicalizeJson rejects float values", () => {
+test("canonicalizeJson accepts finite float values", () => {
+  assert.equal(canonicalizeJson({ score: 0.1 }), '{"score":0.1}');
+  assert.equal(canonicalizeJson({ score: 1.0 }), '{"score":1}');
+});
+
+test("canonicalizeJson rejects non-finite floats", () => {
   assert.throws(
-    () => canonicalizeJson({ score: 0.1 }),
-    /Floats are not supported by AICP Core v0.1/
+    () => canonicalizeJson({ score: Number.POSITIVE_INFINITY }),
+    /non-finite/
   );
 });
 
@@ -15,8 +20,4 @@ test("canonicalizeJson rejects unsafe integers", () => {
     () => canonicalizeJson({ score: 9007199254740993 }),
     /safe range/
   );
-});
-
-test("canonicalizeJson allows safe integer values", () => {
-  assert.equal(canonicalizeJson({ score: 9007199254740991 }), '{"score":9007199254740991}');
 });

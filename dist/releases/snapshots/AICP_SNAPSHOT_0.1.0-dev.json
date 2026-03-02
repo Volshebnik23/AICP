@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "504396ac878812e804f17450636cd5c42d690dfd10cb699b282fec8465afdb1f",
+      "combined_sha256": "0d4b42562dd1d7e535881f290861d555f372d08d256762d4f42db441c45e2f42",
       "files": [
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -17,7 +17,7 @@
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
-          "sha256": "8c93cda3ee25b15241f463e45c1a3247c0ecb6706a76bcb2901dffd38a02904e"
+          "sha256": "6bc2838bead99a2a72ceff8d23c8cf737a157ea5106655a08f8afbbea8bcb91a"
         },
         {
           "path": "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
@@ -45,7 +45,7 @@
         },
         {
           "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
-          "sha256": "fdd4fb537b237c00f5c1ed9eb1d47c1b6d237804210c611fddcb44c6b30bf2fe"
+          "sha256": "51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
         },
         {
           "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -61,7 +61,7 @@
         },
         {
           "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-          "sha256": "dba2014d3cc42487e77d956ed7bca889a34fe3abb14952cc5652be0ceb73bbd1"
+          "sha256": "f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
         },
         {
           "path": "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
@@ -118,11 +118,15 @@
         {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
+        },
+        {
+          "path": "conformance/vectors/rfc8785_float64_vectors.json",
+          "sha256": "8d9ef197022297a538da8693897fdbe0808592b491cf7aecad337f55642a2b99"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "3215e2d96d512c3ed0aed253d31522a593156f786c6c013286a030c1e7eb49f0",
+      "combined_sha256": "8e1acd9c570d0871f510df5cd64105f30c1bec6d27328f34485fbbc75cb93bdd",
       "files": [
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -137,8 +141,8 @@
           "sha256": "b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
         },
         {
-          "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
-          "sha256": "219aefa2a62108f10392cdc181e6b526c49dfa4a9edf352d62095e8655330b0e"
+          "path": "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "sha256": "43324e39e27dfec2ad804c87d903607746b3ec7d6005766e972b930dac9b2eb4"
         },
         {
           "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
@@ -471,7 +475,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "6a2118f8dd9cf231abb04659d8fc5f0b90b5c9f7d6a8655512525f542cdcf1f0",
+      "combined_sha256": "144bb56bab9f1c098f91e0e0106317bca74111337eb768b01c16af219fbfdd4e",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -507,7 +511,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "4b36921aba95257d0442bb6b3a44920bcf7d7be20be028d778355976e4e18e5d"
+          "sha256": "5a7a3e61180bafad876888d54a53b506304a65490c70f09edabb7029bdaa0359"
         },
         {
           "path": "registry/hash_domains.json",
