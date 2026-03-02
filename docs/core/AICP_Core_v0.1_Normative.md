@@ -63,7 +63,12 @@ Hashing:
 - Object hashes MUST use deterministic canonicalization and SHA-256 over `AICP1\0<object_type>\0<canonical-json>` preimage semantics.
 - Canonical JSON serialization MUST use UTF-8 output with unescaped non-ASCII characters (`ensure_ascii=false`).
 - Object keys MUST be sorted lexicographically by Unicode code point order at every object nesting level.
-- Floats are currently unsupported in canonicalization and MUST be rejected until full RFC8785 numeric handling is implemented.
+- Numbers MUST follow the Core safe-number policy:
+  - Integers are allowed only when `abs(n) <= 9007199254740991` (IEEE-754 safe integer range).
+  - Non-integer finite floats are allowed and MUST be canonicalized deterministically.
+  - Integral floats (for example `1.0`, `-0.0`) MUST canonicalize to integer form without decimal point, and `-0` MUST canonicalize to `0`.
+- Canonical numeric formatting MUST be deterministic and interoperable across implementations (RFC8785-style normalization: lowercase `e`, no exponent `+`, no exponent leading zeros).
+- NaN/Infinity and unsafe integers MUST be rejected.
 - Executable canonicalization evidence is maintained in `fixtures/core_tv.json` (TV-04..TV-06).
 - `message_hash` MUST be recomputable from message body excluding `message_hash` and `signatures`.
 

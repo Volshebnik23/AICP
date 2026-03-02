@@ -1,0 +1,87 @@
+{
+  "suite_id": "DI-DELEGATED-IDENTITY-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-DELEGATED-IDENTITY conformance for subject binding issuance, revocation, expiry, and acting-on-behalf-of references.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+  "payload_schema_map": {
+    "SUBJECT_BINDING_ISSUE": "#/$defs/SUBJECT_BINDING_ISSUE",
+    "SUBJECT_BINDING_REVOKE": "#/$defs/SUBJECT_BINDING_REVOKE"
+  },
+  "transcripts": [
+    {
+      "id": "DI-01",
+      "path": "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "IDENTITY_ANNOUNCE",
+        "SUBJECT_BINDING_ISSUE",
+        "ATTEST_ACTION"
+      ]
+    },
+    {
+      "id": "DI-02",
+      "path": "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "IDENTITY_ANNOUNCE",
+        "SUBJECT_BINDING_ISSUE",
+        "SUBJECT_BINDING_REVOKE",
+        "ATTEST_ACTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "DI-REVOKE-01", "min_count": 1}]
+    },
+    {
+      "id": "DI-03",
+      "path": "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "IDENTITY_ANNOUNCE",
+        "SUBJECT_BINDING_ISSUE",
+        "ATTEST_ACTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "DI-EXPIRY-01", "min_count": 1}]
+    },
+    {
+      "id": "DI-04",
+      "path": "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "IDENTITY_ANNOUNCE",
+        "SUBJECT_BINDING_ISSUE",
+        "ATTEST_ACTION"
+      ],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "DI-SIGNED-01", "min_count": 1}]
+    }
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-DELEGATED-IDENTITY payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "CT-SIGNATURE-HASH-01", "description": "if signatures[*].object_hash is present, it equals message_hash"},
+    {"test_id": "CT-SIGNATURE-VERIFY-01", "description": "verify Ed25519 signatures using baseline + session-local identity lifecycle keyring"},
+    {"test_id": "DI-OBJ-01", "description": "binding_ref.object_hash must match object_hash('subject_binding', binding_ref.object)"},
+    {"test_id": "DI-ISSUE-01", "description": "ISSUE binding constraints: binding_hash match + issuer binding"},
+    {"test_id": "DI-SIGNED-01", "description": "SUBJECT_BINDING_ISSUE and SUBJECT_BINDING_REVOKE must be signed"},
+    {"test_id": "DI-ACT-01", "description": "ext.subject_binding_hash must reference a prior binding whose agent_id equals sender"},
+    {"test_id": "DI-EXPIRY-01", "description": "ext.subject_binding_hash must not be used after binding expires"},
+    {"test_id": "DI-REVOKE-01", "description": "ext.subject_binding_hash must not be used at/after effective revocation"}
+  ],
+  "compatibility_mark": "AICP-EXT-DELEGATED-IDENTITY-0.1"
+}

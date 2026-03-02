@@ -8,21 +8,27 @@ export const CORE_MESSAGE_TYPES = new Set([
   "CONTEXT_AMEND",
   "ATTEST_ACTION",
   "RESOLVE_CONFLICT",
+  "ERROR",
 ]);
 
-function rejectUnsupportedNumbers(value: unknown): void {
-  if (typeof value === "number") {
-    if (!Number.isFinite(value)) throw new Error("Unsupported non-finite float");
-    if (!Number.isInteger(value)) throw new Error("Float canonicalization beyond fixture scope is not implemented");
-    return;
+export function canonicalizeNumber(value: number): string {
+  if (!Number.isFinite(value)) throw new Error("Unsupported non-finite number for canonicalization");
+  if (Object.is(value, -0) || value === 0) return "0";
+
+  if (Number.isInteger(value)) {
+    if (!Number.isSafeInteger(value)) {
+      throw new Error("Unsafe integer for AICP canonicalization (must be within IEEE-754 safe integer range)");
+    }
+    return String(value);
   }
-  if (Array.isArray(value)) {
-    value.forEach(rejectUnsupportedNumbers);
-    return;
-  }
-  if (value && typeof value === "object") {
-    Object.values(value as Record<string, unknown>).forEach(rejectUnsupportedNumbers);
-  }
+
+  const raw = value.toString().replace("E", "e");
+  const expIndex = raw.indexOf("e");
+  if (expIndex < 0) return raw;
+
+  const mantissa = raw.slice(0, expIndex);
+  const exponent = Number.parseInt(raw.slice(expIndex + 1), 10);
+  return `${mantissa}e${exponent}`;
 }
 
 function sortDeep(value: unknown): unknown {
@@ -36,9 +42,22 @@ function sortDeep(value: unknown): unknown {
   return value;
 }
 
+function serialize(value: unknown): string {
+  if (value === null) return "null";
+  if (typeof value === "boolean") return value ? "true" : "false";
+  if (typeof value === "string") return JSON.stringify(value);
+  if (typeof value === "number") return canonicalizeNumber(value);
+  if (Array.isArray(value)) return `[${value.map((v) => serialize(v)).join(",")}]`;
+  if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const keys = Object.keys(obj).sort();
+    return `{${keys.map((key) => `${JSON.stringify(key)}:${serialize(obj[key])}`).join(",")}}`;
+  }
+  throw new Error(`Unsupported value type for canonicalization: ${typeof value}`);
+}
+
 export function canonicalizeJson(value: unknown): string {
-  rejectUnsupportedNumbers(value);
-  return JSON.stringify(sortDeep(value));
+  return serialize(sortDeep(value));
 }
 
 function b64urlNoPad(input: Buffer): string {

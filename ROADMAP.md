@@ -84,11 +84,6 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M8.5 Session resumption / reconnect pattern (fast re-onboarding)
   - “Resume contract/thread” pattern leveraging hashes and (optionally) OBJECT_RESYNC.
 
-- 🟡 M8.6 Plugfest kit + interop report + errata workflow
-  - `/interop/*` artifacts, test vectors, interop report format.
-  - Interop matrix regeneration + staleness checks are enforced for submission-related PR changes.
-  - Changed-manifest schema validation is enforced for `interop/submissions/*/implementation.json` in interop CI.
-
 - ✅ M8.7 Start Here implementer entrypoint shipped (`START_HERE_IMPLEMENTERS.md`).
 - ✅ M8.8 Self-contained Core drop-ins shipped (`dropins/aicp-core/{typescript,python}/`).
 - ✅ M8.9 TS template Core-envelope validity hardening shipped (`templates/ts-agent/agent.js`).
@@ -129,22 +124,47 @@ AICP is to content-layer agent interaction what HTTPS/TLS is to secure transport
 - ✅ M12.2 EXT-DELEGATION productized (registry message types + payload schema + fixtures + conformance suite + depth/expiry/binding checks).
 - ✅ M12.3 EXT-WORKFLOW-SYNC productized (registry message types + payload schema + fixtures + conformance suite + workflow checks).
 
-- ✅ M13.1 EXT-DISPUTES + EXT-SECURITY-ALERTS productized (message-type registry coverage, payload schemas, deterministic fixtures, conformance suites, and runner checks).
+- ✅ M13.1 EXT-DISPUTES + EXT-SECURITY-ALERT productized (message-type registry coverage, payload schemas, deterministic fixtures, conformance suites, and runner checks).
 - ✅ M13.2 CAPNEG binding refinements shipped (accepted negotiation_result hash/selected bound into contract context with RFC + fixtures + conformance checks).
 - ✅ M13.3 policy_reason_codes baseline expansion + namespaced reason-code acceptance shipped.
 
 ## ⏳ Ecosystem-facing protocol profiles (platform-optional; protocol-only work)
-- ⏳ M11 Reception Chat Profile (rules + onboarding semantics)
-- ⏳ M12 Delegated Identity & Acting-on-behalf-of Binding (Auth/IAM friendly)
-- ⏳ M13 Workflow Orchestration & Delegation Profile (platform may enforce)
+- ✅ M11 Reception Chat Profile shipped (`AICP-RECEPTION-CHAT@0.1`, plus `RC-RECEPTION-CHAT-SEMANTICS-0.1` conformance suite).
+- ✅ M12 Delegated Identity & Acting-on-behalf-of Binding shipped (`EXT-DELEGATED-IDENTITY`, `DI-DELEGATED-IDENTITY-0.1`, `AICP-DELEGATED-IDENTITY@0.1`).
+- ✅ M13 Workflow Orchestration & Delegation Profile shipped (`conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json`, `Makefile` conformance-profiles wiring, `registry/aicp_profiles.json`, and `docs/profiles/AICP_Profiles.md`).
+
+---
+
+## ✅ Productization milestone shipped
+- ✅ M14 Profile packaging shipped
+  - Added profile conformance artifacts for `AICP-MEDIATED-BLOCKING-OPS@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-RECEPTION-CHAT@0.1`.
+  - Wired profile execution and cleanup into `make conformance-profiles` and `make clean`.
+  - Updated profile registry and profile catalog docs to move these profiles to available status.
+  - ✅ Reception chat semantics hardening shipped with cross-suite suite `conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json`, required by `AICP-RECEPTION-CHAT` profile.
 
 ---
 
 ## ⏳ Website & messaging (docs-only)
-- ⏳ M14 Convert ecosystem user stories into website-ready marketing use cases
+- ⏳ M15 Convert ecosystem user stories into website-ready marketing use cases
   - Source: `docs/marketing/ecosystem_use_cases.md`
 
 ---
 
+
+## ✅ M16 Numeric canonicalization & safe number policy shipped
+- ✅ Part 1 shipped (historical): float rejection parity across reference/dropins.
+- ✅ Part 2 shipped: finite float support with deterministic RFC8785-style normalization in Python reference/dropin and TypeScript SDK/dropin, safe-integer enforcement (`abs(n) <= 9007199254740991`), and numeric guardrail fixtures/suite updates (`fixtures/core/numeric/NUM-01_float_payload_pass.jsonl`, `fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl`, `conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json`).
+
+---
+
+
+## ✅ D1–D4 protocol consistency fixes shipped
+- ✅ D1 SECURITY-ALERT naming alignment shipped (suite renamed to `conformance/extensions/SA_SECURITY_ALERT_0.1.json` with singular suite id/compatibility mark to match `EXT-SECURITY-ALERT`).
+- ✅ D2 Reception-chat semantics suite mark reclassified to non-extension (`AICP-SUITE-RECEPTION-CHAT-SEMANTICS-0.1`) to avoid unregistered EXT claims.
+- ✅ D3/D4 Error & recovery docs canonicalized: ops guide now uses EXT-ALERTS action IDs only and references RFC as normative source; RFC links back to ops guide.
+- ✅ Added compatibility-mark anti-drift gate (`scripts/validate_compatibility_marks.py`) and wired it into `make validate`.
+
+---
+
 ## Immediate next step
-**M14 profile packaging** is next, followed by ecosystem-facing profile hardening line items.
+**M15 Website & messaging conversion** is next (docs-focused milestone).
