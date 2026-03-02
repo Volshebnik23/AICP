@@ -1,6 +1,6 @@
 11. RFC: Transport bindings (Registered Extensions)
 
-11.2 EXT-BIND-MCP — Binding over MCP (normative)
+11.2 BIND-MCP-0.1 — Binding over MCP (normative)
 Model: an MCP server ("aicp-bridge") exposes tools and resources to exchange AICP envelopes. The bridge MAY be local (sidecar) or remote. If privacy_mode disallows relay visibility, payload MUST be protected before passing through a remote bridge.
 Required MCP tools (normative minimum):
 •	aicp.sendMessage(envelope) -> {accepted, error_envelope?, head_version?, cursor?}
@@ -17,3 +17,6 @@ Productized artifacts (M7.4):
 
 Verification command:
 - `make conformance-bindings`
+
+
+Compatibility note: `EXT-BIND-MCP` is a deprecated alias retained only for backward compatibility. New negotiations and evidence MUST use `BIND-MCP-0.1`.

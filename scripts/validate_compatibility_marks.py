@@ -77,6 +77,34 @@ def load_binding_ids() -> set[str]:
     }
 
 
+
+
+def _iter_jsonl_rows(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        rows.append(json.loads(line))
+    return rows
+
+
+def _collect_binding_ids(node: Any) -> set[str]:
+    found: set[str] = set()
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "bindings" and isinstance(value, list):
+                for item in value:
+                    if isinstance(item, str):
+                        found.add(item)
+            else:
+                found |= _collect_binding_ids(value)
+    elif isinstance(node, list):
+        for value in node:
+            found |= _collect_binding_ids(value)
+    return found
+
+
 def main() -> int:
     extension_ids = load_extension_ids()
     profile_registry = load_profiles_registry()
@@ -172,6 +200,25 @@ def main() -> int:
                 f"registry/aicp_profiles.json: profile {profile_id}@{profile_version} has no matching "
                 "conformance/profiles/*.json catalog."
             )
+
+    capneg_fixture_paths = sorted((ROOT / "fixtures/extensions/capneg").glob("*.jsonl"))
+    for fixture_path in capneg_fixture_paths:
+        try:
+            rows = _iter_jsonl_rows(fixture_path)
+        except Exception as exc:
+            failures.append(f"{_rel(fixture_path)}: failed to parse JSONL: {exc}")
+            continue
+
+        fixture_binding_ids: set[str] = set()
+        for row in rows:
+            fixture_binding_ids |= _collect_binding_ids(row.get("payload", {}))
+
+        for binding_id in sorted(fixture_binding_ids):
+            if binding_id not in binding_ids:
+                failures.append(
+                    f"{_rel(fixture_path)}: binding id '{binding_id}' referenced in CAPNEG fixture is missing "
+                    "from registry/transport_bindings.json."
+                )
 
     binding_paths = sorted((CONFORMANCE_ROOT / "bindings").glob("*.json"))
     for binding_path in binding_paths:

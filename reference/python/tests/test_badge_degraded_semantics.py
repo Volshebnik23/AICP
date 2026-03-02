@@ -73,3 +73,32 @@ def test_profile_degraded_mode_removes_profile_badges(monkeypatch, tmp_path: Pat
     assert report["degraded"] is True
     assert "signature verification unavailable" in report.get("degraded_reasons", [])
     assert report.get("compatibility_marks") == []
+
+
+def test_profile_infers_aicp_version_from_suite_catalog_when_mock_missing(monkeypatch, tmp_path: Path) -> None:
+    profile_runner = _load_module(PROFILE_RUNNER_PATH, "aicp_profile_runner_missing_version_test")
+
+    profile = {
+        "profile_id": "TMP-PROFILE-INFER-VERSION",
+        "profile_version": "0.1",
+        "required_suites": ["conformance/core/CT_CORE_0.1.json"],
+        "compatibility_mark": "TMP-PROFILE-MARK",
+    }
+    profile_path = tmp_path / "tmp_profile_infer.json"
+    profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
+
+    monkeypatch.setattr(
+        profile_runner,
+        "run_suite",
+        lambda _suite_path: {
+            "suite_id": "CT-CORE-0.1",
+            "passed": True,
+            "failures": [],
+            "compatibility_marks": ["AICP-Core-0.1"],
+            "degraded": False,
+            "degraded_reasons": [],
+        },
+    )
+
+    report = profile_runner.run_profile(profile_path)
+    assert report["aicp_version"] == "0.1"
