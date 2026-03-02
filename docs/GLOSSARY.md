@@ -45,7 +45,7 @@ A codified enforcement consequence (e.g., WARN/KICK/BAN), validated against sanc
 ## Alert (EXT-ALERTS)
 Operational warning/fatal signal (`ALERT`) carrying code + recommended actions for deterministic recovery handling.
 
-## Security Alert (EXT-SECURITY-ALERTS)
+## Security Alert (EXT-SECURITY-ALERT)
 Security incident/event signaling extension distinct from operational EXT-ALERTS taxonomy.
 
 ## Resume (EXT-RESUME)

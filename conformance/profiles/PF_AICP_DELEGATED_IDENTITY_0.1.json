@@ -1,0 +1,12 @@
+{
+  "profile_id": "AICP-DELEGATED-IDENTITY",
+  "profile_version": "0.1",
+  "description": "Delegated identity profile requiring Core, CAPNEG, identity lifecycle, and delegated identity suite conformance.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CN_CAPNEG_0.1.json",
+    "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+    "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-DELEGATED-IDENTITY-0.1"
+}
