@@ -68,7 +68,14 @@ def _stable_extension_coverage_failures(entries: list[dict[str, str]]) -> list[s
         if not fixtures_match:
             failures.append(f"stable extension {ext_id}: no fixtures found under fixtures/extensions/{slug}/")
 
-        suite_hits = [p for p, text in suite_texts.items() if ext_id in text]
+        suite_hits = []
+        for suite_path in ext_suites:
+            suite_json = _load_json(suite_path)
+            if isinstance(suite_json, dict) and suite_json.get("extension_id") == ext_id:
+                suite_hits.append(suite_path)
+                continue
+            if ext_id in suite_texts[suite_path]:
+                suite_hits.append(suite_path)
         if not suite_hits:
             failures.append(f"stable extension {ext_id}: no conformance/extensions suite references this id")
     return failures

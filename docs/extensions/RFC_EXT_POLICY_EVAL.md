@@ -19,3 +19,8 @@ POLICY_DECISION_ATTEST (optional) MAY be used to bind a policy_decision to ATTES
 12.5 Registry bindings (normative)
 language_id and binding_id MUST be registered (Section 8).
 reason_codes used in POLICY_EVAL_RESULT MUST be either registered in `registry/policy_reason_codes.json` or namespaced as `vendor:*` or `org:*`.
+
+
+## Registry entry {#registry-entry}
+- Extension ID: `EXT-POLICY-EVAL`
+- Stability: Stable

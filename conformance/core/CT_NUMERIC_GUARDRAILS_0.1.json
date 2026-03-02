@@ -2,24 +2,18 @@
   "suite_id": "CT-NUMERIC-GUARDRAILS-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "Core numeric guardrails ensuring float-bearing payloads fail deterministic message-hash checks.",
+  "description": "Core numeric guardrails ensuring finite-float acceptance with deterministic message-hash checks and unsafe integer rejection.",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
   "transcripts": [
     {
       "id": "NUM-01",
-      "path": "fixtures/core/numeric/NUM-01_float_in_payload_expected_fail.jsonl",
+      "path": "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
       "expected_message_types": [
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT",
         "ATTEST_ACTION"
       ],
-      "expect_pass": false,
-      "expected_failures": [
-        {
-          "test_id": "CT-MESSAGE-HASH-01",
-          "min_count": 1
-        }
-      ]
+      "expect_pass": true
     },
     {
       "id": "NUM-02",

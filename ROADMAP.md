@@ -7,39 +7,34 @@ _Last updated: 2026-03-02_
 
 ## Current / Next
 
-### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
-- **Why:** Eliminate cross-language drift from unsafe integers while keeping current float-rejection baseline.
-- **Progress:** Canonicalization now enforces integers within ±(2^53−1), unsafe integer expected-fail fixtures are covered in conformance, and OQ-0001 is closed as a staged decision.
-- **Exit:** Safe-integer policy implemented across reference/SDK + conformance guardrails + docs.
+### ✅ M16b — RFC8785 float canonicalization
+- **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
 
-### 🔜 M16b — RFC8785 float canonicalization
-- **Why:** Complete numeric canonicalization beyond integer-only mode.
-- **Next concrete step:** Implement RFC8785 float handling with cross-language parity tests and compatibility notes under release policy.
+### ✅ M17 — Stability graduation baseline (first promotions)
+- **Progress:** `EXT-ENFORCEMENT` and `EXT-POLICY-EVAL` promoted to stable with anchored spec refs and productization coverage.
 
-### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
-- **Why:** Prevent drift between registries/suites/profile marks.
-- **Progress:** Conformance reports now emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes a single anti-drift lint gate for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
-- **Source:** Implemented in this sprint.
-- **Exit:** Lint gates + aligned names/marks across repo.
+### ✅ M18 — Release discipline (changelog + compatibility policy + errata cadence)
+- **Progress:** Errata cadence documented and validator wired into `make validate`.
 
-### 🔜 Next milestone — M17 Stability graduation program
-- **Next concrete step:** Define the first stable baseline set and add validator rules for promotion eligibility metadata in registries.
+### ✅ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
+- **Progress:** Adapter/gateway artifacts are present and roadmap state is now aligned to shipped repo reality.
+
+### 🔜 Next milestone — M22 (Transport bindings and channel properties)
+- **Next concrete step 1:** Define normative channel property schema (reliability, ordering, replay window, ack semantics) with registry IDs + validation.
+- **Next concrete step 2:** Add binding conformance fixtures/suites proving channel-property negotiation and enforcement across at least one transport binding.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
-### ✅ M17 — Stability graduation baseline (first promotions)
-- **Progress:** Stable baseline set established with `EXT-CAPNEG` and `AICP-BASE@0.1` promoted to stable, with registry lint rules for stable/deprecated metadata and productization checks for stable extensions.
-- **Next promotion candidates:** `EXT-ENFORCEMENT`, `EXT-POLICY-EVAL`.
-- **Exit:** “Stable baseline set” defined + validator rules enforce stable metadata + first promotions.
+### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
+- **Progress:** Canonicalization enforces integers within ±(2^53−1), unsafe integer expected-fail fixtures are covered in conformance, and OQ-0001 was staged pending M16b.
+- **Exit:** Safe-integer policy implemented across reference/SDK + conformance guardrails + docs.
 
-### 🟡 M18 — Release discipline (changelog + compatibility policy + errata cadence)
-- **Exit:** RELEASE_NOTES filled; compatibility policy; release checklist; errata cadence.
+### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
+- **Progress:** Conformance reports emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes anti-drift lint for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
+- **Exit:** Lint gates + aligned names/marks across repo.
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
-
-### ⏳ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-- **Exit:** Template adapter skeleton + CI snippets + “<1 hour” onboarding for a new platform.
 
 ### ⏳ M20 — Trust anchors & issuer attestations (internet-scale trust signals)
 - **Exit:** RFC + registries + fixtures + conformance for trust anchors/attestations.
@@ -80,7 +75,6 @@ _Last updated: 2026-03-02_
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
 - **Exit:** Security best practices + deployment cookbooks + security-considerations completion.
 
-
 ### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
 - **Exit:** EXT-ADMISSION + EXT-QUEUE-LEASES + overload reason codes + conformance for crowded-room stability.
 
@@ -93,15 +87,14 @@ _Last updated: 2026-03-02_
 ### ⏳ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, content-level CDN, group policies)
 - **Exit:** EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-FEEDS + CDN/inbox primitives + profiles for brand receptions and agent-media distribution.
 
-
 ## Suggested dependency order (high level)
-1) M16 → M17.1 → M17 → M18 → M33  
-2) Interop hardening: M22 + M19  
-3) Trust & tooling: M20 + M21 + M30  
-4) Enterprise controls: M23 + M24 + M26 + M28  
-5) Crowd-ready bazaars: M35  
-6) Coordination & service chaining: M36 + M37  
-7) Internet-scale audit (recommended before large public feeds): M31  
-8) Agent media & brand reception feeds: M38  
-9) Optional platform interop: M32  
+1) M16 → M17.1 → M17 → M18 → M33
+2) Interop hardening: M22 + M19
+3) Trust & tooling: M20 + M21 + M30
+4) Enterprise controls: M23 + M24 + M26 + M28
+5) Crowd-ready bazaars: M35
+6) Coordination & service chaining: M36 + M37
+7) Internet-scale audit (recommended before large public feeds): M31
+8) Agent media & brand reception feeds: M38
+9) Optional platform interop: M32
 10) Ops + docs completeness: M27 + M34 + M29
