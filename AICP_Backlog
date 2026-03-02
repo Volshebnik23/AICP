@@ -1,4 +1,4 @@
-# AICP v69 — Protocol Backlog (repo-backed)
+# AICP v74 — Protocol Backlog (repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
@@ -13,7 +13,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Current shipped baseline (as of v69)
+## Current shipped baseline (as of v74)
 - Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
 - Extensions productized: CAPNEG, ENFORCEMENT, POLICY_EVAL, PARTICIPANTS, TOOL_GATING, IDENTITY_LC, DELEGATION, WORKFLOW_SYNC, DISPUTES, SECURITY_ALERTS, ALERTS, RESUME, OBJECT_RESYNC, DELEGATED_IDENTITY.
 - Profiles shipped (experimental status): AICP-BASE, AICP-MEDIATED-BLOCKING, AICP-MEDIATED-BLOCKING-OPS, AICP-RECEPTION-CHAT, AICP-RESUMABLE-SESSIONS, AICP-DELEGATED-IDENTITY, AICP-WORKFLOW-ORCHESTRATION-DELEGATION.
@@ -158,23 +158,37 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 
 ---
 
-## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas)
-**Problem:** AICP is transport-agnostic, but interop in practice needs canonical bindings.
+## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
+**Problem:** AICP is transport-agnostic, but interop in practice needs canonical bindings and production-grade delivery semantics.
+
+**Current repo state**
+- ✅ Draft normative doc exists: `docs/bindings/RFC_BIND_HTTP_WS.md` (baseline endpoints + basic error patterns).
+- ❌ Missing: streaming/chunking norms, anti-replay semantics, quota/overload signaling, and conformance.
 
 **Deliverables**
-1) **Bindings RFCs**:
-   - HTTP binding: endpoints, idempotency, error mapping, retry semantics
-   - WS binding: session lifecycle and reconnect (align with RESUME)
-2) **Anti-replay & session-binding**:
-   - define canonical request ids / nonce usage at binding layer
-3) **Rate limits / backpressure**:
-   - standard error/alert patterns to communicate quotas and overload.
+1) **Binding hardening (HTTP/S + WS)**:
+   - Define **SSE/streaming** mode for message replication (polling vs SSE), including ordering guarantees.
+   - Define **chunking** for large payloads/artifacts (e.g., `artifact_ref` + chunk index + total + hash).
+   - Define canonical **webhook** option (optional) with signature binding.
+2) **Anti-replay & session binding**:
+   - Define nonce/timestamp windows and replay cache guidance.
+   - Define idempotency semantics (HTTP headers or envelope fields) for retransmits.
+3) **Rate limits / backpressure / overload**:
+   - Standard error mapping and optional **ALERT** patterns for quotas/overload (retry-after, degrade mode).
+4) **Cross-binding conformance**:
+   - A new binding suite (e.g., `TB_HTTP_WS_0.1`) validating:
+     - idempotent resend behavior
+     - replay rejection
+     - ordering under SSE vs poll
+     - chunk reassembly integrity
+5) **Reference adapter snippets**:
+   - Minimal client/server examples (Python + TS) for POST + poll and POST + SSE.
 
 **Acceptance**
-- Two vendors can connect via a binding profile without bespoke integration docs.
+- Two vendors can connect via a binding profile (HTTP+SSE or WS) without bespoke integration docs.
+- Replay and retransmit behavior is deterministic and testable across languages.
 
 ---
-
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 **Problem:** Enforcement assumes content-visible moderation; enterprise needs privacy modes.
 
@@ -221,20 +235,30 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 ---
 
 ## M26 — Human-in-the-loop primitive (approval / step-up)
-**Problem:** Can be modeled indirectly, but market wants explicit primitive.
+**Problem:** Can be modeled indirectly, but market wants an explicit, machine-checkable approval primitive that cannot be “UX-skipped”.
 
 **Deliverables**
-1) **EXT-HUMAN-APPROVAL**:
-   - approval request/grant/deny messages
-   - binding to tool call or content message hash
-2) **Step-up auth pattern**:
-   - tie to delegated identity / OAuth bridge in later milestones.
+1) **EXT-HUMAN-APPROVAL (normative)**:
+   - `APPROVAL_CHALLENGE` (what is being approved; human-readable + machine-readable fields)
+   - `APPROVAL_GRANT` / `APPROVAL_DENY` (signed by approver)
+   - Bindings:
+     - MUST bind to **target** (`tool_call_id`/`tool_call_hash` OR `message_hash`)
+     - MUST include **actor** (`approver_id`) and **scope** (what changes are permitted)
+     - MUST include **TTL/expiry** and optional **revocation handle**
+2) **Step-up patterns**:
+   - Risk-triggered step-up (e.g., amount threshold, data-classification escalation)
+   - “Dual control” / two-person rule (optional)
+3) **Conformance + fixtures**
+   - expected-fail for: missing binding, expired approval, wrong signer, approval reuse across targets
+   - expected-pass for: correct binding + signer + TTL
+4) **Bridge hooks**
+   - Provide a mapping note to OAuth/OIDC / delegated identity (ties into M28 IAM bridge).
 
 **Acceptance**
-- Human approval becomes a first-class, machine-checkable step in workflows.
+- Human approval becomes a first-class, verifiable step in workflows (content and/or tool execution).
+- A mediator/enforcer can deterministically reject actions that lack a valid approval grant.
 
 ---
-
 ## M27 — Production attributes: tracing, SLA signals, metering
 **Problem:** For PaaS adoption, production-grade signals matter.
 
@@ -274,3 +298,115 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 
 **Acceptance**
 - “AICP in the real enterprise stack” becomes an adoptable recipe, not research.
+## M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
+**Problem:** In MCP-style ecosystems, tools and their metadata can change (“rug pull”), and tool namespaces can collide (“shadowing”). AICP has TOOL_GATING, but lacks a protocol-level way to make tool catalogs **immutable, attributable, and pinned** to a chat contract.
+
+**Deliverables**
+1) **EXT-ARTIFACT-MANIFESTS (or EXT-TOOL-MANIFEST)** (normative):
+   - Signed manifest objects for **Tools**, **Resources**, and **Prompts**:
+     - `id`, `issuer`, `version`, `schema`, `description`, `risk_class`, `content_hash`
+   - Namespacing rules: `issuer_scoped_id` to prevent collisions/shadowing.
+2) **Contract pinning**
+   - Contract fields to pin:
+     - manifest set digest(s)
+     - allowed tool/resource/prompt ids + versions
+   - Any change requires explicit `CONTEXT_AMEND` / renegotiation.
+3) **Tool gating integration**
+   - TOOL_CALL_REQUEST MUST reference a pinned manifest id/version/digest.
+   - Conformance: expected-fail if tool call refers to unpinned or changed manifest.
+4) **Golden fixtures + conformance**
+   - Rug-pull attempt (manifest changed mid-session) → expected-fail
+   - Shadowing attempt (same tool_id different issuer) → expected-fail
+   - Valid upgrade via renegotiation → expected-pass
+
+**Acceptance**
+- A platform can enforce “no silent tool changes” with protocol evidence.
+- Two vendors interpret the same pinned toolset deterministically.
+
+---
+
+## M31 — Anti-equivocation & transparency witnessing (optional, internet-scale)
+**Problem:** Hash-chains validate local consistency, but a malicious/compromised mediator can show different valid histories (“split transcript equivocation”) to different participants. This blocks strong auditability across domains.
+
+**Deliverables**
+1) **EXT-TRANSCRIPT-WITNESS (optional)**:
+   - Signed **checkpoint commitments** (periodic head-hash commitments) with timestamp and session binding.
+   - `WITNESS_SUBMIT` / `WITNESS_RECEIPT` messages or witness objects (transport-agnostic).
+2) **Gossip / head exchange**
+   - Lightweight message type to exchange latest known head hashes between participants.
+3) **Inclusion proofs**
+   - Witness log inclusion proof format for critical events (contract accept, delegation grants, tool actions).
+4) **Non-repudiation strengthening (optional sub-profile)**
+   - Define an optional rule: delivered content/tool results MUST reference sender-signed originals (when deployments require it).
+5) **Conformance + fixtures**
+   - Split-history expected-fail when witness proofs are required.
+   - Valid checkpoint + inclusion proof expected-pass.
+
+**Acceptance**
+- A deployment can require “single canonical history” evidence across domains.
+- Participants can detect mediator equivocation without bespoke integrations.
+
+---
+
+## M32 — Agent execution interoperability profile (optional): Runs / Threads / Stores
+**Problem:** Some adopters want portability not only of chat transcripts, but also of agent execution lifecycle (runs/threads) and long-lived context references across platforms.
+
+**Deliverables**
+1) **EXT-EXECUTION-LIFECYCLE (optional)**:
+   - `RUN_CREATE`, `RUN_UPDATE`, `RUN_CANCEL`, `RUN_COMPLETE`
+   - `THREAD_CREATE`, `THREAD_APPEND`, `THREAD_CLOSE` (or equivalent minimal set)
+   - Store references: `store_ref` / `memory_ref` objects with hashing + access constraints
+2) **Bindings guidance**
+   - How execution objects map to RESUME/OBJECT_RESYNC and to binding transports.
+3) **Profile**
+   - `AICP-EXECUTION-INTEROP@0.1` bundling the extension with RESUME/OBJECT_RESYNC and (optionally) TOOL_GATING.
+4) **Fixtures + conformance**
+   - expected-pass for run lifecycle ordering
+   - expected-fail for invalid state transitions and dangling store refs
+
+**Acceptance**
+- Two platforms can exchange run/thread metadata and store references in a consistent way (if they opt in).
+
+---
+
+## M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
+**Problem:** Mass adoption requires clear licensing and patent posture to legally ship reference code, schemas, fixtures, and docs in commercial distributions.
+
+**Deliverables**
+1) **Licensing**
+   - `LICENSE` for code (recommended: Apache-2.0)
+   - Spec/doc license (recommended: CC BY 4.0 or CC0 for schemas/fixtures as appropriate)
+   - `NOTICE` + third-party attributions (if needed)
+2) **Patent / IPR posture**
+   - `PATENTS.md` (royalty-free patent grant/commitment; defensive termination)
+   - IPR disclosure process (inbound=outbound; align with common standards bodies patterns)
+3) **Contribution clarity**
+   - CLA or DCO policy (explicit) + `Developer Certificate of Origin` process if chosen
+4) **Trademark & compatibility marks**
+   - Trademark/usage policy for “AICP-compatible” marks and badges.
+
+**Acceptance**
+- A vendor can legally vendor the drop-in SDK, schemas, fixtures, and conformance runner with no ambiguity.
+
+---
+
+## M34 — Security & implementer playbooks (MCP-level doc completeness)
+**Problem:** Implementers repeatedly ask for concrete security guidance (not just normative rules): threat classes, safe defaults, and “gotchas” for deployments with tools, OAuth, on-prem enforcement, and delegated identity.
+
+**Deliverables**
+1) **`docs/security/SECURITY_BEST_PRACTICES.md`**
+   - Confused-deputy patterns, token passthrough, SSRF via tools/resources
+   - Tool poisoning / rug pull mitigation (ties into M30)
+   - Session hijack and replay guidance (ties into M22/M21)
+   - Mediator equivocation considerations (ties into M31)
+2) **Implementer tutorials**
+   - “Mediated blocking in prod” (observability + failures)
+   - “OAuth bridge cookbook” (ties into M28)
+   - “Tool catalog pinning cookbook” (ties into M30)
+3) **Security considerations section completion**
+   - Ensure each extension RFC has a minimal “Security Considerations” section with concrete examples.
+
+**Acceptance**
+- A new adopter can deploy a safe baseline by following one doc set, without reverse-engineering fixtures.
+
+---
