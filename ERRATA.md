@@ -7,6 +7,7 @@ Track discovered inconsistencies or bugs across spec text, schemas, fixtures, te
 - Include affected spec/doc path(s).
 - Include a minimal reproduction (transcript/fixture if possible).
 - Link related conformance failures/reports when applicable.
+- For plugfest findings, also cross-reference the submission path under `interop/submissions/<implementation_id>/` and corresponding `interop/INTEROP_MATRIX.md` row.
 
 ## Template
 - **ID:** ER-XXXX

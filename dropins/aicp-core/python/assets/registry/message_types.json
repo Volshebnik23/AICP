@@ -354,6 +354,24 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "SUBJECT_BINDING_ISSUE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md#3-message-types-normative",
+    "security_considerations": "Issue events must be signed by the declared issuer and hash-bind the delegated subject object."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBJECT_BINDING_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md#3-message-types-normative",
+    "security_considerations": "Revocations require signed, time-bounded effectivity to prevent stale delegated authority use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "TOOL_CALL_ATTEST",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
