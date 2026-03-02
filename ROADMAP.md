@@ -1,4 +1,4 @@
-# AICP v74 — Roadmap Items (repo-backed)
+# AICP v77 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
@@ -7,29 +7,35 @@ _Last updated: 2026-03-02_
 
 ## Current / Next
 
-### 🟡 M16 — Numeric canonicalization & safe number policy (Part 2)
-- **Why:** Cross-language numeric interop (RFC8785 canonicalization; safe-integer policy).
-- **Source:** Already marked current in `ROADMAP.md`.
-- **Exit:** RFC8785 numeric canonicalization + safe number policy + fixtures + conformance.
+### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
+- **Progress:** Implemented across reference, SDK, and dropins with unsafe-integer expected-fail conformance coverage.
 
-### 🔜 M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
-- **Why:** Prevent drift between registries/suites/profile marks.
-- **Source:** Already marked next in `ROADMAP.md`.
-- **Exit:** Lint gates + aligned names/marks across repo.
+### ✅ M16b — RFC8785 float canonicalization
+- **Progress:** Finite float canonicalization is implemented with shared float64 vectors (`conformance/vectors/rfc8785_float64_vectors.json`) and cross-language parity tests.
+- **Guardrails retained:** non-finite numbers are rejected; unsafe integers remain disallowed.
+
+### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
+- **Progress:** Conformance reports emit protocol `aicp_version` from suite/profile inputs; anti-drift mark lint gate is active.
+
+### ✅ M18 — Release discipline (changelog + compatibility policy + errata cadence)
+- **Progress:** Compatibility policy, release checklist, and errata cadence are documented and validated (`scripts/validate_errata.py`).
+
+### ✅ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
+- **Progress:** Shipped guide + template in `docs/guides/Protocol_Adapter_Gateway.md` and `templates/protocol-adapter/` with CI snippet.
+
+### 🔜 Next milestone — M22 Transport bindings and channel properties
+- **Why now:** Core numeric/version drift and baseline release discipline are now landed; next highest interop risk is transport semantic divergence.
+- **Next concrete step:** Define canonical HTTP/WS/SSE replay/idempotency/overload semantics with conformance cases.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
-### ⏳ M17 — Stability graduation program (reduce experimental sprawl safely)
+### ✅ M17 — Stability graduation baseline (first promotions)
+- **Progress:** Stable baseline set includes `EXT-CAPNEG`, `EXT-ENFORCEMENT`, `EXT-POLICY-EVAL`, and profile `AICP-BASE@0.1`; validators enforce stable/deprecated metadata and stable extension productization coverage.
+- **Next promotion candidates:** `EXT-ALERTS`, `EXT-DELEGATION`.
 - **Exit:** “Stable baseline set” defined + validator rules enforce stable metadata + first promotions.
-
-### ⏳ M18 — Release discipline (changelog + compatibility policy + errata cadence)
-- **Exit:** RELEASE_NOTES filled; compatibility policy; release checklist; errata cadence.
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
-
-### ⏳ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-- **Exit:** Template adapter skeleton + CI snippets + “<1 hour” onboarding for a new platform.
 
 ### ⏳ M20 — Trust anchors & issuer attestations (internet-scale trust signals)
 - **Exit:** RFC + registries + fixtures + conformance for trust anchors/attestations.

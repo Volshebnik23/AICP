@@ -14,11 +14,10 @@ DEFAULT_OUT = ROOT / "dist/releases/snapshots/AICP_SNAPSHOT_0.1.0-dev.json"
 
 
 def _sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    data = path.read_bytes()
+    if path.suffix in {".json", ".jsonl", ".md"}:
+        data = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(data).hexdigest()
 
 
 def _collect_files(patterns: list[str], exclude_predicate: Any | None = None) -> list[dict[str, str]]:

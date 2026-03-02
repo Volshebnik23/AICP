@@ -23,6 +23,6 @@ Track unresolved specification/productization questions here.
   - Option A: Keep strict float rejection as the baseline until full RFC8785 numeric handling lands.
   - Option B: Implement full RFC8785 float canonicalization now.
 - **Decision owner:** AICP Working Group
-- **Status:** open
-- **Target milestone:** M16
-- **Notes / links:** Current policy is to reject all floats across reference + dropins; conformance numeric guardrail suite tracks this until full RFC8785 support is implemented.
+- **Status:** decided (staged)
+- **Target milestone:** M16a (completed), M16b (planned)
+- **Notes / links:** Closed: M16b implemented finite-float canonicalization with shared float64 vectors under `conformance/vectors/rfc8785_float64_vectors.json`; non-finite numbers remain rejected and unsafe integers remain disallowed.

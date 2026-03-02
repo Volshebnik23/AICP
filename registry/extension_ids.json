@@ -9,13 +9,14 @@
     "security_considerations": "Operational alerts should avoid sensitive leakage and spoofing."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-CAPNEG",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
-    "security_considerations": "Negotiation must prevent downgrade and spoofing."
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#registry-entry",
+    "security_considerations": "Negotiation must prevent downgrade and spoofing.",
+    "compatibility_notes": "Stable baseline extension for capability negotiation; incompatible changes require migration notes and conformance updates."
   },
   {
     "status": "experimental",
@@ -45,13 +46,14 @@
     "security_considerations": "Dispute artifacts should be tamper-evident and reviewable."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-ENFORCEMENT",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md",
-    "security_considerations": "Verdict authenticity and mediator integrity are required to prevent unauthorized delivery or suppression."
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#registry-entry",
+    "security_considerations": "Verdict authenticity and mediator integrity are required to prevent unauthorized delivery or suppression.",
+    "compatibility_notes": "Stable extension; changes require compatibility notes and updated conformance evidence."
   },
   {
     "status": "experimental",
@@ -81,13 +83,14 @@
     "security_considerations": "Membership spoofing, role escalation, and join spam should be mitigated with authenticated identities and admission controls."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "EXT-POLICY-EVAL",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md",
-    "security_considerations": "Decision provenance should be auditable."
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#registry-entry",
+    "security_considerations": "Decision provenance should be auditable.",
+    "compatibility_notes": "Stable extension; changes require compatibility notes and updated conformance evidence."
   },
   {
     "status": "experimental",
