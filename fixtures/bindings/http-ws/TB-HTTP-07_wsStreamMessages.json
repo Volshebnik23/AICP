@@ -1,0 +1,147 @@
+{
+  "case_id": "TB-HTTP-07",
+  "operation": "wsStreamMessages",
+  "channel_properties": {
+    "CP-ORDERING-0.1": "ordered"
+  },
+  "http_request": null,
+  "http_response": null,
+  "ws_session": {
+    "url": "wss://relay.example/aicp/v1/sessions/sGT1/stream",
+    "protocol": "aicp-0.1"
+  },
+  "ws_frames_out": [
+    {
+      "type": "messages",
+      "messages": [
+        {
+          "session_id": "sGT1",
+          "message_id": "m1",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "sender": "agent:A",
+          "message_type": "CONTRACT_PROPOSE",
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "payload": {
+            "contract": {
+              "contract_id": "cGT1",
+              "goal": "golden_demo",
+              "roles": [
+                "initiator",
+                "responder"
+              ]
+            },
+            "contract_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4",
+            "note": "propose contract v1"
+          },
+          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "signatures": [
+            {
+              "signer": "agent:A",
+              "kid": "A1",
+              "object_type": "message",
+              "object_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+              "sig_b64url": "Kc-w_l9sUC3A40zH2LyqFliHdPfbQDZZud9swZ-zLc-WNqCiV1mjGC2moZ48KNR5YQJwU02GlLzCKplqUIccCw"
+            }
+          ]
+        },
+        {
+          "session_id": "sGT1",
+          "message_id": "m2",
+          "timestamp": "2026-01-01T00:00:05Z",
+          "sender": "agent:B",
+          "message_type": "CONTRACT_ACCEPT",
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "payload": {
+            "accepted": true
+          },
+          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+          "signatures": [
+            {
+              "signer": "agent:B",
+              "kid": "B1",
+              "object_type": "message",
+              "object_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+              "sig_b64url": "gexy1jDTZ4hJZvq40m_AyJ4qUTZLcjb4CtMDlkW-4LW9l3SeFUuNlgd0IpXeAtS5C4SaiHSsBb-jgu6DNd-vBw"
+            }
+          ]
+        }
+      ],
+      "next_cursor": "m2"
+    }
+  ],
+  "embedded_messages": [
+    {
+      "session_id": "sGT1",
+      "message_id": "m1",
+      "timestamp": "2026-01-01T00:00:00Z",
+      "sender": "agent:A",
+      "message_type": "CONTRACT_PROPOSE",
+      "contract_id": "cGT1",
+      "contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v1"
+      },
+      "payload": {
+        "contract": {
+          "contract_id": "cGT1",
+          "goal": "golden_demo",
+          "roles": [
+            "initiator",
+            "responder"
+          ]
+        },
+        "contract_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4",
+        "note": "propose contract v1"
+      },
+      "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+      "signatures": [
+        {
+          "signer": "agent:A",
+          "kid": "A1",
+          "object_type": "message",
+          "object_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "sig_b64url": "Kc-w_l9sUC3A40zH2LyqFliHdPfbQDZZud9swZ-zLc-WNqCiV1mjGC2moZ48KNR5YQJwU02GlLzCKplqUIccCw"
+        }
+      ]
+    },
+    {
+      "session_id": "sGT1",
+      "message_id": "m2",
+      "timestamp": "2026-01-01T00:00:05Z",
+      "sender": "agent:B",
+      "message_type": "CONTRACT_ACCEPT",
+      "contract_id": "cGT1",
+      "contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v1"
+      },
+      "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+      "payload": {
+        "accepted": true
+      },
+      "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+      "signatures": [
+        {
+          "signer": "agent:B",
+          "kid": "B1",
+          "object_type": "message",
+          "object_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+          "sig_b64url": "gexy1jDTZ4hJZvq40m_AyJ4qUTZLcjb4CtMDlkW-4LW9l3SeFUuNlgd0IpXeAtS5C4SaiHSsBb-jgu6DNd-vBw"
+        }
+      ]
+    }
+  ]
+}

@@ -304,6 +304,192 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
             if isinstance(mcp_msg, dict):
                 extracted_messages = [mcp_msg]
 
+
+        channel_properties = case_obj.get("channel_properties")
+
+        if "TB-CP-ORDERING-01" in enabled_checks:
+            ordered = isinstance(channel_properties, dict) and channel_properties.get("CP-ORDERING-0.1") == "ordered"
+            if ordered and len(extracted_messages) >= 2:
+                for idx in range(1, len(extracted_messages)):
+                    prev = extracted_messages[idx - 1]
+                    current = extracted_messages[idx]
+                    prev_hash = prev.get("message_hash")
+                    current_prev_hash = current.get("prev_msg_hash")
+                    if not isinstance(prev_hash, str) or not prev_hash:
+                        add_failure(
+                            failures,
+                            "TB-CP-ORDERING-01",
+                            f"ordered mode requires message_hash on embedded_messages[{idx - 1}]",
+                            rel_case,
+                            None,
+                        )
+                        break
+                    if not isinstance(current_prev_hash, str) or not current_prev_hash:
+                        add_failure(
+                            failures,
+                            "TB-CP-ORDERING-01",
+                            f"ordered mode requires prev_msg_hash on embedded_messages[{idx}]",
+                            rel_case,
+                            None,
+                        )
+                        break
+                    if current_prev_hash != prev_hash:
+                        add_failure(
+                            failures,
+                            "TB-CP-ORDERING-01",
+                            f"embedded_messages[{idx}].prev_msg_hash must equal embedded_messages[{idx - 1}].message_hash",
+                            rel_case,
+                            None,
+                        )
+                        break
+
+        if "TB-CP-RELIABILITY-01" in enabled_checks:
+            at_most_once = isinstance(channel_properties, dict) and channel_properties.get("CP-RELIABILITY-0.1") == "at_most_once"
+            if at_most_once:
+                seen_ids: set[str] = set()
+                duplicate_ids: set[str] = set()
+                for msg in extracted_messages:
+                    mid = msg.get("message_id")
+                    if isinstance(mid, str):
+                        if mid in seen_ids:
+                            duplicate_ids.add(mid)
+                        else:
+                            seen_ids.add(mid)
+                if duplicate_ids:
+                    add_failure(
+                        failures,
+                        "TB-CP-RELIABILITY-01",
+                        f"at_most_once forbids duplicate message_id values: {sorted(duplicate_ids)}",
+                        rel_case,
+                        None,
+                    )
+
+        if "TB-CP-RELIABILITY-02" in enabled_checks:
+            at_least_once = isinstance(channel_properties, dict) and channel_properties.get("CP-RELIABILITY-0.1") == "at_least_once"
+            if at_least_once:
+                seen_hashes: dict[str, str] = {}
+                for msg in extracted_messages:
+                    mid = msg.get("message_id")
+                    mhash = msg.get("message_hash")
+                    if not isinstance(mid, str) or not isinstance(mhash, str):
+                        continue
+                    prior_hash = seen_hashes.get(mid)
+                    if prior_hash is None:
+                        seen_hashes[mid] = mhash
+                    elif prior_hash != mhash:
+                        add_failure(
+                            failures,
+                            "TB-CP-RELIABILITY-02",
+                            f"at_least_once duplicate message_id '{mid}' has inconsistent message_hash values",
+                            rel_case,
+                            None,
+                        )
+                        break
+
+        ws_frames_out = case_obj.get("ws_frames_out")
+        ws_frames_in = case_obj.get("ws_frames_in")
+
+        if "TB-WS-PULL-01" in enabled_checks and case_obj.get("operation") == "wsPullMessages":
+            if not isinstance(ws_frames_in, list) or not ws_frames_in:
+                add_failure(failures, "TB-WS-PULL-01", "wsPullMessages requires ws_frames_in with at least one frame", rel_case, None)
+            elif not isinstance(ws_frames_in[0], dict) or ws_frames_in[0].get("type") != "pull":
+                add_failure(failures, "TB-WS-PULL-01", "wsPullMessages requires first inbound frame to be type='pull'", rel_case, None)
+            else:
+                limit = ws_frames_in[0].get("limit")
+                if not isinstance(limit, int):
+                    add_failure(failures, "TB-WS-PULL-01", "wsPullMessages pull frame must include integer limit", rel_case, None)
+                elif not isinstance(ws_frames_out, list) or not ws_frames_out:
+                    add_failure(failures, "TB-WS-PULL-01", "wsPullMessages requires ws_frames_out frames", rel_case, None)
+                else:
+                    message_frames = [f for f in ws_frames_out if isinstance(f, dict) and f.get("type") == "messages"]
+                    overload_present = any(isinstance(f, dict) and f.get("type") == "overload" for f in ws_frames_out)
+                    if not message_frames and not overload_present:
+                        add_failure(
+                            failures,
+                            "TB-WS-PULL-01",
+                            "wsPullMessages requires at least one messages frame unless overload-only",
+                            rel_case,
+                            None,
+                        )
+                    if message_frames:
+                        for idx, frame in enumerate(message_frames):
+                            more = frame.get("more")
+                            if idx < len(message_frames) - 1 and more is not True:
+                                add_failure(
+                                    failures,
+                                    "TB-WS-PULL-01",
+                                    "all non-final messages frames must set more=true",
+                                    rel_case,
+                                    None,
+                                )
+                                break
+                            if idx == len(message_frames) - 1 and more is not False:
+                                add_failure(
+                                    failures,
+                                    "TB-WS-PULL-01",
+                                    "last messages frame must set more=false",
+                                    rel_case,
+                                    None,
+                                )
+                                break
+                        if isinstance(limit, int):
+                            delivered = 0
+                            for frame in message_frames:
+                                msgs = frame.get("messages")
+                                if isinstance(msgs, list):
+                                    delivered += len(msgs)
+                            if delivered > limit:
+                                add_failure(
+                                    failures,
+                                    "TB-WS-PULL-01",
+                                    f"delivered messages ({delivered}) exceed pull limit ({limit})",
+                                    rel_case,
+                                    None,
+                                )
+
+        if "TB-WS-FRAME-MIRROR-01" in enabled_checks and isinstance(ws_frames_out, list):
+            frame_pairs: set[tuple[str, str]] = set()
+            malformed = False
+            for frame in ws_frames_out:
+                if not isinstance(frame, dict) or frame.get("type") != "messages":
+                    continue
+                messages = frame.get("messages")
+                if not isinstance(messages, list):
+                    continue
+                for idx, msg in enumerate(messages):
+                    if not isinstance(msg, dict):
+                        continue
+                    mid = msg.get("message_id")
+                    mhash = msg.get("message_hash")
+                    if not isinstance(mid, str) or not mid or not isinstance(mhash, str) or not mhash:
+                        add_failure(
+                            failures,
+                            "TB-WS-FRAME-MIRROR-01",
+                            f"messages frame entry {idx} must include message_id and message_hash",
+                            rel_case,
+                            None,
+                        )
+                        malformed = True
+                        break
+                    frame_pairs.add((mid, mhash))
+                if malformed:
+                    break
+            if not malformed and frame_pairs:
+                embedded_pairs = {
+                    (msg.get("message_id"), msg.get("message_hash"))
+                    for msg in extracted_messages
+                    if isinstance(msg.get("message_id"), str) and isinstance(msg.get("message_hash"), str)
+                }
+                missing_pairs = sorted(frame_pairs - embedded_pairs)
+                if missing_pairs:
+                    add_failure(
+                        failures,
+                        "TB-WS-FRAME-MIRROR-01",
+                        f"ws messages frame pairs missing in embedded_messages: {missing_pairs}",
+                        rel_case,
+                        None,
+                    )
+
         for msg in extracted_messages:
             if core_validator is not None:
                 for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):

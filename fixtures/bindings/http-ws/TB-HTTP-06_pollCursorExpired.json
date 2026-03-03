@@ -1,0 +1,23 @@
+{
+  "case_id": "TB-HTTP-06",
+  "operation": "pollCursorExpired",
+  "channel_properties": {
+    "CP-REPLAY-WINDOW-0.1": 2
+  },
+  "http_request": {
+    "method": "GET",
+    "path": "/aicp/v1/sessions/sGT1/messages",
+    "query": {
+      "after": "m0",
+      "limit": "10"
+    }
+  },
+  "http_response": {
+    "status": 410,
+    "body": {
+      "reason_code": "cursor_expired",
+      "min_cursor": "m5"
+    }
+  },
+  "embedded_messages": []
+}

@@ -1,11 +1,11 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ddf8ef3151d29045a37cf975e3970f69faffe4baf904ac0d5c171ba3e464537c",
+      "combined_sha256": "d078227773e5124deb11f238b9465f9f03f1e32293061bfbcd753c5f0438bab4",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-          "sha256": "67bc3845d4c8b853d8eeba109f36428fe6ff682183899f5545920f5f12957b19"
+          "sha256": "0207c9e83c10b3750b1b5f550434a3adb12af73437ba4566c53256d7f8c3cbea"
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -130,7 +130,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "585cb6733ef05760cb71a741be1cbfe103d3f4bcd0f3121a185a97fcd0387797",
+      "combined_sha256": "5ddfef4520b1f15bfcfcd691ab8a210b71f23a8284500be6cfa43cbe430e5449",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -147,6 +147,30 @@
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-04_overload.json",
           "sha256": "4c30f239c7bca4288974250d46dfff3530724a2cf16c7b236273b6c7cfa0ca6b"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-05_ackCursor.json",
+          "sha256": "1db6c056e193d9fc736fcb172ee170dff6eafc68cec630ae437c46c045de9cf8"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-06_pollCursorExpired.json",
+          "sha256": "16a26a450e49e41ad70eee80e9187825dbb87231bdca17c5141d8693a9743c3c"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-07_wsStreamMessages.json",
+          "sha256": "d77461f1940cad77a780befe9a0cb4e7829bd9f6750046b402f0e9f283f98652"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json",
+          "sha256": "39eb607c04b7e1d3cb19090ebda3d5b91eb130e2bf426ee06da200b6e0f743b6"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-09_wsPullMessages_chunked.json",
+          "sha256": "794bac74478ccff3a27265412006c49e3981cca6e6996b697d7aa613e0c0cbc5"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json",
+          "sha256": "1d0fcf151d39b02be3b96f0580edc2aa7a61425d87da7cf9c1c008b9db6f1b63"
         },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -580,11 +604,11 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "d06b12cf4089a20c1280c7454acfe5bddb9505942f05c70ad5ed8c46066a243c",
+      "combined_sha256": "c7523bab764492a449838f0c64bbcdd0d2de1817a758bf97fcad775f44a742c5",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
-          "sha256": "02c1aabe857deb604681917711aad01c33aaaac5daab8333efe4cb05d804a784"
+          "sha256": "3a41a6889185e5fefff383a7f109c01a20cd1c365c88cc3c5c0512d15b64b4f0"
         },
         {
           "path": "schemas/bindings/bind-mcp.schema.json",
