@@ -1,11 +1,11 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "d078227773e5124deb11f238b9465f9f03f1e32293061bfbcd753c5f0438bab4",
+      "combined_sha256": "56f1635aaf8816fb535d09a9c8b489bd88f6588c46760ff523b5c47c19887fa9",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-          "sha256": "0207c9e83c10b3750b1b5f550434a3adb12af73437ba4566c53256d7f8c3cbea"
+          "sha256": "493f485b3e88ae9fb2914a1d287343bed66c4c5bb9bbf759c33e7ea8c0c70478"
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -130,7 +130,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "5ddfef4520b1f15bfcfcd691ab8a210b71f23a8284500be6cfa43cbe430e5449",
+      "combined_sha256": "62650c6f8e42dd7314a668c5116a131128aa3b38899b286d4d2e61f75280e4b0",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -171,6 +171,18 @@
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json",
           "sha256": "1d0fcf151d39b02be3b96f0580edc2aa7a61425d87da7cf9c1c008b9db6f1b63"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-12_ssePullMessages_chunked.json",
+          "sha256": "9793620a162b79808321db93927f0808a8dc27275b3ce401876bece0075fe838"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-13_sseOverloadEvent.json",
+          "sha256": "769d904e8bc2e5534dbae298b884aa01b630ebc497568a91c7e0f7050c9d2ab2"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json",
+          "sha256": "fafb10730ae1cd08ed95c0a6a5e7b0a404cc9a59c2c355e5ac328f180b8c94d1"
         },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -604,11 +616,11 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "c7523bab764492a449838f0c64bbcdd0d2de1817a758bf97fcad775f44a742c5",
+      "combined_sha256": "2ea0be15c0f8a93e70be62c4630e4bac64174e1b2fcb0deb2310dd78796ea008",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
-          "sha256": "3a41a6889185e5fefff383a7f109c01a20cd1c365c88cc3c5c0512d15b64b4f0"
+          "sha256": "12baef67647db68a632a86fadbca4148b01c70b7ba4b007435cfd89cbd28f3d6"
         },
         {
           "path": "schemas/bindings/bind-mcp.schema.json",

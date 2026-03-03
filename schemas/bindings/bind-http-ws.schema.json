@@ -63,7 +63,9 @@
         "pollCursorExpired",
         "wsStreamMessages",
         "wsOverloadFrame",
-        "wsPullMessages"
+        "wsPullMessages",
+        "ssePullMessages",
+        "sseOverloadEvent"
       ]
     },
     "channel_properties": {
@@ -176,6 +178,17 @@
       "items": {
         "type": "object"
       }
+    },
+    "sse_events_out": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "replay_of": {
+      "type": "string",
+      "pattern": "^TB-HTTP-\\d{2}$"
     }
   },
   "allOf": [
@@ -185,6 +198,11 @@
           "operation": {
             "const": "sendMessage"
           }
+        },
+        "not": {
+          "required": [
+            "replay_of"
+          ]
         }
       },
       "then": {
@@ -679,6 +697,383 @@
                   }
                 }
               ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "operation": {
+              "const": "sendMessage"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "replay_of"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "ssePullMessages"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "sse_events_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "query",
+              "headers"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages/stream$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              },
+              "headers": {
+                "required": [
+                  "Accept"
+                ],
+                "properties": {
+                  "Accept": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 200
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              },
+              "body": {
+                "type": "null"
+              }
+            }
+          },
+          "sse_events_out": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event",
+                "data"
+              ],
+              "properties": {
+                "event": {
+                  "type": "string",
+                  "enum": [
+                    "messages",
+                    "overload",
+                    "heartbeat"
+                  ]
+                },
+                "data": {
+                  "type": "object"
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "event": {
+                        "const": "messages"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "messages",
+                          "cursor_after_last",
+                          "more"
+                        ],
+                        "properties": {
+                          "messages": {
+                            "type": "array"
+                          },
+                          "cursor_after_last": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "more": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "event": {
+                        "const": "overload"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "retry_after"
+                        ],
+                        "properties": {
+                          "retry_after": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "sseOverloadEvent"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "sse_events_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "query",
+              "headers"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages/stream$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              },
+              "headers": {
+                "required": [
+                  "Accept"
+                ],
+                "properties": {
+                  "Accept": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 200
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              },
+              "body": {
+                "type": "null"
+              }
+            }
+          },
+          "sse_events_out": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event",
+                "data"
+              ],
+              "properties": {
+                "event": {
+                  "const": "overload"
+                },
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "retry_after"
+                  ],
+                  "properties": {
+                    "retry_after": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "operation": {
+              "enum": [
+                "ssePullMessages",
+                "sseOverloadEvent"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "sse_events_out"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "replay_of"
+        ],
+        "properties": {
+          "operation": {
+            "const": "sendMessage"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "headers"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  200,
+                  208
+                ]
+              },
+              "headers": {
+                "required": [
+                  "AICP-Replay"
+                ],
+                "properties": {
+                  "AICP-Replay": {
+                    "const": "true"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "sendMessage"
+          }
+        },
+        "not": {
+          "required": [
+            "replay_of"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": 202
+              }
             }
           }
         }
