@@ -304,6 +304,44 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
             if isinstance(mcp_msg, dict):
                 extracted_messages = [mcp_msg]
 
+
+        if "TB-CP-ORDERING-01" in enabled_checks:
+            channel_properties = case_obj.get("channel_properties")
+            ordered = isinstance(channel_properties, dict) and channel_properties.get("CP-ORDERING-0.1") == "ordered"
+            if ordered and len(extracted_messages) >= 2:
+                for idx in range(1, len(extracted_messages)):
+                    prev = extracted_messages[idx - 1]
+                    current = extracted_messages[idx]
+                    prev_hash = prev.get("message_hash")
+                    current_prev_hash = current.get("prev_msg_hash")
+                    if not isinstance(prev_hash, str) or not prev_hash:
+                        add_failure(
+                            failures,
+                            "TB-CP-ORDERING-01",
+                            f"ordered mode requires message_hash on embedded_messages[{idx - 1}]",
+                            rel_case,
+                            None,
+                        )
+                        break
+                    if not isinstance(current_prev_hash, str) or not current_prev_hash:
+                        add_failure(
+                            failures,
+                            "TB-CP-ORDERING-01",
+                            f"ordered mode requires prev_msg_hash on embedded_messages[{idx}]",
+                            rel_case,
+                            None,
+                        )
+                        break
+                    if current_prev_hash != prev_hash:
+                        add_failure(
+                            failures,
+                            "TB-CP-ORDERING-01",
+                            f"embedded_messages[{idx}].prev_msg_hash must equal embedded_messages[{idx - 1}].message_hash",
+                            rel_case,
+                            None,
+                        )
+                        break
+
         for msg in extracted_messages:
             if core_validator is not None:
                 for err in sorted(core_validator.iter_errors(msg), key=lambda e: list(e.path)):

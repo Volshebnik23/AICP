@@ -2,19 +2,27 @@
   "suite_id": "TB-HTTP-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, and overload signaling.",
+  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, overload signaling, ACK, cursor-expiry handling, and minimal WS framing.",
   "schema_ref": "schemas/bindings/bind-http-ws.schema.json",
   "cases": [
     "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
     "fixtures/bindings/http-ws/TB-HTTP-02_pollMessages.json",
     "fixtures/bindings/http-ws/TB-HTTP-03_getHead.json",
-    "fixtures/bindings/http-ws/TB-HTTP-04_overload.json"
+    "fixtures/bindings/http-ws/TB-HTTP-04_overload.json",
+    "fixtures/bindings/http-ws/TB-HTTP-05_ackCursor.json",
+    "fixtures/bindings/http-ws/TB-HTTP-06_pollCursorExpired.json",
+    "fixtures/bindings/http-ws/TB-HTTP-07_wsStreamMessages.json",
+    "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json"
   ],
   "compatibility_mark": "AICP-BIND-HTTP-0.1",
   "checks": [
     {
       "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
       "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "TB-CP-ORDERING-01",
+      "description": "when CP-ORDERING-0.1 is ordered, embedded_messages must provide contiguous prev_msg_hash -> message_hash linkage"
     }
   ]
 }
