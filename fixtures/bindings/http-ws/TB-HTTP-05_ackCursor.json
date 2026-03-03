@@ -1,0 +1,19 @@
+{
+  "case_id": "TB-HTTP-05",
+  "operation": "ackCursor",
+  "channel_properties": {
+    "CP-ACK-0.1": "explicit"
+  },
+  "http_request": {
+    "method": "POST",
+    "path": "/aicp/v1/sessions/sGT1/ack",
+    "body": {
+      "cursor": "m2"
+    }
+  },
+  "http_response": {
+    "status": 204,
+    "body": null
+  },
+  "embedded_messages": []
+}
