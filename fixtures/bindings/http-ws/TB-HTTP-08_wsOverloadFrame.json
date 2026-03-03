@@ -1,0 +1,17 @@
+{
+  "case_id": "TB-HTTP-08",
+  "operation": "wsOverloadFrame",
+  "http_request": null,
+  "http_response": null,
+  "ws_session": {
+    "url": "wss://relay.example/aicp/v1/sessions/sGT1/stream",
+    "protocol": "aicp-0.1"
+  },
+  "ws_frames_out": [
+    {
+      "type": "overload",
+      "retry_after": "PT30S"
+    }
+  ],
+  "embedded_messages": []
+}

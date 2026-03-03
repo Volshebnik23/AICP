@@ -1,4 +1,4 @@
-# AICP v83 — Protocol Backlog (repo-backed)
+# AICP v86 — Protocol Backlog (repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
@@ -13,12 +13,15 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Current shipped baseline (as of v83)
+## Current shipped baseline (as of v86)
 - Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
 - Stable extension baseline includes: EXT-CAPNEG, EXT-ENFORCEMENT, EXT-POLICY-EVAL (with anchored registry refs and compatibility notes).
 - Numeric canonicalization M16b is shipped: finite floats supported with deterministic ECMAScript-aligned tokens; unsafe integers remain rejected.
 - Release discipline M18 is shipped: errata cadence doc + errata validator are part of `make validate`.
 - M22 is started: channel properties schema/registry + CAPNEG negotiation fields + CN-09 MCP conformance evidence are in-repo.
+- TB-HTTP evidence is shipped: binding suite + fixtures + conformance report for HTTP/WS transport behavior.
+- TB-HTTP now includes ACK/cursor-expiry/minimal WS framing evidence, plus binding-case schema validation wired into `make validate`.
+- TB-HTTP now covers WS pull/chunking + reliability invariants and is validated by the binding-case schema validator in `make validate`.
 - Snapshot discipline exists (manifest generation + validation gate).
 
 ---
