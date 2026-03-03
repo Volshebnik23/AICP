@@ -14,7 +14,9 @@
   "http_response": {
     "status": 429,
     "headers": {
-      "Retry-After": "30"
+      "Retry-After": "30",
+      "RateLimit-Remaining": "0",
+      "RateLimit-Reset": "30"
     },
     "body": {
       "error": "overload"

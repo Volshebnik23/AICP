@@ -1,0 +1,36 @@
+{
+  "case_id": "TB-HTTP-17",
+  "operation": "ssePullMessages",
+  "reconnect_of": "TB-HTTP-12",
+  "http_request": {
+    "method": "GET",
+    "path": "/aicp/v1/sessions/sGT1/messages/stream",
+    "query": {
+      "after": "m3",
+      "limit": "2"
+    },
+    "headers": {
+      "Accept": "text/event-stream",
+      "Last-Event-ID": "m3"
+    }
+  },
+  "http_response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/event-stream"
+    },
+    "body": null
+  },
+  "sse_events_out": [
+    {
+      "event": "messages",
+      "id": "m3",
+      "data": {
+        "messages": [],
+        "cursor_after_last": "m3",
+        "more": false
+      }
+    }
+  ],
+  "embedded_messages": []
+}

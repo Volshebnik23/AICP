@@ -1,0 +1,133 @@
+{
+  "case_id": "TB-HTTP-10",
+  "operation": "pollMessages",
+  "channel_properties": {
+    "CP-RELIABILITY-0.1": "at_least_once"
+  },
+  "http_request": {
+    "method": "GET",
+    "path": "/aicp/v1/sessions/sGT1/messages",
+    "query": {
+      "after": "m1",
+      "limit": "2"
+    }
+  },
+  "http_response": {
+    "status": 200,
+    "body": {
+      "messages": [
+        {
+          "session_id": "sGT1",
+          "message_id": "m2",
+          "timestamp": "2026-01-01T00:00:05Z",
+          "sender": "agent:B",
+          "message_type": "CONTRACT_ACCEPT",
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "payload": {
+            "accepted": true
+          },
+          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+          "signatures": [
+            {
+              "signer": "agent:B",
+              "kid": "B1",
+              "object_type": "message",
+              "object_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+              "sig_b64url": "gexy1jDTZ4hJZvq40m_AyJ4qUTZLcjb4CtMDlkW-4LW9l3SeFUuNlgd0IpXeAtS5C4SaiHSsBb-jgu6DNd-vBw"
+            }
+          ]
+        },
+        {
+          "session_id": "sGT1",
+          "message_id": "m2",
+          "timestamp": "2026-01-01T00:00:05Z",
+          "sender": "agent:B",
+          "message_type": "CONTRACT_ACCEPT",
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+          "payload": {
+            "accepted": true
+          },
+          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+          "signatures": [
+            {
+              "signer": "agent:B",
+              "kid": "B1",
+              "object_type": "message",
+              "object_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+              "sig_b64url": "gexy1jDTZ4hJZvq40m_AyJ4qUTZLcjb4CtMDlkW-4LW9l3SeFUuNlgd0IpXeAtS5C4SaiHSsBb-jgu6DNd-vBw"
+            }
+          ]
+        }
+      ],
+      "next_cursor": "m2"
+    }
+  },
+  "embedded_messages": [
+    {
+      "session_id": "sGT1",
+      "message_id": "m2",
+      "timestamp": "2026-01-01T00:00:05Z",
+      "sender": "agent:B",
+      "message_type": "CONTRACT_ACCEPT",
+      "contract_id": "cGT1",
+      "contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v1"
+      },
+      "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+      "payload": {
+        "accepted": true
+      },
+      "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+      "signatures": [
+        {
+          "signer": "agent:B",
+          "kid": "B1",
+          "object_type": "message",
+          "object_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+          "sig_b64url": "gexy1jDTZ4hJZvq40m_AyJ4qUTZLcjb4CtMDlkW-4LW9l3SeFUuNlgd0IpXeAtS5C4SaiHSsBb-jgu6DNd-vBw"
+        }
+      ]
+    },
+    {
+      "session_id": "sGT1",
+      "message_id": "m2",
+      "timestamp": "2026-01-01T00:00:05Z",
+      "sender": "agent:B",
+      "message_type": "CONTRACT_ACCEPT",
+      "contract_id": "cGT1",
+      "contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v1"
+      },
+      "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+      "payload": {
+        "accepted": true
+      },
+      "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+      "signatures": [
+        {
+          "signer": "agent:B",
+          "kid": "B1",
+          "object_type": "message",
+          "object_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+          "sig_b64url": "gexy1jDTZ4hJZvq40m_AyJ4qUTZLcjb4CtMDlkW-4LW9l3SeFUuNlgd0IpXeAtS5C4SaiHSsBb-jgu6DNd-vBw"
+        }
+      ]
+    }
+  ]
+}

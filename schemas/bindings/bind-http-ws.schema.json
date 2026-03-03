@@ -11,6 +11,42 @@
     "http_response",
     "embedded_messages"
   ],
+  "$defs": {
+    "ChannelProperties": {
+      "type": "object",
+      "properties": {
+        "CP-RELIABILITY-0.1": {
+          "type": "string",
+          "enum": [
+            "at_least_once",
+            "at_most_once"
+          ]
+        },
+        "CP-ORDERING-0.1": {
+          "type": "string",
+          "enum": [
+            "ordered",
+            "unordered"
+          ]
+        },
+        "CP-ACK-0.1": {
+          "type": "string",
+          "enum": [
+            "none",
+            "explicit"
+          ]
+        },
+        "CP-REPLAY-WINDOW-0.1": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "patternProperties": {
+        "^vendor:/.+": true
+      },
+      "additionalProperties": false
+    }
+  },
   "properties": {
     "case_id": {
       "type": "string",
@@ -22,11 +58,26 @@
         "sendMessage",
         "pollMessages",
         "getHead",
-        "overload"
+        "overload",
+        "ackCursor",
+        "pollCursorExpired",
+        "wsStreamMessages",
+        "wsOverloadFrame",
+        "wsPullMessages",
+        "ssePullMessages",
+        "sseOverloadEvent",
+        "createSession",
+        "closeSession"
       ]
     },
+    "channel_properties": {
+      "$ref": "#/$defs/ChannelProperties"
+    },
     "http_request": {
-      "type": "object",
+      "type": [
+        "object",
+        "null"
+      ],
       "additionalProperties": false,
       "required": [
         "method",
@@ -42,7 +93,7 @@
         },
         "path": {
           "type": "string",
-          "pattern": "^/aicp/v1/sessions/.+"
+          "pattern": "^/aicp/v1/sessions(?:/.*)?$"
         },
         "query": {
           "type": "object",
@@ -65,7 +116,10 @@
       }
     },
     "http_response": {
-      "type": "object",
+      "type": [
+        "object",
+        "null"
+      ],
       "additionalProperties": false,
       "required": [
         "status"
@@ -88,12 +142,80 @@
         }
       }
     },
+    "ws_session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "protocol"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^wss://"
+        },
+        "protocol": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ws_frames_out": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
     "embedded_messages": {
       "type": "array",
       "items": {
         "type": "object"
       },
       "minItems": 0
+    },
+    "ws_frames_in": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "sse_events_out": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "replay_of": {
+      "type": "string",
+      "pattern": "^TB-HTTP-\\d{2}$"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheme",
+        "token"
+      ],
+      "properties": {
+        "scheme": {
+          "const": "bearer"
+        },
+        "token": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reconnect_of": {
+      "type": "string",
+      "pattern": "^TB-HTTP-\\d{2}$"
     }
   },
   "allOf": [
@@ -103,11 +225,17 @@
           "operation": {
             "const": "sendMessage"
           }
+        },
+        "not": {
+          "required": [
+            "replay_of"
+          ]
         }
       },
       "then": {
         "properties": {
           "http_request": {
+            "type": "object",
             "required": [
               "method",
               "path",
@@ -140,6 +268,7 @@
             }
           },
           "http_response": {
+            "type": "object",
             "required": [
               "status"
             ],
@@ -163,6 +292,7 @@
       "then": {
         "properties": {
           "http_request": {
+            "type": "object",
             "required": [
               "method",
               "path",
@@ -184,6 +314,7 @@
             }
           },
           "http_response": {
+            "type": "object",
             "required": [
               "status",
               "body"
@@ -220,6 +351,7 @@
       "then": {
         "properties": {
           "http_request": {
+            "type": "object",
             "required": [
               "method",
               "path"
@@ -234,6 +366,7 @@
             }
           },
           "http_response": {
+            "type": "object",
             "required": [
               "status"
             ],
@@ -257,6 +390,7 @@
       "then": {
         "properties": {
           "http_response": {
+            "type": "object",
             "required": [
               "status",
               "headers"
@@ -271,6 +405,916 @@
               "headers": {
                 "required": [
                   "Retry-After"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "ackCursor"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "body"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "pattern": "/ack$"
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "cursor"
+                ]
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": 204
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "pollCursorExpired"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "query"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 410
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "reason_code",
+                  "min_cursor"
+                ],
+                "properties": {
+                  "reason_code": {
+                    "const": "cursor_expired"
+                  },
+                  "min_cursor": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "enum": [
+              "wsStreamMessages",
+              "wsOverloadFrame",
+              "wsPullMessages"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "ws_session",
+          "ws_frames_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "null"
+          },
+          "http_response": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "ws_session"
+              ]
+            },
+            {
+              "required": [
+                "ws_frames_out"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "wsStreamMessages"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ws_frames_out": {
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "messages",
+                "next_cursor"
+              ],
+              "properties": {
+                "type": {
+                  "const": "messages"
+                },
+                "messages": {
+                  "type": "array"
+                },
+                "next_cursor": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "wsOverloadFrame"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ws_frames_out": {
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "retry_after"
+              ],
+              "properties": {
+                "type": {
+                  "const": "overload"
+                },
+                "retry_after": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "wsPullMessages"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "ws_session",
+          "ws_frames_in",
+          "ws_frames_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "null"
+          },
+          "http_response": {
+            "type": "null"
+          },
+          "ws_frames_in": {
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "after",
+                "limit"
+              ],
+              "properties": {
+                "type": {
+                  "const": "pull"
+                },
+                "after": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000
+                }
+              }
+            }
+          },
+          "ws_frames_out": {
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "messages",
+                    "cursor_after_last",
+                    "more"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "messages"
+                    },
+                    "messages": {
+                      "type": "array"
+                    },
+                    "cursor_after_last": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "more": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "retry_after"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "overload"
+                    },
+                    "retry_after": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "operation": {
+              "const": "sendMessage"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "replay_of"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "ssePullMessages"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "sse_events_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "query",
+              "headers"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages/stream$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              },
+              "headers": {
+                "required": [
+                  "Accept"
+                ],
+                "properties": {
+                  "Accept": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 200
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              },
+              "body": {
+                "type": "null"
+              }
+            }
+          },
+          "sse_events_out": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event",
+                "data"
+              ],
+              "properties": {
+                "event": {
+                  "type": "string",
+                  "enum": [
+                    "messages",
+                    "overload",
+                    "heartbeat"
+                  ]
+                },
+                "data": {
+                  "type": "object"
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "event": {
+                        "const": "messages"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "messages",
+                          "cursor_after_last",
+                          "more"
+                        ],
+                        "properties": {
+                          "messages": {
+                            "type": "array"
+                          },
+                          "cursor_after_last": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "more": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "event": {
+                        "const": "overload"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "retry_after"
+                        ],
+                        "properties": {
+                          "retry_after": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "event": {
+                        "const": "messages"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "id"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "sseOverloadEvent"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "sse_events_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "query",
+              "headers"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages/stream$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              },
+              "headers": {
+                "required": [
+                  "Accept"
+                ],
+                "properties": {
+                  "Accept": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 200
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "text/event-stream"
+                  }
+                }
+              },
+              "body": {
+                "type": "null"
+              }
+            }
+          },
+          "sse_events_out": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event",
+                "data"
+              ],
+              "properties": {
+                "event": {
+                  "const": "overload"
+                },
+                "data": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "retry_after"
+                  ],
+                  "properties": {
+                    "retry_after": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "operation": {
+              "enum": [
+                "ssePullMessages",
+                "sseOverloadEvent"
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "sse_events_out"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "replay_of"
+        ],
+        "properties": {
+          "operation": {
+            "const": "sendMessage"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "headers"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  200,
+                  208
+                ]
+              },
+              "headers": {
+                "required": [
+                  "AICP-Replay"
+                ],
+                "properties": {
+                  "AICP-Replay": {
+                    "const": "true"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "sendMessage"
+          }
+        },
+        "not": {
+          "required": [
+            "replay_of"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": 202
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "operation": {
+              "const": "ssePullMessages"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "reconnect_of"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "createSession"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "const": "/aicp/v1/sessions"
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "application/json"
+                  }
+                }
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "client_id"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 201
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "session_id",
+                  "expires_at"
+                ],
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "auth_required": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "closeSession"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "pattern": "/close$"
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 204
+              },
+              "body": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "overload"
+          },
+          "http_response": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": 429
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_response": {
+            "type": "object",
+            "required": [
+              "headers"
+            ],
+            "properties": {
+              "headers": {
+                "required": [
+                  "Retry-After"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "RateLimit-Limit"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "RateLimit-Remaining"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "RateLimit-Reset"
+                    ]
+                  }
                 ]
               }
             }
