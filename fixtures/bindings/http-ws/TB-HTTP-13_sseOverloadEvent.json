@@ -1,0 +1,31 @@
+{
+  "case_id": "TB-HTTP-13",
+  "operation": "ssePullMessages",
+  "http_request": {
+    "method": "GET",
+    "path": "/aicp/v1/sessions/sGT1/messages/stream",
+    "query": {
+      "after": "m3",
+      "limit": "2"
+    },
+    "headers": {
+      "Accept": "text/event-stream"
+    }
+  },
+  "http_response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/event-stream"
+    },
+    "body": null
+  },
+  "sse_events_out": [
+    {
+      "event": "overload",
+      "data": {
+        "retry_after": "PT20S"
+      }
+    }
+  ],
+  "embedded_messages": []
+}

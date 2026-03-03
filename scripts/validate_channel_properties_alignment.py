@@ -23,6 +23,7 @@ def main() -> int:
     registry = _load_json(ROOT / "registry/channel_properties.json")
     binding_schema = _load_json(ROOT / "schemas/bindings/channel-properties.schema.json")
     capneg_schema = _load_json(ROOT / "schemas/extensions/ext-capneg-payloads.schema.json")
+    http_ws_schema = _load_json(ROOT / "schemas/bindings/bind-http-ws.schema.json")
 
     registry_ids = sorted(
         entry.get("id")
@@ -32,12 +33,15 @@ def main() -> int:
 
     defs = binding_schema.get("$defs", {}) if isinstance(binding_schema, dict) else {}
     capneg_defs = capneg_schema.get("$defs", {}) if isinstance(capneg_schema, dict) else {}
+    http_ws_defs = http_ws_schema.get("$defs", {}) if isinstance(http_ws_schema, dict) else {}
 
     ch_props = defs.get("ChannelProperties", {}) if isinstance(defs, dict) else {}
     supp_props = defs.get("SupportedChannelProperties", {}) if isinstance(defs, dict) else {}
 
     ch_keys = sorted((ch_props.get("properties") or {}).keys()) if isinstance(ch_props, dict) else []
     supp_keys = sorted((supp_props.get("properties") or {}).keys()) if isinstance(supp_props, dict) else []
+    http_ws_props = http_ws_defs.get("ChannelProperties", {}) if isinstance(http_ws_defs, dict) else {}
+    http_ws_keys = sorted((http_ws_props.get("properties") or {}).keys()) if isinstance(http_ws_props, dict) else []
 
     errors = 0
 
@@ -47,6 +51,10 @@ def main() -> int:
 
     if supp_keys != registry_ids:
         _fail(f"SupportedChannelProperties keys drift from registry IDs: schema={supp_keys} registry={registry_ids}")
+        errors += 1
+
+    if http_ws_keys != registry_ids:
+        _fail(f"bind-http-ws $defs.ChannelProperties keys drift from registry IDs: schema={http_ws_keys} registry={registry_ids}")
         errors += 1
 
     pattern = ch_props.get("patternProperties", {}) if isinstance(ch_props, dict) else {}
