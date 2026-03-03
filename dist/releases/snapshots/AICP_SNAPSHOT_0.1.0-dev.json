@@ -1,11 +1,11 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "6454158b8e6423993aab27c49b300659c65b5bfe081226526b78e4bf5d5479f1",
+      "combined_sha256": "d078227773e5124deb11f238b9465f9f03f1e32293061bfbcd753c5f0438bab4",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-          "sha256": "1b687811b32626e39dbe3929deb21ae27fd1d58d19f3266d8e1f2d1401e2ea9f"
+          "sha256": "0207c9e83c10b3750b1b5f550434a3adb12af73437ba4566c53256d7f8c3cbea"
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -130,7 +130,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "7f65b767153239dd2333a999553edb348f66405040c2fefd3f3713ab351d6252",
+      "combined_sha256": "5ddfef4520b1f15bfcfcd691ab8a210b71f23a8284500be6cfa43cbe430e5449",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -163,6 +163,14 @@
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json",
           "sha256": "39eb607c04b7e1d3cb19090ebda3d5b91eb130e2bf426ee06da200b6e0f743b6"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-09_wsPullMessages_chunked.json",
+          "sha256": "794bac74478ccff3a27265412006c49e3981cca6e6996b697d7aa613e0c0cbc5"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json",
+          "sha256": "1d0fcf151d39b02be3b96f0580edc2aa7a61425d87da7cf9c1c008b9db6f1b63"
         },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -596,11 +604,11 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "c75c57d236eb9ebfb7c602d82831c29482915c8852e19b30ac12b2dd23feb290",
+      "combined_sha256": "c7523bab764492a449838f0c64bbcdd0d2de1817a758bf97fcad775f44a742c5",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
-          "sha256": "5c644754bcb263ca47488ed95370a786b5024c9dbb1ceee192385b7b6200d628"
+          "sha256": "3a41a6889185e5fefff383a7f109c01a20cd1c365c88cc3c5c0512d15b64b4f0"
         },
         {
           "path": "schemas/bindings/bind-mcp.schema.json",

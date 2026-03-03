@@ -2,7 +2,7 @@
   "suite_id": "TB-HTTP-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, overload signaling, ACK, cursor-expiry handling, and minimal WS framing.",
+  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, overload signaling, ACK, cursor-expiry handling, minimal WS framing, and WS pull/chunk backpressure semantics.",
   "schema_ref": "schemas/bindings/bind-http-ws.schema.json",
   "cases": [
     "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -12,7 +12,9 @@
     "fixtures/bindings/http-ws/TB-HTTP-05_ackCursor.json",
     "fixtures/bindings/http-ws/TB-HTTP-06_pollCursorExpired.json",
     "fixtures/bindings/http-ws/TB-HTTP-07_wsStreamMessages.json",
-    "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json"
+    "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json",
+    "fixtures/bindings/http-ws/TB-HTTP-09_wsPullMessages_chunked.json",
+    "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json"
   ],
   "compatibility_mark": "AICP-BIND-HTTP-0.1",
   "checks": [
@@ -23,6 +25,22 @@
     {
       "test_id": "TB-CP-ORDERING-01",
       "description": "when CP-ORDERING-0.1 is ordered, embedded_messages must provide contiguous prev_msg_hash -> message_hash linkage"
+    },
+    {
+      "test_id": "TB-CP-RELIABILITY-01",
+      "description": "when CP-RELIABILITY-0.1 is at_most_once, embedded_messages must not contain duplicate message_id values"
+    },
+    {
+      "test_id": "TB-CP-RELIABILITY-02",
+      "description": "when CP-RELIABILITY-0.1 is at_least_once, duplicate message_id values must keep identical message_hash values"
+    },
+    {
+      "test_id": "TB-WS-PULL-01",
+      "description": "wsPullMessages must use pull frame semantics, obey chunk more flags, and respect pull limit"
+    },
+    {
+      "test_id": "TB-WS-FRAME-MIRROR-01",
+      "description": "WS messages frames must mirror embedded_messages by (message_id, message_hash) pairs"
     }
   ]
 }
