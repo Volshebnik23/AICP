@@ -11,6 +11,42 @@
     "http_response",
     "embedded_messages"
   ],
+  "$defs": {
+    "ChannelProperties": {
+      "type": "object",
+      "properties": {
+        "CP-RELIABILITY-0.1": {
+          "type": "string",
+          "enum": [
+            "at_least_once",
+            "at_most_once"
+          ]
+        },
+        "CP-ORDERING-0.1": {
+          "type": "string",
+          "enum": [
+            "ordered",
+            "unordered"
+          ]
+        },
+        "CP-ACK-0.1": {
+          "type": "string",
+          "enum": [
+            "none",
+            "explicit"
+          ]
+        },
+        "CP-REPLAY-WINDOW-0.1": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "patternProperties": {
+        "^vendor:/.+": true
+      },
+      "additionalProperties": false
+    }
+  },
   "properties": {
     "case_id": {
       "type": "string",
@@ -22,11 +58,21 @@
         "sendMessage",
         "pollMessages",
         "getHead",
-        "overload"
+        "overload",
+        "ackCursor",
+        "pollCursorExpired",
+        "wsStreamMessages",
+        "wsOverloadFrame"
       ]
     },
+    "channel_properties": {
+      "$ref": "#/$defs/ChannelProperties"
+    },
     "http_request": {
-      "type": "object",
+      "type": [
+        "object",
+        "null"
+      ],
       "additionalProperties": false,
       "required": [
         "method",
@@ -65,7 +111,10 @@
       }
     },
     "http_response": {
-      "type": "object",
+      "type": [
+        "object",
+        "null"
+      ],
       "additionalProperties": false,
       "required": [
         "status"
@@ -88,6 +137,31 @@
         }
       }
     },
+    "ws_session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "protocol"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^wss://"
+        },
+        "protocol": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ws_frames_out": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
     "embedded_messages": {
       "type": "array",
       "items": {
@@ -108,6 +182,7 @@
       "then": {
         "properties": {
           "http_request": {
+            "type": "object",
             "required": [
               "method",
               "path",
@@ -140,6 +215,7 @@
             }
           },
           "http_response": {
+            "type": "object",
             "required": [
               "status"
             ],
@@ -163,6 +239,7 @@
       "then": {
         "properties": {
           "http_request": {
+            "type": "object",
             "required": [
               "method",
               "path",
@@ -184,6 +261,7 @@
             }
           },
           "http_response": {
+            "type": "object",
             "required": [
               "status",
               "body"
@@ -220,6 +298,7 @@
       "then": {
         "properties": {
           "http_request": {
+            "type": "object",
             "required": [
               "method",
               "path"
@@ -234,6 +313,7 @@
             }
           },
           "http_response": {
+            "type": "object",
             "required": [
               "status"
             ],
@@ -257,6 +337,7 @@
       "then": {
         "properties": {
           "http_response": {
+            "type": "object",
             "required": [
               "status",
               "headers"
@@ -272,6 +353,225 @@
                 "required": [
                   "Retry-After"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "ackCursor"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "body"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "pattern": "/ack$"
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "cursor"
+                ]
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": 204
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "pollCursorExpired"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "query"
+            ],
+            "properties": {
+              "method": {
+                "const": "GET"
+              },
+              "path": {
+                "pattern": "/messages$"
+              },
+              "query": {
+                "required": [
+                  "after",
+                  "limit"
+                ]
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 410
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "reason_code",
+                  "min_cursor"
+                ],
+                "properties": {
+                  "reason_code": {
+                    "const": "cursor_expired"
+                  },
+                  "min_cursor": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "enum": [
+              "wsStreamMessages",
+              "wsOverloadFrame"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "ws_session",
+          "ws_frames_out"
+        ],
+        "properties": {
+          "http_request": {
+            "type": "null"
+          },
+          "http_response": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "ws_session"
+              ]
+            },
+            {
+              "required": [
+                "ws_frames_out"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "wsStreamMessages"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ws_frames_out": {
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "messages",
+                "next_cursor"
+              ],
+              "properties": {
+                "type": {
+                  "const": "messages"
+                },
+                "messages": {
+                  "type": "array"
+                },
+                "next_cursor": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "wsOverloadFrame"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ws_frames_out": {
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "retry_after"
+              ],
+              "properties": {
+                "type": {
+                  "const": "overload"
+                },
+                "retry_after": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             }
           }
