@@ -197,6 +197,42 @@
           "sha256": "0712036b3022139b2101afce5e5189508c5aeb1a3cc3a61ae82c31ff10ee952b"
         },
         {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-05_ackCursor.json",
+          "sha256": "1db6c056e193d9fc736fcb172ee170dff6eafc68cec630ae437c46c045de9cf8"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-06_pollCursorExpired.json",
+          "sha256": "16a26a450e49e41ad70eee80e9187825dbb87231bdca17c5141d8693a9743c3c"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-07_wsStreamMessages.json",
+          "sha256": "d77461f1940cad77a780befe9a0cb4e7829bd9f6750046b402f0e9f283f98652"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json",
+          "sha256": "39eb607c04b7e1d3cb19090ebda3d5b91eb130e2bf426ee06da200b6e0f743b6"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-09_wsPullMessages_chunked.json",
+          "sha256": "794bac74478ccff3a27265412006c49e3981cca6e6996b697d7aa613e0c0cbc5"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json",
+          "sha256": "1d0fcf151d39b02be3b96f0580edc2aa7a61425d87da7cf9c1c008b9db6f1b63"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-12_ssePullMessages_chunked.json",
+          "sha256": "9793620a162b79808321db93927f0808a8dc27275b3ce401876bece0075fe838"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-13_sseOverloadEvent.json",
+          "sha256": "769d904e8bc2e5534dbae298b884aa01b630ebc497568a91c7e0f7050c9d2ab2"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json",
+          "sha256": "fafb10730ae1cd08ed95c0a6a5e7b0a404cc9a59c2c355e5ac328f180b8c94d1"
+        },
+        {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
           "sha256": "ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
         },
