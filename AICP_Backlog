@@ -1,4 +1,4 @@
-# AICP v86 — Protocol Backlog (repo-backed)
+# AICP v87 — Protocol Backlog (repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
@@ -13,7 +13,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Current shipped baseline (as of v86)
+## Current shipped baseline (as of v87)
 - Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
 - Stable extension baseline includes: EXT-CAPNEG, EXT-ENFORCEMENT, EXT-POLICY-EVAL (with anchored registry refs and compatibility notes).
 - Numeric canonicalization M16b is shipped: finite floats supported with deterministic ECMAScript-aligned tokens; unsafe integers remain rejected.

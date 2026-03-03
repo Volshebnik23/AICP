@@ -1,11 +1,11 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "56f1635aaf8816fb535d09a9c8b489bd88f6588c46760ff523b5c47c19887fa9",
+      "combined_sha256": "7e12b139a5b067c58acb7060b19c1a477d5e117d22b7d1a0d4673c6fc8218f55",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-          "sha256": "493f485b3e88ae9fb2914a1d287343bed66c4c5bb9bbf759c33e7ea8c0c70478"
+          "sha256": "8a114a16a3beca97d05e821fe0a4ee1deb6da1d871fea8dcaef032a1d8c35413"
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -130,7 +130,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "62650c6f8e42dd7314a668c5116a131128aa3b38899b286d4d2e61f75280e4b0",
+      "combined_sha256": "c61515dd7eabf14a0893eb1a58cbd373481bcc7dec4009abd0707793eca00327",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -146,7 +146,7 @@
         },
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-04_overload.json",
-          "sha256": "4c30f239c7bca4288974250d46dfff3530724a2cf16c7b236273b6c7cfa0ca6b"
+          "sha256": "120b92c89a0d51fa38d6bc6d25e3fe8890bf3d8e5dd02b97616b7ea292360269"
         },
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-05_ackCursor.json",
@@ -174,7 +174,7 @@
         },
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-12_ssePullMessages_chunked.json",
-          "sha256": "9793620a162b79808321db93927f0808a8dc27275b3ce401876bece0075fe838"
+          "sha256": "080ee0b9ca5f9bcef94b4fa6121e6458712b16c8bd161fad5833bcac88d94a2b"
         },
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-13_sseOverloadEvent.json",
@@ -183,6 +183,18 @@
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json",
           "sha256": "fafb10730ae1cd08ed95c0a6a5e7b0a404cc9a59c2c355e5ac328f180b8c94d1"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-15_createSession.json",
+          "sha256": "322ce7d1dee4fc33b70c340f5838bab8236b6082e39842b76cd6f41a64c437f2"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-16_closeSession.json",
+          "sha256": "0c110d95983172b1319112e24c5768a43cbcbce0baa5703dd1890a928753d000"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json",
+          "sha256": "0712036b3022139b2101afce5e5189508c5aeb1a3cc3a61ae82c31ff10ee952b"
         },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -616,11 +628,11 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "2ea0be15c0f8a93e70be62c4630e4bac64174e1b2fcb0deb2310dd78796ea008",
+      "combined_sha256": "47b72218ad82018609874480b255baba557439e1c0d55e6db6c1933cf1299618",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
-          "sha256": "12baef67647db68a632a86fadbca4148b01c70b7ba4b007435cfd89cbd28f3d6"
+          "sha256": "4efbbb52bdf10fa5d2e09f474d55474b2411715dd8bd2bdbf71c9b884d2f7817"
         },
         {
           "path": "schemas/bindings/bind-mcp.schema.json",

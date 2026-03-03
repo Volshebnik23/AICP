@@ -1,0 +1,22 @@
+{
+  "case_id": "TB-HTTP-16",
+  "operation": "closeSession",
+  "session_id": "sGT1",
+  "auth": {
+    "scheme": "bearer",
+    "token": "tok-gt-1"
+  },
+  "http_request": {
+    "method": "POST",
+    "path": "/aicp/v1/sessions/sGT1/close",
+    "headers": {
+      "Authorization": "Bearer tok-gt-1"
+    },
+    "body": null
+  },
+  "http_response": {
+    "status": 204,
+    "body": null
+  },
+  "embedded_messages": []
+}

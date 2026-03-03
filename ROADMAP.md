@@ -1,9 +1,9 @@
-# AICP v86 — Roadmap Items (repo-backed)
+# AICP v87 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
 
-_Last updated: 2026-03-02_
+_Last updated: 2026-03-03_
 
 ## Current / Next
 
@@ -25,7 +25,10 @@ _Last updated: 2026-03-02_
 - **Step 2 hardening:** binding ID normalization shipped for HTTP/BUS (`BIND-HTTP-0.1` / `BIND-BUS-0.1`) with deprecated alias mapping retained for compatibility.
 - **Step 2 guardrails:** schema/registry alignment validator added to prevent channel-properties drift between canonical binding schema and CAPNEG embedded defs.
 - **Step 2 evidence:** TB-HTTP-0.1 binding conformance suite + fixtures + report are now shipped, including ACK, cursor-expiry, minimal WS framing, WS pull/chunking evidence, reliability invariants, SSE pull framing/backpressure guidance, and idempotency/replay hardening evidence (Idempotency-Key derivation + replay case/check).
-- **Next concrete step:** quotas/rate-limits + auth/session-establishment hardening, plus SSE reconnect semantics (Last-Event-ID) (M22 next).
+- **Step 3 complete:** overload/quota evidence now enforces HTTP `429` `Retry-After` plus rate-limit hint headers via schema + binding check.
+- **Step 3 complete:** session/auth establishment hardening now includes `createSession`/`closeSession` binding evidence, conditional bearer auth checks, and cross-case session consistency validation.
+- **Step 3 complete:** SSE reconnect semantics now enforce `Last-Event-ID` equivalence with `after` cursor and required SSE event IDs for `messages` events.
+- **Next concrete step:** extend M22 with broader anti-replay windows and multi-session interoperability coverage.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
