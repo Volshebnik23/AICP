@@ -276,6 +276,7 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
 
     failures: list[dict[str, Any]] = []
     seen_cases_by_id: dict[str, dict[str, Any]] = {}
+    loaded_cases: list[tuple[str, dict[str, Any]]] = []
 
     for rel_case in suite.get("cases", []):
         case_path = ROOT / rel_case
@@ -284,6 +285,8 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
         except Exception as exc:
             add_failure(failures, "TB-CASE-JSON-01", f"invalid JSON case file: {exc}", rel_case, None)
             continue
+
+        loaded_cases.append((rel_case, case_obj))
 
         if case_validator is not None:
             for err in sorted(case_validator.iter_errors(case_obj), key=lambda e: list(e.path)):
@@ -614,6 +617,55 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                         if replay_hdr != "true":
                             add_failure(failures, "TB-HTTP-REPLAY-01", "replay case must set response header AICP-Replay: true", rel_case, None)
 
+        if "TB-HTTP-RATELIMIT-01" in enabled_checks and case_obj.get("operation") == "overload":
+            response = case_obj.get("http_response")
+            if isinstance(response, dict) and response.get("status") == 429:
+                headers = response.get("headers") if isinstance(response.get("headers"), dict) else {}
+                if not isinstance(headers.get("Retry-After"), str) or not headers.get("Retry-After"):
+                    add_failure(failures, "TB-HTTP-RATELIMIT-01", "429 overload responses must include Retry-After header", rel_case, None)
+                rate_hints = ["RateLimit-Limit", "RateLimit-Remaining", "RateLimit-Reset"]
+                if not any(isinstance(headers.get(name), str) and headers.get(name) for name in rate_hints):
+                    add_failure(failures, "TB-HTTP-RATELIMIT-01", "429 overload responses must include at least one RateLimit-* hint header", rel_case, None)
+
+        if "TB-HTTP-AUTH-01" in enabled_checks and isinstance(case_obj.get("auth"), dict):
+            auth = case_obj.get("auth")
+            http_request = case_obj.get("http_request")
+            headers = http_request.get("headers") if isinstance(http_request, dict) and isinstance(http_request.get("headers"), dict) else {}
+            expected = None
+            if auth.get("scheme") == "bearer" and isinstance(auth.get("token"), str):
+                expected = f"Bearer {auth.get('token')}"
+            actual = headers.get("Authorization") if isinstance(headers, dict) else None
+            if expected is None or actual != expected:
+                add_failure(failures, "TB-HTTP-AUTH-01", "auth evidence requires request header Authorization: Bearer <token>", rel_case, None)
+
+        if "TB-SSE-RECONNECT-01" in enabled_checks:
+            reconnect_of = case_obj.get("reconnect_of")
+            if isinstance(reconnect_of, str):
+                referenced_case = seen_cases_by_id.get(reconnect_of)
+                if referenced_case is None:
+                    add_failure(failures, "TB-SSE-RECONNECT-01", f"reconnect_of references unknown or later case_id '{reconnect_of}'", rel_case, None)
+                elif referenced_case.get("operation") != "ssePullMessages":
+                    add_failure(failures, "TB-SSE-RECONNECT-01", "reconnect_of must reference an ssePullMessages case", rel_case, None)
+                else:
+                    ref_events = referenced_case.get("sse_events_out") if isinstance(referenced_case.get("sse_events_out"), list) else []
+                    msg_events = [e for e in ref_events if isinstance(e, dict) and e.get("event") == "messages"]
+                    if not msg_events:
+                        add_failure(failures, "TB-SSE-RECONNECT-01", "referenced ssePullMessages case must include at least one messages event", rel_case, None)
+                    else:
+                        last_event = msg_events[-1]
+                        data = last_event.get("data") if isinstance(last_event.get("data"), dict) else {}
+                        expected_cursor = last_event.get("id") if isinstance(last_event.get("id"), str) and last_event.get("id") else data.get("cursor_after_last")
+                        request = case_obj.get("http_request")
+                        headers = request.get("headers") if isinstance(request, dict) and isinstance(request.get("headers"), dict) else {}
+                        query = request.get("query") if isinstance(request, dict) and isinstance(request.get("query"), dict) else {}
+                        if not isinstance(expected_cursor, str) or not expected_cursor:
+                            add_failure(failures, "TB-SSE-RECONNECT-01", "referenced case must provide reconnect cursor via event id or data.cursor_after_last", rel_case, None)
+                        else:
+                            if headers.get("Last-Event-ID") != expected_cursor:
+                                add_failure(failures, "TB-SSE-RECONNECT-01", f"Last-Event-ID must match reconnect cursor '{expected_cursor}'", rel_case, None)
+                            if query.get("after") != expected_cursor:
+                                add_failure(failures, "TB-SSE-RECONNECT-01", f"query.after must match reconnect cursor '{expected_cursor}'", rel_case, None)
+
         case_id = case_obj.get("case_id")
         if isinstance(case_id, str) and case_id:
             seen_cases_by_id[case_id] = case_obj
@@ -653,6 +705,41 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                         continue
                     if not verify_ed25519(key.get("public_key_b64url", ""), sig.get("sig_b64url", ""), sig.get("object_hash", "")):
                         add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
+
+    if "TB-HTTP-SESSION-01" in enabled_checks:
+        create_case_id = None
+        created_session_id = None
+        for rel_case, case_obj in loaded_cases:
+            if case_obj.get("operation") != "createSession":
+                continue
+            create_case_id = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
+            response = case_obj.get("http_response")
+            body = response.get("body") if isinstance(response, dict) and isinstance(response.get("body"), dict) else {}
+            created_session_id = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
+            if created_session_id is None and isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id"):
+                created_session_id = case_obj.get("session_id")
+            break
+        if create_case_id and created_session_id:
+            mismatches: list[str] = []
+            for rel_case, case_obj in loaded_cases:
+                if case_obj.get("operation") == "createSession":
+                    continue
+                cid = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
+                request = case_obj.get("http_request")
+                path = request.get("path") if isinstance(request, dict) and isinstance(request.get("path"), str) else ""
+                body = request.get("body") if isinstance(request, dict) and isinstance(request.get("body"), dict) else {}
+                top_session = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) else None
+                body_session = body.get("session_id") if isinstance(body.get("session_id"), str) else None
+                if "/sessions/" in path and "/" in path.split('/sessions/', 1)[1]:
+                    path_sid = path.split('/sessions/', 1)[1].split('/', 1)[0]
+                    if path_sid != created_session_id:
+                        mismatches.append(f"{cid} path session_id '{path_sid}' != '{created_session_id}'")
+                if top_session is not None and top_session != created_session_id:
+                    mismatches.append(f"{cid} top-level session_id '{top_session}' != '{created_session_id}'")
+                if body_session is not None and body_session != created_session_id:
+                    mismatches.append(f"{cid} body.session_id '{body_session}' != '{created_session_id}'")
+            if mismatches:
+                add_failure(failures, "TB-HTTP-SESSION-01", f"session_id mismatch against createSession {create_case_id}: {mismatches}", "conformance/bindings/TB_HTTP_WS_0.1.json", None)
 
     protocol_version = suite["aicp_version"]
     passed = not failures

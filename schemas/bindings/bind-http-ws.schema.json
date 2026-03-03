@@ -65,7 +65,9 @@
         "wsOverloadFrame",
         "wsPullMessages",
         "ssePullMessages",
-        "sseOverloadEvent"
+        "sseOverloadEvent",
+        "createSession",
+        "closeSession"
       ]
     },
     "channel_properties": {
@@ -91,7 +93,7 @@
         },
         "path": {
           "type": "string",
-          "pattern": "^/aicp/v1/sessions/.+"
+          "pattern": "^/aicp/v1/sessions(?:/.*)?$"
         },
         "query": {
           "type": "object",
@@ -187,6 +189,31 @@
       }
     },
     "replay_of": {
+      "type": "string",
+      "pattern": "^TB-HTTP-\\d{2}$"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheme",
+        "token"
+      ],
+      "properties": {
+        "scheme": {
+          "const": "bearer"
+        },
+        "token": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reconnect_of": {
       "type": "string",
       "pattern": "^TB-HTTP-\\d{2}$"
     }
@@ -382,7 +409,53 @@
               }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "http_response": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": 429
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "http_response": {
+                  "properties": {
+                    "headers": {
+                      "required": [
+                        "Retry-After"
+                      ],
+                      "anyOf": [
+                        {
+                          "required": [
+                            "RateLimit-Limit"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "RateLimit-Remaining"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "RateLimit-Reset"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     },
     {
@@ -761,6 +834,10 @@
                 "properties": {
                   "Accept": {
                     "pattern": "text/event-stream"
+                  },
+                  "Last-Event-ID": {
+                    "type": "string",
+                    "minLength": 1
                   }
                 }
               }
@@ -813,6 +890,10 @@
                 },
                 "data": {
                   "type": "object"
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
                 }
               },
               "allOf": [
@@ -847,7 +928,10 @@
                           }
                         }
                       }
-                    }
+                    },
+                    "required": [
+                      "id"
+                    ]
                   }
                 },
                 {
@@ -1076,6 +1160,155 @@
               }
             }
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "createSession"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path",
+              "headers",
+              "body"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "const": "/aicp/v1/sessions"
+              },
+              "headers": {
+                "required": [
+                  "Content-Type"
+                ],
+                "properties": {
+                  "Content-Type": {
+                    "pattern": "application/json"
+                  }
+                }
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "client_id"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 201
+              },
+              "body": {
+                "type": "object",
+                "required": [
+                  "session_id",
+                  "expires_at"
+                ],
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "auth_required": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          },
+          "session_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "closeSession"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "http_request": {
+            "type": "object",
+            "required": [
+              "method",
+              "path"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              },
+              "path": {
+                "pattern": "^/aicp/v1/sessions/[^/]+/close$"
+              }
+            }
+          },
+          "http_response": {
+            "type": "object",
+            "required": [
+              "status",
+              "body"
+            ],
+            "properties": {
+              "status": {
+                "const": 204
+              },
+              "body": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "operation": {
+              "const": "ssePullMessages"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "reconnect_of"
+          ]
         }
       }
     }

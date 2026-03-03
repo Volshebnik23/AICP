@@ -24,6 +24,11 @@
 - If `CP-REPLAY-WINDOW-0.1` is negotiated, polling cursors older than retained window MUST fail with HTTP `410` and body `{ "reason_code": "cursor_expired", "min_cursor": "..." }`.
 - If `CP-ORDERING-0.1` is negotiated as `"ordered"`, delivered messages MUST be emitted in contiguous hash-chain order (for adjacent messages `next.prev_msg_hash == prev.message_hash`).
 
+### Rate limits and quotas
+- On quota exhaustion, servers SHOULD respond with HTTP `429` (preferred) and MUST include header `Retry-After`.
+- When HTTP `429` is returned, servers SHOULD include at least one rate-limit hint header: `RateLimit-Limit`, `RateLimit-Remaining`, or `RateLimit-Reset`.
+- For WS/SSE overload signaling, overload frames/events SHOULD include a non-empty `retry_after` string.
+
 ### Minimal WS framing
 When WSS streaming is used, outbound frames MUST use one of the following minimal envelope shapes:
 - Stream push messages frame (legacy stream shape):
@@ -53,6 +58,9 @@ Server events:
 
 Rules:
 - For pull streams, server MAY chunk into multiple `messages` events.
+- Every `messages` event MUST include SSE `id` equal to that event payload `cursor_after_last`.
+- Clients MAY reconnect by sending `Last-Event-ID: <cursor>`; servers MUST treat this as equivalent to `after=<cursor>`.
+- If both `Last-Event-ID` and query `after` are present, they MUST match.
 - All non-final `messages` events MUST set `more=true`; the final `messages` event MUST set `more=false`.
 - Total delivered messages across the stream MUST be `<= limit`.
 - When `CP-ORDERING-0.1 == "ordered"`, delivered messages MUST preserve contiguous hash-chain order.
