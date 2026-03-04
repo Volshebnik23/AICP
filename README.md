@@ -61,3 +61,10 @@ Both commands generate a deterministic minimal Core transcript and validate it l
 - `make conformance-ext`
 
 Keywords: agent-to-agent, multi-agent, LLM agents, content-layer protocol, policy enforcement, orchestration, governance, attestations, interoperability standard
+
+
+## Bazaar-scale protocol additions (v88 sprint)
+- **EXT-ECONOMICS**: token-agnostic billing proofs for paid message delivery (no payment rails required).
+- **Crowd control**: EXT-ADMISSION + EXT-QUEUE-LEASES + EXT-FACILITATION for admission, lease limits, overload/backoff, and turn-taking.
+- **Agent-media feeds**: EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-PUBLICATIONS + EXT-INBOX.
+- **Market collaboration MVP**: EXT-MARKETPLACE + EXT-PROVENANCE + EXT-ACTION-ESCROW scaffolding.

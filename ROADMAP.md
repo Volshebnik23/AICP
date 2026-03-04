@@ -1,9 +1,9 @@
-# AICP v87 — Roadmap Items (repo-backed)
+# AICP v88 — Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
 
-_Last updated: 2026-03-03_
+_Last updated: 2026-03-04_
 
 ## Current / Next
 
@@ -20,6 +20,7 @@ _Last updated: 2026-03-03_
 - **Progress:** Adapter/gateway artifacts are present and roadmap state is now aligned to shipped repo reality.
 
 ### 🚧 M22 — Transport bindings and channel properties (started)
+- **Step 4 complete:** v88 bazaar-scale content-layer extensions scaffolded (economics, admission/queue/facilitation, channels/subscriptions/publications/inbox, marketplace/provenance/escrow) with schemas + fixtures + conformance suites.
 - **Step 1 complete:** channel properties registry + canonical schema landed, and CAPNEG now carries binding/channel-property negotiation fields.
 - **Step 2 partial:** MCP-backed CAPNEG conformance evidence added (CN-09) with binding/channel-property negotiation invariant checks in runner.
 - **Step 2 hardening:** binding ID normalization shipped for HTTP/BUS (`BIND-HTTP-0.1` / `BIND-BUS-0.1`) with deprecated alias mapping retained for compatibility.

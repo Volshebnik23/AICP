@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-channels-payloads.schema.json",
+  "title": "AICP EXT-CHANNELS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "CHANNEL_DECLARE": {
+      "type": "object",
+      "required": [
+        "channel_id",
+        "version_id"
+      ],
+      "properties": {
+        "channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "topic_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "visibility_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention_policy_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "CHANNEL_UPDATE": {
+      "type": "object",
+      "required": [
+        "channel_id",
+        "version_id"
+      ],
+      "properties": {
+        "channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "topic_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "visibility_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention_policy_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "CHANNEL_DEPRECATE": {
+      "type": "object",
+      "required": [
+        "channel_id",
+        "version_id"
+      ],
+      "properties": {
+        "channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "topic_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "visibility_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention_policy_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

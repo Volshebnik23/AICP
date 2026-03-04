@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-admission-payloads.schema.json",
+  "title": "AICP EXT-ADMISSION payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "ADMISSION_REQUEST": {
+      "type": "object",
+      "required": [
+        "admission_id"
+      ],
+      "properties": {
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "attestation_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ADMISSION_OFFER": {
+      "type": "object",
+      "required": [
+        "admission_id"
+      ],
+      "properties": {
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "attestation_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ADMISSION_ACCEPT": {
+      "type": "object",
+      "required": [
+        "admission_id"
+      ],
+      "properties": {
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "attestation_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ADMISSION_REJECT": {
+      "type": "object",
+      "required": [
+        "admission_id"
+      ],
+      "properties": {
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "attestation_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ADMISSION_RENEW": {
+      "type": "object",
+      "required": [
+        "admission_id"
+      ],
+      "properties": {
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "attestation_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ADMISSION_REVOKE": {
+      "type": "object",
+      "required": [
+        "admission_id"
+      ],
+      "properties": {
+        "admission_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "attestation_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

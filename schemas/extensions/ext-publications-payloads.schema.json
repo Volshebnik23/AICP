@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-publications-payloads.schema.json",
+  "title": "AICP EXT-PUBLICATIONS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "PUBLICATION_PUBLISH": {
+      "type": "object",
+      "required": [
+        "publication_id",
+        "version_id",
+        "content_hash",
+        "ttl_seconds"
+      ],
+      "properties": {
+        "publication_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "PUBLICATION_UPDATE": {
+      "type": "object",
+      "required": [
+        "publication_id",
+        "version_id",
+        "prior_version_id",
+        "content_hash",
+        "ttl_seconds"
+      ],
+      "properties": {
+        "publication_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prior_version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "PUBLICATION_RETRACT": {
+      "type": "object",
+      "required": [
+        "publication_id",
+        "version_id",
+        "prior_version_id",
+        "content_hash",
+        "ttl_seconds",
+        "reason_code"
+      ],
+      "properties": {
+        "publication_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prior_version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

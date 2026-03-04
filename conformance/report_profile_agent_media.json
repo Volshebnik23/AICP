@@ -1,0 +1,75 @@
+{
+  "aicp_version": "0.1",
+  "profile_id": "AICP-AGENT-MEDIA",
+  "profile_version": "0.1",
+  "timestamp": "2026-03-03T03:21:00.793447+00:00",
+  "passed": true,
+  "suite_reports": [
+    {
+      "aicp_version": "0.1",
+      "suite_id": "CT-CORE-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.789624+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-Core-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "CH-CHANNELS-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.791125+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-CHANNELS-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "SB-SUBSCRIPTIONS-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.792253+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-SUBSCRIPTIONS-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "PB-PUBLICATIONS-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.793409+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-PUBLICATIONS-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    }
+  ],
+  "failures": [],
+  "compatibility_marks": [
+    "AICP-Profile-AGENT-MEDIA-0.1",
+    "AICP-Core-0.1",
+    "AICP-EXT-CHANNELS-0.1",
+    "AICP-EXT-SUBSCRIPTIONS-0.1",
+    "AICP-EXT-PUBLICATIONS-0.1"
+  ],
+  "degraded": false,
+  "degraded_reasons": []
+}

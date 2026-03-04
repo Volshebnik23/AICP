@@ -1,0 +1,105 @@
+{
+  "aicp_version": "0.1",
+  "profile_id": "AICP-BAZAAR-RECEPTION",
+  "profile_version": "0.1",
+  "timestamp": "2026-03-03T03:21:00.157362+00:00",
+  "passed": true,
+  "suite_reports": [
+    {
+      "aicp_version": "0.1",
+      "suite_id": "CT-CORE-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.150118+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-Core-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "PA-PARTICIPANTS-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.152175+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-PARTICIPANTS-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "PE-POLICY-EVAL-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.153450+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-POLICY-EVAL-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "ENF-ENFORCEMENT-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.154833+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-ENFORCEMENT-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "AD-ADMISSION-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.156057+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-ADMISSION-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "QL-QUEUE-LEASES-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:21:00.157318+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-QUEUE-LEASES-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    }
+  ],
+  "failures": [],
+  "compatibility_marks": [
+    "AICP-Profile-BAZAAR-RECEPTION-0.1",
+    "AICP-Core-0.1",
+    "AICP-EXT-PARTICIPANTS-0.1",
+    "AICP-EXT-POLICY-EVAL-0.1",
+    "AICP-EXT-ENFORCEMENT-0.1",
+    "AICP-EXT-ADMISSION-0.1",
+    "AICP-EXT-QUEUE-LEASES-0.1"
+  ],
+  "degraded": false,
+  "degraded_reasons": []
+}

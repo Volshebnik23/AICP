@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-queue-leases-payloads.schema.json",
+  "title": "AICP EXT-QUEUE-LEASES payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "QUEUE_ENQUEUE": {
+      "type": "object",
+      "required": [
+        "queue_id",
+        "item_id"
+      ],
+      "properties": {
+        "queue_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "QUEUE_LEASE_GRANT": {
+      "type": "object",
+      "required": [
+        "lease_id",
+        "queue_id",
+        "ttl_seconds",
+        "max_msgs",
+        "max_bytes"
+      ],
+      "properties": {
+        "lease_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "queue_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_msgs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "allowed_message_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "QUEUE_ACK": {
+      "type": "object",
+      "required": [
+        "lease_id",
+        "item_id"
+      ],
+      "properties": {
+        "lease_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "QUEUE_NACK": {
+      "type": "object",
+      "required": [
+        "lease_id",
+        "item_id"
+      ],
+      "properties": {
+        "lease_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "QUEUE_RELEASE": {
+      "type": "object",
+      "required": [
+        "lease_id"
+      ],
+      "properties": {
+        "lease_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "OVERLOAD_SIGNAL": {
+      "type": "object",
+      "required": [
+        "reason_code",
+        "retry_after_seconds"
+      ],
+      "properties": {
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retry_after_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "THROTTLE_UPDATE": {
+      "type": "object",
+      "required": [
+        "max_msgs_per_minute"
+      ],
+      "properties": {
+        "max_msgs_per_minute": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

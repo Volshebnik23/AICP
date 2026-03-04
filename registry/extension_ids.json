@@ -3,6 +3,24 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-ACTION-ESCROW",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ACTION_ESCROW.md#registry-entry",
+    "security_considerations": "Escrow commits must bind approval and policy hashes to avoid unauthorized execution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-ADMISSION",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#registry-entry",
+    "security_considerations": "Admission tokens and attestations should be authenticated and revocable to resist queue abuse."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-ALERTS",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md",
@@ -17,6 +35,15 @@
     "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#registry-entry",
     "security_considerations": "Negotiation must prevent downgrade and spoofing.",
     "compatibility_notes": "Stable baseline extension for capability negotiation; incompatible changes require migration notes and conformance updates."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-CHANNELS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_CHANNELS.md#registry-entry",
+    "security_considerations": "Channel ownership and update rights must be authenticated to prevent channel takeover."
   },
   {
     "status": "experimental",
@@ -46,6 +73,15 @@
     "security_considerations": "Dispute artifacts should be tamper-evident and reviewable."
   },
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-ECONOMICS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ECONOMICS.md#registry-entry",
+    "security_considerations": "Protect against proof replay, issuer spoofing, downgrade of proof requirements, and spend metadata leakage."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -59,10 +95,37 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-FACILITATION",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#registry-entry",
+    "security_considerations": "Turn grants and moderator directives should be authenticated and non-repudiable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-IDENTITY-LC",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md",
     "security_considerations": "Identity lifecycle actions affect trust roots."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-INBOX",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#registry-entry",
+    "security_considerations": "Inbox routing decisions should be auditable to prevent silent drops and unfair prioritization."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-MARKETPLACE",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#registry-entry",
+    "security_considerations": "Awards must bind to bids and RFW IDs to prevent winner substitution."
   },
   {
     "status": "experimental",
@@ -96,6 +159,33 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-PROVENANCE",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_PROVENANCE.md#registry-entry",
+    "security_considerations": "Provenance nodes should be hash-linked to resist tampering and equivocation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-PUBLICATIONS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_PUBLICATIONS.md#registry-entry",
+    "security_considerations": "Publication integrity and retraction authenticity are required to prevent cache poisoning."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-QUEUE-LEASES",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#registry-entry",
+    "security_considerations": "Lease grants must be bounded and auditable to prevent flooding and starvation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-RESUME",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md",
@@ -109,6 +199,15 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md",
     "security_considerations": "Incident signaling must avoid sensitive data overexposure."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-SUBSCRIPTIONS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md#registry-entry",
+    "security_considerations": "Subscription filters and cursors should avoid leaking private interests and must prevent replay confusion."
   },
   {
     "status": "experimental",

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-marketplace-payloads.schema.json",
+  "title": "AICP EXT-MARKETPLACE payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "RFW_DECLARE": {
+      "type": "object",
+      "required": [
+        "rfw_id"
+      ],
+      "properties": {
+        "rfw_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "BID_SUBMIT": {
+      "type": "object",
+      "required": [
+        "bid_id",
+        "rfw_id"
+      ],
+      "properties": {
+        "bid_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rfw_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "AWARD": {
+      "type": "object",
+      "required": [
+        "award_id",
+        "rfw_id",
+        "bid_id"
+      ],
+      "properties": {
+        "award_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rfw_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bid_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "WORK_ORDER_DECLARE": {
+      "type": "object",
+      "required": [
+        "work_order_id",
+        "award_id"
+      ],
+      "properties": {
+        "work_order_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "award_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "WORK_ORDER_UPDATE": {
+      "type": "object",
+      "required": [
+        "work_order_id",
+        "status"
+      ],
+      "properties": {
+        "work_order_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
