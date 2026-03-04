@@ -1,0 +1,30 @@
+{
+  "aicp_version": "0.1",
+  "profile_id": "AICP-BASE",
+  "profile_version": "0.1",
+  "timestamp": "2026-03-03T03:20:55.568887+00:00",
+  "passed": true,
+  "suite_reports": [
+    {
+      "aicp_version": "0.1",
+      "suite_id": "CT-CORE-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:20:55.568812+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-Core-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    }
+  ],
+  "failures": [],
+  "compatibility_marks": [
+    "AICP-Profile-BASE-0.1",
+    "AICP-Core-0.1"
+  ],
+  "degraded": false,
+  "degraded_reasons": []
+}

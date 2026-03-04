@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-provenance-payloads.schema.json",
+  "title": "AICP EXT-PROVENANCE payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "PROVENANCE_DECLARE": {
+      "type": "object",
+      "required": [
+        "graph_id",
+        "nodes"
+      ],
+      "properties": {
+        "graph_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "PROVENANCE_APPEND": {
+      "type": "object",
+      "required": [
+        "graph_id",
+        "node"
+      ],
+      "properties": {
+        "graph_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "node": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

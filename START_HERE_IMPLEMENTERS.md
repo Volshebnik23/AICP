@@ -61,3 +61,9 @@ If you are integrating AICP with an existing platform gateway, start with:
 - Template: `templates/protocol-adapter/`
 
 Recommended CI baseline: `make validate` + `make conformance-profiles`.
+
+
+## Bazaar-scale implementer guidance (v88)
+1. Verify economics proof binding (`submit_id` + `content_hash`) before delivering paid content.
+2. Enforce queue lease limits (`max_msgs`, `max_bytes`, `allowed_message_types`) and emit overload/backoff signals.
+3. Keep subscription cursors deterministic and validate publication integrity (`content_hash`, version chaining).

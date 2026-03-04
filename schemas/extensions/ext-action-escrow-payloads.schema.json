@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-action-escrow-payloads.schema.json",
+  "title": "AICP EXT-ACTION-ESCROW payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "ACTION_PREPARE": {
+      "type": "object",
+      "required": [
+        "escrow_id",
+        "tool_call_request_hash",
+        "policy_context_hash"
+      ],
+      "properties": {
+        "escrow_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_call_request_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_context_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ACTION_APPROVE": {
+      "type": "object",
+      "required": [
+        "escrow_id",
+        "approval_hash"
+      ],
+      "properties": {
+        "escrow_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approval_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ACTION_COMMIT": {
+      "type": "object",
+      "required": [
+        "escrow_id",
+        "tool_call_request_hash",
+        "approval_hash",
+        "policy_context_hash"
+      ],
+      "properties": {
+        "escrow_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_call_request_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approval_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_context_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

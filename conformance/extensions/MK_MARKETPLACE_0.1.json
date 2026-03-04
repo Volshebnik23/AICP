@@ -1,0 +1,63 @@
+{
+  "suite_id": "MK-MARKETPLACE-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "MK-MARKETPLACE-0.1",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-marketplace-payloads.schema.json",
+  "payload_schema_map": {
+    "RFW_DECLARE": "#/$defs/RFW_DECLARE",
+    "BID_SUBMIT": "#/$defs/BID_SUBMIT",
+    "AWARD": "#/$defs/AWARD",
+    "WORK_ORDER_DECLARE": "#/$defs/WORK_ORDER_DECLARE",
+    "WORK_ORDER_UPDATE": "#/$defs/WORK_ORDER_UPDATE"
+  },
+  "transcripts": [
+    {
+      "id": "MK-01",
+      "path": "fixtures/extensions/marketplace/MK-01_marketplace_pass.jsonl",
+      "expected_message_types": [
+        "RFW_DECLARE",
+        "BID_SUBMIT",
+        "AWARD",
+        "WORK_ORDER_DECLARE",
+        "WORK_ORDER_UPDATE"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against extension payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id constant and message_id unique"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-MARKETPLACE-0.1"
+}

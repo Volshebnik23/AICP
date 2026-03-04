@@ -131,3 +131,8 @@ Operational guidance:
 - A platform that requires `AICP-MEDIATED-BLOCKING@0.1` SHOULD declare it in `required_aicp_profiles` and reject proposals selecting weaker profiles.
 - Product profile claims negotiated in CAPNEG are runtime claims; conformance/profile badges are separate evidence artifacts and MUST still be produced from suite/profile runners.
 - Downgrade attempts are expected to be detectable deterministically via CAPNEG conformance checks.
+
+
+## Experimental profiles added in v88
+- **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases baseline.
+- **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications baseline with optional economics.

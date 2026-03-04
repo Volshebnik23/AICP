@@ -1,0 +1,12 @@
+{
+  "profile_id": "AICP-AGENT-MEDIA",
+  "profile_version": "0.1",
+  "description": "Agent media profile for channels, subscriptions, and publication integrity.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CH_CHANNELS_0.1.json",
+    "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json",
+    "conformance/extensions/PB_PUBLICATIONS_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-AGENT-MEDIA-0.1"
+}

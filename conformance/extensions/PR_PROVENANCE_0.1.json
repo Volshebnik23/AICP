@@ -1,0 +1,57 @@
+{
+  "suite_id": "PR-PROVENANCE-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "PR-PROVENANCE-0.1",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-provenance-payloads.schema.json",
+  "payload_schema_map": {
+    "PROVENANCE_DECLARE": "#/$defs/PROVENANCE_DECLARE",
+    "PROVENANCE_APPEND": "#/$defs/PROVENANCE_APPEND"
+  },
+  "transcripts": [
+    {
+      "id": "PR-01",
+      "path": "fixtures/extensions/provenance/PR-01_provenance_pass.jsonl",
+      "expected_message_types": [
+        "PROVENANCE_DECLARE",
+        "PROVENANCE_APPEND"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against extension payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id constant and message_id unique"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-PROVENANCE-0.1"
+}

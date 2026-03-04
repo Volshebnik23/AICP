@@ -20,3 +20,7 @@
 - **Policy tightening**: unsafe integers are now rejected during canonicalization; encode out-of-range values as strings.
 
 - Compatibility note: implementations may now exchange finite float payload values in canonical JSON. Integer values still MUST remain within IEEE-754 safe integer range (±(2^53-1)).
+
+
+## v88 / 0.1.0-dev (experimental extensions)
+Added experimental EXT-ECONOMICS, EXT-ADMISSION, EXT-QUEUE-LEASES, EXT-FACILITATION, EXT-CHANNELS, EXT-SUBSCRIPTIONS, EXT-PUBLICATIONS, EXT-INBOX, EXT-MARKETPLACE, EXT-PROVENANCE, and EXT-ACTION-ESCROW with schemas, fixtures, suites, and runner checks.

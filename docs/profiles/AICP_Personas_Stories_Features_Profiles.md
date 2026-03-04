@@ -74,3 +74,11 @@ This mapping anchors profile evolution in user needs and implementable feature b
 2. user stories it satisfies,
 3. concrete required suites/extensions,
 4. objective conformance evidence path.
+
+
+## New personas and stories (v88)
+- **Brand Reception Operator**: uses ADMISSION + QUEUE-LEASES + INBOX to control spikes.
+- **Bazaar Enforcer Operator**: uses FACILITATION and overload signaling to reduce storm traffic.
+- **Agent Media Publisher/Editor**: uses CHANNELS/SUBSCRIPTIONS/PUBLICATIONS for corrections and targeted distribution.
+- **Marketplace Operator**: uses MARKETPLACE + PROVENANCE + ACTION-ESCROW for award and accountable execution.
+- **Client Agent**: uses SUBSCRIPTIONS + ECONOMICS budgets + backoff hints.

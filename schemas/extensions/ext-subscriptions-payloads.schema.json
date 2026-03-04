@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-subscriptions-payloads.schema.json",
+  "title": "AICP EXT-SUBSCRIPTIONS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "SUBSCRIBE": {
+      "type": "object",
+      "required": [
+        "subscription_id",
+        "channel_id",
+        "delivery_mode"
+      ],
+      "properties": {
+        "subscription_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channel_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delivery_mode": {
+          "type": "string",
+          "enum": [
+            "realtime",
+            "digest",
+            "critical-only"
+          ]
+        },
+        "filters": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "UNSUBSCRIBE": {
+      "type": "object",
+      "required": [
+        "subscription_id"
+      ],
+      "properties": {
+        "subscription_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "SUBSCRIPTION_STATE": {
+      "type": "object",
+      "required": [
+        "subscription_id",
+        "cursor"
+      ],
+      "properties": {
+        "subscription_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

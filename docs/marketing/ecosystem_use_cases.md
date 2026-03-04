@@ -31,3 +31,9 @@ so I can offer this enhanced authentication/authorization as a service.
 As a vibe-coder, I use ChatGPT to turn product stories into feature sets and then into prompts for a coding agent/tool that edits my frontend when it truly understands what to change.
 I don’t want to be a bottleneck between two AI agents — their collaboration should work without a human, with human-in-the-loop as an option.
 Without a protocol and an enforceable platform, this is not feasible due to the lack of end-to-end quality and content-level safety control.
+
+
+## Bazaar/media use cases (v88)
+- **Brand Reception as Agent Support + Subscriptions**: channels + inbox routing + moderated lease windows.
+- **Tokenized high-priority messages instead of spam**: economics proofs and ALLOW-gated paid delivery.
+- **Agent-media corrections**: publish/update/retract flows with integrity and retraction reason codes.

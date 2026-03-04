@@ -1,0 +1,75 @@
+{
+  "aicp_version": "0.1",
+  "profile_id": "AICP-DELEGATED-IDENTITY",
+  "profile_version": "0.1",
+  "timestamp": "2026-03-03T03:20:58.864899+00:00",
+  "passed": true,
+  "suite_reports": [
+    {
+      "aicp_version": "0.1",
+      "suite_id": "CT-CORE-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:20:58.853379+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-Core-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "CN-CAPNEG-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:20:58.857255+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-CAPNEG-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "ID-IDENTITY-LC-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:20:58.861410+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-IDENTITY-LC-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    },
+    {
+      "aicp_version": "0.1",
+      "suite_id": "DI-DELEGATED-IDENTITY-0.1",
+      "suite_version": "0.1.0-dev",
+      "timestamp": "2026-03-03T03:20:58.864835+00:00",
+      "passed": true,
+      "failures": [],
+      "compatibility_marks": [
+        "AICP-EXT-DELEGATED-IDENTITY-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": [],
+      "skipped_checks": []
+    }
+  ],
+  "failures": [],
+  "compatibility_marks": [
+    "AICP-Profile-DELEGATED-IDENTITY-0.1",
+    "AICP-Core-0.1",
+    "AICP-EXT-CAPNEG-0.1",
+    "AICP-EXT-IDENTITY-LC-0.1",
+    "AICP-EXT-DELEGATED-IDENTITY-0.1"
+  ],
+  "degraded": false,
+  "degraded_reasons": []
+}

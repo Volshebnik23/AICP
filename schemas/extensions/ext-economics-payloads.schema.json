@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-economics-payloads.schema.json",
+  "title": "AICP EXT-ECONOMICS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "PAID_MESSAGE_SUBMIT": {
+      "type": "object",
+      "required": [
+        "submit_id",
+        "content_hash",
+        "token_system_id",
+        "requested_amount"
+      ],
+      "properties": {
+        "submit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "token_system_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requested_amount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "ECONOMICS_VERDICT": {
+      "type": "object",
+      "required": [
+        "submit_id",
+        "decision"
+      ],
+      "properties": {
+        "submit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "REQUIRE_PROOF"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "PAYMENT_PROOF_SUBMIT": {
+      "type": "object",
+      "required": [
+        "submit_id",
+        "receipt_id",
+        "nonce",
+        "token_system_id",
+        "covers_submit_id",
+        "covers_content_hash",
+        "issued_at",
+        "expires_at"
+      ],
+      "properties": {
+        "submit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nonce": {
+          "type": "string",
+          "minLength": 1
+        },
+        "token_system_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "covers_submit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "covers_content_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PAID_MESSAGE_DELIVER": {
+      "type": "object",
+      "required": [
+        "submit_id",
+        "delivered_content_hash"
+      ],
+      "properties": {
+        "submit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delivered_content_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proof_ref_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_ref_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

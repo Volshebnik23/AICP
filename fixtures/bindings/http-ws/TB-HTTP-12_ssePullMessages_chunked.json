@@ -93,7 +93,8 @@
         ],
         "cursor_after_last": "m2",
         "more": true
-      }
+      },
+      "id": "m2"
     },
     {
       "event": "messages",
@@ -134,7 +135,8 @@
         ],
         "cursor_after_last": "m3",
         "more": false
-      }
+      },
+      "id": "m3"
     }
   ],
   "embedded_messages": [

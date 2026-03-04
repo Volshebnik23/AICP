@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-facilitation-payloads.schema.json",
+  "title": "AICP EXT-FACILITATION payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "AGENDA_DECLARE": {
+      "type": "object",
+      "required": [
+        "agenda_id"
+      ],
+      "properties": {
+        "agenda_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "AGENDA_UPDATE": {
+      "type": "object",
+      "required": [
+        "agenda_id"
+      ],
+      "properties": {
+        "agenda_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "TURN_REQUEST": {
+      "type": "object",
+      "required": [
+        "turn_id"
+      ],
+      "properties": {
+        "turn_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topic": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "TURN_GRANT": {
+      "type": "object",
+      "required": [
+        "turn_id",
+        "grantee"
+      ],
+      "properties": {
+        "turn_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grantee": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "TURN_REVOKE": {
+      "type": "object",
+      "required": [
+        "turn_id"
+      ],
+      "properties": {
+        "turn_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "DIGEST_REQUEST": {
+      "type": "object",
+      "required": [
+        "digest_id"
+      ],
+      "properties": {
+        "digest_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "DIGEST_DELIVER": {
+      "type": "object",
+      "required": [
+        "digest_id",
+        "summary_hash"
+      ],
+      "properties": {
+        "digest_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "MODERATOR_DIRECTIVE": {
+      "type": "object",
+      "required": [
+        "directive_id",
+        "instruction"
+      ],
+      "properties": {
+        "directive_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "instruction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

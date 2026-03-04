@@ -1,5 +1,26 @@
 [
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-AGENT-MEDIA@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Agent media profile requires publication integrity, controlled subscription filtering, and safe replay cursors.",
+    "profile_id": "AICP-AGENT-MEDIA",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-CHANNELS",
+      "EXT-SUBSCRIPTIONS",
+      "EXT-PUBLICATIONS"
+    ],
+    "required_policy_categories": [
+      "distribution"
+    ],
+    "required_crypto_profiles": [],
+    "description": "Agent-media profile for channelized publish/update/retract feeds with subscription controls."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -14,6 +35,32 @@
     "required_crypto_profiles": [],
     "description": "Core-only baseline profile aligned with PF_AICP_BASE_0.1 and Core suite evidence.",
     "compatibility_notes": "Stable baseline profile; maintain backward compatibility for core-only profile semantics."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-BAZAAR-RECEPTION@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Bazaar reception profile requires admission and queue fairness controls with auditable overload handling.",
+    "profile_id": "AICP-BAZAAR-RECEPTION",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-PARTICIPANTS",
+      "EXT-ENFORCEMENT",
+      "EXT-POLICY-EVAL",
+      "EXT-ADMISSION",
+      "EXT-QUEUE-LEASES"
+    ],
+    "required_policy_categories": [
+      "traffic_shaping",
+      "content_budgets",
+      "artifact_constraints",
+      "facilitation"
+    ],
+    "required_crypto_profiles": [],
+    "description": "Bazaar reception profile for high-volume moderated receptions with admission and lease controls."
   },
   {
     "status": "experimental",

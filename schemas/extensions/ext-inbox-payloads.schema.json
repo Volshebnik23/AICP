@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-inbox-payloads.schema.json",
+  "title": "AICP EXT-INBOX payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "INBOX_ENQUEUE": {
+      "type": "object",
+      "required": [
+        "inbox_id",
+        "item_id"
+      ],
+      "properties": {
+        "inbox_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "INBOX_ROUTE": {
+      "type": "object",
+      "required": [
+        "item_id",
+        "route_key"
+      ],
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "route_key": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "INBOX_LEASE_GRANT": {
+      "type": "object",
+      "required": [
+        "inbox_id",
+        "lease_id",
+        "ttl_seconds"
+      ],
+      "properties": {
+        "inbox_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lease_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "INBOX_ACK": {
+      "type": "object",
+      "required": [
+        "inbox_id",
+        "item_id"
+      ],
+      "properties": {
+        "inbox_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

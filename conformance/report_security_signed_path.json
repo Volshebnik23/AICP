@@ -1,0 +1,14 @@
+{
+  "aicp_version": "0.1",
+  "suite_id": "SIG-SIGNED-PATHS-0.1",
+  "suite_version": "0.1.0-dev",
+  "timestamp": "2026-03-03T03:21:02.939905+00:00",
+  "passed": true,
+  "failures": [],
+  "compatibility_marks": [
+    "AICP-SECURITY-SIGNED-PATH-0.1"
+  ],
+  "degraded": false,
+  "degraded_reasons": [],
+  "skipped_checks": []
+}

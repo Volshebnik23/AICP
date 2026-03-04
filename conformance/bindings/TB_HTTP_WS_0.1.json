@@ -17,7 +17,10 @@
     "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json",
     "fixtures/bindings/http-ws/TB-HTTP-12_ssePullMessages_chunked.json",
     "fixtures/bindings/http-ws/TB-HTTP-13_sseOverloadEvent.json",
-    "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json"
+    "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json",
+    "fixtures/bindings/http-ws/TB-HTTP-15_createSession.json",
+    "fixtures/bindings/http-ws/TB-HTTP-16_closeSession.json",
+    "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json"
   ],
   "compatibility_mark": "AICP-BIND-HTTP-0.1",
   "checks": [
@@ -60,6 +63,22 @@
     {
       "test_id": "TB-HTTP-REPLAY-01",
       "description": "replay_of cases must reference earlier case evidence and mark replay response headers/status"
+    },
+    {
+      "test_id": "TB-HTTP-RATELIMIT-01",
+      "description": "overload 429 responses must include Retry-After and at least one RateLimit-* hint header"
+    },
+    {
+      "test_id": "TB-HTTP-AUTH-01",
+      "description": "if auth evidence exists, request must include Authorization: Bearer <token>"
+    },
+    {
+      "test_id": "TB-HTTP-SESSION-01",
+      "description": "createSession evidence must define canonical session_id reused by all session-scoped paths and request bodies"
+    },
+    {
+      "test_id": "TB-SSE-RECONNECT-01",
+      "description": "reconnect_of SSE pulls must carry Last-Event-ID and query.after matching referenced cursor"
     }
   ]
 }

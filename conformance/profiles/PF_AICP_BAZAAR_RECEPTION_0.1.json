@@ -1,0 +1,14 @@
+{
+  "profile_id": "AICP-BAZAAR-RECEPTION",
+  "profile_version": "0.1",
+  "description": "Bazaar reception profile for admission, queue leases, and moderated throughput.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+    "conformance/extensions/AD_ADMISSION_0.1.json",
+    "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-BAZAAR-RECEPTION-0.1"
+}
