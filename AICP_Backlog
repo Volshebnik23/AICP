@@ -1,4 +1,4 @@
-# AICP v88 — Protocol Backlog (repo-backed)
+# AICP v90 — Protocol Backlog (repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
@@ -570,5 +570,64 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 **Acceptance**
 - Brands can run reception feeds that agents can reliably subscribe to (support/news/security) without spam.
 - Platforms can scale distribution with portable semantics (channels/topics/subscriptions/cursors) and enforce policy-driven delivery.
+
+---
+
+## M39 — Content-origin disclosure (optional): portable origin claims for messages & publications
+**Problem:** In bazaar receptions and agent-media feeds, participants (including other agents) sometimes need a **portable, machine-checkable origin signal** to support consistent UI badges and policy-driven routing/moderation (e.g., “human-authored note”, “AI-assisted”, “official platform-attested”). This must **not** turn AICP into a detector or a transport; it is a content-layer claim that can be forwarded across AICP chats and audited in transcripts.
+
+**Deliverables**
+1) **EXT-CONTENT-ORIGIN (experimental)**
+   - Two MVP message types:
+     - `CONTENT_ORIGIN_CLAIM` (self-declared by a participant/agent)
+     - `CONTENT_ORIGIN_ATTEST` (attested by platform roles and/or an external IdP actor)
+   - `origin_claim` object (portable across chats):
+     - `origin`: `AI | HUMAN | AI_ASSISTED | UNKNOWN`
+     - `claim_level`: `SELF_DECLARED | PLATFORM_ATTESTED | IDP_ATTESTED`
+     - MUST bind to `target_message_hash` (and optionally to `target_object_hash` for publication artifacts).
+     - Anti-replay: `claim_id` + `issued_at` (+ optional `expires_at`).
+     - Privacy-safe optional hints: `generator_hint`, `model_hint` (MAY be omitted).
+2) **Registries**
+   - Add `EXT-CONTENT-ORIGIN` to `registry/extension_ids.json` (experimental).
+   - Add new message types to `registry/message_types.json`.
+   - Add policy category `origin_disclosure` to `registry/policy_categories.json` (experimental).
+   - Add reason codes to `registry/policy_reason_codes.json`:
+     - `ORIGIN_DISCLOSURE_REQUIRED`
+     - `ORIGIN_DISCLOSURE_INVALID_BINDING`
+     - `ORIGIN_DISCLOSURE_UNTRUSTED_ATTESTER`
+     - `ORIGIN_DISCLOSURE_REPLAYED`
+3) **Schemas**
+   - `schemas/extensions/ext-content-origin-payloads.schema.json` with `$defs` for both message types.
+   - Enforce required binding fields (at minimum `target_message_hash`) and timestamp types per repo conventions.
+4) **Fixtures + conformance**
+   - Fixtures folder: `fixtures/extensions/content_origin/`
+   - expected-pass:
+     - platform attests a delivered message (`CONTENT_DELIVER` → `CONTENT_ORIGIN_ATTEST` bound to deliver target hash)
+     - IdP attests an “AI_ASSISTED” or “HUMAN” claim (optional) where `auth:*` actor is the attester
+   - expected-fail:
+     - missing binding (`target_message_hash` absent)
+     - unknown target hash (doesn’t exist in transcript)
+     - replayed `claim_id`
+   - Conformance suite: `conformance/extensions/CO_CONTENT_ORIGIN_0.1.json` (schema + semantic checks).
+5) **Conformance runner semantic checks**
+   - `CO-BIND-01`: `target_message_hash` must exist in transcript history.
+   - `CO-ROLE-01`: if `claim_level=PLATFORM_ATTESTED`, attester MUST be a platform role (`mediator:*` or `enforcer:*` per repo conventions); if `IDP_ATTESTED`, attester MUST be `auth:*` (or satisfy the repo’s delegated-identity conventions).
+   - `CO-REPLAY-01`: `claim_id` uniqueness within session scope.
+   - `CO-RESOLVE-01`: deterministic claim resolution rule for consumers (not UI):
+     - prefer highest trust: `IDP_ATTESTED > PLATFORM_ATTESTED > SELF_DECLARED`
+     - ties resolved by latest `issued_at`.
+6) **Profile integration (non-core)**
+   - Keep optional for baseline agent↔agent profiles.
+   - Recommend for bazaar/media profiles where mixed participation and syndication require portable origin signals.
+7) **Documentation (must ship with the extension)**
+   - Implementer guide: how to produce/verify claims; do not treat self-declared claims as proof.
+   - Suite overview: add CO suite and fixture paths.
+   - Personas/stories: “brand reception operator”, “agent media publisher”, “client agent forwarding across receptions while preserving attestations”.
+   - Marketing/use-cases: emphasize **attestation**, not “AI detection”.
+
+**Acceptance**
+- Origin claims are portable across AICP chats (hash-bound + signed where attested) and interpretable with a deterministic rule.
+- Baseline agent↔agent chats do not change behavior unless a profile/contract/policy explicitly requires origin disclosure.
+- Conformance suite `CO_CONTENT_ORIGIN_0.1` passes for reference transcripts and fails for negative fixtures.
 
 ---
