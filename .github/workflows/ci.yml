@@ -92,3 +92,9 @@ jobs:
         run: |
           make quickstart-py
           make quickstart-ts
+
+      - name: Run template onboarding smoke commands
+        run: |
+          node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
+          python sandbox/run.py out/template-ts-agent/thread.jsonl --no-signature-verify
+          python templates/protocol-adapter/adapter.py fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl > out/template-protocol-adapter/events.json

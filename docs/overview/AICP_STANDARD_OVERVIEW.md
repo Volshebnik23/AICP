@@ -22,11 +22,18 @@ Profiles are named bundles of required extensions, behavior expectations, and ba
 - Not a domain ontology.
 - Not a hosted platform or CA.
 
+## Version and status labels (avoid confusion)
+
+- **Protocol version (`aicp_version`)**: wire/content semantics and conformance target (for example `0.1`).
+- **Repo/release version (`VERSION`, release notes tags)**: packaging cadence of this repository.
+- **Roadmap milestone IDs (`Mxx`)**: planning progress labels, not protocol negotiation values.
+
 ## Try it now
 
 - `make quickstart-py`
 - `make quickstart-ts`
 - `make conformance-all`
+- `make template-smoke`
 
 ## Where to go next
 

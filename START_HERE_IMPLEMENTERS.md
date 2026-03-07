@@ -60,10 +60,17 @@ If you are integrating AICP with an existing platform gateway, start with:
 - Guide: `docs/guides/Protocol_Adapter_Gateway.md`
 - Template: `templates/protocol-adapter/`
 
-Recommended CI baseline: `make validate` + `make conformance-profiles`.
+Recommended CI baseline: `make validate` + `make conformance-profiles` + template smoke tests for adapter/agent commands.
 
 
 ## Bazaar-scale implementer guidance (v88)
 1. Verify economics proof binding (`submit_id` + `content_hash`) before delivering paid content.
 2. Enforce queue lease limits (`max_msgs`, `max_bytes`, `allowed_message_types`) and emit overload/backoff signals.
 3. Keep subscription cursors deterministic and validate publication integrity (`content_hash`, version chaining).
+
+
+## Template smoke commands (shipped onboarding)
+
+- `node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl`
+- `python sandbox/run.py out/template-ts-agent/thread.jsonl --no-signature-verify`
+- `python templates/protocol-adapter/adapter.py fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl`
