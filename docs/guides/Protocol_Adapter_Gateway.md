@@ -10,6 +10,17 @@ This guide describes a minimal adapter architecture for ingesting AICP envelopes
 5. **store**: append immutable transcript/event log.
 6. **emit**: dispatch to internal workers or APIs.
 
+## Template alignment
+Use `templates/protocol-adapter/` as a starting point only. The shipped template preserves audit-critical envelope fields (`prev_msg_hash`, `signatures`, `contract_ref`, relation/extension projection) in an `audit_envelope` while still demonstrating a compact event projection.
+
+If you simplify further, document the mapping as intentionally lossy and keep full envelopes in immutable storage.
+
+## Ecosystem and enforcement placement
+This implementation guide is the practical adapter view. For architecture positioning and enforcement model choices, see:
+- `docs/architecture/Protocol_Adapter_Gateway.md`
+- `docs/architecture/AICP_in_the_Ecosystem.md`
+- `docs/architecture/Enforcement_Models.md`
+
 ## CAPNEG as input filter
 Use negotiated CAPNEG outputs as machine-readable admission checks:
 - reject unsupported profile/extension combinations,

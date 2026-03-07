@@ -119,5 +119,6 @@
   "x-legacy-ids": [
     "https://aicp.dev/schemas/aicp-core-message.schema.json",
     "https://aicp.dev/schemas/core/aicp-core-message.schema.json"
-  ]
+  ],
+  "description": "Boundary schema for AICP Core message envelopes. This schema is intentionally permissive for ingress compatibility; semantic invariants (chain, sequencing, hash/signature consistency, and profile/suite expectations) are enforced by conformance runners."
 }

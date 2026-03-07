@@ -19,6 +19,19 @@ _Last updated: 2026-03-04_
 ### ✅ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
 - **Progress:** Adapter/gateway artifacts are present and roadmap state is now aligned to shipped repo reality.
 
+### ✅ M42–M46 — Developer-facing documentation architecture pass
+- **Progress:** Canonical docs front door (`docs/INDEX.md`) shipped with role/goal navigation and cross-links across overview, profiles, architecture, playbooks, and flows.
+- **Progress:** Ecosystem positioning, profile selection guide, session topology cookbook, and enforcement models docs shipped with explicit protocol-vs-adjacent-layer boundaries.
+- **Progress:** Solution playbooks for reception/support, enterprise orchestration, personal-agent coordination, agent media feeds, and commerce-assisted purchase shipped with profile and dependency guidance.
+- **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
+
+### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
+- **Progress:** Core narrative now explicitly matches shipped `ERROR` baseline and clarifies narrative/spec/schema/conformance/reference boundaries.
+- **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
+- **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
+- **Progress:** CI/test coverage now includes deterministic smoke checks for shipped onboarding templates.
+- **Next concrete step:** expand template smoke checks into profile-specific onboarding packs without increasing default CI runtime significantly.
+
 ### 🚧 M22 — Transport bindings and channel properties (started)
 - **Step 4 complete:** v88 bazaar-scale content-layer extensions scaffolded (economics, admission/queue/facilitation, channels/subscriptions/publications/inbox, marketplace/provenance/escrow) with schemas + fixtures + conformance suites.
 - **Step 1 complete:** channel properties registry + canonical schema landed, and CAPNEG now carries binding/channel-property negotiation fields.
