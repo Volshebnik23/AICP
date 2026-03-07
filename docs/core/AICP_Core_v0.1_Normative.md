@@ -6,7 +6,7 @@
 
 ## 1. Scope
 
-This document is the canonical normative Core v0.1 source. Implementations MUST treat this Markdown file as the source of truth for Core protocol behavior.
+This document is the canonical narrative normative Core v0.1 source. Implementations MUST treat it as the authoritative requirements text for Core behavior, interpreted together with Core schemas and Core conformance artifacts for executable validation.
 
 ## 2. Message envelope (normative)
 
@@ -20,7 +20,7 @@ A Core message MUST include:
 
 Messages MUST include `contract_id`. Messages MAY include `contract_ref`, `prev_msg_hash`, `message_hash`, `signatures`, and relation metadata.
 
-Implementations MUST validate incoming messages against the Core message schema at the boundary.
+Implementations MUST validate incoming messages against the Core message schema at the boundary. The boundary schema is intentionally permissive for transport/interchange compatibility; stricter semantic checks are enforced by Core conformance checks.
 
 ## 3. Core message types (normative)
 
@@ -30,8 +30,10 @@ Core v0.1 message taxonomy:
 - `CONTEXT_AMEND`
 - `ATTEST_ACTION`
 - `RESOLVE_CONFLICT`
+- `ERROR`
 
 Implementations MUST use `CONTEXT_AMEND` for amendment flow. Earlier draft labels are non-normative and MUST NOT be used in Core conformance artifacts.
+`ERROR` is part of the shipped Core message set and MUST be accepted by Core payload/schema/conformance paths.
 
 ## 4. State machine and invariants (normative)
 
@@ -72,6 +74,7 @@ Hashing:
 Signatures:
 - Signature verification SHOULD use Ed25519 profile(s) registered for Core.
 - If signatures are present, their `object_hash` MUST match the message hash being signed.
+- If a signature includes `kid`, verifiers MUST resolve it consistently with signer key material (fail on mismatch).
 - Executable signed-path evidence: `fixtures/security/signed_paths/` and `conformance/security/SIG_SIGNED_PATHS_0.1.json`.
 
 ## 6. Core payload requirements (normative minimum)
@@ -87,6 +90,7 @@ Minimum required fields by type:
   - Consent/authority attestation: includes `consent_ref` (and may include `authority_ref`, `scope_ref`).
   - `tool_name` remains optional.
 - `RESOLVE_CONFLICT`: `conflict_id`, `conflict_class`, `resolution`, `candidates`
+- `ERROR`: `error_code`, `error_class`, `severity`, `applies_to`, `disposition` (with optional `recover_action`, `retry_after_ms`, `details`, `evidence_refs`)
 
 ## 7. Conformance requirements (normative minimum)
 
@@ -100,8 +104,18 @@ Core suite execution MUST verify, at minimum:
 - signature hash consistency and signature verification when signatures are present
 
 Core conformance artifacts are defined in `conformance/core/CT_CORE_0.1.json` and the conformance runner.
+Core conformance includes a cross-cutting recovery/resync transcript (`GT-06`) that exercises `STATE_SYNC_REQUEST`/`STATE_SYNC_RESPONSE` as registered recovery artifacts; this does not redefine Core message taxonomy.
 
-## 8. Canonical artifact pointers
+## 8. Implementation stack clarification (normative mapping)
+
+Core behavior is checked in layers:
+- narrative requirements in this document,
+- envelope/payload shape checks in `schemas/core/`,
+- semantic and transcript invariants in `conformance/core/` via runner.
+
+Reference implementations/helpers are supportive artifacts and MUST NOT override normative requirements in this document or conformance suites.
+
+## 9. Canonical artifact pointers
 
 - Core message schema: `schemas/core/aicp-core-message.schema.json`
 - Core payload schema: `schemas/core/aicp-core-payloads.schema.json`

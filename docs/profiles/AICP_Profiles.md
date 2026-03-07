@@ -16,7 +16,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Required suites/extensions:** Core only.
 - **Registry alignment note:** `registry/aicp_profiles.json` sets `required_extensions=[]` for this profile.
   - `conformance/core/CT_CORE_0.1.json`
-- **Intent:** Minimal interoperable baseline for AICP Core v0.1 behavior.
+- **Intent:** Minimal interoperable profile for AICP Core v0.1 behavior.
 - **Canonical flow:** `docs/flows/AICP_Canonical_Flows.md#21-core-happy-path-signed-transcript`
 
 #### `AICP-MEDIATED-BLOCKING`
@@ -30,7 +30,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Intent:** Deterministic mediated blocking flow with policy evaluation + enforcement gate semantics.
 - **Canonical flows:**
   - Enforcement: `docs/flows/AICP_Canonical_Flows.md#24-mediated-blocking-enforcement-ext-enforcement`
-  - Operational alerts (optional in current baseline): `docs/flows/AICP_Canonical_Flows.md#25-operational-alerts-ext-alerts`
+  - Operational alerts (optional in current profile): `docs/flows/AICP_Canonical_Flows.md#25-operational-alerts-ext-alerts`
 
 #### `AICP-MEDIATED-BLOCKING-OPS`
 - **Status:** Available now.
@@ -89,7 +89,7 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Intent:** Bind agent senders to issuer-attested account identities with explicit scope/expiry/revocation checks for acting-on-behalf-of semantics.
 - **Canonical refs:** `docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md`, `docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md`
 
-### 2.2 Planned (draft)
+### 2.2 Additional available profiles
 
 #### `AICP-WORKFLOW-ORCHESTRATION-DELEGATION`
 - **Status:** Available now.
@@ -133,6 +133,13 @@ Operational guidance:
 - Downgrade attempts are expected to be detectable deterministically via CAPNEG conformance checks.
 
 
-## Experimental profiles added in v88
-- **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases baseline.
-- **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications baseline with optional economics.
+## Experimental profiles currently in repo
+- **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases profile.
+- **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications profile with optional economics.
+
+## See also
+
+- `docs/profiles/Profile_Selection_Guide.md`
+- `docs/profiles/AICP_Personas_Stories_Features_Profiles.md`
+- `docs/playbooks/`
+- `docs/playbooks/Session_Topologies.md`

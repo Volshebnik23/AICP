@@ -82,3 +82,19 @@ This mapping anchors profile evolution in user needs and implementable feature b
 - **Agent Media Publisher/Editor**: uses CHANNELS/SUBSCRIPTIONS/PUBLICATIONS for corrections and targeted distribution.
 - **Marketplace Operator**: uses MARKETPLACE + PROVENANCE + ACTION-ESCROW for award and accountable execution.
 - **Client Agent**: uses SUBSCRIPTIONS + ECONOMICS budgets + backoff hints.
+
+## Scenario → Persona → Story → Features → Profile → Dependencies map
+
+| Scenario | Persona | Story | Feature set | Suggested profile | Adjacent dependencies |
+|---|---|---|---|---|---|
+| Hosted brand support reception | Product architect / mediator developer | Host moderated external support conversations with policy-gated escalation | Mediated delivery, enforcement signaling, alerts | `AICP-MEDIATED-BLOCKING@0.1` | Transport, IAM, support APIs |
+| Enterprise workflow chaining | Platform architect / enterprise orchestrator | Coordinate multiple agents with delegated authority and auditable tool use | Delegation, workflow sync, tool gating, policy eval | `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` | IAM bridge, policy engine, workflow runtime |
+| Delegated identity actions | Security architect / enforcer developer | Validate acting-on-behalf-of operations across trust boundaries | Delegated identity lifecycle + evidence compatibility | `AICP-DELEGATED-IDENTITY@0.1` | Identity lifecycle, revocation/status infra |
+| Personal agent external coordination | Agent developer | Keep user-governed context while interacting with foreign receptions | Base governance + resumable continuity where needed | `AICP-BASE@0.1` then `AICP-RESUMABLE-SESSIONS@0.1` | Connectivity, personal IAM, optional relay |
+| Agent media/feed distribution | Product architect | Publish governed channel updates to subscriber agents | Channels/subscriptions/publications/inbox | `AICP-AGENT-MEDIA@0.1` | Distribution infra, moderation controls |
+| Bazaar-style multi-party intake | Solution architect | Run high-volume moderated intake with admission/congestion controls | Admission + queue leases + facilitation + participants/enforcement | `AICP-BAZAAR-RECEPTION@0.1` | Channel ops, anti-abuse controls |
+
+Use this table with:
+- `docs/profiles/Profile_Selection_Guide.md`
+- `docs/playbooks/`
+- `docs/architecture/AICP_in_the_Ecosystem.md`

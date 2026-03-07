@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py lint release-check clean
+.PHONY: validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -114,6 +114,12 @@ quickstart-ts:
 quickstart-py:
 	$(PYTHON) dropins/aicp-core/python/generate_minimal_core_transcript.py --out out/quickstart/py/minimal_core.jsonl
 	$(PYTHON) sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify
+
+template-smoke:
+	mkdir -p out/template-ts-agent out/template-protocol-adapter
+	node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
+	$(PYTHON) sandbox/run.py out/template-ts-agent/thread.jsonl --no-signature-verify
+	$(PYTHON) templates/protocol-adapter/adapter.py fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl > out/template-protocol-adapter/events.json
 
 lint:
 	@echo "Lint target placeholder: no lint checks configured."
