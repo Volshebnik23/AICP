@@ -1,22 +1,16 @@
-import { createHash } from "node:crypto";
+import { messageHashFromBody } from "../../sdk/typescript/src/hashing.js";
 
-function sortDeep(value) {
-  if (Array.isArray(value)) return value.map(sortDeep);
-  if (value && typeof value === "object") {
-    const out = {};
-    for (const key of Object.keys(value).sort()) out[key] = sortDeep(value[key]);
-    return out;
-  }
-  return value;
-}
-
-function messageHashFromBody(body) {
-  const canonical = JSON.stringify(sortDeep(body));
-  const preimage = Buffer.concat([Buffer.from("AICP1\0message\0", "utf-8"), Buffer.from(canonical, "utf-8")]);
-  return `sha256:${createHash("sha256").update(preimage).digest("base64url")}`;
-}
-
-function buildCoreMessage({ sessionId, messageId, timestamp, sender, contractId, contractRef, messageType, payload, prevMsgHash }) {
+function buildCoreMessage({
+  sessionId,
+  messageId,
+  timestamp,
+  sender,
+  contractId,
+  contractRef,
+  messageType,
+  payload,
+  prevMsgHash,
+}) {
   const body = {
     session_id: sessionId,
     message_id: messageId,
@@ -34,10 +28,10 @@ function buildCoreMessage({ sessionId, messageId, timestamp, sender, contractId,
 const contractId = "c-template-demo";
 const contractRef = { branch_id: "main", base_version: "v1", head_version: "v1" };
 
-const message = buildCoreMessage({
+const m1 = buildCoreMessage({
   sessionId: "s-template-demo",
   messageId: "m0001",
-  timestamp: "t0001",
+  timestamp: "2026-01-01T00:00:00Z",
   sender: "agent:A",
   contractId,
   contractRef,
@@ -52,4 +46,18 @@ const message = buildCoreMessage({
   },
 });
 
-console.log(JSON.stringify(message, null, 2));
+const m2 = buildCoreMessage({
+  sessionId: "s-template-demo",
+  messageId: "m0002",
+  timestamp: "2026-01-01T00:00:01Z",
+  sender: "agent:B",
+  contractId,
+  contractRef,
+  messageType: "CONTRACT_ACCEPT",
+  payload: { accepted: true },
+  prevMsgHash: m1.message_hash,
+});
+
+for (const message of [m1, m2]) {
+  process.stdout.write(`${JSON.stringify(message)}\n`);
+}

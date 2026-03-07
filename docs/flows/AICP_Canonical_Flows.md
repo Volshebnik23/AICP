@@ -260,3 +260,7 @@ Conformance reference: `conformance/extensions/RS_RESUME_0.1.json`; fixtures: `f
 - Deterministic demo transcripts and threat-driven expected-fail cases are available under `demos/enforcement_behavioral/`.
 - Canonical machine-verifiable fixtures are in `fixtures/demos/enforcement_behavioral/` and suite catalog `conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json`.
 
+## Topology cookbook cross-link
+
+Use this file for canonical flow semantics. Use `docs/playbooks/Session_Topologies.md` for architecture pattern selection and context-portability trade-offs.
+

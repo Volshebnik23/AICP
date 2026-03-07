@@ -1,9 +1,9 @@
-# AICP v90 — Protocol Backlog (repo-backed)
+# AICP Protocol Backlog (planning-only, repo-backed)
 
 > Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
 > Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
 
-This backlog translates consumer adoption needs into **protocol deliverables** that can be shipped in-repo:
+This backlog is a **planning artifact for remaining product deliverables**. It tracks what is still needed in-repo, not a historical release ledger:
 - RFC/Docs (normative)
 - Registries
 - JSON Schemas
@@ -13,9 +13,9 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Current shipped baseline (as of v88)
+## Current repo state (already delivered)
 - Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
-- Stable extension baseline includes: EXT-CAPNEG, EXT-ENFORCEMENT, EXT-POLICY-EVAL (with anchored registry refs and compatibility notes).
+- Stable extension set includes: EXT-CAPNEG, EXT-ENFORCEMENT, EXT-POLICY-EVAL (with anchored registry refs and compatibility notes).
 - Numeric canonicalization M16b is shipped: finite floats supported with deterministic ECMAScript-aligned tokens; unsafe integers remain rejected.
 - Release discipline M18 is shipped: errata cadence doc + errata validator are part of `make validate`.
 - M22 is started: channel properties schema/registry + CAPNEG negotiation fields + CN-09 MCP conformance evidence are in-repo.
@@ -29,7 +29,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 # Backlog epics and milestones
 
 ## M16 — Numeric canonicalization: RFC8785 numeric handling & safe number policy (OQ-0001)
-**Status:** Shipped in v81 baseline. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
+**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
 **Problem:** Core rejects floats until RFC8785 numeric handling exists, but real-world payloads contain floats/decimals unexpectedly. Also JS “number” makes big integers lossy → interop hazards.
 
 **Deliverables**
@@ -57,7 +57,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 ---
 
 ## M17 — Stability graduation program (reduce “experimental sprawl” safely)
-**Status:** Shipped in v81 baseline. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
+**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
 **Problem:** Most entries in `registry/extension_ids.json` and many in `registry/message_types.json` are `experimental`. That’s OK for 0.1, but blocks “market trust”: vendors hesitate to bet on “formally changeable”.
 
 **Deliverables**
@@ -68,7 +68,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
    - Update `scripts/validate_registry.py` to enforce required fields for stable entries:
      - `introduced_in`, `spec_ref` anchors, `security_considerations`, and “compatibility notes”.
 3) **Graduation plan & first promotions**:
-   - Promote a minimal baseline to stable:
+   - Promote a minimal delivered set to stable:
      - Core message types
      - CAPNEG + ENFORCEMENT + POLICY_EVAL (if you’re ready) OR only CAPNEG.
    - Document why each is safe to freeze.
@@ -77,12 +77,12 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 
 **Acceptance**
 - `make validate` enforces the stability policy rules.
-- Roadmap explicitly lists “stable baseline set”.
+- Roadmap explicitly lists “stable delivered set”.
 
 ---
 
 ## M18 — Release discipline: changelog + compatibility policy + errata cadence
-**Status:** Shipped in v81 baseline. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
+**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
 **Problem:** `RELEASE_NOTES.md` is a template; for mass adoption you need strict changelog + compatibility policy.
 
 **Deliverables**
@@ -107,7 +107,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 ---
 
 ## M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-**Status:** Shipped in v81 baseline. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
+**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
 **Problem:** Critical adopter wants **Adapter/Gateway** approach: parse/validate AICP, verify hashes/signatures, map to internal event model, run conformance in CI, use CAPNEG as inbound filter.
 
 **Deliverables**
@@ -168,34 +168,24 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 ---
 
 ## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-**Problem:** AICP is transport-agnostic, but interop in practice needs canonical bindings and production-grade delivery semantics.
+**Status:** In progress (substantial pieces already delivered).
+**Current remaining gap:** HTTP/WS binding coverage exists in docs/schemas/fixtures/conformance, but remaining work is to harden interoperability windows and operational edge cases across multi-session deployments.
 
-**Current repo state**
-- ✅ Draft normative doc exists: `docs/bindings/RFC_BIND_HTTP_WS.md` (baseline endpoints + basic error patterns).
-- ❌ Missing: streaming/chunking norms, anti-replay semantics, quota/overload signaling, and conformance.
-
-**Deliverables**
-1) **Binding hardening (HTTP/S + WS)**:
-   - Define **SSE/streaming** mode for message replication (polling vs SSE), including ordering guarantees.
-   - Define **chunking** for large payloads/artifacts (e.g., `artifact_ref` + chunk index + total + hash).
-   - Define canonical **webhook** option (optional) with signature binding.
-2) **Anti-replay & session binding**:
-   - Define nonce/timestamp windows and replay cache guidance.
-   - Define idempotency semantics (HTTP headers or envelope fields) for retransmits.
-3) **Rate limits / backpressure / overload**:
-   - Standard error mapping and optional **ALERT** patterns for quotas/overload (retry-after, degrade mode).
-4) **Cross-binding conformance**:
-   - A new binding suite (e.g., `TB_HTTP_WS_0.1`) validating:
-     - idempotent resend behavior
-     - replay rejection
-     - ordering under SSE vs poll
-     - chunk reassembly integrity
-5) **Reference adapter snippets**:
-   - Minimal client/server examples (Python + TS) for POST + poll and POST + SSE.
+**Remaining deliverables**
+1) **Replay-window hardening and multi-session semantics**
+   - Extend anti-replay guidance/tests for broader window handling across concurrent sessions.
+   - Add deterministic checks for cross-session replay collision handling.
+2) **Streaming/reconnect edge coverage expansion**
+   - Add additional conformance cases for reconnect churn, chunk interruption, and recovery ordering under stress.
+3) **Operational interoperability tightening**
+   - Add incremental evidence for quota/backpressure behavior consistency under mixed transport usage.
+   - Keep binding guidance aligned with already shipped conformance behavior.
+4) **Reference adapter examples refresh**
+   - Keep minimal client/server snippets aligned to current binding evidence and recovery semantics.
 
 **Acceptance**
-- Two vendors can connect via a binding profile (HTTP+SSE or WS) without bespoke integration docs.
-- Replay and retransmit behavior is deterministic and testable across languages.
+- Independent implementations can pass the shipped binding suites plus new edge-case suites without bespoke integration rules.
+- Replay/reconnect/overload behavior remains deterministic and testable across sessions and transports.
 
 ---
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
@@ -423,7 +413,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
    - Ensure each extension RFC has a minimal “Security Considerations” section with concrete examples.
 
 **Acceptance**
-- A new adopter can deploy a safe baseline by following one doc set, without reverse-engineering fixtures.
+- A new adopter can deploy a safe starting point by following one doc set, without reverse-engineering fixtures.
 
 ---
 
@@ -624,7 +614,7 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
      - prefer highest trust: `IDP_ATTESTED > PLATFORM_ATTESTED > SELF_DECLARED`
      - ties resolved by latest `issued_at`.
 6) **Profile integration (non-core)**
-   - Keep optional for baseline agent↔agent profiles.
+   - Keep optional for core agent↔agent profiles.
    - Recommend for bazaar/media profiles where mixed participation and syndication require portable origin signals.
 7) **Documentation (must ship with the extension)**
    - Implementer guide: how to produce/verify claims; do not treat self-declared claims as proof.
