@@ -221,7 +221,11 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
    - redacted content message referencing original message_hash + redaction policy + redaction proof object.
 2) **Retention policy in contract**:
    - standard fields/policy category for retention TTL, delete semantics, audit retention.
-
+3) **PII handle references (vault-neutral)**
+   - Define a normative `pii_ref` object pattern for sensitive fields (address, email, phone, passport, etc.) that are stored out-of-band.
+   - `pii_ref` MUST be hashable and stable within a transcript; MUST support least-privilege access control by the host/enforcer (policy-driven; no hard dependency on a specific vault).
+   - Redaction mode MAY replace inline PII with `pii_ref` while preserving transcript integrity.
+   - Guidance: external protocols (e.g., ACP checkout) SHOULD receive real PII via tool/checkout channel; AICP transcript stores only `pii_ref` + digests.
 **Acceptance**
 - A transcript can be shared with content redacted while preserving integrity/auditability.
 
@@ -262,7 +266,10 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
    - expected-pass for: correct binding + signer + TTL
 4) **Bridge hooks**
    - Provide a mapping note to OAuth/OIDC / delegated identity (ties into M28 IAM bridge).
-
+5) **External intervention bridge (checkout / 3DS / step-up prompts)**
+   - Standardize `INTERVENTION_REQUIRED` / `INTERVENTION_COMPLETE` objects that reference an external step without embedding vendor APIs.
+   - MUST carry machine-checkable fields: `reason_code`, `provider_hint`, `expires_at`, and a handle linking to the exact external action being unblocked (see M40 EXT-EXTERNAL-TRANSACTION).
+   - Enables deterministic mediation: “do not commit external action unless intervention is completed”.
 **Acceptance**
 - Human approval becomes a first-class, verifiable step in workflows (content and/or tool execution).
 - A mediator/enforcer can deterministically reject actions that lack a valid approval grant.
@@ -630,4 +637,94 @@ This backlog translates consumer adoption needs into **protocol deliverables** t
 - Baseline agent↔agent chats do not change behavior unless a profile/contract/policy explicitly requires origin disclosure.
 - Conformance suite `CO_CONTENT_ORIGIN_0.1` passes for reference transcripts and fails for negative fixtures.
 
+---
+
+## M40 — External protocol transaction bridge (protocol-neutral; ACP as first mapping target)
+**Problem:** For agent commerce and cross-domain workflows, AICP transcripts need a **standard, portable way** to anchor and audit “external protocol steps” (checkout, payment allowance, cancellations, interventions) without turning AICP into a commerce protocol or locking to a vendor infrastructure. Today, this is done as ad hoc text logs, which breaks interoperability and enforcement.
+
+**Deliverables**
+1) **EXT-EXTERNAL-TRANSACTION (normative)**
+   - Define a standard object and message payload(s) for representing an external step, including:
+     - `external_protocol` (string; e.g., `acp`, but not limited)
+     - `external_version` (string)
+     - `operation` (string; e.g., `checkout_sessions.create|update|complete|cancel`, `delegate_payment.create`)
+     - `external_ids` map (e.g., `checkout_session_id`, `order_id`, `payment_token_id`, etc.)
+     - `request_digest` / `response_digest` (hashes over redacted request/response payloads)
+     - `policy_ref` / `consent_ref` / `approval_ref` (tie to contract + M26)
+     - `pii_refs[]` (tie to M24 vault-neutral PII handles)
+     - Optional correlation hints:
+       - `idempotency_key`, `request_id` (if used by the external protocol)
+       - guidance: recommend deriving these from AICP `message_id` / step id for deterministic retries
+   - Specify privacy and redaction guidance:
+     - transcripts store only digests and pii_refs; raw payloads may be stored out-of-band.
+
+2) **Registries**
+   - Add `EXT-EXTERNAL-TRANSACTION` to `registry/extension_ids.json` (experimental initially).
+   - Add message type(s) to `registry/message_types.json`:
+     - e.g., `EXTERNAL_TXN_DECLARE`, `EXTERNAL_TXN_RESULT` (names TBD)
+   - Add policy categories/reason codes for external-step enforcement:
+     - `external_step_requires_approval`, `external_step_out_of_policy`, `external_step_intervention_required`.
+
+3) **Schemas**
+   - `schemas/extensions/ext-external-transaction-payloads.schema.json`:
+     - enforce required fields and digest formats.
+
+4) **ACP mapping appendix (non-binding)**
+   - Add a mapping note (in the RFC for this extension or separate guide) showing how to anchor ACP steps:
+     - Create/Update/Retrieve/Complete/Cancel checkout sessions
+     - Delegate payment allowance + token issuance (ACP delegate-payment)
+     - Interventions required (3DS/step-up) as links to M26 intervention objects
+   - Keep this mapping optional and versioned by `external_version`.
+
+5) **Fixtures + conformance**
+   - Fixtures folder: `fixtures/extensions/external_transaction/`
+   - Suite: `conformance/extensions/XT_EXTERNAL_TRANSACTION_0.1.json`
+   - expected-pass:
+     - external transaction declare → result with digests; links to contract + approval_ref
+   - expected-fail:
+     - missing digests, mismatched external_version, approval required but absent, pii inline where forbidden by policy.
+
+**Acceptance**
+- Platforms can enforce “no external irreversible step without approval” using interoperable objects.
+- External receipts can be anchored as verifiable digests without leaking PII.
+
+---
+
+## M41 — Commerce-ready profile (AICP↔ACP bridge profile + conformance)
+**Problem:** Even with EXT-EXTERNAL-TRANSACTION, implementers need a **turnkey, testable bundle** that shows “how to do agent commerce safely” with approvals, PII handling, and external-step anchoring. This must remain optional and not redefine AICP as a purchase protocol.
+
+**Deliverables**
+1) **AICP-Profile-COMMERCE-ACP@0.1 (optional)**
+   - Profile bundles:
+     - Core + EXT-CAPNEG + EXT-ENFORCEMENT + EXT-POLICY-EVAL
+     - EXT-EXTERNAL-TRANSACTION (M40)
+     - EXT-HUMAN-APPROVAL (M26)
+     - EXT-REDACTION + PII refs (M24)
+   - Profile requirements:
+     - external checkout/payment steps MUST be represented via EXT-EXTERNAL-TRANSACTION
+     - approval required for irreversible steps (complete checkout, payment token issuance, address changes) unless explicitly waived in contract/policy
+     - PII MUST be represented via pii_refs in transcript (unless privacy mode allows full)
+
+2) **Conformance suite: CT_ACP_BRIDGE_0.1**
+   - Proves that a transcript correctly anchors:
+     - ACP `checkout_sessions.create/update/complete/cancel` steps as external transactions
+     - Delegate payment allowance issuance and token reference (ACP delegate-payment) as external transactions
+     - An intervention-required step (3DS/step-up) modeled as:
+       - `INTERVENTION_REQUIRED` → `INTERVENTION_COMPLETE` (M26)
+       - and linked to the corresponding external transaction step
+   - expected-fail:
+     - complete without approval_ref (when required)
+     - digests missing or mismatched
+     - PII inline where prohibited
+     - idempotency/request correlation missing when policy requires it
+
+3) **Implementer guide (protocol-level, not platform-specific)**
+   - “How to anchor ACP steps in AICP transcripts”
+   - “How to model user consent / approvals”
+   - “How to handle PII safely with pii_refs”
+   - “How to replay safely (idempotency correlation guidance)”
+
+**Acceptance**
+- Two vendors implementing the profile can exchange commerce-bound transcripts with deterministic enforcement and auditability.
+- Conformance suite provides objective evidence that the integration is correct.
 ---
