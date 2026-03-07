@@ -94,6 +94,8 @@ _Last updated: 2026-03-04_
 - **Exit:** Binding notes + minimal profiles for common enterprise integration styles.
 
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
+- **Progress:** Implementer-facing security best-practices doc is shipped at `docs/security/SECURITY_BEST_PRACTICES.md`.
+- **Next concrete step:** add production cookbook depth (mediated blocking/OAuth bridge/tool pinning) and finish security-considerations completion across extension docs.
 - **Exit:** Security best practices + deployment cookbooks + security-considerations completion.
 
 ### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)

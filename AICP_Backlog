@@ -397,23 +397,19 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 ---
 
 ## M34 — Security & implementer playbooks (MCP-level doc completeness)
-**Problem:** Implementers repeatedly ask for concrete security guidance (not just normative rules): threat classes, safe defaults, and “gotchas” for deployments with tools, OAuth, on-prem enforcement, and delegated identity.
+**Status:** In progress.
+**Current remaining gap:** A practical security best-practices guide is now in-repo; remaining work is targeted tutorial/cookbook depth and extension-level security-considerations completeness.
 
-**Deliverables**
-1) **`docs/security/SECURITY_BEST_PRACTICES.md`**
-   - Confused-deputy patterns, token passthrough, SSRF via tools/resources
-   - Tool poisoning / rug pull mitigation (ties into M30)
-   - Session hijack and replay guidance (ties into M22/M21)
-   - Mediator equivocation considerations (ties into M31)
-2) **Implementer tutorials**
-   - “Mediated blocking in prod” (observability + failures)
+**Remaining deliverables**
+1) **Implementer tutorials**
+   - “Mediated blocking in production” (observability + failure handling)
    - “OAuth bridge cookbook” (ties into M28)
    - “Tool catalog pinning cookbook” (ties into M30)
-3) **Security considerations section completion**
-   - Ensure each extension RFC has a minimal “Security Considerations” section with concrete examples.
+2) **Security considerations section completion**
+   - Ensure each extension RFC has a minimal security-considerations section with concrete examples.
 
 **Acceptance**
-- A new adopter can deploy a safe starting point by following one doc set, without reverse-engineering fixtures.
+- A new adopter can deploy a safe starting point from one security doc set, then deepen with targeted production cookbooks.
 
 ---
 

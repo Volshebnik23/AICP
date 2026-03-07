@@ -86,3 +86,4 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - [docs/profiles/AICP_Profiles.md](docs/profiles/AICP_Profiles.md)
 - [docs/profiles/Profile_Selection_Guide.md](docs/profiles/Profile_Selection_Guide.md)
 - [docs/architecture/Enforcement_Models.md](docs/architecture/Enforcement_Models.md)
+- [docs/security/SECURITY_BEST_PRACTICES.md](docs/security/SECURITY_BEST_PRACTICES.md)

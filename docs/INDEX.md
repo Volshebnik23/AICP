@@ -42,4 +42,5 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - Ecosystem positioning: [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md)
 - Solution playbooks: [docs/playbooks/](playbooks/)
 - Enforcement models: [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md)
+- Security best practices: [docs/security/SECURITY_BEST_PRACTICES.md](security/SECURITY_BEST_PRACTICES.md)
 - Canonical flows: [docs/flows/AICP_Canonical_Flows.md](flows/AICP_Canonical_Flows.md)
