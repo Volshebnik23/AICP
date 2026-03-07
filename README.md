@@ -2,69 +2,67 @@
 
 “An open content-layer protocol for agent-to-agent interaction with enforceable policies.”
 
-AICP is a practical, implementable protocol repo for teams building multi-agent platforms.
+AICP is a practical, implementable standard for governed multi-agent conversation/context artifacts.
 
+➡️ **Docs front door:** [docs/INDEX.md](docs/INDEX.md)  
 ➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
-➡️ **30-second standard overview:** [docs/overview/AICP_STANDARD_OVERVIEW.md](docs/overview/AICP_STANDARD_OVERVIEW.md)
 
+## What problem AICP solves
 
-## Primary links
+Multi-agent systems often need portable, verifiable conversation/context semantics across vendors and products. AICP provides a shared content-layer model for contracts, policies, attestations, transcript linkage, and enforcement-compatible evidence.
 
-- Standard overview: [docs/overview/AICP_STANDARD_OVERVIEW.md](docs/overview/AICP_STANDARD_OVERVIEW.md)
-- Compatibility ladder & badges: [docs/adoption/COMPATIBILITY_AND_BADGES.md](docs/adoption/COMPATIBILITY_AND_BADGES.md)
-- Start Here: [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
+## What AICP standardizes
 
-## What AICP is
+- Agent-to-agent **content-layer** message/envelope semantics.
+- Governed contract/policy/attestation references in transcripts.
+- Hash/canonicalization-based verifiable artifacts.
+- Conformance/profile model for interoperability targets.
+- Enforcement-compatible transcript/evidence semantics.
 
-- An **agent-to-agent protocol** focused on interoperable message content, not transport lock-in.
-- A **content-layer** standard with deterministic hashing/canonicalization for verifiable exchanges.
-- Built for **enforcement / enforcer** workflows (policy checks, replay checks, conformance checks).
-- Includes **policies & attestations** primitives for trust, auditability, and governance.
-- Supports **profiles / negotiation** and extension-based capability growth.
+## What AICP intentionally does not standardize
 
+- Discovery/directory protocols.
+- Calling/connectivity/transport protocols.
+- Tool execution protocols or tool catalogs.
+- IAM provider internals.
+- Commerce/payment rails.
+- A universal trust fabric.
 
-## Quickstart
+## Where AICP fits in a multi-protocol stack
 
-- `make quickstart-ts`
-- `make quickstart-py`
+AICP sits as the **governed content layer** between transport/connectivity and domain/application behavior. It complements (does not replace) discovery, calling/connectivity, tool integration, IAM, commerce, and trust infrastructure.
 
-Both commands generate a deterministic minimal Core transcript and validate it locally.
+See: [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_Ecosystem.md).
+
+## Practical adoption patterns
+
+1. **Embed AICP directly in an agent/app**
+   - Use drop-ins/templates, then validate against conformance/profile suites.
+2. **Use an adapter/gateway in front of an existing system**
+   - Preserve audit-critical envelope/evidence fields.
+3. **Use AICP as the governed layer for hosted receptions/mediated sessions**
+   - Keep moderation and enforcement policy decisions portable and checkable.
+
+See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gateway.md), [docs/playbooks/](docs/playbooks/).
+
+## When not to use AICP
+
+- Single-agent local tool orchestration without governed multi-party context.
+- Discovery-only or transport-only integration problems.
+- Pure payment-rail requirements with no governed conversation/evidence needs.
 
 ## Implementer path
 
-1. Read the suite index: `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`
-2. Read Core normative behavior: `docs/core/AICP_Core_v0.1_Normative.md`
-3. Implement envelope boundary validation against schemas in `schemas/`
-4. Validate semantics and invariants with:
+1. Read suite index: `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`
+2. Read Core narrative: `docs/core/AICP_Core_v0.1_Normative.md`
+3. Validate boundary/schema + conformance:
    - `make validate`
    - `make conformance`
    - `make conformance-ext`
    - `make conformance-bindings`
-5. Reuse helper implementations:
-   - Python reference validators/helpers (minimal but invariant-enforcing): `reference/python/`
-   - TypeScript SDK hashing/chain helpers: `sdk/typescript/`
-6. Use onboarding templates for bootstrap only:
-   - TS agent template: `templates/ts-agent/`
-   - Protocol adapter template: `templates/protocol-adapter/`
-
-## Core truth stack (canonical boundary)
-
-- **Narrative spec (normative):** `docs/core/AICP_Core_v0.1_Normative.md`
-- **Shipped Core baseline:** includes `ERROR` alongside the core message taxonomy and is enforced through core schema/payload/conformance artifacts.
-- **Schema boundary validation:** `schemas/core/`
-- **Semantic/conformance validation:** `conformance/core/CT_CORE_0.1.json` + runner in `conformance/runner/`
-- **Reference helper status:** `reference/python/` is a correctness-first minimal reference layer for implementers, not the protocol authority.
-
-## Canonical layout
-
-- Core normative document (canonical narrative): `docs/core/AICP_Core_v0.1_Normative.md`
-- Glossary: `docs/GLOSSARY.md`
-- Optional release artifact (not edited in normal PRs): `docs/core/AICP_Core_v0.1_Normative_0.1.0.docx`
-- Core schemas: `schemas/core/`
-- Core fixtures and golden transcripts: `fixtures/`
-- Conformance suite and runner: `conformance/`
-- Python reference implementation: `reference/python/`
-- TypeScript SDK: `sdk/typescript/`
+4. Reuse helpers:
+   - Python reference: `reference/python/`
+   - TypeScript SDK: `sdk/typescript/`
 
 ## One-command checks
 
@@ -73,21 +71,10 @@ Both commands generate a deterministic minimal Core transcript and validate it l
 - `make conformance`
 - `make conformance-ext`
 
-Keywords: agent-to-agent, multi-agent, LLM agents, content-layer protocol, policy enforcement, orchestration, governance, attestations, interoperability standard
+## Continue reading
 
-
-## Bazaar-scale protocol additions (v88 sprint)
-- **EXT-ECONOMICS**: token-agnostic billing proofs for paid message delivery (no payment rails required).
-- **Crowd control**: EXT-ADMISSION + EXT-QUEUE-LEASES + EXT-FACILITATION for admission, lease limits, overload/backoff, and turn-taking.
-- **Agent-media feeds**: EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-PUBLICATIONS + EXT-INBOX.
-- **Market collaboration MVP**: EXT-MARKETPLACE + EXT-PROVENANCE + EXT-ACTION-ESCROW scaffolding.
-
-
-## Maturity and version labels
-
-- **Protocol version** (`aicp_version`): protocol semantics and conformance target (currently `0.1`).
-- **Repository/release version** (`VERSION`, release notes tags): repo packaging cadence and shipped artifact set.
-- **Roadmap milestone labels** (`Mxx` in `ROADMAP.md`): planning status, not wire-level protocol versioning.
-
-Extension maturity is intentionally mixed in this repo: some components are stable and some are scaffolded/experimental.
-Scaffolded extensions remain shipped for implementer iteration; maturity is communicated via docs/registry status, not by deleting surfaces.
+- [docs/INDEX.md](docs/INDEX.md)
+- [docs/overview/AICP_STANDARD_OVERVIEW.md](docs/overview/AICP_STANDARD_OVERVIEW.md)
+- [docs/profiles/AICP_Profiles.md](docs/profiles/AICP_Profiles.md)
+- [docs/profiles/Profile_Selection_Guide.md](docs/profiles/Profile_Selection_Guide.md)
+- [docs/architecture/Enforcement_Models.md](docs/architecture/Enforcement_Models.md)

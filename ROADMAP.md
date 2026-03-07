@@ -19,6 +19,12 @@ _Last updated: 2026-03-04_
 ### ✅ M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
 - **Progress:** Adapter/gateway artifacts are present and roadmap state is now aligned to shipped repo reality.
 
+### ✅ M42–M46 — Developer-facing documentation architecture pass
+- **Progress:** Canonical docs front door (`docs/INDEX.md`) shipped with role/goal navigation and cross-links across overview, profiles, architecture, playbooks, and flows.
+- **Progress:** Ecosystem positioning, profile selection guide, session topology cookbook, and enforcement models docs shipped with explicit protocol-vs-adjacent-layer boundaries.
+- **Progress:** Solution playbooks for reception/support, enterprise orchestration, personal-agent coordination, agent media feeds, and commerce-assisted purchase shipped with profile and dependency guidance.
+- **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
+
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` baseline and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.

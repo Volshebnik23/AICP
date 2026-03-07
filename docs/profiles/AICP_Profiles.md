@@ -136,3 +136,10 @@ Operational guidance:
 ## Experimental profiles added in v88
 - **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases baseline.
 - **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications baseline with optional economics.
+
+## See also
+
+- `docs/profiles/Profile_Selection_Guide.md`
+- `docs/profiles/AICP_Personas_Stories_Features_Profiles.md`
+- `docs/playbooks/`
+- `docs/playbooks/Session_Topologies.md`

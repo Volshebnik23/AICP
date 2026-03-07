@@ -1,39 +1,49 @@
-# AICP Ecosystem Use Cases (Draft)
+# Ecosystem Use Cases (Marketing-facing)
 
-These are high-level ecosystem user stories to explain *why* AICP exists as an open standard.
-They describe the broader AICP + (future) Enforcer Platform landscape; the current repo focuses on the protocol.
+AICP is best understood as the **governed content-layer** in multi-agent products.
 
-## 1) Brand-safe AEO agent in a public moderated chat
-As a Marketing Director, I want to improve how my brand is perceived in AI-powered search (AEO) and grow that channel.
-I will run a PoC with a Platform that provides a public chat-as-a-service where my brand agent lives, with moderation via AICP Enforcement.
-Users can bring their own agents into the chat to ask questions and get product advice.
-AICP with Content Enforcement lets me worry less that my brand-representative agent (by itself, by accident, or under malicious influence from a user’s agent) will output content that violates brand rules and harms the brand.
+## Positioning
 
-## 2) Service-chaining corporate agent workflows (with IAM/PAM)
-As a Director of AI Innovation, I’m building corporate AI (e.g., on ServiceNow Agents or Microsoft Copilot).
-My vision: replace Excel reports, PowerBI dashboards, and custom reporting workflows with agent-driven execution.
-Employees shift from “ask the boss what report they need and build it in a system” to “track goals, enrich them with my expertise, delegate execution to an agent, keep control.”
-This becomes real when every employee has a personal assistant that can pull real data from corporate systems and produce plans/roadmaps with charts and evidence.
-With agent authorization and PAM integration, I can manage access levels with group and individual policies.
-To orchestrate multi-agent service chains (roles, responsibilities, context retention, delegation) and ensure this is not just “a request to agents” but an externally moderated channel with security events and optional human-in-the-loop, I need a protocol and an enforceable corporate platform.
+AICP helps products standardize governed conversation/context artifacts across ecosystems. It does **not** replace discovery, transport, IAM, tool protocols, payment rails, or trust fabrics.
 
-## 3) Developer-created “reception chat” for a personal internet agent
-As a developer, I want to create and customize an AI agent that represents a person online.
-For each such agent, I need a “reception chat” with enforceable behavior rules.
-I will use a PaaS “AI Reception as a Service” that provides the inter-agent chat and the ability to define and enforce rules via an open protocol, while I focus on building and customizing the agent.
+## Representative use cases
 
-## 4) Authentication provider: binding agent ↔ user account ↔ delegated authority
-As an authentication provider, I want to store and serve the binding between:
-an AI agent, the authenticated user account it belongs to, and the delegated authorities the user granted to that agent,
-so I can offer this enhanced authentication/authorization as a service.
+### 1) Brand reception and support
+- Hosted brand sessions with moderated external agent/client participation.
+- Adjacent assumptions: transport connectivity, IAM, support/tool APIs.
+- Playbook: `docs/playbooks/Brand_Reception_and_Support.md`.
 
-## 5) Vibe-coder: agent-to-agent collaboration without the human as a bottleneck
-As a vibe-coder, I use ChatGPT to turn product stories into feature sets and then into prompts for a coding agent/tool that edits my frontend when it truly understands what to change.
-I don’t want to be a bottleneck between two AI agents — their collaboration should work without a human, with human-in-the-loop as an option.
-Without a protocol and an enforceable platform, this is not feasible due to the lack of end-to-end quality and content-level safety control.
+### 2) Enterprise orchestration
+- Multi-agent enterprise workflows with delegated authority and evidence-linked approvals.
+- Adjacent assumptions: IAM bridge, policy engine, workflow runtime.
+- Playbook: `docs/playbooks/Enterprise_Orchestration.md`.
 
+### 3) Personal agent coordination
+- Personal agents coordinating external specialist services while preserving user-governed context boundaries.
+- Adjacent assumptions: connectivity/calling layer, optional relay, identity controls.
+- Playbook: `docs/playbooks/Personal_Agent_Coordination.md`.
 
-## Bazaar/media use cases (v88)
-- **Brand Reception as Agent Support + Subscriptions**: channels + inbox routing + moderated lease windows.
-- **Tokenized high-priority messages instead of spam**: economics proofs and ALLOW-gated paid delivery.
-- **Agent-media corrections**: publish/update/retract flows with integrity and retraction reason codes.
+### 4) Agent media and brand feeds
+- Governed content distribution via channels/subscriptions/publications with moderation-compatible records.
+- Adjacent assumptions: distribution services, moderation controls, access management.
+- Playbook: `docs/playbooks/Agent_Media_and_Brand_Feeds.md`.
+
+### 5) Commerce-assisted purchase flows
+- Product-selection dialogue and approval/evidence continuity in AICP, with checkout/payment external.
+- Adjacent assumptions: commerce APIs/payment rails/fraud systems.
+- Playbook: `docs/playbooks/Commerce_Assisted_Purchase_Flow.md`.
+
+## Profile-first messaging
+
+Use profile-based messaging in go-to-market materials:
+- “Base governed interoperability” → `AICP-BASE@0.1`
+- “Moderated hosted reception” → `AICP-MEDIATED-BLOCKING@0.1`
+- “Workflow + delegation” → `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1`
+
+Profile selection guide: `docs/profiles/Profile_Selection_Guide.md`.
+
+## See also
+
+- `docs/architecture/AICP_in_the_Ecosystem.md`
+- `docs/architecture/Enforcement_Models.md`
+- `docs/playbooks/Session_Topologies.md`
