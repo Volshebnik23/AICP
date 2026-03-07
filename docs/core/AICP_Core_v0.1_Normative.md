@@ -30,8 +30,10 @@ Core v0.1 message taxonomy:
 - `CONTEXT_AMEND`
 - `ATTEST_ACTION`
 - `RESOLVE_CONFLICT`
+- `ERROR`
 
 Implementations MUST use `CONTEXT_AMEND` for amendment flow. Earlier draft labels are non-normative and MUST NOT be used in Core conformance artifacts.
+`ERROR` is part of the shipped Core baseline and MUST be accepted by Core payload/schema/conformance paths.
 
 ## 4. State machine and invariants (normative)
 
@@ -72,6 +74,7 @@ Hashing:
 Signatures:
 - Signature verification SHOULD use Ed25519 profile(s) registered for Core.
 - If signatures are present, their `object_hash` MUST match the message hash being signed.
+- If a signature includes `kid`, verifiers MUST resolve it consistently with signer key material (fail on mismatch).
 - Executable signed-path evidence: `fixtures/security/signed_paths/` and `conformance/security/SIG_SIGNED_PATHS_0.1.json`.
 
 ## 6. Core payload requirements (normative minimum)
@@ -101,7 +104,16 @@ Core suite execution MUST verify, at minimum:
 
 Core conformance artifacts are defined in `conformance/core/CT_CORE_0.1.json` and the conformance runner.
 
-## 8. Canonical artifact pointers
+## 8. Implementation stack clarification (normative mapping)
+
+Core behavior is checked in layers:
+- narrative requirements in this document,
+- envelope/payload shape checks in `schemas/core/`,
+- semantic and transcript invariants in `conformance/core/` via runner.
+
+Reference implementations/helpers are supportive artifacts and MUST NOT override normative requirements in this document or conformance suites.
+
+## 9. Canonical artifact pointers
 
 - Core message schema: `schemas/core/aicp-core-message.schema.json`
 - Core payload schema: `schemas/core/aicp-core-payloads.schema.json`
