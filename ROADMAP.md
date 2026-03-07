@@ -1,4 +1,4 @@
-# AICP v88 — Roadmap Items (repo-backed)
+# AICP Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
 > This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
@@ -10,7 +10,7 @@ _Last updated: 2026-03-04_
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
 
-### ✅ M17 — Stability graduation baseline (first promotions)
+### ✅ M17 — Stability graduation (first promotions)
 - **Progress:** `EXT-ENFORCEMENT` and `EXT-POLICY-EVAL` promoted to stable with anchored spec refs and productization coverage.
 
 ### ✅ M18 — Release discipline (changelog + compatibility policy + errata cadence)
@@ -26,14 +26,14 @@ _Last updated: 2026-03-04_
 - **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
-- **Progress:** Core narrative now explicitly matches shipped `ERROR` baseline and clarifies narrative/spec/schema/conformance/reference boundaries.
+- **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
 - **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
 - **Progress:** CI/test coverage now includes deterministic smoke checks for shipped onboarding templates.
 - **Next concrete step:** expand template smoke checks into profile-specific onboarding packs without increasing default CI runtime significantly.
 
-### 🚧 M22 — Transport bindings and channel properties (started)
-- **Step 4 complete:** v88 bazaar-scale content-layer extensions scaffolded (economics, admission/queue/facilitation, channels/subscriptions/publications/inbox, marketplace/provenance/escrow) with schemas + fixtures + conformance suites.
+### 🚧 M22 — Transport bindings and channel properties (current)
+- **Step 4 complete:** bazaar-scale content-layer extensions scaffolded (economics, admission/queue/facilitation, channels/subscriptions/publications/inbox, marketplace/provenance/escrow) with schemas + fixtures + conformance suites.
 - **Step 1 complete:** channel properties registry + canonical schema landed, and CAPNEG now carries binding/channel-property negotiation fields.
 - **Step 2 partial:** MCP-backed CAPNEG conformance evidence added (CN-09) with binding/channel-property negotiation invariant checks in runner.
 - **Step 2 hardening:** binding ID normalization shipped for HTTP/BUS (`BIND-HTTP-0.1` / `BIND-BUS-0.1`) with deprecated alias mapping retained for compatibility.

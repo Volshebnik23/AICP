@@ -51,6 +51,14 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - Discovery-only or transport-only integration problems.
 - Pure payment-rail requirements with no governed conversation/evidence needs.
 
+
+## Executable truth layers
+
+- Narrative requirements: `docs/core/AICP_Core_v0.1_Normative.md`
+- Boundary shape validation: `schemas/core/`
+- Stronger semantic/transcript checks: `conformance/` runners and suites
+- Reference helpers/SDK/drop-ins: supportive implementer artifacts
+
 ## Implementer path
 
 1. Read suite index: `docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md`

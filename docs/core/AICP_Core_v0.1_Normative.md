@@ -33,7 +33,7 @@ Core v0.1 message taxonomy:
 - `ERROR`
 
 Implementations MUST use `CONTEXT_AMEND` for amendment flow. Earlier draft labels are non-normative and MUST NOT be used in Core conformance artifacts.
-`ERROR` is part of the shipped Core baseline and MUST be accepted by Core payload/schema/conformance paths.
+`ERROR` is part of the shipped Core message set and MUST be accepted by Core payload/schema/conformance paths.
 
 ## 4. State machine and invariants (normative)
 
