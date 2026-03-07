@@ -92,3 +92,6 @@ jobs:
         run: |
           make quickstart-py
           make quickstart-ts
+
+      - name: Run template onboarding smoke target
+        run: make template-smoke

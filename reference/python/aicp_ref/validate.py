@@ -29,13 +29,31 @@ def recompute_message_hashes(messages: list[dict[str, Any]]) -> list[str]:
 def verify_signatures(messages: list[dict[str, Any]], key_map: dict[str, dict[str, str]]) -> list[str]:
     errors: list[str] = []
     for i, msg in enumerate(messages, start=1):
+        message_hash = msg.get("message_hash")
         for sig in msg.get("signatures", []) or []:
             signer = sig.get("signer")
-            if signer not in key_map:
+            signer_key = key_map.get(signer)
+            if signer_key is None:
                 errors.append(f"line {i}: missing key for signer {signer}")
                 continue
-            pk = key_map[signer].get("public_key_b64url")
-            ok = verify_ed25519(pk, sig.get("sig_b64url"), sig.get("object_hash"))
+
+            signature_hash = sig.get("object_hash")
+            if signature_hash != message_hash:
+                errors.append(
+                    f"line {i}: signature.object_hash mismatch (expected {message_hash}, got {signature_hash})"
+                )
+                continue
+
+            key_id = sig.get("kid")
+            if key_id is not None and signer_key.get("kid") not in (None, key_id):
+                errors.append(
+                    f"line {i}: signature kid mismatch for signer {signer} "
+                    f"(expected {signer_key.get('kid')}, got {key_id})"
+                )
+                continue
+
+            public_key = signer_key.get("public_key_b64url")
+            ok = verify_ed25519(public_key, sig.get("sig_b64url"), signature_hash)
             if not ok:
                 errors.append(f"line {i}: signature verification failed for signer {signer}")
     return errors

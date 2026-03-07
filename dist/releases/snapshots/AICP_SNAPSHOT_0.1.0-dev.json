@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "45cd2e4820bbfe5b3c41534abe851bcca0a7e49d0f2547e6d67f0614b84a81c0",
+      "combined_sha256": "ca9dcff057da3a7d882777298cce1b923a4a52220bd7b23089fafb3c3e173aa5",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -17,7 +17,7 @@
         },
         {
           "path": "conformance/core/CT_CORE_0.1.json",
-          "sha256": "05c3c707575d5cedef26101f376b66eddddc01134ea169b6d35164d90b7a73d6"
+          "sha256": "bbdccdec6847527ec38b33e8e6b928ee688779012802da8cbcb4bec8b1259374"
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
@@ -772,7 +772,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "3d61d06251d3bf17a6b588e2bb445141d6d83b788bfe62854d8bb77eb715f023",
+      "combined_sha256": "ca80b282901cdc075a2d205622d4f8da8d1be2ca5f25427332cefbe973ba6c92",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -792,7 +792,7 @@
         },
         {
           "path": "schemas/core/aicp-core-message.schema.json",
-          "sha256": "496f883d445f93b28bb5f005e27bd1f352fc63e379c46f427ddaf4a9abeee2b6"
+          "sha256": "55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
         },
         {
           "path": "schemas/core/aicp-core-payloads.schema.json",
