@@ -57,6 +57,11 @@ def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
     return match.group(1) if match else ""
 
 
+def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
+    match = pattern.search(text)
+    return match.group(1) if match else ""
+
+
 def main() -> int:
     errors: list[str] = []
     backlog = _load(BACKLOG)
