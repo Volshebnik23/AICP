@@ -45,6 +45,9 @@ M22_STALE_WORDING_PATTERNS = [
     re.compile(r"\bmajor\b.{0,40}\btransport\b.{0,40}\bmissing\b", re.IGNORECASE),
     re.compile(r"\bmajor\b.{0,40}\bbinding\b.{0,40}\bmissing\b", re.IGNORECASE),
 ]
+ROADMAP_CURRENT_NEXT_RE = re.compile(r"(?ms)^## Current / Next\s*\n(.*?)(?=^## |\Z)")
+ROADMAP_PLANNED_RE = re.compile(r"(?ms)^## Planned milestones.*?\n(.*?)(?=^## |\Z)")
+ROADMAP_M22_ENTRY_RE = re.compile(r"(?m)^###\s*[✅🚧⏳]?\s*M22\b")
 
 
 def _load(path: Path) -> str:
@@ -70,6 +73,11 @@ def _m22_section(text: str) -> str | None:
     next_m = re.search(r"(?m)^## M\d+\b", rest)
     end = m22_start.end() + next_m.start() if next_m else len(text)
     return text[start:end]
+
+
+def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
+    match = pattern.search(text)
+    return match.group(1) if match else ""
 
 
 def main() -> int:
@@ -116,6 +124,22 @@ def main() -> int:
         if "**Status:** Delivered" in section:
             errors.append("Backlog milestone sections must not carry delivered-status ledger markers")
             break
+
+    roadmap_current_next = _roadmap_section(roadmap, ROADMAP_CURRENT_NEXT_RE)
+    roadmap_planned = _roadmap_section(roadmap, ROADMAP_PLANNED_RE)
+    if roadmap_planned:
+        if re.search(r"(?m)^###\s*✅\s*M", roadmap_planned):
+            errors.append("ROADMAP.md must not include completed (✅) milestones under '## Planned milestones'")
+        if re.search(r"(?m)^###\s*[✅🚧⏳]?\s*M16a\b", roadmap_planned):
+            errors.append("ROADMAP.md must not list M16a under '## Planned milestones'")
+        if re.search(r"(?m)^###\s*[✅🚧⏳]?\s*M17\.1\b", roadmap_planned):
+            errors.append("ROADMAP.md must not list M17.1 under '## Planned milestones'")
+
+    if roadmap_current_next and roadmap_planned:
+        current_has_m22 = bool(ROADMAP_M22_ENTRY_RE.search(roadmap_current_next))
+        planned_has_m22 = bool(ROADMAP_M22_ENTRY_RE.search(roadmap_planned))
+        if current_has_m22 and planned_has_m22:
+            errors.append("ROADMAP.md must not duplicate M22 under both '## Current / Next' and '## Planned milestones'")
 
     backlog_cycle_headers = _headers_with_cycles(backlog)
     roadmap_cycle_headers = _headers_with_cycles(roadmap)
