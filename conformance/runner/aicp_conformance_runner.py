@@ -278,6 +278,15 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
     seen_cases_by_id: dict[str, dict[str, Any]] = {}
     loaded_cases: list[tuple[str, dict[str, Any]]] = []
 
+    def _session_id_from_path(path: str) -> str | None:
+        if not isinstance(path, str) or '/sessions/' not in path:
+            return None
+        tail = path.split('/sessions/', 1)[1]
+        if not tail:
+            return None
+        segment = tail.split('/', 1)[0]
+        return segment or None
+
     for rel_case in suite.get("cases", []):
         case_path = ROOT / rel_case
         try:
@@ -605,6 +614,14 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                     else:
                         if base_msg.get("message_id") != cur_msg.get("message_id") or base_msg.get("message_hash") != cur_msg.get("message_hash"):
                             add_failure(failures, "TB-HTTP-REPLAY-01", "replay case embedded message_id/message_hash must match referenced case", rel_case, None)
+                    base_req = base_case.get("http_request") if isinstance(base_case.get("http_request"), dict) else {}
+                    cur_req = case_obj.get("http_request") if isinstance(case_obj.get("http_request"), dict) else {}
+                    base_body = base_req.get("body") if isinstance(base_req.get("body"), dict) else {}
+                    cur_body = cur_req.get("body") if isinstance(cur_req.get("body"), dict) else {}
+                    base_scope = base_body.get("session_id") if isinstance(base_body.get("session_id"), str) else _session_id_from_path(base_req.get("path", ""))
+                    cur_scope = cur_body.get("session_id") if isinstance(cur_body.get("session_id"), str) else _session_id_from_path(cur_req.get("path", ""))
+                    if isinstance(base_scope, str) and isinstance(cur_scope, str) and base_scope != cur_scope:
+                        add_failure(failures, "TB-HTTP-REPLAY-01", "replay_of case must remain in the same session scope as referenced case", rel_case, None)
                     response = case_obj.get("http_response")
                     if not isinstance(response, dict):
                         add_failure(failures, "TB-HTTP-REPLAY-01", "replay case requires http_response object", rel_case, None)
@@ -707,39 +724,41 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                         add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
 
     if "TB-HTTP-SESSION-01" in enabled_checks:
-        create_case_id = None
-        created_session_id = None
+        known_sessions: set[str] = set()
         for rel_case, case_obj in loaded_cases:
             if case_obj.get("operation") != "createSession":
                 continue
-            create_case_id = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
             response = case_obj.get("http_response")
             body = response.get("body") if isinstance(response, dict) and isinstance(response.get("body"), dict) else {}
-            created_session_id = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
-            if created_session_id is None and isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id"):
-                created_session_id = case_obj.get("session_id")
-            break
-        if create_case_id and created_session_id:
-            mismatches: list[str] = []
-            for rel_case, case_obj in loaded_cases:
-                if case_obj.get("operation") == "createSession":
-                    continue
-                cid = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
-                request = case_obj.get("http_request")
-                path = request.get("path") if isinstance(request, dict) and isinstance(request.get("path"), str) else ""
-                body = request.get("body") if isinstance(request, dict) and isinstance(request.get("body"), dict) else {}
-                top_session = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) else None
-                body_session = body.get("session_id") if isinstance(body.get("session_id"), str) else None
-                if "/sessions/" in path and "/" in path.split('/sessions/', 1)[1]:
-                    path_sid = path.split('/sessions/', 1)[1].split('/', 1)[0]
-                    if path_sid != created_session_id:
-                        mismatches.append(f"{cid} path session_id '{path_sid}' != '{created_session_id}'")
-                if top_session is not None and top_session != created_session_id:
-                    mismatches.append(f"{cid} top-level session_id '{top_session}' != '{created_session_id}'")
-                if body_session is not None and body_session != created_session_id:
-                    mismatches.append(f"{cid} body.session_id '{body_session}' != '{created_session_id}'")
-            if mismatches:
-                add_failure(failures, "TB-HTTP-SESSION-01", f"session_id mismatch against createSession {create_case_id}: {mismatches}", "conformance/bindings/TB_HTTP_WS_0.1.json", None)
+            response_sid = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
+            if response_sid:
+                known_sessions.add(response_sid)
+            top_sid = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id") else None
+            if top_sid:
+                known_sessions.add(top_sid)
+
+        mismatches: list[str] = []
+        for rel_case, case_obj in loaded_cases:
+            if case_obj.get("operation") == "createSession":
+                continue
+            cid = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
+            request = case_obj.get("http_request")
+            path = request.get("path") if isinstance(request, dict) and isinstance(request.get("path"), str) else ""
+            body = request.get("body") if isinstance(request, dict) and isinstance(request.get("body"), dict) else {}
+            top_session = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id") else None
+            body_session = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
+            path_session = _session_id_from_path(path)
+
+            case_sessions = [sid for sid in [path_session, top_session, body_session] if isinstance(sid, str) and sid]
+            unique_sessions = sorted(set(case_sessions))
+            if len(unique_sessions) > 1:
+                mismatches.append(f"{cid} inconsistent session scope across path/body/top-level: {unique_sessions}")
+                continue
+            if unique_sessions and known_sessions and unique_sessions[0] not in known_sessions:
+                mismatches.append(f"{cid} session_id '{unique_sessions[0]}' was not created by createSession evidence")
+
+        if mismatches:
+            add_failure(failures, "TB-HTTP-SESSION-01", f"session-scope mismatches: {mismatches}", "conformance/bindings/TB_HTTP_WS_0.1.json", None)
 
     protocol_version = suite["aicp_version"]
     passed = not failures

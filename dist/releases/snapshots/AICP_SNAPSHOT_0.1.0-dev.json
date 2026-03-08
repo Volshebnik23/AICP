@@ -1,11 +1,11 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ca9dcff057da3a7d882777298cce1b923a4a52220bd7b23089fafb3c3e173aa5",
+      "combined_sha256": "3e5d48b2515a432e35fe677f2b769aafa8891f6cb243847653b8692e241a7dce",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-          "sha256": "8a114a16a3beca97d05e821fe0a4ee1deb6da1d871fea8dcaef032a1d8c35413"
+          "sha256": "59eace67163b8ac39bb92f3de6789cb8677e7f545c4953fde97a62077ebb5d66"
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -182,7 +182,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "e41478a2ef988c4a1a0fabe61cdc6558975794f6099d8f3716dc35ebb8894a8d",
+      "combined_sha256": "e526ec674bfd5560a750b73fbfa4eeee0b2f678d8bcc1bcc3860d34a046bc177",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -247,6 +247,26 @@
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json",
           "sha256": "0712036b3022139b2101afce5e5189508c5aeb1a3cc3a61ae82c31ff10ee952b"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-18_sendMessage_replay_window.json",
+          "sha256": "1864cbb51d134f60b6e070b85854333a6ca90f1e42c27d6732a4c0ac2024ad97"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-19_createSession_secondary.json",
+          "sha256": "2d6418501b32559a0f08f98923e9f24623249d4fb097135bb065ff13d0f0ccf9"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-20_sendMessage_session2_collision_scope.json",
+          "sha256": "b6809cf85c9ba7f9dd284ab2ab274e06ea6c5c551cad896d640bebd89965b83a"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-21_sendMessage_replay_session2.json",
+          "sha256": "f7b7e76bb67f9487c903430513df18d68ea5185683a26e1a85be0ec33f6787b2"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-22_ssePullMessages_reconnect_churn.json",
+          "sha256": "61c499cb324eedddcd55f944d7c274d2d67d3d61238120cf62f8f607cf623fe6"
         },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",

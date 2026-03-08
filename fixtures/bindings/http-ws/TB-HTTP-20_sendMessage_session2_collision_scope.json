@@ -1,0 +1,46 @@
+{
+  "case_id": "TB-HTTP-20",
+  "operation": "sendMessage",
+  "channel_properties": {
+    "CP-REPLAY-WINDOW-0.1": 300
+  },
+  "http_request": {
+    "method": "POST",
+    "path": "/aicp/v1/sessions/sGT2/messages",
+    "headers": {
+      "Content-Type": "application/json",
+      "Idempotency-Key": "sGT2-m1"
+    },
+    "body": {
+      "session_id": "sGT2",
+      "message_id": "m1",
+      "timestamp": "2026-01-02T00:00:00Z",
+      "sender": "agent:B",
+      "message_type": "CONTRACT_PROPOSE",
+      "contract_id": "cGT2",
+      "payload": {
+        "note": "message_id collision with sGT1 remains session-scoped"
+      }
+    }
+  },
+  "http_response": {
+    "status": 202,
+    "body": {
+      "accepted": true,
+      "message_id": "m1"
+    }
+  },
+  "embedded_messages": [
+    {
+      "session_id": "sGT2",
+      "message_id": "m1",
+      "timestamp": "2026-01-02T00:00:00Z",
+      "sender": "agent:B",
+      "message_type": "CONTRACT_PROPOSE",
+      "contract_id": "cGT2",
+      "payload": {
+        "note": "message_id collision with sGT1 remains session-scoped"
+      }
+    }
+  ]
+}

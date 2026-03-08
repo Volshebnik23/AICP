@@ -1,0 +1,29 @@
+{
+  "case_id": "TB-HTTP-19",
+  "operation": "createSession",
+  "session_id": "sGT2",
+  "auth": {
+    "scheme": "bearer",
+    "token": "tok-gt-2"
+  },
+  "http_request": {
+    "method": "POST",
+    "path": "/aicp/v1/sessions",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer tok-gt-2"
+    },
+    "body": {
+      "client_id": "agent:B"
+    }
+  },
+  "http_response": {
+    "status": 201,
+    "body": {
+      "session_id": "sGT2",
+      "expires_at": "2026-03-03T12:05:00Z",
+      "auth_required": true
+    }
+  },
+  "embedded_messages": []
+}

@@ -32,27 +32,14 @@ _Last updated: 2026-03-04_
 - **Progress:** CI/test coverage now includes deterministic smoke checks for shipped onboarding templates.
 - **Next concrete step:** expand template smoke checks into profile-specific onboarding packs without increasing default CI runtime significantly.
 
-### 🚧 M22 — Transport bindings and channel properties (current)
-- **Step 4 complete:** bazaar-scale content-layer extensions scaffolded (economics, admission/queue/facilitation, channels/subscriptions/publications/inbox, marketplace/provenance/escrow) with schemas + fixtures + conformance suites.
-- **Step 1 complete:** channel properties registry + canonical schema landed, and CAPNEG now carries binding/channel-property negotiation fields.
-- **Step 2 partial:** MCP-backed CAPNEG conformance evidence added (CN-09) with binding/channel-property negotiation invariant checks in runner.
-- **Step 2 hardening:** binding ID normalization shipped for HTTP/BUS (`BIND-HTTP-0.1` / `BIND-BUS-0.1`) with deprecated alias mapping retained for compatibility.
-- **Step 2 guardrails:** schema/registry alignment validator added to prevent channel-properties drift between canonical binding schema and CAPNEG embedded defs.
-- **Step 2 evidence:** TB-HTTP-0.1 binding conformance suite + fixtures + report are now shipped, including ACK, cursor-expiry, minimal WS framing, WS pull/chunking evidence, reliability invariants, SSE pull framing/backpressure guidance, and idempotency/replay hardening evidence (Idempotency-Key derivation + replay case/check).
-- **Step 3 complete:** overload/quota evidence now enforces HTTP `429` `Retry-After` plus rate-limit hint headers via schema + binding check.
-- **Step 3 complete:** session/auth establishment hardening now includes `createSession`/`closeSession` binding evidence, conditional bearer auth checks, and cross-case session consistency validation.
-- **Step 3 complete:** SSE reconnect semantics now enforce `Last-Event-ID` equivalence with `after` cursor and required SSE event IDs for `messages` events.
-- **Next concrete step:** extend M22 with broader anti-replay windows and multi-session interoperability coverage.
+### ✅ M22 — Transport bindings and channel properties (completed)
+- **Shipped:** replay-window hardening now includes additional deterministic replay evidence (`TB-HTTP-18`) plus session-scoped replay checks in runner enforcement.
+- **Shipped:** multi-session interoperability is now conformance-backed with secondary-session create/send/replay coverage (`TB-HTTP-19`/`20`/`21`) and session-scope coherence checks across path/body/top-level references.
+- **Shipped:** reconnect/churn coverage now includes multi-step SSE reconnect evidence (`TB-HTTP-22` chaining from `TB-HTTP-17`) with deterministic cursor continuity checks.
+- **Shipped:** HTTP/WS binding RFC guidance now maps replay/idempotency/session-scope/reconnect behavior directly to shipped conformance cases.
+- **Next concrete step:** begin M20 (Trust anchors & issuer attestations) per dependency order after interop hardening.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
-
-### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
-- **Progress:** Canonicalization enforces integers within ±(2^53−1), unsafe integer expected-fail fixtures are covered in conformance, and OQ-0001 was staged pending M16b.
-- **Exit:** Safe-integer policy implemented across reference/SDK + conformance guardrails + docs.
-
-### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
-- **Progress:** Conformance reports emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes anti-drift lint for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
-- **Exit:** Lint gates + aligned names/marks across repo.
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
@@ -65,9 +52,6 @@ _Last updated: 2026-03-04_
 
 ### ⏳ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
 - **Exit:** Signed manifests + contract pinning + tool-gating integration + conformance.
-
-### ⏳ M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-- **Exit:** Canonical HTTP/SSE + WS semantics incl. anti-replay, idempotency, overload, chunking + conformance.
 
 ### ⏳ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 - **Exit:** Full/redacted/metadata-only/classification-only modes + conformance.

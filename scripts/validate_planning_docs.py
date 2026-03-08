@@ -20,6 +20,7 @@ BANNED_PHRASES = [
 PLANNING_FRAMING_TOKEN_GROUPS = [
     ["planning-only"],
     ["remaining deliverables", "remaining product deliverables"],
+    ["roadmap.md"],
 ]
 
 REMOVED_DELIVERED_MILESTONE_HEADERS = [
@@ -27,21 +28,14 @@ REMOVED_DELIVERED_MILESTONE_HEADERS = [
     "## M17",
     "## M18",
     "## M19",
+    "## M22",
 ]
 
 CYCLE_LABEL_RE = re.compile(r"\bv(?:88|90)\b", re.IGNORECASE)
-M22_HEADER_RE = re.compile(
-    r"^## M22 — Transport bindings and channel properties \(HTTP/WS \+ anti-replay \+ quotas \+ streaming\)\s*$",
-    re.MULTILINE,
-)
-MILESTONE_SECTION_RE = re.compile(
-    r"(?ms)^## M\d+\b.*?(?=^## M\d+\b|\Z)",
-)
-M22_STALE_WORDING_PATTERNS = [
-    re.compile(r"\btransport binding(?:s)?\b.{0,40}\bmissing\b", re.IGNORECASE),
-    re.compile(r"\bbinding(?:s)?\b.{0,40}\bmissing\b", re.IGNORECASE),
-    re.compile(r"\bhttp/ws\b.{0,40}\bmissing\b", re.IGNORECASE),
-]
+MILESTONE_SECTION_RE = re.compile(r"(?ms)^## M\d+\b.*?(?=^## M\d+\b|\Z)")
+ROADMAP_CURRENT_NEXT_RE = re.compile(r"(?ms)^## Current / Next\s*\n(.*?)(?=^## |\Z)")
+ROADMAP_PLANNED_RE = re.compile(r"(?ms)^## Planned milestones.*?\n(.*?)(?=^## |\Z)")
+ROADMAP_M22_ENTRY_RE = re.compile(r"(?m)^###\s*[✅🚧⏳]?\s*M22\b")
 
 
 def _load(path: Path) -> str:
@@ -58,15 +52,9 @@ def _headers_with_cycles(text: str) -> list[str]:
     ]
 
 
-def _m22_section(text: str) -> str | None:
-    m22_start = M22_HEADER_RE.search(text)
-    if not m22_start:
-        return None
-    start = m22_start.start()
-    rest = text[m22_start.end() :]
-    next_m = re.search(r"(?m)^## M\d+\b", rest)
-    end = m22_start.end() + next_m.start() if next_m else len(text)
-    return text[start:end]
+def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
+    match = pattern.search(text)
+    return match.group(1) if match else ""
 
 
 def main() -> int:
@@ -85,34 +73,37 @@ def main() -> int:
     if "**Status:** Delivered" in backlog:
         errors.append("AICP_Backlog must not include delivered-status milestone markers")
 
-    top = "\n".join(backlog.splitlines()[:40]).lower()
+    top = "\n".join(backlog.splitlines()[:25]).lower()
     for token_group in PLANNING_FRAMING_TOKEN_GROUPS:
         if not any(token in top for token in token_group):
             errors.append(
                 "AICP_Backlog top framing must include one of: " + ", ".join(repr(token) for token in token_group)
             )
 
-    m22 = _m22_section(backlog)
-    if not m22:
-        errors.append("AICP_Backlog must include an M22 section")
-    else:
-        m22_lower = m22.lower()
-        if "remaining gap" not in m22_lower:
-            errors.append("M22 must explicitly describe a remaining gap")
-        if "already-shipped" not in m22_lower and "shipped" not in m22_lower:
-            errors.append("M22 must acknowledge shipped transport/binding foundations and focus on remaining work")
-        for pattern in M22_STALE_WORDING_PATTERNS:
-            if pattern.search(m22):
-                errors.append(
-                    "M22 contains stale wording that describes already-shipped transport/binding work as broadly missing"
-                )
-                break
+    milestone_headers = [line.strip() for line in backlog.splitlines() if line.startswith("## M")]
+    if not milestone_headers:
+        errors.append("AICP_Backlog must include at least one remaining milestone section")
 
-    # enforce planning-only structure: milestone bodies should not include delivered-status style markers
     for section in MILESTONE_SECTION_RE.findall(backlog):
         if "**Status:** Delivered" in section:
             errors.append("Backlog milestone sections must not carry delivered-status ledger markers")
             break
+
+    roadmap_current_next = _roadmap_section(roadmap, ROADMAP_CURRENT_NEXT_RE)
+    roadmap_planned = _roadmap_section(roadmap, ROADMAP_PLANNED_RE)
+    if roadmap_planned:
+        if re.search(r"(?m)^.*✅.*\bM[0-9]", roadmap_planned):
+            errors.append("ROADMAP.md must not include completed (✅) milestones under '## Planned milestones'")
+        if re.search(r"(?m)^###\s*[✅🚧⏳]?\s*M16a\b", roadmap_planned):
+            errors.append("ROADMAP.md must not list M16a under '## Planned milestones'")
+        if re.search(r"(?m)^###\s*[✅🚧⏳]?\s*M17\.1\b", roadmap_planned):
+            errors.append("ROADMAP.md must not list M17.1 under '## Planned milestones'")
+
+    if roadmap_current_next and roadmap_planned:
+        current_has_m22 = bool(ROADMAP_M22_ENTRY_RE.search(roadmap_current_next))
+        planned_has_m22 = bool(ROADMAP_M22_ENTRY_RE.search(roadmap_planned))
+        if current_has_m22 and planned_has_m22:
+            errors.append("ROADMAP.md must not duplicate M22 under both '## Current / Next' and '## Planned milestones'")
 
     backlog_cycle_headers = _headers_with_cycles(backlog)
     roadmap_cycle_headers = _headers_with_cycles(roadmap)
