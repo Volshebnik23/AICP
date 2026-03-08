@@ -12,9 +12,13 @@ This reference implementation provides correctness-first helpers for:
 
 ## Notes
 
-Canonicalization currently matches existing fixtures using sorted-key JSON encoding.
-Full RFC8785 numeric edge-case handling is intentionally out of scope and unsupported;
-float cases raise explicit exceptions.
+This package is an implementer helper layer (minimal ergonomics, correctness-first checks),
+not the protocol authority. Normative behavior is defined by Core docs + schemas + conformance suites.
+
+Validation helpers in `aicp_ref/validate.py` enforce key Core invariants including:
+- non-first transcript messages requiring `prev_msg_hash`,
+- signature `object_hash` matching the enclosing `message_hash`,
+- consistent signer/`kid` key selection when `kid` is present.
 
 ## Run tests
 
