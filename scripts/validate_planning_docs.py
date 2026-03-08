@@ -128,7 +128,7 @@ def main() -> int:
     roadmap_current_next = _roadmap_section(roadmap, ROADMAP_CURRENT_NEXT_RE)
     roadmap_planned = _roadmap_section(roadmap, ROADMAP_PLANNED_RE)
     if roadmap_planned:
-        if re.search(r"(?m)^###\s*✅\s*M", roadmap_planned):
+        if re.search(r"(?m)^.*✅.*\bM[0-9]", roadmap_planned):
             errors.append("ROADMAP.md must not include completed (✅) milestones under '## Planned milestones'")
         if re.search(r"(?m)^###\s*[✅🚧⏳]?\s*M16a\b", roadmap_planned):
             errors.append("ROADMAP.md must not list M16a under '## Planned milestones'")
