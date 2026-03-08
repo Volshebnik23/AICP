@@ -13,9 +13,7 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Planning context from current repo state
-- Core/conformance foundations and delivered milestones are tracked in `ROADMAP.md` as shipped/current/next status.
-- This backlog captures only remaining protocol deliverables to plan and execute.
+> Planning context: shipped milestone history lives in `ROADMAP.md`; this backlog tracks only remaining protocol deliverables.
 
 ---
 

@@ -46,14 +46,6 @@ _Last updated: 2026-03-04_
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
-### ✅ M16a — Safe-integer policy + numeric guardrails (staged decision)
-- **Progress:** Canonicalization enforces integers within ±(2^53−1), unsafe integer expected-fail fixtures are covered in conformance, and OQ-0001 was staged pending M16b.
-- **Exit:** Safe-integer policy implemented across reference/SDK + conformance guardrails + docs.
-
-### ✅ M17.1 — Protocol ID & compatibility mark alignment (anti-drift)
-- **Progress:** Conformance reports emit protocol `aicp_version` from suite/profile inputs, and `make validate` includes anti-drift lint for extensions/profiles/bindings mark alignment + global mark uniqueness across `conformance/**`.
-- **Exit:** Lint gates + aligned names/marks across repo.
-
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
 
@@ -65,9 +57,6 @@ _Last updated: 2026-03-04_
 
 ### ⏳ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
 - **Exit:** Signed manifests + contract pinning + tool-gating integration + conformance.
-
-### ⏳ M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-- **Exit:** Canonical HTTP/SSE + WS semantics incl. anti-replay, idempotency, overload, chunking + conformance.
 
 ### ⏳ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 - **Exit:** Full/redacted/metadata-only/classification-only modes + conformance.
