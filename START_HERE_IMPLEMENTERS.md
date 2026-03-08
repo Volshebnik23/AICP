@@ -89,3 +89,4 @@ Use this guide to choose based on trust, privacy, and operational constraints:
 - `docs/architecture/AICP_in_the_Ecosystem.md`
 - `docs/profiles/Profile_Selection_Guide.md`
 - `docs/playbooks/Session_Topologies.md`
+- `docs/guides/MEDIATED_BLOCKING_PRODUCTION.md`

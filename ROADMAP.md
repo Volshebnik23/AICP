@@ -1,7 +1,7 @@
 # AICP Roadmap Items (repo-backed)
 
 > Generated from the current repo `ROADMAP.md` + `AICP_Backlog`, plus newly identified protocol gaps (interop + security).
-> This file lists **actionable roadmap milestones** (deliverables + exit criteria). It intentionally omits already-shipped items.
+> This file lists roadmap status across current/next/planned milestones with concise shipped progress and next steps.
 
 _Last updated: 2026-03-04_
 

@@ -13,24 +13,22 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Current repo state (already delivered)
-- Core: envelope, hash-chain, message_hash, signatures verify, CONTRACT_PROPOSE/ACCEPT, CONTEXT_AMEND, ATTEST_ACTION, RESOLVE_CONFLICT, ERROR.
-- Stable extension set includes: EXT-CAPNEG, EXT-ENFORCEMENT, EXT-POLICY-EVAL (with anchored registry refs and compatibility notes).
-- Numeric canonicalization M16b is shipped: finite floats supported with deterministic ECMAScript-aligned tokens; unsafe integers remain rejected.
-- Release discipline M18 is shipped: errata cadence doc + errata validator are part of `make validate`.
-- M22 is started: channel properties schema/registry + CAPNEG negotiation fields + CN-09 MCP conformance evidence are in-repo.
-- TB-HTTP evidence is shipped: binding suite + fixtures + conformance report for HTTP/WS transport behavior.
-- TB-HTTP now includes ACK/cursor-expiry/minimal WS framing evidence, plus binding-case schema validation wired into `make validate`.
-- TB-HTTP now covers WS pull/chunking + reliability invariants and is validated by the binding-case schema validator in `make validate`.
-- Snapshot discipline exists (manifest generation + validation gate).
+## Planning context from current repo state
+- Core and conformance foundations are already shipped and validated in-repo.
+- M22 transport/channel-properties work is already materially implemented (docs/schemas/fixtures/conformance), with additional hardening remaining.
+- This backlog is for remaining deliverables and should not duplicate release-history narration.
+
 
 ---
 
 # Backlog epics and milestones
 
 ## M16 — Numeric canonicalization: RFC8785 numeric handling & safe number policy (OQ-0001)
-**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
-**Problem:** Core rejects floats until RFC8785 numeric handling exists, but real-world payloads contain floats/decimals unexpectedly. Also JS “number” makes big integers lossy → interop hazards.
+**Status:** Already delivered in current repo state.
+**Remaining planning note:** no additional deliverables currently targeted in this backlog slice.
+
+**Historical problem statement (kept for context):
+- Core rejects floats until RFC8785 numeric handling exists, but real-world payloads contain floats/decimals unexpectedly. Also JS “number” makes big integers lossy → interop hazards.
 
 **Deliverables**
 1) **Policy decision doc** (normative):
@@ -57,8 +55,11 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 ---
 
 ## M17 — Stability graduation program (reduce “experimental sprawl” safely)
-**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
-**Problem:** Most entries in `registry/extension_ids.json` and many in `registry/message_types.json` are `experimental`. That’s OK for 0.1, but blocks “market trust”: vendors hesitate to bet on “formally changeable”.
+**Status:** Already delivered in current repo state.
+**Remaining planning note:** future promotions tracked via roadmap, not this backlog section.
+
+**Historical problem statement (kept for context):
+- Most entries in `registry/extension_ids.json` and many in `registry/message_types.json` are `experimental`. That’s OK for 0.1, but blocks “market trust”: vendors hesitate to bet on “formally changeable”.
 
 **Deliverables**
 1) **Compatibility & stability policy doc**:
@@ -82,8 +83,11 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 ---
 
 ## M18 — Release discipline: changelog + compatibility policy + errata cadence
-**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
-**Problem:** `RELEASE_NOTES.md` is a template; for mass adoption you need strict changelog + compatibility policy.
+**Status:** Already delivered in current repo state.
+**Remaining planning note:** ongoing maintenance, no new scope in this backlog slice.
+
+**Historical problem statement (kept for context):
+- `RELEASE_NOTES.md` is a template; for mass adoption you need strict changelog + compatibility policy.
 
 **Deliverables**
 1) **Fill `RELEASE_NOTES.md`** with repo-backed entries:
@@ -107,8 +111,11 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 ---
 
 ## M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-**Status:** Already delivered in current repo state. Evidence: `ROADMAP.md`, release docs under `docs/`, and conformance/validator artifacts in-repo.
-**Problem:** Critical adopter wants **Adapter/Gateway** approach: parse/validate AICP, verify hashes/signatures, map to internal event model, run conformance in CI, use CAPNEG as inbound filter.
+**Status:** Already delivered in current repo state.
+**Remaining planning note:** maintain with incremental onboarding hardening only.
+
+**Historical problem statement (kept for context):
+- Critical adopter wants **Adapter/Gateway** approach: parse/validate AICP, verify hashes/signatures, map to internal event model, run conformance in CI, use CAPNEG as inbound filter.
 
 **Deliverables**
 1) **Adapter architecture guide**:
