@@ -14,130 +14,24 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 - Snapshot + release discipline
 
 ## Planning context from current repo state
-- Core and conformance foundations are already shipped and validated in-repo.
-- M22 transport/channel-properties work is already materially implemented (docs/schemas/fixtures/conformance), with additional hardening remaining.
-- This backlog is for remaining deliverables and should not duplicate release-history narration.
-
+- Core and conformance foundations are already shipped and tracked in `ROADMAP.md`.
+- This backlog captures only remaining deliverables to plan and execute.
 
 ---
 
 # Backlog epics and milestones
 
 ## M16 — Numeric canonicalization: RFC8785 numeric handling & safe number policy (OQ-0001)
-**Status:** Already delivered in current repo state.
-**Remaining planning note:** no additional deliverables currently targeted in this backlog slice.
-
-**Historical problem statement (kept for context):
-- Core rejects floats until RFC8785 numeric handling exists, but real-world payloads contain floats/decimals unexpectedly. Also JS “number” makes big integers lossy → interop hazards.
-
-**Deliverables**
-1) **Policy decision doc** (normative):
-   - Define “safe integer range” policy (e.g., require JSON numbers to be within IEEE-754 safe integer range OR require integers to be encoded as strings beyond that).
-   - Define interim guidance: how to represent decimals now (string/decimal object) until numeric handling ships.
-2) **RFC: Numeric Handling**:
-   - Adopt RFC8785 numeric normalization rules (or subset) for canonicalization, including exponent normalization, -0, etc.
-   - Specify handling of NaN/Infinity (reject), and precision expectations.
-3) **Implementation parity**:
-   - Update Python + TypeScript canonicalizers to support the chosen numeric policy.
-   - Add conformance fixtures that include:
-     - decimals, exponents, edge cases (-0), large ints near boundary.
-4) **Conformance gates**:
-   - New conformance suite verifying cross-language canonical hashes for numeric edge fixtures.
-   - Update Core spec text + OPEN_QUESTIONS.md: close OQ-0001 or downgrade scope with explicit constraints.
-
-**Acceptance**
-- Canonicalization yields identical hashes across reference Python + TS dropins for numeric fixtures.
-- A clear migration story: “what changes in v0.2 vs v0.1-dev”.
-
-**Notes**
-- This may be a **breaking** behavior change → coordinate with Release discipline (M18).
-
----
+**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
 
 ## M17 — Stability graduation program (reduce “experimental sprawl” safely)
-**Status:** Already delivered in current repo state.
-**Remaining planning note:** future promotions tracked via roadmap, not this backlog section.
-
-**Historical problem statement (kept for context):
-- Most entries in `registry/extension_ids.json` and many in `registry/message_types.json` are `experimental`. That’s OK for 0.1, but blocks “market trust”: vendors hesitate to bet on “formally changeable”.
-
-**Deliverables**
-1) **Compatibility & stability policy doc**:
-   - Define meanings of: experimental / stable (and optionally “candidate” if you decide to add it).
-   - Define “graduation checklist”: schema+fixtures+conformance+profile inclusion+interop evidence.
-2) **Registry schema rule**:
-   - Update `scripts/validate_registry.py` to enforce required fields for stable entries:
-     - `introduced_in`, `spec_ref` anchors, `security_considerations`, and “compatibility notes”.
-3) **Graduation plan & first promotions**:
-   - Promote a minimal delivered set to stable:
-     - Core message types
-     - CAPNEG + ENFORCEMENT + POLICY_EVAL (if you’re ready) OR only CAPNEG.
-   - Document why each is safe to freeze.
-4) **Anti-drift enforcement**:
-   - Update snapshot/release checklist: changing any stable entry must add RELEASE_NOTES compatibility section.
-
-**Acceptance**
-- `make validate` enforces the stability policy rules.
-- Roadmap explicitly lists “stable delivered set”.
-
----
+**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
 
 ## M18 — Release discipline: changelog + compatibility policy + errata cadence
-**Status:** Already delivered in current repo state.
-**Remaining planning note:** ongoing maintenance, no new scope in this backlog slice.
-
-**Historical problem statement (kept for context):
-- `RELEASE_NOTES.md` is a template; for mass adoption you need strict changelog + compatibility policy.
-
-**Deliverables**
-1) **Fill `RELEASE_NOTES.md`** with repo-backed entries:
-   - Added/Changed/Fixed + Compatibility notes for each shipped milestone (M8–M15 and later).
-2) **`docs/ops/COMPATIBILITY_POLICY.md`**:
-   - Define what counts as breaking vs non-breaking for:
-     - Core schema
-     - Hashing/canonicalization
-     - Registries
-     - Conformance suites
-     - Profiles
-   - Define deprecation/transition process.
-3) **Release checklist**:
-   - `docs/ops/RELEASE_CHECKLIST.md` (snapshot update, conformance pass, registry checks, errata updates).
-4) **Errata workflow alignment**:
-   - Ensure interop errata notes + ERRATA.md are consistent with policy.
-
-**Acceptance**
-- A new contributor can answer: “will this change break existing implementers?” from docs alone.
-
----
+**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
 
 ## M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-**Status:** Already delivered in current repo state.
-**Remaining planning note:** maintain with incremental onboarding hardening only.
-
-**Historical problem statement (kept for context):
-- Critical adopter wants **Adapter/Gateway** approach: parse/validate AICP, verify hashes/signatures, map to internal event model, run conformance in CI, use CAPNEG as inbound filter.
-
-**Deliverables**
-1) **Adapter architecture guide**:
-   - `docs/guides/Protocol_Adapter_Gateway.md`:
-     - recommended module boundaries
-     - how to map envelope/payload to internal events
-     - CAPNEG as “input filter” pattern with machine-readable failure.
-2) **Minimal deployable skeleton** (reference, not a hosted platform):
-   - `templates/protocol-adapter/`:
-     - minimal service skeleton + config
-     - runs validator + conformance in CI
-     - example translation “AICP message -> internal event”.
-3) **CI templates**:
-   - example GitHub Actions snippet: run `make conformance-profiles` for chosen profile.
-4) **“< 1 hour onboarding” update**:
-   - Update `START_HERE_IMPLEMENTERS.md` to include adapter path as first-class option.
-
-**Acceptance**
-- A new adopter can:
-  - copy template
-  - run conformance for a chosen profile
-  - get a working validation gateway without touching their agent core logic.
+**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
 
 ---
 
@@ -175,24 +69,18 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 ---
 
 ## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-**Status:** In progress (substantial pieces already delivered).
-**Current remaining gap:** HTTP/WS binding coverage exists in docs/schemas/fixtures/conformance, but remaining work is to harden interoperability windows and operational edge cases across multi-session deployments.
+**Status:** In progress.
+**Remaining gap focus:** harden already-shipped binding coverage so independent implementations behave deterministically across replay, reconnect, and mixed-transport operational stress.
 
 **Remaining deliverables**
-1) **Replay-window hardening and multi-session semantics**
-   - Extend anti-replay guidance/tests for broader window handling across concurrent sessions.
-   - Add deterministic checks for cross-session replay collision handling.
-2) **Streaming/reconnect edge coverage expansion**
-   - Add additional conformance cases for reconnect churn, chunk interruption, and recovery ordering under stress.
-3) **Operational interoperability tightening**
-   - Add incremental evidence for quota/backpressure behavior consistency under mixed transport usage.
-   - Keep binding guidance aligned with already shipped conformance behavior.
-4) **Reference adapter examples refresh**
-   - Keep minimal client/server snippets aligned to current binding evidence and recovery semantics.
+1) **Hardening:** expand replay-window and multi-session collision coverage with deterministic pass/fail fixtures and checks.
+2) **Testing:** add reconnect/stream interruption/recovery-order edge suites for transport churn scenarios.
+3) **Examples/docs:** refresh minimal binding examples and operational guidance so they match shipped behavior and new hardening evidence.
 
 **Acceptance**
-- Independent implementations can pass the shipped binding suites plus new edge-case suites without bespoke integration rules.
-- Replay/reconnect/overload behavior remains deterministic and testable across sessions and transports.
+- New M22 edge suites run in-repo with deterministic outcomes.
+- Independent implementations can pass binding suites without bespoke replay/reconnect handling rules.
+- Binding examples/docs match conformance-backed behavior.
 
 ---
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
