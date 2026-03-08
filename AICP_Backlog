@@ -52,20 +52,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 ---
 
-## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-**Remaining gap:** harden and prove interoperability for already-shipped transport/binding foundations across replay-window, reconnect, and mixed-transport operational stress cases.
-
-**Remaining deliverables**
-1) **Hardening:** extend replay-window and multi-session anti-replay collision checks with deterministic fixtures and conformance assertions.
-2) **Coverage:** expand reconnect/churn/ordering edge-case coverage for streaming and recovery behavior under stress.
-3) **Examples/docs:** refresh minimal HTTP/WS binding examples and operational guidance to match conformance-backed behavior.
-
-**Acceptance**
-- New M22 edge suites pass deterministically in-repo.
-- Independent implementations can pass binding suites without bespoke replay/reconnect handling.
-- Binding examples/docs stay aligned with shipped and newly hardened conformance evidence.
-
----
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 **Problem:** Enforcement assumes content-visible moderation; enterprise needs privacy modes.
 

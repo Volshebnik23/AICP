@@ -2,7 +2,7 @@
   "suite_id": "TB-HTTP-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, overload signaling, ACK, cursor-expiry handling, WS framing/pull chunking, SSE pull framing/backpressure, and idempotency/replay evidence.",
+  "description": "HTTP/WS binding conformance for message ingest, polling, head retrieval, overload signaling, ACK, cursor-expiry handling, WS framing/pull chunking, SSE pull framing/backpressure, idempotency/replay evidence, and multi-session replay/reconnect hardening.",
   "schema_ref": "schemas/bindings/bind-http-ws.schema.json",
   "cases": [
     "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -20,7 +20,12 @@
     "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json",
     "fixtures/bindings/http-ws/TB-HTTP-15_createSession.json",
     "fixtures/bindings/http-ws/TB-HTTP-16_closeSession.json",
-    "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json"
+    "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json",
+    "fixtures/bindings/http-ws/TB-HTTP-18_sendMessage_replay_window.json",
+    "fixtures/bindings/http-ws/TB-HTTP-19_createSession_secondary.json",
+    "fixtures/bindings/http-ws/TB-HTTP-20_sendMessage_session2_collision_scope.json",
+    "fixtures/bindings/http-ws/TB-HTTP-21_sendMessage_replay_session2.json",
+    "fixtures/bindings/http-ws/TB-HTTP-22_ssePullMessages_reconnect_churn.json"
   ],
   "compatibility_mark": "AICP-BIND-HTTP-0.1",
   "checks": [
@@ -62,7 +67,7 @@
     },
     {
       "test_id": "TB-HTTP-REPLAY-01",
-      "description": "replay_of cases must reference earlier case evidence and mark replay response headers/status"
+      "description": "replay_of cases must reference earlier case evidence, stay within the same session scope, and mark replay response headers/status"
     },
     {
       "test_id": "TB-HTTP-RATELIMIT-01",
@@ -74,7 +79,7 @@
     },
     {
       "test_id": "TB-HTTP-SESSION-01",
-      "description": "createSession evidence must define canonical session_id reused by all session-scoped paths and request bodies"
+      "description": "createSession evidence must define known session_id values; every session-scoped path/body/top-level session reference must be coherent and map to a created session"
     },
     {
       "test_id": "TB-SSE-RECONNECT-01",

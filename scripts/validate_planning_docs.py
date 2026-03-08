@@ -28,23 +28,11 @@ REMOVED_DELIVERED_MILESTONE_HEADERS = [
     "## M17",
     "## M18",
     "## M19",
+    "## M22",
 ]
 
 CYCLE_LABEL_RE = re.compile(r"\bv(?:88|90)\b", re.IGNORECASE)
-M22_HEADER_RE = re.compile(
-    r"^## M22 — Transport bindings and channel properties \(HTTP/WS \+ anti-replay \+ quotas \+ streaming\)\s*$",
-    re.MULTILINE,
-)
-MILESTONE_SECTION_RE = re.compile(
-    r"(?ms)^## M\d+\b.*?(?=^## M\d+\b|\Z)",
-)
-M22_STALE_WORDING_PATTERNS = [
-    re.compile(r"\btransport binding(?:s)?\b.{0,40}\bmissing\b", re.IGNORECASE),
-    re.compile(r"\bbinding(?:s)?\b.{0,40}\bmissing\b", re.IGNORECASE),
-    re.compile(r"\bhttp/ws\b.{0,40}\bmissing\b", re.IGNORECASE),
-    re.compile(r"\bmajor\b.{0,40}\btransport\b.{0,40}\bmissing\b", re.IGNORECASE),
-    re.compile(r"\bmajor\b.{0,40}\bbinding\b.{0,40}\bmissing\b", re.IGNORECASE),
-]
+MILESTONE_SECTION_RE = re.compile(r"(?ms)^## M\d+\b.*?(?=^## M\d+\b|\Z)")
 ROADMAP_CURRENT_NEXT_RE = re.compile(r"(?ms)^## Current / Next\s*\n(.*?)(?=^## |\Z)")
 ROADMAP_PLANNED_RE = re.compile(r"(?ms)^## Planned milestones.*?\n(.*?)(?=^## |\Z)")
 ROADMAP_M22_ENTRY_RE = re.compile(r"(?m)^###\s*[✅🚧⏳]?\s*M22\b")
@@ -64,15 +52,9 @@ def _headers_with_cycles(text: str) -> list[str]:
     ]
 
 
-def _m22_section(text: str) -> str | None:
-    m22_start = M22_HEADER_RE.search(text)
-    if not m22_start:
-        return None
-    start = m22_start.start()
-    rest = text[m22_start.end() :]
-    next_m = re.search(r"(?m)^## M\d+\b", rest)
-    end = m22_start.end() + next_m.start() if next_m else len(text)
-    return text[start:end]
+def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
+    match = pattern.search(text)
+    return match.group(1) if match else ""
 
 
 def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
@@ -103,23 +85,10 @@ def main() -> int:
                 "AICP_Backlog top framing must include one of: " + ", ".join(repr(token) for token in token_group)
             )
 
-    m22 = _m22_section(backlog)
-    if not m22:
-        errors.append("AICP_Backlog must include an M22 section")
-    else:
-        m22_lower = m22.lower()
-        if "remaining gap" not in m22_lower:
-            errors.append("M22 must explicitly describe a remaining gap")
-        if "already-shipped" not in m22_lower and "shipped" not in m22_lower:
-            errors.append("M22 must acknowledge shipped transport/binding foundations and focus on remaining work")
-        for pattern in M22_STALE_WORDING_PATTERNS:
-            if pattern.search(m22):
-                errors.append(
-                    "M22 contains stale wording that describes already-shipped transport/binding work as broadly missing"
-                )
-                break
+    milestone_headers = [line.strip() for line in backlog.splitlines() if line.startswith("## M")]
+    if not milestone_headers:
+        errors.append("AICP_Backlog must include at least one remaining milestone section")
 
-    # enforce planning-only structure: milestone bodies should not include delivered-status style markers
     for section in MILESTONE_SECTION_RE.findall(backlog):
         if "**Status:** Delivered" in section:
             errors.append("Backlog milestone sections must not carry delivered-status ledger markers")

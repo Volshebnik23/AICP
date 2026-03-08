@@ -14,6 +14,7 @@
 - Clients MUST send `Idempotency-Key` header on POST ingestion.
 - `Idempotency-Key` MUST be deterministically derived from `message_id`: either exactly equal to `message_id`, or namespaced with a terminal segment ending in `message_id` where preceding delimiter is one of `-`, `:`, or `/`.
 - On replay, servers SHOULD respond idempotently (no duplicate acceptance) and MAY signal replay using header `AICP-Replay: true`.
+- Replay/idempotency state MUST remain session-scoped: the same `message_id` MAY be accepted in a different session and MUST NOT be treated as a replay across session boundaries.
 - Ordering/replay behavior MUST be documented by implementations and enforced consistently with negotiated Channel Properties when present.
 - If WSS streaming is provided, stream framing MUST preserve transcript ordering guarantees declared for the session.
 
@@ -60,6 +61,7 @@ Rules:
 - For pull streams, server MAY chunk into multiple `messages` events.
 - Every `messages` event MUST include SSE `id` equal to that event payload `cursor_after_last`.
 - Clients MAY reconnect by sending `Last-Event-ID: <cursor>`; servers MUST treat this as equivalent to `after=<cursor>`.
+- Reconnect handling MUST remain deterministic across repeated churn (`reconnect_of` chains), including no-op reconnects at a stable cursor.
 - If both `Last-Event-ID` and query `after` are present, they MUST match.
 - All non-final `messages` events MUST set `more=true`; the final `messages` event MUST set `more=false`.
 - Total delivered messages across the stream MUST be `<= limit`.
@@ -79,3 +81,9 @@ Rules:
 - Deprecated alias: `EXT-BIND-HTTP`.
 - Implementations MAY accept deprecated alias values for backward compatibility in declarations.
 - Deprecated aliases MUST NOT be emitted as canonical negotiated values; canonical selection MUST use `BIND-HTTP-0.1`.
+
+## Conformance evidence map (M22 completion)
+- `TB-HTTP-14`, `TB-HTTP-18`: replay handling within bounded replay retention (`AICP-Replay: true`, idempotent replay response).
+- `TB-HTTP-19`, `TB-HTTP-20`, `TB-HTTP-21`: second-session creation plus same-`message_id` interaction proving session-scoped idempotency/replay behavior.
+- `TB-HTTP-17`, `TB-HTTP-22`: multi-step SSE reconnect churn with stable cursor continuity (`Last-Event-ID` == `after`).
+- Runner checks `TB-HTTP-REPLAY-01`, `TB-HTTP-SESSION-01`, and `TB-SSE-RECONNECT-01` enforce these invariants deterministically.
