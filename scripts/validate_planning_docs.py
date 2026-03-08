@@ -20,6 +20,7 @@ BANNED_PHRASES = [
 PLANNING_FRAMING_TOKEN_GROUPS = [
     ["planning-only"],
     ["remaining deliverables", "remaining product deliverables"],
+    ["roadmap.md"],
 ]
 
 REMOVED_DELIVERED_MILESTONE_HEADERS = [
@@ -41,6 +42,8 @@ M22_STALE_WORDING_PATTERNS = [
     re.compile(r"\btransport binding(?:s)?\b.{0,40}\bmissing\b", re.IGNORECASE),
     re.compile(r"\bbinding(?:s)?\b.{0,40}\bmissing\b", re.IGNORECASE),
     re.compile(r"\bhttp/ws\b.{0,40}\bmissing\b", re.IGNORECASE),
+    re.compile(r"\bmajor\b.{0,40}\btransport\b.{0,40}\bmissing\b", re.IGNORECASE),
+    re.compile(r"\bmajor\b.{0,40}\bbinding\b.{0,40}\bmissing\b", re.IGNORECASE),
 ]
 
 
@@ -85,7 +88,7 @@ def main() -> int:
     if "**Status:** Delivered" in backlog:
         errors.append("AICP_Backlog must not include delivered-status milestone markers")
 
-    top = "\n".join(backlog.splitlines()[:40]).lower()
+    top = "\n".join(backlog.splitlines()[:25]).lower()
     for token_group in PLANNING_FRAMING_TOKEN_GROUPS:
         if not any(token in top for token in token_group):
             errors.append(
