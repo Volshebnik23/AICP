@@ -14,26 +14,12 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 - Snapshot + release discipline
 
 ## Planning context from current repo state
-- Core and conformance foundations are already shipped and tracked in `ROADMAP.md`.
-- This backlog captures only remaining deliverables to plan and execute.
+- Core/conformance foundations and delivered milestones are tracked in `ROADMAP.md` as shipped/current/next status.
+- This backlog captures only remaining protocol deliverables to plan and execute.
 
 ---
 
 # Backlog epics and milestones
-
-## M16 — Numeric canonicalization: RFC8785 numeric handling & safe number policy (OQ-0001)
-**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
-
-## M17 — Stability graduation program (reduce “experimental sprawl” safely)
-**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
-
-## M18 — Release discipline: changelog + compatibility policy + errata cadence
-**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
-
-## M19 — Protocol Adapter / Gateway quickstart kit (CI-first onboarding)
-**Status:** Delivered; shipped-history details are tracked in `ROADMAP.md`.
-
----
 
 ## M20 — Trust anchors & attestations (internet-scale trust signals)
 **Problem:** Identity lifecycle exists, but no standardized “trust network”: trust anchors, issuer attestation formats, trust signals.
@@ -69,18 +55,17 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 ---
 
 ## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-**Status:** In progress.
-**Remaining gap focus:** harden already-shipped binding coverage so independent implementations behave deterministically across replay, reconnect, and mixed-transport operational stress.
+**Remaining gap:** harden and prove interoperability for already-shipped transport/binding foundations across replay-window, reconnect, and mixed-transport operational stress cases.
 
 **Remaining deliverables**
-1) **Hardening:** expand replay-window and multi-session collision coverage with deterministic pass/fail fixtures and checks.
-2) **Testing:** add reconnect/stream interruption/recovery-order edge suites for transport churn scenarios.
-3) **Examples/docs:** refresh minimal binding examples and operational guidance so they match shipped behavior and new hardening evidence.
+1) **Hardening:** extend replay-window and multi-session anti-replay collision checks with deterministic fixtures and conformance assertions.
+2) **Coverage:** expand reconnect/churn/ordering edge-case coverage for streaming and recovery behavior under stress.
+3) **Examples/docs:** refresh minimal HTTP/WS binding examples and operational guidance to match conformance-backed behavior.
 
 **Acceptance**
-- New M22 edge suites run in-repo with deterministic outcomes.
-- Independent implementations can pass binding suites without bespoke replay/reconnect handling rules.
-- Binding examples/docs match conformance-backed behavior.
+- New M22 edge suites pass deterministically in-repo.
+- Independent implementations can pass binding suites without bespoke replay/reconnect handling.
+- Binding examples/docs stay aligned with shipped and newly hardened conformance evidence.
 
 ---
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
