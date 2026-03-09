@@ -1,0 +1,42 @@
+{
+  "case_id": "TA-03",
+  "trust_anchor_list": {
+    "anchor_list_id": "tal-devnet-1",
+    "version": "2026-03-08",
+    "issued_at": "2026-03-08T00:00:00Z",
+    "expires_at": "2027-03-08T00:00:00Z",
+    "anchors": [
+      {
+        "issuer_id": "issuer:devco",
+        "signer": "agent:S",
+        "kid": "S1",
+        "public_key_b64url": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ"
+      }
+    ],
+    "meta": {
+      "name": "DevCo baseline anchor set"
+    }
+  },
+  "trust_anchor_list_hash": "sha256:Lo_Sq9E-A1cteVcs412wcD9lTweCUQWZj6gduaS6Lek",
+  "issuer_attestation": {
+    "attestation_id": "att-devco-provider-001",
+    "issuer_id": "issuer:devco",
+    "subject_id": "agent:provider-alpha",
+    "attestation_type": "issuer_identity_attestation",
+    "trust_signal": "verified_provider",
+    "issued_at": "2026-03-08T00:05:00Z",
+    "expires_at": "2026-09-08T00:05:00Z",
+    "anchor_list_id": "tal-devnet-1",
+    "profile_ref": "PF_AICP_BASE_0.1",
+    "scope": "provider_listing"
+  },
+  "issuer_attestation_hash": "sha256:XrQM3Lsvt5r6kAsp7UZq99z-QbqeeB1GBUOycquhVG4",
+  "attestation_signature": {
+    "signer": "agent:T",
+    "kid": "T1",
+    "object_type": "issuer_attestation",
+    "object_hash": "sha256:XrQM3Lsvt5r6kAsp7UZq99z-QbqeeB1GBUOycquhVG4",
+    "sig_b64url": "rhE_cgZEBxxGnHmEAJc6Gxa3QHQeUXqlGbQTty8I7xLXVNz2TtdaXTwiE-oDy2CA2dONmNxf3uZ3HCxpmrjlBQ"
+  },
+  "expect_trust_valid": false
+}

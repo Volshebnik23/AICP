@@ -1,0 +1,38 @@
+[
+  {
+    "id": "verified_provider",
+    "type": "trust_signal_types",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#3-issuer_attestation-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Trust signals must be interpreted only after signature and trust-anchor validation."
+  },
+  {
+    "id": "verified_developer",
+    "type": "trust_signal_types",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#3-issuer_attestation-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Trust signals must be interpreted only after signature and trust-anchor validation."
+  },
+  {
+    "id": "profile_compliance",
+    "type": "trust_signal_types",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#3-issuer_attestation-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Profile claims are attestations and require independent profile verification where applicable."
+  },
+  {
+    "id": "human_backed",
+    "type": "trust_signal_types",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#3-issuer_attestation-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Human-backed claims should avoid leaking sensitive identity linkage beyond required scope."
+  }
+]
