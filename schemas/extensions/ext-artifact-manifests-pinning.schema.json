@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-artifact-manifests-pinning.schema.json",
+  "title": "AICP artifact manifests and pinning objects",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "artifact_manifest": {
+      "type": "object",
+      "required": [
+        "manifest_id",
+        "artifact_kind",
+        "issuer_id",
+        "issuer_scoped_id",
+        "version",
+        "interface_version",
+        "description",
+        "risk_class",
+        "content_hash"
+      ],
+      "properties": {
+        "manifest_id": {"type": "string", "minLength": 1},
+        "artifact_kind": {"type": "string", "enum": ["tool", "resource", "prompt"]},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "issuer_scoped_id": {"type": "string", "pattern": "^[^#]+#[^#]+$"},
+        "version": {"type": "string", "minLength": 1},
+        "interface_version": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "risk_class": {"type": "string", "enum": ["low", "moderate", "high", "critical"]},
+        "content_hash": {"type": "string", "pattern": "^sha256:[A-Za-z0-9._:-]+$"},
+        "metadata": {"type": "object", "additionalProperties": true},
+        "signature": {
+          "type": "object",
+          "required": ["signer", "alg", "sig_b64url"],
+          "properties": {
+            "signer": {"type": "string", "minLength": 1},
+            "alg": {"type": "string", "minLength": 1},
+            "sig_b64url": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"issuer_id": {"type": "string"}, "manifest_id": {"type": "string"}}, "required": ["issuer_id", "manifest_id"]},
+          "then": {
+            "properties": {
+              "issuer_scoped_id": {
+                "pattern": "^[^#]+#[^#]+$"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "artifact_pin": {
+      "type": "object",
+      "required": [
+        "artifact_kind",
+        "manifest_id",
+        "issuer_id",
+        "issuer_scoped_id",
+        "version",
+        "content_hash"
+      ],
+      "properties": {
+        "artifact_kind": {"type": "string", "enum": ["tool", "resource", "prompt"]},
+        "manifest_id": {"type": "string", "minLength": 1},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "issuer_scoped_id": {"type": "string", "pattern": "^[^#]+#[^#]+$"},
+        "version": {"type": "string", "minLength": 1},
+        "content_hash": {"type": "string", "pattern": "^sha256:[A-Za-z0-9._:-]+$"}
+      },
+      "additionalProperties": false
+    },
+    "contract_artifact_pinning": {
+      "type": "object",
+      "required": ["manifest_set_hash", "pinned_artifacts"],
+      "properties": {
+        "manifest_set_hash": {"type": "string", "pattern": "^sha256:[A-Za-z0-9._:-]+$"},
+        "pinned_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/artifact_pin"}
+        },
+        "manifests": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/artifact_manifest"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "tool_call_manifest_ref": {
+      "type": "object",
+      "required": ["manifest_id", "issuer_id", "issuer_scoped_id", "version", "content_hash"],
+      "properties": {
+        "manifest_id": {"type": "string", "minLength": 1},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "issuer_scoped_id": {"type": "string", "pattern": "^[^#]+#[^#]+$"},
+        "version": {"type": "string", "minLength": 1},
+        "content_hash": {"type": "string", "pattern": "^sha256:[A-Za-z0-9._:-]+$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

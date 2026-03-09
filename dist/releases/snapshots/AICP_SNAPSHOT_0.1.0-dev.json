@@ -36,6 +36,10 @@
           "sha256": "0cdc4e818385b772d5a0a194dfee0e6324e7d0850a1bc3f3553461c39446b211"
         },
         {
+          "path": "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "sha256": "8de2475e04ff7aa6616e34e3d8fe9a907a469bbbd1221099487715f273371bf2"
+        },
+        {
           "path": "conformance/extensions/CH_CHANNELS_0.1.json",
           "sha256": "3e78c2ad5d4e12c543697eefbff878833be60c14bc85b38c27a5a84f2c991db2"
         },
@@ -883,6 +887,10 @@
           "sha256": "6ae105850cd66191966b1865290f1f9c5bc3f009d71e3dc438843fb89d8c9fc6"
         },
         {
+          "path": "schemas/extensions/ext-artifact-manifests-pinning.schema.json",
+          "sha256": "c15cca7515f100294f7a274d07af4ced40046e60832a7200a7d2af7341b76390"
+        },
+        {
           "path": "schemas/extensions/ext-capneg-payloads.schema.json",
           "sha256": "a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
         },
@@ -968,7 +976,11 @@
         },
         {
           "path": "schemas/extensions/ext-tool-gating-payloads.schema.json",
-          "sha256": "0c54b23deab5266cbb8c145d02451cb447ab9f8b2bb5ddc2c05143d0383a6083"
+          "sha256": "85ec3513efa93f5d39af3ab1d354c7a425b7f48745529e9105225e43772e2ab0"
+        },
+        {
+          "path": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
+          "sha256": "640afd5a740914fac8f82405b5a07c4603cc1c2a7053ccce8bc6710906566ec6"
         },
         {
           "path": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
@@ -1048,6 +1060,10 @@
       {
         "mark": "AICP-EXT-ALERTS-0.1",
         "path": "conformance/extensions/AL_ALERTS_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-ARTIFACT-MANIFESTS-PINNING-0.1",
+        "path": "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json"
       },
       {
         "mark": "AICP-EXT-CHANNELS-0.1",

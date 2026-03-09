@@ -54,13 +54,9 @@ _Last updated: 2026-03-09_
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
-### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
-- **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
 
 
 
-### ⏳ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
-- **Exit:** Signed manifests + contract pinning + tool-gating integration + conformance.
 
 ### ⏳ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 - **Exit:** Full/redacted/metadata-only/classification-only modes + conformance.
@@ -106,7 +102,7 @@ _Last updated: 2026-03-09_
 ## Suggested dependency order (high level)
 1) M16 → M17.1 → M17 → M18 → M33
 2) Interop hardening: M22 + M19
-3) Trust & tooling: M20 + M21 + M30
+3) Trust & tooling: M20 + M21
 4) Enterprise controls: M23 + M24 + M26 + M28
 5) Crowd-ready bazaars: M35
 6) Coordination & service chaining: M36 + M37
