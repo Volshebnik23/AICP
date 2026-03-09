@@ -46,6 +46,7 @@ conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SA_SECURITY_ALERT_0.1.json --out conformance/report_ext_security_alerts.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PA_PARTICIPANTS_0.1.json --out conformance/report_ext_participants.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TG_TOOL_GATING_0.1.json --out conformance/report_ext_tool_gating.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json --out conformance/report_ext_artifact_manifests_pinning.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ID_IDENTITY_LC_0.1.json --out conformance/report_ext_identity_lc.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DL_DELEGATION_0.1.json --out conformance/report_ext_delegation.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/WF_WORKFLOW_SYNC_0.1.json --out conformance/report_ext_workflow_sync.json
