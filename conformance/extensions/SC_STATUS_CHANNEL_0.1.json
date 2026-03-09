@@ -1,0 +1,31 @@
+{
+  "suite_id": "SC-STATUS-CHANNEL-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "M21 baseline conformance for status query/assertion and revocation semantics.",
+  "schema_ref": "schemas/extensions/ext-status-channel-artifacts.schema.json",
+  "cases": [
+    "fixtures/extensions/status_channel/SC-01_status_good_valid.json",
+    "fixtures/extensions/status_channel/SC-02_status_revoked_valid.json",
+    "fixtures/extensions/status_channel/SC-03_status_untrusted_signer_expected_fail.json"
+  ],
+  "checks": [
+    {
+      "test_id": "SR-QUERY-OBJ-01",
+      "description": "status_query_hash must match object hash and status_as_of must be valid date-time"
+    },
+    {
+      "test_id": "SR-ASSERT-OBJ-01",
+      "description": "status_assertion_hash and status_signature object bindings must be valid"
+    },
+    {
+      "test_id": "SR-REGISTRY-01",
+      "description": "status and revocation reason codes must be registered"
+    },
+    {
+      "test_id": "SR-CHAIN-01",
+      "description": "status assertions must verify under trust anchors with target binding and temporal/cache semantics"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-STATUS-CHANNEL-0.1"
+}

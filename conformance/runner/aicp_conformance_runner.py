@@ -5,7 +5,7 @@ import argparse
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -277,6 +277,34 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
     failures: list[dict[str, Any]] = []
     seen_cases_by_id: dict[str, dict[str, Any]] = {}
     loaded_cases: list[tuple[str, dict[str, Any]]] = []
+
+    trust_signal_ids: set[str] = set()
+    attestation_type_ids: set[str] = set()
+    status_codes: set[str] = set()
+    revocation_reason_codes: set[str] = set()
+    if any(check in enabled_checks for check in {"TR-REGISTRY-01", "TR-CHAIN-01"}):
+        trust_signal_ids = {
+            e.get("id") for e in load_json(ROOT / "registry/trust_signal_types.json") if isinstance(e, dict)
+        }
+        attestation_type_ids = {
+            e.get("id") for e in load_json(ROOT / "registry/attestation_types.json") if isinstance(e, dict)
+        }
+    if any(check in enabled_checks for check in {"SR-REGISTRY-01", "SR-CHAIN-01"}):
+        status_codes = {
+            e.get("id") for e in load_json(ROOT / "registry/status_assertion_codes.json") if isinstance(e, dict)
+        }
+        revocation_reason_codes = {
+            e.get("id") for e in load_json(ROOT / "registry/revocation_reason_codes.json") if isinstance(e, dict)
+        }
+
+    def _session_id_from_path(path: str) -> str | None:
+        if not isinstance(path, str) or '/sessions/' not in path:
+            return None
+        tail = path.split('/sessions/', 1)[1]
+        if not tail:
+            return None
+        segment = tail.split('/', 1)[0]
+        return segment or None
 
     for rel_case in suite.get("cases", []):
         case_path = ROOT / rel_case
@@ -605,6 +633,14 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                     else:
                         if base_msg.get("message_id") != cur_msg.get("message_id") or base_msg.get("message_hash") != cur_msg.get("message_hash"):
                             add_failure(failures, "TB-HTTP-REPLAY-01", "replay case embedded message_id/message_hash must match referenced case", rel_case, None)
+                    base_req = base_case.get("http_request") if isinstance(base_case.get("http_request"), dict) else {}
+                    cur_req = case_obj.get("http_request") if isinstance(case_obj.get("http_request"), dict) else {}
+                    base_body = base_req.get("body") if isinstance(base_req.get("body"), dict) else {}
+                    cur_body = cur_req.get("body") if isinstance(cur_req.get("body"), dict) else {}
+                    base_scope = base_body.get("session_id") if isinstance(base_body.get("session_id"), str) else _session_id_from_path(base_req.get("path", ""))
+                    cur_scope = cur_body.get("session_id") if isinstance(cur_body.get("session_id"), str) else _session_id_from_path(cur_req.get("path", ""))
+                    if isinstance(base_scope, str) and isinstance(cur_scope, str) and base_scope != cur_scope:
+                        add_failure(failures, "TB-HTTP-REPLAY-01", "replay_of case must remain in the same session scope as referenced case", rel_case, None)
                     response = case_obj.get("http_response")
                     if not isinstance(response, dict):
                         add_failure(failures, "TB-HTTP-REPLAY-01", "replay case requires http_response object", rel_case, None)
@@ -666,6 +702,204 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                             if query.get("after") != expected_cursor:
                                 add_failure(failures, "TB-SSE-RECONNECT-01", f"query.after must match reconnect cursor '{expected_cursor}'", rel_case, None)
 
+        trust_anchor_list = case_obj.get("trust_anchor_list") if isinstance(case_obj.get("trust_anchor_list"), dict) else None
+        trust_anchor_list_hash = case_obj.get("trust_anchor_list_hash") if isinstance(case_obj.get("trust_anchor_list_hash"), str) else None
+        issuer_attestation = case_obj.get("issuer_attestation") if isinstance(case_obj.get("issuer_attestation"), dict) else None
+        issuer_attestation_hash = case_obj.get("issuer_attestation_hash") if isinstance(case_obj.get("issuer_attestation_hash"), str) else None
+        attestation_signature = case_obj.get("attestation_signature") if isinstance(case_obj.get("attestation_signature"), dict) else None
+        expect_trust_valid = bool(case_obj.get("expect_trust_valid"))
+
+        if "TR-ANCHOR-OBJ-01" in enabled_checks and trust_anchor_list is not None:
+            try:
+                computed_anchor_hash = object_hash("trust_anchor_list", trust_anchor_list)
+            except Exception as exc:
+                add_failure(failures, "TR-ANCHOR-OBJ-01", f"trust_anchor_list hash recompute error: {exc}", rel_case, None)
+            else:
+                if computed_anchor_hash != trust_anchor_list_hash:
+                    add_failure(failures, "TR-ANCHOR-OBJ-01", "trust_anchor_list_hash must equal object_hash('trust_anchor_list', trust_anchor_list)", rel_case, None)
+            anchor_issued = _parse_iso_datetime(trust_anchor_list.get("issued_at"))
+            anchor_expires = _parse_iso_datetime(trust_anchor_list.get("expires_at"))
+            if anchor_issued is None or anchor_expires is None:
+                add_failure(failures, "TR-ANCHOR-OBJ-01", "trust_anchor_list issued_at/expires_at must be valid date-time", rel_case, None)
+            elif anchor_issued >= anchor_expires:
+                add_failure(failures, "TR-ANCHOR-OBJ-01", "trust_anchor_list issued_at must be earlier than expires_at", rel_case, None)
+
+        trust_chain_valid = False
+        if issuer_attestation is not None:
+            if "TR-ATTEST-OBJ-01" in enabled_checks:
+                try:
+                    computed_attestation_hash = object_hash("issuer_attestation", issuer_attestation)
+                except Exception as exc:
+                    add_failure(failures, "TR-ATTEST-OBJ-01", f"issuer_attestation hash recompute error: {exc}", rel_case, None)
+                else:
+                    if computed_attestation_hash != issuer_attestation_hash:
+                        add_failure(failures, "TR-ATTEST-OBJ-01", "issuer_attestation_hash must equal object_hash('issuer_attestation', issuer_attestation)", rel_case, None)
+                if not isinstance(attestation_signature, dict):
+                    add_failure(failures, "TR-ATTEST-OBJ-01", "issuer_attestation requires attestation_signature object", rel_case, None)
+                else:
+                    if attestation_signature.get("object_type") != "issuer_attestation":
+                        add_failure(failures, "TR-ATTEST-OBJ-01", "attestation_signature.object_type must be 'issuer_attestation'", rel_case, None)
+                    if attestation_signature.get("object_hash") != issuer_attestation_hash:
+                        add_failure(failures, "TR-ATTEST-OBJ-01", "attestation_signature.object_hash must equal issuer_attestation_hash", rel_case, None)
+
+            if "TR-REGISTRY-01" in enabled_checks:
+                if issuer_attestation.get("attestation_type") not in attestation_type_ids:
+                    add_failure(failures, "TR-REGISTRY-01", "issuer_attestation.attestation_type must be registered in registry/attestation_types.json", rel_case, None)
+                if issuer_attestation.get("trust_signal") not in trust_signal_ids:
+                    add_failure(failures, "TR-REGISTRY-01", "issuer_attestation.trust_signal must be registered in registry/trust_signal_types.json", rel_case, None)
+
+            if "TR-CHAIN-01" in enabled_checks and trust_anchor_list is not None and isinstance(attestation_signature, dict):
+                anchors = trust_anchor_list.get("anchors") if isinstance(trust_anchor_list.get("anchors"), list) else []
+                signer = attestation_signature.get("signer")
+                kid = attestation_signature.get("kid")
+                issuer_id = issuer_attestation.get("issuer_id")
+                matched_anchor = None
+                for anchor in anchors:
+                    if not isinstance(anchor, dict):
+                        continue
+                    if anchor.get("issuer_id") == issuer_id and anchor.get("signer") == signer and anchor.get("kid") == kid:
+                        matched_anchor = anchor
+                        break
+                if matched_anchor is not None and isinstance(matched_anchor.get("public_key_b64url"), str):
+                    trust_chain_valid = verify_ed25519(
+                        matched_anchor.get("public_key_b64url", ""),
+                        str(attestation_signature.get("sig_b64url", "")),
+                        str(attestation_signature.get("object_hash", "")),
+                    )
+
+                att_issued = _parse_iso_datetime(issuer_attestation.get("issued_at"))
+                att_expires = _parse_iso_datetime(issuer_attestation.get("expires_at"))
+                anchor_issued = _parse_iso_datetime(trust_anchor_list.get("issued_at"))
+                anchor_expires = _parse_iso_datetime(trust_anchor_list.get("expires_at"))
+                temporal_valid = (
+                    att_issued is not None
+                    and att_expires is not None
+                    and anchor_issued is not None
+                    and anchor_expires is not None
+                    and att_issued < att_expires
+                    and anchor_issued <= att_issued
+                    and att_expires <= anchor_expires
+                )
+                list_match = issuer_attestation.get("anchor_list_id") == trust_anchor_list.get("anchor_list_id")
+                trust_chain_valid = trust_chain_valid and temporal_valid and list_match and matched_anchor is not None
+
+                if expect_trust_valid and not trust_chain_valid:
+                    add_failure(failures, "TR-CHAIN-01", "expected valid attestation did not resolve under provided trust_anchor_list", rel_case, None)
+                if (not expect_trust_valid) and trust_chain_valid:
+                    add_failure(failures, "TR-CHAIN-01", "case marked expect_trust_valid=false but attestation resolved as trusted", rel_case, None)
+
+        status_query = case_obj.get("status_query") if isinstance(case_obj.get("status_query"), dict) else None
+        status_query_hash = case_obj.get("status_query_hash") if isinstance(case_obj.get("status_query_hash"), str) else None
+        status_assertion = case_obj.get("status_assertion") if isinstance(case_obj.get("status_assertion"), dict) else None
+        status_assertion_hash = case_obj.get("status_assertion_hash") if isinstance(case_obj.get("status_assertion_hash"), str) else None
+        status_signature = case_obj.get("status_signature") if isinstance(case_obj.get("status_signature"), dict) else None
+        observed_at = _parse_iso_datetime(case_obj.get("observed_at"))
+        expect_status_valid = bool(case_obj.get("expect_status_valid"))
+
+        if "SR-QUERY-OBJ-01" in enabled_checks and status_query is not None:
+            try:
+                computed_query_hash = object_hash("status_query", status_query)
+            except Exception as exc:
+                add_failure(failures, "SR-QUERY-OBJ-01", f"status_query hash recompute error: {exc}", rel_case, None)
+            else:
+                if computed_query_hash != status_query_hash:
+                    add_failure(failures, "SR-QUERY-OBJ-01", "status_query_hash must equal object_hash('status_query', status_query)", rel_case, None)
+            if _parse_iso_datetime(status_query.get("status_as_of")) is None:
+                add_failure(failures, "SR-QUERY-OBJ-01", "status_query.status_as_of must be valid date-time", rel_case, None)
+
+        status_valid = False
+        if status_assertion is not None:
+            if "SR-ASSERT-OBJ-01" in enabled_checks:
+                try:
+                    computed_status_hash = object_hash("status_assertion", status_assertion)
+                except Exception as exc:
+                    add_failure(failures, "SR-ASSERT-OBJ-01", f"status_assertion hash recompute error: {exc}", rel_case, None)
+                else:
+                    if computed_status_hash != status_assertion_hash:
+                        add_failure(failures, "SR-ASSERT-OBJ-01", "status_assertion_hash must equal object_hash('status_assertion', status_assertion)", rel_case, None)
+                if not isinstance(status_signature, dict):
+                    add_failure(failures, "SR-ASSERT-OBJ-01", "status_assertion requires status_signature object", rel_case, None)
+                else:
+                    if status_signature.get("object_type") != "status_assertion":
+                        add_failure(failures, "SR-ASSERT-OBJ-01", "status_signature.object_type must be 'status_assertion'", rel_case, None)
+                    if status_signature.get("object_hash") != status_assertion_hash:
+                        add_failure(failures, "SR-ASSERT-OBJ-01", "status_signature.object_hash must equal status_assertion_hash", rel_case, None)
+
+            if "SR-REGISTRY-01" in enabled_checks:
+                if status_assertion.get("status") not in status_codes:
+                    add_failure(failures, "SR-REGISTRY-01", "status_assertion.status must be registered in registry/status_assertion_codes.json", rel_case, None)
+                if status_assertion.get("status") == "REVOKED" and status_assertion.get("revocation_reason") not in revocation_reason_codes:
+                    add_failure(failures, "SR-REGISTRY-01", "REVOKED status_assertion.revocation_reason must be registered in registry/revocation_reason_codes.json", rel_case, None)
+
+            if "SR-CHAIN-01" in enabled_checks and isinstance(status_signature, dict) and trust_anchor_list is not None and status_query is not None:
+                anchors = trust_anchor_list.get("anchors") if isinstance(trust_anchor_list.get("anchors"), list) else []
+                signer = status_signature.get("signer")
+                kid = status_signature.get("kid")
+                issuer_id = status_assertion.get("issuer_id")
+                matched_anchor = None
+                for anchor in anchors:
+                    if not isinstance(anchor, dict):
+                        continue
+                    if anchor.get("issuer_id") == issuer_id and anchor.get("signer") == signer and anchor.get("kid") == kid:
+                        matched_anchor = anchor
+                        break
+
+                sig_ok = False
+                if matched_anchor is not None and isinstance(matched_anchor.get("public_key_b64url"), str):
+                    sig_ok = verify_ed25519(
+                        matched_anchor.get("public_key_b64url", ""),
+                        str(status_signature.get("sig_b64url", "")),
+                        str(status_signature.get("object_hash", "")),
+                    )
+
+                query_as_of = _parse_iso_datetime(status_query.get("status_as_of"))
+                assertion_as_of = _parse_iso_datetime(status_assertion.get("status_as_of"))
+                issued_at = _parse_iso_datetime(status_assertion.get("issued_at"))
+                expires_at = _parse_iso_datetime(status_assertion.get("expires_at"))
+                anchor_issued = _parse_iso_datetime(trust_anchor_list.get("issued_at"))
+                anchor_expires = _parse_iso_datetime(trust_anchor_list.get("expires_at"))
+                max_age = status_assertion.get("max_age_seconds")
+                cache_ok = (
+                    isinstance(max_age, int)
+                    and issued_at is not None
+                    and observed_at is not None
+                    and observed_at <= issued_at + timedelta(seconds=max_age)
+                )
+                binding_ok = (
+                    status_assertion.get("query_id") == status_query.get("query_id")
+                    and status_assertion.get("target_type") == status_query.get("target_type")
+                    and status_assertion.get("target_ref") == status_query.get("target_ref")
+                    and status_assertion.get("anchor_list_id") == trust_anchor_list.get("anchor_list_id")
+                    and query_as_of is not None
+                    and assertion_as_of is not None
+                    and query_as_of == assertion_as_of
+                )
+                temporal_ok = (
+                    issued_at is not None
+                    and expires_at is not None
+                    and anchor_issued is not None
+                    and anchor_expires is not None
+                    and assertion_as_of is not None
+                    and issued_at < expires_at
+                    and anchor_issued <= issued_at
+                    and expires_at <= anchor_expires
+                    and assertion_as_of <= issued_at <= expires_at
+                )
+                status_value = status_assertion.get("status")
+                revoked_at = _parse_iso_datetime(status_assertion.get("revoked_at"))
+                revoked_semantics_ok = True
+                if status_value == "REVOKED":
+                    revoked_semantics_ok = revoked_at is not None and assertion_as_of is not None and revoked_at <= assertion_as_of
+                elif status_value == "GOOD":
+                    revoked_semantics_ok = status_assertion.get("revoked_at") is None
+
+                status_valid = sig_ok and binding_ok and temporal_ok and cache_ok and revoked_semantics_ok and matched_anchor is not None
+
+                if expect_status_valid and not status_valid:
+                    add_failure(failures, "SR-CHAIN-01", "expected valid status assertion did not resolve under provided trust anchors and temporal/cache semantics", rel_case, None)
+                if (not expect_status_valid) and status_valid:
+                    add_failure(failures, "SR-CHAIN-01", "case marked expect_status_valid=false but status assertion resolved as valid", rel_case, None)
+
         case_id = case_obj.get("case_id")
         if isinstance(case_id, str) and case_id:
             seen_cases_by_id[case_id] = case_obj
@@ -707,39 +941,41 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                         add_failure(failures, "TB-EMBEDDED-SIGNATURE-VERIFY-01", "embedded signature verification failed", rel_case, None)
 
     if "TB-HTTP-SESSION-01" in enabled_checks:
-        create_case_id = None
-        created_session_id = None
+        known_sessions: set[str] = set()
         for rel_case, case_obj in loaded_cases:
             if case_obj.get("operation") != "createSession":
                 continue
-            create_case_id = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
             response = case_obj.get("http_response")
             body = response.get("body") if isinstance(response, dict) and isinstance(response.get("body"), dict) else {}
-            created_session_id = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
-            if created_session_id is None and isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id"):
-                created_session_id = case_obj.get("session_id")
-            break
-        if create_case_id and created_session_id:
-            mismatches: list[str] = []
-            for rel_case, case_obj in loaded_cases:
-                if case_obj.get("operation") == "createSession":
-                    continue
-                cid = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
-                request = case_obj.get("http_request")
-                path = request.get("path") if isinstance(request, dict) and isinstance(request.get("path"), str) else ""
-                body = request.get("body") if isinstance(request, dict) and isinstance(request.get("body"), dict) else {}
-                top_session = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) else None
-                body_session = body.get("session_id") if isinstance(body.get("session_id"), str) else None
-                if "/sessions/" in path and "/" in path.split('/sessions/', 1)[1]:
-                    path_sid = path.split('/sessions/', 1)[1].split('/', 1)[0]
-                    if path_sid != created_session_id:
-                        mismatches.append(f"{cid} path session_id '{path_sid}' != '{created_session_id}'")
-                if top_session is not None and top_session != created_session_id:
-                    mismatches.append(f"{cid} top-level session_id '{top_session}' != '{created_session_id}'")
-                if body_session is not None and body_session != created_session_id:
-                    mismatches.append(f"{cid} body.session_id '{body_session}' != '{created_session_id}'")
-            if mismatches:
-                add_failure(failures, "TB-HTTP-SESSION-01", f"session_id mismatch against createSession {create_case_id}: {mismatches}", "conformance/bindings/TB_HTTP_WS_0.1.json", None)
+            response_sid = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
+            if response_sid:
+                known_sessions.add(response_sid)
+            top_sid = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id") else None
+            if top_sid:
+                known_sessions.add(top_sid)
+
+        mismatches: list[str] = []
+        for rel_case, case_obj in loaded_cases:
+            if case_obj.get("operation") == "createSession":
+                continue
+            cid = case_obj.get("case_id") if isinstance(case_obj.get("case_id"), str) else rel_case
+            request = case_obj.get("http_request")
+            path = request.get("path") if isinstance(request, dict) and isinstance(request.get("path"), str) else ""
+            body = request.get("body") if isinstance(request, dict) and isinstance(request.get("body"), dict) else {}
+            top_session = case_obj.get("session_id") if isinstance(case_obj.get("session_id"), str) and case_obj.get("session_id") else None
+            body_session = body.get("session_id") if isinstance(body.get("session_id"), str) and body.get("session_id") else None
+            path_session = _session_id_from_path(path)
+
+            case_sessions = [sid for sid in [path_session, top_session, body_session] if isinstance(sid, str) and sid]
+            unique_sessions = sorted(set(case_sessions))
+            if len(unique_sessions) > 1:
+                mismatches.append(f"{cid} inconsistent session scope across path/body/top-level: {unique_sessions}")
+                continue
+            if unique_sessions and known_sessions and unique_sessions[0] not in known_sessions:
+                mismatches.append(f"{cid} session_id '{unique_sessions[0]}' was not created by createSession evidence")
+
+        if mismatches:
+            add_failure(failures, "TB-HTTP-SESSION-01", f"session-scope mismatches: {mismatches}", "conformance/bindings/TB_HTTP_WS_0.1.json", None)
 
     protocol_version = suite["aicp_version"]
     passed = not failures

@@ -1,0 +1,58 @@
+{
+  "case_id": "SC-02",
+  "trust_anchor_list": {
+    "anchor_list_id": "tal-status-1",
+    "version": "2026-03-08",
+    "issued_at": "2026-03-08T00:00:00Z",
+    "expires_at": "2027-03-08T00:00:00Z",
+    "anchors": [
+      {
+        "issuer_id": "issuer:status-authority",
+        "signer": "agent:S",
+        "kid": "S1",
+        "public_key_b64url": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ"
+      }
+    ]
+  },
+  "trust_anchor_list_hash": "sha256:mz5M4k2K3S6LEcqqQWdqn2UMNBAeBE0TAS_E9bY3we8",
+  "status_query": {
+    "query_id": "sq-001",
+    "target_type": "issuer_attestation",
+    "target_ref": {
+      "object_type": "issuer_attestation",
+      "object_id": "att-devco-provider-001",
+      "object_hash": "sha256:target-attestation-hash-001"
+    },
+    "status_as_of": "2026-03-08T02:00:00Z"
+  },
+  "status_query_hash": "sha256:i4A_sAqN700TZLdybZ4MddsZC_IS13TFAzDUNVBhp14",
+  "status_assertion": {
+    "status_id": "sa-002",
+    "query_id": "sq-001",
+    "target_type": "issuer_attestation",
+    "target_ref": {
+      "object_type": "issuer_attestation",
+      "object_id": "att-devco-provider-001",
+      "object_hash": "sha256:target-attestation-hash-001"
+    },
+    "status": "REVOKED",
+    "status_as_of": "2026-03-08T02:00:00Z",
+    "issued_at": "2026-03-08T02:00:05Z",
+    "expires_at": "2026-03-08T03:00:05Z",
+    "issuer_id": "issuer:status-authority",
+    "anchor_list_id": "tal-status-1",
+    "max_age_seconds": 600,
+    "revoked_at": "2026-03-08T01:45:00Z",
+    "revocation_reason": "KEY_COMPROMISE"
+  },
+  "status_assertion_hash": "sha256:-6kXvLc2R9qKtRsX57fjBNIaVk31XA2AlK7fXwkUM_U",
+  "status_signature": {
+    "signer": "agent:S",
+    "kid": "S1",
+    "object_type": "status_assertion",
+    "object_hash": "sha256:-6kXvLc2R9qKtRsX57fjBNIaVk31XA2AlK7fXwkUM_U",
+    "sig_b64url": "es4_KKn3-2pzz7XoP7TWjt2Z0ztC0dv2aUPl3RTCTuCL0G0TmuNdnL75t1-2YeQBNe3rgdTMozf-7xT_dF5mBQ"
+  },
+  "observed_at": "2026-03-08T02:05:00Z",
+  "expect_status_valid": true
+}
