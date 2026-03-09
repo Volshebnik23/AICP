@@ -1,0 +1,20 @@
+[
+  {
+    "id": "KEY_COMPROMISE",
+    "type": "revocation_reason_codes",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#3-status_assertion-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Compromised key revocations should trigger immediate deny decisions."
+  },
+  {
+    "id": "SUPERSEDED",
+    "type": "revocation_reason_codes",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#3-status_assertion-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Superseded status should be accompanied by replacement key/object guidance where available."
+  }
+]

@@ -20,20 +20,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 # Backlog epics and milestones
 
 
-## M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
-**Problem:** Delegated identity & key revoke exist, but no “real-time status” mechanism.
-
-**Deliverables**
-1) **RFC + extension** for status responses:
-   - status request/response messages or object format
-   - cache lifetimes, staleness, replay protections at protocol level (transport-binding may complement).
-2) **Conformance**:
-   - validate status object hashing/signing and “revoked as-of” semantics.
-
-**Acceptance**
-- An agent can machine-check “binding/key is revoked as of now” with verifiable artifacts.
-
----
 
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 **Problem:** Enforcement assumes content-visible moderation; enterprise needs privacy modes.

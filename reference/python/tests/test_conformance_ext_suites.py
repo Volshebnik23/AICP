@@ -31,6 +31,7 @@ def test_extension_conformance_suites_pass() -> None:
         ("conformance/extensions/AL_ALERTS_0.1.json", "conformance/report_ext_alerts_test.json"),
         ("conformance/extensions/RS_RESUME_0.1.json", "conformance/report_ext_resume_test.json"),
         ("conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json", "conformance/report_ext_trust_attestations_test.json"),
+        ("conformance/extensions/SC_STATUS_CHANNEL_0.1.json", "conformance/report_ext_status_channel_test.json"),
     ]
     for suite, report in suites:
         assert _run_suite(suite, report) == 0, f"suite failed: {suite}"

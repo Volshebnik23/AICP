@@ -1,0 +1,29 @@
+[
+  {
+    "id": "GOOD",
+    "type": "status_assertion_codes",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#3-status_assertion-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "GOOD status assertions require verified trust-chain and bounded cache freshness."
+  },
+  {
+    "id": "REVOKED",
+    "type": "status_assertion_codes",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#3-status_assertion-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "REVOKED assertions must include deterministic revoked_at semantics."
+  },
+  {
+    "id": "UNKNOWN",
+    "type": "status_assertion_codes",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#3-status_assertion-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "UNKNOWN responses should be treated conservatively by policy evaluators."
+  }
+]

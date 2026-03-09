@@ -1,0 +1,56 @@
+{
+  "case_id": "SC-01",
+  "trust_anchor_list": {
+    "anchor_list_id": "tal-status-1",
+    "version": "2026-03-08",
+    "issued_at": "2026-03-08T00:00:00Z",
+    "expires_at": "2027-03-08T00:00:00Z",
+    "anchors": [
+      {
+        "issuer_id": "issuer:status-authority",
+        "signer": "agent:S",
+        "kid": "S1",
+        "public_key_b64url": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ"
+      }
+    ]
+  },
+  "trust_anchor_list_hash": "sha256:mz5M4k2K3S6LEcqqQWdqn2UMNBAeBE0TAS_E9bY3we8",
+  "status_query": {
+    "query_id": "sq-001",
+    "target_type": "issuer_attestation",
+    "target_ref": {
+      "object_type": "issuer_attestation",
+      "object_id": "att-devco-provider-001",
+      "object_hash": "sha256:target-attestation-hash-001"
+    },
+    "status_as_of": "2026-03-08T02:00:00Z"
+  },
+  "status_query_hash": "sha256:i4A_sAqN700TZLdybZ4MddsZC_IS13TFAzDUNVBhp14",
+  "status_assertion": {
+    "status_id": "sa-001",
+    "query_id": "sq-001",
+    "target_type": "issuer_attestation",
+    "target_ref": {
+      "object_type": "issuer_attestation",
+      "object_id": "att-devco-provider-001",
+      "object_hash": "sha256:target-attestation-hash-001"
+    },
+    "status": "GOOD",
+    "status_as_of": "2026-03-08T02:00:00Z",
+    "issued_at": "2026-03-08T02:00:05Z",
+    "expires_at": "2026-03-08T03:00:05Z",
+    "issuer_id": "issuer:status-authority",
+    "anchor_list_id": "tal-status-1",
+    "max_age_seconds": 600
+  },
+  "status_assertion_hash": "sha256:lMOu7YcMM1-eWzkH_y7zMpQXmGjscDsiFoy9r_m0o8s",
+  "status_signature": {
+    "signer": "agent:S",
+    "kid": "S1",
+    "object_type": "status_assertion",
+    "object_hash": "sha256:lMOu7YcMM1-eWzkH_y7zMpQXmGjscDsiFoy9r_m0o8s",
+    "sig_b64url": "jzYDIyo_Dzde-autcjcXHG8AA3miNr0YSm4ZfMAT7o9TNAQRy7kA3TXTRAO1sGfdqyXR4xrBLrz6oQrBj_RkAQ"
+  },
+  "observed_at": "2026-03-08T02:05:00Z",
+  "expect_status_valid": true
+}

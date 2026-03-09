@@ -235,5 +235,14 @@
     "type": "extension_ids",
     "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#1-scope-normative",
     "security_considerations": "Trust decisions must verify object hashes, signature bindings, and anchor linkage before consuming attestation claims."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-STATUS-CHANNEL",
+    "type": "extension_ids",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#1-scope-normative",
+    "security_considerations": "Status assertions must be validated for trust linkage, signature integrity, and staleness before use."
   }
 ]

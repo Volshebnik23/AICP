@@ -29,6 +29,7 @@ REMOVED_DELIVERED_MILESTONE_HEADERS = [
     "## M18",
     "## M19",
     "## M20",
+    "## M21",
     "## M22",
 ]
 

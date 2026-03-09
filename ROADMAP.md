@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-08_
+_Last updated: 2026-03-09_
 
 ## Current / Next
 
@@ -37,7 +37,7 @@ _Last updated: 2026-03-08_
 - **Shipped:** multi-session interoperability is now conformance-backed with secondary-session create/send/replay coverage (`TB-HTTP-19`/`20`/`21`) and session-scope coherence checks across path/body/top-level references.
 - **Shipped:** reconnect/churn coverage now includes multi-step SSE reconnect evidence (`TB-HTTP-22` chaining from `TB-HTTP-17`) with deterministic cursor continuity checks.
 - **Shipped:** HTTP/WS binding RFC guidance now maps replay/idempotency/session-scope/reconnect behavior directly to shipped conformance cases.
-- **Next concrete step:** begin M21 (Revocation/status channel) to add revocation freshness on top of shipped M20 trust baseline.
+- **Next concrete step:** begin M30 (Tool/Resource/Prompt supply-chain security) after shipping trust + status baseline.
 
 ### ✅ M20 — Trust anchors & issuer attestations (completed)
 - **Shipped:** normative M20 RFC defines canonical `trust_anchor_list` and `issuer_attestation` objects with baseline verification model and explicit M21 deferrals.
@@ -45,14 +45,19 @@ _Last updated: 2026-03-08_
 - **Shipped:** M20 schemas + deterministic fixtures + conformance suite (`TA-TRUST-ATTESTATIONS-0.1`) verify hash integrity, registry linkage, signature binding, and trust-chain resolution including untrusted-signer negative case.
 - **Next concrete step:** begin M21 (Revocation/status channel) to layer revocation/status freshness onto this baseline trust model.
 
+
+### ✅ M21 — Revocation/status channel (completed)
+- **Shipped:** normative M21 RFC defines canonical `status_query` and `status_assertion` objects with baseline status-as-of/cache semantics and revocation-as-of checks.
+- **Shipped:** minimal status and revocation-reason registries are in-repo and validator-enforced (`registry/status_assertion_codes.json`, `registry/revocation_reason_codes.json`).
+- **Shipped:** M21 schema + deterministic fixtures + conformance suite (`SC-STATUS-CHANNEL-0.1`) verify hash integrity, registry linkage, trust-chain signature checks, target binding consistency, and temporal/cache validity for GOOD/REVOKED assertions.
+- **Next concrete step:** begin M30 (Tool/Resource/Prompt supply-chain security).
+
 ## Planned milestones (protocol maturity & ecosystem scale)
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
 
 
-### ⏳ M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
-- **Exit:** Status request/response or status object format + cache/staleness rules + conformance.
 
 ### ⏳ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
 - **Exit:** Signed manifests + contract pinning + tool-gating integration + conformance.

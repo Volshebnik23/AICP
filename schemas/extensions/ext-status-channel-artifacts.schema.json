@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-status-channel-artifacts.schema.json",
+  "title": "M21 status/revocation conformance artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "trust_anchor_list",
+    "trust_anchor_list_hash",
+    "status_query",
+    "status_query_hash",
+    "status_assertion",
+    "status_assertion_hash",
+    "status_signature",
+    "observed_at",
+    "expect_status_valid"
+  ],
+  "$defs": {
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signer", "kid", "object_type", "object_hash", "sig_b64url"],
+      "properties": {
+        "signer": {"type": "string", "minLength": 1},
+        "kid": {"type": "string", "minLength": 1},
+        "object_type": {"type": "string", "minLength": 1},
+        "object_hash": {"type": "string", "minLength": 1},
+        "sig_b64url": {"type": "string", "minLength": 1}
+      }
+    },
+    "trust_anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer_id", "signer", "kid", "public_key_b64url"],
+      "properties": {
+        "issuer_id": {"type": "string", "minLength": 1},
+        "signer": {"type": "string", "minLength": 1},
+        "kid": {"type": "string", "minLength": 1},
+        "public_key_b64url": {"type": "string", "minLength": 1}
+      }
+    },
+    "trust_anchor_list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["anchor_list_id", "version", "issued_at", "expires_at", "anchors"],
+      "properties": {
+        "anchor_list_id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "anchors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/trust_anchor"}}
+      }
+    },
+    "target_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "object_hash"],
+      "properties": {
+        "object_type": {"type": "string", "minLength": 1},
+        "object_id": {"type": "string", "minLength": 1},
+        "object_hash": {"type": "string", "minLength": 1}
+      }
+    },
+    "status_query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["query_id", "target_type", "target_ref", "status_as_of"],
+      "properties": {
+        "query_id": {"type": "string", "minLength": 1},
+        "target_type": {"type": "string", "minLength": 1},
+        "target_ref": {"$ref": "#/$defs/target_ref"},
+        "status_as_of": {"type": "string", "format": "date-time"}
+      }
+    },
+    "status_assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status_id", "query_id", "target_type", "target_ref", "status", "status_as_of", "issued_at", "expires_at", "issuer_id", "anchor_list_id", "max_age_seconds"],
+      "properties": {
+        "status_id": {"type": "string", "minLength": 1},
+        "query_id": {"type": "string", "minLength": 1},
+        "target_type": {"type": "string", "minLength": 1},
+        "target_ref": {"$ref": "#/$defs/target_ref"},
+        "status": {"type": "string", "minLength": 1},
+        "status_as_of": {"type": "string", "format": "date-time"},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "anchor_list_id": {"type": "string", "minLength": 1},
+        "max_age_seconds": {"type": "integer", "minimum": 0},
+        "revoked_at": {"type": "string", "format": "date-time"},
+        "revocation_reason": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^SC-\\d{2}$"},
+    "trust_anchor_list": {"$ref": "#/$defs/trust_anchor_list"},
+    "trust_anchor_list_hash": {"type": "string", "minLength": 1},
+    "status_query": {"$ref": "#/$defs/status_query"},
+    "status_query_hash": {"type": "string", "minLength": 1},
+    "status_assertion": {"$ref": "#/$defs/status_assertion"},
+    "status_assertion_hash": {"type": "string", "minLength": 1},
+    "status_signature": {"$ref": "#/$defs/signature"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "expect_status_valid": {"type": "boolean"}
+  }
+}

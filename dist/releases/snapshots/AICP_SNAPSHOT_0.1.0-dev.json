@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ed99ccdcb08d31302594844866ed8217c4d67e8b267b4d45d234f53ddc6c1010",
+      "combined_sha256": "2048ad38baaa062a31f4b5bfe3634b60b08b06643ed87e27ea82fe582d70f437",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -124,6 +124,10 @@
           "sha256": "6cc0855b213d6c58de83aacbea90843815677fc78a037140b83c9db0d49c49ac"
         },
         {
+          "path": "conformance/extensions/SC_STATUS_CHANNEL_0.1.json",
+          "sha256": "57c969327d264d3995f3e055a88c2dcb75ab45cdd3ef30f739542e710f9e32aa"
+        },
+        {
           "path": "conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json",
           "sha256": "cced181debcf741faf6914f1a41139cdcf5b7df27ed384b84092363b6cc9e55e"
         },
@@ -186,7 +190,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "1ab326566a3c357a67c37a6d500fdb3deaea9ad926b371b335c6dcdb2a3745ba",
+      "combined_sha256": "27e4f1d5f59d43c9d77c280317bec4311cec0e118bc96305bea7cd6873d8f763",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -601,6 +605,18 @@
           "sha256": "adb9673ea74dd34c98cb044869f4972b810d8d035d2c8a7b48cd91669f1374b8"
         },
         {
+          "path": "fixtures/extensions/status_channel/SC-01_status_good_valid.json",
+          "sha256": "184bbdcbbfe63782c0a893f815171657ce43491bfb85f270a856b035d30863b0"
+        },
+        {
+          "path": "fixtures/extensions/status_channel/SC-02_status_revoked_valid.json",
+          "sha256": "595ac0dae9d29575211289263c1118453767b5f98782bc5c13d7492bd511de1f"
+        },
+        {
+          "path": "fixtures/extensions/status_channel/SC-03_status_untrusted_signer_expected_fail.json",
+          "sha256": "00f3e05e10b473736ef4d445cdfdecfb10afb1ecce55aeb9d9857c1e54a4f161"
+        },
+        {
           "path": "fixtures/extensions/subscriptions/SB-01_subscription_pass.jsonl",
           "sha256": "b448423972f3c48ddcd3904906f7d4a4f987d08bdb63d295aef246b4afc4b040"
         },
@@ -727,7 +743,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "b52ad8dcb0d73ccb62ec1b1ddb01b7e10a0aeb1ed1f558de72ee888bd13e42a7",
+      "combined_sha256": "9a56bc445d49aa3919b4535cefb3b2753abb7cd0a2f61d85e349c0f44f228b12",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -771,7 +787,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "6426f4635f9dd756ad1c264a5595e6a5b73777c77361cb37299474bd41cf9caf"
+          "sha256": "55c9544f0d4cb4dfa507c2231ec6f5eb712f540aa8839e564e69eeeaca565a24"
         },
         {
           "path": "registry/hash_domains.json",
@@ -802,8 +818,16 @@
           "sha256": "87a7a9c16ad9c0cde5d30f94495ddca449218f1bf791b3512f69196a5ee5fa31"
         },
         {
+          "path": "registry/revocation_reason_codes.json",
+          "sha256": "4d31eddd068e4252398743f3971d203950e2a0851ba650074edabb8154b2fdf5"
+        },
+        {
           "path": "registry/security_alert_categories.json",
           "sha256": "2c12dd54eea9c851003313617a7504b517a97617c0b8a52ad4365ca112ec76b3"
+        },
+        {
+          "path": "registry/status_assertion_codes.json",
+          "sha256": "ff513a1dfac6b6081a13a72a9b21f5b5e8b22d249302833c5099049128168a86"
         },
         {
           "path": "registry/transport_bindings.json",
@@ -816,7 +840,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "be0da47dc4e00f16d90c9210115242a5169c17bbe66b0f47dfbeda0782745998",
+      "combined_sha256": "20220cd5a84a399b65202c9f0a6cdefa4d4521b6e19c3c7c5d0c1033180d7f09",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -933,6 +957,10 @@
         {
           "path": "schemas/extensions/ext-security-alerts-payloads.schema.json",
           "sha256": "3a4f7c3be03e7376ee2a00f01384f3349919bc3d62039f080afbcba93e60ca46"
+        },
+        {
+          "path": "schemas/extensions/ext-status-channel-artifacts.schema.json",
+          "sha256": "03048d0019eb5bb3db855310d5df074d3de0dc9099185d16abc962b9d13b676a"
         },
         {
           "path": "schemas/extensions/ext-subscriptions-payloads.schema.json",
@@ -1108,6 +1136,10 @@
       {
         "mark": "AICP-EXT-SUBSCRIPTIONS-0.1",
         "path": "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-STATUS-CHANNEL-0.1",
+        "path": "conformance/extensions/SC_STATUS_CHANNEL_0.1.json"
       },
       {
         "mark": "AICP-EXT-TRUST-ATTESTATIONS-0.1",

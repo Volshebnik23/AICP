@@ -5,7 +5,7 @@ import argparse
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -280,12 +280,21 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
 
     trust_signal_ids: set[str] = set()
     attestation_type_ids: set[str] = set()
+    status_codes: set[str] = set()
+    revocation_reason_codes: set[str] = set()
     if any(check in enabled_checks for check in {"TR-REGISTRY-01", "TR-CHAIN-01"}):
         trust_signal_ids = {
             e.get("id") for e in load_json(ROOT / "registry/trust_signal_types.json") if isinstance(e, dict)
         }
         attestation_type_ids = {
             e.get("id") for e in load_json(ROOT / "registry/attestation_types.json") if isinstance(e, dict)
+        }
+    if any(check in enabled_checks for check in {"SR-REGISTRY-01", "SR-CHAIN-01"}):
+        status_codes = {
+            e.get("id") for e in load_json(ROOT / "registry/status_assertion_codes.json") if isinstance(e, dict)
+        }
+        revocation_reason_codes = {
+            e.get("id") for e in load_json(ROOT / "registry/revocation_reason_codes.json") if isinstance(e, dict)
         }
 
     def _session_id_from_path(path: str) -> str | None:
@@ -778,6 +787,118 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                     add_failure(failures, "TR-CHAIN-01", "expected valid attestation did not resolve under provided trust_anchor_list", rel_case, None)
                 if (not expect_trust_valid) and trust_chain_valid:
                     add_failure(failures, "TR-CHAIN-01", "case marked expect_trust_valid=false but attestation resolved as trusted", rel_case, None)
+
+        status_query = case_obj.get("status_query") if isinstance(case_obj.get("status_query"), dict) else None
+        status_query_hash = case_obj.get("status_query_hash") if isinstance(case_obj.get("status_query_hash"), str) else None
+        status_assertion = case_obj.get("status_assertion") if isinstance(case_obj.get("status_assertion"), dict) else None
+        status_assertion_hash = case_obj.get("status_assertion_hash") if isinstance(case_obj.get("status_assertion_hash"), str) else None
+        status_signature = case_obj.get("status_signature") if isinstance(case_obj.get("status_signature"), dict) else None
+        observed_at = _parse_iso_datetime(case_obj.get("observed_at"))
+        expect_status_valid = bool(case_obj.get("expect_status_valid"))
+
+        if "SR-QUERY-OBJ-01" in enabled_checks and status_query is not None:
+            try:
+                computed_query_hash = object_hash("status_query", status_query)
+            except Exception as exc:
+                add_failure(failures, "SR-QUERY-OBJ-01", f"status_query hash recompute error: {exc}", rel_case, None)
+            else:
+                if computed_query_hash != status_query_hash:
+                    add_failure(failures, "SR-QUERY-OBJ-01", "status_query_hash must equal object_hash('status_query', status_query)", rel_case, None)
+            if _parse_iso_datetime(status_query.get("status_as_of")) is None:
+                add_failure(failures, "SR-QUERY-OBJ-01", "status_query.status_as_of must be valid date-time", rel_case, None)
+
+        status_valid = False
+        if status_assertion is not None:
+            if "SR-ASSERT-OBJ-01" in enabled_checks:
+                try:
+                    computed_status_hash = object_hash("status_assertion", status_assertion)
+                except Exception as exc:
+                    add_failure(failures, "SR-ASSERT-OBJ-01", f"status_assertion hash recompute error: {exc}", rel_case, None)
+                else:
+                    if computed_status_hash != status_assertion_hash:
+                        add_failure(failures, "SR-ASSERT-OBJ-01", "status_assertion_hash must equal object_hash('status_assertion', status_assertion)", rel_case, None)
+                if not isinstance(status_signature, dict):
+                    add_failure(failures, "SR-ASSERT-OBJ-01", "status_assertion requires status_signature object", rel_case, None)
+                else:
+                    if status_signature.get("object_type") != "status_assertion":
+                        add_failure(failures, "SR-ASSERT-OBJ-01", "status_signature.object_type must be 'status_assertion'", rel_case, None)
+                    if status_signature.get("object_hash") != status_assertion_hash:
+                        add_failure(failures, "SR-ASSERT-OBJ-01", "status_signature.object_hash must equal status_assertion_hash", rel_case, None)
+
+            if "SR-REGISTRY-01" in enabled_checks:
+                if status_assertion.get("status") not in status_codes:
+                    add_failure(failures, "SR-REGISTRY-01", "status_assertion.status must be registered in registry/status_assertion_codes.json", rel_case, None)
+                if status_assertion.get("status") == "REVOKED" and status_assertion.get("revocation_reason") not in revocation_reason_codes:
+                    add_failure(failures, "SR-REGISTRY-01", "REVOKED status_assertion.revocation_reason must be registered in registry/revocation_reason_codes.json", rel_case, None)
+
+            if "SR-CHAIN-01" in enabled_checks and isinstance(status_signature, dict) and trust_anchor_list is not None and status_query is not None:
+                anchors = trust_anchor_list.get("anchors") if isinstance(trust_anchor_list.get("anchors"), list) else []
+                signer = status_signature.get("signer")
+                kid = status_signature.get("kid")
+                issuer_id = status_assertion.get("issuer_id")
+                matched_anchor = None
+                for anchor in anchors:
+                    if not isinstance(anchor, dict):
+                        continue
+                    if anchor.get("issuer_id") == issuer_id and anchor.get("signer") == signer and anchor.get("kid") == kid:
+                        matched_anchor = anchor
+                        break
+
+                sig_ok = False
+                if matched_anchor is not None and isinstance(matched_anchor.get("public_key_b64url"), str):
+                    sig_ok = verify_ed25519(
+                        matched_anchor.get("public_key_b64url", ""),
+                        str(status_signature.get("sig_b64url", "")),
+                        str(status_signature.get("object_hash", "")),
+                    )
+
+                query_as_of = _parse_iso_datetime(status_query.get("status_as_of"))
+                assertion_as_of = _parse_iso_datetime(status_assertion.get("status_as_of"))
+                issued_at = _parse_iso_datetime(status_assertion.get("issued_at"))
+                expires_at = _parse_iso_datetime(status_assertion.get("expires_at"))
+                anchor_issued = _parse_iso_datetime(trust_anchor_list.get("issued_at"))
+                anchor_expires = _parse_iso_datetime(trust_anchor_list.get("expires_at"))
+                max_age = status_assertion.get("max_age_seconds")
+                cache_ok = (
+                    isinstance(max_age, int)
+                    and issued_at is not None
+                    and observed_at is not None
+                    and observed_at <= issued_at + timedelta(seconds=max_age)
+                )
+                binding_ok = (
+                    status_assertion.get("query_id") == status_query.get("query_id")
+                    and status_assertion.get("target_type") == status_query.get("target_type")
+                    and status_assertion.get("target_ref") == status_query.get("target_ref")
+                    and status_assertion.get("anchor_list_id") == trust_anchor_list.get("anchor_list_id")
+                    and query_as_of is not None
+                    and assertion_as_of is not None
+                    and query_as_of == assertion_as_of
+                )
+                temporal_ok = (
+                    issued_at is not None
+                    and expires_at is not None
+                    and anchor_issued is not None
+                    and anchor_expires is not None
+                    and assertion_as_of is not None
+                    and issued_at < expires_at
+                    and anchor_issued <= issued_at
+                    and expires_at <= anchor_expires
+                    and assertion_as_of <= issued_at <= expires_at
+                )
+                status_value = status_assertion.get("status")
+                revoked_at = _parse_iso_datetime(status_assertion.get("revoked_at"))
+                revoked_semantics_ok = True
+                if status_value == "REVOKED":
+                    revoked_semantics_ok = revoked_at is not None and assertion_as_of is not None and revoked_at <= assertion_as_of
+                elif status_value == "GOOD":
+                    revoked_semantics_ok = status_assertion.get("revoked_at") is None
+
+                status_valid = sig_ok and binding_ok and temporal_ok and cache_ok and revoked_semantics_ok and matched_anchor is not None
+
+                if expect_status_valid and not status_valid:
+                    add_failure(failures, "SR-CHAIN-01", "expected valid status assertion did not resolve under provided trust anchors and temporal/cache semantics", rel_case, None)
+                if (not expect_status_valid) and status_valid:
+                    add_failure(failures, "SR-CHAIN-01", "case marked expect_status_valid=false but status assertion resolved as valid", rel_case, None)
 
         case_id = case_obj.get("case_id")
         if isinstance(case_id, str) and case_id:
