@@ -13,61 +13,14 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 - Implementer tooling/quickstarts (adapter skeletons, CI templates)
 - Snapshot + release discipline
 
-## Planning context from current repo state
-- Core/conformance foundations and delivered milestones are tracked in `ROADMAP.md` as shipped/current/next status.
-- This backlog captures only remaining protocol deliverables to plan and execute.
+> Planning context: shipped milestone history lives in `ROADMAP.md`; this backlog tracks only remaining protocol deliverables.
 
 ---
 
 # Backlog epics and milestones
 
-## M20 — Trust anchors & attestations (internet-scale trust signals)
-**Problem:** Identity lifecycle exists, but no standardized “trust network”: trust anchors, issuer attestation formats, trust signals.
 
-**Deliverables**
-1) **RFC: Trust Anchors & Issuer Attestations**
-   - define “trust anchor list” artifact format (hashable object)
-   - define “issuer attestation” object (agent belongs to provider X; profile compliance Y; etc.)
-2) **Registries**
-   - trust signal types registry (minimal interoperable signals)
-   - attestation types registry
-3) **Schemas + fixtures + conformance**
-   - validate attestation object hashing, signature requirements, and attachment to transcripts.
 
-**Acceptance**
-- Implementer can verify: “this issuer is trusted under anchor set A” without platform-specific magic.
-
----
-
-## M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
-**Problem:** Delegated identity & key revoke exist, but no “real-time status” mechanism.
-
-**Deliverables**
-1) **RFC + extension** for status responses:
-   - status request/response messages or object format
-   - cache lifetimes, staleness, replay protections at protocol level (transport-binding may complement).
-2) **Conformance**:
-   - validate status object hashing/signing and “revoked as-of” semantics.
-
-**Acceptance**
-- An agent can machine-check “binding/key is revoked as of now” with verifiable artifacts.
-
----
-
-## M22 — Transport bindings and channel properties (HTTP/WS + anti-replay + quotas + streaming)
-**Remaining gap:** harden and prove interoperability for already-shipped transport/binding foundations across replay-window, reconnect, and mixed-transport operational stress cases.
-
-**Remaining deliverables**
-1) **Hardening:** extend replay-window and multi-session anti-replay collision checks with deterministic fixtures and conformance assertions.
-2) **Coverage:** expand reconnect/churn/ordering edge-case coverage for streaming and recovery behavior under stress.
-3) **Examples/docs:** refresh minimal HTTP/WS binding examples and operational guidance to match conformance-backed behavior.
-
-**Acceptance**
-- New M22 edge suites pass deterministically in-repo.
-- Independent implementations can pass binding suites without bespoke replay/reconnect handling.
-- Binding examples/docs stay aligned with shipped and newly hardened conformance evidence.
-
----
 ## M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 **Problem:** Enforcement assumes content-visible moderation; enterprise needs privacy modes.
 

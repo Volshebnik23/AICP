@@ -30,6 +30,10 @@ REQUIRED_FILES = [
     "aicp_profiles.json",
     "capneg_reason_codes.json",
     "channel_properties.json",
+    "trust_signal_types.json",
+    "attestation_types.json",
+    "status_assertion_codes.json",
+    "revocation_reason_codes.json",
 ]
 
 REQUIRED_FIELDS = {

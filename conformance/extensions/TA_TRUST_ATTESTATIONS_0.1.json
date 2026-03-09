@@ -1,0 +1,31 @@
+{
+  "suite_id": "TA-TRUST-ATTESTATIONS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "M20 baseline conformance for trust anchor lists and issuer attestations.",
+  "schema_ref": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
+  "cases": [
+    "fixtures/extensions/trust_attestations/TA-01_trust_anchor_list_valid.json",
+    "fixtures/extensions/trust_attestations/TA-02_issuer_attestation_valid.json",
+    "fixtures/extensions/trust_attestations/TA-03_issuer_attestation_untrusted_signer.json"
+  ],
+  "checks": [
+    {
+      "test_id": "TR-ANCHOR-OBJ-01",
+      "description": "trust_anchor_list_hash must equal object_hash('trust_anchor_list', trust_anchor_list) and timestamps must be valid"
+    },
+    {
+      "test_id": "TR-ATTEST-OBJ-01",
+      "description": "issuer_attestation_hash/signature object bindings must be valid"
+    },
+    {
+      "test_id": "TR-REGISTRY-01",
+      "description": "issuer_attestation attestation_type and trust_signal must be registered"
+    },
+    {
+      "test_id": "TR-CHAIN-01",
+      "description": "attestation trust resolution must follow anchor list signer/kid + issuer linkage + validity windows"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-TRUST-ATTESTATIONS-0.1"
+}
