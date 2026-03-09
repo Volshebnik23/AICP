@@ -137,30 +137,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 **Acceptance**
 - “AICP in the real enterprise stack” becomes an adoptable recipe, not research.
-## M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
-**Problem:** In MCP-style ecosystems, tools and their metadata can change (“rug pull”), and tool namespaces can collide (“shadowing”). AICP has TOOL_GATING, but lacks a protocol-level way to make tool catalogs **immutable, attributable, and pinned** to a chat contract.
-
-**Deliverables**
-1) **EXT-ARTIFACT-MANIFESTS (or EXT-TOOL-MANIFEST)** (normative):
-   - Signed manifest objects for **Tools**, **Resources**, and **Prompts**:
-     - `id`, `issuer`, `version`, `schema`, `description`, `risk_class`, `content_hash`
-   - Namespacing rules: `issuer_scoped_id` to prevent collisions/shadowing.
-2) **Contract pinning**
-   - Contract fields to pin:
-     - manifest set digest(s)
-     - allowed tool/resource/prompt ids + versions
-   - Any change requires explicit `CONTEXT_AMEND` / renegotiation.
-3) **Tool gating integration**
-   - TOOL_CALL_REQUEST MUST reference a pinned manifest id/version/digest.
-   - Conformance: expected-fail if tool call refers to unpinned or changed manifest.
-4) **Golden fixtures + conformance**
-   - Rug-pull attempt (manifest changed mid-session) → expected-fail
-   - Shadowing attempt (same tool_id different issuer) → expected-fail
-   - Valid upgrade via renegotiation → expected-pass
-
-**Acceptance**
-- A platform can enforce “no silent tool changes” with protocol evidence.
-- Two vendors interpret the same pinned toolset deterministically.
 
 ---
 

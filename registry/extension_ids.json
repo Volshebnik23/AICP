@@ -244,5 +244,14 @@
     "type": "extension_ids",
     "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#1-scope-normative",
     "security_considerations": "Status assertions must be validated for trust linkage, signature integrity, and staleness before use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-ARTIFACT-MANIFESTS-PINNING",
+    "type": "extension_ids",
+    "spec_ref": "docs/rfc/RFC_Artifact_Manifests_and_Pinning.md",
+    "security_considerations": "Manifest hash pinning, issuer-scoped identity, and explicit renegotiation reduce rug-pull and namespace-shadowing risk for tool/resource/prompt integrations."
   }
 ]

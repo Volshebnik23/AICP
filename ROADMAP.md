@@ -37,7 +37,7 @@ _Last updated: 2026-03-09_
 - **Shipped:** multi-session interoperability is now conformance-backed with secondary-session create/send/replay coverage (`TB-HTTP-19`/`20`/`21`) and session-scope coherence checks across path/body/top-level references.
 - **Shipped:** reconnect/churn coverage now includes multi-step SSE reconnect evidence (`TB-HTTP-22` chaining from `TB-HTTP-17`) with deterministic cursor continuity checks.
 - **Shipped:** HTTP/WS binding RFC guidance now maps replay/idempotency/session-scope/reconnect behavior directly to shipped conformance cases.
-- **Next concrete step:** begin M30 (Tool/Resource/Prompt supply-chain security) after shipping trust + status baseline.
+- **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes) now that trust/status/supply-chain baseline is shipped.
 
 ### ✅ M20 — Trust anchors & issuer attestations (completed)
 - **Shipped:** normative M20 RFC defines canonical `trust_anchor_list` and `issuer_attestation` objects with baseline verification model and explicit M21 deferrals.
@@ -50,7 +50,15 @@ _Last updated: 2026-03-09_
 - **Shipped:** normative M21 RFC defines canonical `status_query` and `status_assertion` objects with baseline status-as-of/cache semantics and revocation-as-of checks.
 - **Shipped:** minimal status and revocation-reason registries are in-repo and validator-enforced (`registry/status_assertion_codes.json`, `registry/revocation_reason_codes.json`).
 - **Shipped:** M21 schema + deterministic fixtures + conformance suite (`SC-STATUS-CHANNEL-0.1`) verify hash integrity, registry linkage, trust-chain signature checks, target binding consistency, and temporal/cache validity for GOOD/REVOKED assertions.
-- **Next concrete step:** begin M30 (Tool/Resource/Prompt supply-chain security).
+- **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes).
+
+
+### ✅ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
+- **Shipped:** normative M30 baseline RFC defines canonical artifact manifests (`tool`/`resource`/`prompt`), issuer-scoped anti-shadowing identity, contract pinning, and explicit deferrals (`docs/rfc/RFC_Artifact_Manifests_and_Pinning.md`).
+- **Shipped:** baseline schema support landed for artifact manifests and contract pinning plus `TOOL_CALL_REQUEST.payload.manifest_ref` binding fields (`schemas/extensions/ext-artifact-manifests-pinning.schema.json`, `schemas/extensions/ext-tool-gating-payloads.schema.json`).
+- **Shipped:** deterministic M30 fixtures and extension conformance suite verify valid pinned baseline, rug-pull expected-fail, shadowing expected-fail, and valid upgrade via explicit `CONTEXT_AMEND` renegotiation (`fixtures/extensions/tool_supply_chain/*`, `conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json`).
+- **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes) as the next remaining milestone.
+
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
@@ -58,9 +66,6 @@ _Last updated: 2026-03-09_
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
 
 
-
-### ⏳ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
-- **Exit:** Signed manifests + contract pinning + tool-gating integration + conformance.
 
 ### ⏳ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
 - **Exit:** Full/redacted/metadata-only/classification-only modes + conformance.
@@ -106,7 +111,7 @@ _Last updated: 2026-03-09_
 ## Suggested dependency order (high level)
 1) M16 → M17.1 → M17 → M18 → M33
 2) Interop hardening: M22 + M19
-3) Trust & tooling: M20 + M21 + M30
+3) Trust & tooling: M20 + M21
 4) Enterprise controls: M23 + M24 + M26 + M28
 5) Crowd-ready bazaars: M35
 6) Coordination & service chaining: M36 + M37

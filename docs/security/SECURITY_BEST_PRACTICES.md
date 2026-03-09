@@ -67,7 +67,7 @@ Relevant docs:
 
 Relevant docs:
 - `docs/extensions/RFC_EXT_TOOL_GATING.md`
-- `AICP_Backlog` (M30 planning for supply-chain hardening)
+- `docs/rfc/RFC_Artifact_Manifests_and_Pinning.md` (M30 baseline for artifact pinning and anti-shadowing)
 
 ## 6) Session hijack / replay guidance
 
