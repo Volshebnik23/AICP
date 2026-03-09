@@ -1,0 +1,137 @@
+{
+  "suite_id": "AM-ARTIFACT-MANIFESTS-PINNING-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "M30 baseline conformance for artifact manifests, pinning, anti-shadowing, and tool-gating linkage.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-tool-gating-payloads.schema.json",
+  "payload_schema_map": {
+    "TOOL_CALL_REQUEST": "#/$defs/TOOL_CALL_REQUEST",
+    "TOOL_CALL_VERDICT": "#/$defs/TOOL_CALL_VERDICT",
+    "TOOL_CALL_RESULT": "#/$defs/TOOL_CALL_RESULT"
+  },
+  "transcripts": [
+    {
+      "id": "AM-01",
+      "path": "fixtures/extensions/tool_supply_chain/M30-01_valid_pinned_baseline_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "TOOL_CALL_REQUEST",
+        "TOOL_CALL_VERDICT",
+        "TOOL_CALL_RESULT"
+      ]
+    },
+    {
+      "id": "AM-02",
+      "path": "fixtures/extensions/tool_supply_chain/M30-02_rug_pull_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "TOOL_CALL_REQUEST",
+        "TOOL_CALL_VERDICT",
+        "TOOL_CALL_RESULT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AM-PIN-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "AM-03",
+      "path": "fixtures/extensions/tool_supply_chain/M30-03_shadowing_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "TOOL_CALL_REQUEST",
+        "TOOL_CALL_VERDICT",
+        "TOOL_CALL_RESULT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AM-SHADOW-01",
+          "min_count": 1
+        },
+        {
+          "test_id": "AM-PIN-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "AM-04",
+      "path": "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTEXT_AMEND",
+        "TOOL_CALL_REQUEST",
+        "TOOL_CALL_VERDICT",
+        "TOOL_CALL_RESULT"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate JSONL messages against core schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type must be registered"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate tool-gating payload schema for relevant message types"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash continuity"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "non-first messages require prev_msg_hash"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id constant and unique message_id"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message sequence matches transcript expectations"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "message_hash recomputation check"
+    },
+    {
+      "test_id": "TG-BIND-01",
+      "description": "tool verdict/result bind to prior request hash"
+    },
+    {
+      "test_id": "TG-MODE-01",
+      "description": "blocking mode requires ALLOW verdict_ref"
+    },
+    {
+      "test_id": "AM-MANIFEST-SCHEMA-01",
+      "description": "artifact pinning/manifests conform to M30 schema"
+    },
+    {
+      "test_id": "AM-PIN-01",
+      "description": "TOOL_CALL_REQUEST manifest_ref must match active pinned artifact"
+    },
+    {
+      "test_id": "AM-SHADOW-01",
+      "description": "issuer-scoped anti-shadowing enforced"
+    },
+    {
+      "test_id": "AM-RENEG-01",
+      "description": "pin changes require explicit CONTEXT_AMEND before use"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-ARTIFACT-MANIFESTS-PINNING-0.1"
+}

@@ -137,30 +137,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 **Acceptance**
 - “AICP in the real enterprise stack” becomes an adoptable recipe, not research.
-## M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
-**Problem:** In MCP-style ecosystems, tools and their metadata can change (“rug pull”), and tool namespaces can collide (“shadowing”). AICP has TOOL_GATING, but lacks a protocol-level way to make tool catalogs **immutable, attributable, and pinned** to a chat contract.
-
-**Deliverables**
-1) **EXT-ARTIFACT-MANIFESTS (or EXT-TOOL-MANIFEST)** (normative):
-   - Signed manifest objects for **Tools**, **Resources**, and **Prompts**:
-     - `id`, `issuer`, `version`, `schema`, `description`, `risk_class`, `content_hash`
-   - Namespacing rules: `issuer_scoped_id` to prevent collisions/shadowing.
-2) **Contract pinning**
-   - Contract fields to pin:
-     - manifest set digest(s)
-     - allowed tool/resource/prompt ids + versions
-   - Any change requires explicit `CONTEXT_AMEND` / renegotiation.
-3) **Tool gating integration**
-   - TOOL_CALL_REQUEST MUST reference a pinned manifest id/version/digest.
-   - Conformance: expected-fail if tool call refers to unpinned or changed manifest.
-4) **Golden fixtures + conformance**
-   - Rug-pull attempt (manifest changed mid-session) → expected-fail
-   - Shadowing attempt (same tool_id different issuer) → expected-fail
-   - Valid upgrade via renegotiation → expected-pass
-
-**Acceptance**
-- A platform can enforce “no silent tool changes” with protocol evidence.
-- Two vendors interpret the same pinned toolset deterministically.
 
 ---
 
@@ -723,4 +699,53 @@ link to profiles/use-case playbooks
 Acceptance:
 A platform architect can adopt AICP with either centralized or distributed enforcement without misreading the protocol’s scope.
 The docs make clear that AICP standardizes compatible enforcement artifacts, not a mandatory trust-engine implementation.
+
+## M47 — Adjacent protocol integration patterns and ecosystem stack guidance
+**Problem:** AICP already documents its governed content-layer role and ecosystem boundaries, but implementers still lack sufficiently detailed adjacent-protocol integration guidance. The remaining gap is practical stack-level guidance for how AICP is combined with adjacent protocols/services in real systems—especially a concrete, non-normative A2A-like calling/connectivity integration pattern and stronger alignment across playbooks and adapter/gateway guidance.
+
+**Deliverables**
+1) **Strengthen ecosystem architecture guidance**
+   - Expand/refine `docs/architecture/AICP_in_the_Ecosystem.md` with implementer-grade guidance (not basic positioning).
+   - Preserve AICP as the governed content/context layer.
+   - Clarify responsibility boundaries for discovery/directory services, calling/connectivity, AICP governed conversation/context, tool/API connectivity, and external trust/IAM/commerce systems.
+
+2) **Adjacent capability matrix refinement**
+   - Add/complete an adjacency matrix that explicitly states whether AICP replaces, complements, references, or is intentionally orthogonal to each adjacent capability.
+   - Cover at minimum: A2A-like calling/connectivity, MCP-like tool integration, OAuth/OIDC/IAM, transport bindings, external commerce/checkout protocols, and external trust engines/trust fabrics.
+
+3) **Anti-misuse and use-when guidance completion**
+   - Add/complete explicit “Do not treat AICP as…” guidance for discovery/DNS, hosted chat platform, payment rail, tool catalog protocol, universal identity provider, and trust fabric/consensus system.
+   - Add/complete explicit “Use AICP when…” guidance for shared goals/roles/policies, moderated multi-agent context, portable attestations/transcript evidence, and cross-vendor enforcement-compatible interactions.
+
+4) **Non-normative adjacent-protocol integration pattern: A2A**
+   - Add new informative document: `docs/adjacent/A2A_Integration_Pattern.md`.
+   - Explicitly state: AICP does **not** require A2A; A2A is one possible calling/connectivity layer; the doc is informative/non-normative; it does not define an AICP transport binding; no AICP conformance claim depends on A2A support.
+   - Require a practical layered pattern covering: discovery/directory (external), A2A for rendezvous/calling/contact establishment, AICP for governed conversation/contract/policies/moderation/attestations/transcript continuity, MCP for tools/APIs, and IAM/trust/commerce as external systems.
+   - Require explicit boundary rules: A2A does not replace AICP governance; AICP does not replace A2A connectivity; MCP does not replace AICP contracts/policies/transcript semantics; discovery and trust fabric remain external.
+
+5) **Practical reference patterns for the A2A integration doc**
+   - Include concrete patterns such as:
+     - call remote specialist via A2A, then invite into hosted AICP session;
+     - call branded reception endpoint via A2A, then join foreign AICP-governed reception;
+     - use A2A only for rendezvous/bootstrap, then switch to AICP for governed multi-agent interaction;
+     - use MCP tools inside an AICP-governed session after A2A rendezvous;
+     - relay pattern: reach restricted participant via trusted third agent and return resulting context to the AICP session.
+   - For each pattern require: actor roles, session ownership, transcript host, mediator/enforcer role, A2A-layer vs AICP-layer context exchange, and explicit external assumptions.
+
+6) **Bootstrap / failure / fallback guidance**
+   - Require bootstrap hints: remote reception endpoint, accepted AICP profile, capability hint, policy/preflight hint, and required identity/attestation-class hint.
+   - Require failure/fallback patterns for: A2A-supported but no AICP support; remote agent accepts only clients in its own hosted reception; AICP profile mismatch after A2A rendezvous; connectivity success but contract negotiation failure; policy-blocked cross-session join; fallback to relay/summary/tool-only integration.
+
+7) **Cross-links and doc integration**
+   - Require cross-linking from `docs/INDEX.md` and a lightweight README cross-link.
+   - Require alignment update in `docs/playbooks/Personal_Agent_Coordination.md`.
+   - Require clear placement/cross-linking for `docs/guides/Protocol_Adapter_Gateway.md` (or the most relevant architecture-side adapter/gateway guidance).
+
+**Acceptance**
+- Architects can place AICP cleanly in a multi-protocol stack without collapsing it into transport, IAM, tool protocol, platform, or trust fabric concerns.
+- Developers can understand how A2A + AICP + MCP are combined without confusing their roles.
+- No document implies A2A is mandatory for AICP.
+- No document implies AICP is a transport or calling protocol.
+- A2A-related material is concrete enough to guide implementation decisions while remaining clearly non-normative.
+
 ---

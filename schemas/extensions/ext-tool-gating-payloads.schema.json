@@ -44,6 +44,39 @@
         },
         "note": {
           "type": "string"
+        },
+        "manifest_ref": {
+          "type": "object",
+          "required": [
+            "manifest_id",
+            "issuer_id",
+            "issuer_scoped_id",
+            "version",
+            "content_hash"
+          ],
+          "properties": {
+            "manifest_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "issuer_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "issuer_scoped_id": {
+              "type": "string",
+              "pattern": "^[^#]+#[^#]+$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content_hash": {
+              "type": "string",
+              "pattern": "^sha256:[A-Za-z0-9._:-]+$"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
