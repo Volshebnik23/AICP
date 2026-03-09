@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-trust-attestations-artifacts.schema.json",
+  "title": "M20 trust anchors + issuer attestations conformance artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "trust_anchor_list",
+    "trust_anchor_list_hash",
+    "expect_trust_valid"
+  ],
+  "$defs": {
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signer", "kid", "object_type", "object_hash", "sig_b64url"],
+      "properties": {
+        "signer": {"type": "string", "minLength": 1},
+        "kid": {"type": "string", "minLength": 1},
+        "object_type": {"type": "string", "minLength": 1},
+        "object_hash": {"type": "string", "minLength": 1},
+        "sig_b64url": {"type": "string", "minLength": 1}
+      }
+    },
+    "trust_anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer_id", "signer", "kid", "public_key_b64url"],
+      "properties": {
+        "issuer_id": {"type": "string", "minLength": 1},
+        "signer": {"type": "string", "minLength": 1},
+        "kid": {"type": "string", "minLength": 1},
+        "public_key_b64url": {"type": "string", "minLength": 1}
+      }
+    },
+    "trust_anchor_list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["anchor_list_id", "version", "issued_at", "expires_at", "anchors"],
+      "properties": {
+        "anchor_list_id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/trust_anchor"}
+        },
+        "meta": {"type": "object"}
+      }
+    },
+    "issuer_attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestation_id",
+        "issuer_id",
+        "subject_id",
+        "attestation_type",
+        "trust_signal",
+        "issued_at",
+        "expires_at",
+        "anchor_list_id"
+      ],
+      "properties": {
+        "attestation_id": {"type": "string", "minLength": 1},
+        "issuer_id": {"type": "string", "minLength": 1},
+        "subject_id": {"type": "string", "minLength": 1},
+        "attestation_type": {"type": "string", "minLength": 1},
+        "trust_signal": {"type": "string", "minLength": 1},
+        "issued_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "anchor_list_id": {"type": "string", "minLength": 1},
+        "scope": {"type": "string"},
+        "profile_ref": {"type": "string"},
+        "evidence_ref": {"type": "string"}
+      }
+    }
+  },
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^TA-\\d{2}$"},
+    "trust_anchor_list": {"$ref": "#/$defs/trust_anchor_list"},
+    "trust_anchor_list_hash": {"type": "string", "minLength": 1},
+    "issuer_attestation": {"$ref": "#/$defs/issuer_attestation"},
+    "issuer_attestation_hash": {"type": "string", "minLength": 1},
+    "attestation_signature": {"$ref": "#/$defs/signature"},
+    "expect_trust_valid": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"expect_trust_valid": {"const": true}}},
+      "then": {
+        "required": ["issuer_attestation", "issuer_attestation_hash", "attestation_signature"]
+      }
+    }
+  ]
+}

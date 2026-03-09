@@ -1,11 +1,11 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ca9dcff057da3a7d882777298cce1b923a4a52220bd7b23089fafb3c3e173aa5",
+      "combined_sha256": "ed99ccdcb08d31302594844866ed8217c4d67e8b267b4d45d234f53ddc6c1010",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-          "sha256": "8a114a16a3beca97d05e821fe0a4ee1deb6da1d871fea8dcaef032a1d8c35413"
+          "sha256": "59eace67163b8ac39bb92f3de6789cb8677e7f545c4953fde97a62077ebb5d66"
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
@@ -124,6 +124,10 @@
           "sha256": "6cc0855b213d6c58de83aacbea90843815677fc78a037140b83c9db0d49c49ac"
         },
         {
+          "path": "conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json",
+          "sha256": "cced181debcf741faf6914f1a41139cdcf5b7df27ed384b84092363b6cc9e55e"
+        },
+        {
           "path": "conformance/extensions/TG_TOOL_GATING_0.1.json",
           "sha256": "f1646a39d7e43bb74e415b09cd44faa34564e4c4b23fe66c8112a11f904cddf7"
         },
@@ -182,7 +186,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "e41478a2ef988c4a1a0fabe61cdc6558975794f6099d8f3716dc35ebb8894a8d",
+      "combined_sha256": "1ab326566a3c357a67c37a6d500fdb3deaea9ad926b371b335c6dcdb2a3745ba",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -247,6 +251,26 @@
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json",
           "sha256": "0712036b3022139b2101afce5e5189508c5aeb1a3cc3a61ae82c31ff10ee952b"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-18_sendMessage_replay_window.json",
+          "sha256": "1864cbb51d134f60b6e070b85854333a6ca90f1e42c27d6732a4c0ac2024ad97"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-19_createSession_secondary.json",
+          "sha256": "2d6418501b32559a0f08f98923e9f24623249d4fb097135bb065ff13d0f0ccf9"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-20_sendMessage_session2_collision_scope.json",
+          "sha256": "b6809cf85c9ba7f9dd284ab2ab274e06ea6c5c551cad896d640bebd89965b83a"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-21_sendMessage_replay_session2.json",
+          "sha256": "f7b7e76bb67f9487c903430513df18d68ea5185683a26e1a85be0ec33f6787b2"
+        },
+        {
+          "path": "fixtures/bindings/http-ws/TB-HTTP-22_ssePullMessages_reconnect_churn.json",
+          "sha256": "61c499cb324eedddcd55f944d7c274d2d67d3d61238120cf62f8f607cf623fe6"
         },
         {
           "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
@@ -601,6 +625,18 @@
           "sha256": "0e825be0fb1041bb841e9dcbe9a3040c1820e16bb91e4e885734a09f77d758e0"
         },
         {
+          "path": "fixtures/extensions/trust_attestations/TA-01_trust_anchor_list_valid.json",
+          "sha256": "b732eed72fe593f0e5a20628759b123213d5150de598f25178e3a0e2f499dc95"
+        },
+        {
+          "path": "fixtures/extensions/trust_attestations/TA-02_issuer_attestation_valid.json",
+          "sha256": "1715101d3d8dd98a2f7e7f25f652a21647b657335cb427f8b0a2949cf605c5d2"
+        },
+        {
+          "path": "fixtures/extensions/trust_attestations/TA-03_issuer_attestation_untrusted_signer.json",
+          "sha256": "438d91cf460f04b74e786a2a91ef7fa175ed6d94df23174b161276711051c22c"
+        },
+        {
           "path": "fixtures/extensions/workflow_sync/WF-01_declare_and_step_attest_pass.jsonl",
           "sha256": "adada9fb00877b106bec63c36e66ed5d7f8ed616bcfe94cab68c665f0e23eb51"
         },
@@ -691,7 +727,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "513b0f39d3db8652e7b1536684a8bf193850268c5a683b3e8b440c7787fd3fb8",
+      "combined_sha256": "b52ad8dcb0d73ccb62ec1b1ddb01b7e10a0aeb1ed1f558de72ee888bd13e42a7",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -704,6 +740,10 @@
         {
           "path": "registry/alert_recommended_actions.json",
           "sha256": "0da453ecd8d679abe5418723c395600cbcc74bedda65816c7c45e68d2515c602"
+        },
+        {
+          "path": "registry/attestation_types.json",
+          "sha256": "e7d6de0be5805a0735fc206ebcd4ef4ad9259b068e847ef6756cdba6534c31ac"
         },
         {
           "path": "registry/canonicalization_profiles.json",
@@ -731,7 +771,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "eade10a7789a5d0381af0105fa87b7b826152c7fab76e724575fa5c9cc0f2531"
+          "sha256": "6426f4635f9dd756ad1c264a5595e6a5b73777c77361cb37299474bd41cf9caf"
         },
         {
           "path": "registry/hash_domains.json",
@@ -768,11 +808,15 @@
         {
           "path": "registry/transport_bindings.json",
           "sha256": "a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+        },
+        {
+          "path": "registry/trust_signal_types.json",
+          "sha256": "a3161d4438f1c3bf69df9d5f22450cd3526fc064b1f1ad0937f1f3bd0dd35307"
         }
       ]
     },
     "schemas": {
-      "combined_sha256": "ca80b282901cdc075a2d205622d4f8da8d1be2ca5f25427332cefbe973ba6c92",
+      "combined_sha256": "be0da47dc4e00f16d90c9210115242a5169c17bbe66b0f47dfbeda0782745998",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -897,6 +941,10 @@
         {
           "path": "schemas/extensions/ext-tool-gating-payloads.schema.json",
           "sha256": "0c54b23deab5266cbb8c145d02451cb447ab9f8b2bb5ddc2c05143d0383a6083"
+        },
+        {
+          "path": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
+          "sha256": "640afd5a740914fac8f82405b5a07c4603cc1c2a7053ccce8bc6710906566ec6"
         },
         {
           "path": "schemas/extensions/ext-workflow-sync-payloads.schema.json",
@@ -1060,6 +1108,10 @@
       {
         "mark": "AICP-EXT-SUBSCRIPTIONS-0.1",
         "path": "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-TRUST-ATTESTATIONS-0.1",
+        "path": "conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json"
       },
       {
         "mark": "AICP-EXT-TOOL-GATING-0.1",

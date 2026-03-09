@@ -36,6 +36,23 @@ def test_binding_conformance_suite_passes() -> None:
         (ROOT / report).unlink(missing_ok=True)
 
 
+def test_http_ws_binding_conformance_suite_passes() -> None:
+    report = "conformance/report_bind_http_ws_test.json"
+    cmd = [
+        sys.executable,
+        str(RUNNER),
+        "--suite",
+        "conformance/bindings/TB_HTTP_WS_0.1.json",
+        "--out",
+        report,
+    ]
+    result = subprocess.run(cmd, cwd=ROOT, check=False)
+    try:
+        assert result.returncode == 0
+    finally:
+        (ROOT / report).unlink(missing_ok=True)
+
+
 def test_binding_suite_does_not_use_network_for_schema_resolution(monkeypatch) -> None:
     runner = _load_runner_module()
     called: list[str] = []

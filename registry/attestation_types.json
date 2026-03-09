@@ -1,0 +1,20 @@
+[
+  {
+    "id": "issuer_identity_attestation",
+    "type": "attestation_types",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#3-issuer_attestation-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Identity attestations require signature and trust-anchor validation before use."
+  },
+  {
+    "id": "issuer_profile_attestation",
+    "type": "attestation_types",
+    "status": "experimental",
+    "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#3-issuer_attestation-object-normative",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "security_considerations": "Profile attestations must bind to explicit profile identifiers to avoid ambiguity."
+  }
+]
