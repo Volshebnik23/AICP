@@ -278,6 +278,16 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
     seen_cases_by_id: dict[str, dict[str, Any]] = {}
     loaded_cases: list[tuple[str, dict[str, Any]]] = []
 
+    trust_signal_ids: set[str] = set()
+    attestation_type_ids: set[str] = set()
+    if any(check in enabled_checks for check in {"TR-REGISTRY-01", "TR-CHAIN-01"}):
+        trust_signal_ids = {
+            e.get("id") for e in load_json(ROOT / "registry/trust_signal_types.json") if isinstance(e, dict)
+        }
+        attestation_type_ids = {
+            e.get("id") for e in load_json(ROOT / "registry/attestation_types.json") if isinstance(e, dict)
+        }
+
     def _session_id_from_path(path: str) -> str | None:
         if not isinstance(path, str) or '/sessions/' not in path:
             return None
@@ -682,6 +692,92 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
                                 add_failure(failures, "TB-SSE-RECONNECT-01", f"Last-Event-ID must match reconnect cursor '{expected_cursor}'", rel_case, None)
                             if query.get("after") != expected_cursor:
                                 add_failure(failures, "TB-SSE-RECONNECT-01", f"query.after must match reconnect cursor '{expected_cursor}'", rel_case, None)
+
+        trust_anchor_list = case_obj.get("trust_anchor_list") if isinstance(case_obj.get("trust_anchor_list"), dict) else None
+        trust_anchor_list_hash = case_obj.get("trust_anchor_list_hash") if isinstance(case_obj.get("trust_anchor_list_hash"), str) else None
+        issuer_attestation = case_obj.get("issuer_attestation") if isinstance(case_obj.get("issuer_attestation"), dict) else None
+        issuer_attestation_hash = case_obj.get("issuer_attestation_hash") if isinstance(case_obj.get("issuer_attestation_hash"), str) else None
+        attestation_signature = case_obj.get("attestation_signature") if isinstance(case_obj.get("attestation_signature"), dict) else None
+        expect_trust_valid = bool(case_obj.get("expect_trust_valid"))
+
+        if "TR-ANCHOR-OBJ-01" in enabled_checks and trust_anchor_list is not None:
+            try:
+                computed_anchor_hash = object_hash("trust_anchor_list", trust_anchor_list)
+            except Exception as exc:
+                add_failure(failures, "TR-ANCHOR-OBJ-01", f"trust_anchor_list hash recompute error: {exc}", rel_case, None)
+            else:
+                if computed_anchor_hash != trust_anchor_list_hash:
+                    add_failure(failures, "TR-ANCHOR-OBJ-01", "trust_anchor_list_hash must equal object_hash('trust_anchor_list', trust_anchor_list)", rel_case, None)
+            anchor_issued = _parse_iso_datetime(trust_anchor_list.get("issued_at"))
+            anchor_expires = _parse_iso_datetime(trust_anchor_list.get("expires_at"))
+            if anchor_issued is None or anchor_expires is None:
+                add_failure(failures, "TR-ANCHOR-OBJ-01", "trust_anchor_list issued_at/expires_at must be valid date-time", rel_case, None)
+            elif anchor_issued >= anchor_expires:
+                add_failure(failures, "TR-ANCHOR-OBJ-01", "trust_anchor_list issued_at must be earlier than expires_at", rel_case, None)
+
+        trust_chain_valid = False
+        if issuer_attestation is not None:
+            if "TR-ATTEST-OBJ-01" in enabled_checks:
+                try:
+                    computed_attestation_hash = object_hash("issuer_attestation", issuer_attestation)
+                except Exception as exc:
+                    add_failure(failures, "TR-ATTEST-OBJ-01", f"issuer_attestation hash recompute error: {exc}", rel_case, None)
+                else:
+                    if computed_attestation_hash != issuer_attestation_hash:
+                        add_failure(failures, "TR-ATTEST-OBJ-01", "issuer_attestation_hash must equal object_hash('issuer_attestation', issuer_attestation)", rel_case, None)
+                if not isinstance(attestation_signature, dict):
+                    add_failure(failures, "TR-ATTEST-OBJ-01", "issuer_attestation requires attestation_signature object", rel_case, None)
+                else:
+                    if attestation_signature.get("object_type") != "issuer_attestation":
+                        add_failure(failures, "TR-ATTEST-OBJ-01", "attestation_signature.object_type must be 'issuer_attestation'", rel_case, None)
+                    if attestation_signature.get("object_hash") != issuer_attestation_hash:
+                        add_failure(failures, "TR-ATTEST-OBJ-01", "attestation_signature.object_hash must equal issuer_attestation_hash", rel_case, None)
+
+            if "TR-REGISTRY-01" in enabled_checks:
+                if issuer_attestation.get("attestation_type") not in attestation_type_ids:
+                    add_failure(failures, "TR-REGISTRY-01", "issuer_attestation.attestation_type must be registered in registry/attestation_types.json", rel_case, None)
+                if issuer_attestation.get("trust_signal") not in trust_signal_ids:
+                    add_failure(failures, "TR-REGISTRY-01", "issuer_attestation.trust_signal must be registered in registry/trust_signal_types.json", rel_case, None)
+
+            if "TR-CHAIN-01" in enabled_checks and trust_anchor_list is not None and isinstance(attestation_signature, dict):
+                anchors = trust_anchor_list.get("anchors") if isinstance(trust_anchor_list.get("anchors"), list) else []
+                signer = attestation_signature.get("signer")
+                kid = attestation_signature.get("kid")
+                issuer_id = issuer_attestation.get("issuer_id")
+                matched_anchor = None
+                for anchor in anchors:
+                    if not isinstance(anchor, dict):
+                        continue
+                    if anchor.get("issuer_id") == issuer_id and anchor.get("signer") == signer and anchor.get("kid") == kid:
+                        matched_anchor = anchor
+                        break
+                if matched_anchor is not None and isinstance(matched_anchor.get("public_key_b64url"), str):
+                    trust_chain_valid = verify_ed25519(
+                        matched_anchor.get("public_key_b64url", ""),
+                        str(attestation_signature.get("sig_b64url", "")),
+                        str(attestation_signature.get("object_hash", "")),
+                    )
+
+                att_issued = _parse_iso_datetime(issuer_attestation.get("issued_at"))
+                att_expires = _parse_iso_datetime(issuer_attestation.get("expires_at"))
+                anchor_issued = _parse_iso_datetime(trust_anchor_list.get("issued_at"))
+                anchor_expires = _parse_iso_datetime(trust_anchor_list.get("expires_at"))
+                temporal_valid = (
+                    att_issued is not None
+                    and att_expires is not None
+                    and anchor_issued is not None
+                    and anchor_expires is not None
+                    and att_issued < att_expires
+                    and anchor_issued <= att_issued
+                    and att_expires <= anchor_expires
+                )
+                list_match = issuer_attestation.get("anchor_list_id") == trust_anchor_list.get("anchor_list_id")
+                trust_chain_valid = trust_chain_valid and temporal_valid and list_match and matched_anchor is not None
+
+                if expect_trust_valid and not trust_chain_valid:
+                    add_failure(failures, "TR-CHAIN-01", "expected valid attestation did not resolve under provided trust_anchor_list", rel_case, None)
+                if (not expect_trust_valid) and trust_chain_valid:
+                    add_failure(failures, "TR-CHAIN-01", "case marked expect_trust_valid=false but attestation resolved as trusted", rel_case, None)
 
         case_id = case_obj.get("case_id")
         if isinstance(case_id, str) and case_id:

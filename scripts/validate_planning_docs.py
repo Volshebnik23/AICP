@@ -28,6 +28,7 @@ REMOVED_DELIVERED_MILESTONE_HEADERS = [
     "## M17",
     "## M18",
     "## M19",
+    "## M20",
     "## M22",
 ]
 
@@ -50,11 +51,6 @@ def _headers_with_cycles(text: str) -> list[str]:
         for line in text.splitlines()
         if line.startswith("#") and CYCLE_LABEL_RE.search(line)
     ]
-
-
-def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
-    match = pattern.search(text)
-    return match.group(1) if match else ""
 
 
 def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:

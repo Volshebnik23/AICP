@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "3e5d48b2515a432e35fe677f2b769aafa8891f6cb243847653b8692e241a7dce",
+      "combined_sha256": "ed99ccdcb08d31302594844866ed8217c4d67e8b267b4d45d234f53ddc6c1010",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -124,6 +124,10 @@
           "sha256": "6cc0855b213d6c58de83aacbea90843815677fc78a037140b83c9db0d49c49ac"
         },
         {
+          "path": "conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json",
+          "sha256": "cced181debcf741faf6914f1a41139cdcf5b7df27ed384b84092363b6cc9e55e"
+        },
+        {
           "path": "conformance/extensions/TG_TOOL_GATING_0.1.json",
           "sha256": "f1646a39d7e43bb74e415b09cd44faa34564e4c4b23fe66c8112a11f904cddf7"
         },
@@ -182,7 +186,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "e526ec674bfd5560a750b73fbfa4eeee0b2f678d8bcc1bcc3860d34a046bc177",
+      "combined_sha256": "1ab326566a3c357a67c37a6d500fdb3deaea9ad926b371b335c6dcdb2a3745ba",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -621,6 +625,18 @@
           "sha256": "0e825be0fb1041bb841e9dcbe9a3040c1820e16bb91e4e885734a09f77d758e0"
         },
         {
+          "path": "fixtures/extensions/trust_attestations/TA-01_trust_anchor_list_valid.json",
+          "sha256": "b732eed72fe593f0e5a20628759b123213d5150de598f25178e3a0e2f499dc95"
+        },
+        {
+          "path": "fixtures/extensions/trust_attestations/TA-02_issuer_attestation_valid.json",
+          "sha256": "1715101d3d8dd98a2f7e7f25f652a21647b657335cb427f8b0a2949cf605c5d2"
+        },
+        {
+          "path": "fixtures/extensions/trust_attestations/TA-03_issuer_attestation_untrusted_signer.json",
+          "sha256": "438d91cf460f04b74e786a2a91ef7fa175ed6d94df23174b161276711051c22c"
+        },
+        {
           "path": "fixtures/extensions/workflow_sync/WF-01_declare_and_step_attest_pass.jsonl",
           "sha256": "adada9fb00877b106bec63c36e66ed5d7f8ed616bcfe94cab68c665f0e23eb51"
         },
@@ -711,7 +727,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "513b0f39d3db8652e7b1536684a8bf193850268c5a683b3e8b440c7787fd3fb8",
+      "combined_sha256": "b52ad8dcb0d73ccb62ec1b1ddb01b7e10a0aeb1ed1f558de72ee888bd13e42a7",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -724,6 +740,10 @@
         {
           "path": "registry/alert_recommended_actions.json",
           "sha256": "0da453ecd8d679abe5418723c395600cbcc74bedda65816c7c45e68d2515c602"
+        },
+        {
+          "path": "registry/attestation_types.json",
+          "sha256": "e7d6de0be5805a0735fc206ebcd4ef4ad9259b068e847ef6756cdba6534c31ac"
         },
         {
           "path": "registry/canonicalization_profiles.json",
@@ -751,7 +771,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "eade10a7789a5d0381af0105fa87b7b826152c7fab76e724575fa5c9cc0f2531"
+          "sha256": "6426f4635f9dd756ad1c264a5595e6a5b73777c77361cb37299474bd41cf9caf"
         },
         {
           "path": "registry/hash_domains.json",
@@ -788,11 +808,15 @@
         {
           "path": "registry/transport_bindings.json",
           "sha256": "a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+        },
+        {
+          "path": "registry/trust_signal_types.json",
+          "sha256": "a3161d4438f1c3bf69df9d5f22450cd3526fc064b1f1ad0937f1f3bd0dd35307"
         }
       ]
     },
     "schemas": {
-      "combined_sha256": "ca80b282901cdc075a2d205622d4f8da8d1be2ca5f25427332cefbe973ba6c92",
+      "combined_sha256": "be0da47dc4e00f16d90c9210115242a5169c17bbe66b0f47dfbeda0782745998",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -917,6 +941,10 @@
         {
           "path": "schemas/extensions/ext-tool-gating-payloads.schema.json",
           "sha256": "0c54b23deab5266cbb8c145d02451cb447ab9f8b2bb5ddc2c05143d0383a6083"
+        },
+        {
+          "path": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
+          "sha256": "640afd5a740914fac8f82405b5a07c4603cc1c2a7053ccce8bc6710906566ec6"
         },
         {
           "path": "schemas/extensions/ext-workflow-sync-payloads.schema.json",
@@ -1080,6 +1108,10 @@
       {
         "mark": "AICP-EXT-SUBSCRIPTIONS-0.1",
         "path": "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-TRUST-ATTESTATIONS-0.1",
+        "path": "conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json"
       },
       {
         "mark": "AICP-EXT-TOOL-GATING-0.1",

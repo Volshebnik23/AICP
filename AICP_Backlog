@@ -19,23 +19,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 # Backlog epics and milestones
 
-## M20 — Trust anchors & attestations (internet-scale trust signals)
-**Problem:** Identity lifecycle exists, but no standardized “trust network”: trust anchors, issuer attestation formats, trust signals.
-
-**Deliverables**
-1) **RFC: Trust Anchors & Issuer Attestations**
-   - define “trust anchor list” artifact format (hashable object)
-   - define “issuer attestation” object (agent belongs to provider X; profile compliance Y; etc.)
-2) **Registries**
-   - trust signal types registry (minimal interoperable signals)
-   - attestation types registry
-3) **Schemas + fixtures + conformance**
-   - validate attestation object hashing, signature requirements, and attachment to transcripts.
-
-**Acceptance**
-- Implementer can verify: “this issuer is trusted under anchor set A” without platform-specific magic.
-
----
 
 ## M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
 **Problem:** Delegated identity & key revoke exist, but no “real-time status” mechanism.

@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-04_
+_Last updated: 2026-03-08_
 
 ## Current / Next
 
@@ -37,15 +37,19 @@ _Last updated: 2026-03-04_
 - **Shipped:** multi-session interoperability is now conformance-backed with secondary-session create/send/replay coverage (`TB-HTTP-19`/`20`/`21`) and session-scope coherence checks across path/body/top-level references.
 - **Shipped:** reconnect/churn coverage now includes multi-step SSE reconnect evidence (`TB-HTTP-22` chaining from `TB-HTTP-17`) with deterministic cursor continuity checks.
 - **Shipped:** HTTP/WS binding RFC guidance now maps replay/idempotency/session-scope/reconnect behavior directly to shipped conformance cases.
-- **Next concrete step:** begin M20 (Trust anchors & issuer attestations) per dependency order after interop hardening.
+- **Next concrete step:** begin M21 (Revocation/status channel) to add revocation freshness on top of shipped M20 trust baseline.
+
+### ✅ M20 — Trust anchors & issuer attestations (completed)
+- **Shipped:** normative M20 RFC defines canonical `trust_anchor_list` and `issuer_attestation` objects with baseline verification model and explicit M21 deferrals.
+- **Shipped:** trust-signal and attestation-type registries are now in-repo and validator-enforced (`registry/trust_signal_types.json`, `registry/attestation_types.json`).
+- **Shipped:** M20 schemas + deterministic fixtures + conformance suite (`TA-TRUST-ATTESTATIONS-0.1`) verify hash integrity, registry linkage, signature binding, and trust-chain resolution including untrusted-signer negative case.
+- **Next concrete step:** begin M21 (Revocation/status channel) to layer revocation/status freshness onto this baseline trust model.
 
 ## Planned milestones (protocol maturity & ecosystem scale)
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
 
-### ⏳ M20 — Trust anchors & issuer attestations (internet-scale trust signals)
-- **Exit:** RFC + registries + fixtures + conformance for trust anchors/attestations.
 
 ### ⏳ M21 — Revocation/status channel (OCSP/CRL analog, protocol-level)
 - **Exit:** Status request/response or status object format + cache/staleness rules + conformance.
