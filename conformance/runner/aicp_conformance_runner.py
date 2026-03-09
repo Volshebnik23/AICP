@@ -2305,6 +2305,99 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         add_failure(t_failures, "TG-MODE-01", "audit mode requires later TOOL_CALL_ATTEST bound to TOOL_CALL_RESULT.message_hash and target_request_hash", rel_file, line_no)
 
 
+        if any(check in enabled_checks for check in {"AM-MANIFEST-SCHEMA-01", "AM-PIN-01", "AM-SHADOW-01", "AM-RENEG-01"}):
+            manifest_schema = load_json(ROOT / "schemas/extensions/ext-artifact-manifests-pinning.schema.json")
+            manifest_validator = None
+            if Draft202012Validator is not None:
+                manifest_wrapper = {
+                    "$schema": manifest_schema.get("$schema"),
+                    "$id": manifest_schema.get("$id"),
+                    "$ref": "#/$defs/contract_artifact_pinning",
+                    "$defs": manifest_schema.get("$defs", {}),
+                }
+                manifest_validator = Draft202012Validator(manifest_wrapper)
+
+            active_pins: list[dict[str, Any]] = []
+            initial_pins: list[dict[str, Any]] = []
+
+            def _extract_pinning_from_contract(contract_obj: dict[str, Any]) -> dict[str, Any] | None:
+                ext = contract_obj.get("ext") if isinstance(contract_obj.get("ext"), dict) else {}
+                pin = ext.get("artifact_pinning") if isinstance(ext, dict) else None
+                if pin is None:
+                    extensions = contract_obj.get("extensions") if isinstance(contract_obj.get("extensions"), dict) else {}
+                    pin = extensions.get("EXT-ARTIFACT-PINNING") if isinstance(extensions, dict) else None
+                return pin if isinstance(pin, dict) else None
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CONTRACT_PROPOSE":
+                    contract_obj = payload.get("contract") if isinstance(payload.get("contract"), dict) else {}
+                    pin_obj = _extract_pinning_from_contract(contract_obj)
+                    if isinstance(pin_obj, dict):
+                        initial_pins = list(pin_obj.get("pinned_artifacts") or [])
+                        active_pins = list(initial_pins)
+                        if "AM-MANIFEST-SCHEMA-01" in enabled_checks and manifest_validator is not None:
+                            for err in sorted(manifest_validator.iter_errors(pin_obj), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "AM-MANIFEST-SCHEMA-01", err.message, rel_file, line_no)
+
+                if mtype == "CONTEXT_AMEND":
+                    ext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    pin_obj = ext.get("artifact_pinning") if isinstance(ext.get("artifact_pinning"), dict) else None
+                    if isinstance(pin_obj, dict):
+                        if "AM-MANIFEST-SCHEMA-01" in enabled_checks and manifest_validator is not None:
+                            for err in sorted(manifest_validator.iter_errors(pin_obj), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "AM-MANIFEST-SCHEMA-01", err.message, rel_file, line_no)
+                        new_pins = list(pin_obj.get("pinned_artifacts") or [])
+                        if "AM-RENEG-01" in enabled_checks and initial_pins and new_pins and new_pins != active_pins:
+                            active_pins = new_pins
+
+                if mtype == "TOOL_CALL_REQUEST":
+                    if "AM-PIN-01" in enabled_checks:
+                        manifest_ref = payload.get("manifest_ref") if isinstance(payload.get("manifest_ref"), dict) else None
+                        if manifest_ref is None:
+                            add_failure(t_failures, "AM-PIN-01", "TOOL_CALL_REQUEST must include payload.manifest_ref when artifact pinning is active", rel_file, line_no)
+                        else:
+                            matched = False
+                            for pin in active_pins:
+                                if not isinstance(pin, dict):
+                                    continue
+                                if all(manifest_ref.get(k) == pin.get(k) for k in ["manifest_id", "issuer_id", "issuer_scoped_id", "version", "content_hash"]):
+                                    matched = True
+                                    break
+                            if not matched:
+                                add_failure(t_failures, "AM-PIN-01", "TOOL_CALL_REQUEST manifest_ref does not match active pinned artifact", rel_file, line_no)
+
+                    if "AM-SHADOW-01" in enabled_checks:
+                        manifest_ref = payload.get("manifest_ref") if isinstance(payload.get("manifest_ref"), dict) else None
+                        if manifest_ref is not None:
+                            for pin in active_pins:
+                                if not isinstance(pin, dict):
+                                    continue
+                                if manifest_ref.get("manifest_id") == pin.get("manifest_id") and manifest_ref.get("issuer_id") != pin.get("issuer_id"):
+                                    add_failure(t_failures, "AM-SHADOW-01", "manifest_id collision with different issuer_id detected (shadowing)", rel_file, line_no)
+                                    break
+
+            if "AM-RENEG-01" in enabled_checks and initial_pins:
+                saw_amend = any((msg.get("message_type") == "CONTEXT_AMEND" and isinstance((msg.get("payload") or {}).get("ext"), dict) and isinstance(((msg.get("payload") or {}).get("ext") or {}).get("artifact_pinning"), dict)) for _, msg in rows)
+                for line_no, msg in rows:
+                    if msg.get("message_type") != "TOOL_CALL_REQUEST":
+                        continue
+                    payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                    manifest_ref = payload.get("manifest_ref") if isinstance(payload.get("manifest_ref"), dict) else {}
+                    issuer = manifest_ref.get("issuer_id")
+                    manifest_id = manifest_ref.get("manifest_id")
+                    version = manifest_ref.get("version")
+                    same_artifact_initial = [
+                        pin for pin in initial_pins
+                        if isinstance(pin, dict)
+                        and pin.get("issuer_id") == issuer
+                        and pin.get("manifest_id") == manifest_id
+                    ]
+                    if same_artifact_initial and all(pin.get("version") != version for pin in same_artifact_initial) and not saw_amend:
+                        add_failure(t_failures, "AM-RENEG-01", "pinned artifact version changed without explicit CONTEXT_AMEND", rel_file, line_no)
+
         if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
             for line_no, msg in rows:
                 if msg.get("message_type") != "ALERT":
