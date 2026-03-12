@@ -214,12 +214,20 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
    - “Mediated blocking in production” (observability + failure handling)
    - “OAuth bridge cookbook” (ties into M28)
    - “Tool catalog pinning cookbook” (ties into M30)
-2) **Security considerations section completion**
+2) **Adjacent content-source tutorial**
+   - “Using Context Hub as a fresh-content source in an AICP-governed workflow”
+   - Tutorial MUST cover:
+     - when an AICP participant/platform should query a fresh-content source versus rely on cached/local knowledge,
+     - how to record the chosen doc/skill/version/source in transcript or workflow state,
+     - how to avoid hidden dependency on local-only annotations,
+     - how to handle reduced-freshness / offline / cached-content operation safely,
+     - how to separate AICP-governed shared context from adjacent content-registry behavior.
+3) **Security considerations section completion**
    - Ensure each extension RFC has a minimal security-considerations section with concrete examples.
 
 **Acceptance**
 - A new adopter can deploy a safe starting point from one security doc set, then deepen with targeted production cookbooks.
-
+- Implementers have at least one concrete cookbook showing how to use an adjacent fresh-content system without confusing it with AICP itself.
 ---
 
 ## M35 — Bazaar-scale admission, crowd control & content-level queuing (public “bird bazaar” readiness)
@@ -614,6 +622,7 @@ Enterprise workflow orchestration
 Personal agent coordinating external specialists
 Agent media / brand feeds / notifications
 Commerce-assisted purchase flow
+AICP with Context Hub as a fresh-content / docs / skills source
 For each playbook include
 actor map
 what runs where
@@ -624,17 +633,61 @@ trust/privacy assumptions
 what is out of scope for AICP
 canonical flow references and conformance suites
 failure/rollback notes
+
+Additional adjacent-system playbook requirement:
+Add `docs/playbooks/AICP_with_Context_Hub.md` as an informative, non-normative ecosystem playbook.
+It MUST make clear that:
+- Context Hub is not part of AICP,
+- Context Hub is an adjacent fresh-content / docs / skills source,
+- the playbook does not define a new AICP extension or binding,
+- the purpose is to show one practical way an AICP agent or platform can use fresh content inside a governed AICP session.
+
+The Context Hub playbook MUST explicitly cover all three synergy points:
+1) **Fresh-content retrieval during an AICP session**
+- show one or more AICP participants using Context Hub to search/fetch current docs or skills needed for the session;
+- reflect the real Context Hub model: search/get, version-aware and language-aware doc/skill retrieval.
+2) **Docs/skills as referenced working artifacts in the session**
+- show how the session records which Context Hub document/skill, version, language, and source/trust class were selected,
+- and how responsibility for applying or validating that content is assigned inside the governed session.
+3) **AICP as the shared governed context layer that Context Hub itself does not provide**
+- explicitly explain that Context Hub local annotations are local and not shared,
+- explain that AICP is the layer that provides shared goal, contract, roles, policy constraints, delegated responsibility, transcript continuity, and resume-safe coordination across multiple agents/platforms.
+
+The Context Hub playbook MUST include at least one detailed end-to-end scenario, such as:
+- a multi-agent coding/integration session,
+- where one participant fetches fresh docs/skills from Context Hub,
+- the session records which material is in force,
+- a local annotation or newly discovered quirk is surfaced as part of the governed workflow,
+- and the session can resume after interruption without losing which external content informed the work.
+
+The Context Hub playbook MUST also include:
+- a short architecture map:
+  - Context Hub = fresh-content / docs / skills source
+  - AICP = governed multi-agent session layer
+  - Tool/API layer = execution surface
+  - optional local adapter / MCP wrapper = implementation choice, not protocol requirement
+- failure/fallback patterns:
+  - multiple candidate versions or sources,
+  - disagreement between agents over which source/version to trust,
+  - hidden local annotation risk,
+  - Context Hub unavailable / cached-only mode,
+  - resumed session needing to re-identify prior external content used.
+
 New doc: docs/profiles/Profile_Selection_Guide.md
 Scenario → recommended profile(s)
 minimum viable profile
 “upgrade path” to stricter profiles
 pairing guidance (e.g., delegated identity + orchestration, reception + media, etc.)
+
 Update personas/stories doc
 Add direct mapping:
 scenario → persona/story → feature set → profile → adjacent protocol dependencies
+Include at least one adjacent-content example showing that some governed sessions rely on external fresh-content/skills systems (for example, Context Hub) without making those systems part of AICP.
+
 Acceptance:
 A developer can choose the right profile for a target workflow without reading all extension RFCs first.
 Two solution architects can independently arrive at similar stack/profile choices for the same scenario.
+Developers have at least one concrete, adjacent-system example showing how AICP sessions can use a fresh-content registry while preserving AICP’s scope boundaries.
 
 M45 — Session topology and context-portability cookbook
 Problem:
