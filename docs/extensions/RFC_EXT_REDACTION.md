@@ -1,5 +1,7 @@
 # RFC: EXT-REDACTION — redaction declarations, retention policy, and vault-neutral PII references (Registered Extension)
 
+**Status:** Incubating draft foundation (M24 slice-1 artifacts present; full M24 not yet shipped in `ROADMAP.md`).
+
 EXT-REDACTION defines a minimal, verifiable M24 foundation for declaring redacted derivatives without mutating prior transcript records.
 
 This RFC is intentionally conservative: it standardizes redaction declarations, contract retention-policy fields, and a vault-neutral `pii_ref` pattern. It does **not** standardize full deletion workflows, vendor vault APIs, or advanced cryptographic transformation proofs.

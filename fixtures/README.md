@@ -2,6 +2,8 @@
 
 Fixtures and golden transcripts are verification artifacts.
 
+Status note: Fixture/suite presence indicates deterministic test coverage, not automatic milestone graduation; roadmap status in `ROADMAP.md` remains authoritative for shipped vs incubating scope.
+
 ## Rules
 
 - Do not hand-edit golden transcripts.

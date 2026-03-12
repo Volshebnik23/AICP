@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-12_
+_Last updated: 2026-03-13_
 
 ## Current / Next
 
@@ -37,7 +37,7 @@ _Last updated: 2026-03-12_
 - **Shipped:** multi-session interoperability is now conformance-backed with secondary-session create/send/replay coverage (`TB-HTTP-19`/`20`/`21`) and session-scope coherence checks across path/body/top-level references.
 - **Shipped:** reconnect/churn coverage now includes multi-step SSE reconnect evidence (`TB-HTTP-22` chaining from `TB-HTTP-17`) with deterministic cursor continuity checks.
 - **Shipped:** HTTP/WS binding RFC guidance now maps replay/idempotency/session-scope/reconnect behavior directly to shipped conformance cases.
-- **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes) now that trust/status/supply-chain baseline is shipped.
+- **Next concrete step:** keep M22 executable transport/binding surface stable while incubating M23/M24 artifacts toward graduation.
 
 ### ✅ M20 — Trust anchors & issuer attestations (completed)
 - **Shipped:** normative M20 RFC defines canonical `trust_anchor_list` and `issuer_attestation` objects with baseline verification model and explicit M21 deferrals.
@@ -50,38 +50,25 @@ _Last updated: 2026-03-12_
 - **Shipped:** normative M21 RFC defines canonical `status_query` and `status_assertion` objects with baseline status-as-of/cache semantics and revocation-as-of checks.
 - **Shipped:** minimal status and revocation-reason registries are in-repo and validator-enforced (`registry/status_assertion_codes.json`, `registry/revocation_reason_codes.json`).
 - **Shipped:** M21 schema + deterministic fixtures + conformance suite (`SC-STATUS-CHANNEL-0.1`) verify hash integrity, registry linkage, trust-chain signature checks, target binding consistency, and temporal/cache validity for GOOD/REVOKED assertions.
-- **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes).
+- **Next concrete step:** maintain M21 operational reliability while M23 remains incubating.
 
 
 ### ✅ M30 — Tool/Resource/Prompt supply-chain security (immutable manifests + pinning + anti-shadowing)
 - **Shipped:** normative M30 baseline RFC defines canonical artifact manifests (`tool`/`resource`/`prompt`), issuer-scoped anti-shadowing identity, contract pinning, and explicit deferrals (`docs/rfc/RFC_Artifact_Manifests_and_Pinning.md`).
 - **Shipped:** baseline schema support landed for artifact manifests and contract pinning plus `TOOL_CALL_REQUEST.payload.manifest_ref` binding fields (`schemas/extensions/ext-artifact-manifests-pinning.schema.json`, `schemas/extensions/ext-tool-gating-payloads.schema.json`).
 - **Shipped:** deterministic M30 fixtures and extension conformance suite verify valid pinned baseline, rug-pull expected-fail, shadowing expected-fail, and valid upgrade via explicit `CONTEXT_AMEND` renegotiation (`fixtures/extensions/tool_supply_chain/*`, `conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json`).
-- **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes) as the next remaining milestone.
+- **Next concrete step:** preserve M30 supply-chain baseline while incubating adjacent enterprise/privacy milestones.
 
 
-### ✅ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
-- **Shipped:** canonical M23 privacy modes are now registry-backed (`full`, `redacted`, `metadata-only`, `classification-only`) while legacy CAPNEG modes remain for backward compatibility (`registry/privacy_modes.json`).
-- **Shipped:** normative confidentiality binding RFC + schema now define contract-level mode/hash/artifact requirements and CAPNEG integration (`docs/extensions/RFC_EXT_CONFIDENTIALITY.md`, `schemas/extensions/ext-confidentiality-artifacts.schema.json`).
-- **Shipped:** deterministic confidentiality fixtures and extension conformance suite now verify pass/fail mode requirements and CAPNEG-to-contract binding (`fixtures/extensions/confidentiality/*`, `conformance/extensions/CF_CONFIDENTIALITY_0.1.json`).
-- **Shipped:** conformance runner + one-command workflow now enforce confidentiality checks under extension suites (`conformance/runner/aicp_conformance_runner.py`, `Makefile`).
-- **Next concrete step:** begin M24 (Redaction standard + retention/deletion policies).
+### ⏳ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem) [incubating]
+- **Current repo reality:** confidentiality RFC/schema/fixtures/suite artifacts are present and runnable in extension conformance (`docs/extensions/RFC_EXT_CONFIDENTIALITY.md`, `schemas/extensions/ext-confidentiality-artifacts.schema.json`, `conformance/extensions/CF_CONFIDENTIALITY_0.1.json`).
+- **Status signaling:** treat M23 as incubating protocol surface until graduation criteria are explicitly called as shipped in this roadmap (artifact presence alone is not milestone completion).
+- **Next concrete step:** run stabilization/graduation pass for M23 semantics and compatibility guarantees.
 
-
-### ⏳ M24 — Redaction standard + retention/deletion policies (slice 1 shipped)
-- **Shipped (slice 1):** EXT-REDACTION RFC + schema + registry/message-type entries now define `CONTENT_REDACTED`, minimal `redaction_proof`, contract `retention_policy`, and vault-neutral `pii_ref` requirements (`docs/extensions/RFC_EXT_REDACTION.md`, `schemas/extensions/ext-redaction-payloads.schema.json`, `registry/extension_ids.json`, `registry/message_types.json`).
-- **Shipped (slice 1):** deterministic redaction fixtures + extension conformance suite + runner checks now verify original-message binding, proof/policy fields, pii_ref constraints, retention-policy fields, and chain-integrity behavior (`fixtures/extensions/redaction/*`, `conformance/extensions/RD_REDACTION_0.1.json`, `conformance/runner/aicp_conformance_runner.py`).
-- **Next concrete step:** complete remaining M24 scope (full redaction-object semantics and retention/deletion lifecycle details).
-
-## Planned milestones (protocol maturity & ecosystem scale)
-
-### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
-- **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
-
-
-
-### ⏳ M24 — Redaction standard + retention/deletion policies
-- **Exit:** Redaction objects + retention/deletion contract fields + fixtures + conformance.
+### ⏳ M24 — Redaction standard + retention/deletion policies [slice-1 incubating]
+- **Current repo reality:** initial EXT-REDACTION artifacts exist (RFC/schema/fixtures/conformance/message-type wiring) for a minimal redaction declaration foundation.
+- **Status signaling:** this is slice-1 scaffolding, not full M24 completion (retention/deletion lifecycle and richer redaction semantics remain unfinished).
+- **Next concrete step:** complete remaining M24 normative scope and promotion criteria before claiming shipped status.
 
 ### ⏳ M26 — Human-in-the-loop primitive (approval / step-up)
 - **Exit:** EXT-HUMAN-APPROVAL with challenge/signer/TTL bindings + conformance.
