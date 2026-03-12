@@ -226,6 +226,18 @@ def _has_resolvable_evidence_ref(evidence_refs: Any, prior_message_ids: set[str]
     return False
 
 
+def _contract_ext_object(contract: Any, ext_key: str, extension_id: str) -> dict[str, Any] | None:
+    if not isinstance(contract, dict):
+        return None
+    ext = contract.get("ext")
+    if isinstance(ext, dict) and isinstance(ext.get(ext_key), dict):
+        return ext.get(ext_key)
+    extensions = contract.get("extensions")
+    if isinstance(extensions, dict) and isinstance(extensions.get(extension_id), dict):
+        return extensions.get(extension_id)
+    return None
+
+
 def _parse_iso_datetime(value: Any) -> datetime | None:
     if not isinstance(value, str) or not value:
         return None
@@ -1041,6 +1053,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
     contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
+    confidentiality_schema_path = ROOT / "schemas/extensions/ext-confidentiality-artifacts.schema.json"
+    confidentiality_schema = load_json(confidentiality_schema_path)
+    confidentiality_validator = _build_validator(confidentiality_schema, confidentiality_schema_path) if Draft202012Validator is not None else None
 
     failures: list[dict[str, Any]] = []
     degraded = False
@@ -1567,6 +1582,88 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.negotiation_result_hash must match accepted negotiation_result hash", rel_file, line_no)
                         if "selected" in capneg_binding and capneg_binding.get("selected") != expected_selected:
                             add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.selected must exactly match negotiation_result.selected", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"CF-CONTRACT-CONFIDENTIALITY-01", "CF-MODE-REGISTRY-01", "CF-CAPNEG-BIND-01", "CF-NEGRESULT-HASH-BIND-01", "CF-REDACTION-ARTIFACTS-01", "CF-METADATA-PROJECTION-01", "CF-CLASSIFICATION-ARTIFACTS-01"}):
+            proposed_negotiation_result = None
+            proposed_negotiation_result_hash = None
+            accepted_negotiation_result_hash = None
+            accepted_mode = None
+            accepted_indices: list[int] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CAPABILITIES_PROPOSE":
+                    nr = payload.get("negotiation_result")
+                    if isinstance(nr, dict):
+                        proposed_negotiation_result = nr
+                        proposed_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        selected = nr.get("selected") if isinstance(nr.get("selected"), dict) else {}
+                        accepted_mode = selected.get("privacy_mode") if isinstance(selected.get("privacy_mode"), str) else accepted_mode
+
+                elif mtype == "CAPABILITIES_ACCEPT" and payload.get("accepted") is True:
+                    accepted_indices.append(idx)
+                    nr = payload.get("negotiation_result")
+                    nr_hash = payload.get("negotiation_result_hash")
+                    if isinstance(nr, dict):
+                        accepted_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        selected = nr.get("selected") if isinstance(nr.get("selected"), dict) else {}
+                        if isinstance(selected.get("privacy_mode"), str):
+                            accepted_mode = selected.get("privacy_mode")
+                    if isinstance(nr_hash, str) and nr_hash:
+                        accepted_negotiation_result_hash = nr_hash
+
+            if not accepted_indices:
+                pass
+            else:
+                expected_hash = accepted_negotiation_result_hash or proposed_negotiation_result_hash
+                for idx, (line_no, msg) in enumerate(rows):
+                    if idx <= accepted_indices[0] or msg.get("message_type") != "CONTRACT_PROPOSE":
+                        continue
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    confidentiality = _contract_ext_object(contract, "confidentiality", "EXT-CONFIDENTIALITY")
+
+                    if confidentiality is None:
+                        if "CF-CONTRACT-CONFIDENTIALITY-01" in enabled_checks:
+                            add_failure(t_failures, "CF-CONTRACT-CONFIDENTIALITY-01", "CONTRACT_PROPOSE payload.contract.ext.confidentiality is required after CAPABILITIES_ACCEPT", rel_file, line_no)
+                        continue
+
+                    if confidentiality_validator is not None:
+                        for err in sorted(confidentiality_validator.iter_errors(confidentiality), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "CF-CONTRACT-CONFIDENTIALITY-01", f"confidentiality object schema error: {err.message}", rel_file, line_no)
+
+                    mode_id = confidentiality.get("mode_id")
+                    if "CF-MODE-REGISTRY-01" in enabled_checks:
+                        if mode_id not in privacy_modes_registry and not _is_namespaced_identifier(mode_id):
+                            add_failure(t_failures, "CF-MODE-REGISTRY-01", f"unregistered confidentiality mode_id '{mode_id}'", rel_file, line_no)
+
+                    if "CF-CAPNEG-BIND-01" in enabled_checks and isinstance(accepted_mode, str):
+                        if mode_id != accepted_mode:
+                            add_failure(t_failures, "CF-CAPNEG-BIND-01", "contract.ext.confidentiality.mode_id must match accepted CAPNEG selected.privacy_mode", rel_file, line_no)
+
+                    if "CF-NEGRESULT-HASH-BIND-01" in enabled_checks and isinstance(expected_hash, str):
+                        n_hash = confidentiality.get("negotiation_result_hash")
+                        if not isinstance(n_hash, str) or n_hash != expected_hash:
+                            add_failure(t_failures, "CF-NEGRESULT-HASH-BIND-01", "contract.ext.confidentiality.negotiation_result_hash must match accepted CAPNEG result hash", rel_file, line_no)
+
+                    if "CF-REDACTION-ARTIFACTS-01" in enabled_checks and mode_id == "redacted":
+                        refs = confidentiality.get("redaction_artifact_refs")
+                        if not isinstance(refs, list) or len([r for r in refs if isinstance(r, str) and r]) == 0:
+                            add_failure(t_failures, "CF-REDACTION-ARTIFACTS-01", "redacted mode requires non-empty redaction_artifact_refs", rel_file, line_no)
+
+                    if "CF-METADATA-PROJECTION-01" in enabled_checks and mode_id == "metadata-only":
+                        projection = confidentiality.get("metadata_projection")
+                        if not isinstance(projection, dict) or len(projection) == 0:
+                            add_failure(t_failures, "CF-METADATA-PROJECTION-01", "metadata-only mode requires non-empty metadata_projection", rel_file, line_no)
+
+                    if "CF-CLASSIFICATION-ARTIFACTS-01" in enabled_checks and mode_id == "classification-only":
+                        labels = confidentiality.get("classification_labels")
+                        evidence_refs = confidentiality.get("classification_evidence_refs")
+                        labels_ok = isinstance(labels, list) and len([v for v in labels if isinstance(v, str) and v]) > 0
+                        evidence_ok = isinstance(evidence_refs, list) and len([v for v in evidence_refs if isinstance(v, str) and v]) > 0
+                        if not labels_ok or not evidence_ok:
+                            add_failure(t_failures, "CF-CLASSIFICATION-ARTIFACTS-01", "classification-only mode requires non-empty classification_labels and classification_evidence_refs", rel_file, line_no)
 
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
@@ -2110,26 +2207,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     first_contract_line_no = line_no
                     break
 
-            capneg_cfg: dict[str, Any] | None = None
-            enforcement_cfg: dict[str, Any] | None = None
-            participants_cfg: dict[str, Any] | None = None
-            if isinstance(first_contract, dict):
-                ext = first_contract.get("ext") or {}
-                if isinstance(ext, dict):
-                    capneg_cfg = ext.get("capneg")
-                    enforcement_cfg = ext.get("enforcement")
-                    participants_cfg = ext.get("participants")
-                if enforcement_cfg is None or participants_cfg is None:
-                    extensions = first_contract.get("extensions") or {}
-                    if isinstance(extensions, dict):
-                        if enforcement_cfg is None:
-                            enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
-                        if participants_cfg is None:
-                            participants_cfg = extensions.get("EXT-PARTICIPANTS")
-
-            capneg_cfg = capneg_cfg if isinstance(capneg_cfg, dict) else None
-            enforcement_cfg = enforcement_cfg if isinstance(enforcement_cfg, dict) else None
-            participants_cfg = participants_cfg if isinstance(participants_cfg, dict) else None
+            capneg_cfg = _contract_ext_object(first_contract, "capneg", "EXT-CAPNEG")
+            enforcement_cfg = _contract_ext_object(first_contract, "enforcement", "EXT-ENFORCEMENT")
+            participants_cfg = _contract_ext_object(first_contract, "participants", "EXT-PARTICIPANTS")
 
             mediators: list[str] = []
             if isinstance(enforcement_cfg, dict):
