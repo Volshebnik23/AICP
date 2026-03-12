@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-09_
+_Last updated: 2026-03-12_
 
 ## Current / Next
 
@@ -60,15 +60,25 @@ _Last updated: 2026-03-09_
 - **Next concrete step:** begin M23 (Confidentiality & selective disclosure modes) as the next remaining milestone.
 
 
+### ✅ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
+- **Shipped:** canonical M23 privacy modes are now registry-backed (`full`, `redacted`, `metadata-only`, `classification-only`) while legacy CAPNEG modes remain for backward compatibility (`registry/privacy_modes.json`).
+- **Shipped:** normative confidentiality binding RFC + schema now define contract-level mode/hash/artifact requirements and CAPNEG integration (`docs/extensions/RFC_EXT_CONFIDENTIALITY.md`, `schemas/extensions/ext-confidentiality-artifacts.schema.json`).
+- **Shipped:** deterministic confidentiality fixtures and extension conformance suite now verify pass/fail mode requirements and CAPNEG-to-contract binding (`fixtures/extensions/confidentiality/*`, `conformance/extensions/CF_CONFIDENTIALITY_0.1.json`).
+- **Shipped:** conformance runner + one-command workflow now enforce confidentiality checks under extension suites (`conformance/runner/aicp_conformance_runner.py`, `Makefile`).
+- **Next concrete step:** begin M24 (Redaction standard + retention/deletion policies).
+
+
+### ⏳ M24 — Redaction standard + retention/deletion policies (slice 1 shipped)
+- **Shipped (slice 1):** EXT-REDACTION RFC + schema + registry/message-type entries now define `CONTENT_REDACTED`, minimal `redaction_proof`, contract `retention_policy`, and vault-neutral `pii_ref` requirements (`docs/extensions/RFC_EXT_REDACTION.md`, `schemas/extensions/ext-redaction-payloads.schema.json`, `registry/extension_ids.json`, `registry/message_types.json`).
+- **Shipped (slice 1):** deterministic redaction fixtures + extension conformance suite + runner checks now verify original-message binding, proof/policy fields, pii_ref constraints, retention-policy fields, and chain-integrity behavior (`fixtures/extensions/redaction/*`, `conformance/extensions/RD_REDACTION_0.1.json`, `conformance/runner/aicp_conformance_runner.py`).
+- **Next concrete step:** complete remaining M24 scope (full redaction-object semantics and retention/deletion lifecycle details).
+
 ## Planned milestones (protocol maturity & ecosystem scale)
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 - **Exit:** Clear LICENSE+PATENTS+contribution policy+trademark policy enabling commercial distribution.
 
 
-
-### ⏳ M23 — Confidentiality & selective disclosure modes (enterprise/on-prem)
-- **Exit:** Full/redacted/metadata-only/classification-only modes + conformance.
 
 ### ⏳ M24 — Redaction standard + retention/deletion policies
 - **Exit:** Redaction objects + retention/deletion contract fields + fixtures + conformance.
