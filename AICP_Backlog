@@ -215,7 +215,7 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
    - “OAuth bridge cookbook” (ties into M28)
    - “Tool catalog pinning cookbook” (ties into M30)
 2) **Adjacent content-source tutorial**
-   - “Using Context Hub as a fresh-content source in an AICP-governed workflow”
+   - “Using Context Hub https://github.com/andrewyng/context-hub as a fresh-content source in an AICP-governed workflow”
    - Tutorial MUST cover:
      - when an AICP participant/platform should query a fresh-content source versus rely on cached/local knowledge,
      - how to record the chosen doc/skill/version/source in transcript or workflow state,
