@@ -135,6 +135,22 @@ def _resolve_json_pointer(doc: dict[str, Any], pointer: str) -> Any:
     return cur
 
 
+
+
+def _validator_for_schema_pointer(schema: dict[str, Any], pointer: str) -> Any:
+    if Draft202012Validator is None:
+        return None
+    norm_pointer = _normalize_pointer(pointer)
+    _resolve_json_pointer(schema, norm_pointer)
+    wrapper = {
+        "$schema": schema.get("$schema"),
+        "$id": schema.get("$id"),
+        "$ref": f"#{norm_pointer}" if norm_pointer else "#",
+        "$defs": schema.get("$defs", {}),
+    }
+    return Draft202012Validator(wrapper)
+
+
 def _validate_payload_schema(
     msg: dict[str, Any],
     line_no: int,
@@ -224,6 +240,18 @@ def _has_resolvable_evidence_ref(evidence_refs: Any, prior_message_ids: set[str]
         if ref.startswith("objhash:") and ref[len("objhash:"):] in prior_payload_object_hashes:
             return True
     return False
+
+
+def _contract_ext_object(contract: Any, ext_key: str, extension_id: str) -> dict[str, Any] | None:
+    if not isinstance(contract, dict):
+        return None
+    ext = contract.get("ext")
+    if isinstance(ext, dict) and isinstance(ext.get(ext_key), dict):
+        return ext.get(ext_key)
+    extensions = contract.get("extensions")
+    if isinstance(extensions, dict) and isinstance(extensions.get(extension_id), dict):
+        return extensions.get(extension_id)
+    return None
 
 
 def _parse_iso_datetime(value: Any) -> datetime | None:
@@ -1041,6 +1069,15 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
     contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
+    confidentiality_schema_path = ROOT / "schemas/extensions/ext-confidentiality-artifacts.schema.json"
+    confidentiality_schema = load_json(confidentiality_schema_path)
+    confidentiality_validator = _build_validator(confidentiality_schema, confidentiality_schema_path) if Draft202012Validator is not None else None
+    redaction_schema_path = ROOT / "schemas/extensions/ext-redaction-payloads.schema.json"
+    redaction_schema = load_json(redaction_schema_path)
+    redaction_payload_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/CONTENT_REDACTED") if Draft202012Validator is not None else None
+    redaction_proof_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RedactionProof") if Draft202012Validator is not None else None
+    pii_ref_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/PiiRef") if Draft202012Validator is not None else None
+    retention_policy_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RetentionPolicy") if Draft202012Validator is not None else None
 
     failures: list[dict[str, Any]] = []
     degraded = False
@@ -1567,6 +1604,177 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.negotiation_result_hash must match accepted negotiation_result hash", rel_file, line_no)
                         if "selected" in capneg_binding and capneg_binding.get("selected") != expected_selected:
                             add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.selected must exactly match negotiation_result.selected", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"CF-CONTRACT-CONFIDENTIALITY-01", "CF-MODE-REGISTRY-01", "CF-CAPNEG-BIND-01", "CF-NEGRESULT-HASH-BIND-01", "CF-REDACTION-ARTIFACTS-01", "CF-METADATA-PROJECTION-01", "CF-CLASSIFICATION-ARTIFACTS-01"}):
+            proposed_negotiation_result = None
+            proposed_negotiation_result_hash = None
+            accepted_negotiation_result_hash = None
+            accepted_mode = None
+            accepted_indices: list[int] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CAPABILITIES_PROPOSE":
+                    nr = payload.get("negotiation_result")
+                    if isinstance(nr, dict):
+                        proposed_negotiation_result = nr
+                        proposed_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        selected = nr.get("selected") if isinstance(nr.get("selected"), dict) else {}
+                        accepted_mode = selected.get("privacy_mode") if isinstance(selected.get("privacy_mode"), str) else accepted_mode
+
+                elif mtype == "CAPABILITIES_ACCEPT" and payload.get("accepted") is True:
+                    accepted_indices.append(idx)
+                    nr = payload.get("negotiation_result")
+                    nr_hash = payload.get("negotiation_result_hash")
+                    if isinstance(nr, dict):
+                        accepted_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        selected = nr.get("selected") if isinstance(nr.get("selected"), dict) else {}
+                        if isinstance(selected.get("privacy_mode"), str):
+                            accepted_mode = selected.get("privacy_mode")
+                    if isinstance(nr_hash, str) and nr_hash:
+                        accepted_negotiation_result_hash = nr_hash
+
+            if not accepted_indices:
+                pass
+            else:
+                expected_hash = accepted_negotiation_result_hash or proposed_negotiation_result_hash
+                for idx, (line_no, msg) in enumerate(rows):
+                    if idx <= accepted_indices[0] or msg.get("message_type") != "CONTRACT_PROPOSE":
+                        continue
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    confidentiality = _contract_ext_object(contract, "confidentiality", "EXT-CONFIDENTIALITY")
+
+                    if confidentiality is None:
+                        if "CF-CONTRACT-CONFIDENTIALITY-01" in enabled_checks:
+                            add_failure(t_failures, "CF-CONTRACT-CONFIDENTIALITY-01", "CONTRACT_PROPOSE payload.contract.ext.confidentiality is required after CAPABILITIES_ACCEPT", rel_file, line_no)
+                        continue
+
+                    if confidentiality_validator is not None:
+                        for err in sorted(confidentiality_validator.iter_errors(confidentiality), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "CF-CONTRACT-CONFIDENTIALITY-01", f"confidentiality object schema error: {err.message}", rel_file, line_no)
+
+                    mode_id = confidentiality.get("mode_id")
+                    if "CF-MODE-REGISTRY-01" in enabled_checks:
+                        if mode_id not in privacy_modes_registry and not _is_namespaced_identifier(mode_id):
+                            add_failure(t_failures, "CF-MODE-REGISTRY-01", f"unregistered confidentiality mode_id '{mode_id}'", rel_file, line_no)
+
+                    if "CF-CAPNEG-BIND-01" in enabled_checks and isinstance(accepted_mode, str):
+                        if mode_id != accepted_mode:
+                            add_failure(t_failures, "CF-CAPNEG-BIND-01", "contract.ext.confidentiality.mode_id must match accepted CAPNEG selected.privacy_mode", rel_file, line_no)
+
+                    if "CF-NEGRESULT-HASH-BIND-01" in enabled_checks and isinstance(expected_hash, str):
+                        n_hash = confidentiality.get("negotiation_result_hash")
+                        if not isinstance(n_hash, str) or n_hash != expected_hash:
+                            add_failure(t_failures, "CF-NEGRESULT-HASH-BIND-01", "contract.ext.confidentiality.negotiation_result_hash must match accepted CAPNEG result hash", rel_file, line_no)
+
+                    if "CF-REDACTION-ARTIFACTS-01" in enabled_checks and mode_id == "redacted":
+                        refs = confidentiality.get("redaction_artifact_refs")
+                        if not isinstance(refs, list) or len([r for r in refs if isinstance(r, str) and r]) == 0:
+                            add_failure(t_failures, "CF-REDACTION-ARTIFACTS-01", "redacted mode requires non-empty redaction_artifact_refs", rel_file, line_no)
+
+                    if "CF-METADATA-PROJECTION-01" in enabled_checks and mode_id == "metadata-only":
+                        projection = confidentiality.get("metadata_projection")
+                        if not isinstance(projection, dict) or len(projection) == 0:
+                            add_failure(t_failures, "CF-METADATA-PROJECTION-01", "metadata-only mode requires non-empty metadata_projection", rel_file, line_no)
+
+                    if "CF-CLASSIFICATION-ARTIFACTS-01" in enabled_checks and mode_id == "classification-only":
+                        labels = confidentiality.get("classification_labels")
+                        evidence_refs = confidentiality.get("classification_evidence_refs")
+                        labels_ok = isinstance(labels, list) and len([v for v in labels if isinstance(v, str) and v]) > 0
+                        evidence_ok = isinstance(evidence_refs, list) and len([v for v in evidence_refs if isinstance(v, str) and v]) > 0
+                        if not labels_ok or not evidence_ok:
+                            add_failure(t_failures, "CF-CLASSIFICATION-ARTIFACTS-01", "classification-only mode requires non-empty classification_labels and classification_evidence_refs", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"RD-ORIGINAL-BIND-01", "RD-POLICY-REF-01", "RD-PROOF-01", "RD-PII-REF-01", "RD-RETENTION-CONTRACT-01", "RD-CHAIN-INTEGRITY-01"}):
+            prior_message_hashes: set[str] = set()
+            forbidden_pii_keys = {"value", "raw_value", "plaintext", "email", "phone", "address", "ssn", "passport_number", "national_id"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CONTRACT_PROPOSE" and "RD-RETENTION-CONTRACT-01" in enabled_checks:
+                    contract = payload.get("contract") if isinstance(payload.get("contract"), dict) else {}
+                    redaction_cfg = _contract_ext_object(contract, "redaction", "EXT-REDACTION")
+                    if redaction_cfg is not None:
+                        retention = redaction_cfg.get("retention_policy") if isinstance(redaction_cfg.get("retention_policy"), dict) else None
+                        if retention is None:
+                            add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "contract.ext.redaction.retention_policy must be present when EXT-REDACTION contract config is declared", rel_file, line_no)
+                        else:
+                            ttl = retention.get("ttl_seconds")
+                            delete_semantics = retention.get("delete_semantics")
+                            audit_ttl = retention.get("audit_retention_seconds")
+                            if not isinstance(ttl, int) or ttl < 1:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.ttl_seconds must be an integer >= 1", rel_file, line_no)
+                            if not isinstance(delete_semantics, str) or delete_semantics not in {"hard-delete", "soft-delete", "tombstone"}:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.delete_semantics must be one of: hard-delete, soft-delete, tombstone", rel_file, line_no)
+                            if not isinstance(audit_ttl, int) or audit_ttl < 1:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds must be an integer >= 1", rel_file, line_no)
+                            if retention_policy_validator is not None:
+                                for err in sorted(retention_policy_validator.iter_errors(retention), key=lambda e: list(e.path)):
+                                    add_failure(t_failures, "RD-RETENTION-CONTRACT-01", f"invalid retention_policy: {err.message}", rel_file, line_no)
+                            if isinstance(ttl, int) and isinstance(audit_ttl, int) and audit_ttl < ttl:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds should be >= ttl_seconds", rel_file, line_no)
+
+                if mtype == "CONTENT_REDACTED":
+                    if redaction_payload_validator is not None:
+                        for err in sorted(redaction_payload_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            if list(err.path)[:1] == ["redaction_proof"] or "redaction_proof" in err.message:
+                                add_failure(t_failures, "RD-PROOF-01", f"invalid redaction payload proof shape: {err.message}", rel_file, line_no)
+                            elif list(err.path)[:1] == ["pii_refs"] or "pii_refs" in err.message:
+                                add_failure(t_failures, "RD-PII-REF-01", f"invalid pii_refs shape: {err.message}", rel_file, line_no)
+
+                    original_hash = payload.get("original_message_hash")
+                    if "RD-ORIGINAL-BIND-01" in enabled_checks:
+                        if not isinstance(original_hash, str) or not original_hash or original_hash not in prior_message_hashes:
+                            add_failure(t_failures, "RD-ORIGINAL-BIND-01", "CONTENT_REDACTED.original_message_hash must reference an earlier message_hash", rel_file, line_no)
+
+                    if "RD-POLICY-REF-01" in enabled_checks:
+                        policy_ref = payload.get("redaction_policy_ref")
+                        if not isinstance(policy_ref, str) or not policy_ref:
+                            add_failure(t_failures, "RD-POLICY-REF-01", "CONTENT_REDACTED.redaction_policy_ref must be a non-empty string", rel_file, line_no)
+
+                    if "RD-PROOF-01" in enabled_checks:
+                        proof = payload.get("redaction_proof")
+                        if not isinstance(proof, dict):
+                            add_failure(t_failures, "RD-PROOF-01", "CONTENT_REDACTED.redaction_proof must be an object", rel_file, line_no)
+                        else:
+                            for field in ("proof_type", "proof_ref", "generated_at"):
+                                if not isinstance(proof.get(field), str) or not proof.get(field):
+                                    add_failure(t_failures, "RD-PROOF-01", f"redaction_proof.{field} must be a non-empty string", rel_file, line_no)
+                            if redaction_proof_validator is not None:
+                                for err in sorted(redaction_proof_validator.iter_errors(proof), key=lambda e: list(e.path)):
+                                    add_failure(t_failures, "RD-PROOF-01", f"invalid redaction_proof: {err.message}", rel_file, line_no)
+
+                    if "RD-PII-REF-01" in enabled_checks:
+                        pii_refs = payload.get("pii_refs")
+                        if pii_refs is not None:
+                            if not isinstance(pii_refs, list):
+                                add_failure(t_failures, "RD-PII-REF-01", "CONTENT_REDACTED.pii_refs must be an array when present", rel_file, line_no)
+                            else:
+                                for idx, pii_ref in enumerate(pii_refs):
+                                    if not isinstance(pii_ref, dict):
+                                        add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}] must be an object", rel_file, line_no)
+                                        continue
+                                    for bad_key in forbidden_pii_keys:
+                                        if bad_key in pii_ref:
+                                            add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}] contains forbidden inline sensitive key '{bad_key}'", rel_file, line_no)
+                                    for field in ("ref_id", "class", "controller", "access_policy_ref"):
+                                        if not isinstance(pii_ref.get(field), str) or not pii_ref.get(field):
+                                            add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}].{field} must be a non-empty string", rel_file, line_no)
+                                    if pii_ref_validator is not None:
+                                        for err in sorted(pii_ref_validator.iter_errors(pii_ref), key=lambda e: list(e.path)):
+                                            add_failure(t_failures, "RD-PII-REF-01", f"invalid pii_ref: {err.message}", rel_file, line_no)
+
+                    if "RD-CHAIN-INTEGRITY-01" in enabled_checks and isinstance(original_hash, str) and isinstance(msg.get("message_hash"), str):
+                        if msg.get("message_hash") == original_hash:
+                            add_failure(t_failures, "RD-CHAIN-INTEGRITY-01", "CONTENT_REDACTED message_hash must be distinct from original_message_hash", rel_file, line_no)
+
+                message_hash = msg.get("message_hash")
+                if isinstance(message_hash, str) and message_hash:
+                    prior_message_hashes.add(message_hash)
 
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
@@ -2110,26 +2318,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     first_contract_line_no = line_no
                     break
 
-            capneg_cfg: dict[str, Any] | None = None
-            enforcement_cfg: dict[str, Any] | None = None
-            participants_cfg: dict[str, Any] | None = None
-            if isinstance(first_contract, dict):
-                ext = first_contract.get("ext") or {}
-                if isinstance(ext, dict):
-                    capneg_cfg = ext.get("capneg")
-                    enforcement_cfg = ext.get("enforcement")
-                    participants_cfg = ext.get("participants")
-                if enforcement_cfg is None or participants_cfg is None:
-                    extensions = first_contract.get("extensions") or {}
-                    if isinstance(extensions, dict):
-                        if enforcement_cfg is None:
-                            enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
-                        if participants_cfg is None:
-                            participants_cfg = extensions.get("EXT-PARTICIPANTS")
-
-            capneg_cfg = capneg_cfg if isinstance(capneg_cfg, dict) else None
-            enforcement_cfg = enforcement_cfg if isinstance(enforcement_cfg, dict) else None
-            participants_cfg = participants_cfg if isinstance(participants_cfg, dict) else None
+            capneg_cfg = _contract_ext_object(first_contract, "capneg", "EXT-CAPNEG")
+            enforcement_cfg = _contract_ext_object(first_contract, "enforcement", "EXT-ENFORCEMENT")
+            participants_cfg = _contract_ext_object(first_contract, "participants", "EXT-PARTICIPANTS")
 
             mediators: list[str] = []
             if isinstance(enforcement_cfg, dict):

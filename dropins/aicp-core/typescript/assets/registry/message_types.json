@@ -262,6 +262,15 @@
     "security_considerations": "Content payloads should be mediated to avoid bypassing enforcement in blocking mode."
   },
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_REDACTED",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#1-message-type-normative",
+    "security_considerations": "Redaction payloads should include policy and proof bindings and avoid inline plaintext PII."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
