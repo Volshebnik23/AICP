@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-redaction-payloads.schema.json",
+  "title": "AICP EXT-REDACTION payloads and contract artifacts",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "StringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "RedactionProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proof_type",
+        "proof_ref",
+        "generated_at"
+      ],
+      "properties": {
+        "proof_type": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "proof_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PiiRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref_id",
+        "class",
+        "controller",
+        "access_policy_ref"
+      ],
+      "properties": {
+        "ref_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "class": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "controller": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "access_policy_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "handle_digest": {
+          "type": "string",
+          "pattern": "^sha256:[A-Za-z0-9._:-]+$"
+        }
+      }
+    },
+    "ReplacementSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "replaced_classes"
+      ],
+      "properties": {
+        "replaced_classes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "mask",
+            "drop",
+            "tokenize"
+          ]
+        }
+      }
+    },
+    "CONTENT_REDACTED": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "original_message_hash",
+        "redaction_policy_ref",
+        "redaction_proof"
+      ],
+      "properties": {
+        "original_message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "redaction_policy_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "redaction_proof": {
+          "$ref": "#/$defs/RedactionProof"
+        },
+        "artifact_refs": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "pii_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PiiRef"
+          }
+        },
+        "replacement_summary": {
+          "$ref": "#/$defs/ReplacementSummary"
+        }
+      }
+    },
+    "RetentionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ttl_seconds",
+        "delete_semantics",
+        "audit_retention_seconds"
+      ],
+      "properties": {
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "delete_semantics": {
+          "type": "string",
+          "enum": [
+            "hard-delete",
+            "soft-delete",
+            "tombstone"
+          ]
+        },
+        "audit_retention_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "ContractRedaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "retention_policy"
+      ],
+      "properties": {
+        "retention_policy": {
+          "$ref": "#/$defs/RetentionPolicy"
+        }
+      }
+    }
+  }
+}

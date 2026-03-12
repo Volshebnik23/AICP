@@ -78,6 +78,7 @@ Registered extension IDs are authoritative in `registry/extension_ids.json`.
 - `EXT-ENFORCEMENT` — `docs/extensions/RFC_EXT_ENFORCEMENT.md`
 - `EXT-ALERTS` — `docs/extensions/RFC_EXT_ALERTS.md`
 - `EXT-RESUME` — `docs/extensions/RFC_EXT_RESUME.md`
+- `EXT-REDACTION` — `docs/extensions/RFC_EXT_REDACTION.md`
 - `EXT-PARTICIPANTS` — `docs/extensions/RFC_EXT_PARTICIPANTS.md`
 - `EXT-TOOL-GATING` — `docs/extensions/RFC_EXT_TOOL_GATING.md`
 
@@ -130,7 +131,8 @@ Items sometimes discussed as potential future work (for example tracing/QoS/arti
 Do not treat unregistered ideas as conformance targets or compatibility claims.
 
 
-## Added extension suites (v89)
+## Added extension suites (v90)
+- `conformance/extensions/RD_REDACTION_0.1.json`
 - `conformance/extensions/CF_CONFIDENTIALITY_0.1.json`
 - `conformance/extensions/EC_ECONOMICS_0.1.json`
 - `conformance/extensions/AD_ADMISSION_0.1.json`

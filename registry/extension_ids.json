@@ -204,6 +204,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-REDACTION",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#8-registry-entries",
+    "security_considerations": "Redaction declarations must bind to prior message hashes, policy refs, and retention semantics without exposing plaintext sensitive values."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-RESUME",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md",

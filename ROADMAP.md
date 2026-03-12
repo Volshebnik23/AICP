@@ -67,6 +67,12 @@ _Last updated: 2026-03-12_
 - **Shipped:** conformance runner + one-command workflow now enforce confidentiality checks under extension suites (`conformance/runner/aicp_conformance_runner.py`, `Makefile`).
 - **Next concrete step:** begin M24 (Redaction standard + retention/deletion policies).
 
+
+### ⏳ M24 — Redaction standard + retention/deletion policies (slice 1 shipped)
+- **Shipped (slice 1):** EXT-REDACTION RFC + schema + registry/message-type entries now define `CONTENT_REDACTED`, minimal `redaction_proof`, contract `retention_policy`, and vault-neutral `pii_ref` requirements (`docs/extensions/RFC_EXT_REDACTION.md`, `schemas/extensions/ext-redaction-payloads.schema.json`, `registry/extension_ids.json`, `registry/message_types.json`).
+- **Shipped (slice 1):** deterministic redaction fixtures + extension conformance suite + runner checks now verify original-message binding, proof/policy fields, pii_ref constraints, retention-policy fields, and chain-integrity behavior (`fixtures/extensions/redaction/*`, `conformance/extensions/RD_REDACTION_0.1.json`, `conformance/runner/aicp_conformance_runner.py`).
+- **Next concrete step:** complete remaining M24 scope (full redaction-object semantics and retention/deletion lifecycle details).
+
 ## Planned milestones (protocol maturity & ecosystem scale)
 
 ### ⏳ M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption

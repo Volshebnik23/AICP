@@ -135,6 +135,22 @@ def _resolve_json_pointer(doc: dict[str, Any], pointer: str) -> Any:
     return cur
 
 
+
+
+def _validator_for_schema_pointer(schema: dict[str, Any], pointer: str) -> Any:
+    if Draft202012Validator is None:
+        return None
+    norm_pointer = _normalize_pointer(pointer)
+    _resolve_json_pointer(schema, norm_pointer)
+    wrapper = {
+        "$schema": schema.get("$schema"),
+        "$id": schema.get("$id"),
+        "$ref": f"#{norm_pointer}" if norm_pointer else "#",
+        "$defs": schema.get("$defs", {}),
+    }
+    return Draft202012Validator(wrapper)
+
+
 def _validate_payload_schema(
     msg: dict[str, Any],
     line_no: int,
@@ -1056,6 +1072,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     confidentiality_schema_path = ROOT / "schemas/extensions/ext-confidentiality-artifacts.schema.json"
     confidentiality_schema = load_json(confidentiality_schema_path)
     confidentiality_validator = _build_validator(confidentiality_schema, confidentiality_schema_path) if Draft202012Validator is not None else None
+    redaction_schema_path = ROOT / "schemas/extensions/ext-redaction-payloads.schema.json"
+    redaction_schema = load_json(redaction_schema_path)
+    redaction_payload_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/CONTENT_REDACTED") if Draft202012Validator is not None else None
+    redaction_proof_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RedactionProof") if Draft202012Validator is not None else None
+    pii_ref_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/PiiRef") if Draft202012Validator is not None else None
+    retention_policy_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RetentionPolicy") if Draft202012Validator is not None else None
 
     failures: list[dict[str, Any]] = []
     degraded = False
@@ -1664,6 +1686,95 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         evidence_ok = isinstance(evidence_refs, list) and len([v for v in evidence_refs if isinstance(v, str) and v]) > 0
                         if not labels_ok or not evidence_ok:
                             add_failure(t_failures, "CF-CLASSIFICATION-ARTIFACTS-01", "classification-only mode requires non-empty classification_labels and classification_evidence_refs", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"RD-ORIGINAL-BIND-01", "RD-POLICY-REF-01", "RD-PROOF-01", "RD-PII-REF-01", "RD-RETENTION-CONTRACT-01", "RD-CHAIN-INTEGRITY-01"}):
+            prior_message_hashes: set[str] = set()
+            forbidden_pii_keys = {"value", "raw_value", "plaintext", "email", "phone", "address", "ssn", "passport_number", "national_id"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CONTRACT_PROPOSE" and "RD-RETENTION-CONTRACT-01" in enabled_checks:
+                    contract = payload.get("contract") if isinstance(payload.get("contract"), dict) else {}
+                    redaction_cfg = _contract_ext_object(contract, "redaction", "EXT-REDACTION")
+                    if redaction_cfg is not None:
+                        retention = redaction_cfg.get("retention_policy") if isinstance(redaction_cfg.get("retention_policy"), dict) else None
+                        if retention is None:
+                            add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "contract.ext.redaction.retention_policy must be present when EXT-REDACTION contract config is declared", rel_file, line_no)
+                        else:
+                            ttl = retention.get("ttl_seconds")
+                            delete_semantics = retention.get("delete_semantics")
+                            audit_ttl = retention.get("audit_retention_seconds")
+                            if not isinstance(ttl, int) or ttl < 1:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.ttl_seconds must be an integer >= 1", rel_file, line_no)
+                            if not isinstance(delete_semantics, str) or delete_semantics not in {"hard-delete", "soft-delete", "tombstone"}:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.delete_semantics must be one of: hard-delete, soft-delete, tombstone", rel_file, line_no)
+                            if not isinstance(audit_ttl, int) or audit_ttl < 1:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds must be an integer >= 1", rel_file, line_no)
+                            if retention_policy_validator is not None:
+                                for err in sorted(retention_policy_validator.iter_errors(retention), key=lambda e: list(e.path)):
+                                    add_failure(t_failures, "RD-RETENTION-CONTRACT-01", f"invalid retention_policy: {err.message}", rel_file, line_no)
+                            if isinstance(ttl, int) and isinstance(audit_ttl, int) and audit_ttl < ttl:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds should be >= ttl_seconds", rel_file, line_no)
+
+                if mtype == "CONTENT_REDACTED":
+                    if redaction_payload_validator is not None:
+                        for err in sorted(redaction_payload_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            if list(err.path)[:1] == ["redaction_proof"] or "redaction_proof" in err.message:
+                                add_failure(t_failures, "RD-PROOF-01", f"invalid redaction payload proof shape: {err.message}", rel_file, line_no)
+                            elif list(err.path)[:1] == ["pii_refs"] or "pii_refs" in err.message:
+                                add_failure(t_failures, "RD-PII-REF-01", f"invalid pii_refs shape: {err.message}", rel_file, line_no)
+
+                    original_hash = payload.get("original_message_hash")
+                    if "RD-ORIGINAL-BIND-01" in enabled_checks:
+                        if not isinstance(original_hash, str) or not original_hash or original_hash not in prior_message_hashes:
+                            add_failure(t_failures, "RD-ORIGINAL-BIND-01", "CONTENT_REDACTED.original_message_hash must reference an earlier message_hash", rel_file, line_no)
+
+                    if "RD-POLICY-REF-01" in enabled_checks:
+                        policy_ref = payload.get("redaction_policy_ref")
+                        if not isinstance(policy_ref, str) or not policy_ref:
+                            add_failure(t_failures, "RD-POLICY-REF-01", "CONTENT_REDACTED.redaction_policy_ref must be a non-empty string", rel_file, line_no)
+
+                    if "RD-PROOF-01" in enabled_checks:
+                        proof = payload.get("redaction_proof")
+                        if not isinstance(proof, dict):
+                            add_failure(t_failures, "RD-PROOF-01", "CONTENT_REDACTED.redaction_proof must be an object", rel_file, line_no)
+                        else:
+                            for field in ("proof_type", "proof_ref", "generated_at"):
+                                if not isinstance(proof.get(field), str) or not proof.get(field):
+                                    add_failure(t_failures, "RD-PROOF-01", f"redaction_proof.{field} must be a non-empty string", rel_file, line_no)
+                            if redaction_proof_validator is not None:
+                                for err in sorted(redaction_proof_validator.iter_errors(proof), key=lambda e: list(e.path)):
+                                    add_failure(t_failures, "RD-PROOF-01", f"invalid redaction_proof: {err.message}", rel_file, line_no)
+
+                    if "RD-PII-REF-01" in enabled_checks:
+                        pii_refs = payload.get("pii_refs")
+                        if pii_refs is not None:
+                            if not isinstance(pii_refs, list):
+                                add_failure(t_failures, "RD-PII-REF-01", "CONTENT_REDACTED.pii_refs must be an array when present", rel_file, line_no)
+                            else:
+                                for idx, pii_ref in enumerate(pii_refs):
+                                    if not isinstance(pii_ref, dict):
+                                        add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}] must be an object", rel_file, line_no)
+                                        continue
+                                    for bad_key in forbidden_pii_keys:
+                                        if bad_key in pii_ref:
+                                            add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}] contains forbidden inline sensitive key '{bad_key}'", rel_file, line_no)
+                                    for field in ("ref_id", "class", "controller", "access_policy_ref"):
+                                        if not isinstance(pii_ref.get(field), str) or not pii_ref.get(field):
+                                            add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}].{field} must be a non-empty string", rel_file, line_no)
+                                    if pii_ref_validator is not None:
+                                        for err in sorted(pii_ref_validator.iter_errors(pii_ref), key=lambda e: list(e.path)):
+                                            add_failure(t_failures, "RD-PII-REF-01", f"invalid pii_ref: {err.message}", rel_file, line_no)
+
+                    if "RD-CHAIN-INTEGRITY-01" in enabled_checks and isinstance(original_hash, str) and isinstance(msg.get("message_hash"), str):
+                        if msg.get("message_hash") == original_hash:
+                            add_failure(t_failures, "RD-CHAIN-INTEGRITY-01", "CONTENT_REDACTED message_hash must be distinct from original_message_hash", rel_file, line_no)
+
+                message_hash = msg.get("message_hash")
+                if isinstance(message_hash, str) and message_hash:
+                    prior_message_hashes.add(message_hash)
 
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
