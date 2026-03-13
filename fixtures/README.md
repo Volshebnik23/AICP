@@ -2,6 +2,8 @@
 
 Fixtures and golden transcripts are verification artifacts.
 
+Status note: Fixture/suite presence indicates deterministic test coverage, not automatic milestone graduation; roadmap status in `ROADMAP.md` remains authoritative for shipped vs incubating scope.
+
 ## Rules
 
 - Do not hand-edit golden transcripts.
@@ -24,3 +26,9 @@ Extension note: SECURITY-ALERT fixtures (`fixtures/extensions/security_alerts/SA
 Extension note: POLICY-EVAL fixture `PE-05_policy_decision_attest_presence.jsonl` was added deterministically with `reference/python/aicp_ref/hashing.py` to provide fixture-level coverage for `POLICY_DECISION_ATTEST` required by profile coverage gating.
 Extension note: DISPUTES fixtures include resolvable-evidence coverage (`DS-03`) generated deterministically via `scripts/generate_disputes_fixtures.py`.
 Extension note: SECURITY-ALERT fixtures include resolvable-evidence coverage (`SA-03`) generated deterministically via `scripts/generate_security_alerts_fixtures.py`.
+
+Extension note: CONFIDENTIALITY fixtures (`fixtures/extensions/confidentiality/CF-01*`..`CF-08*`) are generated deterministically via `scripts/generate_confidentiality_fixtures.py` using `reference/python/aicp_ref/hashing.py` for CAPNEG negotiation hash binding and message hash/chain computation.
+
+Extension note: REDACTION fixtures (`fixtures/extensions/redaction/RD-01*`..`RD-09*`) are generated deterministically via `scripts/generate_redaction_fixtures.py` using `reference/python/aicp_ref/hashing.py` for message hash/chain computation, including retention policy-category and delete-semantics negative vectors.
+
+Extension note: HUMAN-APPROVAL fixtures (`fixtures/extensions/human_approval/HA-01*`..`HA-08*`) are generated deterministically via `scripts/generate_human_approval_fixtures.py` using `reference/python/aicp_ref/hashing.py` for message hash/chain computation, including signer mismatch, expiry, target-reuse, and intervention-link expected-fail vectors.

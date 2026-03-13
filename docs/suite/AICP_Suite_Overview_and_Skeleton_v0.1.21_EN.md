@@ -66,6 +66,7 @@ Conformance is executable and repo-backed:
 Registered extension IDs are authoritative in `registry/extension_ids.json`.
 
 - `EXT-CAPNEG` — `docs/extensions/RFC_EXT_CAPNEG.md`
+- `EXT-CONFIDENTIALITY` — `docs/extensions/RFC_EXT_CONFIDENTIALITY.md`
 - `EXT-POLICY-EVAL` — `docs/extensions/RFC_EXT_POLICY_EVAL.md`
 - `EXT-OBJECT-RESYNC` — `docs/extensions/RFC_EXT_OBJECT_RESYNC.md`
 - `EXT-IDENTITY-LC` — `docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md`
@@ -77,6 +78,8 @@ Registered extension IDs are authoritative in `registry/extension_ids.json`.
 - `EXT-ENFORCEMENT` — `docs/extensions/RFC_EXT_ENFORCEMENT.md`
 - `EXT-ALERTS` — `docs/extensions/RFC_EXT_ALERTS.md`
 - `EXT-RESUME` — `docs/extensions/RFC_EXT_RESUME.md`
+- `EXT-REDACTION` — `docs/extensions/RFC_EXT_REDACTION.md`
+- `EXT-HUMAN-APPROVAL` — `docs/extensions/RFC_EXT_HUMAN_APPROVAL.md`
 - `EXT-PARTICIPANTS` — `docs/extensions/RFC_EXT_PARTICIPANTS.md`
 - `EXT-TOOL-GATING` — `docs/extensions/RFC_EXT_TOOL_GATING.md`
 
@@ -129,7 +132,10 @@ Items sometimes discussed as potential future work (for example tracing/QoS/arti
 Do not treat unregistered ideas as conformance targets or compatibility claims.
 
 
-## Added extension suites (v88)
+## Added extension suites (v90)
+- `conformance/extensions/RD_REDACTION_0.1.json`
+- `conformance/extensions/CF_CONFIDENTIALITY_0.1.json`
+- `conformance/extensions/HA_HUMAN_APPROVAL_0.1.json`
 - `conformance/extensions/EC_ECONOMICS_0.1.json`
 - `conformance/extensions/AD_ADMISSION_0.1.json`
 - `conformance/extensions/QL_QUEUE_LEASES_0.1.json`

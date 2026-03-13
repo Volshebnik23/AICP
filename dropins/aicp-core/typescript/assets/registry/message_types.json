@@ -120,6 +120,33 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "APPROVAL_CHALLENGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#1-message-types-normative",
+    "security_considerations": "Approval challenge must bind target, approver, scope, and expiry for deterministic enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "APPROVAL_DENY",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#3-approval_grant-and-approval_deny-payloads-normative-minimum",
+    "security_considerations": "Approval denials must be signer-bound and linked to the challenged action for auditable rejection."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "APPROVAL_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#3-approval_grant-and-approval_deny-payloads-normative-minimum",
+    "security_considerations": "Approval grants must be signer-bound to challenge context and expiry to prevent replay/substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "ARBITRATION_REQUEST",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
@@ -260,6 +287,15 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
     "security_considerations": "Content payloads should be mediated to avoid bypassing enforcement in blocking mode."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_REDACTED",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#1-message-type-normative",
+    "security_considerations": "Redaction payloads should include policy and proof bindings and avoid inline plaintext PII."
   },
   {
     "status": "stable",
@@ -417,6 +453,24 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#message-types-normative",
     "security_considerations": "INBOX_ROUTE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INTERVENTION_COMPLETE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#4-intervention-bridge-normative-minimum",
+    "security_considerations": "Intervention completion must bind to a prior requirement and matching handle to prevent false unblocking."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INTERVENTION_REQUIRED",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#4-intervention-bridge-normative-minimum",
+    "security_considerations": "Intervention requests must carry reason, provider hint, expiry, and stable handle for deterministic gating."
   },
   {
     "status": "experimental",
