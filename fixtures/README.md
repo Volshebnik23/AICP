@@ -30,3 +30,5 @@ Extension note: SECURITY-ALERT fixtures include resolvable-evidence coverage (`S
 Extension note: CONFIDENTIALITY fixtures (`fixtures/extensions/confidentiality/CF-01*`..`CF-08*`) are generated deterministically via `scripts/generate_confidentiality_fixtures.py` using `reference/python/aicp_ref/hashing.py` for CAPNEG negotiation hash binding and message hash/chain computation.
 
 Extension note: REDACTION fixtures (`fixtures/extensions/redaction/RD-01*`..`RD-09*`) are generated deterministically via `scripts/generate_redaction_fixtures.py` using `reference/python/aicp_ref/hashing.py` for message hash/chain computation, including retention policy-category and delete-semantics negative vectors.
+
+Extension note: HUMAN-APPROVAL fixtures (`fixtures/extensions/human_approval/HA-01*`..`HA-08*`) are generated deterministically via `scripts/generate_human_approval_fixtures.py` using `reference/python/aicp_ref/hashing.py` for message hash/chain computation, including signer mismatch, expiry, target-reuse, and intervention-link expected-fail vectors.

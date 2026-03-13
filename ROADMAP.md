@@ -70,8 +70,10 @@ _Last updated: 2026-03-13_
 - **Shipped:** retention/deletion policy-category standardization (`retention_deletion`) is registry-backed and conformance-checked.
 - **Next concrete step:** proceed to M26 (Human-in-the-loop primitive).
 
-### ⏳ M26 — Human-in-the-loop primitive (approval / step-up)
-- **Exit:** EXT-HUMAN-APPROVAL with challenge/signer/TTL bindings + conformance.
+### ✅ M26 — Human-in-the-loop primitive (approval / step-up)
+- **Shipped:** `EXT-HUMAN-APPROVAL` with canonical approval/intervention message types, strict schema, deterministic fixtures, and executable extension conformance (`HA-HUMAN-APPROVAL-0.1`).
+- **Shipped:** challenge target/scope/TTL binding, signer/approver checks, anti-reuse and expiry checks, and intervention required/complete linkage are machine-checkable from transcript evidence.
+- **Next concrete step:** proceed to M28 IAM bridge mapping (OAuth/OIDC/enterprise IAM interoperability profiles).
 
 ### ⏳ M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
 - **Exit:** Normative mapping guidance + examples + security notes.

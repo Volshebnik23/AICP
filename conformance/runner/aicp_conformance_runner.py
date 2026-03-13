@@ -1079,6 +1079,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     redaction_proof_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RedactionProof") if Draft202012Validator is not None else None
     pii_ref_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/PiiRef") if Draft202012Validator is not None else None
     retention_policy_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RetentionPolicy") if Draft202012Validator is not None else None
+    human_approval_schema_path = ROOT / "schemas/extensions/ext-human-approval-payloads.schema.json"
+    human_approval_schema = load_json(human_approval_schema_path)
+    approval_challenge_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_CHALLENGE") if Draft202012Validator is not None else None
+    approval_grant_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_GRANT") if Draft202012Validator is not None else None
+    approval_deny_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_DENY") if Draft202012Validator is not None else None
+    intervention_required_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_REQUIRED") if Draft202012Validator is not None else None
+    intervention_complete_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_COMPLETE") if Draft202012Validator is not None else None
 
     failures: list[dict[str, Any]] = []
     degraded = False
@@ -1787,6 +1794,150 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 message_hash = msg.get("message_hash")
                 if isinstance(message_hash, str) and message_hash:
                     prior_message_hashes.add(message_hash)
+
+        if any(check in enabled_checks for check in {"HA-CHALLENGE-TARGET-01", "HA-CHALLENGE-APPROVER-01", "HA-CHALLENGE-EXPIRY-01", "HA-DECISION-BIND-01", "HA-SIGNER-01", "HA-TARGET-REUSE-01", "HA-EXPIRY-01", "HA-INTERVENTION-REQUIRED-01", "HA-INTERVENTION-LINK-01", "HA-ENFORCER-BIND-01"}):
+            challenges_by_hash: dict[str, tuple[dict[str, Any], int]] = {}
+            grants_by_target: dict[tuple[Any, ...], list[tuple[dict[str, Any], int]]] = {}
+            interventions_by_hash: dict[str, tuple[dict[str, Any], int]] = {}
+
+            def _target_tuple(binding: Any) -> tuple[Any, ...] | None:
+                if not isinstance(binding, dict):
+                    return None
+                return tuple(sorted((k, v) for k, v in binding.items() if isinstance(k, str)))
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                msg_hash = msg.get("message_hash")
+                msg_ts = _parse_iso_datetime(msg.get("timestamp"))
+
+                if mtype == "APPROVAL_CHALLENGE":
+                    target = payload.get("target_binding")
+                    approver_id = payload.get("approver_id")
+                    scope = payload.get("scope")
+                    expires_at = _parse_iso_datetime(payload.get("expires_at"))
+
+                    if "HA-CHALLENGE-TARGET-01" in enabled_checks:
+                        if not isinstance(target, dict):
+                            add_failure(t_failures, "HA-CHALLENGE-TARGET-01", "APPROVAL_CHALLENGE.target_binding must be an object", rel_file, line_no)
+                        else:
+                            present = [k for k in ("tool_call_id", "tool_call_hash", "message_hash") if isinstance(target.get(k), str) and target.get(k)]
+                            if len(present) != 1:
+                                add_failure(t_failures, "HA-CHALLENGE-TARGET-01", "APPROVAL_CHALLENGE.target_binding must contain exactly one of tool_call_id/tool_call_hash/message_hash", rel_file, line_no)
+                        if approval_challenge_validator is not None:
+                            for err in sorted(approval_challenge_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "HA-CHALLENGE-TARGET-01", f"invalid approval challenge payload: {err.message}", rel_file, line_no)
+
+                    if "HA-CHALLENGE-APPROVER-01" in enabled_checks:
+                        if not isinstance(approver_id, str) or not approver_id:
+                            add_failure(t_failures, "HA-CHALLENGE-APPROVER-01", "APPROVAL_CHALLENGE.approver_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(scope, dict) or not isinstance(scope.get("action"), str) or not scope.get("action"):
+                            add_failure(t_failures, "HA-CHALLENGE-APPROVER-01", "APPROVAL_CHALLENGE.scope.action must be present", rel_file, line_no)
+
+                    if "HA-CHALLENGE-EXPIRY-01" in enabled_checks:
+                        if expires_at is None:
+                            add_failure(t_failures, "HA-CHALLENGE-EXPIRY-01", "APPROVAL_CHALLENGE.expires_at must be valid RFC3339 date-time", rel_file, line_no)
+
+                    if isinstance(msg_hash, str) and msg_hash:
+                        challenges_by_hash[msg_hash] = (msg, line_no)
+
+                elif mtype in {"APPROVAL_GRANT", "APPROVAL_DENY"}:
+                    challenge_hash = payload.get("challenge_message_hash")
+                    challenge_entry = challenges_by_hash.get(challenge_hash) if isinstance(challenge_hash, str) else None
+                    decision_target = payload.get("target_binding")
+
+                    if mtype == "APPROVAL_GRANT" and approval_grant_validator is not None:
+                        for err in sorted(approval_grant_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "HA-DECISION-BIND-01", f"invalid approval grant payload: {err.message}", rel_file, line_no)
+                    if mtype == "APPROVAL_DENY" and approval_deny_validator is not None:
+                        for err in sorted(approval_deny_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "HA-DECISION-BIND-01", f"invalid approval deny payload: {err.message}", rel_file, line_no)
+
+                    if "HA-DECISION-BIND-01" in enabled_checks and challenge_entry is None:
+                        add_failure(t_failures, "HA-DECISION-BIND-01", f"{mtype} must reference a prior APPROVAL_CHALLENGE via challenge_message_hash", rel_file, line_no)
+
+                    if challenge_entry is not None:
+                        challenge_msg = challenge_entry[0]
+                        challenge_payload = challenge_msg.get("payload") or {}
+                        expected_approver = challenge_payload.get("approver_id")
+                        expected_target = challenge_payload.get("target_binding")
+                        expected_scope = challenge_payload.get("scope")
+                        expected_expires = challenge_payload.get("expires_at")
+                        expires_at = _parse_iso_datetime(expected_expires)
+
+                        if "HA-SIGNER-01" in enabled_checks:
+                            if msg.get("sender") != expected_approver or payload.get("approver_id") != expected_approver:
+                                add_failure(t_failures, "HA-SIGNER-01", f"{mtype} sender and approver_id must match challenge approver_id", rel_file, line_no)
+
+                        if "HA-TARGET-REUSE-01" in enabled_checks:
+                            if not isinstance(expected_target, dict) or not isinstance(expected_scope, dict) or not isinstance(expected_expires, str) or not expected_expires:
+                                pass
+                            elif decision_target != expected_target or payload.get("scope") != expected_scope or payload.get("expires_at") != expected_expires:
+                                add_failure(t_failures, "HA-TARGET-REUSE-01", f"{mtype} target_binding/scope/expires_at must match challenged values exactly", rel_file, line_no)
+
+                        if "HA-EXPIRY-01" in enabled_checks:
+                            if expires_at is None or msg_ts is None:
+                                add_failure(t_failures, "HA-EXPIRY-01", f"{mtype} and challenge must have valid timestamps for expiry checks", rel_file, line_no)
+                            elif msg_ts > expires_at:
+                                add_failure(t_failures, "HA-EXPIRY-01", f"{mtype} occurs after challenge expiry", rel_file, line_no)
+
+                        if mtype == "APPROVAL_GRANT":
+                            tkey = _target_tuple(expected_target)
+                            if tkey is not None:
+                                grants_by_target.setdefault(tkey, []).append((msg, line_no))
+
+                elif mtype == "INTERVENTION_REQUIRED":
+                    if "HA-INTERVENTION-REQUIRED-01" in enabled_checks:
+                        if intervention_required_validator is not None:
+                            for err in sorted(intervention_required_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "HA-INTERVENTION-REQUIRED-01", f"invalid intervention-required payload: {err.message}", rel_file, line_no)
+                        if _parse_iso_datetime(payload.get("expires_at")) is None:
+                            add_failure(t_failures, "HA-INTERVENTION-REQUIRED-01", "INTERVENTION_REQUIRED.expires_at must be valid RFC3339 date-time", rel_file, line_no)
+
+                    if isinstance(msg_hash, str) and msg_hash:
+                        interventions_by_hash[msg_hash] = (msg, line_no)
+
+                elif mtype == "INTERVENTION_COMPLETE":
+                    req_hash = payload.get("required_message_hash")
+                    req_entry = interventions_by_hash.get(req_hash) if isinstance(req_hash, str) else None
+
+                    if "HA-INTERVENTION-LINK-01" in enabled_checks:
+                        if intervention_complete_validator is not None:
+                            for err in sorted(intervention_complete_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "HA-INTERVENTION-LINK-01", f"invalid intervention-complete payload: {err.message}", rel_file, line_no)
+                        if req_entry is None:
+                            add_failure(t_failures, "HA-INTERVENTION-LINK-01", "INTERVENTION_COMPLETE.required_message_hash must reference prior INTERVENTION_REQUIRED", rel_file, line_no)
+                        else:
+                            req_payload = req_entry[0].get("payload") or {}
+                            if payload.get("intervention_handle") != req_payload.get("intervention_handle"):
+                                add_failure(t_failures, "HA-INTERVENTION-LINK-01", "INTERVENTION_COMPLETE.intervention_handle must match required intervention_handle", rel_file, line_no)
+
+                elif mtype == "TOOL_CALL_REQUEST" and "HA-ENFORCER-BIND-01" in enabled_checks:
+                    ext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    ha_ext = ext.get("human_approval") if isinstance(ext.get("human_approval"), dict) else None
+                    if not isinstance(ha_ext, dict) or not ha_ext.get("required"):
+                        continue
+                    target: dict[str, Any] = {}
+                    if isinstance(payload.get("tool_call_id"), str) and payload.get("tool_call_id"):
+                        target["tool_call_id"] = payload.get("tool_call_id")
+                    if isinstance(payload.get("tool_call_hash"), str) and payload.get("tool_call_hash"):
+                        target["tool_call_hash"] = payload.get("tool_call_hash")
+                    if not target:
+                        add_failure(t_failures, "HA-ENFORCER-BIND-01", "TOOL_CALL_REQUEST requiring approval must include tool_call_id or tool_call_hash", rel_file, line_no)
+                        continue
+                    tkey = _target_tuple(target)
+                    grants = grants_by_target.get(tkey, []) if tkey is not None else []
+                    if not grants:
+                        add_failure(t_failures, "HA-ENFORCER-BIND-01", "TOOL_CALL_REQUEST requiring approval lacks prior matching APPROVAL_GRANT", rel_file, line_no)
+                    elif "HA-EXPIRY-01" in enabled_checks and msg_ts is not None:
+                        valid = False
+                        for grant_msg, _ in grants:
+                            expires_at = _parse_iso_datetime((grant_msg.get("payload") or {}).get("expires_at"))
+                            if expires_at is not None and msg_ts <= expires_at:
+                                valid = True
+                                break
+                        if not valid:
+                            add_failure(t_failures, "HA-EXPIRY-01", "TOOL_CALL_REQUEST requiring approval has only expired grants", rel_file, line_no)
 
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}

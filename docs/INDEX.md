@@ -36,7 +36,7 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 
 - Extension RFC index: [docs/extensions/README.md](extensions/README.md)
 - Extension RFC folder: [docs/extensions/](extensions/)
-- Key extension RFCs for current privacy milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md)
+- Key extension RFCs for current enterprise-control milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md), [RFC_EXT_HUMAN_APPROVAL.md](extensions/RFC_EXT_HUMAN_APPROVAL.md)
 - Executable extension checks: [conformance/extensions/](../conformance/extensions/)
 - Source of truth for shipped vs incubating milestone status: [ROADMAP.md](../ROADMAP.md)
 

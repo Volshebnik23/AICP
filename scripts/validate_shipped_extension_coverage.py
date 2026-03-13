@@ -31,6 +31,10 @@ def main() -> int:
         if "conformance/extensions/RD_REDACTION_0.1.json" not in makefile:
             failures.append("ROADMAP marks M24 shipped, but Makefile conformance-ext does not include RD_REDACTION_0.1")
 
+    if _has_shipped_milestone(roadmap, "M26"):
+        if "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M26 shipped, but Makefile conformance-ext does not include HA_HUMAN_APPROVAL_0.1")
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

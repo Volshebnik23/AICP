@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "0534796d9bbf3f0e9c4b716d28dc14f0423262cffcbf2eabc4b4edf87ddee312",
+      "combined_sha256": "8fbead467d7aaa3aa7c5abc9714bef99871ab95d8bb9112ef6ded91ecc8b649d",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -78,6 +78,10 @@
         {
           "path": "conformance/extensions/FA_FACILITATION_0.1.json",
           "sha256": "b4f71e2f1069dc030532e1b707d295dc6d2263011093c3d1e1026dd57cbad1b8"
+        },
+        {
+          "path": "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+          "sha256": "dcd49b2fe7198766e8d7894054fd97c215b831f7ec432553f0950a2f1c829f71"
         },
         {
           "path": "conformance/extensions/IB_INBOX_0.1.json",
@@ -202,7 +206,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "61a2553ef3f36fa603068be042bdf9bc5d23921b23cd87b6247d1081fc8599d6",
+      "combined_sha256": "118662947bce0f268bb21e170ac5c324c4949d30228a3255e7e8cdf20cd1aa48",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -519,6 +523,38 @@
         {
           "path": "fixtures/extensions/facilitation/FA-02_content_without_turn_expected_fail.jsonl",
           "sha256": "8418abff601b6135c93dd7c97e513ff07fc77c8accd8e6ac0500f6a357e54066"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+          "sha256": "79645c871ce0a788d704f32ff16c37bb97382d9b9a2fc9828c58e818cb48223a"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
+          "sha256": "edfcbe2547eae9595707d297c1147181fe7be545d8d0f302073bb6e8e4a41e1d"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl",
+          "sha256": "b0b948ef0ac4e830826843023cb67a2346dffee80b0e17f7ad8004836ba62a63"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-04_missing_target_binding_expected_fail.jsonl",
+          "sha256": "fa868de60ae7a7ca72ed416f0e9d16e1557bea29f5e3db59e3ae43661d2bd26e"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+          "sha256": "d5fed650dc3b6a449f64d1f5338f04b685f30bb54fee323eef98cf287cd45f5e"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+          "sha256": "a3e22f36a6a68be164734decebd4b62f16f6b480908b2af163f74e799f3f0cda"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl",
+          "sha256": "771aca8a91f1acdd22ad92cfa8d6f02a4a3786a58d477d401e86ce7ae04bf4b3"
+        },
+        {
+          "path": "fixtures/extensions/human_approval/HA-08_missing_intervention_handle_expected_fail.jsonl",
+          "sha256": "7e2e7b24ddb20dd5de0804eec55ce2b718916e152aa3dad02ce8312fc4588492"
         },
         {
           "path": "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
@@ -839,7 +875,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "80697475ca626c621415076be067c18e84ee07f59be1d25af157d74df71b2dc8",
+      "combined_sha256": "b1d346639e437392c1b70bbee74fe23d2875a0344dbf18e9c877619279be48d1",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -883,7 +919,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "d5d74aea52c0282f696c031ab0776f2e2f31d7c3c740d7c209a20c7afba50af4"
+          "sha256": "1ccf1533beeefbddac7658edb3f09c398be232047e07ab53fff7f7171881affb"
         },
         {
           "path": "registry/hash_domains.json",
@@ -891,7 +927,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "f34d7e6c99a06aa7e3dbf035f17184998f794368702e2350ca3945d7f07e85f5"
+          "sha256": "61b47becb877b1e3ada363ead3fc7d954cc14f954794032eaeb0a88dd4f2766c"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -936,7 +972,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "4022bf98f333e4d98d00004755e04b7f51ba38f7bf10462b44d0d340f44f86d4",
+      "combined_sha256": "231f9d943b2737e066e6d7cd0a88baf055b21b1a03bda9d678271b8041e4a157",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1017,6 +1053,10 @@
         {
           "path": "schemas/extensions/ext-facilitation-payloads.schema.json",
           "sha256": "3c4bf7baff51412fa9caf82507be9098481f78da9b0af0daec3f78536be8346a"
+        },
+        {
+          "path": "schemas/extensions/ext-human-approval-payloads.schema.json",
+          "sha256": "695c87a4b1053c62489e82949e28d845b186366c38b4579015fb247a3f310668"
         },
         {
           "path": "schemas/extensions/ext-identity-lc-payloads.schema.json",
@@ -1200,6 +1240,10 @@
       {
         "mark": "AICP-EXT-FACILITATION-0.1",
         "path": "conformance/extensions/FA_FACILITATION_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-HUMAN-APPROVAL-0.1",
+        "path": "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json"
       },
       {
         "mark": "AICP-EXT-INBOX-0.1",

@@ -122,6 +122,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-HUMAN-APPROVAL",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#10-registry-entries",
+    "security_considerations": "Human-approval artifacts must be bound to challenge target, approver identity, and expiry to resist bypass and replay."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-IDENTITY-LC",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md",

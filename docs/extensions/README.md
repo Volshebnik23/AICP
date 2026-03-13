@@ -12,7 +12,8 @@ Extension RFCs live in this folder (`docs/extensions/`).
 
 - Core transport/binding executable baseline remains centered on the shipped M22 conformance/CI surface.
 - M23 (`RFC_EXT_CONFIDENTIALITY.md`) is shipped with executable extension conformance coverage.
-- M24 (`RFC_EXT_REDACTION.md`) is now represented as shipped in roadmap terms for its protocol deliverables (redaction declaration + retention/deletion policy + pii_ref + conformance).
+- M24 (`RFC_EXT_REDACTION.md`) is shipped in roadmap terms for its protocol deliverables (redaction declaration + retention/deletion policy + pii_ref + conformance).
+- M26 (`RFC_EXT_HUMAN_APPROVAL.md`) is shipped with executable extension conformance coverage (approval/step-up primitives).
 
 ## Where to look next
 
