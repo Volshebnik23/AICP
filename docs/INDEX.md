@@ -35,8 +35,9 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 ## Extension discoverability and maturity
 
 - Extension RFC index: [docs/extensions/README.md](extensions/README.md)
+- Extension maturity notes (shipped vs incubating wording): [docs/extensions/README.md#how-to-read-maturity-in-this-repo](extensions/README.md#how-to-read-maturity-in-this-repo)
 - Extension RFC folder: [docs/extensions/](extensions/)
-- Key extension RFCs for current enterprise-control milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md), [RFC_EXT_HUMAN_APPROVAL.md](extensions/RFC_EXT_HUMAN_APPROVAL.md)
+- Key extension RFCs for current enterprise-control milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md), [RFC_EXT_HUMAN_APPROVAL.md](extensions/RFC_EXT_HUMAN_APPROVAL.md), [RFC_EXT_IAM_BRIDGE.md](extensions/RFC_EXT_IAM_BRIDGE.md)
 - Executable extension checks: [conformance/extensions/](../conformance/extensions/)
 - Source of truth for shipped vs incubating milestone status: [ROADMAP.md](../ROADMAP.md)
 

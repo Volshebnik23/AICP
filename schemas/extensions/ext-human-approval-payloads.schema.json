@@ -67,7 +67,6 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "target_binding",
         "approver_id",
         "scope",
         "expires_at"
@@ -161,8 +160,7 @@
       "required": [
         "reason_code",
         "provider_hint",
-        "expires_at",
-        "intervention_handle"
+        "expires_at"
       ],
       "properties": {
         "reason_code": {
