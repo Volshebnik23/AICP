@@ -102,6 +102,40 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "RD-08",
+      "path": "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-POLICY-CATEGORY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "RD-09",
+      "path": "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-DELETE-SEMANTICS-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -156,6 +190,14 @@
     {
       "test_id": "RD-CHAIN-INTEGRITY-01",
       "description": "redaction is a new declaration (hash-chain intact; redaction hash distinct from original_message_hash)"
+    },
+    {
+      "test_id": "RD-POLICY-CATEGORY-01",
+      "description": "contract.ext.redaction.retention_policy.policy_category must be the standardized retention/deletion category"
+    },
+    {
+      "test_id": "RD-DELETE-SEMANTICS-01",
+      "description": "retention_policy.delete_semantics must use standardized values"
     }
   ],
   "compatibility_mark": "AICP-EXT-REDACTION-0.1"

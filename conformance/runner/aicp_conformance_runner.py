@@ -1046,6 +1046,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    retention_policy_category_id = "retention_deletion"
     capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
     privacy_modes_registry = {e.get("id") for e in load_json(ROOT / "registry/privacy_modes.json")}
     transport_bindings_registry = {
@@ -1687,7 +1688,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if not labels_ok or not evidence_ok:
                             add_failure(t_failures, "CF-CLASSIFICATION-ARTIFACTS-01", "classification-only mode requires non-empty classification_labels and classification_evidence_refs", rel_file, line_no)
 
-        if any(check in enabled_checks for check in {"RD-ORIGINAL-BIND-01", "RD-POLICY-REF-01", "RD-PROOF-01", "RD-PII-REF-01", "RD-RETENTION-CONTRACT-01", "RD-CHAIN-INTEGRITY-01"}):
+        if any(check in enabled_checks for check in {"RD-ORIGINAL-BIND-01", "RD-POLICY-REF-01", "RD-PROOF-01", "RD-PII-REF-01", "RD-RETENTION-CONTRACT-01", "RD-POLICY-CATEGORY-01", "RD-DELETE-SEMANTICS-01", "RD-CHAIN-INTEGRITY-01"}):
             prior_message_hashes: set[str] = set()
             forbidden_pii_keys = {"value", "raw_value", "plaintext", "email", "phone", "address", "ssn", "passport_number", "national_id"}
 
@@ -1708,13 +1709,24 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             audit_ttl = retention.get("audit_retention_seconds")
                             if not isinstance(ttl, int) or ttl < 1:
                                 add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.ttl_seconds must be an integer >= 1", rel_file, line_no)
+                            policy_category = retention.get("policy_category")
+                            policy_ref = retention.get("policy_ref")
                             if not isinstance(delete_semantics, str) or delete_semantics not in {"hard-delete", "soft-delete", "tombstone"}:
-                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.delete_semantics must be one of: hard-delete, soft-delete, tombstone", rel_file, line_no)
+                                add_failure(t_failures, "RD-DELETE-SEMANTICS-01", "retention_policy.delete_semantics must be one of: hard-delete, soft-delete, tombstone", rel_file, line_no)
                             if not isinstance(audit_ttl, int) or audit_ttl < 1:
                                 add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds must be an integer >= 1", rel_file, line_no)
+                            if not isinstance(policy_category, str) or not policy_category:
+                                add_failure(t_failures, "RD-POLICY-CATEGORY-01", "retention_policy.policy_category must be present and non-empty", rel_file, line_no)
+                            elif policy_category != retention_policy_category_id:
+                                add_failure(t_failures, "RD-POLICY-CATEGORY-01", f"retention_policy.policy_category must be '{retention_policy_category_id}'", rel_file, line_no)
+                            elif policy_category not in policy_categories_registry:
+                                add_failure(t_failures, "RD-POLICY-CATEGORY-01", f"retention_policy.policy_category '{policy_category}' must be registered", rel_file, line_no)
+                            if not isinstance(policy_ref, str) or not policy_ref:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.policy_ref must be a non-empty string", rel_file, line_no)
                             if retention_policy_validator is not None:
                                 for err in sorted(retention_policy_validator.iter_errors(retention), key=lambda e: list(e.path)):
-                                    add_failure(t_failures, "RD-RETENTION-CONTRACT-01", f"invalid retention_policy: {err.message}", rel_file, line_no)
+                                    test_id = "RD-POLICY-CATEGORY-01" if "policy_category" in err.message else ("RD-DELETE-SEMANTICS-01" if "delete_semantics" in err.message else "RD-RETENTION-CONTRACT-01")
+                                    add_failure(t_failures, test_id, f"invalid retention_policy: {err.message}", rel_file, line_no)
                             if isinstance(ttl, int) and isinstance(audit_ttl, int) and audit_ttl < ttl:
                                 add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds should be >= ttl_seconds", rel_file, line_no)
 

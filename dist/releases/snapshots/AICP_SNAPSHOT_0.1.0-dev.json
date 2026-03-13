@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "19946679a7298ffb9777b9b649bf5d487c210f87519eee3d2d7f9415e0458c3a",
+      "combined_sha256": "0534796d9bbf3f0e9c4b716d28dc14f0423262cffcbf2eabc4b4edf87ddee312",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -121,7 +121,7 @@
         },
         {
           "path": "conformance/extensions/RD_REDACTION_0.1.json",
-          "sha256": "78a57ff768bfb13b8075ab3ca1b5580c351d2a92c3067b49e34aaba4b01cb100"
+          "sha256": "5943a4c4f3326ea093673f353637858b61818386e0c503bfdcb89e7c6c8d93a2"
         },
         {
           "path": "conformance/extensions/RS_RESUME_0.1.json",
@@ -202,7 +202,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "d4c8f06d39a03ef726a9cea83155d25ecf454f7054914cde9c56dba8ca99257c",
+      "combined_sha256": "61a2553ef3f36fa603068be042bdf9bc5d23921b23cd87b6247d1081fc8599d6",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -622,31 +622,39 @@
         },
         {
           "path": "fixtures/extensions/redaction/RD-01_basic_redaction_pass.jsonl",
-          "sha256": "68ed7e8fb44c5af71c21a0eb50ef2611eced3c4a6cbaad37ff41aae270f05fd9"
+          "sha256": "8edeff9e76506e981561a17710ee856e17a5c890315f6e795bedbfe25230dc77"
         },
         {
           "path": "fixtures/extensions/redaction/RD-02_redaction_with_pii_refs_pass.jsonl",
-          "sha256": "5cdfc0203390d07e93c13aee4caae8292c14e678b9ecbba25c62c45e3b1e14af"
+          "sha256": "276f0d002565e44c7961091962d7da81e598a78794e875aa2ec99ed58f2e4445"
         },
         {
           "path": "fixtures/extensions/redaction/RD-03_contract_retention_policy_pass.jsonl",
-          "sha256": "62e464ffb53eaebc07a0e8a4c424c09cdbfaa47d8cf2fadc30e20415d329ce81"
+          "sha256": "3e14ebd9ae044d8a3bd2df9080291e5ae7fba838a0b52d14b4970bb50b7907df"
         },
         {
           "path": "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
-          "sha256": "47c1aae7ac4fbaa756c93d129ad372034e715a5c4bd61532416d1bac04f67ef5"
+          "sha256": "0742b54c9cc9b45728a25f10c1d18a5fc997bbb0e5dda37d99403dfefe4b1eb1"
         },
         {
           "path": "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
-          "sha256": "ccbc175f03e7944f12d698694c8950ee3b400082d43e5da17f3ec1fbc4ec813e"
+          "sha256": "ad7bea73789f9e46cd2ca7fc6736005fb7d66e1e2144a980dd7a9c92d3212629"
         },
         {
           "path": "fixtures/extensions/redaction/RD-06_invalid_pii_ref_expected_fail.jsonl",
-          "sha256": "d2e73238a801d7fa5d43fcfaaacf81c98646ae8c6ddccb978427e758e9f11ff1"
+          "sha256": "ea6c724cce0b4686fd22df7f34e4af3ff65f2ca1e9e43a7c4a66cb88ff3c17ad"
         },
         {
           "path": "fixtures/extensions/redaction/RD-07_missing_retention_field_expected_fail.jsonl",
-          "sha256": "af56e888689aaa15fca4472e3c3115286367eebb5f6948d837f906a5bf7571de"
+          "sha256": "b5a3f7eaf6f822927c187e01ad12fa518f8e89bf36039511dd42e5fc07d0c0dc"
+        },
+        {
+          "path": "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+          "sha256": "4548f0ff1c5a14dcd3da32f020f6231c6974deb299c71e4b1138176a005722b7"
+        },
+        {
+          "path": "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
+          "sha256": "3f04c163bd87a15f1edd5218162c507e661e6f7932804e9dd2516fad0d4ca6eb"
         },
         {
           "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
@@ -831,7 +839,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "4bc7c2fe99e90c186a8736df49503956ba1c402f3e3e3e5f23b6ba7abc021eae",
+      "combined_sha256": "80697475ca626c621415076be067c18e84ee07f59be1d25af157d74df71b2dc8",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -891,7 +899,7 @@
         },
         {
           "path": "registry/policy_categories.json",
-          "sha256": "305454cc57c3ebc461c741ed4bc74469701ae1c0928ac1304165e0296545e114"
+          "sha256": "5ae27d21220828c826274c12059685799d952b7c14a9e3895c81f0c0a6776c9e"
         },
         {
           "path": "registry/policy_languages.json",
@@ -928,7 +936,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "f64e2ed63af58d36c441e9c74f2f0564a4d06d1ad2b68d1cf6dad6a0ef5d1ee6",
+      "combined_sha256": "4022bf98f333e4d98d00004755e04b7f51ba38f7bf10462b44d0d340f44f86d4",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1048,7 +1056,7 @@
         },
         {
           "path": "schemas/extensions/ext-redaction-payloads.schema.json",
-          "sha256": "a6d71f1851e94dda126ec526cae6c8964edc6feeea34f4e087c04d8bb3983da1"
+          "sha256": "7f0b75bc43169f7d25df676acda8960bb03fcac8eaf013580f3015d526fe9339"
         },
         {
           "path": "schemas/extensions/ext-resume-payloads.schema.json",

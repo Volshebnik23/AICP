@@ -124,7 +124,9 @@
       "required": [
         "ttl_seconds",
         "delete_semantics",
-        "audit_retention_seconds"
+        "audit_retention_seconds",
+        "policy_category",
+        "policy_ref"
       ],
       "properties": {
         "ttl_seconds": {
@@ -142,6 +144,14 @@
         "audit_retention_seconds": {
           "type": "integer",
           "minimum": 1
+        },
+        "policy_category": {
+          "type": "string",
+          "const": "retention_deletion"
+        },
+        "policy_ref": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

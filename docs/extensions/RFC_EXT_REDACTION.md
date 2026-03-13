@@ -1,6 +1,6 @@
 # RFC: EXT-REDACTION — redaction declarations, retention policy, and vault-neutral PII references (Registered Extension)
 
-**Status:** Incubating draft foundation (M24 slice-1 artifacts present; full M24 not yet shipped in `ROADMAP.md`).
+**Status:** M24 completion target (this RFC defines the normative redaction/retention foundation expected for M24 completion in this repository).
 
 EXT-REDACTION defines a minimal, verifiable M24 foundation for declaring redacted derivatives without mutating prior transcript records.
 
@@ -45,8 +45,12 @@ When retention is contractually declared for this extension, implementations MUS
 - `ttl_seconds` (MUST): retention TTL in seconds.
 - `delete_semantics` (MUST): one of `hard-delete`, `soft-delete`, `tombstone`.
 - `audit_retention_seconds` (MUST): audit retention period in seconds.
+- `policy_category` (MUST): policy category for retention/deletion controls; MUST be `retention_deletion`.
+- `policy_ref` (MUST): reference to the governing retention/deletion policy artifact.
 
 `audit_retention_seconds` SHOULD be greater than or equal to `ttl_seconds`.
+
+Delete semantics standardization: for M24, `delete_semantics` is standardized by the authoritative enum in `schemas/extensions/ext-redaction-payloads.schema.json` (no separate registry file).
 
 ## 5. Vault-neutral pii_ref (normative)
 

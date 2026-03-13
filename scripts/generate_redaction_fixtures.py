@@ -33,7 +33,7 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
     path.write_text("\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
 
 
-def build_case(case_id: str, *, with_pii: bool = False, include_retention: bool = True, original_ref_mode: str = "valid", include_proof: bool = True, bad_pii: bool = False, retention_missing_audit: bool = False) -> list[dict]:
+def build_case(case_id: str, *, with_pii: bool = False, include_retention: bool = True, original_ref_mode: str = "valid", include_proof: bool = True, bad_pii: bool = False, retention_missing_audit: bool = False, retention_missing_policy_category: bool = False, retention_bad_delete_semantics: bool = False) -> list[dict]:
     session_id = f"s{case_id}"
     contract_id = f"c{case_id}"
 
@@ -43,9 +43,15 @@ def build_case(case_id: str, *, with_pii: bool = False, include_retention: bool 
             "ttl_seconds": 86400,
             "delete_semantics": "tombstone",
             "audit_retention_seconds": 2592000,
+            "policy_category": "retention_deletion",
+            "policy_ref": "policy:retention:default:v1",
         }
         if retention_missing_audit:
             rp.pop("audit_retention_seconds", None)
+        if retention_missing_policy_category:
+            rp.pop("policy_category", None)
+        if retention_bad_delete_semantics:
+            rp["delete_semantics"] = "erase-now"
         contract_ext["redaction"] = {"retention_policy": rp}
 
     msg1 = {
@@ -147,6 +153,8 @@ def main() -> int:
         "RD-05_missing_redaction_proof_expected_fail.jsonl": build_case("RD05", include_proof=False),
         "RD-06_invalid_pii_ref_expected_fail.jsonl": build_case("RD06", with_pii=True, bad_pii=True),
         "RD-07_missing_retention_field_expected_fail.jsonl": build_case("RD07", include_retention=True, retention_missing_audit=True),
+        "RD-08_missing_policy_category_expected_fail.jsonl": build_case("RD08", include_retention=True, retention_missing_policy_category=True),
+        "RD-09_invalid_delete_semantics_expected_fail.jsonl": build_case("RD09", include_retention=True, retention_bad_delete_semantics=True),
     }
 
     for filename, rows in fixtures.items():

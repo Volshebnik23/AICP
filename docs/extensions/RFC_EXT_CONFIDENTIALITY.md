@@ -1,6 +1,6 @@
 # RFC: EXT-CONFIDENTIALITY — confidentiality mode binding and selective disclosure evidence (Registered Extension)
 
-**Status:** Incubating draft extension surface (M23 not yet marked shipped in `ROADMAP.md`).
+**Status:** Shipped M23 extension surface (with executable conformance coverage in this repository).
 
 EXT-CONFIDENTIALITY makes privacy mode selection externally verifiable by binding CAPNEG negotiation outcomes to a contract-level confidentiality object.
 
