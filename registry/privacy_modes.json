@@ -3,10 +3,10 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "standard",
+    "id": "classification-only",
     "type": "privacy_modes",
-    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
-    "security_considerations": "Baseline privacy mode with standard metadata exposure controls."
+    "spec_ref": "docs/extensions/RFC_EXT_CONFIDENTIALITY.md#2-canonical-m23-privacy-modes",
+    "security_considerations": "Allows only classification labels and evidence references for policy checks without content disclosure."
   },
   {
     "status": "experimental",
@@ -15,7 +15,26 @@
     "id": "confidential",
     "type": "privacy_modes",
     "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
-    "security_considerations": "Reduces exposure of optional context while preserving enforceability."
+    "security_considerations": "Reduces exposure of optional context while preserving enforceability.",
+    "compatibility_notes": "Legacy privacy mode retained for backward compatibility; new implementations SHOULD prefer M23 canonical modes."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "full",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CONFIDENTIALITY.md#2-canonical-m23-privacy-modes",
+    "security_considerations": "Allows full content visibility per negotiated contract and governance constraints."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "metadata-only",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CONFIDENTIALITY.md#2-canonical-m23-privacy-modes",
+    "security_considerations": "Restricts disclosure to declared metadata projections for least-privilege enforcement."
   },
   {
     "status": "experimental",
@@ -24,7 +43,27 @@
     "id": "opaque",
     "type": "privacy_modes",
     "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
-    "security_considerations": "Maximizes minimization and requires explicit evidence references for escalations."
+    "security_considerations": "Maximizes minimization and requires explicit evidence references for escalations.",
+    "compatibility_notes": "Legacy privacy mode retained for backward compatibility; new implementations SHOULD prefer M23 canonical modes."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "redacted",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CONFIDENTIALITY.md#2-canonical-m23-privacy-modes",
+    "security_considerations": "Requires explicit redaction artifact references to preserve enforceable audit trails."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "standard",
+    "type": "privacy_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
+    "security_considerations": "Baseline privacy mode with standard metadata exposure controls.",
+    "compatibility_notes": "Legacy privacy mode retained for backward compatibility; new implementations SHOULD prefer M23 canonical modes."
   },
   {
     "status": "experimental",
@@ -33,6 +72,7 @@
     "id": "strict",
     "type": "privacy_modes",
     "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#102-payload-shape-normative-minimum",
-    "security_considerations": "Strict privacy mode minimizes optional disclosure and requires explicit negotiated allowances."
+    "security_considerations": "Strict privacy mode minimizes optional disclosure and requires explicit negotiated allowances.",
+    "compatibility_notes": "Legacy privacy mode retained for backward compatibility; new implementations SHOULD prefer M23 canonical modes."
   }
 ]

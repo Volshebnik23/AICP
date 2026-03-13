@@ -32,6 +32,16 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - **I want to understand architecture boundaries** → [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md).
 - **I want to design a real product around AICP** → [docs/playbooks/](playbooks/) + [docs/playbooks/Session_Topologies.md](playbooks/Session_Topologies.md).
 
+## Extension discoverability and maturity
+
+- Extension RFC index: [docs/extensions/README.md](extensions/README.md)
+- Extension RFC folder: [docs/extensions/](extensions/)
+- Key extension RFCs for current privacy milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md)
+- Executable extension checks: [conformance/extensions/](../conformance/extensions/)
+- Source of truth for shipped vs incubating milestone status: [ROADMAP.md](../ROADMAP.md)
+
+Note: document/fixture/schema presence does not by itself mean a milestone is shipped; roadmap + executable conformance surface define release maturity.
+
 ## Core docs map
 
 - Repo front door: [README.md](../README.md)
