@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-human-approval-payloads.schema.json",
+  "title": "AICP EXT-HUMAN-APPROVAL payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "NonEmptyStringArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NonEmptyString"
+      },
+      "minItems": 1
+    },
+    "TargetBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool_call_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "tool_call_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "tool_call_id"
+          ]
+        },
+        {
+          "required": [
+            "tool_call_hash"
+          ]
+        },
+        {
+          "required": [
+            "message_hash"
+          ]
+        }
+      ]
+    },
+    "Scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "constraints": {
+          "$ref": "#/$defs/NonEmptyStringArray"
+        }
+      }
+    },
+    "APPROVAL_CHALLENGE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_binding",
+        "approver_id",
+        "scope",
+        "expires_at"
+      ],
+      "properties": {
+        "target_binding": {
+          "$ref": "#/$defs/TargetBinding"
+        },
+        "approver_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_handle": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "APPROVAL_GRANT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "challenge_message_hash",
+        "approver_id",
+        "target_binding",
+        "scope",
+        "expires_at"
+      ],
+      "properties": {
+        "challenge_message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "approver_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "target_binding": {
+          "$ref": "#/$defs/TargetBinding"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "grant_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "APPROVAL_DENY": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "challenge_message_hash",
+        "approver_id",
+        "target_binding",
+        "scope",
+        "expires_at"
+      ],
+      "properties": {
+        "challenge_message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "approver_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "target_binding": {
+          "$ref": "#/$defs/TargetBinding"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deny_reason": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "INTERVENTION_REQUIRED": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason_code",
+        "provider_hint",
+        "expires_at",
+        "intervention_handle"
+      ],
+      "properties": {
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "step_up_auth",
+            "manual_review",
+            "policy_exception",
+            "user_presence_required"
+          ]
+        },
+        "provider_hint": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "intervention_handle": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "INTERVENTION_COMPLETE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_message_hash",
+        "intervention_handle"
+      ],
+      "properties": {
+        "required_message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "intervention_handle": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "completion_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    }
+  }
+}

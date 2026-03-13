@@ -85,6 +85,15 @@
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "status": "experimental",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#4-contract-retention-policy-normative",
+    "security_considerations": "Retention/deletion policy controls bound lifecycle handling and deletion semantics for redactable transcript artifacts.",
+    "id": "retention_deletion"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
     "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
     "security_considerations": "Constrains actions/data to explicitly approved scope references.",
     "id": "scope"

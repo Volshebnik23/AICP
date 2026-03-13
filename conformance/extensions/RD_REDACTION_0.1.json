@@ -1,0 +1,204 @@
+{
+  "suite_id": "RD-REDACTION-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-REDACTION conformance checks for redaction declarations and retention policy bindings.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {
+      "id": "RD-01",
+      "path": "fixtures/extensions/redaction/RD-01_basic_redaction_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ]
+    },
+    {
+      "id": "RD-02",
+      "path": "fixtures/extensions/redaction/RD-02_redaction_with_pii_refs_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ]
+    },
+    {
+      "id": "RD-03",
+      "path": "fixtures/extensions/redaction/RD-03_contract_retention_policy_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ]
+    },
+    {
+      "id": "RD-04",
+      "path": "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-ORIGINAL-BIND-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "RD-05",
+      "path": "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-PROOF-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "RD-06",
+      "path": "fixtures/extensions/redaction/RD-06_invalid_pii_ref_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-PII-REF-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "RD-07",
+      "path": "fixtures/extensions/redaction/RD-07_missing_retention_field_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-RETENTION-CONTRACT-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "RD-08",
+      "path": "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-POLICY-CATEGORY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "RD-09",
+      "path": "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "CONTENT_REDACTED"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "RD-DELETE-SEMANTICS-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "RD-ORIGINAL-BIND-01",
+      "description": "CONTENT_REDACTED.original_message_hash must reference an earlier transcript message_hash"
+    },
+    {
+      "test_id": "RD-POLICY-REF-01",
+      "description": "CONTENT_REDACTED.redaction_policy_ref must be present and non-empty"
+    },
+    {
+      "test_id": "RD-PROOF-01",
+      "description": "CONTENT_REDACTED.redaction_proof must be present and structurally valid"
+    },
+    {
+      "test_id": "RD-PII-REF-01",
+      "description": "pii_refs entries must match pii_ref schema and avoid inline plaintext PII fields"
+    },
+    {
+      "test_id": "RD-RETENTION-CONTRACT-01",
+      "description": "contract.ext.redaction.retention_policy must include required fields and valid values when declared"
+    },
+    {
+      "test_id": "RD-CHAIN-INTEGRITY-01",
+      "description": "redaction is a new declaration (hash-chain intact; redaction hash distinct from original_message_hash)"
+    },
+    {
+      "test_id": "RD-POLICY-CATEGORY-01",
+      "description": "contract.ext.redaction.retention_policy.policy_category must be the standardized retention/deletion category"
+    },
+    {
+      "test_id": "RD-DELETE-SEMANTICS-01",
+      "description": "retention_policy.delete_semantics must use standardized values"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-REDACTION-0.1"
+}

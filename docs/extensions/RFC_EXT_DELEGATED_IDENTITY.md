@@ -50,3 +50,8 @@ For conformance and third-party enforcement:
 - Issuer signatures and key lifecycle evidence are required to prevent spoofed bindings.
 - Revocation processing MUST be time-aware (`effective_at`) to avoid stale delegated authority use.
 - Implementations SHOULD keep binding scope minimal and short-lived.
+
+
+## 7. EXT-IAM-BRIDGE integration note (normative compatibility)
+`binding_ref.object` MAY include `iam_claims_snapshot` for EXT-IAM-BRIDGE evaluation.
+When present, it is part of the `subject_binding` hashed object and MUST NOT contain bearer token material.

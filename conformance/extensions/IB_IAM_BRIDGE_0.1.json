@@ -1,0 +1,36 @@
+{
+  "suite_id": "IB-IAM-BRIDGE-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-IAM-BRIDGE conformance checks for external IAM claim mapping into AICP-native authority and approval controls.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {"id": "IB-01", "path": "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"]},
+    {"id": "IB-02", "path": "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"]},
+    {"id": "IB-03", "path": "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "APPROVAL_CHALLENGE", "APPROVAL_GRANT", "TOOL_CALL_REQUEST"]},
+    {"id": "IB-04", "path": "fixtures/extensions/iam_bridge/IB-04_missing_required_scope_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "IB-SCOPE-MAP-01", "min_count": 1}]},
+    {"id": "IB-05", "path": "fixtures/extensions/iam_bridge/IB-05_wrong_issuer_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "IB-ISSUER-01", "min_count": 1}]},
+    {"id": "IB-06", "path": "fixtures/extensions/iam_bridge/IB-06_missing_required_role_or_group_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "IB-ROLE-MAP-01", "min_count": 1}]},
+    {"id": "IB-07", "path": "fixtures/extensions/iam_bridge/IB-07_required_acr_not_met_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "IB-STEPUP-ACR-01", "min_count": 1}]},
+    {"id": "IB-08", "path": "fixtures/extensions/iam_bridge/IB-08_required_amr_not_met_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "IB-STEPUP-AMR-01", "min_count": 1}]},
+    {"id": "IB-09", "path": "fixtures/extensions/iam_bridge/IB-09_missing_required_approval_evidence_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "IB-APPROVAL-MAP-01", "min_count": 1}]}
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "IB-ISSUER-01", "description": "claims issuer must satisfy contract iam_bridge issuer allowlist"},
+    {"test_id": "IB-SCOPE-MAP-01", "description": "required scopes and scope-derived authority must satisfy protected-action requirements"},
+    {"test_id": "IB-ROLE-MAP-01", "description": "required roles and role-derived authority must satisfy protected-action requirements"},
+    {"test_id": "IB-GROUP-MAP-01", "description": "required groups and group-derived authority must satisfy protected-action requirements"},
+    {"test_id": "IB-BINDING-LINK-01", "description": "protected action must reference valid prior delegated-identity binding with IAM claims snapshot"},
+    {"test_id": "IB-STEPUP-ACR-01", "description": "required_acr must be met"},
+    {"test_id": "IB-STEPUP-AMR-01", "description": "required_amr_any/all must be met"},
+    {"test_id": "IB-APPROVAL-MAP-01", "description": "approval_required action must include matching prior APPROVAL_GRANT evidence"}
+  ],
+  "compatibility_mark": "AICP-EXT-IAM-BRIDGE-0.1"
+}

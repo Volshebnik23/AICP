@@ -135,6 +135,22 @@ def _resolve_json_pointer(doc: dict[str, Any], pointer: str) -> Any:
     return cur
 
 
+
+
+def _validator_for_schema_pointer(schema: dict[str, Any], pointer: str) -> Any:
+    if Draft202012Validator is None:
+        return None
+    norm_pointer = _normalize_pointer(pointer)
+    _resolve_json_pointer(schema, norm_pointer)
+    wrapper = {
+        "$schema": schema.get("$schema"),
+        "$id": schema.get("$id"),
+        "$ref": f"#{norm_pointer}" if norm_pointer else "#",
+        "$defs": schema.get("$defs", {}),
+    }
+    return Draft202012Validator(wrapper)
+
+
 def _validate_payload_schema(
     msg: dict[str, Any],
     line_no: int,
@@ -224,6 +240,18 @@ def _has_resolvable_evidence_ref(evidence_refs: Any, prior_message_ids: set[str]
         if ref.startswith("objhash:") and ref[len("objhash:"):] in prior_payload_object_hashes:
             return True
     return False
+
+
+def _contract_ext_object(contract: Any, ext_key: str, extension_id: str) -> dict[str, Any] | None:
+    if not isinstance(contract, dict):
+        return None
+    ext = contract.get("ext")
+    if isinstance(ext, dict) and isinstance(ext.get(ext_key), dict):
+        return ext.get(ext_key)
+    extensions = contract.get("extensions")
+    if isinstance(extensions, dict) and isinstance(extensions.get(extension_id), dict):
+        return extensions.get(extension_id)
+    return None
 
 
 def _parse_iso_datetime(value: Any) -> datetime | None:
@@ -1018,6 +1046,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    retention_policy_category_id = "retention_deletion"
     capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
     privacy_modes_registry = {e.get("id") for e in load_json(ROOT / "registry/privacy_modes.json")}
     transport_bindings_registry = {
@@ -1041,6 +1070,27 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
     contract_validator = _build_validator(contract_schema, contract_schema_path) if Draft202012Validator is not None else None
+    confidentiality_schema_path = ROOT / "schemas/extensions/ext-confidentiality-artifacts.schema.json"
+    confidentiality_schema = load_json(confidentiality_schema_path)
+    confidentiality_validator = _build_validator(confidentiality_schema, confidentiality_schema_path) if Draft202012Validator is not None else None
+    redaction_schema_path = ROOT / "schemas/extensions/ext-redaction-payloads.schema.json"
+    redaction_schema = load_json(redaction_schema_path)
+    redaction_payload_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/CONTENT_REDACTED") if Draft202012Validator is not None else None
+    redaction_proof_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RedactionProof") if Draft202012Validator is not None else None
+    pii_ref_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/PiiRef") if Draft202012Validator is not None else None
+    retention_policy_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RetentionPolicy") if Draft202012Validator is not None else None
+    human_approval_schema_path = ROOT / "schemas/extensions/ext-human-approval-payloads.schema.json"
+    human_approval_schema = load_json(human_approval_schema_path)
+    approval_challenge_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_CHALLENGE") if Draft202012Validator is not None else None
+    approval_grant_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_GRANT") if Draft202012Validator is not None else None
+    approval_deny_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_DENY") if Draft202012Validator is not None else None
+    intervention_required_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_REQUIRED") if Draft202012Validator is not None else None
+    intervention_complete_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_COMPLETE") if Draft202012Validator is not None else None
+    iam_bridge_schema_path = ROOT / "schemas/extensions/ext-iam-bridge-payloads.schema.json"
+    iam_bridge_schema = load_json(iam_bridge_schema_path)
+    iam_bridge_contract_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/ContractIamBridge") if Draft202012Validator is not None else None
+    iam_bridge_claims_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/IamClaimsSnapshot") if Draft202012Validator is not None else None
+
 
     failures: list[dict[str, Any]] = []
     degraded = False
@@ -1567,6 +1617,473 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.negotiation_result_hash must match accepted negotiation_result hash", rel_file, line_no)
                         if "selected" in capneg_binding and capneg_binding.get("selected") != expected_selected:
                             add_failure(t_failures, "CN-CONTRACT-BIND-01", "contract.ext.capneg.selected must exactly match negotiation_result.selected", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"CF-CONTRACT-CONFIDENTIALITY-01", "CF-MODE-REGISTRY-01", "CF-CAPNEG-BIND-01", "CF-NEGRESULT-HASH-BIND-01", "CF-REDACTION-ARTIFACTS-01", "CF-METADATA-PROJECTION-01", "CF-CLASSIFICATION-ARTIFACTS-01"}):
+            proposed_negotiation_result = None
+            proposed_negotiation_result_hash = None
+            accepted_negotiation_result_hash = None
+            accepted_mode = None
+            accepted_indices: list[int] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CAPABILITIES_PROPOSE":
+                    nr = payload.get("negotiation_result")
+                    if isinstance(nr, dict):
+                        proposed_negotiation_result = nr
+                        proposed_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        selected = nr.get("selected") if isinstance(nr.get("selected"), dict) else {}
+                        accepted_mode = selected.get("privacy_mode") if isinstance(selected.get("privacy_mode"), str) else accepted_mode
+
+                elif mtype == "CAPABILITIES_ACCEPT" and payload.get("accepted") is True:
+                    accepted_indices.append(idx)
+                    nr = payload.get("negotiation_result")
+                    nr_hash = payload.get("negotiation_result_hash")
+                    if isinstance(nr, dict):
+                        accepted_negotiation_result_hash = object_hash("capneg.negotiation_result", nr)
+                        selected = nr.get("selected") if isinstance(nr.get("selected"), dict) else {}
+                        if isinstance(selected.get("privacy_mode"), str):
+                            accepted_mode = selected.get("privacy_mode")
+                    if isinstance(nr_hash, str) and nr_hash:
+                        accepted_negotiation_result_hash = nr_hash
+
+            if not accepted_indices:
+                pass
+            else:
+                expected_hash = accepted_negotiation_result_hash or proposed_negotiation_result_hash
+                for idx, (line_no, msg) in enumerate(rows):
+                    if idx <= accepted_indices[0] or msg.get("message_type") != "CONTRACT_PROPOSE":
+                        continue
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    confidentiality = _contract_ext_object(contract, "confidentiality", "EXT-CONFIDENTIALITY")
+
+                    if confidentiality is None:
+                        if "CF-CONTRACT-CONFIDENTIALITY-01" in enabled_checks:
+                            add_failure(t_failures, "CF-CONTRACT-CONFIDENTIALITY-01", "CONTRACT_PROPOSE payload.contract.ext.confidentiality is required after CAPABILITIES_ACCEPT", rel_file, line_no)
+                        continue
+
+                    if confidentiality_validator is not None:
+                        for err in sorted(confidentiality_validator.iter_errors(confidentiality), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "CF-CONTRACT-CONFIDENTIALITY-01", f"confidentiality object schema error: {err.message}", rel_file, line_no)
+
+                    mode_id = confidentiality.get("mode_id")
+                    if "CF-MODE-REGISTRY-01" in enabled_checks:
+                        if mode_id not in privacy_modes_registry and not _is_namespaced_identifier(mode_id):
+                            add_failure(t_failures, "CF-MODE-REGISTRY-01", f"unregistered confidentiality mode_id '{mode_id}'", rel_file, line_no)
+
+                    if "CF-CAPNEG-BIND-01" in enabled_checks and isinstance(accepted_mode, str):
+                        if mode_id != accepted_mode:
+                            add_failure(t_failures, "CF-CAPNEG-BIND-01", "contract.ext.confidentiality.mode_id must match accepted CAPNEG selected.privacy_mode", rel_file, line_no)
+
+                    if "CF-NEGRESULT-HASH-BIND-01" in enabled_checks and isinstance(expected_hash, str):
+                        n_hash = confidentiality.get("negotiation_result_hash")
+                        if not isinstance(n_hash, str) or n_hash != expected_hash:
+                            add_failure(t_failures, "CF-NEGRESULT-HASH-BIND-01", "contract.ext.confidentiality.negotiation_result_hash must match accepted CAPNEG result hash", rel_file, line_no)
+
+                    if "CF-REDACTION-ARTIFACTS-01" in enabled_checks and mode_id == "redacted":
+                        refs = confidentiality.get("redaction_artifact_refs")
+                        if not isinstance(refs, list) or len([r for r in refs if isinstance(r, str) and r]) == 0:
+                            add_failure(t_failures, "CF-REDACTION-ARTIFACTS-01", "redacted mode requires non-empty redaction_artifact_refs", rel_file, line_no)
+
+                    if "CF-METADATA-PROJECTION-01" in enabled_checks and mode_id == "metadata-only":
+                        projection = confidentiality.get("metadata_projection")
+                        if not isinstance(projection, dict) or len(projection) == 0:
+                            add_failure(t_failures, "CF-METADATA-PROJECTION-01", "metadata-only mode requires non-empty metadata_projection", rel_file, line_no)
+
+                    if "CF-CLASSIFICATION-ARTIFACTS-01" in enabled_checks and mode_id == "classification-only":
+                        labels = confidentiality.get("classification_labels")
+                        evidence_refs = confidentiality.get("classification_evidence_refs")
+                        labels_ok = isinstance(labels, list) and len([v for v in labels if isinstance(v, str) and v]) > 0
+                        evidence_ok = isinstance(evidence_refs, list) and len([v for v in evidence_refs if isinstance(v, str) and v]) > 0
+                        if not labels_ok or not evidence_ok:
+                            add_failure(t_failures, "CF-CLASSIFICATION-ARTIFACTS-01", "classification-only mode requires non-empty classification_labels and classification_evidence_refs", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"RD-ORIGINAL-BIND-01", "RD-POLICY-REF-01", "RD-PROOF-01", "RD-PII-REF-01", "RD-RETENTION-CONTRACT-01", "RD-POLICY-CATEGORY-01", "RD-DELETE-SEMANTICS-01", "RD-CHAIN-INTEGRITY-01"}):
+            prior_message_hashes: set[str] = set()
+            forbidden_pii_keys = {"value", "raw_value", "plaintext", "email", "phone", "address", "ssn", "passport_number", "national_id"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "CONTRACT_PROPOSE" and "RD-RETENTION-CONTRACT-01" in enabled_checks:
+                    contract = payload.get("contract") if isinstance(payload.get("contract"), dict) else {}
+                    redaction_cfg = _contract_ext_object(contract, "redaction", "EXT-REDACTION")
+                    if redaction_cfg is not None:
+                        retention = redaction_cfg.get("retention_policy") if isinstance(redaction_cfg.get("retention_policy"), dict) else None
+                        if retention is None:
+                            add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "contract.ext.redaction.retention_policy must be present when EXT-REDACTION contract config is declared", rel_file, line_no)
+                        else:
+                            ttl = retention.get("ttl_seconds")
+                            delete_semantics = retention.get("delete_semantics")
+                            audit_ttl = retention.get("audit_retention_seconds")
+                            if not isinstance(ttl, int) or ttl < 1:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.ttl_seconds must be an integer >= 1", rel_file, line_no)
+                            policy_category = retention.get("policy_category")
+                            policy_ref = retention.get("policy_ref")
+                            if not isinstance(delete_semantics, str) or delete_semantics not in {"hard-delete", "soft-delete", "tombstone"}:
+                                add_failure(t_failures, "RD-DELETE-SEMANTICS-01", "retention_policy.delete_semantics must be one of: hard-delete, soft-delete, tombstone", rel_file, line_no)
+                            if not isinstance(audit_ttl, int) or audit_ttl < 1:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds must be an integer >= 1", rel_file, line_no)
+                            if not isinstance(policy_category, str) or not policy_category:
+                                add_failure(t_failures, "RD-POLICY-CATEGORY-01", "retention_policy.policy_category must be present and non-empty", rel_file, line_no)
+                            elif policy_category != retention_policy_category_id:
+                                add_failure(t_failures, "RD-POLICY-CATEGORY-01", f"retention_policy.policy_category must be '{retention_policy_category_id}'", rel_file, line_no)
+                            elif policy_category not in policy_categories_registry:
+                                add_failure(t_failures, "RD-POLICY-CATEGORY-01", f"retention_policy.policy_category '{policy_category}' must be registered", rel_file, line_no)
+                            if not isinstance(policy_ref, str) or not policy_ref:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.policy_ref must be a non-empty string", rel_file, line_no)
+                            if retention_policy_validator is not None:
+                                for err in sorted(retention_policy_validator.iter_errors(retention), key=lambda e: list(e.path)):
+                                    test_id = "RD-POLICY-CATEGORY-01" if "policy_category" in err.message else ("RD-DELETE-SEMANTICS-01" if "delete_semantics" in err.message else "RD-RETENTION-CONTRACT-01")
+                                    add_failure(t_failures, test_id, f"invalid retention_policy: {err.message}", rel_file, line_no)
+                            if isinstance(ttl, int) and isinstance(audit_ttl, int) and audit_ttl < ttl:
+                                add_failure(t_failures, "RD-RETENTION-CONTRACT-01", "retention_policy.audit_retention_seconds should be >= ttl_seconds", rel_file, line_no)
+
+                if mtype == "CONTENT_REDACTED":
+                    if redaction_payload_validator is not None:
+                        for err in sorted(redaction_payload_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            if list(err.path)[:1] == ["redaction_proof"] or "redaction_proof" in err.message:
+                                add_failure(t_failures, "RD-PROOF-01", f"invalid redaction payload proof shape: {err.message}", rel_file, line_no)
+                            elif list(err.path)[:1] == ["pii_refs"] or "pii_refs" in err.message:
+                                add_failure(t_failures, "RD-PII-REF-01", f"invalid pii_refs shape: {err.message}", rel_file, line_no)
+
+                    original_hash = payload.get("original_message_hash")
+                    if "RD-ORIGINAL-BIND-01" in enabled_checks:
+                        if not isinstance(original_hash, str) or not original_hash or original_hash not in prior_message_hashes:
+                            add_failure(t_failures, "RD-ORIGINAL-BIND-01", "CONTENT_REDACTED.original_message_hash must reference an earlier message_hash", rel_file, line_no)
+
+                    if "RD-POLICY-REF-01" in enabled_checks:
+                        policy_ref = payload.get("redaction_policy_ref")
+                        if not isinstance(policy_ref, str) or not policy_ref:
+                            add_failure(t_failures, "RD-POLICY-REF-01", "CONTENT_REDACTED.redaction_policy_ref must be a non-empty string", rel_file, line_no)
+
+                    if "RD-PROOF-01" in enabled_checks:
+                        proof = payload.get("redaction_proof")
+                        if not isinstance(proof, dict):
+                            add_failure(t_failures, "RD-PROOF-01", "CONTENT_REDACTED.redaction_proof must be an object", rel_file, line_no)
+                        else:
+                            for field in ("proof_type", "proof_ref", "generated_at"):
+                                if not isinstance(proof.get(field), str) or not proof.get(field):
+                                    add_failure(t_failures, "RD-PROOF-01", f"redaction_proof.{field} must be a non-empty string", rel_file, line_no)
+                            if redaction_proof_validator is not None:
+                                for err in sorted(redaction_proof_validator.iter_errors(proof), key=lambda e: list(e.path)):
+                                    add_failure(t_failures, "RD-PROOF-01", f"invalid redaction_proof: {err.message}", rel_file, line_no)
+
+                    if "RD-PII-REF-01" in enabled_checks:
+                        pii_refs = payload.get("pii_refs")
+                        if pii_refs is not None:
+                            if not isinstance(pii_refs, list):
+                                add_failure(t_failures, "RD-PII-REF-01", "CONTENT_REDACTED.pii_refs must be an array when present", rel_file, line_no)
+                            else:
+                                for idx, pii_ref in enumerate(pii_refs):
+                                    if not isinstance(pii_ref, dict):
+                                        add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}] must be an object", rel_file, line_no)
+                                        continue
+                                    for bad_key in forbidden_pii_keys:
+                                        if bad_key in pii_ref:
+                                            add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}] contains forbidden inline sensitive key '{bad_key}'", rel_file, line_no)
+                                    for field in ("ref_id", "class", "controller", "access_policy_ref"):
+                                        if not isinstance(pii_ref.get(field), str) or not pii_ref.get(field):
+                                            add_failure(t_failures, "RD-PII-REF-01", f"pii_refs[{idx}].{field} must be a non-empty string", rel_file, line_no)
+                                    if pii_ref_validator is not None:
+                                        for err in sorted(pii_ref_validator.iter_errors(pii_ref), key=lambda e: list(e.path)):
+                                            add_failure(t_failures, "RD-PII-REF-01", f"invalid pii_ref: {err.message}", rel_file, line_no)
+
+                    if "RD-CHAIN-INTEGRITY-01" in enabled_checks and isinstance(original_hash, str) and isinstance(msg.get("message_hash"), str):
+                        if msg.get("message_hash") == original_hash:
+                            add_failure(t_failures, "RD-CHAIN-INTEGRITY-01", "CONTENT_REDACTED message_hash must be distinct from original_message_hash", rel_file, line_no)
+
+                message_hash = msg.get("message_hash")
+                if isinstance(message_hash, str) and message_hash:
+                    prior_message_hashes.add(message_hash)
+
+        if any(check in enabled_checks for check in {"HA-CHALLENGE-TARGET-01", "HA-CHALLENGE-APPROVER-01", "HA-CHALLENGE-EXPIRY-01", "HA-DECISION-BIND-01", "HA-SIGNER-01", "HA-TARGET-REUSE-01", "HA-EXPIRY-01", "HA-INTERVENTION-REQUIRED-01", "HA-INTERVENTION-LINK-01", "HA-ENFORCER-BIND-01"}):
+            challenges_by_hash: dict[str, tuple[dict[str, Any], int]] = {}
+            grants_by_target: dict[tuple[Any, ...], list[tuple[dict[str, Any], int]]] = {}
+            interventions_by_hash: dict[str, tuple[dict[str, Any], int]] = {}
+
+            def _target_tuple(binding: Any) -> tuple[Any, ...] | None:
+                if not isinstance(binding, dict):
+                    return None
+                return tuple(sorted((k, v) for k, v in binding.items() if isinstance(k, str)))
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                msg_hash = msg.get("message_hash")
+                msg_ts = _parse_iso_datetime(msg.get("timestamp"))
+
+                if mtype == "APPROVAL_CHALLENGE":
+                    target = payload.get("target_binding")
+                    approver_id = payload.get("approver_id")
+                    scope = payload.get("scope")
+                    expires_at = _parse_iso_datetime(payload.get("expires_at"))
+
+                    if "HA-CHALLENGE-TARGET-01" in enabled_checks:
+                        if not isinstance(target, dict):
+                            add_failure(t_failures, "HA-CHALLENGE-TARGET-01", "APPROVAL_CHALLENGE.target_binding must be an object", rel_file, line_no)
+                        else:
+                            present = [k for k in ("tool_call_id", "tool_call_hash", "message_hash") if isinstance(target.get(k), str) and target.get(k)]
+                            if len(present) != 1:
+                                add_failure(t_failures, "HA-CHALLENGE-TARGET-01", "APPROVAL_CHALLENGE.target_binding must contain exactly one of tool_call_id/tool_call_hash/message_hash", rel_file, line_no)
+                        if approval_challenge_validator is not None:
+                            for err in sorted(approval_challenge_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "HA-CHALLENGE-TARGET-01", f"invalid approval challenge payload: {err.message}", rel_file, line_no)
+
+                    if "HA-CHALLENGE-APPROVER-01" in enabled_checks:
+                        if not isinstance(approver_id, str) or not approver_id:
+                            add_failure(t_failures, "HA-CHALLENGE-APPROVER-01", "APPROVAL_CHALLENGE.approver_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(scope, dict) or not isinstance(scope.get("action"), str) or not scope.get("action"):
+                            add_failure(t_failures, "HA-CHALLENGE-APPROVER-01", "APPROVAL_CHALLENGE.scope.action must be present", rel_file, line_no)
+
+                    if "HA-CHALLENGE-EXPIRY-01" in enabled_checks:
+                        if expires_at is None:
+                            add_failure(t_failures, "HA-CHALLENGE-EXPIRY-01", "APPROVAL_CHALLENGE.expires_at must be valid RFC3339 date-time", rel_file, line_no)
+
+                    if isinstance(msg_hash, str) and msg_hash:
+                        challenges_by_hash[msg_hash] = (msg, line_no)
+
+                elif mtype in {"APPROVAL_GRANT", "APPROVAL_DENY"}:
+                    challenge_hash = payload.get("challenge_message_hash")
+                    challenge_entry = challenges_by_hash.get(challenge_hash) if isinstance(challenge_hash, str) else None
+                    decision_target = payload.get("target_binding")
+
+                    if mtype == "APPROVAL_GRANT" and approval_grant_validator is not None:
+                        for err in sorted(approval_grant_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "HA-DECISION-BIND-01", f"invalid approval grant payload: {err.message}", rel_file, line_no)
+                    if mtype == "APPROVAL_DENY" and approval_deny_validator is not None:
+                        for err in sorted(approval_deny_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "HA-DECISION-BIND-01", f"invalid approval deny payload: {err.message}", rel_file, line_no)
+
+                    if "HA-DECISION-BIND-01" in enabled_checks and challenge_entry is None:
+                        add_failure(t_failures, "HA-DECISION-BIND-01", f"{mtype} must reference a prior APPROVAL_CHALLENGE via challenge_message_hash", rel_file, line_no)
+
+                    if challenge_entry is not None:
+                        challenge_msg = challenge_entry[0]
+                        challenge_payload = challenge_msg.get("payload") or {}
+                        expected_approver = challenge_payload.get("approver_id")
+                        expected_target = challenge_payload.get("target_binding")
+                        expected_scope = challenge_payload.get("scope")
+                        expected_expires = challenge_payload.get("expires_at")
+                        expires_at = _parse_iso_datetime(expected_expires)
+
+                        if "HA-SIGNER-01" in enabled_checks:
+                            if msg.get("sender") != expected_approver or payload.get("approver_id") != expected_approver:
+                                add_failure(t_failures, "HA-SIGNER-01", f"{mtype} sender and approver_id must match challenge approver_id", rel_file, line_no)
+
+                        if "HA-TARGET-REUSE-01" in enabled_checks:
+                            if not isinstance(expected_target, dict) or not isinstance(expected_scope, dict) or not isinstance(expected_expires, str) or not expected_expires:
+                                pass
+                            elif decision_target != expected_target or payload.get("scope") != expected_scope or payload.get("expires_at") != expected_expires:
+                                add_failure(t_failures, "HA-TARGET-REUSE-01", f"{mtype} target_binding/scope/expires_at must match challenged values exactly", rel_file, line_no)
+
+                        if "HA-EXPIRY-01" in enabled_checks:
+                            if expires_at is None or msg_ts is None:
+                                add_failure(t_failures, "HA-EXPIRY-01", f"{mtype} and challenge must have valid timestamps for expiry checks", rel_file, line_no)
+                            elif msg_ts > expires_at:
+                                add_failure(t_failures, "HA-EXPIRY-01", f"{mtype} occurs after challenge expiry", rel_file, line_no)
+
+                        if mtype == "APPROVAL_GRANT":
+                            tkey = _target_tuple(expected_target)
+                            if tkey is not None:
+                                grants_by_target.setdefault(tkey, []).append((msg, line_no))
+
+                elif mtype == "INTERVENTION_REQUIRED":
+                    if "HA-INTERVENTION-REQUIRED-01" in enabled_checks:
+                        if intervention_required_validator is not None:
+                            for err in sorted(intervention_required_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "HA-INTERVENTION-REQUIRED-01", f"invalid intervention-required payload: {err.message}", rel_file, line_no)
+                        if _parse_iso_datetime(payload.get("expires_at")) is None:
+                            add_failure(t_failures, "HA-INTERVENTION-REQUIRED-01", "INTERVENTION_REQUIRED.expires_at must be valid RFC3339 date-time", rel_file, line_no)
+
+                    if isinstance(msg_hash, str) and msg_hash:
+                        interventions_by_hash[msg_hash] = (msg, line_no)
+
+                elif mtype == "INTERVENTION_COMPLETE":
+                    req_hash = payload.get("required_message_hash")
+                    req_entry = interventions_by_hash.get(req_hash) if isinstance(req_hash, str) else None
+
+                    if "HA-INTERVENTION-LINK-01" in enabled_checks:
+                        if intervention_complete_validator is not None:
+                            for err in sorted(intervention_complete_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "HA-INTERVENTION-LINK-01", f"invalid intervention-complete payload: {err.message}", rel_file, line_no)
+                        if req_entry is None:
+                            add_failure(t_failures, "HA-INTERVENTION-LINK-01", "INTERVENTION_COMPLETE.required_message_hash must reference prior INTERVENTION_REQUIRED", rel_file, line_no)
+                        else:
+                            req_payload = req_entry[0].get("payload") or {}
+                            if payload.get("intervention_handle") != req_payload.get("intervention_handle"):
+                                add_failure(t_failures, "HA-INTERVENTION-LINK-01", "INTERVENTION_COMPLETE.intervention_handle must match required intervention_handle", rel_file, line_no)
+
+                elif mtype == "TOOL_CALL_REQUEST" and "HA-ENFORCER-BIND-01" in enabled_checks:
+                    ext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    ha_ext = ext.get("human_approval") if isinstance(ext.get("human_approval"), dict) else None
+                    if not isinstance(ha_ext, dict) or not ha_ext.get("required"):
+                        continue
+                    target: dict[str, Any] = {}
+                    if isinstance(payload.get("tool_call_id"), str) and payload.get("tool_call_id"):
+                        target["tool_call_id"] = payload.get("tool_call_id")
+                    if isinstance(payload.get("tool_call_hash"), str) and payload.get("tool_call_hash"):
+                        target["tool_call_hash"] = payload.get("tool_call_hash")
+                    if not target:
+                        add_failure(t_failures, "HA-ENFORCER-BIND-01", "TOOL_CALL_REQUEST requiring approval must include tool_call_id or tool_call_hash", rel_file, line_no)
+                        continue
+                    tkey = _target_tuple(target)
+                    grants = grants_by_target.get(tkey, []) if tkey is not None else []
+                    if not grants:
+                        add_failure(t_failures, "HA-ENFORCER-BIND-01", "TOOL_CALL_REQUEST requiring approval lacks prior matching APPROVAL_GRANT", rel_file, line_no)
+                    elif "HA-EXPIRY-01" in enabled_checks and msg_ts is not None:
+                        valid = False
+                        for grant_msg, _ in grants:
+                            expires_at = _parse_iso_datetime((grant_msg.get("payload") or {}).get("expires_at"))
+                            if expires_at is not None and msg_ts <= expires_at:
+                                valid = True
+                                break
+                        if not valid:
+                            add_failure(t_failures, "HA-EXPIRY-01", "TOOL_CALL_REQUEST requiring approval has only expired grants", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"IB-ISSUER-01", "IB-SCOPE-MAP-01", "IB-ROLE-MAP-01", "IB-GROUP-MAP-01", "IB-BINDING-LINK-01", "IB-STEPUP-ACR-01", "IB-STEPUP-AMR-01", "IB-APPROVAL-MAP-01"}):
+            contract_iam_bridge: dict[str, Any] | None = None
+            binding_claims_by_hash: dict[str, dict[str, Any]] = {}
+            binding_agent_by_hash: dict[str, str] = {}
+            grants_by_tool_call_id: dict[str, list[tuple[dict[str, Any], int]]] = {}
+            challenges_by_hash: dict[str, tuple[dict[str, Any], int]] = {}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                msg_ts = _parse_iso_datetime(msg.get("timestamp"))
+
+                if mtype == "CONTRACT_PROPOSE":
+                    contract = (payload.get("contract") if isinstance(payload.get("contract"), dict) else None)
+                    obj = _contract_ext_object(contract, "iam_bridge", "EXT-IAM-BRIDGE")
+                    if isinstance(obj, dict):
+                        contract_iam_bridge = obj
+                        if iam_bridge_contract_validator is not None:
+                            for err in sorted(iam_bridge_contract_validator.iter_errors(obj), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "IB-BINDING-LINK-01", f"invalid contract.ext.iam_bridge shape: {err.message}", rel_file, line_no)
+
+                elif mtype == "SUBJECT_BINDING_ISSUE":
+                    b_hash = payload.get("binding_hash")
+                    b_ref = payload.get("binding_ref") if isinstance(payload.get("binding_ref"), dict) else None
+                    b_obj = b_ref.get("object") if isinstance(b_ref, dict) and isinstance(b_ref.get("object"), dict) else None
+                    claims = b_obj.get("iam_claims_snapshot") if isinstance(b_obj, dict) and isinstance(b_obj.get("iam_claims_snapshot"), dict) else None
+                    if isinstance(b_hash, str) and b_hash and isinstance(claims, dict):
+                        binding_claims_by_hash[b_hash] = claims
+                        agent_id = b_obj.get("agent_id") if isinstance(b_obj.get("agent_id"), str) else ""
+                        binding_agent_by_hash[b_hash] = agent_id
+                        if iam_bridge_claims_validator is not None:
+                            for err in sorted(iam_bridge_claims_validator.iter_errors(claims), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "IB-BINDING-LINK-01", f"invalid iam_claims_snapshot shape: {err.message}", rel_file, line_no)
+
+                elif mtype == "APPROVAL_CHALLENGE":
+                    mhash = msg.get("message_hash")
+                    if isinstance(mhash, str) and mhash:
+                        challenges_by_hash[mhash] = (msg, line_no)
+
+                elif mtype == "APPROVAL_GRANT":
+                    c_hash = payload.get("challenge_message_hash")
+                    if isinstance(c_hash, str) and c_hash in challenges_by_hash:
+                        ch_payload = (challenges_by_hash[c_hash][0].get("payload") or {})
+                        target = ch_payload.get("target_binding") if isinstance(ch_payload.get("target_binding"), dict) else None
+                        if isinstance(target, dict):
+                            tcid = target.get("tool_call_id") if isinstance(target.get("tool_call_id"), str) else None
+                            if tcid:
+                                grants_by_tool_call_id.setdefault(tcid, []).append((msg, line_no))
+
+                elif mtype == "TOOL_CALL_REQUEST":
+                    if contract_iam_bridge is None:
+                        continue
+                    pext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    ib_ext = pext.get("iam_bridge") if isinstance(pext.get("iam_bridge"), dict) else {}
+                    action_id = ib_ext.get("action_id") if isinstance(ib_ext.get("action_id"), str) else None
+                    if not action_id:
+                        continue
+                    action_policy = (contract_iam_bridge.get("protected_actions") or {}).get(action_id)
+                    if not isinstance(action_policy, dict):
+                        continue
+
+                    msg_ext = msg.get("ext") if isinstance(msg.get("ext"), dict) else {}
+                    binding_hash = msg_ext.get("subject_binding_hash") if isinstance(msg_ext.get("subject_binding_hash"), str) else None
+                    claims = binding_claims_by_hash.get(binding_hash) if isinstance(binding_hash, str) else None
+
+                    if "IB-BINDING-LINK-01" in enabled_checks:
+                        if not isinstance(binding_hash, str) or not binding_hash:
+                            add_failure(t_failures, "IB-BINDING-LINK-01", "protected action must include ext.subject_binding_hash", rel_file, line_no)
+                            continue
+                        if claims is None:
+                            add_failure(t_failures, "IB-BINDING-LINK-01", "subject_binding_hash must reference prior SUBJECT_BINDING_ISSUE with iam_claims_snapshot", rel_file, line_no)
+                            continue
+                        expected_agent = binding_agent_by_hash.get(binding_hash)
+                        if isinstance(expected_agent, str) and expected_agent and msg.get("sender") != expected_agent:
+                            add_failure(t_failures, "IB-BINDING-LINK-01", "protected action sender must match subject binding agent_id", rel_file, line_no)
+
+                    scopes = claims.get("scopes") if isinstance(claims.get("scopes"), list) else []
+                    roles = claims.get("roles") if isinstance(claims.get("roles"), list) else []
+                    groups = claims.get("groups") if isinstance(claims.get("groups"), list) else []
+                    issuer = claims.get("issuer") if isinstance(claims.get("issuer"), str) else None
+                    acr = claims.get("acr") if isinstance(claims.get("acr"), str) else None
+                    amr = claims.get("amr") if isinstance(claims.get("amr"), list) else []
+
+                    if "IB-ISSUER-01" in enabled_checks:
+                        allow = contract_iam_bridge.get("issuers_allowlist") if isinstance(contract_iam_bridge.get("issuers_allowlist"), list) else []
+                        if issuer not in allow:
+                            add_failure(t_failures, "IB-ISSUER-01", f"claims issuer '{issuer}' is not allowed by contract.ext.iam_bridge.issuers_allowlist", rel_file, line_no)
+
+                    derived: set[str] = set()
+                    for scope in scopes:
+                        mapped = (contract_iam_bridge.get("scope_authority_map") or {}).get(scope)
+                        if isinstance(mapped, list):
+                            derived.update([m for m in mapped if isinstance(m, str)])
+                    for role in roles:
+                        mapped = (contract_iam_bridge.get("role_authority_map") or {}).get(role)
+                        if isinstance(mapped, list):
+                            derived.update([m for m in mapped if isinstance(m, str)])
+                    for group in groups:
+                        mapped = (contract_iam_bridge.get("group_authority_map") or {}).get(group)
+                        if isinstance(mapped, list):
+                            derived.update([m for m in mapped if isinstance(m, str)])
+
+                    req_auth = action_policy.get("required_authority") if isinstance(action_policy.get("required_authority"), list) else []
+                    req_scopes = action_policy.get("required_scopes") if isinstance(action_policy.get("required_scopes"), list) else []
+                    req_roles = action_policy.get("required_roles") if isinstance(action_policy.get("required_roles"), list) else []
+                    req_groups = action_policy.get("required_groups") if isinstance(action_policy.get("required_groups"), list) else []
+
+                    if "IB-SCOPE-MAP-01" in enabled_checks:
+                        missing = [s for s in req_scopes if s not in scopes]
+                        missing_auth = [a for a in req_auth if a not in derived]
+                        if missing or missing_auth:
+                            add_failure(t_failures, "IB-SCOPE-MAP-01", f"missing required scopes/authority for action '{action_id}' (missing_scopes={missing}, missing_authority={missing_auth})", rel_file, line_no)
+
+                    if "IB-ROLE-MAP-01" in enabled_checks and req_roles:
+                        missing = [r for r in req_roles if r not in roles]
+                        if missing:
+                            add_failure(t_failures, "IB-ROLE-MAP-01", f"missing required roles for action '{action_id}': {missing}", rel_file, line_no)
+
+                    if "IB-GROUP-MAP-01" in enabled_checks and req_groups:
+                        missing = [g for g in req_groups if g not in groups]
+                        if missing:
+                            add_failure(t_failures, "IB-GROUP-MAP-01", f"missing required groups for action '{action_id}': {missing}", rel_file, line_no)
+
+                    if "IB-STEPUP-ACR-01" in enabled_checks and isinstance(action_policy.get("required_acr"), str):
+                        if acr != action_policy.get("required_acr"):
+                            add_failure(t_failures, "IB-STEPUP-ACR-01", f"required_acr '{action_policy.get('required_acr')}' not met", rel_file, line_no)
+
+                    if "IB-STEPUP-AMR-01" in enabled_checks:
+                        req_any = action_policy.get("required_amr_any") if isinstance(action_policy.get("required_amr_any"), list) else []
+                        req_all = action_policy.get("required_amr_all") if isinstance(action_policy.get("required_amr_all"), list) else []
+                        if req_any and not any(a in amr for a in req_any):
+                            add_failure(t_failures, "IB-STEPUP-AMR-01", f"required_amr_any not met: {req_any}", rel_file, line_no)
+                        if req_all and any(a not in amr for a in req_all):
+                            add_failure(t_failures, "IB-STEPUP-AMR-01", f"required_amr_all not met: {req_all}", rel_file, line_no)
+
+                    if "IB-APPROVAL-MAP-01" in enabled_checks and bool(action_policy.get("approval_required")):
+                        tcid = payload.get("tool_call_id") if isinstance(payload.get("tool_call_id"), str) else None
+                        grants = grants_by_tool_call_id.get(tcid, []) if tcid else []
+                        if not grants:
+                            add_failure(t_failures, "IB-APPROVAL-MAP-01", "approval_required action lacks prior matching APPROVAL_GRANT", rel_file, line_no)
 
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
@@ -2110,26 +2627,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     first_contract_line_no = line_no
                     break
 
-            capneg_cfg: dict[str, Any] | None = None
-            enforcement_cfg: dict[str, Any] | None = None
-            participants_cfg: dict[str, Any] | None = None
-            if isinstance(first_contract, dict):
-                ext = first_contract.get("ext") or {}
-                if isinstance(ext, dict):
-                    capneg_cfg = ext.get("capneg")
-                    enforcement_cfg = ext.get("enforcement")
-                    participants_cfg = ext.get("participants")
-                if enforcement_cfg is None or participants_cfg is None:
-                    extensions = first_contract.get("extensions") or {}
-                    if isinstance(extensions, dict):
-                        if enforcement_cfg is None:
-                            enforcement_cfg = extensions.get("EXT-ENFORCEMENT")
-                        if participants_cfg is None:
-                            participants_cfg = extensions.get("EXT-PARTICIPANTS")
-
-            capneg_cfg = capneg_cfg if isinstance(capneg_cfg, dict) else None
-            enforcement_cfg = enforcement_cfg if isinstance(enforcement_cfg, dict) else None
-            participants_cfg = participants_cfg if isinstance(participants_cfg, dict) else None
+            capneg_cfg = _contract_ext_object(first_contract, "capneg", "EXT-CAPNEG")
+            enforcement_cfg = _contract_ext_object(first_contract, "enforcement", "EXT-ENFORCEMENT")
+            participants_cfg = _contract_ext_object(first_contract, "participants", "EXT-PARTICIPANTS")
 
             mediators: list[str] = []
             if isinstance(enforcement_cfg, dict):

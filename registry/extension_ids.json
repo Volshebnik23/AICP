@@ -27,6 +27,15 @@
     "security_considerations": "Operational alerts should avoid sensitive leakage and spoofing."
   },
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-ARTIFACT-MANIFESTS-PINNING",
+    "type": "extension_ids",
+    "spec_ref": "docs/rfc/RFC_Artifact_Manifests_and_Pinning.md",
+    "security_considerations": "Manifest hash pinning, issuer-scoped identity, and explicit renegotiation reduce rug-pull and namespace-shadowing risk for tool/resource/prompt integrations."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -44,6 +53,15 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_CHANNELS.md#registry-entry",
     "security_considerations": "Channel ownership and update rights must be authenticated to prevent channel takeover."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-CONFIDENTIALITY",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_CONFIDENTIALITY.md#8-registry-entry",
+    "security_considerations": "Confidentiality mode bindings must match accepted negotiation hashes and mode-specific disclosure evidence requirements."
   },
   {
     "status": "experimental",
@@ -99,6 +117,24 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#registry-entry",
     "security_considerations": "Turn grants and moderator directives should be authenticated and non-repudiable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-HUMAN-APPROVAL",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#10-registry-entries",
+    "security_considerations": "Human-approval artifacts must be bound to challenge target, approver identity, and expiry to resist bypass and replay."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-IAM-BRIDGE",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#10-registry-entries",
+    "security_considerations": "IAM bridge mappings must avoid bearer-token material and enforce issuer/claim binding to subject-binding context."
   },
   {
     "status": "experimental",
@@ -186,6 +222,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-REDACTION",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#8-registry-entries",
+    "security_considerations": "Redaction declarations must bind to prior message hashes, policy refs, and retention semantics without exposing plaintext sensitive values."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-RESUME",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md",
@@ -199,6 +244,15 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md",
     "security_considerations": "Incident signaling must avoid sensitive data overexposure."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-STATUS-CHANNEL",
+    "type": "extension_ids",
+    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#1-scope-normative",
+    "security_considerations": "Status assertions must be validated for trust linkage, signature integrity, and staleness before use."
   },
   {
     "status": "experimental",
@@ -222,15 +276,6 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "EXT-WORKFLOW-SYNC",
-    "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md",
-    "security_considerations": "Workflow attestations must bind to contract head."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
     "id": "EXT-TRUST-ATTESTATIONS",
     "type": "extension_ids",
     "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#1-scope-normative",
@@ -240,18 +285,9 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
-    "id": "EXT-STATUS-CHANNEL",
+    "id": "EXT-WORKFLOW-SYNC",
     "type": "extension_ids",
-    "spec_ref": "docs/rfc/RFC_Revocation_and_Status_Channel.md#1-scope-normative",
-    "security_considerations": "Status assertions must be validated for trust linkage, signature integrity, and staleness before use."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "EXT-ARTIFACT-MANIFESTS-PINNING",
-    "type": "extension_ids",
-    "spec_ref": "docs/rfc/RFC_Artifact_Manifests_and_Pinning.md",
-    "security_considerations": "Manifest hash pinning, issuer-scoped identity, and explicit renegotiation reduce rug-pull and namespace-shadowing risk for tool/resource/prompt integrations."
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md",
+    "security_considerations": "Workflow attestations must bind to contract head."
   }
 ]

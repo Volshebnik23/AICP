@@ -1,0 +1,211 @@
+{
+  "suite_id": "HA-HUMAN-APPROVAL-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-HUMAN-APPROVAL conformance checks for approval challenge/decision and intervention lifecycle bindings.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-human-approval-payloads.schema.json",
+  "payload_schema_map": {
+    "APPROVAL_CHALLENGE": "#/$defs/APPROVAL_CHALLENGE",
+    "APPROVAL_GRANT": "#/$defs/APPROVAL_GRANT",
+    "APPROVAL_DENY": "#/$defs/APPROVAL_DENY",
+    "INTERVENTION_REQUIRED": "#/$defs/INTERVENTION_REQUIRED",
+    "INTERVENTION_COMPLETE": "#/$defs/INTERVENTION_COMPLETE"
+  },
+  "transcripts": [
+    {
+      "id": "HA-01",
+      "path": "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_GRANT",
+        "TOOL_CALL_REQUEST"
+      ]
+    },
+    {
+      "id": "HA-02",
+      "path": "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_DENY"
+      ]
+    },
+    {
+      "id": "HA-03",
+      "path": "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "INTERVENTION_REQUIRED",
+        "INTERVENTION_COMPLETE"
+      ]
+    },
+    {
+      "id": "HA-04",
+      "path": "fixtures/extensions/human_approval/HA-04_missing_target_binding_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_GRANT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "HA-CHALLENGE-TARGET-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "HA-05",
+      "path": "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_GRANT",
+        "TOOL_CALL_REQUEST"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "HA-EXPIRY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "HA-06",
+      "path": "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_GRANT",
+        "TOOL_CALL_REQUEST"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "HA-SIGNER-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "HA-07",
+      "path": "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_GRANT",
+        "TOOL_CALL_REQUEST"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "HA-TARGET-REUSE-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "HA-08",
+      "path": "fixtures/extensions/human_approval/HA-08_missing_intervention_handle_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "INTERVENTION_REQUIRED",
+        "INTERVENTION_COMPLETE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "HA-INTERVENTION-LINK-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against EXT-HUMAN-APPROVAL payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "HA-CHALLENGE-TARGET-01",
+      "description": "APPROVAL_CHALLENGE must declare exactly one valid target binding"
+    },
+    {
+      "test_id": "HA-CHALLENGE-APPROVER-01",
+      "description": "APPROVAL_CHALLENGE must declare approver_id and scope"
+    },
+    {
+      "test_id": "HA-CHALLENGE-EXPIRY-01",
+      "description": "APPROVAL_CHALLENGE expires_at must be present and valid"
+    },
+    {
+      "test_id": "HA-DECISION-BIND-01",
+      "description": "APPROVAL_GRANT and APPROVAL_DENY must reference prior APPROVAL_CHALLENGE"
+    },
+    {
+      "test_id": "HA-SIGNER-01",
+      "description": "Grant/deny sender and approver_id must match challenge approver_id"
+    },
+    {
+      "test_id": "HA-TARGET-REUSE-01",
+      "description": "Grant/deny target binding and scope must match challenge exactly"
+    },
+    {
+      "test_id": "HA-EXPIRY-01",
+      "description": "Approval decisions and approved actions must not occur after challenge expiry"
+    },
+    {
+      "test_id": "HA-INTERVENTION-REQUIRED-01",
+      "description": "INTERVENTION_REQUIRED fields must be present and valid"
+    },
+    {
+      "test_id": "HA-INTERVENTION-LINK-01",
+      "description": "INTERVENTION_COMPLETE must reference a prior INTERVENTION_REQUIRED and matching handle"
+    },
+    {
+      "test_id": "HA-ENFORCER-BIND-01",
+      "description": "TOOL_CALL_REQUEST requiring approval must have a valid prior APPROVAL_GRANT bound to target"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-HUMAN-APPROVAL-0.1"
+}
