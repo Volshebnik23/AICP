@@ -135,11 +135,7 @@
         },
         "delete_semantics": {
           "type": "string",
-          "enum": [
-            "hard-delete",
-            "soft-delete",
-            "tombstone"
-          ]
+          "minLength": 1
         },
         "audit_retention_seconds": {
           "type": "integer",
@@ -147,7 +143,7 @@
         },
         "policy_category": {
           "type": "string",
-          "const": "retention_deletion"
+          "minLength": 1
         },
         "policy_ref": {
           "type": "string",

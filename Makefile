@@ -60,6 +60,7 @@ conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AL_ALERTS_0.1.json --out conformance/report_ext_alerts.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RS_RESUME_0.1.json --out conformance/report_ext_resume.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json --out conformance/report_ext_delegated_identity.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/IB_IAM_BRIDGE_0.1.json --out conformance/report_ext_iam_bridge.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json --out conformance/report_ext_reception_chat_semantics.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/EC_ECONOMICS_0.1.json --out conformance/report_ext_economics.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AD_ADMISSION_0.1.json --out conformance/report_ext_admission.json

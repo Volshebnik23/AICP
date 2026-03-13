@@ -27,3 +27,5 @@ Track unresolved specification/productization questions here.
 - **Target milestone:** M16a (completed), M16b (completed)
 - **Notes / links:** Update: M16b implemented. Canonicalization now allows finite floats with deterministic ECMAScript-aligned numeric tokens. Safe-integer enforcement for integers remains in effect.
 - 2026-03-13: ROADMAP marks M24 shipped while `AICP_Backlog` remains a planning artifact listing M24 as remaining by default structure; keep treating backlog as planning-only and roadmap as shipped-state source of truth unless governance decides to prune delivered backlog sections.
+
+- 2026-03-13: M27/M28 sequencing drift recorded: M28 IAM bridge shipped in this sprint before M27 production-attributes work; roadmap now explicitly marks M28 complete and names M27 as the next pending milestone to avoid silent renumbering.

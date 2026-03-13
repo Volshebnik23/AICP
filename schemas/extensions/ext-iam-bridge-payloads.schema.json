@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-iam-bridge-payloads.schema.json",
+  "title": "AICP EXT-IAM-BRIDGE payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "StringArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NonEmptyString"
+      }
+    },
+    "AuthorityTokenArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NonEmptyString"
+      },
+      "minItems": 1
+    },
+    "AuthorityMap": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/AuthorityTokenArray"
+      }
+    },
+    "NormalizedClaimsSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer",
+        "subject",
+        "scopes",
+        "roles",
+        "groups",
+        "issued_at",
+        "expires_at"
+      ],
+      "properties": {
+        "issuer": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "subject": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "scopes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "roles": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "groups": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "acr": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "amr": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ActionRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_scopes_any": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_scopes_all": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_roles_any": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_roles_all": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_groups_any": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_groups_all": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_authority_any": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_acr": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "required_amr_any": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "required_amr_all": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "requires_human_approval": {
+          "type": "boolean"
+        },
+        "approval_scope_action": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "ContractIamBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuer_allowlist",
+        "scope_to_authority",
+        "role_to_authority",
+        "group_to_authority",
+        "actions"
+      ],
+      "properties": {
+        "issuer_allowlist": {
+          "$ref": "#/$defs/AuthorityTokenArray"
+        },
+        "scope_to_authority": {
+          "$ref": "#/$defs/AuthorityMap"
+        },
+        "role_to_authority": {
+          "$ref": "#/$defs/AuthorityMap"
+        },
+        "group_to_authority": {
+          "$ref": "#/$defs/AuthorityMap"
+        },
+        "actions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ActionRequirement"
+          }
+        }
+      }
+    },
+    "SubjectBindingIamBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iam_bridge_claims",
+        "iam_bridge_claims_hash"
+      ],
+      "properties": {
+        "iam_bridge_claims": {
+          "$ref": "#/$defs/NormalizedClaimsSnapshot"
+        },
+        "iam_bridge_claims_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "MessageIamBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "required_scopes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "required_roles": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "required_groups": {
+          "$ref": "#/$defs/StringArray"
+        }
+      }
+    }
+  }
+}

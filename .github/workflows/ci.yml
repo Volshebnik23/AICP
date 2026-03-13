@@ -36,8 +36,7 @@ jobs:
       - name: Run make test
         run: make test
 
-      - name: Run make conformance-ext (non-blocking on PRs, strict on main)
-        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+      - name: Run make conformance-ext
         run: make conformance-ext
 
       - name: Run make conformance-bindings
