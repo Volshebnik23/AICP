@@ -1,6 +1,6 @@
 # RFC: EXT-REDACTION — redaction declarations, retention policy, and vault-neutral PII references (Registered Extension)
 
-**Status:** M24 completion target (this RFC defines the normative redaction/retention foundation expected for M24 completion in this repository).
+**Status:** Shipped M24 extension surface (with executable conformance coverage in this repository).
 
 EXT-REDACTION defines a minimal, verifiable M24 foundation for declaring redacted derivatives without mutating prior transcript records.
 
