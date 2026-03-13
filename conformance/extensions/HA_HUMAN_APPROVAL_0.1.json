@@ -127,7 +127,7 @@
       "expect_pass": false,
       "expected_failures": [
         {
-          "test_id": "HA-INTERVENTION-LINK-01",
+          "test_id": "HA-INTERVENTION-REQUIRED-01",
           "min_count": 1
         }
       ]

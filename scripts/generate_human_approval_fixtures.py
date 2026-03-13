@@ -229,7 +229,7 @@ def build_intervention_case(case_id: str, *, missing_handle: bool = False) -> li
             "contract_id": f"cha-{case_id}",
             "payload": {
                 "required_message_hash": baseline[-1]["message_hash"],
-                "intervention_handle": "intervention:3ds:txn-001" if not missing_handle else "",
+                "intervention_handle": "intervention:3ds:txn-001",
                 "completion_ref": "objhash:sha256:stepup-proof-001"
             }
         }
