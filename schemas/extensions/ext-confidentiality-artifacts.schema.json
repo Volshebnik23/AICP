@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-confidentiality-artifacts.schema.json",
+  "title": "AICP EXT-CONFIDENTIALITY contract binding artifacts",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "NonEmptyStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/NonEmptyString"
+      }
+    },
+    "MetadataProjection": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/NonEmptyString"
+      }
+    }
+  },
+  "required": [
+    "mode_id"
+  ],
+  "properties": {
+    "mode_id": {
+      "$ref": "#/$defs/NonEmptyString"
+    },
+    "negotiation_result_hash": {
+      "$ref": "#/$defs/NonEmptyString"
+    },
+    "redaction_artifact_refs": {
+      "$ref": "#/$defs/NonEmptyStringArray"
+    },
+    "metadata_projection": {
+      "$ref": "#/$defs/MetadataProjection"
+    },
+    "classification_labels": {
+      "$ref": "#/$defs/NonEmptyStringArray"
+    },
+    "classification_evidence_refs": {
+      "$ref": "#/$defs/NonEmptyStringArray"
+    },
+    "artifact_refs": {
+      "$ref": "#/$defs/NonEmptyStringArray"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode_id": {
+            "const": "redacted"
+          }
+        },
+        "required": [
+          "mode_id"
+        ]
+      },
+      "then": {
+        "required": [
+          "redaction_artifact_refs"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode_id": {
+            "const": "metadata-only"
+          }
+        },
+        "required": [
+          "mode_id"
+        ]
+      },
+      "then": {
+        "required": [
+          "metadata_projection"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode_id": {
+            "const": "classification-only"
+          }
+        },
+        "required": [
+          "mode_id"
+        ]
+      },
+      "then": {
+        "required": [
+          "classification_labels",
+          "classification_evidence_refs"
+        ]
+      }
+    }
+  ]
+}
