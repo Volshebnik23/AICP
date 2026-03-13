@@ -61,5 +61,68 @@
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
     "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_approval_evidence_missing",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Protected action requiring mapped human approval lacks valid approval evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_issuer_not_allowed",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Claims snapshot issuer is not allowed by contract ext.iam_bridge issuer_allowlist."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_required_acr_not_met",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Required acr level for protected action is not satisfied."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_required_amr_not_met",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Required amr method set for protected action is not satisfied."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_required_group_missing",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Required group for protected action/delegation mapping is absent."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_required_role_missing",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Required role for protected action/delegation mapping is absent."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge_required_scope_missing",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
+    "security_considerations": "Required OAuth scope for protected action/delegation mapping is absent."
   }
 ]

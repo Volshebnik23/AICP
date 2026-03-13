@@ -6,14 +6,15 @@ Extension RFCs live in this folder (`docs/extensions/`).
 
 - **Registry presence** means an identifier exists and is tracked (`registry/extension_ids.json`).
 - **Schema/fixtures/conformance presence** means there is machine-checkable artifact coverage.
-- **Milestone shipped status** is decided in `ROADMAP.md` (source of truth), not by document presence alone.
+- **Milestone shipped status** is decided in `ROADMAP.md` (source of truth), and MUST remain aligned with executable schema/fixture/conformance evidence in this repo.
 
 ## Current phase summary
 
 - Core transport/binding executable baseline remains centered on the shipped M22 conformance/CI surface.
 - M23 (`RFC_EXT_CONFIDENTIALITY.md`) is shipped with executable extension conformance coverage.
-- M24 (`RFC_EXT_REDACTION.md`) is shipped in roadmap terms for its protocol deliverables (redaction declaration + retention/deletion policy + pii_ref + conformance).
+- M24 (`RFC_EXT_REDACTION.md`) is shipped with executable schema/fixture/conformance coverage for redaction declarations, retention/deletion policy, `pii_ref` handling, and deterministic fail vectors.
 - M26 (`RFC_EXT_HUMAN_APPROVAL.md`) is shipped with executable extension conformance coverage (approval/step-up primitives).
+- M28 (`RFC_EXT_IAM_BRIDGE.md`) is shipped with executable extension conformance coverage for issuer/scopes/roles/groups mapping, delegated-identity binding linkage, and step-up/approval checks.
 
 ## Where to look next
 

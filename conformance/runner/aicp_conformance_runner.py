@@ -254,6 +254,22 @@ def _contract_ext_object(contract: Any, ext_key: str, extension_id: str) -> dict
     return None
 
 
+def _flatten_authority_subset(value: Any) -> set[str]:
+    out: set[str] = set()
+    if not isinstance(value, dict):
+        return out
+    for key, entries in value.items():
+        if not isinstance(key, str):
+            continue
+        if isinstance(entries, list):
+            for entry in entries:
+                if isinstance(entry, str) and entry:
+                    out.add(f"{key}.{entry}")
+        elif isinstance(entries, str) and entries:
+            out.add(f"{key}.{entries}")
+    return out
+
+
 def _parse_iso_datetime(value: Any) -> datetime | None:
     if not isinstance(value, str) or not value:
         return None
@@ -1086,6 +1102,12 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     approval_deny_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_DENY") if Draft202012Validator is not None else None
     intervention_required_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_REQUIRED") if Draft202012Validator is not None else None
     intervention_complete_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_COMPLETE") if Draft202012Validator is not None else None
+    iam_bridge_schema_path = ROOT / "schemas/extensions/ext-iam-bridge-payloads.schema.json"
+    iam_bridge_schema = load_json(iam_bridge_schema_path)
+    iam_bridge_claims_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/NormalizedClaimsSnapshot") if Draft202012Validator is not None else None
+    iam_bridge_contract_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/ContractIamBridge") if Draft202012Validator is not None else None
+    iam_bridge_message_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/MessageIamBridge") if Draft202012Validator is not None else None
+
 
     failures: list[dict[str, Any]] = []
     degraded = False
@@ -2378,6 +2400,173 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         revoked_at = revoked_effective_at.get(binding_hash)
                         if revoked_at is not None and msg_ts is not None and revoked_at <= msg_ts:
                             add_failure(t_failures, "DI-REVOKE-01", "ext.subject_binding_hash used at/after effective revocation", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"IB-ISSUER-01", "IB-SCOPE-MAP-01", "IB-ROLE-MAP-01", "IB-GROUP-MAP-01", "IB-BINDING-LINK-01", "IB-STEPUP-ACR-01", "IB-STEPUP-AMR-01", "IB-APPROVAL-MAP-01"}):
+            first_contract = None
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    break
+
+            iam_bridge_cfg = _contract_ext_object(first_contract, "iam_bridge", "EXT-IAM-BRIDGE") if isinstance(first_contract, dict) else None
+            if iam_bridge_cfg is None:
+                iam_bridge_cfg = {}
+            if iam_bridge_contract_validator is not None and isinstance(iam_bridge_cfg, dict) and len(iam_bridge_cfg) > 0:
+                for err in sorted(iam_bridge_contract_validator.iter_errors(iam_bridge_cfg), key=lambda e: list(e.path)):
+                    add_failure(t_failures, "IB-ISSUER-01", f"invalid contract.ext.iam_bridge: {err.message}", rel_file, rows[0][0] if rows else None)
+
+            issued_bindings: dict[str, dict[str, Any]] = {}
+            approvals: list[dict[str, Any]] = []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+
+                if mtype == "SUBJECT_BINDING_ISSUE":
+                    binding_hash = payload.get("binding_hash")
+                    binding_ref = payload.get("binding_ref") if isinstance(payload.get("binding_ref"), dict) else None
+                    binding_obj = binding_ref.get("object") if isinstance(binding_ref, dict) and isinstance(binding_ref.get("object"), dict) else None
+                    claims = None
+                    claims_hash = None
+                    if isinstance(binding_obj, dict):
+                        ext_obj = binding_obj.get("ext") if isinstance(binding_obj.get("ext"), dict) else None
+                        if isinstance(ext_obj, dict):
+                            claims = ext_obj.get("iam_bridge_claims")
+                            claims_hash = ext_obj.get("iam_bridge_claims_hash")
+                    if isinstance(binding_hash, str) and binding_hash:
+                        issued_bindings[binding_hash] = {
+                            "idx": idx,
+                            "line_no": line_no,
+                            "binding_obj": binding_obj,
+                            "claims": claims if isinstance(claims, dict) else None,
+                            "claims_hash": claims_hash,
+                        }
+
+                if mtype == "APPROVAL_GRANT":
+                    approvals.append({"idx": idx, "line_no": line_no, "msg": msg})
+
+            issuer_allowlist = iam_bridge_cfg.get("issuer_allowlist") if isinstance(iam_bridge_cfg.get("issuer_allowlist"), list) else []
+            scope_to_auth = iam_bridge_cfg.get("scope_to_authority") if isinstance(iam_bridge_cfg.get("scope_to_authority"), dict) else {}
+            role_to_auth = iam_bridge_cfg.get("role_to_authority") if isinstance(iam_bridge_cfg.get("role_to_authority"), dict) else {}
+            group_to_auth = iam_bridge_cfg.get("group_to_authority") if isinstance(iam_bridge_cfg.get("group_to_authority"), dict) else {}
+            actions_cfg = iam_bridge_cfg.get("actions") if isinstance(iam_bridge_cfg.get("actions"), dict) else {}
+
+            def _req_list(action_cfg: dict[str, Any], key: str, ext_iam: dict[str, Any] | None, ext_key: str) -> list[str]:
+                if isinstance(ext_iam, dict) and isinstance(ext_iam.get(ext_key), list):
+                    return [v for v in ext_iam.get(ext_key) if isinstance(v, str) and v]
+                if isinstance(action_cfg.get(key), list):
+                    return [v for v in action_cfg.get(key) if isinstance(v, str) and v]
+                return []
+
+            for idx, (line_no, msg) in enumerate(rows):
+                ext = msg.get("ext") if isinstance(msg.get("ext"), dict) else {}
+                binding_hash = ext.get("subject_binding_hash") if isinstance(ext.get("subject_binding_hash"), str) else None
+                iam_ext = ext.get("iam_bridge") if isinstance(ext.get("iam_bridge"), dict) else None
+                action = iam_ext.get("action") if isinstance(iam_ext, dict) and isinstance(iam_ext.get("action"), str) else None
+                if binding_hash is None or action is None:
+                    continue
+
+                if iam_bridge_message_validator is not None and isinstance(iam_ext, dict):
+                    for err in sorted(iam_bridge_message_validator.iter_errors(iam_ext), key=lambda e: list(e.path)):
+                        add_failure(t_failures, "IB-BINDING-LINK-01", f"invalid ext.iam_bridge: {err.message}", rel_file, line_no)
+
+                binding = issued_bindings.get(binding_hash)
+                if binding is None or binding.get("idx", -1) >= idx:
+                    if "IB-BINDING-LINK-01" in enabled_checks:
+                        add_failure(t_failures, "IB-BINDING-LINK-01", "acting message must reference an earlier SUBJECT_BINDING_ISSUE via ext.subject_binding_hash", rel_file, line_no)
+                    continue
+
+                claims = binding.get("claims")
+                claims_hash = binding.get("claims_hash")
+                if not isinstance(claims, dict):
+                    if "IB-BINDING-LINK-01" in enabled_checks:
+                        add_failure(t_failures, "IB-BINDING-LINK-01", "subject binding must include ext.iam_bridge_claims for IAM bridge evaluation", rel_file, line_no)
+                    continue
+
+                if iam_bridge_claims_validator is not None:
+                    for err in sorted(iam_bridge_claims_validator.iter_errors(claims), key=lambda e: list(e.path)):
+                        add_failure(t_failures, "IB-BINDING-LINK-01", f"invalid normalized claims snapshot: {err.message}", rel_file, line_no)
+
+                try:
+                    computed_claims_hash = object_hash("iam_claims_snapshot", claims)
+                    if isinstance(claims_hash, str) and claims_hash != computed_claims_hash:
+                        add_failure(t_failures, "IB-BINDING-LINK-01", "iam_bridge_claims_hash must equal object_hash('iam_claims_snapshot', iam_bridge_claims)", rel_file, line_no)
+                except Exception as exc:
+                    add_failure(t_failures, "IB-BINDING-LINK-01", f"claims hash recompute error: {exc}", rel_file, line_no)
+
+                issuer = claims.get("issuer")
+                if "IB-ISSUER-01" in enabled_checks and isinstance(issuer_allowlist, list) and issuer_allowlist and issuer not in issuer_allowlist:
+                    add_failure(t_failures, "IB-ISSUER-01", f"claims issuer '{issuer}' is not allowed by contract.ext.iam_bridge.issuer_allowlist", rel_file, line_no)
+
+                action_cfg = actions_cfg.get(action) if isinstance(actions_cfg.get(action), dict) else {}
+                scopes = set(v for v in claims.get("scopes", []) if isinstance(v, str))
+                roles = set(v for v in claims.get("roles", []) if isinstance(v, str))
+                groups = set(v for v in claims.get("groups", []) if isinstance(v, str))
+                amr = set(v for v in claims.get("amr", []) if isinstance(v, str))
+                mapped_authority: set[str] = set()
+                for s in scopes:
+                    mapped_authority.update(v for v in scope_to_auth.get(s, []) if isinstance(v, str))
+                for r in roles:
+                    mapped_authority.update(v for v in role_to_auth.get(r, []) if isinstance(v, str))
+                for g in groups:
+                    mapped_authority.update(v for v in group_to_auth.get(g, []) if isinstance(v, str))
+
+                if msg.get("message_type") == "DELEGATION_GRANT":
+                    mapped_authority.update(_flatten_authority_subset(payload.get("authority_subset")))
+
+                req_scopes_all = _req_list(action_cfg, "required_scopes_all", iam_ext, "required_scopes")
+                req_roles_all = _req_list(action_cfg, "required_roles_all", iam_ext, "required_roles")
+                req_groups_all = _req_list(action_cfg, "required_groups_all", iam_ext, "required_groups")
+                req_scopes_any = [v for v in action_cfg.get("required_scopes_any", []) if isinstance(v, str)] if isinstance(action_cfg.get("required_scopes_any"), list) else []
+                req_roles_any = [v for v in action_cfg.get("required_roles_any", []) if isinstance(v, str)] if isinstance(action_cfg.get("required_roles_any"), list) else []
+                req_groups_any = [v for v in action_cfg.get("required_groups_any", []) if isinstance(v, str)] if isinstance(action_cfg.get("required_groups_any"), list) else []
+                req_auth_any = [v for v in action_cfg.get("required_authority_any", []) if isinstance(v, str)] if isinstance(action_cfg.get("required_authority_any"), list) else []
+
+                if "IB-SCOPE-MAP-01" in enabled_checks:
+                    if any(v not in scopes for v in req_scopes_all):
+                        add_failure(t_failures, "IB-SCOPE-MAP-01", "required_scopes_all not satisfied by normalized claims snapshot", rel_file, line_no)
+                    if req_scopes_any and not any(v in scopes for v in req_scopes_any):
+                        add_failure(t_failures, "IB-SCOPE-MAP-01", "required_scopes_any not satisfied by normalized claims snapshot", rel_file, line_no)
+                if "IB-ROLE-MAP-01" in enabled_checks:
+                    if any(v not in roles for v in req_roles_all):
+                        add_failure(t_failures, "IB-ROLE-MAP-01", "required_roles_all not satisfied by normalized claims snapshot", rel_file, line_no)
+                    if req_roles_any and not any(v in roles for v in req_roles_any):
+                        add_failure(t_failures, "IB-ROLE-MAP-01", "required_roles_any not satisfied by normalized claims snapshot", rel_file, line_no)
+                if "IB-GROUP-MAP-01" in enabled_checks:
+                    if any(v not in groups for v in req_groups_all):
+                        add_failure(t_failures, "IB-GROUP-MAP-01", "required_groups_all not satisfied by normalized claims snapshot", rel_file, line_no)
+                    if req_groups_any and not any(v in groups for v in req_groups_any):
+                        add_failure(t_failures, "IB-GROUP-MAP-01", "required_groups_any not satisfied by normalized claims snapshot", rel_file, line_no)
+                if "IB-SCOPE-MAP-01" in enabled_checks and req_auth_any and not any(v in mapped_authority for v in req_auth_any):
+                    add_failure(t_failures, "IB-SCOPE-MAP-01", "required_authority_any not satisfied by scope/role/group mapping", rel_file, line_no)
+
+                required_acr = action_cfg.get("required_acr") if isinstance(action_cfg.get("required_acr"), str) else None
+                if "IB-STEPUP-ACR-01" in enabled_checks and required_acr is not None and claims.get("acr") != required_acr:
+                    add_failure(t_failures, "IB-STEPUP-ACR-01", f"required_acr '{required_acr}' not satisfied", rel_file, line_no)
+
+                required_amr_any = [v for v in action_cfg.get("required_amr_any", []) if isinstance(v, str)] if isinstance(action_cfg.get("required_amr_any"), list) else []
+                required_amr_all = [v for v in action_cfg.get("required_amr_all", []) if isinstance(v, str)] if isinstance(action_cfg.get("required_amr_all"), list) else []
+                if "IB-STEPUP-AMR-01" in enabled_checks:
+                    if required_amr_any and not any(v in amr for v in required_amr_any):
+                        add_failure(t_failures, "IB-STEPUP-AMR-01", "required_amr_any not satisfied", rel_file, line_no)
+                    if any(v not in amr for v in required_amr_all):
+                        add_failure(t_failures, "IB-STEPUP-AMR-01", "required_amr_all not satisfied", rel_file, line_no)
+
+                if "IB-APPROVAL-MAP-01" in enabled_checks and action_cfg.get("requires_human_approval") is True:
+                    approval_action = action_cfg.get("approval_scope_action") if isinstance(action_cfg.get("approval_scope_action"), str) else action
+                    target_tool_call_id = payload.get("tool_call_id") if isinstance(payload.get("tool_call_id"), str) else None
+                    has_valid_approval = False
+                    for appr in approvals:
+                        if appr.get("idx", -1) >= idx:
+                            continue
+                        appr_payload = (appr.get("msg") or {}).get("payload") or {}
+                        scope_action = ((appr_payload.get("scope") or {}).get("action") if isinstance(appr_payload.get("scope"), dict) else None)
+                        target_binding = appr_payload.get("target_binding") if isinstance(appr_payload.get("target_binding"), dict) else {}
+                        if scope_action == approval_action and ((target_tool_call_id is not None and target_binding.get("tool_call_id") == target_tool_call_id) or (target_tool_call_id is None)):
+                            has_valid_approval = True
+                            break
+                    if not has_valid_approval:
+                        add_failure(t_failures, "IB-APPROVAL-MAP-01", "protected action requires approval evidence but no matching prior APPROVAL_GRANT was found", rel_file, line_no)
 
         if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
             first_contract = None
