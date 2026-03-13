@@ -73,9 +73,9 @@ _Last updated: 2026-03-13_
 ### ✅ M26 — Human-in-the-loop primitive (approval / step-up)
 - **Shipped:** `EXT-HUMAN-APPROVAL` with canonical approval/intervention message types, strict schema, deterministic fixtures, and executable extension conformance (`HA-HUMAN-APPROVAL-0.1`).
 - **Shipped:** challenge target/scope/TTL binding, signer/approver checks, anti-reuse and expiry checks, and intervention required/complete linkage are machine-checkable from transcript evidence.
-- **Next concrete step:** proceed to M28 IAM bridge mapping (OAuth/OIDC/enterprise IAM interoperability profiles).
+- **Next concrete step:** with M28 now shipped, proceed to M27 production attributes (tracing/SLA/metering).
 
-### ⏳ M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
+### ✅ M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
 - **Exit:** Normative mapping guidance + examples + security notes.
 
 ### ⏳ M31 — Anti-equivocation & transparency witnessing (optional, internet-scale)
