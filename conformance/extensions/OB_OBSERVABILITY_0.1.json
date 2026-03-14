@@ -1,0 +1,93 @@
+{
+  "suite_id": "OB-OBSERVABILITY-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-OBSERVABILITY conformance checks for trace correlation, SLA signal normalization, and metering evidence.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-observability-payloads.schema.json",
+  "payload_schema_map": {
+    "OBS_SIGNAL": "#/$defs/OBS_SIGNAL"
+  },
+  "transcripts": [
+    {
+      "id": "OB-01",
+      "path": "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OBS_SIGNAL"]
+    },
+    {
+      "id": "OB-02",
+      "path": "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST", "OBS_SIGNAL"]
+    },
+    {
+      "id": "OB-03",
+      "path": "fixtures/extensions/observability/OB-03_sla_throttle_signal_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OBS_SIGNAL"]
+    },
+    {
+      "id": "OB-04",
+      "path": "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST", "OBS_SIGNAL"]
+    },
+    {
+      "id": "OB-05",
+      "path": "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "APPROVAL_CHALLENGE", "APPROVAL_GRANT", "TOOL_CALL_REQUEST", "OBS_SIGNAL", "OBS_SIGNAL"]
+    },
+    {
+      "id": "OB-06",
+      "path": "fixtures/extensions/observability/OB-06_missing_correlation_ref_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OBS_SIGNAL"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "OB-TRACE-CORRELATION-01", "min_count": 1}]
+    },
+    {
+      "id": "OB-07",
+      "path": "fixtures/extensions/observability/OB-07_invalid_trace_shape_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OBS_SIGNAL"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "OB-TRACE-CONTEXT-01", "min_count": 1}]
+    },
+    {
+      "id": "OB-08",
+      "path": "fixtures/extensions/observability/OB-08_invalid_signal_type_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OBS_SIGNAL"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "OB-SLA-SIGNAL-01", "min_count": 1}]
+    },
+    {
+      "id": "OB-09",
+      "path": "fixtures/extensions/observability/OB-09_unregistered_reason_code_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OBS_SIGNAL"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "OB-REASON-CODE-01", "min_count": 1}]
+    },
+    {
+      "id": "OB-10",
+      "path": "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST", "OBS_SIGNAL"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "OB-METERING-01", "min_count": 1}]
+    }
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-OBSERVABILITY payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "OB-TRACE-CORRELATION-01", "description": "trace payload must include exactly one valid correlation_ref target"},
+    {"test_id": "OB-TRACE-CONTEXT-01", "description": "trace payload identifiers and parent-child relation must be valid"},
+    {"test_id": "OB-SLA-SIGNAL-01", "description": "sla.signal_type must be one of drop/throttle/deny/degraded/timeout"},
+    {"test_id": "OB-REASON-CODE-01", "description": "sla.reason_code must be registered or namespaced vendor:/org:"},
+    {"test_id": "OB-METERING-01", "description": "metering quantity must be non-negative and unit must be non-empty"},
+    {"test_id": "OB-CORRELATION-LINK-01", "description": "sla and metering payloads must correlate to valid transcript targets"},
+    {"test_id": "OB-APPROVAL-CORRELATION-01", "description": "at least one observability signal must correlate with M26 approval-governed flow evidence"},
+    {"test_id": "OB-IAM-STEPUP-CORRELATION-01", "description": "at least one observability signal must correlate with M28 IAM step-up-governed flow evidence"}
+  ],
+  "compatibility_mark": "AICP-EXT-OBSERVABILITY-0.1",
+  "extension_id": "EXT-OBSERVABILITY"
+}
