@@ -26,6 +26,12 @@ If local assumptions, public `main`, roadmap/docs, and executable CI surfaces dr
 Run before opening a PR:
 
 - `make validate`
+- `make conformance`
+- `make conformance-ext`
+- `make conformance-bindings`
 - `make test`
+- `make quickstart-py`
+- `make quickstart-ts`
+- `cd sdk/typescript && npm ci && npm test && cd ../..`
 
 Use the PR template and include risk and compatibility impact.

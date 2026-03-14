@@ -87,10 +87,12 @@ _Last updated: 2026-03-13_
 ### ✅ M27 — Production attributes: tracing, SLA signals, metering
 - **Shipped:** `EXT-OBSERVABILITY` RFC + schema + deterministic fixtures + executable extension conformance (`OB-OBSERVABILITY-0.1`) are in-repo and wired through `make conformance-ext`.
 - **Shipped:** transcript-level `OBS_SIGNAL` artifacts now cover trace correlation, standardized SLA/error signals, and normalized metering events with machine-checkable negative vectors.
-- **Next concrete step:** proceed to M29 enterprise domain bindings while keeping M27 scope transport-neutral and content-layer only.
+- **Next concrete step:** keep M27 observability stable while enterprise binding integrations advance under M29.
 
-### ⏳ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
-- **Exit:** Binding notes + minimal profiles for common enterprise integration styles.
+### ✅ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
+- **Shipped:** `EXT-ENTERPRISE-BINDINGS` RFC + schema + deterministic fixtures + executable extension conformance (`EB-ENTERPRISE-BINDINGS-0.1`) are in-repo and wired through `make conformance-ext`.
+- **Shipped:** enterprise OpenAPI/OData/policy-xref bindings are now transcript-auditable and include linkage checks with M26 approval, M27 observability, and M28 IAM-governed activity.
+- **Next concrete step:** proceed with M34 documentation/security playbook depth while keeping enterprise bindings transport-neutral and non-runtime.
 
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
 - **Progress:** Implementer-facing security best-practices doc is shipped at `docs/security/SECURITY_BEST_PRACTICES.md`.
@@ -119,4 +121,4 @@ _Last updated: 2026-03-13_
 7) Internet-scale audit (recommended before large public feeds): M31
 8) Agent media & brand reception feeds: M38
 9) Optional platform interop: M32
-10) Ops + docs completeness: M34 + M29 (with M27 observability baseline shipped)
+10) Ops + docs completeness: M34 (with M27 observability and M29 enterprise bindings shipped)
