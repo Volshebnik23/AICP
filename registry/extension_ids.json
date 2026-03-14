@@ -176,6 +176,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-OBSERVABILITY",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md",
+    "security_considerations": "Observability events are transcript-level telemetry artifacts and must avoid secret leakage."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-PARTICIPANTS",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md",
