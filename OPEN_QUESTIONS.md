@@ -29,3 +29,5 @@ Track unresolved specification/productization questions here.
 - 2026-03-13: ROADMAP marks M24 shipped while `AICP_Backlog` remains a planning artifact listing M24 as remaining by default structure; keep treating backlog as planning-only and roadmap as shipped-state source of truth unless governance decides to prune delivered backlog sections.
 
 - 2026-03-13: M27/M28 sequencing drift recorded: M28 IAM bridge shipped in this sprint before M27 production-attributes work; roadmap now explicitly marks M28 complete and names M27 as the next pending milestone to avoid silent renumbering.
+
+- 2026-03-14: RTSS note — public docs/roadmap briefly claimed M29 shipped before executable enterprise-bindings artifacts were present (`RFC_EXT_ENTERPRISE_BINDINGS.md`, `EB_ENTERPRISE_BINDINGS_0.1.json`, fixture generator/suite wiring). Status is synchronized back to pending until those artifacts land.
