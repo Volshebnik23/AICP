@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "1dd083311a82b9c2604b82cd0bbbd04070e312e6dc910b27434b0a91e254beea",
+      "combined_sha256": "58f1c97c8541ca1ce6c099d04996b841eb533d5578a50439af4af89b477d2792",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -64,6 +64,10 @@
           "sha256": "586b151898ee1bcc2763e77d8f9129f58ec249f177a1c2982bdcc3ea944931d5"
         },
         {
+          "path": "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "sha256": "27fe8fd035596ae8d416eb67cc827ea006bbbe4008cae6520a459aec21c9af27"
+        },
+        {
           "path": "conformance/extensions/EC_ECONOMICS_0.1.json",
           "sha256": "8cb4c7d6a0f9d65d48fe3c7551ee7ec19245b17f211010e136ed58c9fffd8881"
         },
@@ -98,6 +102,10 @@
         {
           "path": "conformance/extensions/MK_MARKETPLACE_0.1.json",
           "sha256": "3279094300951b3ee57d98067b80b23fbfc0944b6930ff6794f533ba15a518c8"
+        },
+        {
+          "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json",
+          "sha256": "f73af1357530b2e5654f9f8717b771dd3729ab590d7808a8387c2d3db934348c"
         },
         {
           "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
@@ -210,7 +218,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "c831becbe46689a612fd0a09b3795ce6d717da61d70301b51e3d95bf22de5749",
+      "combined_sha256": "8e60918deb6dc0eb333f74818ed1ede90ef9beb8e197bd7d49db6680efa9c677",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -521,6 +529,38 @@
           "sha256": "1372f1adea3d4b8ddaf3fc12eed808ab1b9151812542867a0b74e5fa6da6e9bb"
         },
         {
+          "path": "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
+          "sha256": "c4e9497490d83904afff6ca44e6401ac00e14d0d8cefef78a8afb41784913bc0"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-02_odata_retrieval_binding_pass.jsonl",
+          "sha256": "02d60214251f8f2dacf7faaaeb672d6657c13249edac2c18ead799fb2be826ea"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-03_policy_xref_binding_pass.jsonl",
+          "sha256": "09c0696cb0ccd8552ab2900e2937785957a0090b61e098d889df6e66b0fbbc49"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "sha256": "84163a9f1f3bd0cc1c874e0e3d8e0b300b7490396c5b6b0b0011c1435aff2bd3"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl",
+          "sha256": "71073817423adb3c150e19523a767228ccecb5215673d16ad9fc938ce9bd5d2b"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl",
+          "sha256": "d9c3ffc80618e75c646da83811ba59b8cccc7a6733405d5d3f9152200cb99e5e"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl",
+          "sha256": "bbd169491783a70f7f2d6b56024424e22d2c4745bfa7d43735f8dae05e5a3bff"
+        },
+        {
+          "path": "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl",
+          "sha256": "cc1b52393b438cc7d5a74bd3fbf2a3e04428fe03c846af1a3302a87f7fca9424"
+        },
+        {
           "path": "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
           "sha256": "955c9f87ee2d80e54cc0411f394558b0bdd9aa358d63ef5a90e642bf74f8bcf6"
         },
@@ -631,6 +671,46 @@
         {
           "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
           "sha256": "05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
+          "sha256": "1fc2e8ccbaa9b811a7dfdd03032aca50bd55633fb9c7cd4f2be69d22e055d570"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+          "sha256": "864866be22da79784ded4cf0d5037961d48115c126db9548eb8b29000fe69400"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-03_sla_throttle_signal_pass.jsonl",
+          "sha256": "05ae043a41ec17969ca0e22a3b909e435c77b87ebd35f484495425acc7143a93"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+          "sha256": "9df2a2d508e3929c116589e67d607cfaa3e57c19785e9fff4c06fa229083469a"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "sha256": "d7bd94171e4128a4e6a7a10ad17b0b3f06731b838c48bae4ae7886b6324b3e01"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-06_missing_correlation_ref_expected_fail.jsonl",
+          "sha256": "81ef8e9416cb822c32058d166d6ee8bbb65e89f21d9fec61882b238470205094"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-07_invalid_trace_shape_expected_fail.jsonl",
+          "sha256": "6fe5391e0685c521a400dd17e077cf10f633b996ceae7908b83974abd6bac10d"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-08_invalid_signal_type_expected_fail.jsonl",
+          "sha256": "2b079fccb22f84051ceb233f4d39510d3abadd9efd3f6690baee7e92c1fa4019"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-09_unregistered_reason_code_expected_fail.jsonl",
+          "sha256": "7cce2b38a7f33fbdba0d27f599e99e91a5ffb76caa8565eb6ec07ebc781651e0"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl",
+          "sha256": "040e5867ffc86b72e4f670a17902392cacd12c8ad32ba6c675d0d675f3e93bfb"
         },
         {
           "path": "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
@@ -915,7 +995,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "feff3bb6fd5881617c7371dd9532ad0d2b8e189bc21193dc1a292e1c88291fdf",
+      "combined_sha256": "0893079cfcdd957303c24aa129aa0a308d939cf336d89f8b538d0682ce51d728",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -959,7 +1039,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "c9ec4f7a912ef4e47aacd5eb90c3ea9b180228e3b476004a38d8a4237236e042"
+          "sha256": "39bab52aa1660ab06549f610fa5134167aa7457dd0933d9f5ecd43201683acc5"
         },
         {
           "path": "registry/hash_domains.json",
@@ -967,7 +1047,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "61b47becb877b1e3ada363ead3fc7d954cc14f954794032eaeb0a88dd4f2766c"
+          "sha256": "7427a499a2beb801fa9bfe565674af85c865c5332e08e3ba7b6b3147e3c00651"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -983,7 +1063,7 @@
         },
         {
           "path": "registry/policy_reason_codes.json",
-          "sha256": "c33119ba72d40b11ef563116da06a3f0befe24e49733b072241986821af075ef"
+          "sha256": "9701534a3fd6a0d851eb77617f65a6f7ef3cf8c20c504dc8a845e9c0fd94c76b"
         },
         {
           "path": "registry/privacy_modes.json",
@@ -1012,7 +1092,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "8051949e7a2fc09d0c10e455bba5e2a836da9f7b424144572610299c373ab041",
+      "combined_sha256": "bc2b048965c5243f7fc0ea611293992e1da96871d8d70506568a7d84a6740acf",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1091,6 +1171,10 @@
           "sha256": "7b16e9ea1db9eeaebfaf378581afebf31c5e71fc050d856fcce6599c896a8353"
         },
         {
+          "path": "schemas/extensions/ext-enterprise-bindings-payloads.schema.json",
+          "sha256": "476303139d748c2803eacc4ce5284ed7d68a378e575d226303ea7f4cf3aa5b1f"
+        },
+        {
           "path": "schemas/extensions/ext-facilitation-payloads.schema.json",
           "sha256": "3c4bf7baff51412fa9caf82507be9098481f78da9b0af0daec3f78536be8346a"
         },
@@ -1117,6 +1201,10 @@
         {
           "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
           "sha256": "6bb488bdc87fa7c7a0c253d19454c53475201a4ead98d6e610a5b17edc2223b6"
+        },
+        {
+          "path": "schemas/extensions/ext-observability-payloads.schema.json",
+          "sha256": "57dc6e5bbf1b370484aa4facb03f65596f29e76f19b64035aa90b15f360379c9"
         },
         {
           "path": "schemas/extensions/ext-participants-payloads.schema.json",
@@ -1270,6 +1358,10 @@
         "path": "conformance/extensions/DS_DISPUTES_0.1.json"
       },
       {
+        "mark": "AICP-EXT-ENTERPRISE-BINDINGS-0.1",
+        "path": "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json"
+      },
+      {
         "mark": "AICP-EXT-ECONOMICS-0.1",
         "path": "conformance/extensions/EC_ECONOMICS_0.1.json"
       },
@@ -1304,6 +1396,10 @@
       {
         "mark": "AICP-EXT-MARKETPLACE-0.1",
         "path": "conformance/extensions/MK_MARKETPLACE_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-OBSERVABILITY-0.1",
+        "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json"
       },
       {
         "mark": "AICP-EXT-OBJECT-RESYNC-0.1",

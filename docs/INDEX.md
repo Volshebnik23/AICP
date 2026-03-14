@@ -37,7 +37,7 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - Extension RFC index: [docs/extensions/README.md](extensions/README.md)
 - Extension maturity notes (shipped vs incubating wording): [docs/extensions/README.md#how-to-read-maturity-in-this-repo](extensions/README.md#how-to-read-maturity-in-this-repo)
 - Extension RFC folder: [docs/extensions/](extensions/)
-- Key extension RFCs for current enterprise-control milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md), [RFC_EXT_HUMAN_APPROVAL.md](extensions/RFC_EXT_HUMAN_APPROVAL.md), [RFC_EXT_IAM_BRIDGE.md](extensions/RFC_EXT_IAM_BRIDGE.md)
+- Key extension RFCs for current enterprise-control milestones: [RFC_EXT_CONFIDENTIALITY.md](extensions/RFC_EXT_CONFIDENTIALITY.md), [RFC_EXT_REDACTION.md](extensions/RFC_EXT_REDACTION.md), [RFC_EXT_HUMAN_APPROVAL.md](extensions/RFC_EXT_HUMAN_APPROVAL.md), [RFC_EXT_IAM_BRIDGE.md](extensions/RFC_EXT_IAM_BRIDGE.md), [RFC_EXT_OBSERVABILITY.md](extensions/RFC_EXT_OBSERVABILITY.md), [RFC_EXT_ENTERPRISE_BINDINGS.md](extensions/RFC_EXT_ENTERPRISE_BINDINGS.md)
 - Executable extension checks: [conformance/extensions/](../conformance/extensions/)
 - Source of truth for shipped vs incubating milestone status: [ROADMAP.md](../ROADMAP.md)
 
@@ -45,6 +45,8 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 
 - Human Approval (M26): [RFC_EXT_HUMAN_APPROVAL.md](extensions/RFC_EXT_HUMAN_APPROVAL.md) + suite [`HA_HUMAN_APPROVAL_0.1.json`](../conformance/extensions/HA_HUMAN_APPROVAL_0.1.json)
 - IAM Bridge (M28): [RFC_EXT_IAM_BRIDGE.md](extensions/RFC_EXT_IAM_BRIDGE.md) + suite [`IB_IAM_BRIDGE_0.1.json`](../conformance/extensions/IB_IAM_BRIDGE_0.1.json)
+- Observability production attributes (M27): [RFC_EXT_OBSERVABILITY.md](extensions/RFC_EXT_OBSERVABILITY.md) + suite [`OB_OBSERVABILITY_0.1.json`](../conformance/extensions/OB_OBSERVABILITY_0.1.json)
+- Enterprise domain bindings (M29): [RFC_EXT_ENTERPRISE_BINDINGS.md](extensions/RFC_EXT_ENTERPRISE_BINDINGS.md) + suite [`EB_ENTERPRISE_BINDINGS_0.1.json`](../conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json)
 - Full extension index and maturity notes: [docs/extensions/README.md](extensions/README.md)
 
 Note: document/fixture/schema presence does not by itself mean a milestone is shipped; roadmap + executable conformance surface define release maturity.

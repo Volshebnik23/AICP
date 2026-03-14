@@ -1,0 +1,41 @@
+{
+  "suite_id": "EB-ENTERPRISE-BINDINGS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-ENTERPRISE-BINDINGS conformance checks for OpenAPI/OData/policy cross-reference bindings and enterprise-control linkage.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-enterprise-bindings-payloads.schema.json",
+  "payload_schema_map": {
+    "CONTRACT_PROPOSE": "#/$defs/CONTRACT_PROPOSE"
+  },
+  "transcripts": [
+    {"id": "EB-01", "path": "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST", "OBS_SIGNAL"]},
+    {"id": "EB-02", "path": "fixtures/extensions/enterprise_bindings/EB-02_odata_retrieval_binding_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST"]},
+    {"id": "EB-03", "path": "fixtures/extensions/enterprise_bindings/EB-03_policy_xref_binding_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "POLICY_EVAL_REQUEST"]},
+    {"id": "EB-04", "path": "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "SUBJECT_BINDING_ISSUE", "APPROVAL_CHALLENGE", "APPROVAL_GRANT", "TOOL_CALL_REQUEST", "OBS_SIGNAL"]},
+    {"id": "EB-05", "path": "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "EB-OPENAPI-BIND-01", "min_count": 1}]},
+    {"id": "EB-06", "path": "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "EB-ODATA-BIND-01", "min_count": 1}]},
+    {"id": "EB-07", "path": "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "POLICY_EVAL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "EB-POLICY-KIND-01", "min_count": 1}]},
+    {"id": "EB-08", "path": "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST"], "expect_pass": false, "expected_failures": [{"test_id": "EB-OBS-CORRELATION-01", "min_count": 1}]}
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-ENTERPRISE-BINDINGS payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "EB-OPENAPI-BIND-01", "description": "OpenAPI binding must include normalized external operation linkage"},
+    {"test_id": "EB-ODATA-BIND-01", "description": "OData binding must include normalized retrieval target linkage"},
+    {"test_id": "EB-POLICY-XREF-01", "description": "Policy cross-reference object must include valid reference shape"},
+    {"test_id": "EB-POLICY-KIND-01", "description": "Policy kind must be one of abac/rbac/opa"},
+    {"test_id": "EB-IAM-LINK-01", "description": "Enterprise binding activity must link coherently to M28 IAM-bound action evidence"},
+    {"test_id": "EB-APPROVAL-LINK-01", "description": "Enterprise binding activity must link coherently to M26 approval evidence when required"},
+    {"test_id": "EB-OBS-CORRELATION-01", "description": "Enterprise-bound activity must have M27 OBS_SIGNAL correlation evidence"},
+    {"test_id": "EB-REFERENCE-INTEGRITY-01", "description": "Binding references used by activity must resolve consistently inside transcript evidence"}
+  ],
+  "compatibility_mark": "AICP-EXT-ENTERPRISE-BINDINGS-0.1",
+  "extension_id": "EXT-ENTERPRISE-BINDINGS"
+}

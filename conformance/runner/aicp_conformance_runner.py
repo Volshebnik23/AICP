@@ -2573,6 +2573,282 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if not has_valid_approval:
                         add_failure(t_failures, "IB-APPROVAL-MAP-01", "protected action requires approval evidence but no matching prior APPROVAL_GRANT was found", rel_file, line_no)
 
+        if any(check in enabled_checks for check in {"OB-TRACE-CORRELATION-01", "OB-TRACE-CONTEXT-01", "OB-SLA-SIGNAL-01", "OB-REASON-CODE-01", "OB-METERING-01", "OB-CORRELATION-LINK-01", "OB-APPROVAL-CORRELATION-01", "OB-IAM-STEPUP-CORRELATION-01"}):
+            valid_signal_types = {"drop", "throttle", "deny", "degraded", "timeout"}
+            trace_id_re = re.compile(r"^[0-9a-f]{32}$")
+            span_id_re = re.compile(r"^[0-9a-f]{16}$")
+            known_message_hashes = {m.get("message_hash") for _, m in rows if isinstance(m.get("message_hash"), str)}
+            known_tool_call_ids: set[str] = set()
+            known_tool_call_hashes: set[str] = set()
+            known_workflow_step_refs: set[str] = set()
+            approval_tool_call_ids: set[str] = set()
+            iam_tool_call_ids: set[str] = set()
+
+            for _, msg in rows:
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                tool_call_id = payload.get("tool_call_id")
+                if isinstance(tool_call_id, str) and tool_call_id:
+                    known_tool_call_ids.add(tool_call_id)
+                    ext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    if isinstance(ext.get("human_approval"), dict) and ext.get("human_approval", {}).get("required") is True:
+                        approval_tool_call_ids.add(tool_call_id)
+                    if isinstance(ext.get("iam_bridge"), dict):
+                        iam_tool_call_ids.add(tool_call_id)
+
+                step_ref = payload.get("workflow_step_ref")
+                if isinstance(step_ref, str) and step_ref:
+                    known_workflow_step_refs.add(step_ref)
+
+                tool_call_hash = payload.get("tool_call_hash")
+                if isinstance(tool_call_hash, str) and tool_call_hash:
+                    known_tool_call_hashes.add(tool_call_hash)
+
+            def _extract_corr(obj: Any) -> tuple[str | None, str | None]:
+                if not isinstance(obj, dict):
+                    return (None, None)
+                corr = obj.get("correlation_ref")
+                if not isinstance(corr, dict):
+                    return (None, None)
+                keys = [k for k in ("message_hash", "tool_call_id", "tool_call_hash", "workflow_step_ref") if isinstance(corr.get(k), str) and corr.get(k)]
+                if len(keys) != 1:
+                    return (None, None)
+                key = keys[0]
+                return (key, str(corr.get(key)))
+
+            def _corr_valid(kind: str | None, value: str | None) -> bool:
+                if kind is None or value is None:
+                    return False
+                if kind == "message_hash":
+                    return value in known_message_hashes
+                if kind == "tool_call_id":
+                    return value in known_tool_call_ids
+                if kind == "tool_call_hash":
+                    return value in known_tool_call_hashes
+                if kind == "workflow_step_ref":
+                    return value in known_workflow_step_refs
+                return False
+
+            found_approval_corr = False
+            found_iam_corr = False
+            for idx, (line_no, msg) in enumerate(rows):
+                if msg.get("message_type") != "OBS_SIGNAL":
+                    continue
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                trace_obj = payload.get("trace") if isinstance(payload.get("trace"), dict) else None
+                sla_obj = payload.get("sla") if isinstance(payload.get("sla"), dict) else None
+                metering_obj = payload.get("metering") if isinstance(payload.get("metering"), dict) else None
+
+                obs_objects = [obj for obj in (trace_obj, sla_obj, metering_obj) if isinstance(obj, dict)]
+                for obj in obs_objects:
+                    corr_kind, corr_value = _extract_corr(obj)
+                    if corr_kind == "tool_call_id" and corr_value in approval_tool_call_ids:
+                        found_approval_corr = True
+                    if corr_kind == "tool_call_id" and corr_value in iam_tool_call_ids:
+                        found_iam_corr = True
+
+                if trace_obj is not None:
+                    corr_kind, corr_value = _extract_corr(trace_obj)
+                    if "OB-TRACE-CORRELATION-01" in enabled_checks and not _corr_valid(corr_kind, corr_value):
+                        add_failure(t_failures, "OB-TRACE-CORRELATION-01", "trace.correlation_ref must bind to exactly one valid transcript target", rel_file, line_no)
+
+                    if "OB-TRACE-CONTEXT-01" in enabled_checks:
+                        trace_id = trace_obj.get("trace_id")
+                        span_id = trace_obj.get("span_id")
+                        parent_span_id = trace_obj.get("parent_span_id")
+                        if not isinstance(trace_id, str) or not trace_id_re.fullmatch(trace_id):
+                            add_failure(t_failures, "OB-TRACE-CONTEXT-01", "trace.trace_id must be 32 lowercase hex chars", rel_file, line_no)
+                        if not isinstance(span_id, str) or not span_id_re.fullmatch(span_id):
+                            add_failure(t_failures, "OB-TRACE-CONTEXT-01", "trace.span_id must be 16 lowercase hex chars", rel_file, line_no)
+                        if parent_span_id is not None:
+                            if not isinstance(parent_span_id, str) or not span_id_re.fullmatch(parent_span_id):
+                                add_failure(t_failures, "OB-TRACE-CONTEXT-01", "trace.parent_span_id must be 16 lowercase hex chars when present", rel_file, line_no)
+                            if isinstance(parent_span_id, str) and isinstance(span_id, str) and parent_span_id == span_id:
+                                add_failure(t_failures, "OB-TRACE-CONTEXT-01", "trace.parent_span_id must differ from trace.span_id", rel_file, line_no)
+
+                if sla_obj is not None:
+                    corr_kind, corr_value = _extract_corr(sla_obj)
+                    if "OB-CORRELATION-LINK-01" in enabled_checks and not _corr_valid(corr_kind, corr_value):
+                        add_failure(t_failures, "OB-CORRELATION-LINK-01", "sla.correlation_ref must bind to exactly one valid transcript target", rel_file, line_no)
+                    if "OB-SLA-SIGNAL-01" in enabled_checks:
+                        sig = sla_obj.get("signal_type")
+                        if not isinstance(sig, str) or sig not in valid_signal_types:
+                            add_failure(t_failures, "OB-SLA-SIGNAL-01", "sla.signal_type must be one of drop/throttle/deny/degraded/timeout", rel_file, line_no)
+                    if "OB-REASON-CODE-01" in enabled_checks:
+                        code = sla_obj.get("reason_code")
+                        if not isinstance(code, str) or not code:
+                            add_failure(t_failures, "OB-REASON-CODE-01", "sla.reason_code must be a non-empty string", rel_file, line_no)
+                        elif code not in policy_reason_codes and not _is_namespaced_identifier(code):
+                            add_failure(t_failures, "OB-REASON-CODE-01", f"unknown reason_code '{code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+
+                if metering_obj is not None:
+                    corr_kind, corr_value = _extract_corr(metering_obj)
+                    if "OB-CORRELATION-LINK-01" in enabled_checks and not _corr_valid(corr_kind, corr_value):
+                        add_failure(t_failures, "OB-CORRELATION-LINK-01", "metering.correlation_ref must bind to exactly one valid transcript target", rel_file, line_no)
+                    if "OB-METERING-01" in enabled_checks:
+                        quantity = metering_obj.get("quantity")
+                        unit = metering_obj.get("unit")
+                        if not isinstance(quantity, (int, float)) or isinstance(quantity, bool):
+                            add_failure(t_failures, "OB-METERING-01", "metering.quantity must be numeric", rel_file, line_no)
+                        elif quantity < 0:
+                            add_failure(t_failures, "OB-METERING-01", "metering.quantity must be non-negative", rel_file, line_no)
+                        if not isinstance(unit, str) or not unit:
+                            add_failure(t_failures, "OB-METERING-01", "metering.unit must be a non-empty string", rel_file, line_no)
+
+            if "OB-APPROVAL-CORRELATION-01" in enabled_checks and approval_tool_call_ids and not found_approval_corr:
+                add_failure(t_failures, "OB-APPROVAL-CORRELATION-01", "no OBS_SIGNAL correlated to a tool_call_id with M26 human_approval.required=true evidence", rel_file, rows[-1][0] if rows else None)
+
+            if "OB-IAM-STEPUP-CORRELATION-01" in enabled_checks and iam_tool_call_ids and not found_iam_corr:
+                add_failure(t_failures, "OB-IAM-STEPUP-CORRELATION-01", "no OBS_SIGNAL correlated to a tool_call_id with M28 iam_bridge action evidence", rel_file, rows[-1][0] if rows else None)
+
+        if any(check in enabled_checks for check in {"EB-OPENAPI-BIND-01", "EB-ODATA-BIND-01", "EB-POLICY-XREF-01", "EB-POLICY-KIND-01", "EB-IAM-LINK-01", "EB-APPROVAL-LINK-01", "EB-OBS-CORRELATION-01", "EB-REFERENCE-INTEGRITY-01"}):
+            first_contract = None
+            first_contract_line_no = rows[0][0] if rows else None
+            for line_no, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    first_contract = ((msg.get("payload") or {}).get("contract") or {})
+                    first_contract_line_no = line_no
+                    break
+
+            eb_cfg: dict[str, Any] = {}
+            if isinstance(first_contract, dict):
+                ext = first_contract.get("ext") or {}
+                if isinstance(ext, dict) and isinstance(ext.get("enterprise_bindings"), dict):
+                    eb_cfg = ext.get("enterprise_bindings")
+                else:
+                    extensions = first_contract.get("extensions") or {}
+                    if isinstance(extensions, dict) and isinstance(extensions.get("EXT-ENTERPRISE-BINDINGS"), dict):
+                        eb_cfg = extensions.get("EXT-ENTERPRISE-BINDINGS")
+
+            openapi_bindings = eb_cfg.get("openapi_bindings") if isinstance(eb_cfg.get("openapi_bindings"), list) else []
+            odata_bindings = eb_cfg.get("odata_bindings") if isinstance(eb_cfg.get("odata_bindings"), list) else []
+            policy_xrefs = eb_cfg.get("policy_xrefs") if isinstance(eb_cfg.get("policy_xrefs"), list) else []
+
+            openapi_ids = {b.get("binding_id") for b in openapi_bindings if isinstance(b, dict) and isinstance(b.get("binding_id"), str)}
+            odata_ids = {b.get("binding_id") for b in odata_bindings if isinstance(b, dict) and isinstance(b.get("binding_id"), str)}
+            all_binding_ids = {b for b in (openapi_ids | odata_ids) if isinstance(b, str) and b}
+
+            if "EB-OPENAPI-BIND-01" in enabled_checks:
+                if not openapi_bindings:
+                    add_failure(t_failures, "EB-OPENAPI-BIND-01", "contract.ext.enterprise_bindings.openapi_bindings must contain at least one binding", rel_file, first_contract_line_no)
+                for b in openapi_bindings:
+                    if not isinstance(b, dict):
+                        add_failure(t_failures, "EB-OPENAPI-BIND-01", "openapi binding entry must be an object", rel_file, first_contract_line_no)
+                        continue
+                    if not isinstance(b.get("spec_ref"), str) or not b.get("spec_ref"):
+                        add_failure(t_failures, "EB-OPENAPI-BIND-01", "openapi binding spec_ref must be a non-empty string", rel_file, first_contract_line_no)
+                    if not isinstance(b.get("tool_id"), str) or not b.get("tool_id"):
+                        add_failure(t_failures, "EB-OPENAPI-BIND-01", "openapi binding tool_id must be a non-empty string", rel_file, first_contract_line_no)
+                    if not isinstance(b.get("operation_id"), str) or not b.get("operation_id"):
+                        add_failure(t_failures, "EB-OPENAPI-BIND-01", "openapi binding operation_id must be present for operation linkage", rel_file, first_contract_line_no)
+
+            if "EB-ODATA-BIND-01" in enabled_checks:
+                if not odata_bindings:
+                    add_failure(t_failures, "EB-ODATA-BIND-01", "contract.ext.enterprise_bindings.odata_bindings must contain at least one binding", rel_file, first_contract_line_no)
+                for b in odata_bindings:
+                    if not isinstance(b, dict):
+                        add_failure(t_failures, "EB-ODATA-BIND-01", "odata binding entry must be an object", rel_file, first_contract_line_no)
+                        continue
+                    if not isinstance(b.get("service_ref"), str) or not b.get("service_ref"):
+                        add_failure(t_failures, "EB-ODATA-BIND-01", "odata binding service_ref must be a non-empty string", rel_file, first_contract_line_no)
+                    target = b.get("target_ref")
+                    if not isinstance(target, str) or not target:
+                        add_failure(t_failures, "EB-ODATA-BIND-01", "odata binding target_ref must be a non-empty string", rel_file, first_contract_line_no)
+
+            if "EB-POLICY-XREF-01" in enabled_checks:
+                if not policy_xrefs:
+                    add_failure(t_failures, "EB-POLICY-XREF-01", "contract.ext.enterprise_bindings.policy_xrefs must contain at least one xref", rel_file, first_contract_line_no)
+                for x in policy_xrefs:
+                    if not isinstance(x, dict):
+                        add_failure(t_failures, "EB-POLICY-XREF-01", "policy_xref entry must be an object", rel_file, first_contract_line_no)
+                        continue
+                    if not isinstance(x.get("policy_ref"), str) or not x.get("policy_ref"):
+                        add_failure(t_failures, "EB-POLICY-XREF-01", "policy_xref.policy_ref must be a non-empty string", rel_file, first_contract_line_no)
+                    if not isinstance(x.get("xref_id"), str) or not x.get("xref_id"):
+                        add_failure(t_failures, "EB-POLICY-XREF-01", "policy_xref.xref_id must be a non-empty string", rel_file, first_contract_line_no)
+
+            if "EB-POLICY-KIND-01" in enabled_checks:
+                allowed_kinds = {"abac", "rbac", "opa"}
+                for x in policy_xrefs:
+                    if not isinstance(x, dict):
+                        continue
+                    kind = x.get("policy_kind")
+                    if not isinstance(kind, str) or kind not in allowed_kinds:
+                        add_failure(t_failures, "EB-POLICY-KIND-01", f"unsupported policy_kind '{kind}' (must be one of abac/rbac/opa)", rel_file, first_contract_line_no)
+
+            tool_rows: list[tuple[int, dict[str, Any]]] = []
+            approvals: list[tuple[int, dict[str, Any]]] = []
+            obs_tool_corr: set[str] = set()
+            iam_link_found = False
+            has_iam_activity = False
+            approval_link_found = False
+            requires_obs_correlation = eb_cfg.get("requires_obs_correlation") is True
+
+            for idx, (line_no, msg) in enumerate(rows):
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "APPROVAL_GRANT":
+                    approvals.append((idx, msg))
+
+                if mtype == "OBS_SIGNAL":
+                    for key in ("trace", "sla", "metering"):
+                        obj = payload.get(key)
+                        if not isinstance(obj, dict):
+                            continue
+                        corr = obj.get("correlation_ref") if isinstance(obj.get("correlation_ref"), dict) else {}
+                        tool_call_id = corr.get("tool_call_id") if isinstance(corr.get("tool_call_id"), str) else None
+                        if tool_call_id:
+                            obs_tool_corr.add(tool_call_id)
+
+                if mtype == "TOOL_CALL_REQUEST":
+                    tool_rows.append((line_no, msg))
+                    tool_call_id = payload.get("tool_call_id") if isinstance(payload.get("tool_call_id"), str) else None
+                    ext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    eb_ref = None
+                    if isinstance(ext.get("enterprise_bindings"), dict):
+                        eb_ref = ext.get("enterprise_bindings", {}).get("binding_ref_id")
+                    if "EB-REFERENCE-INTEGRITY-01" in enabled_checks:
+                        if not isinstance(eb_ref, str) or not eb_ref:
+                            add_failure(t_failures, "EB-REFERENCE-INTEGRITY-01", "TOOL_CALL_REQUEST.ext.enterprise_bindings.binding_ref_id must be present", rel_file, line_no)
+                        elif eb_ref not in all_binding_ids:
+                            add_failure(t_failures, "EB-REFERENCE-INTEGRITY-01", f"binding_ref_id '{eb_ref}' does not resolve to declared openapi/odata binding_id", rel_file, line_no)
+
+                    if "EB-IAM-LINK-01" in enabled_checks and isinstance(ext.get("iam_bridge"), dict):
+                        has_iam_activity = True
+                        action = ext.get("iam_bridge", {}).get("action")
+                        if isinstance(action, str) and any(isinstance(x, dict) and x.get("action_ref") == action for x in policy_xrefs):
+                            iam_link_found = True
+
+                    if "EB-APPROVAL-LINK-01" in enabled_checks and isinstance(ext.get("human_approval"), dict) and ext.get("human_approval", {}).get("required") is True and isinstance(tool_call_id, str):
+                        for appr_idx, appr_msg in approvals:
+                            if appr_idx >= idx:
+                                continue
+                            appr_payload = appr_msg.get("payload") if isinstance(appr_msg.get("payload"), dict) else {}
+                            target = appr_payload.get("target_binding") if isinstance(appr_payload.get("target_binding"), dict) else {}
+                            if target.get("tool_call_id") == tool_call_id:
+                                approval_link_found = True
+                                break
+
+                    if "EB-ODATA-BIND-01" in enabled_checks and isinstance(eb_ref, str) and eb_ref in odata_ids:
+                        args = payload.get("arguments") if isinstance(payload.get("arguments"), dict) else {}
+                        target = args.get("target_ref") if isinstance(args.get("target_ref"), str) else None
+                        bound_target = None
+                        for binding in odata_bindings:
+                            if isinstance(binding, dict) and binding.get("binding_id") == eb_ref:
+                                bound_target = binding.get("target_ref")
+                                break
+                        if isinstance(target, str) and isinstance(bound_target, str) and target != bound_target:
+                            add_failure(t_failures, "EB-ODATA-BIND-01", f"odata binding target_ref '{bound_target}' does not match tool arguments target_ref '{target}'", rel_file, line_no)
+
+            if "EB-IAM-LINK-01" in enabled_checks and has_iam_activity and not iam_link_found:
+                add_failure(t_failures, "EB-IAM-LINK-01", "no enterprise-bound TOOL_CALL_REQUEST linked to iam_bridge action + policy_xref.action_ref", rel_file, tool_rows[-1][0] if tool_rows else first_contract_line_no)
+            if "EB-APPROVAL-LINK-01" in enabled_checks and any(isinstance((m.get("payload") or {}).get("ext"), dict) and ((m.get("payload") or {}).get("ext", {}).get("human_approval", {}).get("required") is True) for _, m in tool_rows) and not approval_link_found:
+                add_failure(t_failures, "EB-APPROVAL-LINK-01", "no required human_approval TOOL_CALL_REQUEST had prior matching APPROVAL_GRANT evidence", rel_file, tool_rows[-1][0] if tool_rows else first_contract_line_no)
+            if "EB-OBS-CORRELATION-01" in enabled_checks and requires_obs_correlation:
+                bound_tool_ids = {((m.get("payload") or {}).get("tool_call_id")) for _, m in tool_rows if isinstance((m.get("payload") or {}).get("tool_call_id"), str)}
+                if bound_tool_ids and obs_tool_corr.isdisjoint(bound_tool_ids):
+                    add_failure(t_failures, "EB-OBS-CORRELATION-01", "no OBS_SIGNAL correlation_ref.tool_call_id matches enterprise-bound TOOL_CALL_REQUEST", rel_file, tool_rows[-1][0] if tool_rows else first_contract_line_no)
+
         if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
             first_contract = None
             for _, msg in rows:

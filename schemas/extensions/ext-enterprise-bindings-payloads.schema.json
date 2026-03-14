@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-enterprise-bindings-payloads.schema.json",
+  "title": "AICP EXT-ENTERPRISE-BINDINGS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "OpenApiBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "spec_ref",
+        "tool_id"
+      ],
+      "properties": {
+        "binding_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "spec_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "operation_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "tool_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "projection_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "policy_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "binding_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "ODataBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "service_ref",
+        "target_ref"
+      ],
+      "properties": {
+        "binding_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "service_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "target_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "query_profile_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "projection_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "binding_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "PolicyXref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xref_id",
+        "policy_kind",
+        "policy_ref"
+      ],
+      "properties": {
+        "xref_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "policy_kind": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "policy_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "subject_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "resource_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "action_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "opa_package_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "authority_map_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "EnterpriseBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "openapi_bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OpenApiBinding"
+          }
+        },
+        "odata_bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ODataBinding"
+          }
+        },
+        "policy_xrefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PolicyXref"
+          }
+        },
+        "requires_obs_correlation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CONTRACT_PROPOSE": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "contract"
+      ],
+      "properties": {
+        "contract": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "ext"
+          ],
+          "properties": {
+            "ext": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "enterprise_bindings"
+              ],
+              "properties": {
+                "enterprise_bindings": {
+                  "$ref": "#/$defs/EnterpriseBindings"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

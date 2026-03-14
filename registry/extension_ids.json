@@ -113,6 +113,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-ENTERPRISE-BINDINGS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ENTERPRISE_BINDINGS.md",
+    "security_considerations": "Enterprise bindings must use stable references and avoid embedding secrets or runtime credentials."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-FACILITATION",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#registry-entry",
@@ -171,6 +180,15 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md",
     "security_considerations": "Resync can leak existence and amplify traffic if unbounded."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-OBSERVABILITY",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md",
+    "security_considerations": "Observability events are transcript-level telemetry artifacts and must avoid secret leakage."
   },
   {
     "status": "experimental",

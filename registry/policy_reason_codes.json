@@ -21,6 +21,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "MESSAGE_DROPPED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md#6-slaerror-signal-payload-normative",
+    "security_considerations": "Standardized drop reason for interoperable SLA signaling."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "PII_BLOCKED",
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
@@ -52,6 +61,24 @@
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
     "security_considerations": "Highlights boundary crossing attempts for audit."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SERVICE_DEGRADED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md#6-slaerror-signal-payload-normative",
+    "security_considerations": "Standardized degraded-service reason for transcript-level operator audit."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TIMEOUT_EXCEEDED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md#6-slaerror-signal-payload-normative",
+    "security_considerations": "Standardized timeout reason for cross-vendor SLA signaling."
   },
   {
     "status": "experimental",

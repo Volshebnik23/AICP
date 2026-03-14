@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-observability-payloads.schema.json",
+  "title": "AICP EXT-OBSERVABILITY payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "CorrelationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "tool_call_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "tool_call_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "workflow_step_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "message_hash"
+          ]
+        },
+        {
+          "required": [
+            "tool_call_id"
+          ]
+        },
+        {
+          "required": [
+            "tool_call_hash"
+          ]
+        },
+        {
+          "required": [
+            "workflow_step_ref"
+          ]
+        }
+      ]
+    },
+    "Trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trace_id",
+        "span_id"
+      ],
+      "properties": {
+        "trace_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "span_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "correlation_ref": {
+          "$ref": "#/$defs/CorrelationRef"
+        },
+        "parent_span_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "trace_flags": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "trace_state_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "Sla": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signal_type",
+        "reason_code",
+        "observed_at"
+      ],
+      "properties": {
+        "signal_type": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "correlation_ref": {
+          "$ref": "#/$defs/CorrelationRef"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Metering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "meter_type",
+        "quantity",
+        "unit",
+        "observed_at"
+      ],
+      "properties": {
+        "meter_type": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "correlation_ref": {
+          "$ref": "#/$defs/CorrelationRef"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "subject_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "billing_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "window_start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "window_end": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "OBS_SIGNAL": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "trace"
+          ],
+          "properties": {
+            "trace": {
+              "$ref": "#/$defs/Trace"
+            }
+          }
+        },
+        {
+          "required": [
+            "sla"
+          ],
+          "properties": {
+            "sla": {
+              "$ref": "#/$defs/Sla"
+            }
+          }
+        },
+        {
+          "required": [
+            "metering"
+          ],
+          "properties": {
+            "metering": {
+              "$ref": "#/$defs/Metering"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "trace": {
+          "$ref": "#/$defs/Trace"
+        },
+        "sla": {
+          "$ref": "#/$defs/Sla"
+        },
+        "metering": {
+          "$ref": "#/$defs/Metering"
+        }
+      }
+    }
+  }
+}
