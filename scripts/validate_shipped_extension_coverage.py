@@ -97,6 +97,8 @@ def main() -> int:
             ad_types = set(ad_payload_map.keys()) if isinstance(ad_payload_map, dict) else set()
             if "ADMISSION_REJECT" not in ad_types:
                 failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REJECT")
+            if "ADMISSION_REVOKE" not in ad_types:
+                failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REVOKE")
             if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ad_transcripts):
                 failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 has no expected-fail transcript")
 
@@ -125,6 +127,20 @@ def main() -> int:
             mp_payload_map = mp_suite.get("payload_schema_map", {}) if isinstance(mp_suite, dict) else {}
             mp_types = set(mp_payload_map.keys()) if isinstance(mp_payload_map, dict) else set()
             marketplace_checks = {c.get("test_id") for c in mp_suite.get("checks", []) if isinstance(c, dict)} if isinstance(mp_suite, dict) else set()
+            message_registry_path = ROOT / "registry/message_types.json"
+            message_registry = _load_json(message_registry_path) if message_registry_path.exists() else []
+            registry_types = {
+                entry.get("id")
+                for entry in message_registry
+                if isinstance(entry, dict) and entry.get("type") == "message_types" and isinstance(entry.get("id"), str)
+            }
+            mp_expected_failure_ids = {
+                f.get("test_id")
+                for t in mp_transcripts
+                if isinstance(t, dict) and t.get("expect_pass") is False
+                for f in t.get("expected_failures", [])
+                if isinstance(f, dict)
+            }
 
             canonical_m36_types = {
                 "RFW_POST",
@@ -157,11 +173,19 @@ def main() -> int:
             if legacy_m36_types & mp_types:
                 present_legacy = sorted(legacy_m36_types & mp_types)
                 failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 still includes legacy marketplace types: {', '.join(present_legacy)}")
+            if not canonical_m36_types.issubset(registry_types):
+                missing_registry = sorted(canonical_m36_types - registry_types)
+                failures.append(f"ROADMAP marks M36 shipped, but registry/message_types.json misses canonical marketplace types: {', '.join(missing_registry)}")
+            if legacy_m36_types & registry_types:
+                present_legacy_registry = sorted(legacy_m36_types & registry_types)
+                failures.append(f"ROADMAP marks M36 shipped, but registry/message_types.json still includes legacy marketplace types: {', '.join(present_legacy_registry)}")
 
             required_semantic_checks = {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01"}
             if not required_semantic_checks.issubset(marketplace_checks):
                 missing_checks = sorted(required_semantic_checks - marketplace_checks)
                 failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 is missing marketplace semantic checks: {', '.join(missing_checks)}")
+            if "MP-AWARD-01" not in mp_expected_failure_ids:
+                failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 has no expected-fail transcript asserting MP-AWARD-01")
 
     if failures:
         for item in failures:

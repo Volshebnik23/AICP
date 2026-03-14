@@ -2981,8 +2981,23 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if isinstance(req_id, str) and req_id and req_id not in requests:
                             requests[req_id] = (line_no, payload)
 
-                    if isinstance(req_id, str) and req_id:
+                    if mtype in {"ADMISSION_REJECT", "ADMISSION_REVOKE"} and isinstance(req_id, str) and req_id:
                         _mark_terminal(req_id, mtype.lower())
+
+                    if mtype == "ADMISSION_RENEW" and "AD-ATTEST-01" in enabled_checks:
+                        attestation_refs = payload.get("attestation_refs")
+                        if attestation_refs is not None:
+                            if not isinstance(attestation_refs, list) or not attestation_refs:
+                                add_failure(t_failures, "AD-ATTEST-01", "ADMISSION_RENEW.attestation_refs must be a non-empty array when present", rel_file, line_no)
+                            else:
+                                for ref in attestation_refs:
+                                    if not _valid_ref(ref):
+                                        add_failure(t_failures, "AD-ATTEST-01", f"invalid attestation_ref '{ref}'", rel_file, line_no)
+
+                    if mtype in {"ADMISSION_REQUEST", "ADMISSION_RENEW"} and "AD-ATTEST-01" in enabled_checks:
+                        stake_ref = payload.get("stake_ref")
+                        if stake_ref is not None and not _valid_ref(stake_ref):
+                            add_failure(t_failures, "AD-ATTEST-01", f"invalid stake_ref '{stake_ref}'", rel_file, line_no)
 
             if "AD-NO-SILENT-DROP-01" in enabled_checks:
                 for req_id, (line_no, _) in requests.items():
@@ -3120,6 +3135,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 if not found_obs:
                     add_failure(t_failures, "QL-OVERLOAD-01", "requires_obs_correlation=true but no OBS_SIGNAL correlation_ref.message_hash targets a QUEUE_LEASE_GRANT", rel_file, first_contract_line_no)
 
+        # Marketplace extension semantic-enforcement path (M36):
+        # This block intentionally handles RFW/BID/AWARD/AUCTION/BLACKBOARD/SUBCHAT
+        # linkage checks separately from schema validation to preserve schema-vs-semantic layering.
         if any(check in enabled_checks for check in {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01", "MP-OBS-CORRELATION-01", "MP-ROUTING-ATTEST-01"}):
             mp_cfg: dict[str, Any] = {}
             for _, msg in rows:
@@ -3215,6 +3233,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                                     add_failure(t_failures, "MP-AWARD-01", "AWARD_ISSUE.work_order.work_order_id must be a non-empty string", rel_file, line_no)
                                 if not isinstance(wo.get("workflow_ref"), str) or not wo.get("workflow_ref"):
                                     add_failure(t_failures, "MP-AWARD-01", "AWARD_ISSUE.work_order.workflow_ref must be a non-empty string", rel_file, line_no)
+                        else:
+                            if isinstance(award_id, str) and award_id not in awards:
+                                add_failure(t_failures, "MP-AWARD-01", f"{mtype}.award_id '{award_id}' must reference prior AWARD_ISSUE", rel_file, line_no)
+                            elif isinstance(award_id, str) and isinstance(rfw_id, str):
+                                issue_rfw_id = awards[award_id][1].get("rfw_id")
+                                if isinstance(issue_rfw_id, str) and issue_rfw_id != rfw_id:
+                                    add_failure(t_failures, "MP-AWARD-01", f"{mtype}.rfw_id '{rfw_id}' must match AWARD_ISSUE.rfw_id '{issue_rfw_id}'", rel_file, line_no)
                     if isinstance(award_id, str) and award_id and mtype == "AWARD_ISSUE":
                         awards[award_id] = (line_no, payload)
 
