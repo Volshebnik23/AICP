@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "2bee54778276fa40c1f90aac1d3376b4799e545dbd5060b56d184c200b27632c",
+      "combined_sha256": "62aca526b8725d5fefc0d642b1e35bdbb8fc214f0c8f253d7574ccc79fcf4f99",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -101,7 +101,7 @@
         },
         {
           "path": "conformance/extensions/MP_MARKETPLACE_0.1.json",
-          "sha256": "a9e3cd3312faf38656d1ac083eaa09a64b84c4ff454aef5bb08d85680c422e85"
+          "sha256": "d87dc5af5ee4e99b1481dc6200806b869fc4679315e7099d9a6037c92a38fabf"
         },
         {
           "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json",
@@ -218,7 +218,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "1668507f358301093532ae2c01cf066264450b2548dd06433c8974b15bc35278",
+      "combined_sha256": "e2d134afc8ffbdb3a5f48d3c40686d67db0daa8890ed87a5258d85e4a3443303",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -715,6 +715,10 @@
         {
           "path": "fixtures/extensions/marketplace/MP-08_invalid_auction_mode_expected_fail.jsonl",
           "sha256": "1fbc01ea5fc0df848fc75cc251d940281734e94faa1d5d4df7cfbc467f7a0f31"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl",
+          "sha256": "8ab7d534c5808e27528f0e3b202af3620e55bffe45caf6efbb52c492a47862ca"
         },
         {
           "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",

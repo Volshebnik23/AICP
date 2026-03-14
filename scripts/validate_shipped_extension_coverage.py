@@ -127,6 +127,13 @@ def main() -> int:
             mp_payload_map = mp_suite.get("payload_schema_map", {}) if isinstance(mp_suite, dict) else {}
             mp_types = set(mp_payload_map.keys()) if isinstance(mp_payload_map, dict) else set()
             marketplace_checks = {c.get("test_id") for c in mp_suite.get("checks", []) if isinstance(c, dict)} if isinstance(mp_suite, dict) else set()
+            mp_expected_failure_ids = {
+                f.get("test_id")
+                for t in mp_transcripts
+                if isinstance(t, dict) and t.get("expect_pass") is False
+                for f in t.get("expected_failures", [])
+                if isinstance(f, dict)
+            }
 
             canonical_m36_types = {
                 "RFW_POST",
@@ -164,6 +171,8 @@ def main() -> int:
             if not required_semantic_checks.issubset(marketplace_checks):
                 missing_checks = sorted(required_semantic_checks - marketplace_checks)
                 failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 is missing marketplace semantic checks: {', '.join(missing_checks)}")
+            if "MP-AWARD-01" not in mp_expected_failure_ids:
+                failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 has no expected-fail transcript asserting MP-AWARD-01")
 
     if failures:
         for item in failures:

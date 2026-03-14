@@ -3230,6 +3230,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                                     add_failure(t_failures, "MP-AWARD-01", "AWARD_ISSUE.work_order.work_order_id must be a non-empty string", rel_file, line_no)
                                 if not isinstance(wo.get("workflow_ref"), str) or not wo.get("workflow_ref"):
                                     add_failure(t_failures, "MP-AWARD-01", "AWARD_ISSUE.work_order.workflow_ref must be a non-empty string", rel_file, line_no)
+                        else:
+                            if isinstance(award_id, str) and award_id not in awards:
+                                add_failure(t_failures, "MP-AWARD-01", f"{mtype}.award_id '{award_id}' must reference prior AWARD_ISSUE", rel_file, line_no)
+                            elif isinstance(award_id, str) and isinstance(rfw_id, str):
+                                issue_rfw_id = awards[award_id][1].get("rfw_id")
+                                if isinstance(issue_rfw_id, str) and issue_rfw_id != rfw_id:
+                                    add_failure(t_failures, "MP-AWARD-01", f"{mtype}.rfw_id '{rfw_id}' must match AWARD_ISSUE.rfw_id '{issue_rfw_id}'", rel_file, line_no)
                     if isinstance(award_id, str) and award_id and mtype == "AWARD_ISSUE":
                         awards[award_id] = (line_no, payload)
 

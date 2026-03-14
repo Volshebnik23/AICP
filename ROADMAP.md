@@ -108,6 +108,7 @@ _Last updated: 2026-03-14_
 ### ✅ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
 - **Shipped:** `EXT-MARKETPLACE` now provides transcript-native RFW/bid/update/withdraw/award lifecycle, auction open/close modes, blackboard coordination, and subchat routing artifacts with deterministic conformance fixtures.
 - **Shipped:** marketplace orchestration paths now include admission-gated participation checks, routing-attestation evidence hooks, and observability correlation vectors.
+- **Shipped (RTSS closeout):** canonical M36 message family (`RFW_POST`, `BID_*`, `AWARD_*`, `AUCTION_*`, `BLACKBOARD_*`, `SUBCHAT_*`) is now consistently enforced across schema/registry/suite/generator/runner, including explicit expected-fail `MP-AWARD-01` coverage for award/work-order linkage coherence.
 - **Next concrete step:** advance M37 provenance/responsibility transfer while keeping M36 coordination semantics operationally stable.
 
 ### ⏳ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
