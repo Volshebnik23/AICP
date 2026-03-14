@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +16,10 @@ def _read(path: Path) -> str:
 
 def _has_shipped_milestone(roadmap_text: str, milestone: str) -> bool:
     return f"### ✅ {milestone}" in roadmap_text
+
+
+def _load_json(path: Path) -> dict | list:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def main() -> int:
@@ -81,6 +86,25 @@ def main() -> int:
             failures.append("ROADMAP marks M35 shipped, but no fixture generator or deterministic admission fixtures are present")
         if not (ROOT / "scripts/generate_queue_leases_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/queue_leases").glob("*.jsonl")):
             failures.append("ROADMAP marks M35 shipped, but no fixture generator or deterministic queue-lease fixtures are present")
+
+        # minimum behavioral coverage guardrails for shipped M35
+        ad_suite_path = ROOT / "conformance/extensions/AD_ADMISSION_0.1.json"
+        ql_suite_path = ROOT / "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        if ad_suite_path.exists():
+            ad_suite = _load_json(ad_suite_path)
+            ad_transcripts = ad_suite.get("transcripts", []) if isinstance(ad_suite, dict) else []
+            ad_payload_map = ad_suite.get("payload_schema_map", {}) if isinstance(ad_suite, dict) else {}
+            ad_types = set(ad_payload_map.keys()) if isinstance(ad_payload_map, dict) else set()
+            if "ADMISSION_REJECT" not in ad_types:
+                failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REJECT")
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ad_transcripts):
+                failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 has no expected-fail transcript")
+
+        if ql_suite_path.exists():
+            ql_suite = _load_json(ql_suite_path)
+            ql_transcripts = ql_suite.get("transcripts", []) if isinstance(ql_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ql_transcripts):
+                failures.append("ROADMAP marks M35 shipped, but QL_QUEUE_LEASES_0.1 has no expected-fail transcript")
 
     if failures:
         for item in failures:
