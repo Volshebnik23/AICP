@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-13_
+_Last updated: 2026-03-14_
 
 ## Current / Next
 
@@ -73,7 +73,7 @@ _Last updated: 2026-03-13_
 ### ✅ M26 — Human-in-the-loop primitive (approval / step-up)
 - **Shipped:** `EXT-HUMAN-APPROVAL` with canonical approval/intervention message types, strict schema, deterministic fixtures, and executable extension conformance (`HA-HUMAN-APPROVAL-0.1`).
 - **Shipped:** challenge target/scope/TTL binding, signer/approver checks, anti-reuse and expiry checks, and intervention required/complete linkage are machine-checkable from transcript evidence.
-- **Next concrete step:** with M28 now shipped, proceed to M27 production attributes (tracing/SLA/metering).
+- **Next concrete step:** maintain M26 baseline while M27 observability and M28 IAM bridge remain executable and aligned with CI.
 
 ### ✅ M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
 - **Exit:** Normative mapping guidance + examples + security notes.
@@ -84,11 +84,15 @@ _Last updated: 2026-03-13_
 ### ⏳ M32 — Agent execution interoperability profile (optional): Runs / Threads / Stores
 - **Exit:** Optional extension + profile + fixtures/conformance.
 
-### ⏳ M27 — Production attributes: tracing, SLA signals, metering
-- **Exit:** Minimal event taxonomy for tracing/latency/errors + standard SLA signals.
+### ✅ M27 — Production attributes: tracing, SLA signals, metering
+- **Shipped:** `EXT-OBSERVABILITY` RFC + schema + deterministic fixtures + executable extension conformance (`OB-OBSERVABILITY-0.1`) are in-repo and wired through `make conformance-ext`.
+- **Shipped:** transcript-level `OBS_SIGNAL` artifacts now cover trace correlation, standardized SLA/error signals, and normalized metering events with machine-checkable negative vectors.
+- **Next concrete step:** keep M27 observability stable while enterprise binding integrations advance under M29.
 
 ### ⏳ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
-- **Exit:** Binding notes + minimal profiles for common enterprise integration styles.
+- **Progress:** M29 remains pending in executable surface; enterprise bindings artifacts (RFC/schema/fixtures/conformance) are not yet landed on public `main`.
+- **Progress:** roadmap/docs claims were ahead of executable evidence and are being synchronized via RTSS.
+- **Next concrete step:** land minimal `EXT-ENTERPRISE-BINDINGS` executable artifacts (RFC + schema + deterministic fixtures + extension conformance wiring) before advancing follow-on milestones.
 
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
 - **Progress:** Implementer-facing security best-practices doc is shipped at `docs/security/SECURITY_BEST_PRACTICES.md`.
@@ -117,4 +121,4 @@ _Last updated: 2026-03-13_
 7) Internet-scale audit (recommended before large public feeds): M31
 8) Agent media & brand reception feeds: M38
 9) Optional platform interop: M32
-10) Ops + docs completeness: M27 + M34 + M29
+10) Ops + docs completeness: M34 (with M27 observability shipped; M29 after executable artifacts land)
