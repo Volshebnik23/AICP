@@ -79,7 +79,13 @@ A `pii_ref` object is a stable transcript handle to sensitive data stored out-of
 - `original_message_hash` MUST resolve to an earlier message in the same transcript.
 - Standard hash-chain integrity checks remain applicable.
 
-## 7. Conformance expectations
+## 7. Security considerations
+
+- Validate `original_message_hash` resolution before processing redaction declarations to avoid forged replacement lineage.
+- Require policy-controlled access for `pii_ref` dereferencing; transcript presence alone is not authorization.
+- Example: if `replacement_summary` includes raw identifier values, treat as data-leak regression and reject publication.
+
+## 8. Conformance expectations
 
 Suite: `conformance/extensions/RD_REDACTION_0.1.json`
 
@@ -91,7 +97,7 @@ Conformance enforces:
 - contract retention policy required fields,
 - chain-integrity behavior (new declaration, not mutation).
 
-## 8. Registry entries
+## 9. Registry entries
 
 - Extension ID: `EXT-REDACTION`
 - Message type: `CONTENT_REDACTED`

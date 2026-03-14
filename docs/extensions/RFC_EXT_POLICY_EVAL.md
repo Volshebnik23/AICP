@@ -20,6 +20,11 @@ POLICY_DECISION_ATTEST (optional) MAY be used to bind a policy_decision to ATTES
 language_id and binding_id MUST be registered (Section 8).
 reason_codes used in POLICY_EVAL_RESULT MUST be either registered in `registry/policy_reason_codes.json` or namespaced as `vendor:*` or `org:*`.
 
+12.6 Security considerations
+- Treat unsigned or unverifiable `POLICY_EVAL_RESULT` as advisory-only for high-risk enforcement paths.
+- Bind decision artifacts to `context_hash` and `eval_id` to prevent replay of decisions against different inputs.
+- Example: if a cached ALLOW decision is replayed with a different `resource` but same human-readable label, reject because canonical `context_hash` differs.
+
 
 ## Registry entry {#registry-entry}
 - Extension ID: `EXT-POLICY-EVAL`

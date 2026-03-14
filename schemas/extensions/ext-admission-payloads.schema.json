@@ -5,125 +5,96 @@
   "type": "object",
   "additionalProperties": false,
   "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "StringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/NonEmptyString"}
+    },
+    "ReferenceStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "ADMISSION_REQUEST": {
       "type": "object",
-      "required": [
-        "admission_id"
-      ],
+      "additionalProperties": false,
+      "required": ["request_id", "requested_roles", "requested_scopes", "risk_tier"],
       "properties": {
-        "admission_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reason": {
-          "type": "string"
-        },
-        "attestation_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "requested_roles": {"$ref": "#/$defs/StringArray"},
+        "requested_scopes": {"$ref": "#/$defs/StringArray"},
+        "risk_tier": {"$ref": "#/$defs/NonEmptyString"},
+        "attestation_refs": {"$ref": "#/$defs/ReferenceStringArray"},
+        "stake_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "desired_quota_class": {"$ref": "#/$defs/NonEmptyString"},
+        "priority_class": {"$ref": "#/$defs/NonEmptyString"}
+      }
     },
     "ADMISSION_OFFER": {
       "type": "object",
-      "required": [
-        "admission_id"
-      ],
+      "additionalProperties": false,
+      "required": ["request_id", "offer_id", "granted_roles", "granted_scopes", "quota_class", "lease_profile"],
       "properties": {
-        "admission_id": {
-          "type": "string",
-          "minLength": 1
+        "request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "offer_id": {"$ref": "#/$defs/NonEmptyString"},
+        "granted_roles": {"$ref": "#/$defs/StringArray"},
+        "granted_scopes": {"$ref": "#/$defs/StringArray"},
+        "constraints": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/NonEmptyString"}
         },
-        "reason": {
-          "type": "string"
-        },
-        "attestation_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "quota_class": {"$ref": "#/$defs/NonEmptyString"},
+        "lease_profile": {"$ref": "#/$defs/NonEmptyString"},
+        "required_approval": {"type": "boolean"}
+      }
     },
     "ADMISSION_ACCEPT": {
       "type": "object",
-      "required": [
-        "admission_id"
-      ],
+      "additionalProperties": false,
+      "required": ["request_id", "offer_id"],
       "properties": {
-        "admission_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reason": {
-          "type": "string"
-        },
-        "attestation_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "offer_id": {"$ref": "#/$defs/NonEmptyString"},
+        "accepted_at": {"type": "string", "format": "date-time"}
+      }
     },
     "ADMISSION_REJECT": {
       "type": "object",
-      "required": [
-        "admission_id"
-      ],
+      "additionalProperties": false,
+      "required": ["request_id", "reason_code"],
       "properties": {
-        "admission_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reason": {
-          "type": "string"
-        },
-        "attestation_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "reason_code": {"$ref": "#/$defs/NonEmptyString"},
+        "detail_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
     },
     "ADMISSION_RENEW": {
       "type": "object",
-      "required": [
-        "admission_id"
-      ],
+      "additionalProperties": false,
+      "required": ["request_id", "prior_request_id", "reason_code"],
       "properties": {
-        "admission_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reason": {
-          "type": "string"
-        },
-        "attestation_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "prior_request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "reason_code": {"$ref": "#/$defs/NonEmptyString"},
+        "attestation_refs": {"$ref": "#/$defs/ReferenceStringArray"}
+      }
     },
     "ADMISSION_REVOKE": {
       "type": "object",
-      "required": [
-        "admission_id"
-      ],
+      "additionalProperties": false,
+      "required": ["request_id", "reason_code"],
       "properties": {
-        "admission_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "reason": {
-          "type": "string"
-        },
-        "attestation_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "request_id": {"$ref": "#/$defs/NonEmptyString"},
+        "reason_code": {"$ref": "#/$defs/NonEmptyString"},
+        "revoked_at": {"type": "string", "format": "date-time"}
+      }
     }
   }
 }

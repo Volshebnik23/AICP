@@ -43,6 +43,8 @@ For each `TOOL_CALL_RESULT`:
   - `target_request_hash == TOOL_CALL_RESULT.payload.target_request_hash`.
 
 ## 6. Security considerations
+
+- Example: if `TOOL_CALL_RESULT` appears before any matching ALLOW verdict in blocking mode, treat it as potential gate bypass and quarantine downstream effects.
 - Prevent spoofing by authenticating senders of verdicts/attestations.
 - Prevent replay by binding all decisions/results/attestations to request/result hashes.
 - Constrain authority (`acceptors`) to reduce role escalation.

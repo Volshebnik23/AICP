@@ -101,6 +101,8 @@ This extension defines protocol-native approval artifacts only. Deployments MAY 
 
 ## 8. Security considerations
 
+- Example: if a grant references the right challenge hash but a different `target_binding.tool_call_id`, treat it as a binding-substitution attempt and reject execution.
+
 - Challenge/decision binding prevents UX-only approval spoofing.
 - Expiry checks reduce replay risk of stale approvals.
 - Approver identity matching reduces signer substitution attacks.
