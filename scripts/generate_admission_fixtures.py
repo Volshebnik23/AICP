@@ -165,6 +165,13 @@ def fixture_ad07() -> list[dict]:
     ])
 
 
+def fixture_ad08() -> list[dict]:
+    return finalize([
+        {"session_id":"sad-08","message_id":"m1","timestamp":"2026-03-20T11:10:00Z","sender":"agent:pending","message_type":"ADMISSION_REQUEST","contract_id":"c-ad-08",
+         "payload":{"request_id":"req-ad-08","requested_roles":["participant"],"requested_scopes":["queue.post"],"risk_tier":"low"}}
+    ])
+
+
 def main() -> int:
     fixtures = {
         "AD-01_request_offer_accept_pass.jsonl": fixture_ad01(),
@@ -174,6 +181,7 @@ def main() -> int:
         "AD-05_offer_scope_violation_expected_fail.jsonl": fixture_ad05(),
         "AD-06_invalid_attestation_ref_expected_fail.jsonl": fixture_ad06(),
         "AD-07_revoke_with_reason_pass.jsonl": fixture_ad07(),
+        "AD-08_missing_terminal_outcome_expected_fail.jsonl": fixture_ad08(),
     }
     for name, rows in fixtures.items():
         path = OUT_DIR / name

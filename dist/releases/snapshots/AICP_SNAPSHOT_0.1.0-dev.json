@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ed353438e12bf3272940d70cee44638023a47d54320da473854da71a6cc338bb",
+      "combined_sha256": "7910b19991365fed11dee5e466fc9ecf72003271d5cdac6404d9ffa6675b5fa9",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -29,7 +29,7 @@
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
-          "sha256": "4ca8b3f3431ef66b3356dec5ac6bae847edc59cbbad00efc650e35ddc30d26a0"
+          "sha256": "38314482b23484ba9d3b214a8de3f04dba10b0ad60971afe35122585b32462b4"
         },
         {
           "path": "conformance/extensions/AL_ALERTS_0.1.json",
@@ -218,7 +218,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "f2a9cffe7a52e3b886843dfaffeda6c678cf31dbfb1de30093230eec4cb5a63d",
+      "combined_sha256": "ed55a3b6fb4e6b5f1f86fc34940064016456750477f1b42a653717c95f3a987a",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -395,6 +395,10 @@
         {
           "path": "fixtures/extensions/admission/AD-07_revoke_with_reason_pass.jsonl",
           "sha256": "c187a3d13d82315ed939a93be0fb220b1149896df696a6f0b80b812c3c1d1945"
+        },
+        {
+          "path": "fixtures/extensions/admission/AD-08_missing_terminal_outcome_expected_fail.jsonl",
+          "sha256": "4f01282f0ba50d8fc406dae059b95835252215985831660fc257d46e79baef0f"
         },
         {
           "path": "fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl",

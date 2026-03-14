@@ -101,6 +101,20 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "AD-08",
+      "path": "fixtures/extensions/admission/AD-08_missing_terminal_outcome_expected_fail.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AD-NO-SILENT-DROP-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
