@@ -187,6 +187,54 @@ def main() -> int:
             if "MP-AWARD-01" not in mp_expected_failure_ids:
                 failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 has no expected-fail transcript asserting MP-AWARD-01")
 
+    if _has_shipped_milestone(roadmap, "M37"):
+        if "conformance/extensions/PR_PROVENANCE_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include PR_PROVENANCE_0.1")
+        if "conformance/extensions/ES_ACTION_ESCROW_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include ES_ACTION_ESCROW_0.1")
+        if "conformance/extensions/RP_RESPONSIBILITY_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include RP_RESPONSIBILITY_0.1")
+        if not (ROOT / "docs/extensions/RFC_EXT_PROVENANCE.md").exists():
+            failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_PROVENANCE.md is missing")
+        if not (ROOT / "docs/extensions/RFC_EXT_ACTION_ESCROW.md").exists():
+            failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_ACTION_ESCROW.md is missing")
+        if not (ROOT / "docs/extensions/RFC_EXT_RESPONSIBILITY.md").exists():
+            failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_RESPONSIBILITY.md is missing")
+        if not (ROOT / "schemas/extensions/ext-provenance-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M37 shipped, but schemas/extensions/ext-provenance-payloads.schema.json is missing")
+        if not (ROOT / "schemas/extensions/ext-action-escrow-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M37 shipped, but schemas/extensions/ext-action-escrow-payloads.schema.json is missing")
+        if not (ROOT / "schemas/extensions/ext-responsibility-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M37 shipped, but schemas/extensions/ext-responsibility-payloads.schema.json is missing")
+        if not (ROOT / "scripts/generate_provenance_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/provenance").glob("*.jsonl")):
+            failures.append("ROADMAP marks M37 shipped, but no provenance fixture generator or deterministic fixtures are present")
+        if not (ROOT / "scripts/generate_action_escrow_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/action_escrow").glob("*.jsonl")):
+            failures.append("ROADMAP marks M37 shipped, but no action-escrow fixture generator or deterministic fixtures are present")
+        if not (ROOT / "scripts/generate_responsibility_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/responsibility").glob("*.jsonl")):
+            failures.append("ROADMAP marks M37 shipped, but no responsibility fixture generator or deterministic fixtures are present")
+
+        pr_suite_path = ROOT / "conformance/extensions/PR_PROVENANCE_0.1.json"
+        es_suite_path = ROOT / "conformance/extensions/ES_ACTION_ESCROW_0.1.json"
+        rp_suite_path = ROOT / "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+
+        if pr_suite_path.exists():
+            pr_suite = _load_json(pr_suite_path)
+            pr_transcripts = pr_suite.get("transcripts", []) if isinstance(pr_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in pr_transcripts):
+                failures.append("ROADMAP marks M37 shipped, but PR_PROVENANCE_0.1 has no expected-fail transcript")
+
+        if es_suite_path.exists():
+            es_suite = _load_json(es_suite_path)
+            es_transcripts = es_suite.get("transcripts", []) if isinstance(es_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in es_transcripts):
+                failures.append("ROADMAP marks M37 shipped, but ES_ACTION_ESCROW_0.1 has no expected-fail transcript")
+
+        if rp_suite_path.exists():
+            rp_suite = _load_json(rp_suite_path)
+            rp_transcripts = rp_suite.get("transcripts", []) if isinstance(rp_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in rp_transcripts):
+                failures.append("ROADMAP marks M37 shipped, but RP_RESPONSIBILITY_0.1 has no expected-fail transcript")
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

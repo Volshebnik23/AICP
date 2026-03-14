@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "62aca526b8725d5fefc0d642b1e35bdbb8fc214f0c8f253d7574ccc79fcf4f99",
+      "combined_sha256": "7eb92bf02c9780a5164bc5a6286ed95b53ef5e5be04368721c196608506bcd92",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -77,7 +77,7 @@
         },
         {
           "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
-          "sha256": "a24368406cd2778d1a5a0b32a57c3a9b053cf434788e817aa93fb7606cd0b899"
+          "sha256": "cc233cb4abdac46698f2ff5c7e5726f848c96c702db7e4f0e052b82647536ca1"
         },
         {
           "path": "conformance/extensions/FA_FACILITATION_0.1.json",
@@ -125,7 +125,7 @@
         },
         {
           "path": "conformance/extensions/PR_PROVENANCE_0.1.json",
-          "sha256": "ccf57adfde9906c05e99ad8bbc054abbeb4f6afa5f03018b1aa5b50b9e53a8bb"
+          "sha256": "b658f9d19a03e4e9053ec85a3610b6985cb1fd543797e2831111831fbcbe1890"
         },
         {
           "path": "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
@@ -138,6 +138,10 @@
         {
           "path": "conformance/extensions/RD_REDACTION_0.1.json",
           "sha256": "5943a4c4f3326ea093673f353637858b61818386e0c503bfdcb89e7c6c8d93a2"
+        },
+        {
+          "path": "conformance/extensions/RP_RESPONSIBILITY_0.1.json",
+          "sha256": "6fb3fdd72c15fef8af8b3b336131c04878039706286c5883465972493b37827b"
         },
         {
           "path": "conformance/extensions/RS_RESUME_0.1.json",
@@ -218,7 +222,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "e2d134afc8ffbdb3a5f48d3c40686d67db0daa8890ed87a5258d85e4a3443303",
+      "combined_sha256": "9aa905e5f8ec13a8478d407765202c5eb0ef9b45815e9d0186d176d28e4bf9cb",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -361,12 +365,20 @@
           "sha256": "dbe63ca6fccdd4398c44e98962b106e4405bdfe9b55fdf0fccbb4e83dee10cfc"
         },
         {
-          "path": "fixtures/extensions/action_escrow/ES-01_escrow_pass.jsonl",
-          "sha256": "5e60b7eb4287c0a55b600ca4556453097b300ea0243f3af8c4adac18503a1f8b"
+          "path": "fixtures/extensions/action_escrow/ES-01_prepare_approve_commit_pass.jsonl",
+          "sha256": "fa610963fe15430dcbff5720d5d6798de1fd89f8df3a58a36f290c6deb781b0a"
         },
         {
-          "path": "fixtures/extensions/action_escrow/ES-02_commit_missing_binding_expected_fail.jsonl",
-          "sha256": "5445f3ffb119379d9e48e7fa10ba0de163af993f53cf7ac4c6262a1f71f693fc"
+          "path": "fixtures/extensions/action_escrow/ES-02_commit_without_prepare_expected_fail.jsonl",
+          "sha256": "414f1842fe42697d74d562e5f26c75b98113e84cdc08221e11d7a052b711d540"
+        },
+        {
+          "path": "fixtures/extensions/action_escrow/ES-03_commit_without_approve_expected_fail.jsonl",
+          "sha256": "fda06bae8365f5abc9a972536a435f2e9ed68b8cfcb9bb649c51206f3e8f1fed"
+        },
+        {
+          "path": "fixtures/extensions/action_escrow/ES-04_commit_binding_mismatch_expected_fail.jsonl",
+          "sha256": "31bd0b68737dad8b5e265919f7993779066c4985b5195f36db004773f5a76dc2"
         },
         {
           "path": "fixtures/extensions/admission/AD-01_request_offer_accept_pass.jsonl",
@@ -797,8 +809,16 @@
           "sha256": "4fb2e0aa4b58966e2e5c565fbd1f95db2084fe9fa928ecb6775c70d2b8830088"
         },
         {
-          "path": "fixtures/extensions/provenance/PR-01_provenance_pass.jsonl",
-          "sha256": "e8062edd48df6b62a7686a68027b17b4e0a381407c3200f8be5ddf8f636e415f"
+          "path": "fixtures/extensions/provenance/PR-01_dag_multi_agent_pass.jsonl",
+          "sha256": "06828606dc6b33592b8f6b4bae139b635df749a5fbe5bd712f364641cc17f045"
+        },
+        {
+          "path": "fixtures/extensions/provenance/PR-02_append_missing_parent_expected_fail.jsonl",
+          "sha256": "d42ea356dfec4b4da42328258079d9f5e0bad8f4247b2cede9567c8d1791f62b"
+        },
+        {
+          "path": "fixtures/extensions/provenance/PR-03_append_duplicate_node_expected_fail.jsonl",
+          "sha256": "87ee75061b29d9a9f2b67c06decbe5c475f2781a5d4331fea72bf33b4ca59f79"
         },
         {
           "path": "fixtures/extensions/publications/PB-01_publication_pass.jsonl",
@@ -875,6 +895,26 @@
         {
           "path": "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
           "sha256": "3f04c163bd87a15f1edd5218162c507e661e6f7932804e9dd2516fad0d4ca6eb"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl",
+          "sha256": "2d2c648f87031529761d0d424dca5176701dcc2bf6c02de2099949d135cb1c7f"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-02_accept_without_assign_expected_fail.jsonl",
+          "sha256": "f692296516567429013e2f79f5e7ceed738e4684bddab6c8f5cc8cdd31a33264"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-03_missing_terminal_transfer_expected_fail.jsonl",
+          "sha256": "79a82e9f75c85ea02ea56c5ceb7f237ea3691749ebbc84133afe9085fa3b349d"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-04_transient_failure_without_retry_expected_fail.jsonl",
+          "sha256": "8757ca25b591f731c7d2023cb6e0cf60afe3fc0251667c12529be885391e9b61"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-05_failure_with_missing_provenance_expected_fail.jsonl",
+          "sha256": "867b4fb73ca9eff3f2f14b54c4037f9e9f5c1ea04d9fe31c4eb314d4be8ad5fc"
         },
         {
           "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
@@ -1059,7 +1099,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "55c5a86806c86630738850a0b196060cff8f44a2185f198efbecf9ba684437b7",
+      "combined_sha256": "aebe5b733596140f60001d743af679a40243d9c8e058c23ee0dde60432250476",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -1107,7 +1147,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "2656e1aca9567050226cc2896a9481afdd6325720d69002b3c36f475b6df52a2"
+          "sha256": "34618dfc55bd1e8bfacef595d9fea2bf6e7370c09b205f7f0709afba16c628cb"
         },
         {
           "path": "registry/hash_domains.json",
@@ -1115,7 +1155,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "e894e74d9f87f3cd3dde18e34d91a4d2aafc76b8ae249dd17c2fdbdb4663114f"
+          "sha256": "212f811510e6ef667bd5a8a7373186be3cf96e05c224a1cfdb5d98ed850425af"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -1136,6 +1176,10 @@
         {
           "path": "registry/privacy_modes.json",
           "sha256": "2ba80386bed185c7078bfc89315055f7533715e7d1a654c8e2387f5b8bf9ee7a"
+        },
+        {
+          "path": "registry/responsibility_warranty_classes.json",
+          "sha256": "8c8455ebb923e7b9799ae113decb3d869513189172fcb2241e97d7ff94ec0dc3"
         },
         {
           "path": "registry/revocation_reason_codes.json",
@@ -1160,7 +1204,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "a6105ce978505978723297e3bafeaf69c3304db689160f8dbd188aa00ed12a0b",
+      "combined_sha256": "d61b14af01cf34f50de0eb4cac2f5b771888ef941fc9513019c7227285804625",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1192,7 +1236,7 @@
         },
         {
           "path": "schemas/extensions/ext-action-escrow-payloads.schema.json",
-          "sha256": "a0071ab226b5613f6f122462c391b75d9f83e73f756d593fd8afb3fce7b03298"
+          "sha256": "1f14e0c96eebd1114e40f6079fc45c8462c24c859e103ba0c6de1f7f2a372e9c"
         },
         {
           "path": "schemas/extensions/ext-admission-payloads.schema.json",
@@ -1284,7 +1328,7 @@
         },
         {
           "path": "schemas/extensions/ext-provenance-payloads.schema.json",
-          "sha256": "317b1df821b606b62a80bf3869354dafe6c7e49142f389137f72a6cd5d4647eb"
+          "sha256": "e14d5c55a644c73b57bbd0097d27da32804c84e14802c1f0824f8a48c3017439"
         },
         {
           "path": "schemas/extensions/ext-publications-payloads.schema.json",
@@ -1297,6 +1341,10 @@
         {
           "path": "schemas/extensions/ext-redaction-payloads.schema.json",
           "sha256": "cec55e590f53cb657bfc64937eb48e7e55938ddde68a80290b2a465ffb3f953c"
+        },
+        {
+          "path": "schemas/extensions/ext-responsibility-payloads.schema.json",
+          "sha256": "8aa7ecfb7fde1865a3f1df93cd383db6459c4f5577cadc2f261d1bacb13eb18d"
         },
         {
           "path": "schemas/extensions/ext-resume-payloads.schema.json",
@@ -1500,6 +1548,10 @@
       {
         "mark": "AICP-EXT-REDACTION-0.1",
         "path": "conformance/extensions/RD_REDACTION_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-RESPONSIBILITY-0.1",
+        "path": "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
       },
       {
         "mark": "AICP-EXT-RESUME-0.1",

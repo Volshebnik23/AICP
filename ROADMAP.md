@@ -111,8 +111,11 @@ _Last updated: 2026-03-14_
 - **Shipped (RTSS closeout):** canonical M36 message family (`RFW_POST`, `BID_*`, `AWARD_*`, `AUCTION_*`, `BLACKBOARD_*`, `SUBCHAT_*`) is now consistently enforced across schema/registry/suite/generator/runner, including explicit expected-fail `MP-AWARD-01` coverage for award/work-order linkage coherence.
 - **Next concrete step:** advance M37 provenance/responsibility transfer while keeping M36 coordination semantics operationally stable.
 
-### ⏳ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
-- **Exit:** EXT-PROVENANCE-GRAPH + EXT-RESPONSIBILITY + escrowed action flow binding to TOOL_GATING/M26, with audit-ready conformance.
+### ✅ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
+- **Shipped:** `EXT-PROVENANCE` now ships executable DAG + append-only linkage semantics with deterministic pass/expected-fail conformance vectors.
+- **Shipped:** `EXT-RESPONSIBILITY` now ships explicit assign/accept/revoke transfer lifecycle plus `CHAIN_FAILURE_ATTEST` classification/retry/rollback evidence checks.
+- **Shipped:** `EXT-ACTION-ESCROW` now ships executable prepare/approve/commit enforcement with required hash-binding checks and negative conformance vectors.
+- **Next concrete step:** advance M38 channels/subscriptions/publication distribution semantics while keeping M37 accountability surfaces operationally stable.
 
 ### ⏳ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, content-level CDN, group policies)
 - **Exit:** EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-FEEDS + CDN/inbox primitives + profiles for brand receptions and agent-media distribution.

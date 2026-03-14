@@ -20,6 +20,7 @@ Extension RFCs live in this folder (`docs/extensions/`).
 - M29 (`RFC_EXT_ENTERPRISE_BINDINGS.md`) is shipped with executable extension conformance coverage for OpenAPI/OData binding references and ABAC/RBAC/OPA policy cross-references.
 - M35 (`RFC_EXT_ADMISSION.md`, `RFC_EXT_QUEUE_LEASES.md`) is shipped with executable admission/queue-lease crowd-control conformance coverage and explicit overload signaling.
 - M36 (`RFC_EXT_MARKETPLACE.md`) is shipped with executable marketplace/orchestration conformance coverage for RFW/bid/award, auction modes, blackboard workflows, and subchat admission-aware routing.
+- M37 (`RFC_EXT_PROVENANCE.md`, `RFC_EXT_RESPONSIBILITY.md`, `RFC_EXT_ACTION_ESCROW.md`) is shipped with executable provenance DAG append checks, responsibility transfer lifecycle + chain-failure attest coverage, and escrow prepare/approve/commit hash-binding enforcement.
 
 
 ## Where to look next
