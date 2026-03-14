@@ -60,6 +60,7 @@ Note: document/fixture/schema presence does not by itself mean a milestone is sh
 - Profile selection: [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md)
 - Ecosystem positioning: [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md)
 - Solution playbooks: [docs/playbooks/](playbooks/)
+  - Security/ops cookbooks: [Mediated Blocking in Production](playbooks/Mediated_Blocking_in_Production.md), [OAuth Bridge Cookbook](playbooks/OAuth_Bridge_Cookbook.md), [Tool Catalog Pinning Cookbook](playbooks/Tool_Catalog_Pinning_Cookbook.md), [Context Hub Fresh Content Cookbook](playbooks/Context_Hub_Fresh_Content_Cookbook.md)
 - Enforcement models: [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md)
 - Security best practices: [docs/security/SECURITY_BEST_PRACTICES.md](security/SECURITY_BEST_PRACTICES.md)
 - Repo-truth recovery workflow (RTSS): [docs/process/RTSS.md](process/RTSS.md)

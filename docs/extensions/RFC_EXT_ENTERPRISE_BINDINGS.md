@@ -102,6 +102,8 @@ Conformance MUST include checks for:
 
 ## 10. Security considerations
 
+- Example: if `TOOL_CALL_REQUEST.ext.enterprise_bindings.binding_ref_id` resolves to an unpinned or unknown binding, fail closed rather than inferring runtime mapping from tool name alone.
+
 - Treat external `spec_ref`/`policy_ref`/`service_ref` values as sensitive governance metadata in high-assurance deployments.
 - Validate all external references and identifiers at transcript ingestion boundaries.
 - Keep binding IDs deterministic and non-guessable where correlation leakage is a concern.

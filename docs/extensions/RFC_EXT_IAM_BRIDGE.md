@@ -131,6 +131,8 @@ For a message evaluated under `EXT-IAM-BRIDGE`:
 
 ## 9. Security considerations
 
+- Example: if a token validates externally but projected `acr` is below action policy minimum, emit step-up/approval path instead of allowing silent fallback execution.
+
 - Keep snapshots minimal (claims only) and avoid raw token transport.
 - Enforce claim expiry and delegated binding expiry.
 - Validate issuer allowlists deterministically.

@@ -94,10 +94,10 @@ _Last updated: 2026-03-14_
 - **Shipped:** enterprise binding surface now standardizes OpenAPI operation mapping, OData retrieval target mapping, and ABAC/RBAC/OPA policy cross-references as transcript-auditable references.
 - **Next concrete step:** stabilize M29 contract/tool binding references while adjacent M34 security/playbook hardening progresses.
 
-### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
-- **Progress:** Implementer-facing security best-practices doc is shipped at `docs/security/SECURITY_BEST_PRACTICES.md`.
-- **Next concrete step:** add production cookbook depth (mediated blocking/OAuth bridge/tool pinning) and finish security-considerations completion across extension docs.
-- **Exit:** Security best practices + deployment cookbooks + security-considerations completion.
+### ✅ M34 — Security & implementer playbooks (MCP-level doc completeness)
+- **Shipped:** Implementer-facing security best-practices baseline plus production cookbooks for mediated blocking, OAuth bridge mapping, tool catalog pinning, and adjacent fresh-content operation are in `docs/playbooks/`.
+- **Shipped:** extension-level security-considerations coverage now includes concrete implementation warnings across shipped enterprise-control and supply-chain-adjacent RFCs.
+- **Next concrete step:** keep M34 guidance operationally current as extension suites and deployment patterns evolve.
 
 ### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
 - **Exit:** EXT-ADMISSION + EXT-QUEUE-LEASES + overload reason codes + conformance for crowded-room stability.
