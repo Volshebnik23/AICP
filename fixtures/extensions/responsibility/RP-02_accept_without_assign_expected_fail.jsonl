@@ -1,0 +1,1 @@
+{"session_id":"srp-02","message_id":"m1","timestamp":"2026-03-23T11:10:00Z","sender":"agent:worker","message_type":"RESPONSIBILITY_ACCEPT","contract_id":"c-rp-02","payload":{"transfer_id":"t-missing","accepted_by":"agent:worker"},"message_hash":"sha256:eojfubzDJIRqNb9RTzPir2kQzjNxO-5Pfk4QPYysv2c"}

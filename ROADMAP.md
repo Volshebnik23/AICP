@@ -102,15 +102,20 @@ _Last updated: 2026-03-14_
 ### ✅ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
 - **Shipped:** `EXT-ADMISSION` and `EXT-QUEUE-LEASES` now provide transcript-native request/offer/accept/reject/revoke, lease grant/ack/nack/release, and overload/throttle evidence with deterministic extension conformance.
 - **Shipped:** crowd-control sanction paths are machine-readable (no-silent-drop), with reason-code hooks and trust/attestation references for anti-Sybil policy integration.
-- **Next concrete step:** stabilize M35 operational patterns while M36 coordination/marketplace surfaces advance.
+- **Shipped (RTSS closeout):** conformance runner now enforces M35 admission/queue-lease semantics explicitly (renewal linkage, attestation/stake reference validity, no-silent-drop, bounded lease usage, overload/backpressure checks) and shipped-coverage validation includes expected-fail/reject+revoke guardrails.
+- **Next concrete step:** keep M35 operational patterns stable while M36 coordination/marketplace surfaces continue hardening.
 
 ### ✅ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
 - **Shipped:** `EXT-MARKETPLACE` now provides transcript-native RFW/bid/update/withdraw/award lifecycle, auction open/close modes, blackboard coordination, and subchat routing artifacts with deterministic conformance fixtures.
 - **Shipped:** marketplace orchestration paths now include admission-gated participation checks, routing-attestation evidence hooks, and observability correlation vectors.
+- **Shipped (RTSS closeout):** canonical M36 message family (`RFW_POST`, `BID_*`, `AWARD_*`, `AUCTION_*`, `BLACKBOARD_*`, `SUBCHAT_*`) is now consistently enforced across schema/registry/suite/generator/runner, including explicit expected-fail `MP-AWARD-01` coverage for award/work-order linkage coherence.
 - **Next concrete step:** advance M37 provenance/responsibility transfer while keeping M36 coordination semantics operationally stable.
 
-### ⏳ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
-- **Exit:** EXT-PROVENANCE-GRAPH + EXT-RESPONSIBILITY + escrowed action flow binding to TOOL_GATING/M26, with audit-ready conformance.
+### ✅ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
+- **Shipped:** `EXT-PROVENANCE` now ships executable DAG + append-only linkage semantics with deterministic pass/expected-fail conformance vectors.
+- **Shipped:** `EXT-RESPONSIBILITY` now ships explicit assign/accept/revoke transfer lifecycle plus `CHAIN_FAILURE_ATTEST` classification/retry/rollback evidence checks.
+- **Shipped:** `EXT-ACTION-ESCROW` now ships executable prepare/approve/commit enforcement with required hash-binding checks and negative conformance vectors.
+- **Next concrete step:** advance M38 channels/subscriptions/publication distribution semantics while keeping M37 accountability surfaces operationally stable.
 
 ### ⏳ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, content-level CDN, group policies)
 - **Exit:** EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-FEEDS + CDN/inbox primitives + profiles for brand receptions and agent-media distribution.

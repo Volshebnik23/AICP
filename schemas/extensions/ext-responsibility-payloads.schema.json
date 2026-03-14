@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-responsibility-payloads.schema.json",
+  "title": "AICP EXT-RESPONSIBILITY payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ReasonCodeString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "RESPONSIBILITY_ASSIGN": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transfer_id",
+        "action_ref",
+        "from_party",
+        "to_party",
+        "warranty_class"
+      ],
+      "properties": {
+        "transfer_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "action_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "from_party": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "to_party": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "warranty_class": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "context_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "RESPONSIBILITY_ACCEPT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transfer_id",
+        "accepted_by"
+      ],
+      "properties": {
+        "transfer_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "accepted_by": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "RESPONSIBILITY_REVOKE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transfer_id",
+        "reason_code"
+      ],
+      "properties": {
+        "transfer_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/ReasonCodeString"
+        },
+        "detail_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "CHAIN_FAILURE_ATTEST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "failure_id",
+        "classification",
+        "reason_code"
+      ],
+      "properties": {
+        "failure_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "transfer_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "transient",
+            "permanent"
+          ]
+        },
+        "reason_code": {
+          "$ref": "#/$defs/ReasonCodeString"
+        },
+        "retry_after_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "compensating_action_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "provenance_graph_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    }
+  }
+}

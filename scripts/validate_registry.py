@@ -34,6 +34,7 @@ REQUIRED_FILES = [
     "attestation_types.json",
     "status_assertion_codes.json",
     "revocation_reason_codes.json",
+    "responsibility_warranty_classes.json",
 ]
 
 REQUIRED_FIELDS = {

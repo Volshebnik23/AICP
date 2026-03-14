@@ -249,6 +249,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-RESPONSIBILITY",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#registry-entry",
+    "security_considerations": "Responsibility-transfer and chain-failure artifacts should be authenticated and hash-bound to action context to prevent spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-RESUME",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_RESUME.md",

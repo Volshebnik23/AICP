@@ -141,6 +141,19 @@ def mp08() -> list[dict]:
     ])
 
 
+def mp09() -> list[dict]:
+    return finalize([
+        {"session_id":"smp-09","message_id":"m1","timestamp":"2026-03-22T10:20:00Z","sender":"agent:host","message_type":"RFW_POST","contract_id":"c-mp-09",
+         "payload":{"rfw_id":"rfw-09","work_spec_ref":"work:z","policy_ref":"policy:award:v1","deadline":"2026-03-23T10:20:00Z"}},
+        {"session_id":"smp-09","message_id":"m2","timestamp":"2026-03-22T10:20:01Z","sender":"agent:bidder","message_type":"BID_SUBMIT","contract_id":"c-mp-09",
+         "payload":{"bid_id":"bid-09","rfw_id":"rfw-09","offer_terms":{"price_hint":"fixed:30","sla_hint":"p95<3s"}}},
+        {"session_id":"smp-09","message_id":"m3","timestamp":"2026-03-22T10:20:02Z","sender":"agent:host","message_type":"AWARD_ISSUE","contract_id":"c-mp-09",
+         "payload":{"award_id":"award-09","rfw_id":"rfw-09","bid_id":"bid-09","work_order":{"work_order_id":"wo-09","workflow_ref":"workflow:sync:09"}}},
+        {"session_id":"smp-09","message_id":"m4","timestamp":"2026-03-22T10:20:03Z","sender":"agent:bidder","message_type":"AWARD_ACCEPT","contract_id":"c-mp-09",
+         "payload":{"award_id":"award-09","rfw_id":"rfw-other"}}
+    ])
+
+
 def main() -> int:
     fixtures = {
         "MP-01_rfw_bid_award_workflow_pass.jsonl": mp01(),
@@ -151,6 +164,7 @@ def main() -> int:
         "MP-06_award_without_required_evidence_expected_fail.jsonl": mp06(),
         "MP-07_subchat_without_required_admission_expected_fail.jsonl": mp07(),
         "MP-08_invalid_auction_mode_expected_fail.jsonl": mp08(),
+        "MP-09_award_accept_rfw_mismatch_expected_fail.jsonl": mp09(),
     }
     for name, rows in fixtures.items():
         path = OUT_DIR / name
