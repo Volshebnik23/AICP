@@ -141,47 +141,7 @@ If ambiguity or inconsistency is discovered during implementation, record it in 
 
 Use **Repo-Truth Sync Sprint (RTSS)** as the named recovery mode when repo truth drifts.
 
-### A) When to invoke RTSS
-Run RTSS when one or more apply:
-- public `main` does not reflect the milestone state assumed by the current branch;
-- roadmap/docs disagree with Makefile/CI/registries/conformance;
-- a feature sprint is blocked by repo-truth ambiguity rather than missing protocol design;
-- local changes are green but remote PR/branch state cannot be proven;
-- milestone state is functionally present but not truthfully synchronized across roadmap/docs/CI surface.
+Canonical RTSS reference (definition, triggers, operating principles, workflow, anti-patterns, exit criteria, and verification gate):
+- `docs/process/RTSS.md`
 
-### B) What RTSS is
-RTSS is a **small recovery/alignment PR** that restores agreement between:
-- public `main`;
-- roadmap/docs;
-- registries/schemas/conformance;
-- Makefile/CI executable surface;
-- PR evidence / remote-verifiable state.
-
-### C) RTSS exit criteria
-RTSS is done only when all are true:
-- public-main truth is clear;
-- roadmap/docs/Makefile/CI tell the same story;
-- required verification commands are green;
-- PR/branch state is remotely provable, or the blocker is explicitly documented;
-- no new milestone is falsely advanced.
-
-### D) RTSS workflow checklist
-1. Re-read `ROADMAP.md`, `AGENTS.md`, `CONTRIBUTING.md`, and `docs/INDEX.md`.
-2. Verify public-main truth first.
-3. Compare local branch state against public `main`.
-4. Before editing failing milestone code, inspect the failing suite JSON, fixture generator, actual fixtures, payload schema, and runner schema-routing path; treat executable artifacts as source of truth.
-5. Prefer the smallest possible PR that resolves drift.
-6. Update roadmap/docs if shipped state changed.
-7. Re-run the one-command gate (`make validate`, `make test`, and required conformance targets).
-8. In the PR, include exact verification output and remote-proof status.
-9. Only then resume the next product milestone.
-
-### E) Explicit anti-patterns
-Do not:
-- assume local green == merged;
-- claim a PR exists without remote-verifiable evidence;
-- start the next milestone while repo-truth ambiguity is unresolved;
-- patch expected-fail suites instead of fixing schema-vs-semantic layering when that is the real issue.
-
-### Shipped vs stability wording
-Milestone **shipped** status is tracked in `ROADMAP.md`; RFC labels like **experimental** describe extension maturity/stability and are not, by themselves, proof that a milestone is or is not shipped.
+Keep this file concise and use the canonical RTSS doc for implementation details. In RTSS work, do not advance milestone shipped status without executable artifacts and remote-verifiable evidence.
