@@ -1055,7 +1055,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "3698d71f177adc23d815075ef3f0e2a04b812ea9d7927d2b14f42f8a42fd4256",
+      "combined_sha256": "55c5a86806c86630738850a0b196060cff8f44a2185f198efbecf9ba684437b7",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -1111,7 +1111,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "20c757e48da813daf1db3c6a18617974ecc34fe983465f392f67328c963f84ee"
+          "sha256": "e894e74d9f87f3cd3dde18e34d91a4d2aafc76b8ae249dd17c2fdbdb4663114f"
         },
         {
           "path": "registry/policy_bindings.json",

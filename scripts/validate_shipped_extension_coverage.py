@@ -113,10 +113,55 @@ def main() -> int:
             failures.append("ROADMAP marks M36 shipped, but docs/extensions/RFC_EXT_MARKETPLACE.md is missing")
         if not (ROOT / "schemas/extensions/ext-marketplace-payloads.schema.json").exists():
             failures.append("ROADMAP marks M36 shipped, but schemas/extensions/ext-marketplace-payloads.schema.json is missing")
-        if not (ROOT / "conformance/extensions/MP_MARKETPLACE_0.1.json").exists():
+        mp_suite_path = ROOT / "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        if not mp_suite_path.exists():
             failures.append("ROADMAP marks M36 shipped, but conformance/extensions/MP_MARKETPLACE_0.1.json is missing")
         if not (ROOT / "scripts/generate_marketplace_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/marketplace").glob("*.jsonl")):
             failures.append("ROADMAP marks M36 shipped, but no fixture generator or deterministic marketplace fixtures are present")
+
+        if mp_suite_path.exists():
+            mp_suite = _load_json(mp_suite_path)
+            mp_transcripts = mp_suite.get("transcripts", []) if isinstance(mp_suite, dict) else []
+            mp_payload_map = mp_suite.get("payload_schema_map", {}) if isinstance(mp_suite, dict) else {}
+            mp_types = set(mp_payload_map.keys()) if isinstance(mp_payload_map, dict) else set()
+            marketplace_checks = {c.get("test_id") for c in mp_suite.get("checks", []) if isinstance(c, dict)} if isinstance(mp_suite, dict) else set()
+
+            canonical_m36_types = {
+                "RFW_POST",
+                "BID_SUBMIT",
+                "BID_UPDATE",
+                "BID_WITHDRAW",
+                "AWARD_ISSUE",
+                "AWARD_ACCEPT",
+                "AWARD_DECLINE",
+                "AUCTION_OPEN",
+                "AUCTION_CLOSE",
+                "BLACKBOARD_DECLARE",
+                "BLACKBOARD_POST",
+                "BLACKBOARD_UPDATE",
+                "BLACKBOARD_REMOVE",
+                "SUBCHAT_CREATE",
+                "SUBCHAT_INVITE",
+                "SUBCHAT_JOIN",
+                "ROUTING_DECISION_ATTEST",
+            }
+            legacy_m36_types = {"RFW_DECLARE", "AWARD", "WORK_ORDER_DECLARE", "WORK_ORDER_UPDATE"}
+
+            if len(mp_transcripts) < 2:
+                failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 must include more than one transcript")
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in mp_transcripts):
+                failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 has no expected-fail transcript")
+            if not canonical_m36_types.issubset(mp_types):
+                missing = sorted(canonical_m36_types - mp_types)
+                failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 payload_schema_map misses canonical types: {', '.join(missing)}")
+            if legacy_m36_types & mp_types:
+                present_legacy = sorted(legacy_m36_types & mp_types)
+                failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 still includes legacy marketplace types: {', '.join(present_legacy)}")
+
+            required_semantic_checks = {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01"}
+            if not required_semantic_checks.issubset(marketplace_checks):
+                missing_checks = sorted(required_semantic_checks - marketplace_checks)
+                failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 is missing marketplace semantic checks: {', '.join(missing_checks)}")
 
     if failures:
         for item in failures:
