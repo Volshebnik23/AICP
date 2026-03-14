@@ -97,6 +97,8 @@ def main() -> int:
             ad_types = set(ad_payload_map.keys()) if isinstance(ad_payload_map, dict) else set()
             if "ADMISSION_REJECT" not in ad_types:
                 failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REJECT")
+            if "ADMISSION_REVOKE" not in ad_types:
+                failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REVOKE")
             if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ad_transcripts):
                 failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 has no expected-fail transcript")
 

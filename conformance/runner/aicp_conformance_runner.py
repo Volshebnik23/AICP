@@ -2981,8 +2981,23 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if isinstance(req_id, str) and req_id and req_id not in requests:
                             requests[req_id] = (line_no, payload)
 
-                    if isinstance(req_id, str) and req_id:
+                    if mtype in {"ADMISSION_REJECT", "ADMISSION_REVOKE"} and isinstance(req_id, str) and req_id:
                         _mark_terminal(req_id, mtype.lower())
+
+                    if mtype == "ADMISSION_RENEW" and "AD-ATTEST-01" in enabled_checks:
+                        attestation_refs = payload.get("attestation_refs")
+                        if attestation_refs is not None:
+                            if not isinstance(attestation_refs, list) or not attestation_refs:
+                                add_failure(t_failures, "AD-ATTEST-01", "ADMISSION_RENEW.attestation_refs must be a non-empty array when present", rel_file, line_no)
+                            else:
+                                for ref in attestation_refs:
+                                    if not _valid_ref(ref):
+                                        add_failure(t_failures, "AD-ATTEST-01", f"invalid attestation_ref '{ref}'", rel_file, line_no)
+
+                    if mtype in {"ADMISSION_REQUEST", "ADMISSION_RENEW"} and "AD-ATTEST-01" in enabled_checks:
+                        stake_ref = payload.get("stake_ref")
+                        if stake_ref is not None and not _valid_ref(stake_ref):
+                            add_failure(t_failures, "AD-ATTEST-01", f"invalid stake_ref '{stake_ref}'", rel_file, line_no)
 
             if "AD-NO-SILENT-DROP-01" in enabled_checks:
                 for req_id, (line_no, _) in requests.items():
