@@ -35,3 +35,5 @@ Run before opening a PR:
 - `cd sdk/typescript && npm ci && npm test && cd ../..`
 
 Use the PR template and include risk and compatibility impact.
+
+- Reproduce the exact failing CI/local target first before editing (for example run `make conformance-ext` before touching extension code), then trace suite + generator + schema + runner routing from executable artifacts.

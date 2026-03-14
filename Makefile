@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke lint release-check clean
+.PHONY: validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -130,6 +130,16 @@ template-smoke:
 	node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
 	$(PYTHON) sandbox/run.py out/template-ts-agent/thread.jsonl --no-signature-verify
 	$(PYTHON) templates/protocol-adapter/adapter.py fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl > out/template-protocol-adapter/events.json
+
+prepr:
+	$(MAKE) validate
+	$(MAKE) conformance
+	$(MAKE) conformance-ext
+	$(MAKE) conformance-bindings
+	$(MAKE) test
+	$(MAKE) quickstart-py
+	$(MAKE) quickstart-ts
+	cd sdk/typescript && npm ci && npm test
 
 lint:
 	@echo "Lint target placeholder: no lint checks configured."

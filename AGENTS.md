@@ -169,11 +169,12 @@ RTSS is done only when all are true:
 1. Re-read `ROADMAP.md`, `AGENTS.md`, `CONTRIBUTING.md`, and `docs/INDEX.md`.
 2. Verify public-main truth first.
 3. Compare local branch state against public `main`.
-4. Prefer the smallest possible PR that resolves drift.
-5. Update roadmap/docs if shipped state changed.
-6. Re-run the one-command gate (`make validate`, `make test`, and required conformance targets).
-7. In the PR, include exact verification output and remote-proof status.
-8. Only then resume the next product milestone.
+4. Before editing failing milestone code, inspect the failing suite JSON, fixture generator, actual fixtures, payload schema, and runner schema-routing path; treat executable artifacts as source of truth.
+5. Prefer the smallest possible PR that resolves drift.
+6. Update roadmap/docs if shipped state changed.
+7. Re-run the one-command gate (`make validate`, `make test`, and required conformance targets).
+8. In the PR, include exact verification output and remote-proof status.
+9. Only then resume the next product milestone.
 
 ### E) Explicit anti-patterns
 Do not:
