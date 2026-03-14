@@ -1,0 +1,47 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "sealed-bid",
+    "type": "auction_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#5-auction-mode-semantics-normative",
+    "security_considerations": "Auction mode identifiers should be policy-auditable to prevent ambiguous award handling."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "english",
+    "type": "auction_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#5-auction-mode-semantics-normative",
+    "security_considerations": "Auction mode identifiers should be policy-auditable to prevent ambiguous award handling."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "dutch",
+    "type": "auction_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#5-auction-mode-semantics-normative",
+    "security_considerations": "Auction mode identifiers should be policy-auditable to prevent ambiguous award handling."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "fixed-price",
+    "type": "auction_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#5-auction-mode-semantics-normative",
+    "security_considerations": "Auction mode identifiers should be policy-auditable to prevent ambiguous award handling."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "priority-routing",
+    "type": "auction_modes",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#5-auction-mode-semantics-normative",
+    "security_considerations": "Auction mode identifiers should be policy-auditable to prevent ambiguous award handling."
+  }
+]

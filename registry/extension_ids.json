@@ -113,6 +113,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-ENTERPRISE-BINDINGS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_ENTERPRISE_BINDINGS.md#13-registry-entry",
+    "security_considerations": "Enterprise binding references should be validated and hash-bound to transcript context to resist substitution and replay."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-FACILITATION",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#registry-entry",
@@ -160,7 +169,7 @@
     "maintainer": "AICP Working Group",
     "id": "EXT-MARKETPLACE",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#registry-entry",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#13-registry-entry",
     "security_considerations": "Awards must bind to bids and RFW IDs to prevent winner substitution."
   },
   {

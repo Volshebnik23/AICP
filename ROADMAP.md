@@ -89,21 +89,25 @@ _Last updated: 2026-03-14_
 - **Shipped:** transcript-level `OBS_SIGNAL` artifacts now cover trace correlation, standardized SLA/error signals, and normalized metering events with machine-checkable negative vectors.
 - **Next concrete step:** keep M27 observability stable while enterprise binding integrations advance under M29.
 
-### ⏳ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
-- **Progress:** M29 remains pending in executable surface; enterprise bindings artifacts (RFC/schema/fixtures/conformance) are not yet landed on public `main`.
-- **Progress:** roadmap/docs claims were ahead of executable evidence and are being synchronized via RTSS.
-- **Next concrete step:** land minimal `EXT-ENTERPRISE-BINDINGS` executable artifacts (RFC + schema + deterministic fixtures + extension conformance wiring) before advancing follow-on milestones.
+### ✅ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
+- **Shipped:** `EXT-ENTERPRISE-BINDINGS` RFC + strict payload schema + deterministic generator-backed fixtures + executable extension conformance (`EB-ENTERPRISE-BINDINGS-0.1`) are in-repo and wired through `make conformance-ext`.
+- **Shipped:** enterprise binding surface now standardizes OpenAPI operation mapping, OData retrieval target mapping, and ABAC/RBAC/OPA policy cross-references as transcript-auditable references.
+- **Next concrete step:** stabilize M29 contract/tool binding references while adjacent M34 security/playbook hardening progresses.
 
-### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
-- **Progress:** Implementer-facing security best-practices doc is shipped at `docs/security/SECURITY_BEST_PRACTICES.md`.
-- **Next concrete step:** add production cookbook depth (mediated blocking/OAuth bridge/tool pinning) and finish security-considerations completion across extension docs.
-- **Exit:** Security best practices + deployment cookbooks + security-considerations completion.
+### ✅ M34 — Security & implementer playbooks (MCP-level doc completeness)
+- **Shipped:** Implementer-facing security best-practices baseline plus production cookbooks for mediated blocking, OAuth bridge mapping, tool catalog pinning, and adjacent fresh-content operation are in `docs/playbooks/`.
+- **Shipped:** extension-level security-considerations coverage now includes concrete implementation warnings across shipped enterprise-control and supply-chain-adjacent RFCs.
+- **Next concrete step:** keep M34 guidance operationally current as extension suites and deployment patterns evolve.
 
-### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
-- **Exit:** EXT-ADMISSION + EXT-QUEUE-LEASES + overload reason codes + conformance for crowded-room stability.
+### ✅ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
+- **Shipped:** `EXT-ADMISSION` and `EXT-QUEUE-LEASES` now provide transcript-native request/offer/accept/reject/revoke, lease grant/ack/nack/release, and overload/throttle evidence with deterministic extension conformance.
+- **Shipped:** crowd-control sanction paths are machine-readable (no-silent-drop), with reason-code hooks and trust/attestation references for anti-Sybil policy integration.
+- **Next concrete step:** stabilize M35 operational patterns while M36 coordination/marketplace surfaces advance.
 
-### ⏳ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
-- **Exit:** EXT-MARKETPLACE + EXT-BLACKBOARD + subchat semantics, with fixtures showing RFW→bid→award→workflow→close at scale.
+### ✅ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
+- **Shipped:** `EXT-MARKETPLACE` now provides transcript-native RFW/bid/update/withdraw/award lifecycle, auction open/close modes, blackboard coordination, and subchat routing artifacts with deterministic conformance fixtures.
+- **Shipped:** marketplace orchestration paths now include admission-gated participation checks, routing-attestation evidence hooks, and observability correlation vectors.
+- **Next concrete step:** advance M37 provenance/responsibility transfer while keeping M36 coordination semantics operationally stable.
 
 ### ⏳ M37 — Service-chaining accountability (provenance graph + responsibility transfer + escrowed actions)
 - **Exit:** EXT-PROVENANCE-GRAPH + EXT-RESPONSIBILITY + escrowed action flow binding to TOOL_GATING/M26, with audit-ready conformance.
@@ -116,9 +120,9 @@ _Last updated: 2026-03-14_
 2) Interop hardening: M22 + M19
 3) Trust & tooling: M20 + M21
 4) Enterprise controls: M23 + M24 + M26 + M28
-5) Crowd-ready bazaars: M35
+5) Crowd-ready bazaars: M35 (shipped baseline; keep hardening with ops playbooks)
 6) Coordination & service chaining: M36 + M37
 7) Internet-scale audit (recommended before large public feeds): M31
 8) Agent media & brand reception feeds: M38
 9) Optional platform interop: M32
-10) Ops + docs completeness: M34 (with M27 observability shipped; M29 after executable artifacts land)
+10) Ops + docs completeness: M34 (with M27 and M29 executable enterprise-control surfaces shipped)
