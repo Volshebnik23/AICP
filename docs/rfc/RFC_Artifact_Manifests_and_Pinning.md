@@ -70,7 +70,13 @@ M30 baseline conformance MUST verify:
 - expected-fail shadowing case,
 - expected-pass explicit renegotiated upgrade.
 
-## 7. Deferred topics (non-goals of this baseline)
+## 7. Security considerations
+
+- Enforce exact tuple matching (`issuer_id`, `issuer_scoped_id`, `version`, `content_hash`) before execution.
+- Treat hash mismatch on a previously pinned manifest as potential supply-chain attack, not as automatic upgrade.
+- Example: if `manifest_id` matches but `issuer_id` changes, block execution and require explicit renegotiated pin amendment.
+
+## 8. Deferred topics (non-goals of this baseline)
 Explicitly deferred:
 - online transparency log ecosystems,
 - package repository lifecycle semantics,
