@@ -51,6 +51,14 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 
 Note: document/fixture/schema presence does not by itself mean a milestone is shipped; roadmap + executable conformance surface define release maturity.
 
+
+## M34 security & operations cookbook quickstart
+
+- [Mediated Blocking in Production](playbooks/Mediated_Blocking_in_Production.md)
+- [OAuth Bridge Cookbook](playbooks/OAuth_Bridge_Cookbook.md)
+- [Tool Catalog Pinning Cookbook](playbooks/Tool_Catalog_Pinning_Cookbook.md)
+- [Context Hub Fresh Content Cookbook](playbooks/Context_Hub_Fresh_Content_Cookbook.md)
+
 ## Core docs map
 
 - Repo front door: [README.md](../README.md)

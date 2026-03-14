@@ -99,8 +99,10 @@ _Last updated: 2026-03-14_
 - **Shipped:** extension-level security-considerations coverage now includes concrete implementation warnings across shipped enterprise-control and supply-chain-adjacent RFCs.
 - **Next concrete step:** keep M34 guidance operationally current as extension suites and deployment patterns evolve.
 
-### ⏳ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
-- **Exit:** EXT-ADMISSION + EXT-QUEUE-LEASES + overload reason codes + conformance for crowded-room stability.
+### ✅ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
+- **Shipped:** `EXT-ADMISSION` and `EXT-QUEUE-LEASES` now provide transcript-native request/offer/accept/reject/revoke, lease grant/ack/nack/release, and overload/throttle evidence with deterministic extension conformance.
+- **Shipped:** crowd-control sanction paths are machine-readable (no-silent-drop), with reason-code hooks and trust/attestation references for anti-Sybil policy integration.
+- **Next concrete step:** stabilize M35 operational patterns while M36 coordination/marketplace surfaces advance.
 
 ### ⏳ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
 - **Exit:** EXT-MARKETPLACE + EXT-BLACKBOARD + subchat semantics, with fixtures showing RFW→bid→award→workflow→close at scale.
@@ -116,7 +118,7 @@ _Last updated: 2026-03-14_
 2) Interop hardening: M22 + M19
 3) Trust & tooling: M20 + M21
 4) Enterprise controls: M23 + M24 + M26 + M28
-5) Crowd-ready bazaars: M35
+5) Crowd-ready bazaars: M35 (shipped baseline; keep hardening with ops playbooks)
 6) Coordination & service chaining: M36 + M37
 7) Internet-scale audit (recommended before large public feeds): M31
 8) Agent media & brand reception feeds: M38

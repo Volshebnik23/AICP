@@ -59,6 +59,29 @@ def main() -> int:
         if not (ROOT / "scripts/generate_enterprise_bindings_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/enterprise_bindings").glob("*.jsonl")):
             failures.append("ROADMAP marks M29 shipped, but no fixture generator or deterministic fixtures for enterprise bindings are present")
 
+
+    if _has_shipped_milestone(roadmap, "M35"):
+        if "conformance/extensions/AD_ADMISSION_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M35 shipped, but Makefile conformance-ext does not include AD_ADMISSION_0.1")
+        if "conformance/extensions/QL_QUEUE_LEASES_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M35 shipped, but Makefile conformance-ext does not include QL_QUEUE_LEASES_0.1")
+        if not (ROOT / "docs/extensions/RFC_EXT_ADMISSION.md").exists():
+            failures.append("ROADMAP marks M35 shipped, but docs/extensions/RFC_EXT_ADMISSION.md is missing")
+        if not (ROOT / "docs/extensions/RFC_EXT_QUEUE_LEASES.md").exists():
+            failures.append("ROADMAP marks M35 shipped, but docs/extensions/RFC_EXT_QUEUE_LEASES.md is missing")
+        if not (ROOT / "schemas/extensions/ext-admission-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M35 shipped, but schemas/extensions/ext-admission-payloads.schema.json is missing")
+        if not (ROOT / "schemas/extensions/ext-queue-leases-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M35 shipped, but schemas/extensions/ext-queue-leases-payloads.schema.json is missing")
+        if not (ROOT / "conformance/extensions/AD_ADMISSION_0.1.json").exists():
+            failures.append("ROADMAP marks M35 shipped, but conformance/extensions/AD_ADMISSION_0.1.json is missing")
+        if not (ROOT / "conformance/extensions/QL_QUEUE_LEASES_0.1.json").exists():
+            failures.append("ROADMAP marks M35 shipped, but conformance/extensions/QL_QUEUE_LEASES_0.1.json is missing")
+        if not (ROOT / "scripts/generate_admission_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/admission").glob("*.jsonl")):
+            failures.append("ROADMAP marks M35 shipped, but no fixture generator or deterministic admission fixtures are present")
+        if not (ROOT / "scripts/generate_queue_leases_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/queue_leases").glob("*.jsonl")):
+            failures.append("ROADMAP marks M35 shipped, but no fixture generator or deterministic queue-lease fixtures are present")
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

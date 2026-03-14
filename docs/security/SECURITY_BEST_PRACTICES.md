@@ -118,4 +118,4 @@ Relevant docs:
 - Enforcement topology choices: `docs/architecture/Enforcement_Models.md`
 - Adapter integration pattern: `docs/guides/Protocol_Adapter_Gateway.md`
 - Security hardening ops guide: `security_review/OPS_HARDENING_GUIDE.md`
-- Mediated blocking production playbook: `docs/guides/MEDIATED_BLOCKING_PRODUCTION.md`
+- Mediated blocking production playbook: `docs/playbooks/Mediated_Blocking_in_Production.md`

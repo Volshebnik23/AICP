@@ -18,6 +18,7 @@ Extension RFCs live in this folder (`docs/extensions/`).
 - M28 (`RFC_EXT_IAM_BRIDGE.md`) is shipped with executable extension conformance coverage for issuer/scopes/roles/groups mapping, delegated-identity binding linkage, and step-up/approval checks.
 - M27 (`RFC_EXT_OBSERVABILITY.md`) is shipped with executable extension conformance coverage for transcript-level tracing, SLA/error signaling, and normalized metering events.
 - M29 (`RFC_EXT_ENTERPRISE_BINDINGS.md`) is shipped with executable extension conformance coverage for OpenAPI/OData binding references and ABAC/RBAC/OPA policy cross-references.
+- M35 (`RFC_EXT_ADMISSION.md`, `RFC_EXT_QUEUE_LEASES.md`) is shipped with executable admission/queue-lease crowd-control conformance coverage and explicit overload signaling.
 
 
 ## Where to look next
