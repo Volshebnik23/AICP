@@ -2,22 +2,118 @@
   "suite_id": "AD-ADMISSION-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "AD-ADMISSION-0.1",
+  "description": "EXT-ADMISSION conformance checks for explicit admission lifecycle, renewal linkage, and no-silent-drop behavior.",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
   "payload_schema_ref": "schemas/extensions/ext-admission-payloads.schema.json",
   "payload_schema_map": {
     "ADMISSION_REQUEST": "#/$defs/ADMISSION_REQUEST",
     "ADMISSION_OFFER": "#/$defs/ADMISSION_OFFER",
-    "ADMISSION_ACCEPT": "#/$defs/ADMISSION_ACCEPT"
+    "ADMISSION_ACCEPT": "#/$defs/ADMISSION_ACCEPT",
+    "ADMISSION_REJECT": "#/$defs/ADMISSION_REJECT",
+    "ADMISSION_RENEW": "#/$defs/ADMISSION_RENEW",
+    "ADMISSION_REVOKE": "#/$defs/ADMISSION_REVOKE"
   },
   "transcripts": [
     {
       "id": "AD-01",
-      "path": "fixtures/extensions/admission/AD-01_admission_pass.jsonl",
+      "path": "fixtures/extensions/admission/AD-01_request_offer_accept_pass.jsonl",
       "expected_message_types": [
         "ADMISSION_REQUEST",
         "ADMISSION_OFFER",
         "ADMISSION_ACCEPT"
+      ]
+    },
+    {
+      "id": "AD-02",
+      "path": "fixtures/extensions/admission/AD-02_request_reject_with_reason_pass.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST",
+        "ADMISSION_REJECT"
+      ]
+    },
+    {
+      "id": "AD-03",
+      "path": "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST",
+        "ADMISSION_OFFER",
+        "ADMISSION_ACCEPT",
+        "ATTEST_ACTION",
+        "APPROVAL_CHALLENGE",
+        "APPROVAL_GRANT",
+        "ADMISSION_RENEW",
+        "ADMISSION_OFFER",
+        "ADMISSION_ACCEPT"
+      ]
+    },
+    {
+      "id": "AD-07",
+      "path": "fixtures/extensions/admission/AD-07_revoke_with_reason_pass.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST",
+        "ADMISSION_OFFER",
+        "ADMISSION_ACCEPT",
+        "ADMISSION_REVOKE"
+      ]
+    },
+    {
+      "id": "AD-04",
+      "path": "fixtures/extensions/admission/AD-04_reject_without_reason_expected_fail.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST",
+        "ADMISSION_REJECT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AD-REASON-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "AD-05",
+      "path": "fixtures/extensions/admission/AD-05_offer_scope_violation_expected_fail.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST",
+        "ADMISSION_OFFER",
+        "ADMISSION_REJECT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AD-OFFER-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "AD-06",
+      "path": "fixtures/extensions/admission/AD-06_invalid_attestation_ref_expected_fail.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST",
+        "ADMISSION_REJECT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AD-ATTEST-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "AD-08",
+      "path": "fixtures/extensions/admission/AD-08_missing_terminal_outcome_expected_fail.jsonl",
+      "expected_message_types": [
+        "ADMISSION_REQUEST"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AD-NO-SILENT-DROP-01",
+          "min_count": 1
+        }
       ]
     }
   ],
@@ -32,15 +128,11 @@
     },
     {
       "test_id": "CN-PAYLOAD-SCHEMA-01",
-      "description": "Validate payload against extension payload schema"
+      "description": "Validate payload against EXT-ADMISSION payload schema"
     },
     {
       "test_id": "CT-HASH-CHAIN-01",
       "description": "prev_msg_hash equals previous message_hash when present"
-    },
-    {
-      "test_id": "CT-MESSAGE-HASH-01",
-      "description": "recompute message_hash from message body and compare"
     },
     {
       "test_id": "CT-PREV-MSG-REQUIRED-01",
@@ -48,12 +140,41 @@
     },
     {
       "test_id": "CT-INVARIANTS-01",
-      "description": "session_id constant and message_id unique"
+      "description": "session_id is constant and message_id values are unique per transcript"
     },
     {
       "test_id": "CT-SEQUENCE-01",
       "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "AD-REQUEST-01",
+      "description": "admission requests must declare requested roles/scopes and risk tier"
+    },
+    {
+      "test_id": "AD-OFFER-01",
+      "description": "admission offer roles/scopes must be coherent with request and include quota/lease profile"
+    },
+    {
+      "test_id": "AD-REASON-01",
+      "description": "reject/revoke/renew reason_code values must be registered or namespaced vendor:/org:"
+    },
+    {
+      "test_id": "AD-ATTEST-01",
+      "description": "attestation/stake references must be well-formed and machine-verifiable in format"
+    },
+    {
+      "test_id": "AD-RENEW-01",
+      "description": "renewal must reference a prior accepted admission context"
+    },
+    {
+      "test_id": "AD-NO-SILENT-DROP-01",
+      "description": "every admission request must conclude with explicit accept/reject/revoke evidence"
     }
   ],
-  "compatibility_mark": "AICP-EXT-ADMISSION-0.1"
+  "compatibility_mark": "AICP-EXT-ADMISSION-0.1",
+  "extension_id": "EXT-ADMISSION"
 }

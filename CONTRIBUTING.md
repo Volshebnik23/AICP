@@ -19,7 +19,7 @@ Quick pre-flight checklist:
 
 ## When to do a Repo-Truth Sync Sprint (RTSS)
 
-If local assumptions, public `main`, roadmap/docs, and executable CI surfaces drift out of sync, pause feature work and run a small **Repo-Truth Sync Sprint (RTSS)** PR first. See `AGENTS.md` for the canonical RTSS definition and workflow. A clean working tree is not proof there is nothing to PR—always compare against public `main` and verify remote branch/PR state.
+If local assumptions, public `main`, roadmap/docs, and executable CI surfaces drift out of sync, pause feature work and run a small **Repo-Truth Sync Sprint (RTSS)** PR first. See `docs/process/RTSS.md` for the canonical RTSS definition and workflow. A clean working tree is not proof there is nothing to PR—always compare against public `main` and verify remote branch/PR state.
 
 ## Local checks
 
@@ -35,3 +35,5 @@ Run before opening a PR:
 - `cd sdk/typescript && npm ci && npm test && cd ../..`
 
 Use the PR template and include risk and compatibility impact.
+
+Reminder: reproduce the exact failing CI/local target first before editing (for example run `make conformance-ext` before touching extension code), then trace suite + generator + schema + runner routing from executable artifacts.

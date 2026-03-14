@@ -1,0 +1,1 @@
+{"session_id":"sad-08","message_id":"m1","timestamp":"2026-03-20T11:10:00Z","sender":"agent:pending","message_type":"ADMISSION_REQUEST","contract_id":"c-ad-08","payload":{"request_id":"req-ad-08","requested_roles":["participant"],"requested_scopes":["queue.post"],"risk_tier":"low"},"message_hash":"sha256:S2R_xul8k_McktNOHt81D_UHwrOHFM02v1wT5FSlvLQ"}

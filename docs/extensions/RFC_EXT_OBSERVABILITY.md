@@ -107,6 +107,8 @@ Conformance MUST cover at least:
 
 ## 9. Security considerations
 
+- Example: treat an `OBS_SIGNAL` with mismatched `correlation_ref.tool_call_id` as non-authoritative telemetry for that action and do not use it as sole evidence of compliant execution.
+
 - Treat observability events as audit artifacts; preserve hash-chain integrity.
 - Avoid embedding secrets in trace/metering references.
 - Correlation references should point to stable protocol identifiers only.
