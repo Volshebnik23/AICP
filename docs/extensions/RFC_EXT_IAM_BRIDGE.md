@@ -1,6 +1,6 @@
 # RFC_EXT_IAM_BRIDGE (EXT-IAM-BRIDGE)
 
-Status: Experimental  
+Status: Experimental (extension maturity); roadmap milestone M28 is shipped in `ROADMAP.md`  
 AICP Version: 0.1
 
 ## 1. Purpose

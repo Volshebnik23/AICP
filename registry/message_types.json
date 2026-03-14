@@ -521,6 +521,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "OBS_SIGNAL",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md#3-message-surface-normative",
+    "security_considerations": "OBS_SIGNAL payloads must remain transport-neutral and correlate to verifiable transcript targets."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "OVERLOAD_SIGNAL",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
