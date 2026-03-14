@@ -127,6 +127,13 @@ def main() -> int:
             mp_payload_map = mp_suite.get("payload_schema_map", {}) if isinstance(mp_suite, dict) else {}
             mp_types = set(mp_payload_map.keys()) if isinstance(mp_payload_map, dict) else set()
             marketplace_checks = {c.get("test_id") for c in mp_suite.get("checks", []) if isinstance(c, dict)} if isinstance(mp_suite, dict) else set()
+            message_registry_path = ROOT / "registry/message_types.json"
+            message_registry = _load_json(message_registry_path) if message_registry_path.exists() else []
+            registry_types = {
+                entry.get("id")
+                for entry in message_registry
+                if isinstance(entry, dict) and entry.get("type") == "message_types" and isinstance(entry.get("id"), str)
+            }
             mp_expected_failure_ids = {
                 f.get("test_id")
                 for t in mp_transcripts
@@ -166,6 +173,12 @@ def main() -> int:
             if legacy_m36_types & mp_types:
                 present_legacy = sorted(legacy_m36_types & mp_types)
                 failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 still includes legacy marketplace types: {', '.join(present_legacy)}")
+            if not canonical_m36_types.issubset(registry_types):
+                missing_registry = sorted(canonical_m36_types - registry_types)
+                failures.append(f"ROADMAP marks M36 shipped, but registry/message_types.json misses canonical marketplace types: {', '.join(missing_registry)}")
+            if legacy_m36_types & registry_types:
+                present_legacy_registry = sorted(legacy_m36_types & registry_types)
+                failures.append(f"ROADMAP marks M36 shipped, but registry/message_types.json still includes legacy marketplace types: {', '.join(present_legacy_registry)}")
 
             required_semantic_checks = {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01"}
             if not required_semantic_checks.issubset(marketplace_checks):

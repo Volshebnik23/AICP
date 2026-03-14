@@ -3135,6 +3135,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 if not found_obs:
                     add_failure(t_failures, "QL-OVERLOAD-01", "requires_obs_correlation=true but no OBS_SIGNAL correlation_ref.message_hash targets a QUEUE_LEASE_GRANT", rel_file, first_contract_line_no)
 
+        # Marketplace extension semantic-enforcement path (M36):
+        # This block intentionally handles RFW/BID/AWARD/AUCTION/BLACKBOARD/SUBCHAT
+        # linkage checks separately from schema validation to preserve schema-vs-semantic layering.
         if any(check in enabled_checks for check in {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01", "MP-OBS-CORRELATION-01", "MP-ROUTING-ATTEST-01"}):
             mp_cfg: dict[str, Any] = {}
             for _, msg in rows:
