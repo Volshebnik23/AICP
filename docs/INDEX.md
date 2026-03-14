@@ -62,4 +62,5 @@ Note: document/fixture/schema presence does not by itself mean a milestone is sh
 - Solution playbooks: [docs/playbooks/](playbooks/)
 - Enforcement models: [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md)
 - Security best practices: [docs/security/SECURITY_BEST_PRACTICES.md](security/SECURITY_BEST_PRACTICES.md)
+- Repo-truth recovery workflow (RTSS): [docs/process/RTSS.md](process/RTSS.md)
 - Canonical flows: [docs/flows/AICP_Canonical_Flows.md](flows/AICP_Canonical_Flows.md)
