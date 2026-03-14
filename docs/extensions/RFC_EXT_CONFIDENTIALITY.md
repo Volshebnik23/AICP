@@ -77,6 +77,8 @@ Checks include:
 
 ## 7. Security and compatibility notes
 
+- Example: if negotiated `selected.privacy_mode=redacted` but contract omits `redaction_artifact_refs`, fail policy admission instead of treating missing references as implied compliance.
+
 - Hash binding prevents silent mode mismatch between negotiation and contract.
 - Required artifact fields reduce unverifiable “privacy mode promises.”
 - Existing legacy CAPNEG privacy modes remain supported in registry for backward compatibility.

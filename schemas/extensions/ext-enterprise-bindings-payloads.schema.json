@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-enterprise-bindings-payloads.schema.json",
+  "title": "AICP EXT-ENTERPRISE-BINDINGS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "OpenApiBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "spec_ref",
+        "tool_id"
+      ],
+      "properties": {
+        "binding_id": {"$ref": "#/$defs/NonEmptyString"},
+        "spec_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "operation_id": {"type": "string"},
+        "tool_id": {"$ref": "#/$defs/NonEmptyString"},
+        "projection_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "auth_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "policy_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "binding_version": {"$ref": "#/$defs/NonEmptyString"},
+        "namespace": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "ODataBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "service_ref",
+        "target_ref"
+      ],
+      "properties": {
+        "binding_id": {"$ref": "#/$defs/NonEmptyString"},
+        "service_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "target_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "select_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "filter_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "orderby_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "page_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "binding_version": {"$ref": "#/$defs/NonEmptyString"},
+        "namespace": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "PolicyXref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xref_id",
+        "policy_kind",
+        "policy_ref"
+      ],
+      "properties": {
+        "xref_id": {"$ref": "#/$defs/NonEmptyString"},
+        "policy_kind": {"$ref": "#/$defs/NonEmptyString"},
+        "policy_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "subject_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "resource_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "action_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "opa_package_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "EnterpriseBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "openapi_bindings",
+        "odata_bindings",
+        "policy_xrefs"
+      ],
+      "properties": {
+        "openapi_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/OpenApiBinding"}
+        },
+        "odata_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/ODataBinding"}
+        },
+        "policy_xrefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/PolicyXref"}
+        },
+        "requires_obs_correlation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CONTRACT_PROPOSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract"],
+      "properties": {
+        "contract": {
+          "type": "object",
+          "required": ["ext"],
+          "properties": {
+            "ext": {
+              "type": "object",
+              "required": ["enterprise_bindings"],
+              "properties": {
+                "enterprise_bindings": {"$ref": "#/$defs/EnterpriseBindings"}
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+    "TOOL_CALL_REQUEST": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["tool_call_id", "tool_id", "ext"],
+      "properties": {
+        "tool_call_id": {"$ref": "#/$defs/NonEmptyString"},
+        "tool_id": {"$ref": "#/$defs/NonEmptyString"},
+        "arguments": {"type": "object"},
+        "ext": {
+          "type": "object",
+          "required": ["enterprise_bindings"],
+          "properties": {
+            "enterprise_bindings": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["binding_ref_id"],
+              "properties": {
+                "binding_ref_id": {"$ref": "#/$defs/NonEmptyString"}
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
   "suite_id": "QL-QUEUE-LEASES-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "QL-QUEUE-LEASES-0.1",
+  "description": "EXT-QUEUE-LEASES conformance checks for lease bounds, overload signaling, and explicit backpressure semantics.",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
   "payload_schema_ref": "schemas/extensions/ext-queue-leases-payloads.schema.json",
   "payload_schema_map": {
@@ -17,53 +17,57 @@
   "transcripts": [
     {
       "id": "QL-01",
-      "path": "fixtures/extensions/queue_leases/QL-01_lease_flow_pass.jsonl",
-      "expected_message_types": [
-        "CONTRACT_PROPOSE",
-        "CONTRACT_ACCEPT",
-        "QUEUE_ENQUEUE",
-        "QUEUE_LEASE_GRANT",
-        "CONTENT_MESSAGE",
-        "QUEUE_ACK",
-        "QUEUE_NACK",
-        "OVERLOAD_SIGNAL",
-        "QUEUE_RELEASE"
-      ]
+      "path": "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "QUEUE_ENQUEUE", "QUEUE_LEASE_GRANT", "TOOL_CALL_REQUEST", "QUEUE_ACK", "QUEUE_RELEASE", "OBS_SIGNAL"]
+    },
+    {
+      "id": "QL-02",
+      "path": "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "QUEUE_ENQUEUE", "QUEUE_LEASE_GRANT", "QUEUE_NACK", "THROTTLE_UPDATE"]
+    },
+    {
+      "id": "QL-03",
+      "path": "fixtures/extensions/queue_leases/QL-03_overload_signal_degraded_mode_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OVERLOAD_SIGNAL", "THROTTLE_UPDATE"]
+    },
+    {
+      "id": "QL-04",
+      "path": "fixtures/extensions/queue_leases/QL-04_interaction_without_lease_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "TOOL_CALL_REQUEST"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "QL-BOUND-01", "min_count": 1}]
+    },
+    {
+      "id": "QL-05",
+      "path": "fixtures/extensions/queue_leases/QL-05_lease_overrun_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "QUEUE_LEASE_GRANT", "TOOL_CALL_REQUEST", "TOOL_CALL_REQUEST"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "QL-OVERRUN-01", "min_count": 1}]
+    },
+    {
+      "id": "QL-06",
+      "path": "fixtures/extensions/queue_leases/QL-06_invalid_overload_severity_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "OVERLOAD_SIGNAL"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "QL-OVERLOAD-01", "min_count": 1}]
     }
   ],
   "checks": [
-    {
-      "test_id": "CT-SCHEMA-JSONL-01",
-      "description": "Validate each JSONL record against Core message schema"
-    },
-    {
-      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
-      "description": "message_type values must be registered in registry/message_types.json"
-    },
-    {
-      "test_id": "CN-PAYLOAD-SCHEMA-01",
-      "description": "Validate payload against extension payload schema"
-    },
-    {
-      "test_id": "CT-HASH-CHAIN-01",
-      "description": "prev_msg_hash equals previous message_hash when present"
-    },
-    {
-      "test_id": "CT-MESSAGE-HASH-01",
-      "description": "recompute message_hash from message body and compare"
-    },
-    {
-      "test_id": "CT-PREV-MSG-REQUIRED-01",
-      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
-    },
-    {
-      "test_id": "CT-INVARIANTS-01",
-      "description": "session_id constant and message_id unique"
-    },
-    {
-      "test_id": "CT-SEQUENCE-01",
-      "description": "message_type sequence matches expected per transcript"
-    }
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-QUEUE-LEASES payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "QL-LEASE-01", "description": "queue lease grant must include valid ttl and interaction bounds"},
+    {"test_id": "QL-BOUND-01", "description": "when lease-required, interactions must reference active lease"},
+    {"test_id": "QL-OVERRUN-01", "description": "interaction counts must not exceed granted lease limits"},
+    {"test_id": "QL-NACK-01", "description": "queue nack must include machine-readable reason and retry guidance"},
+    {"test_id": "QL-OVERLOAD-01", "description": "overload signal must include valid severity and backpressure guidance"},
+    {"test_id": "QL-RELEASE-01", "description": "queue release must reference a valid prior lease"}
   ],
-  "compatibility_mark": "AICP-EXT-QUEUE-LEASES-0.1"
+  "compatibility_mark": "AICP-EXT-QUEUE-LEASES-0.1",
+  "extension_id": "EXT-QUEUE-LEASES"
 }

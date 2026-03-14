@@ -1,5 +1,7 @@
 ## Repo-Truth Sync Sprint (RTSS)
 
+Canonical reference: `docs/process/RTSS.md` (use this template as a concise execution record, not a full process spec).
+
 ### Problem / context
 - What repo-truth ambiguity or drift blocked progress?
 

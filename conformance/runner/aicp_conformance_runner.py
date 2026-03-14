@@ -2849,6 +2849,276 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 if bound_tool_ids and obs_tool_corr.isdisjoint(bound_tool_ids):
                     add_failure(t_failures, "EB-OBS-CORRELATION-01", "no OBS_SIGNAL correlation_ref.tool_call_id matches enterprise-bound TOOL_CALL_REQUEST", rel_file, tool_rows[-1][0] if tool_rows else first_contract_line_no)
 
+        if any(check in enabled_checks for check in {"AD-REQUEST-01", "AD-OFFER-01", "AD-REASON-01", "AD-ATTEST-01", "AD-RENEW-01", "AD-NO-SILENT-DROP-01"}):
+            requests: dict[str, tuple[int, dict[str, Any]]] = {}
+            offers_by_request: dict[str, list[dict[str, Any]]] = {}
+            terminal_by_request: dict[str, set[str]] = {}
+            accepted_request_ids: set[str] = set()
+
+            def _mark_terminal(req_id: str, kind: str) -> None:
+                terminal_by_request.setdefault(req_id, set()).add(kind)
+
+            all_message_ids = {m.get("message_id") for _, m in rows if isinstance(m.get("message_id"), str)}
+            all_message_hashes = {m.get("message_hash") for _, m in rows if isinstance(m.get("message_hash"), str)}
+            all_objhashes: set[str] = set()
+            for _, m in rows:
+                payload = m.get("payload") if isinstance(m.get("payload"), dict) else None
+                if payload is None:
+                    continue
+                for _, _, oh in _collect_object_hash_triples(payload):
+                    if isinstance(oh, str) and oh:
+                        all_objhashes.add(oh)
+
+            def _valid_ref(value: Any) -> bool:
+                if not isinstance(value, str) or not value:
+                    return False
+                if value.startswith("msgid:"):
+                    return value[len("msgid:"):] in all_message_ids
+                if value.startswith("msghash:"):
+                    return value[len("msghash:"):] in all_message_hashes
+                if value.startswith("objhash:"):
+                    return value[len("objhash:"):] in all_objhashes
+                if value.startswith("att:") or value.startswith("stake:"):
+                    return True
+                return False
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                req_id = payload.get("request_id") if isinstance(payload.get("request_id"), str) else None
+
+                if mtype == "ADMISSION_REQUEST":
+                    if "AD-REQUEST-01" in enabled_checks:
+                        roles = payload.get("requested_roles")
+                        scopes = payload.get("requested_scopes")
+                        risk = payload.get("risk_tier")
+                        if not isinstance(req_id, str) or not req_id:
+                            add_failure(t_failures, "AD-REQUEST-01", "ADMISSION_REQUEST.request_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(roles, list) or not roles or not all(isinstance(x, str) and x for x in roles):
+                            add_failure(t_failures, "AD-REQUEST-01", "ADMISSION_REQUEST.requested_roles must be a non-empty string array", rel_file, line_no)
+                        if not isinstance(scopes, list) or not scopes or not all(isinstance(x, str) and x for x in scopes):
+                            add_failure(t_failures, "AD-REQUEST-01", "ADMISSION_REQUEST.requested_scopes must be a non-empty string array", rel_file, line_no)
+                        if not isinstance(risk, str) or not risk:
+                            add_failure(t_failures, "AD-REQUEST-01", "ADMISSION_REQUEST.risk_tier must be a non-empty string", rel_file, line_no)
+                    if isinstance(req_id, str) and req_id:
+                        requests[req_id] = (line_no, payload)
+
+                    if "AD-ATTEST-01" in enabled_checks:
+                        attestation_refs = payload.get("attestation_refs")
+                        if attestation_refs is not None:
+                            if not isinstance(attestation_refs, list) or not attestation_refs:
+                                add_failure(t_failures, "AD-ATTEST-01", "ADMISSION_REQUEST.attestation_refs must be a non-empty array when present", rel_file, line_no)
+                            else:
+                                for ref in attestation_refs:
+                                    if not _valid_ref(ref):
+                                        add_failure(t_failures, "AD-ATTEST-01", f"invalid attestation_ref '{ref}'", rel_file, line_no)
+                        stake_ref = payload.get("stake_ref")
+                        if stake_ref is not None and (not isinstance(stake_ref, str) or not stake_ref):
+                            add_failure(t_failures, "AD-ATTEST-01", "ADMISSION_REQUEST.stake_ref must be a non-empty string when present", rel_file, line_no)
+
+                elif mtype == "ADMISSION_OFFER":
+                    if "AD-OFFER-01" in enabled_checks:
+                        offer_id = payload.get("offer_id")
+                        granted_roles = payload.get("granted_roles")
+                        granted_scopes = payload.get("granted_scopes")
+                        quota_class = payload.get("quota_class")
+                        lease_profile = payload.get("lease_profile")
+                        if not isinstance(req_id, str) or not req_id:
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.request_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(offer_id, str) or not offer_id:
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.offer_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(granted_roles, list) or not granted_roles or not all(isinstance(x, str) and x for x in granted_roles):
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.granted_roles must be a non-empty string array", rel_file, line_no)
+                        if not isinstance(granted_scopes, list) or not granted_scopes or not all(isinstance(x, str) and x for x in granted_scopes):
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.granted_scopes must be a non-empty string array", rel_file, line_no)
+                        if not isinstance(quota_class, str) or not quota_class:
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.quota_class must be a non-empty string", rel_file, line_no)
+                        if not isinstance(lease_profile, str) or not lease_profile:
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.lease_profile must be a non-empty string", rel_file, line_no)
+
+                        if isinstance(req_id, str) and req_id in requests:
+                            req_payload = requests[req_id][1]
+                            req_roles = set(req_payload.get("requested_roles") or []) if isinstance(req_payload.get("requested_roles"), list) else set()
+                            req_scopes = set(req_payload.get("requested_scopes") or []) if isinstance(req_payload.get("requested_scopes"), list) else set()
+                            off_roles = set(granted_roles or []) if isinstance(granted_roles, list) else set()
+                            off_scopes = set(granted_scopes or []) if isinstance(granted_scopes, list) else set()
+                            if req_roles and not off_roles.issubset(req_roles):
+                                add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.granted_roles must be subset of requested_roles", rel_file, line_no)
+                            if req_scopes and not off_scopes.issubset(req_scopes):
+                                add_failure(t_failures, "AD-OFFER-01", "ADMISSION_OFFER.granted_scopes must be subset of requested_scopes", rel_file, line_no)
+                        elif isinstance(req_id, str):
+                            add_failure(t_failures, "AD-OFFER-01", f"ADMISSION_OFFER references unknown request_id '{req_id}'", rel_file, line_no)
+
+                    if isinstance(req_id, str) and req_id:
+                        offers_by_request.setdefault(req_id, []).append(payload)
+
+                elif mtype == "ADMISSION_ACCEPT":
+                    offer_id = payload.get("offer_id")
+                    if "AD-OFFER-01" in enabled_checks:
+                        if not isinstance(req_id, str) or req_id not in offers_by_request:
+                            add_failure(t_failures, "AD-OFFER-01", "ADMISSION_ACCEPT.request_id must reference an existing ADMISSION_OFFER", rel_file, line_no)
+                        elif isinstance(offer_id, str) and not any(isinstance(o.get("offer_id"), str) and o.get("offer_id") == offer_id for o in offers_by_request.get(req_id, [])):
+                            add_failure(t_failures, "AD-OFFER-01", f"ADMISSION_ACCEPT.offer_id '{offer_id}' not found for request_id '{req_id}'", rel_file, line_no)
+                    if isinstance(req_id, str) and req_id:
+                        _mark_terminal(req_id, "accept")
+                        accepted_request_ids.add(req_id)
+
+                elif mtype in {"ADMISSION_REJECT", "ADMISSION_REVOKE", "ADMISSION_RENEW"}:
+                    reason_code = payload.get("reason_code")
+                    if "AD-REASON-01" in enabled_checks:
+                        if not isinstance(reason_code, str) or not reason_code:
+                            add_failure(t_failures, "AD-REASON-01", f"{mtype}.reason_code must be a non-empty string", rel_file, line_no)
+                        elif reason_code not in policy_reason_codes and not _is_namespaced_identifier(reason_code):
+                            add_failure(t_failures, "AD-REASON-01", f"unknown reason_code '{reason_code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+
+                    if mtype == "ADMISSION_RENEW" and "AD-RENEW-01" in enabled_checks:
+                        prior_request_id = payload.get("prior_request_id")
+                        if not isinstance(prior_request_id, str) or not prior_request_id:
+                            add_failure(t_failures, "AD-RENEW-01", "ADMISSION_RENEW.prior_request_id must be a non-empty string", rel_file, line_no)
+                        elif prior_request_id not in accepted_request_ids:
+                            add_failure(t_failures, "AD-RENEW-01", f"ADMISSION_RENEW.prior_request_id '{prior_request_id}' must reference a previously accepted admission", rel_file, line_no)
+                        if isinstance(req_id, str) and req_id and req_id not in requests:
+                            requests[req_id] = (line_no, payload)
+
+                    if isinstance(req_id, str) and req_id:
+                        _mark_terminal(req_id, mtype.lower())
+
+            if "AD-NO-SILENT-DROP-01" in enabled_checks:
+                for req_id, (line_no, _) in requests.items():
+                    if req_id not in terminal_by_request:
+                        add_failure(t_failures, "AD-NO-SILENT-DROP-01", f"admission request '{req_id}' has no explicit accept/reject/revoke outcome", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"QL-LEASE-01", "QL-BOUND-01", "QL-OVERRUN-01", "QL-NACK-01", "QL-OVERLOAD-01", "QL-RELEASE-01"}):
+            ql_cfg: dict[str, Any] = {}
+            first_contract_line_no = rows[0][0] if rows else None
+            for line_no, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    if isinstance(contract, dict):
+                        ext = contract.get("ext") if isinstance(contract.get("ext"), dict) else {}
+                        ql_cfg = ext.get("queue_leases") if isinstance(ext.get("queue_leases"), dict) else {}
+                        first_contract_line_no = line_no
+                    break
+
+            lease_required = ql_cfg.get("lease_required") is True
+            leases: dict[str, dict[str, Any]] = {}
+            lease_use_msgs: dict[str, int] = {}
+            lease_use_tools: dict[str, int] = {}
+            released: set[str] = set()
+            lease_message_hashes: set[str] = set()
+            valid_overload_severity = {"low", "medium", "high", "critical"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "QUEUE_LEASE_GRANT":
+                    lease_id = payload.get("lease_id") if isinstance(payload.get("lease_id"), str) else None
+                    if "QL-LEASE-01" in enabled_checks:
+                        ttl = payload.get("ttl_seconds")
+                        max_msgs = payload.get("max_msgs")
+                        max_tool_calls = payload.get("max_tool_calls")
+                        if not isinstance(lease_id, str) or not lease_id:
+                            add_failure(t_failures, "QL-LEASE-01", "QUEUE_LEASE_GRANT.lease_id must be a non-empty string", rel_file, line_no)
+                        if not isinstance(ttl, int) or ttl < 1:
+                            add_failure(t_failures, "QL-LEASE-01", "QUEUE_LEASE_GRANT.ttl_seconds must be a positive integer", rel_file, line_no)
+                        if not isinstance(max_msgs, int) or max_msgs < 1:
+                            add_failure(t_failures, "QL-LEASE-01", "QUEUE_LEASE_GRANT.max_msgs must be a positive integer", rel_file, line_no)
+                        if not isinstance(max_tool_calls, int) or max_tool_calls < 0:
+                            add_failure(t_failures, "QL-LEASE-01", "QUEUE_LEASE_GRANT.max_tool_calls must be a non-negative integer", rel_file, line_no)
+                    if isinstance(lease_id, str) and lease_id:
+                        leases[lease_id] = payload
+                        lease_use_msgs.setdefault(lease_id, 0)
+                        lease_use_tools.setdefault(lease_id, 0)
+                        mhash = msg.get("message_hash")
+                        if isinstance(mhash, str) and mhash:
+                            lease_message_hashes.add(mhash)
+
+                elif mtype == "QUEUE_NACK":
+                    if "QL-NACK-01" in enabled_checks:
+                        reason_code = payload.get("reason_code")
+                        retry_after = payload.get("retry_after_seconds")
+                        if not isinstance(reason_code, str) or not reason_code:
+                            add_failure(t_failures, "QL-NACK-01", "QUEUE_NACK.reason_code must be a non-empty string", rel_file, line_no)
+                        elif reason_code not in policy_reason_codes and not _is_namespaced_identifier(reason_code):
+                            add_failure(t_failures, "QL-NACK-01", f"unknown reason_code '{reason_code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+                        if not isinstance(retry_after, int) or retry_after < 1:
+                            add_failure(t_failures, "QL-NACK-01", "QUEUE_NACK.retry_after_seconds must be a positive integer", rel_file, line_no)
+
+                elif mtype == "OVERLOAD_SIGNAL":
+                    if "QL-OVERLOAD-01" in enabled_checks:
+                        severity = payload.get("severity")
+                        reason_code = payload.get("reason_code")
+                        retry_after = payload.get("retry_after_seconds")
+                        if not isinstance(severity, str) or severity not in valid_overload_severity:
+                            add_failure(t_failures, "QL-OVERLOAD-01", "OVERLOAD_SIGNAL.severity must be one of low/medium/high/critical", rel_file, line_no)
+                        if not isinstance(reason_code, str) or not reason_code:
+                            add_failure(t_failures, "QL-OVERLOAD-01", "OVERLOAD_SIGNAL.reason_code must be a non-empty string", rel_file, line_no)
+                        elif reason_code not in policy_reason_codes and not _is_namespaced_identifier(reason_code):
+                            add_failure(t_failures, "QL-OVERLOAD-01", f"unknown reason_code '{reason_code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+                        if not isinstance(retry_after, int) or retry_after < 1:
+                            add_failure(t_failures, "QL-OVERLOAD-01", "OVERLOAD_SIGNAL.retry_after_seconds must be a positive integer", rel_file, line_no)
+
+                elif mtype == "QUEUE_RELEASE":
+                    lease_id = payload.get("lease_id") if isinstance(payload.get("lease_id"), str) else None
+                    if "QL-RELEASE-01" in enabled_checks:
+                        if not isinstance(lease_id, str) or not lease_id:
+                            add_failure(t_failures, "QL-RELEASE-01", "QUEUE_RELEASE.lease_id must be a non-empty string", rel_file, line_no)
+                        elif lease_id not in leases:
+                            add_failure(t_failures, "QL-RELEASE-01", f"QUEUE_RELEASE references unknown lease_id '{lease_id}'", rel_file, line_no)
+                    if isinstance(lease_id, str) and lease_id:
+                        released.add(lease_id)
+
+                elif mtype in {"CONTENT_MESSAGE", "TOOL_CALL_REQUEST"}:
+                    lease_id = None
+                    if isinstance(payload.get("lease_id"), str):
+                        lease_id = payload.get("lease_id")
+                    ext = payload.get("ext") if isinstance(payload.get("ext"), dict) else {}
+                    if lease_id is None and isinstance(ext.get("queue_leases"), dict):
+                        cand = ext.get("queue_leases", {}).get("lease_id")
+                        lease_id = cand if isinstance(cand, str) else None
+
+                    if "QL-BOUND-01" in enabled_checks and lease_required:
+                        if not isinstance(lease_id, str) or not lease_id:
+                            add_failure(t_failures, "QL-BOUND-01", f"{mtype} must include lease_id when lease_required=true", rel_file, line_no)
+                        elif lease_id not in leases:
+                            add_failure(t_failures, "QL-BOUND-01", f"{mtype} references unknown lease_id '{lease_id}'", rel_file, line_no)
+                        elif lease_id in released:
+                            add_failure(t_failures, "QL-BOUND-01", f"{mtype} uses lease_id '{lease_id}' after release", rel_file, line_no)
+
+                    if isinstance(lease_id, str) and lease_id in leases:
+                        lease_use_msgs[lease_id] = lease_use_msgs.get(lease_id, 0) + 1
+                        if mtype == "TOOL_CALL_REQUEST":
+                            lease_use_tools[lease_id] = lease_use_tools.get(lease_id, 0) + 1
+
+            if "QL-OVERRUN-01" in enabled_checks:
+                for lease_id, lease_obj in leases.items():
+                    max_msgs = lease_obj.get("max_msgs") if isinstance(lease_obj.get("max_msgs"), int) else None
+                    max_tool_calls = lease_obj.get("max_tool_calls") if isinstance(lease_obj.get("max_tool_calls"), int) else None
+                    used_msgs = lease_use_msgs.get(lease_id, 0)
+                    used_tools = lease_use_tools.get(lease_id, 0)
+                    if isinstance(max_msgs, int) and used_msgs > max_msgs:
+                        add_failure(t_failures, "QL-OVERRUN-01", f"lease_id '{lease_id}' exceeded max_msgs ({used_msgs}>{max_msgs})", rel_file, first_contract_line_no)
+                    if isinstance(max_tool_calls, int) and used_tools > max_tool_calls:
+                        add_failure(t_failures, "QL-OVERRUN-01", f"lease_id '{lease_id}' exceeded max_tool_calls ({used_tools}>{max_tool_calls})", rel_file, first_contract_line_no)
+
+            if ql_cfg.get("requires_obs_correlation") is True and "QL-OVERLOAD-01" in enabled_checks:
+                found_obs = False
+                for line_no, msg in rows:
+                    if msg.get("message_type") != "OBS_SIGNAL":
+                        continue
+                    payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                    for key in ("trace", "sla", "metering"):
+                        obj = payload.get(key)
+                        if not isinstance(obj, dict):
+                            continue
+                        corr = obj.get("correlation_ref") if isinstance(obj.get("correlation_ref"), dict) else {}
+                        mh = corr.get("message_hash")
+                        if isinstance(mh, str) and mh in lease_message_hashes:
+                            found_obs = True
+                if not found_obs:
+                    add_failure(t_failures, "QL-OVERLOAD-01", "requires_obs_correlation=true but no OBS_SIGNAL correlation_ref.message_hash targets a QUEUE_LEASE_GRANT", rel_file, first_contract_line_no)
+
         if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
             first_contract = None
             for _, msg in rows:
