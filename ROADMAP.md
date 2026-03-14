@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-13_
+_Last updated: 2026-03-14_
 
 ## Current / Next
 
@@ -89,10 +89,10 @@ _Last updated: 2026-03-13_
 - **Shipped:** transcript-level `OBS_SIGNAL` artifacts now cover trace correlation, standardized SLA/error signals, and normalized metering events with machine-checkable negative vectors.
 - **Next concrete step:** keep M27 observability stable while enterprise binding integrations advance under M29.
 
-### ✅ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
-- **Shipped:** `EXT-ENTERPRISE-BINDINGS` RFC + schema + deterministic fixtures + executable extension conformance (`EB-ENTERPRISE-BINDINGS-0.1`) are in-repo and wired through `make conformance-ext`.
-- **Shipped:** enterprise OpenAPI/OData/policy-xref bindings are now transcript-auditable and include linkage checks with M26 approval, M27 observability, and M28 IAM-governed activity.
-- **Next concrete step:** proceed with M34 documentation/security playbook depth while keeping enterprise bindings transport-neutral and non-runtime.
+### ⏳ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
+- **Progress:** M29 remains pending in executable surface; enterprise bindings artifacts (RFC/schema/fixtures/conformance) are not yet landed on public `main`.
+- **Progress:** roadmap/docs claims were ahead of executable evidence and are being synchronized via RTSS.
+- **Next concrete step:** land minimal `EXT-ENTERPRISE-BINDINGS` executable artifacts (RFC + schema + deterministic fixtures + extension conformance wiring) before advancing follow-on milestones.
 
 ### ⏳ M34 — Security & implementer playbooks (MCP-level doc completeness)
 - **Progress:** Implementer-facing security best-practices doc is shipped at `docs/security/SECURITY_BEST_PRACTICES.md`.
@@ -121,4 +121,4 @@ _Last updated: 2026-03-13_
 7) Internet-scale audit (recommended before large public feeds): M31
 8) Agent media & brand reception feeds: M38
 9) Optional platform interop: M32
-10) Ops + docs completeness: M34 (with M27 observability and M29 enterprise bindings shipped)
+10) Ops + docs completeness: M34 (with M27 observability shipped; M29 after executable artifacts land)
