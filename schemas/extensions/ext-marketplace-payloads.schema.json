@@ -5,99 +5,199 @@
   "type": "object",
   "additionalProperties": false,
   "$defs": {
-    "RFW_DECLARE": {
+    "NonEmptyString": {"type": "string", "minLength": 1},
+    "StringArray": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/NonEmptyString"}},
+    "OfferTerms": {
       "type": "object",
-      "required": [
-        "rfw_id"
-      ],
+      "additionalProperties": false,
+      "required": ["price_hint", "sla_hint"],
       "properties": {
-        "rfw_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "scope": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "price_hint": {"$ref": "#/$defs/NonEmptyString"},
+        "sla_hint": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "WorkOrder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_order_id", "workflow_ref"],
+      "properties": {
+        "work_order_id": {"$ref": "#/$defs/NonEmptyString"},
+        "workflow_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "RFW_POST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rfw_id", "work_spec_ref", "policy_ref", "deadline"],
+      "properties": {
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "work_spec_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "policy_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "deadline": {"type": "string", "format": "date-time"},
+        "budget_hint": {"$ref": "#/$defs/NonEmptyString"},
+        "sla_hint": {"$ref": "#/$defs/NonEmptyString"},
+        "required_attestation_refs": {"$ref": "#/$defs/StringArray"}
+      }
     },
     "BID_SUBMIT": {
       "type": "object",
-      "required": [
-        "bid_id",
-        "rfw_id"
-      ],
+      "additionalProperties": false,
+      "required": ["bid_id", "rfw_id", "offer_terms"],
       "properties": {
-        "bid_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "rfw_id": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "bid_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "offer_terms": {"$ref": "#/$defs/OfferTerms"}
+      }
     },
-    "AWARD": {
+    "BID_UPDATE": {
       "type": "object",
-      "required": [
-        "award_id",
-        "rfw_id",
-        "bid_id"
-      ],
+      "additionalProperties": false,
+      "required": ["bid_id", "rfw_id", "offer_terms"],
       "properties": {
-        "award_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "rfw_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "bid_id": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "bid_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "offer_terms": {"$ref": "#/$defs/OfferTerms"}
+      }
     },
-    "WORK_ORDER_DECLARE": {
+    "BID_WITHDRAW": {
       "type": "object",
-      "required": [
-        "work_order_id",
-        "award_id"
-      ],
+      "additionalProperties": false,
+      "required": ["bid_id", "rfw_id", "reason_code"],
       "properties": {
-        "work_order_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "award_id": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "bid_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "reason_code": {"type": "string"}
+      }
     },
-    "WORK_ORDER_UPDATE": {
+    "AWARD_ISSUE": {
       "type": "object",
-      "required": [
-        "work_order_id",
-        "status"
-      ],
+      "additionalProperties": false,
+      "required": ["award_id", "rfw_id", "bid_id", "work_order"],
       "properties": {
-        "work_order_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "status": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
+        "award_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "bid_id": {"$ref": "#/$defs/NonEmptyString"},
+        "work_order": {"$ref": "#/$defs/WorkOrder"}
+      }
+    },
+    "AWARD_ACCEPT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["award_id", "rfw_id"],
+      "properties": {
+        "award_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "AWARD_DECLINE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["award_id", "rfw_id"],
+      "properties": {
+        "award_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "reason_code": {"type": "string"}
+      }
+    },
+    "AUCTION_OPEN": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["auction_id", "rfw_id", "auction_mode", "deadline"],
+      "properties": {
+        "auction_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "auction_mode": {"$ref": "#/$defs/NonEmptyString"},
+        "deadline": {"type": "string", "format": "date-time"}
+      }
+    },
+    "AUCTION_CLOSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["auction_id", "rfw_id", "result_ref"],
+      "properties": {
+        "auction_id": {"$ref": "#/$defs/NonEmptyString"},
+        "rfw_id": {"$ref": "#/$defs/NonEmptyString"},
+        "result_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "BLACKBOARD_DECLARE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_id", "policy_ref"],
+      "properties": {
+        "workspace_id": {"$ref": "#/$defs/NonEmptyString"},
+        "policy_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "retention_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "BLACKBOARD_POST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_id", "entry_id", "content_ref"],
+      "properties": {
+        "workspace_id": {"$ref": "#/$defs/NonEmptyString"},
+        "entry_id": {"$ref": "#/$defs/NonEmptyString"},
+        "content_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "BLACKBOARD_UPDATE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_id", "entry_id", "content_ref"],
+      "properties": {
+        "workspace_id": {"$ref": "#/$defs/NonEmptyString"},
+        "entry_id": {"$ref": "#/$defs/NonEmptyString"},
+        "content_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "BLACKBOARD_REMOVE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_id", "entry_id"],
+      "properties": {
+        "workspace_id": {"$ref": "#/$defs/NonEmptyString"},
+        "entry_id": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "SUBCHAT_CREATE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subchat_id", "parent_chat_id", "topic_tag"],
+      "properties": {
+        "subchat_id": {"$ref": "#/$defs/NonEmptyString"},
+        "parent_chat_id": {"$ref": "#/$defs/NonEmptyString"},
+        "topic_tag": {"$ref": "#/$defs/NonEmptyString"},
+        "admission_policy_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "SUBCHAT_INVITE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subchat_id", "invitee_id"],
+      "properties": {
+        "subchat_id": {"$ref": "#/$defs/NonEmptyString"},
+        "invitee_id": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "SUBCHAT_JOIN": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subchat_id", "participant_id"],
+      "properties": {
+        "subchat_id": {"$ref": "#/$defs/NonEmptyString"},
+        "participant_id": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "ROUTING_DECISION_ATTEST": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_id", "award_id", "policy_ref", "evidence_ref"],
+      "properties": {
+        "decision_id": {"$ref": "#/$defs/NonEmptyString"},
+        "award_id": {"$ref": "#/$defs/NonEmptyString"},
+        "policy_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "evidence_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
     }
   }
 }

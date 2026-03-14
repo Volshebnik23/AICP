@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "7910b19991365fed11dee5e466fc9ecf72003271d5cdac6404d9ffa6675b5fa9",
+      "combined_sha256": "2bee54778276fa40c1f90aac1d3376b4799e545dbd5060b56d184c200b27632c",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -100,8 +100,8 @@
           "sha256": "a8e371c8b98043a6c1d78493f4052cf4fd963dad328b02228fe482c94fde58d1"
         },
         {
-          "path": "conformance/extensions/MK_MARKETPLACE_0.1.json",
-          "sha256": "3279094300951b3ee57d98067b80b23fbfc0944b6930ff6794f533ba15a518c8"
+          "path": "conformance/extensions/MP_MARKETPLACE_0.1.json",
+          "sha256": "a9e3cd3312faf38656d1ac083eaa09a64b84c4ff454aef5bb08d85680c422e85"
         },
         {
           "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json",
@@ -218,7 +218,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "ed55a3b6fb4e6b5f1f86fc34940064016456750477f1b42a653717c95f3a987a",
+      "combined_sha256": "1668507f358301093532ae2c01cf066264450b2548dd06433c8974b15bc35278",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -685,12 +685,36 @@
           "sha256": "5c95df3d925e11b781f50cc790d34b7b95ea93e3cf2b527b70bb7899c08baaef"
         },
         {
-          "path": "fixtures/extensions/marketplace/MK-01_marketplace_pass.jsonl",
-          "sha256": "07477073ddf7a5faaa9ef0a0a6176420784b0c0193496c3dbf6cd8702b8d156d"
+          "path": "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "sha256": "a1aa340c8d3fb93f718c5909f5b6be4727f508b839d49160e5959228d3257e55"
         },
         {
-          "path": "fixtures/extensions/marketplace/MK-02_award_bind_expected_fail.jsonl",
-          "sha256": "a23b1ed6798e6b7ac707a2938e2934ab09aac402ce846801f74bb6174d534db0"
+          "path": "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl",
+          "sha256": "5d2efedcbbbbc5df32eb7b7fb188196895ca6b266ee3fdf264f8325cf3084a9b"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-03_blackboard_coordination_pass.jsonl",
+          "sha256": "ab50820c470ef6dcc458b367188b8bf9ec8251b1d1ca4109e67f4e98fab767af"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl",
+          "sha256": "4813ef0704cf84da013e2d64200f5fc2ec651fa85d8b36148cdfc2033002b464"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl",
+          "sha256": "846597a74f9ee5dd90325ec0dabf191d2037dfb9a75a34f4ad08a23426fc0b55"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
+          "sha256": "6efdc8f6056f92e133eb22198cddca8943e28dd9d4fb69b6e243c628025c590c"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-07_subchat_without_required_admission_expected_fail.jsonl",
+          "sha256": "00d56d880c0b2a1ec625379b7239c5a27e7b8b75913e84f6a5464e4e041c68a9"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-08_invalid_auction_mode_expected_fail.jsonl",
+          "sha256": "1fbc01ea5fc0df848fc75cc251d940281734e94faa1d5d4df7cfbc467f7a0f31"
         },
         {
           "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
@@ -1031,7 +1055,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "86467a9664a317afccba8439c2072c0d8203a9636edcff1814932c890546285f",
+      "combined_sha256": "3698d71f177adc23d815075ef3f0e2a04b812ea9d7927d2b14f42f8a42fd4256",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -1048,6 +1072,10 @@
         {
           "path": "registry/attestation_types.json",
           "sha256": "e7d6de0be5805a0735fc206ebcd4ef4ad9259b068e847ef6756cdba6534c31ac"
+        },
+        {
+          "path": "registry/auction_modes.json",
+          "sha256": "5db3149b843a6ce677215d472f28b69fc2dca3495e8cd14c40745ea453d28bb6"
         },
         {
           "path": "registry/canonicalization_profiles.json",
@@ -1075,7 +1103,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "dfd8983d6dbf6826675af7d5f8a0b6e526938a3fc1cec1a832de2fa0295c9518"
+          "sha256": "2656e1aca9567050226cc2896a9481afdd6325720d69002b3c36f475b6df52a2"
         },
         {
           "path": "registry/hash_domains.json",
@@ -1083,7 +1111,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "7427a499a2beb801fa9bfe565674af85c865c5332e08e3ba7b6b3147e3c00651"
+          "sha256": "20c757e48da813daf1db3c6a18617974ecc34fe983465f392f67328c963f84ee"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -1128,7 +1156,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "7cf51f4b066afd5d01e0e642f20dd84294ea19992fb94f2d0227dfec23ba2802",
+      "combined_sha256": "a6105ce978505978723297e3bafeaf69c3304db689160f8dbd188aa00ed12a0b",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1232,7 +1260,7 @@
         },
         {
           "path": "schemas/extensions/ext-marketplace-payloads.schema.json",
-          "sha256": "dc44473fef8b4566545fabf9657c485251ba4c9ba1de815e231f7b96c277fa80"
+          "sha256": "f961885cec308b38dec7f5664d3eb4e212b0e3348c82d5cf064ad339e276e330"
         },
         {
           "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
@@ -1431,7 +1459,7 @@
       },
       {
         "mark": "AICP-EXT-MARKETPLACE-0.1",
-        "path": "conformance/extensions/MK_MARKETPLACE_0.1.json"
+        "path": "conformance/extensions/MP_MARKETPLACE_0.1.json"
       },
       {
         "mark": "AICP-EXT-OBSERVABILITY-0.1",

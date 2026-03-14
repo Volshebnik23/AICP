@@ -1,0 +1,1 @@
+{"session_id":"smp-05","message_id":"m1","timestamp":"2026-03-22T09:40:00Z","sender":"agent:bad","message_type":"BID_SUBMIT","contract_id":"c-mp-05","payload":{"bid_id":"bid-05","rfw_id":"rfw-missing","offer_terms":{"price_hint":"fixed:10","sla_hint":"p95<2s"}},"message_hash":"sha256:C4N-iLhgM47Q5Cr7Lt_8nb4grEgoNl0H6_sQxziRbbs"}

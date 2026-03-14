@@ -106,6 +106,18 @@ def main() -> int:
             if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ql_transcripts):
                 failures.append("ROADMAP marks M35 shipped, but QL_QUEUE_LEASES_0.1 has no expected-fail transcript")
 
+    if _has_shipped_milestone(roadmap, "M36"):
+        if "conformance/extensions/MP_MARKETPLACE_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M36 shipped, but Makefile conformance-ext does not include MP_MARKETPLACE_0.1")
+        if not (ROOT / "docs/extensions/RFC_EXT_MARKETPLACE.md").exists():
+            failures.append("ROADMAP marks M36 shipped, but docs/extensions/RFC_EXT_MARKETPLACE.md is missing")
+        if not (ROOT / "schemas/extensions/ext-marketplace-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M36 shipped, but schemas/extensions/ext-marketplace-payloads.schema.json is missing")
+        if not (ROOT / "conformance/extensions/MP_MARKETPLACE_0.1.json").exists():
+            failures.append("ROADMAP marks M36 shipped, but conformance/extensions/MP_MARKETPLACE_0.1.json is missing")
+        if not (ROOT / "scripts/generate_marketplace_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/marketplace").glob("*.jsonl")):
+            failures.append("ROADMAP marks M36 shipped, but no fixture generator or deterministic marketplace fixtures are present")
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

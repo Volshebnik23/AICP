@@ -47,6 +47,7 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - IAM Bridge (M28): [RFC_EXT_IAM_BRIDGE.md](extensions/RFC_EXT_IAM_BRIDGE.md) + suite [`IB_IAM_BRIDGE_0.1.json`](../conformance/extensions/IB_IAM_BRIDGE_0.1.json)
 - Observability production attributes (M27): [RFC_EXT_OBSERVABILITY.md](extensions/RFC_EXT_OBSERVABILITY.md) + suite [`OB_OBSERVABILITY_0.1.json`](../conformance/extensions/OB_OBSERVABILITY_0.1.json)
 - Enterprise domain bindings (M29): [RFC_EXT_ENTERPRISE_BINDINGS.md](extensions/RFC_EXT_ENTERPRISE_BINDINGS.md) + suite [`EB_ENTERPRISE_BINDINGS_0.1.json`](../conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json)
+- Marketplace orchestration (M36): [RFC_EXT_MARKETPLACE.md](extensions/RFC_EXT_MARKETPLACE.md) + suite [`MP_MARKETPLACE_0.1.json`](../conformance/extensions/MP_MARKETPLACE_0.1.json)
 - Full extension index and maturity notes: [docs/extensions/README.md](extensions/README.md)
 
 Note: document/fixture/schema presence does not by itself mean a milestone is shipped; roadmap + executable conformance surface define release maturity.

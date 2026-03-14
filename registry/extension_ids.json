@@ -169,7 +169,7 @@
     "maintainer": "AICP Working Group",
     "id": "EXT-MARKETPLACE",
     "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#registry-entry",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#13-registry-entry",
     "security_considerations": "Awards must bind to bids and RFW IDs to prevent winner substitution."
   },
   {

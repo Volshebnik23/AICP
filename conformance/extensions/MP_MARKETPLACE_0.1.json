@@ -1,0 +1,98 @@
+{
+  "suite_id": "MP-MARKETPLACE-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-MARKETPLACE conformance for RFW/bid/award lifecycle, auction semantics, blackboard, subchat and routing evidence.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-marketplace-payloads.schema.json",
+  "payload_schema_map": {
+    "RFW_POST": "#/$defs/RFW_POST",
+    "BID_SUBMIT": "#/$defs/BID_SUBMIT",
+    "BID_UPDATE": "#/$defs/BID_UPDATE",
+    "BID_WITHDRAW": "#/$defs/BID_WITHDRAW",
+    "AWARD_ISSUE": "#/$defs/AWARD_ISSUE",
+    "AWARD_ACCEPT": "#/$defs/AWARD_ACCEPT",
+    "AWARD_DECLINE": "#/$defs/AWARD_DECLINE",
+    "AUCTION_OPEN": "#/$defs/AUCTION_OPEN",
+    "AUCTION_CLOSE": "#/$defs/AUCTION_CLOSE",
+    "BLACKBOARD_DECLARE": "#/$defs/BLACKBOARD_DECLARE",
+    "BLACKBOARD_POST": "#/$defs/BLACKBOARD_POST",
+    "BLACKBOARD_UPDATE": "#/$defs/BLACKBOARD_UPDATE",
+    "BLACKBOARD_REMOVE": "#/$defs/BLACKBOARD_REMOVE",
+    "SUBCHAT_CREATE": "#/$defs/SUBCHAT_CREATE",
+    "SUBCHAT_INVITE": "#/$defs/SUBCHAT_INVITE",
+    "SUBCHAT_JOIN": "#/$defs/SUBCHAT_JOIN",
+    "ROUTING_DECISION_ATTEST": "#/$defs/ROUTING_DECISION_ATTEST"
+  },
+  "transcripts": [
+    {
+      "id": "MP-01",
+      "path": "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "RFW_POST", "BID_SUBMIT", "AWARD_ISSUE", "ROUTING_DECISION_ATTEST", "AWARD_ACCEPT", "OBS_SIGNAL"]
+    },
+    {
+      "id": "MP-02",
+      "path": "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl",
+      "expected_message_types": ["RFW_POST", "AUCTION_OPEN", "BID_SUBMIT", "AUCTION_CLOSE"]
+    },
+    {
+      "id": "MP-03",
+      "path": "fixtures/extensions/marketplace/MP-03_blackboard_coordination_pass.jsonl",
+      "expected_message_types": ["BLACKBOARD_DECLARE", "BLACKBOARD_POST", "BLACKBOARD_UPDATE", "BLACKBOARD_REMOVE"]
+    },
+    {
+      "id": "MP-04",
+      "path": "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "ADMISSION_REQUEST", "ADMISSION_OFFER", "ADMISSION_ACCEPT", "SUBCHAT_CREATE", "SUBCHAT_INVITE", "SUBCHAT_JOIN"]
+    },
+    {
+      "id": "MP-05",
+      "path": "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl",
+      "expected_message_types": ["BID_SUBMIT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "MP-BID-01", "min_count": 1}]
+    },
+    {
+      "id": "MP-06",
+      "path": "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "RFW_POST", "BID_SUBMIT", "AWARD_ISSUE"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "MP-ROUTING-ATTEST-01", "min_count": 1}]
+    },
+    {
+      "id": "MP-07",
+      "path": "fixtures/extensions/marketplace/MP-07_subchat_without_required_admission_expected_fail.jsonl",
+      "expected_message_types": ["CONTRACT_PROPOSE", "SUBCHAT_CREATE", "SUBCHAT_JOIN"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "MP-ADMISSION-LINK-01", "min_count": 1}]
+    },
+    {
+      "id": "MP-08",
+      "path": "fixtures/extensions/marketplace/MP-08_invalid_auction_mode_expected_fail.jsonl",
+      "expected_message_types": ["RFW_POST", "AUCTION_OPEN"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "MP-AUCTION-01", "min_count": 1}]
+    }
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against EXT-MARKETPLACE payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id constant and message_id unique"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "MP-RFW-01", "description": "RFW must contain coherent work spec / policy / deadline references"},
+    {"test_id": "MP-BID-01", "description": "Bids must reference valid prior RFW and coherent offer terms"},
+    {"test_id": "MP-AWARD-01", "description": "Awards must bind to valid bid+RFW context and work order"},
+    {"test_id": "MP-AUCTION-01", "description": "Auction open/close semantics and mode validity must be machine-checkable"},
+    {"test_id": "MP-BLACKBOARD-01", "description": "Blackboard lifecycle operations must be internally consistent"},
+    {"test_id": "MP-SUBCHAT-01", "description": "Subchat create/invite/join must bind to valid parent/topic context"},
+    {"test_id": "MP-ADMISSION-LINK-01", "description": "Required admission/roles must gate participation when policy demands it"},
+    {"test_id": "MP-OBS-CORRELATION-01", "description": "Marketplace activity must correlate with observability evidence when required"},
+    {"test_id": "MP-ROUTING-ATTEST-01", "description": "Routing/award attestation evidence must exist when required by policy"}
+  ],
+  "compatibility_mark": "AICP-EXT-MARKETPLACE-0.1",
+  "extension_id": "EXT-MARKETPLACE"
+}

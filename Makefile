@@ -72,7 +72,7 @@ conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SB_SUBSCRIPTIONS_0.1.json --out conformance/report_ext_subscriptions.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PB_PUBLICATIONS_0.1.json --out conformance/report_ext_publications.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/IB_INBOX_0.1.json --out conformance/report_ext_inbox.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/MK_MARKETPLACE_0.1.json --out conformance/report_ext_marketplace.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/MP_MARKETPLACE_0.1.json --out conformance/report_ext_marketplace.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PR_PROVENANCE_0.1.json --out conformance/report_ext_provenance.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ES_ACTION_ESCROW_0.1.json --out conformance/report_ext_action_escrow.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json --out conformance/report_ext_trust_attestations.json
