@@ -102,7 +102,8 @@ _Last updated: 2026-03-14_
 ### ✅ M35 — Bazaar admission & congestion control (leases, queues, anti-spam hooks)
 - **Shipped:** `EXT-ADMISSION` and `EXT-QUEUE-LEASES` now provide transcript-native request/offer/accept/reject/revoke, lease grant/ack/nack/release, and overload/throttle evidence with deterministic extension conformance.
 - **Shipped:** crowd-control sanction paths are machine-readable (no-silent-drop), with reason-code hooks and trust/attestation references for anti-Sybil policy integration.
-- **Next concrete step:** stabilize M35 operational patterns while M36 coordination/marketplace surfaces advance.
+- **Shipped (RTSS closeout):** conformance runner now enforces M35 admission/queue-lease semantics explicitly (renewal linkage, attestation/stake reference validity, no-silent-drop, bounded lease usage, overload/backpressure checks) and shipped-coverage validation includes expected-fail/reject+revoke guardrails.
+- **Next concrete step:** keep M35 operational patterns stable while M36 coordination/marketplace surfaces continue hardening.
 
 ### ✅ M36 — Multi-agent marketplace & coordination (RFW/Bids/Auction + blackboard + subchats)
 - **Shipped:** `EXT-MARKETPLACE` now provides transcript-native RFW/bid/update/withdraw/award lifecycle, auction open/close modes, blackboard coordination, and subchat routing artifacts with deterministic conformance fixtures.
