@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "1dd083311a82b9c2604b82cd0bbbd04070e312e6dc910b27434b0a91e254beea",
+      "combined_sha256": "a725700564577e8ddaf6186098de01fe9bc8c0a854b99fc91cebbb077632295b",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -98,6 +98,10 @@
         {
           "path": "conformance/extensions/MK_MARKETPLACE_0.1.json",
           "sha256": "3279094300951b3ee57d98067b80b23fbfc0944b6930ff6794f533ba15a518c8"
+        },
+        {
+          "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json",
+          "sha256": "f73af1357530b2e5654f9f8717b771dd3729ab590d7808a8387c2d3db934348c"
         },
         {
           "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
@@ -210,7 +214,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "c831becbe46689a612fd0a09b3795ce6d717da61d70301b51e3d95bf22de5749",
+      "combined_sha256": "0dbccd8959f978d6a0bb5480cbb8beedf48fdcdf262a68f57e529bfd63a9689a",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -633,6 +637,46 @@
           "sha256": "05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
         },
         {
+          "path": "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
+          "sha256": "1fc2e8ccbaa9b811a7dfdd03032aca50bd55633fb9c7cd4f2be69d22e055d570"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+          "sha256": "864866be22da79784ded4cf0d5037961d48115c126db9548eb8b29000fe69400"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-03_sla_throttle_signal_pass.jsonl",
+          "sha256": "05ae043a41ec17969ca0e22a3b909e435c77b87ebd35f484495425acc7143a93"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+          "sha256": "9df2a2d508e3929c116589e67d607cfaa3e57c19785e9fff4c06fa229083469a"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "sha256": "d7bd94171e4128a4e6a7a10ad17b0b3f06731b838c48bae4ae7886b6324b3e01"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-06_missing_correlation_ref_expected_fail.jsonl",
+          "sha256": "81ef8e9416cb822c32058d166d6ee8bbb65e89f21d9fec61882b238470205094"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-07_invalid_trace_shape_expected_fail.jsonl",
+          "sha256": "6fe5391e0685c521a400dd17e077cf10f633b996ceae7908b83974abd6bac10d"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-08_invalid_signal_type_expected_fail.jsonl",
+          "sha256": "2b079fccb22f84051ceb233f4d39510d3abadd9efd3f6690baee7e92c1fa4019"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-09_unregistered_reason_code_expected_fail.jsonl",
+          "sha256": "7cce2b38a7f33fbdba0d27f599e99e91a5ffb76caa8565eb6ec07ebc781651e0"
+        },
+        {
+          "path": "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl",
+          "sha256": "040e5867ffc86b72e4f670a17902392cacd12c8ad32ba6c675d0d675f3e93bfb"
+        },
+        {
           "path": "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
           "sha256": "f2c00a28b585309baa20d7e34b28eae91d7b210b7e486600557d1d2313ea23b1"
         },
@@ -915,7 +959,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "feff3bb6fd5881617c7371dd9532ad0d2b8e189bc21193dc1a292e1c88291fdf",
+      "combined_sha256": "855927e298df8a2c1adb6a4caf762249178cf364853a1be7a28e194a477e21b1",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -959,7 +1003,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "c9ec4f7a912ef4e47aacd5eb90c3ea9b180228e3b476004a38d8a4237236e042"
+          "sha256": "19fc82d5557058b0848cc9ba5544911229430e28a1cae459f4e1114910e746f1"
         },
         {
           "path": "registry/hash_domains.json",
@@ -967,7 +1011,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "61b47becb877b1e3ada363ead3fc7d954cc14f954794032eaeb0a88dd4f2766c"
+          "sha256": "7427a499a2beb801fa9bfe565674af85c865c5332e08e3ba7b6b3147e3c00651"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -983,7 +1027,7 @@
         },
         {
           "path": "registry/policy_reason_codes.json",
-          "sha256": "c33119ba72d40b11ef563116da06a3f0befe24e49733b072241986821af075ef"
+          "sha256": "9701534a3fd6a0d851eb77617f65a6f7ef3cf8c20c504dc8a845e9c0fd94c76b"
         },
         {
           "path": "registry/privacy_modes.json",
@@ -1012,7 +1056,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "8051949e7a2fc09d0c10e455bba5e2a836da9f7b424144572610299c373ab041",
+      "combined_sha256": "b5534244de96d164f77df415304e797a604c7c44ad0ab46767088f11b2dcb996",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1117,6 +1161,10 @@
         {
           "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
           "sha256": "6bb488bdc87fa7c7a0c253d19454c53475201a4ead98d6e610a5b17edc2223b6"
+        },
+        {
+          "path": "schemas/extensions/ext-observability-payloads.schema.json",
+          "sha256": "57dc6e5bbf1b370484aa4facb03f65596f29e76f19b64035aa90b15f360379c9"
         },
         {
           "path": "schemas/extensions/ext-participants-payloads.schema.json",
@@ -1304,6 +1352,10 @@
       {
         "mark": "AICP-EXT-MARKETPLACE-0.1",
         "path": "conformance/extensions/MK_MARKETPLACE_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-OBSERVABILITY-0.1",
+        "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json"
       },
       {
         "mark": "AICP-EXT-OBJECT-RESYNC-0.1",
