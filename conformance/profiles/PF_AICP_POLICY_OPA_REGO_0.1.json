@@ -1,0 +1,11 @@
+{
+  "profile_id": "AICP-POLICY-OPA-REGO",
+  "profile_version": "0.1",
+  "description": "Optional M25 OPA/Rego semantic interoperability profile over EXT-POLICY-EVAL.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/PE_PROFILE_OPA_REGO_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-POLICY-OPA-REGO-0.1"
+}

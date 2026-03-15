@@ -19,22 +19,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 # Backlog epics and milestones
 
-## M25 — Policy semantic interoperability profiles (OPA/Rego, ABAC, LLM-safety)
-**Problem:** Policy-eval avoids a single language, but market needs stable semantic profiles.
-
-**Deliverables**
-1) **Policy language/binding profiles**:
-   - OPA/Rego profile
-   - ABAC/RBAC profile
-   - LLM-safety profile (minimal taxonomy + interpretation)
-2) **Registry stabilization**
-   - promote key registries from experimental to stable (after M17 policy).
-
-**Acceptance**
-- Two vendors interpreting “the same policy bundle” get the same decision.
-
----
-
 ## M33 — Legal readiness pack (licenses, patents, governance) for vendor adoption
 **Problem:** Mass adoption requires clear licensing and patent posture to legally ship reference code, schemas, fixtures, and docs in commercial distributions.
 

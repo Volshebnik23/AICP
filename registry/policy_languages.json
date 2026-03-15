@@ -1,11 +1,32 @@
 [
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "rego.v1",
     "type": "policy_languages",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
-    "security_considerations": "Language implementations should be deterministic or explicitly marked otherwise."
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-opa-rego-01",
+    "security_considerations": "Language implementations should be deterministic or explicitly marked otherwise.",
+    "compatibility_notes": "Stable for deterministic OPA/Rego profile semantics over EXT-POLICY-EVAL."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "abac-rbac.v1",
+    "type": "policy_languages",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-abac-rbac-01",
+    "security_considerations": "Language profile requires transcript-level deterministic boundaries and registry-backed interoperability semantics.",
+    "compatibility_notes": "Stable ABAC/RBAC policy language profile for deterministic subject/action/resource interpretation."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "llm-safety-taxonomy.v1",
+    "type": "policy_languages",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01",
+    "security_considerations": "Language profile requires transcript-level deterministic boundaries and registry-backed interoperability semantics.",
+    "compatibility_notes": "Stable minimal LLM-safety taxonomy language for evidence-bound policy interoperability."
   }
 ]
