@@ -66,9 +66,11 @@ Run before opening an RTSS PR:
 - `make conformance`
 - `make conformance-ext`
 - `make conformance-bindings`
+- `make conformance-profiles`
 - `make test`
 - `make quickstart-py`
 - `make quickstart-ts`
+- `make template-smoke`
 - `cd sdk/typescript && npm ci && npm test && cd ../..`
 
 ## 8) Relationship to shipped-vs-stability wording

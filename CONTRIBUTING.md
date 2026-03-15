@@ -29,9 +29,11 @@ Run before opening a PR:
 - `make conformance`
 - `make conformance-ext`
 - `make conformance-bindings`
+- `make conformance-profiles`
 - `make test`
 - `make quickstart-py`
 - `make quickstart-ts`
+- `make template-smoke`
 - `cd sdk/typescript && npm ci && npm test && cd ../..`
 
 Use the PR template and include risk and compatibility impact.

@@ -16,7 +16,7 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 2. Run the generator (from repo root): `make quickstart-ts`.
 3. Inspect output: `out/quickstart/ts/minimal_core.jsonl`.
 4. Validate output: `python sandbox/run.py out/quickstart/ts/minimal_core.jsonl --no-signature-verify`.
-5. Optional full checks: `make validate && make conformance`.
+5. Optional full gate: `make prepr`.
 
 ## Fastest path (Python)
 
@@ -24,7 +24,7 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 2. Run the generator (from repo root): `make quickstart-py`.
 3. Inspect output: `out/quickstart/py/minimal_core.jsonl`.
 4. Validate output: `python sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify`.
-5. Optional full checks: `make validate && make conformance`.
+5. Optional full gate: `make prepr`.
 
 ## Role-specific first steps
 
@@ -60,13 +60,7 @@ If you are integrating AICP with an existing platform gateway, start with:
 - Guide: `docs/guides/Protocol_Adapter_Gateway.md`
 - Template: `templates/protocol-adapter/`
 
-Recommended CI baseline: `make validate` + `make conformance-profiles` + template smoke tests for adapter/agent commands.
-
-
-## Bazaar-scale implementer guidance (v88)
-1. Verify economics proof binding (`submit_id` + `content_hash`) before delivering paid content.
-2. Enforce queue lease limits (`max_msgs`, `max_bytes`, `allowed_message_types`) and emit overload/backoff signals.
-3. Keep subscription cursors deterministic and validate publication integrity (`content_hash`, version chaining).
+Recommended CI baseline: `make prepr` (includes validation, conformance, profile conformance, quickstarts, template smoke, and TypeScript SDK tests).
 
 
 ## Template smoke commands (shipped onboarding)
