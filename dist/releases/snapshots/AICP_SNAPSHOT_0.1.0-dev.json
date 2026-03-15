@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "cf8b6fa857b9c7e929946598530a34ca802a61a449b0f8e0d1ad3e7ece0fcce3",
+      "combined_sha256": "bb11b1f57134be24d197abb3f659033d97b31e53712c189515f5c74e4c3f4269",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -78,6 +78,10 @@
         {
           "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
           "sha256": "cc233cb4abdac46698f2ff5c7e5726f848c96c702db7e4f0e052b82647536ca1"
+        },
+        {
+          "path": "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+          "sha256": "2bbca0b66101aff97452fa20598d6c15fa593cd214793dbd2a18a4ea62840286"
         },
         {
           "path": "conformance/extensions/FA_FACILITATION_0.1.json",
@@ -196,6 +200,10 @@
           "sha256": "ad57d03ff4d07624dfd0fb5112be1280a5176789e3f5927226bddf8387136765"
         },
         {
+          "path": "conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json",
+          "sha256": "d5fcd6b8b9eb7c1064eb6d9fd03b6b73d52ff19f64a4d3a15e9f60a15cab4e78"
+        },
+        {
           "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json",
           "sha256": "6cee6100ed6fb358d83cd1e04b5242da0aeb43239d50ecbf21db7b685fee3fca"
         },
@@ -226,7 +234,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "6122a508ba81a4913c6fddbc960b0d48b8dcf63482a0b2c69f92b6e90c3ce26e",
+      "combined_sha256": "fe247b535a3ddf0860008ae8e21254f9b1730afc3cd96b7e2151745e2b4e6bfd",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -611,6 +619,34 @@
         {
           "path": "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl",
           "sha256": "c53add2d3bc8ab8b8b8d816e392c0462815460cfa5baea89e6a4509b2c0e52d7"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl",
+          "sha256": "a64acabbf40af366537b8b360ab5cccf8f830843a416b261561ce0afdf2d824c"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-02_thread_lifecycle_pass.jsonl",
+          "sha256": "4e71a55ed339ba616d23e141eb04658964ecf26e7ffbd0c73515dfce4fb25e63"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl",
+          "sha256": "4fccc7d8f3697e57640bb435a8643abb53a46926cf1886964d7473635ad8ed68"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-04_run_update_before_create_expected_fail.jsonl",
+          "sha256": "c158ab5ab3e57b6c10b7358d37599c6c058fbd672e234d64f50b73a000e2c5dd"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl",
+          "sha256": "a91b56a541949b480abfcd0cbcb982bfce9736308b30365701f3279cb0cb456b"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-06_thread_append_after_close_expected_fail.jsonl",
+          "sha256": "3050eabea15a3199ac54be9c6c2bc20d07fa2b6084e7f25cb7a15d8ba9616264"
+        },
+        {
+          "path": "fixtures/extensions/execution_lifecycle/EX-07_dangling_store_ref_expected_fail.jsonl",
+          "sha256": "3a6288d402dcb6b5197e1e80a7bcf723e6bfdcf13d2572d444c5435af9120efa"
         },
         {
           "path": "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
@@ -1159,11 +1195,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "89428524bf1943827812498842e2123dc6afe780ce501c5b0e3acdcfbe4fc1dc",
+      "combined_sha256": "e3ecb4bf28ddb1f7898ae79524f33d84e344deb18ba971d911f7690955fd756d",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "ab9b17fa37284d013223a1b9d6850f55617e789e920f68d06811228e27df8e46"
+          "sha256": "f20a7491f099770bc5cce2923987c4c27bf0d5c269562024ee5e96c6651cbd92"
         },
         {
           "path": "registry/alert_codes.json",
@@ -1207,7 +1243,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "f175df57b2e3e4e1c70eed45f8efd3065adc573c8440744d845b2db965ef5309"
+          "sha256": "478aff5d9f9ca3426371b17ab6044ded37716190a5cdf15af31f971a6e6ce5e0"
         },
         {
           "path": "registry/hash_domains.json",
@@ -1215,7 +1251,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "45f5d23d85ef549bd0cb6b97fdf3871b3a78e1907c72072e213156fe9d5a8fd5"
+          "sha256": "2fb680c4ce5a77a38f70d6d412e0e55c4ab07c27d786691a6734b01fa6ac2984"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -1264,7 +1300,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "347d34a1f0dfc5843b69fe04d9845f5df68903dd49890780b5a980cf7154f820",
+      "combined_sha256": "4f50e4b68c73ff5fd7726e6f46eaab5f14cf67eb2c145245fbd11eb707801ec1",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1345,6 +1381,10 @@
         {
           "path": "schemas/extensions/ext-enterprise-bindings-payloads.schema.json",
           "sha256": "47980966a6c7c1f1ed216585d263c199953f81b5c6fcbb984e032f30a432e6dd"
+        },
+        {
+          "path": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "sha256": "0aaac83cc900e3069f764d1dbd13bf18f3cd1cc132c77b34c6a450a055e49c63"
         },
         {
           "path": "schemas/extensions/ext-facilitation-payloads.schema.json",
@@ -1460,6 +1500,10 @@
         "path": "conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json"
       },
       {
+        "mark": "AICP-Profile-EXECUTION-INTEROP-0.1",
+        "path": "conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json"
+      },
+      {
         "mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
         "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json"
       },
@@ -1552,6 +1596,10 @@
       {
         "mark": "AICP-EXT-ACTION-ESCROW-0.1",
         "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-EXECUTION-LIFECYCLE-0.1",
+        "path": "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
       },
       {
         "mark": "AICP-EXT-FACILITATION-0.1",

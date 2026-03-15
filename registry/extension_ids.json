@@ -325,5 +325,14 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md",
     "security_considerations": "Workflow attestations must bind to contract head."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-EXECUTION-LIFECYCLE",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#registry-entry",
+    "security_considerations": "Execution lifecycle metadata should enforce run/thread terminal-state immutability and hash-bound store reference constraints."
   }
 ]

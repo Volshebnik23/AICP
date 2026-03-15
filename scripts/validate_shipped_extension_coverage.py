@@ -324,6 +324,35 @@ def main() -> int:
                 missing = sorted(required_tw_checks - tw_checks)
                 failures.append(f"ROADMAP marks M31 shipped, but TW_TRANSCRIPT_WITNESS_0.1 is missing semantic checks: {', '.join(missing)}")
 
+    if _has_shipped_milestone(roadmap, "M32"):
+        if "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M32 shipped, but Makefile conformance-ext does not include EX_EXECUTION_LIFECYCLE_0.1")
+        required_paths = [
+            ROOT / "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md",
+            ROOT / "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+            ROOT / "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+            ROOT / "conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json",
+        ]
+        for path in required_paths:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M32 shipped, but {path.relative_to(ROOT)} is missing")
+
+        if not (ROOT / "scripts/generate_execution_lifecycle_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/execution_lifecycle").glob("*.jsonl")):
+            failures.append("ROADMAP marks M32 shipped, but no execution lifecycle fixture generator or deterministic fixtures are present")
+
+        ex_suite_path = ROOT / "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        if ex_suite_path.exists():
+            ex_suite = _load_json(ex_suite_path)
+            ex_transcripts = ex_suite.get("transcripts", []) if isinstance(ex_suite, dict) else []
+            ex_checks = {c.get("test_id") for c in ex_suite.get("checks", []) if isinstance(c, dict)} if isinstance(ex_suite, dict) else set()
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ex_transcripts):
+                failures.append("ROADMAP marks M32 shipped, but EX_EXECUTION_LIFECYCLE_0.1 has no expected-fail transcript")
+            required_ex_checks = {"EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01", "EX-THREAD-REF-01", "EX-THREAD-CLOSED-01", "EX-STORE-REF-01", "EX-STORE-LINK-01", "EX-CROSS-BIND-01"}
+            if not required_ex_checks.issubset(ex_checks):
+                missing = sorted(required_ex_checks - ex_checks)
+                failures.append(f"ROADMAP marks M32 shipped, but EX_EXECUTION_LIFECYCLE_0.1 is missing semantic checks: {', '.join(missing)}")
+
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

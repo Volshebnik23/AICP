@@ -81,10 +81,12 @@ _Last updated: 2026-03-14_
 ### ✅ M31 — Anti-equivocation & transparency witnessing (optional, internet-scale)
 - **Shipped:** `EXT-TRANSCRIPT-WITNESS` now provides transcript-native checkpoint commitments, witness submit/receipt evidence, head exchange artifacts, and inclusion-proof declarations with deterministic pass/expected-fail conformance.
 - **Shipped:** equivocation detection (conflicting heads for same session/sequence), receipt linkage validation, and optional non-repudiation strengthening checks are executable in extension runner semantics.
-- **Next concrete step:** keep M31 witness semantics stable while optional M32 execution interoperability remains pending.
+- **Next concrete step:** keep M31 witness semantics stable while M32 execution interoperability remains operationally aligned.
 
-### ⏳ M32 — Agent execution interoperability profile (optional): Runs / Threads / Stores
-- **Exit:** Optional extension + profile + fixtures/conformance.
+### ✅ M32 — Agent execution interoperability profile (optional): Runs / Threads / Stores
+- **Shipped:** `EXT-EXECUTION-LIFECYCLE` now provides transcript-native run/thread lifecycle metadata (`RUN_*`, `THREAD_*`) plus hash-bound `store_ref`/`memory_ref` objects with deterministic pass/expected-fail conformance.
+- **Shipped:** `AICP-EXECUTION-INTEROP@0.1` profile now bundles Core + `EXT-EXECUTION-LIFECYCLE` + `EXT-RESUME` + `EXT-OBJECT-RESYNC` for portable execution metadata and recovery/resync interoperability.
+- **Next concrete step:** keep M32 execution metadata semantics stable while progressing M33 legal readiness artifacts.
 
 ### ✅ M27 — Production attributes: tracing, SLA signals, metering
 - **Shipped:** `EXT-OBSERVABILITY` RFC + schema + deterministic fixtures + executable extension conformance (`OB-OBSERVABILITY-0.1`) are in-repo and wired through `make conformance-ext`.
