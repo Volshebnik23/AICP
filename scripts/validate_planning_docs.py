@@ -23,18 +23,11 @@ PLANNING_FRAMING_TOKEN_GROUPS = [
     ["roadmap.md"],
 ]
 
-REMOVED_DELIVERED_MILESTONE_HEADERS = [
-    "## M16",
-    "## M17",
-    "## M18",
-    "## M19",
-    "## M20",
-    "## M21",
-    "## M22",
-]
-
 CYCLE_LABEL_RE = re.compile(r"\bv(?:88|90)\b", re.IGNORECASE)
 MILESTONE_SECTION_RE = re.compile(r"(?ms)^## M\d+\b.*?(?=^## M\d+\b|\Z)")
+MILESTONE_ID_RE = re.compile(r"\bM\d+[a-z]?\b", re.IGNORECASE)
+MILESTONE_RANGE_RE = re.compile(r"\bM(\d+)\s*[–-]\s*M(\d+)\b", re.IGNORECASE)
+ROADMAP_SHIPPED_LINE_RE = re.compile(r"(?m)^###\s*✅\s+.*$")
 ROADMAP_CURRENT_NEXT_RE = re.compile(r"(?ms)^## Current / Next\s*\n(.*?)(?=^## |\Z)")
 ROADMAP_PLANNED_RE = re.compile(r"(?ms)^## Planned milestones.*?\n(.*?)(?=^## |\Z)")
 ROADMAP_M22_ENTRY_RE = re.compile(r"(?m)^###\s*[✅🚧⏳]?\s*M22\b")
@@ -59,6 +52,26 @@ def _roadmap_section(text: str, pattern: re.Pattern[str]) -> str:
     return match.group(1) if match else ""
 
 
+def _milestone_ids_from_text(text: str) -> set[str]:
+    ids = {match.group(0).upper() for match in MILESTONE_ID_RE.finditer(text)}
+    for start_text, end_text in MILESTONE_RANGE_RE.findall(text):
+        start = int(start_text)
+        end = int(end_text)
+        if end >= start:
+            ids.update(f"M{idx}" for idx in range(start, end + 1))
+    return ids
+
+
+def _shipped_milestone_ids_from_roadmap(roadmap: str) -> set[str]:
+    shipped_lines = ROADMAP_SHIPPED_LINE_RE.findall(roadmap)
+    return _milestone_ids_from_text("\n".join(shipped_lines))
+
+
+def _backlog_milestone_ids(backlog: str) -> set[str]:
+    headers = [line for line in backlog.splitlines() if line.startswith("## M")]
+    return _milestone_ids_from_text("\n".join(headers))
+
+
 def main() -> int:
     errors: list[str] = []
     backlog = _load(BACKLOG)
@@ -68,9 +81,14 @@ def main() -> int:
         if phrase in backlog:
             errors.append(f"AICP_Backlog contains banned phrase: '{phrase}'")
 
-    for header in REMOVED_DELIVERED_MILESTONE_HEADERS:
-        if re.search(rf"(?m)^{re.escape(header)}\b", backlog):
-            errors.append(f"AICP_Backlog must not include delivered milestone section header '{header}'")
+    shipped_milestones = _shipped_milestone_ids_from_roadmap(roadmap)
+    backlog_milestones = _backlog_milestone_ids(backlog)
+    overlap = sorted(backlog_milestones & shipped_milestones)
+    if overlap:
+        errors.append(
+            "AICP_Backlog must not include milestones already shipped/completed in ROADMAP.md: "
+            + ", ".join(overlap)
+        )
 
     if "**Status:** Delivered" in backlog:
         errors.append("AICP_Backlog must not include delivered-status milestone markers")

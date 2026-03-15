@@ -9,7 +9,15 @@
 ## How Verified
 Commands and outputs:
 - `make validate`
+- `make conformance`
+- `make conformance-ext`
+- `make conformance-bindings`
+- `make conformance-profiles`
 - `make test`
+- `make quickstart-py`
+- `make quickstart-ts`
+- `make template-smoke`
+- `cd sdk/typescript && npm ci && npm test && cd ../..`
 
 ## Risk Level
 - [ ] Low
