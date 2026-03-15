@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "2bee54778276fa40c1f90aac1d3376b4799e545dbd5060b56d184c200b27632c",
+      "combined_sha256": "cf8b6fa857b9c7e929946598530a34ca802a61a449b0f8e0d1ad3e7ece0fcce3",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -45,7 +45,7 @@
         },
         {
           "path": "conformance/extensions/CH_CHANNELS_0.1.json",
-          "sha256": "3e78c2ad5d4e12c543697eefbff878833be60c14bc85b38c27a5a84f2c991db2"
+          "sha256": "bcb439f4ccaaec8afe56a1c515a789a683a48422c052f126149adad25d22dbcc"
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
@@ -77,7 +77,7 @@
         },
         {
           "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
-          "sha256": "a24368406cd2778d1a5a0b32a57c3a9b053cf434788e817aa93fb7606cd0b899"
+          "sha256": "cc233cb4abdac46698f2ff5c7e5726f848c96c702db7e4f0e052b82647536ca1"
         },
         {
           "path": "conformance/extensions/FA_FACILITATION_0.1.json",
@@ -93,7 +93,7 @@
         },
         {
           "path": "conformance/extensions/IB_INBOX_0.1.json",
-          "sha256": "062efe9c273a5ce8e038645ec948871390f8ebcd1fb8800e8dce1f9b1673d43f"
+          "sha256": "7e1cf716df15f1d2792ebf6f0e2c434d968bdf177d0ddfdae174a8da267e3ef7"
         },
         {
           "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -101,7 +101,7 @@
         },
         {
           "path": "conformance/extensions/MP_MARKETPLACE_0.1.json",
-          "sha256": "a9e3cd3312faf38656d1ac083eaa09a64b84c4ff454aef5bb08d85680c422e85"
+          "sha256": "d87dc5af5ee4e99b1481dc6200806b869fc4679315e7099d9a6037c92a38fabf"
         },
         {
           "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json",
@@ -117,7 +117,7 @@
         },
         {
           "path": "conformance/extensions/PB_PUBLICATIONS_0.1.json",
-          "sha256": "c98268f5d4db7580b36db6a14f7d7bddd8be1056d1312bd393c29207e26abbb1"
+          "sha256": "db6cff969e6a7d5f29ea05cfc614cf5b2807088be2cb7d53392ebed8550d740a"
         },
         {
           "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
@@ -125,7 +125,7 @@
         },
         {
           "path": "conformance/extensions/PR_PROVENANCE_0.1.json",
-          "sha256": "ccf57adfde9906c05e99ad8bbc054abbeb4f6afa5f03018b1aa5b50b9e53a8bb"
+          "sha256": "b658f9d19a03e4e9053ec85a3610b6985cb1fd543797e2831111831fbcbe1890"
         },
         {
           "path": "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
@@ -140,6 +140,10 @@
           "sha256": "5943a4c4f3326ea093673f353637858b61818386e0c503bfdcb89e7c6c8d93a2"
         },
         {
+          "path": "conformance/extensions/RP_RESPONSIBILITY_0.1.json",
+          "sha256": "6fb3fdd72c15fef8af8b3b336131c04878039706286c5883465972493b37827b"
+        },
+        {
           "path": "conformance/extensions/RS_RESUME_0.1.json",
           "sha256": "513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
         },
@@ -149,7 +153,7 @@
         },
         {
           "path": "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json",
-          "sha256": "6cc0855b213d6c58de83aacbea90843815677fc78a037140b83c9db0d49c49ac"
+          "sha256": "2b2b7f6e2fe1c6688b0d450260d4bc764eaff08603a070c507ceac0bb1aba7bc"
         },
         {
           "path": "conformance/extensions/SC_STATUS_CHANNEL_0.1.json",
@@ -162,6 +166,10 @@
         {
           "path": "conformance/extensions/TG_TOOL_GATING_0.1.json",
           "sha256": "f1646a39d7e43bb74e415b09cd44faa34564e4c4b23fe66c8112a11f904cddf7"
+        },
+        {
+          "path": "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json",
+          "sha256": "06b7b5abfde750987fd468c3e44055b527442e5f8ebdb48b145da4a2d6bfd8c8"
         },
         {
           "path": "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json",
@@ -218,7 +226,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "1668507f358301093532ae2c01cf066264450b2548dd06433c8974b15bc35278",
+      "combined_sha256": "6122a508ba81a4913c6fddbc960b0d48b8dcf63482a0b2c69f92b6e90c3ce26e",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -361,12 +369,20 @@
           "sha256": "dbe63ca6fccdd4398c44e98962b106e4405bdfe9b55fdf0fccbb4e83dee10cfc"
         },
         {
-          "path": "fixtures/extensions/action_escrow/ES-01_escrow_pass.jsonl",
-          "sha256": "5e60b7eb4287c0a55b600ca4556453097b300ea0243f3af8c4adac18503a1f8b"
+          "path": "fixtures/extensions/action_escrow/ES-01_prepare_approve_commit_pass.jsonl",
+          "sha256": "fa610963fe15430dcbff5720d5d6798de1fd89f8df3a58a36f290c6deb781b0a"
         },
         {
-          "path": "fixtures/extensions/action_escrow/ES-02_commit_missing_binding_expected_fail.jsonl",
-          "sha256": "5445f3ffb119379d9e48e7fa10ba0de163af993f53cf7ac4c6262a1f71f693fc"
+          "path": "fixtures/extensions/action_escrow/ES-02_commit_without_prepare_expected_fail.jsonl",
+          "sha256": "414f1842fe42697d74d562e5f26c75b98113e84cdc08221e11d7a052b711d540"
+        },
+        {
+          "path": "fixtures/extensions/action_escrow/ES-03_commit_without_approve_expected_fail.jsonl",
+          "sha256": "fda06bae8365f5abc9a972536a435f2e9ed68b8cfcb9bb649c51206f3e8f1fed"
+        },
+        {
+          "path": "fixtures/extensions/action_escrow/ES-04_commit_binding_mismatch_expected_fail.jsonl",
+          "sha256": "31bd0b68737dad8b5e265919f7993779066c4985b5195f36db004773f5a76dc2"
         },
         {
           "path": "fixtures/extensions/admission/AD-01_request_offer_accept_pass.jsonl",
@@ -442,7 +458,15 @@
         },
         {
           "path": "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl",
-          "sha256": "e1e96fb3c7b8ba7aba8d8d3d6a127834fa073e8283ab26ba461d14833feeda92"
+          "sha256": "dcf49e7b681efbfd53c226fbb744281b1aa7ba72f27f5c1163941270fb22af02"
+        },
+        {
+          "path": "fixtures/extensions/channels/CH-02_missing_parent_expected_fail.jsonl",
+          "sha256": "625903449de3189c520394db67c83092adc1588d59b947dec343c2430fec0709"
+        },
+        {
+          "path": "fixtures/extensions/channels/CH-03_visibility_escalation_expected_fail.jsonl",
+          "sha256": "9ce0a76488f7a1949434cdae7dd9d78c60a078815a7d6380b52b50f8c5681314"
         },
         {
           "path": "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
@@ -681,8 +705,16 @@
           "sha256": "da3b97cbe9daaad9b117f1a55c8996e4c806bb0b0def49f0b39d8b670e2819cb"
         },
         {
-          "path": "fixtures/extensions/inbox/IB-01_inbox_pass.jsonl",
-          "sha256": "5c95df3d925e11b781f50cc790d34b7b95ea93e3cf2b527b70bb7899c08baaef"
+          "path": "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl",
+          "sha256": "09648c29acada6004f28f9cee5855a28276046fdf65f33e7b3af9c8babdc47b6"
+        },
+        {
+          "path": "fixtures/extensions/inbox/IB-02_ack_without_enqueue_expected_fail.jsonl",
+          "sha256": "8818890815072d7b46b42e49e555c7f0b42c72573e83412b35eebcc29a8d6198"
+        },
+        {
+          "path": "fixtures/extensions/inbox/IB-03_missing_queue_lease_context_expected_fail.jsonl",
+          "sha256": "38edac99be087acdcd6dc1dd5caa8d1a53f0062e6d7e6d8404200cbfe10a8ad5"
         },
         {
           "path": "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
@@ -715,6 +747,10 @@
         {
           "path": "fixtures/extensions/marketplace/MP-08_invalid_auction_mode_expected_fail.jsonl",
           "sha256": "1fbc01ea5fc0df848fc75cc251d940281734e94faa1d5d4df7cfbc467f7a0f31"
+        },
+        {
+          "path": "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl",
+          "sha256": "8ab7d534c5808e27528f0e3b202af3620e55bffe45caf6efbb52c492a47862ca"
         },
         {
           "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
@@ -793,16 +829,36 @@
           "sha256": "4fb2e0aa4b58966e2e5c565fbd1f95db2084fe9fa928ecb6775c70d2b8830088"
         },
         {
-          "path": "fixtures/extensions/provenance/PR-01_provenance_pass.jsonl",
-          "sha256": "e8062edd48df6b62a7686a68027b17b4e0a381407c3200f8be5ddf8f636e415f"
+          "path": "fixtures/extensions/provenance/PR-01_dag_multi_agent_pass.jsonl",
+          "sha256": "06828606dc6b33592b8f6b4bae139b635df749a5fbe5bd712f364641cc17f045"
         },
         {
-          "path": "fixtures/extensions/publications/PB-01_publication_pass.jsonl",
-          "sha256": "1a170be47bb2bab7c40eb4e1a23d253254f889e2b2eaf141bc30607042f81113"
+          "path": "fixtures/extensions/provenance/PR-02_append_missing_parent_expected_fail.jsonl",
+          "sha256": "d42ea356dfec4b4da42328258079d9f5e0bad8f4247b2cede9567c8d1791f62b"
+        },
+        {
+          "path": "fixtures/extensions/provenance/PR-03_append_duplicate_node_expected_fail.jsonl",
+          "sha256": "87ee75061b29d9a9f2b67c06decbe5c475f2781a5d4331fea72bf33b4ca59f79"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
+          "sha256": "6bc93666245747f78bc6f469047c6b923002b26521ffe44d9d56d709f5246c69"
         },
         {
           "path": "fixtures/extensions/publications/PB-02_update_without_publish_expected_fail.jsonl",
-          "sha256": "b069687185983556e5526589e37c8ef687d39f1cb52107b7743ab24b42532832"
+          "sha256": "f2ed431fb7237e1939b6828d12c14101d3dd22cf59faf84a303e060e42090795"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-03_update_without_version_progression_expected_fail.jsonl",
+          "sha256": "0e3dcc9a8a0054564ee063b93b3f5358e40bc7a46f54b53a94cef6d1cb5b7054"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-04_retract_with_unknown_reason_expected_fail.jsonl",
+          "sha256": "b17409e65ed14a750ac8575336eb5844c25c3a847a144c21fd8e9dc1d1859a95"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-05_must_reach_without_delivery_proof_expected_fail.jsonl",
+          "sha256": "bf494fc5171a91287ad8761903baccf7e5f4c1265716ce55f8ce2c49c0c4f79b"
         },
         {
           "path": "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
@@ -873,6 +929,26 @@
           "sha256": "3f04c163bd87a15f1edd5218162c507e661e6f7932804e9dd2516fad0d4ca6eb"
         },
         {
+          "path": "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl",
+          "sha256": "2d2c648f87031529761d0d424dca5176701dcc2bf6c02de2099949d135cb1c7f"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-02_accept_without_assign_expected_fail.jsonl",
+          "sha256": "f692296516567429013e2f79f5e7ceed738e4684bddab6c8f5cc8cdd31a33264"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-03_missing_terminal_transfer_expected_fail.jsonl",
+          "sha256": "79a82e9f75c85ea02ea56c5ceb7f237ea3691749ebbc84133afe9085fa3b349d"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-04_transient_failure_without_retry_expected_fail.jsonl",
+          "sha256": "8757ca25b591f731c7d2023cb6e0cf60afe3fc0251667c12529be885391e9b61"
+        },
+        {
+          "path": "fixtures/extensions/responsibility/RP-05_failure_with_missing_provenance_expected_fail.jsonl",
+          "sha256": "867b4fb73ca9eff3f2f14b54c4037f9e9f5c1ea04d9fe31c4eb314d4be8ad5fc"
+        },
+        {
           "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
           "sha256": "c98c62d03ed26e7b44443f3ae6982a579ce333b9bf93f0103d18d3e910c24543"
         },
@@ -914,11 +990,15 @@
         },
         {
           "path": "fixtures/extensions/subscriptions/SB-01_subscription_pass.jsonl",
-          "sha256": "b448423972f3c48ddcd3904906f7d4a4f987d08bdb63d295aef246b4afc4b040"
+          "sha256": "2ed1cc2dcc2e25b3f483fd0073eac4b99069f43eacdfd2b1edf4ba4daa31e720"
         },
         {
-          "path": "fixtures/extensions/subscriptions/SB-02_subscription_cursor_expected_fail.jsonl",
-          "sha256": "e386bdf627882eb0d9c8f3246cb051bf323c9dafcda4651632abb48b4f8863d8"
+          "path": "fixtures/extensions/subscriptions/SB-02_state_for_unknown_subscription_expected_fail.jsonl",
+          "sha256": "eb736a30f5df40891b146d4dffac6358918035002b1f42b7bda772a3ad286790"
+        },
+        {
+          "path": "fixtures/extensions/subscriptions/SB-03_bad_cursor_progression_expected_fail.jsonl",
+          "sha256": "cdc13391aa5218d61159ea5c1c9f7e54caaca3878fffa5def1e275b77aec16a6"
         },
         {
           "path": "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
@@ -951,6 +1031,30 @@
         {
           "path": "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl",
           "sha256": "b2cfe64bcaf9b10a92032137f33c68d7e66ac985ad710163baabb272aa2e77ea"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl",
+          "sha256": "d6e3d32e0830f08011806a2a7744b599bf1062975d8c29682d2e3fb36b735337"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl",
+          "sha256": "da54e9b89b30bc12108cec6b07156ee4fb9b7dc67c9331f643147c5a734dbc23"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-03_receipt_without_submit_expected_fail.jsonl",
+          "sha256": "e0c2548c7675bba2425b82d36fc9d9b5263527657be6dee850996333453f2eb9"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-04_unknown_inclusion_target_expected_fail.jsonl",
+          "sha256": "2ae4a8afd3ef78f929e2ecaea8130a65b1d469f47bb01378c8d18e805a8e3dfa"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-05_split_history_expected_fail.jsonl",
+          "sha256": "0bee77e7ef7872eb28d410bbe2c0e1f45d2c600867d58f2314ad68217fceee47"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-06_nonrep_required_missing_sigref_expected_fail.jsonl",
+          "sha256": "c13082c68fcfe15942e77faeca618b86db14deafb7aaf0992f6963d21824d8a5"
         },
         {
           "path": "fixtures/extensions/trust_attestations/TA-01_trust_anchor_list_valid.json",
@@ -1055,7 +1159,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "55c5a86806c86630738850a0b196060cff8f44a2185f198efbecf9ba684437b7",
+      "combined_sha256": "89428524bf1943827812498842e2123dc6afe780ce501c5b0e3acdcfbe4fc1dc",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -1103,7 +1207,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "2656e1aca9567050226cc2896a9481afdd6325720d69002b3c36f475b6df52a2"
+          "sha256": "f175df57b2e3e4e1c70eed45f8efd3065adc573c8440744d845b2db965ef5309"
         },
         {
           "path": "registry/hash_domains.json",
@@ -1111,7 +1215,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "e894e74d9f87f3cd3dde18e34d91a4d2aafc76b8ae249dd17c2fdbdb4663114f"
+          "sha256": "45f5d23d85ef549bd0cb6b97fdf3871b3a78e1907c72072e213156fe9d5a8fd5"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -1132,6 +1236,10 @@
         {
           "path": "registry/privacy_modes.json",
           "sha256": "2ba80386bed185c7078bfc89315055f7533715e7d1a654c8e2387f5b8bf9ee7a"
+        },
+        {
+          "path": "registry/responsibility_warranty_classes.json",
+          "sha256": "8c8455ebb923e7b9799ae113decb3d869513189172fcb2241e97d7ff94ec0dc3"
         },
         {
           "path": "registry/revocation_reason_codes.json",
@@ -1156,7 +1264,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "a6105ce978505978723297e3bafeaf69c3304db689160f8dbd188aa00ed12a0b",
+      "combined_sha256": "347d34a1f0dfc5843b69fe04d9845f5df68903dd49890780b5a980cf7154f820",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1188,7 +1296,7 @@
         },
         {
           "path": "schemas/extensions/ext-action-escrow-payloads.schema.json",
-          "sha256": "a0071ab226b5613f6f122462c391b75d9f83e73f756d593fd8afb3fce7b03298"
+          "sha256": "1f14e0c96eebd1114e40f6079fc45c8462c24c859e103ba0c6de1f7f2a372e9c"
         },
         {
           "path": "schemas/extensions/ext-admission-payloads.schema.json",
@@ -1256,7 +1364,7 @@
         },
         {
           "path": "schemas/extensions/ext-inbox-payloads.schema.json",
-          "sha256": "8a831bd3dfb164323dd734c5988b706abe48aa9e57cacf6a57b3671f6eb97528"
+          "sha256": "6c0ad2af19c9981b7f1bda248c81a616871cc05d27eabd57346a059cdfda562d"
         },
         {
           "path": "schemas/extensions/ext-marketplace-payloads.schema.json",
@@ -1280,11 +1388,11 @@
         },
         {
           "path": "schemas/extensions/ext-provenance-payloads.schema.json",
-          "sha256": "317b1df821b606b62a80bf3869354dafe6c7e49142f389137f72a6cd5d4647eb"
+          "sha256": "e14d5c55a644c73b57bbd0097d27da32804c84e14802c1f0824f8a48c3017439"
         },
         {
           "path": "schemas/extensions/ext-publications-payloads.schema.json",
-          "sha256": "f2a241e073af38ac958890504f447d635fe3e33faf0e96ec7b51af14fc9dd3ff"
+          "sha256": "e8b894b2c459c8df53491be369235be43d999f3fa9340e96b1a605b9db24e7c2"
         },
         {
           "path": "schemas/extensions/ext-queue-leases-payloads.schema.json",
@@ -1293,6 +1401,10 @@
         {
           "path": "schemas/extensions/ext-redaction-payloads.schema.json",
           "sha256": "cec55e590f53cb657bfc64937eb48e7e55938ddde68a80290b2a465ffb3f953c"
+        },
+        {
+          "path": "schemas/extensions/ext-responsibility-payloads.schema.json",
+          "sha256": "8aa7ecfb7fde1865a3f1df93cd383db6459c4f5577cadc2f261d1bacb13eb18d"
         },
         {
           "path": "schemas/extensions/ext-resume-payloads.schema.json",
@@ -1313,6 +1425,10 @@
         {
           "path": "schemas/extensions/ext-tool-gating-payloads.schema.json",
           "sha256": "85ec3513efa93f5d39af3ab1d354c7a425b7f48745529e9105225e43772e2ab0"
+        },
+        {
+          "path": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+          "sha256": "106407a8f2a2c8c1f17690355392ab42262be1edd2979450400cfdc601a3ffe7"
         },
         {
           "path": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
@@ -1498,6 +1614,10 @@
         "path": "conformance/extensions/RD_REDACTION_0.1.json"
       },
       {
+        "mark": "AICP-EXT-RESPONSIBILITY-0.1",
+        "path": "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+      },
+      {
         "mark": "AICP-EXT-RESUME-0.1",
         "path": "conformance/extensions/RS_RESUME_0.1.json"
       },
@@ -1520,6 +1640,10 @@
       {
         "mark": "AICP-EXT-TOOL-GATING-0.1",
         "path": "conformance/extensions/TG_TOOL_GATING_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-TRANSCRIPT-WITNESS-0.1",
+        "path": "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
       },
       {
         "mark": "AICP-EXT-WORKFLOW-SYNC-0.1",
