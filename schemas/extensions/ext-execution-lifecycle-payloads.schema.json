@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+  "title": "AICP EXT-EXECUTION-LIFECYCLE payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "AccessConstraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "constraint"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["read", "read_write", "delegated"]
+        },
+        "constraint": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "resolution_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PortableObjectRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref_id", "object_hash", "object_type", "access"],
+      "properties": {
+        "ref_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "object_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "object_type": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "access": {
+          "$ref": "#/$defs/AccessConstraint"
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "RUN_CREATE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id"],
+      "properties": {
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["created", "running", "waiting", "paused"]
+        },
+        "store_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "memory_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "RUN_UPDATE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "status"],
+      "properties": {
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["running", "waiting", "paused"]
+        },
+        "store_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "memory_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "RUN_CANCEL": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "reason_code"],
+      "properties": {
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "RUN_COMPLETE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id"],
+      "properties": {
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "result_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "store_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "memory_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        }
+      }
+    },
+    "THREAD_CREATE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_id"],
+      "properties": {
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "store_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "memory_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        }
+      }
+    },
+    "THREAD_APPEND": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_id", "entry_hash"],
+      "properties": {
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "entry_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "store_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        },
+        "memory_ref": {
+          "$ref": "#/$defs/PortableObjectRef"
+        }
+      }
+    },
+    "THREAD_CLOSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thread_id"],
+      "properties": {
+        "thread_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "run_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    }
+  }
+}

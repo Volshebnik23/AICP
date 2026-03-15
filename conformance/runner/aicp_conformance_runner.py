@@ -1062,6 +1062,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
     registered_message_types = {e.get("id") for e in load_json(ROOT / "registry/message_types.json")}
     policy_categories_registry = {e.get("id") for e in load_json(ROOT / "registry/policy_categories.json")}
+    warranty_classes_registry = {e.get("id") for e in load_json(ROOT / "registry/responsibility_warranty_classes.json")} if (ROOT / "registry/responsibility_warranty_classes.json").exists() else set()
     auction_modes_registry = {e.get("id") for e in load_json(ROOT / "registry/auction_modes.json")} if (ROOT / "registry/auction_modes.json").exists() else {"sealed-bid", "english", "dutch", "fixed-price", "priority-routing"}
     retention_policy_category_id = "retention_deletion"
     capneg_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/capneg_reason_codes.json")}
@@ -2981,8 +2982,23 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if isinstance(req_id, str) and req_id and req_id not in requests:
                             requests[req_id] = (line_no, payload)
 
-                    if isinstance(req_id, str) and req_id:
+                    if mtype in {"ADMISSION_REJECT", "ADMISSION_REVOKE"} and isinstance(req_id, str) and req_id:
                         _mark_terminal(req_id, mtype.lower())
+
+                    if mtype == "ADMISSION_RENEW" and "AD-ATTEST-01" in enabled_checks:
+                        attestation_refs = payload.get("attestation_refs")
+                        if attestation_refs is not None:
+                            if not isinstance(attestation_refs, list) or not attestation_refs:
+                                add_failure(t_failures, "AD-ATTEST-01", "ADMISSION_RENEW.attestation_refs must be a non-empty array when present", rel_file, line_no)
+                            else:
+                                for ref in attestation_refs:
+                                    if not _valid_ref(ref):
+                                        add_failure(t_failures, "AD-ATTEST-01", f"invalid attestation_ref '{ref}'", rel_file, line_no)
+
+                    if mtype in {"ADMISSION_REQUEST", "ADMISSION_RENEW"} and "AD-ATTEST-01" in enabled_checks:
+                        stake_ref = payload.get("stake_ref")
+                        if stake_ref is not None and not _valid_ref(stake_ref):
+                            add_failure(t_failures, "AD-ATTEST-01", f"invalid stake_ref '{stake_ref}'", rel_file, line_no)
 
             if "AD-NO-SILENT-DROP-01" in enabled_checks:
                 for req_id, (line_no, _) in requests.items():
@@ -3120,6 +3136,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 if not found_obs:
                     add_failure(t_failures, "QL-OVERLOAD-01", "requires_obs_correlation=true but no OBS_SIGNAL correlation_ref.message_hash targets a QUEUE_LEASE_GRANT", rel_file, first_contract_line_no)
 
+        # Marketplace extension semantic-enforcement path (M36):
+        # This block intentionally handles RFW/BID/AWARD/AUCTION/BLACKBOARD/SUBCHAT
+        # linkage checks separately from schema validation to preserve schema-vs-semantic layering.
         if any(check in enabled_checks for check in {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01", "MP-OBS-CORRELATION-01", "MP-ROUTING-ATTEST-01"}):
             mp_cfg: dict[str, Any] = {}
             for _, msg in rows:
@@ -3215,6 +3234,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                                     add_failure(t_failures, "MP-AWARD-01", "AWARD_ISSUE.work_order.work_order_id must be a non-empty string", rel_file, line_no)
                                 if not isinstance(wo.get("workflow_ref"), str) or not wo.get("workflow_ref"):
                                     add_failure(t_failures, "MP-AWARD-01", "AWARD_ISSUE.work_order.workflow_ref must be a non-empty string", rel_file, line_no)
+                        else:
+                            if isinstance(award_id, str) and award_id not in awards:
+                                add_failure(t_failures, "MP-AWARD-01", f"{mtype}.award_id '{award_id}' must reference prior AWARD_ISSUE", rel_file, line_no)
+                            elif isinstance(award_id, str) and isinstance(rfw_id, str):
+                                issue_rfw_id = awards[award_id][1].get("rfw_id")
+                                if isinstance(issue_rfw_id, str) and issue_rfw_id != rfw_id:
+                                    add_failure(t_failures, "MP-AWARD-01", f"{mtype}.rfw_id '{rfw_id}' must match AWARD_ISSUE.rfw_id '{issue_rfw_id}'", rel_file, line_no)
                     if isinstance(award_id, str) and award_id and mtype == "AWARD_ISSUE":
                         awards[award_id] = (line_no, payload)
 
@@ -3321,6 +3347,172 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             found_obs = True
                 if not found_obs:
                     add_failure(t_failures, "MP-OBS-CORRELATION-01", "requires_obs_correlation=true but no OBS_SIGNAL correlation_ref.message_hash targets marketplace activity", rel_file, rows[0][0] if rows else None)
+
+        if any(check in enabled_checks for check in {"PR-NODE-01", "PR-LINK-01", "PR-APPEND-01"}):
+            graph_nodes: dict[str, set[str]] = {}
+
+            def _check_node(node: dict[str, Any], known_nodes: set[str], line_no: int) -> None:
+                node_id = node.get("node_id")
+                node_type = node.get("node_type")
+                if "PR-NODE-01" in enabled_checks:
+                    if not isinstance(node_id, str) or not node_id:
+                        add_failure(t_failures, "PR-NODE-01", "provenance node.node_id must be a non-empty string", rel_file, line_no)
+                    if node_type not in {"artifact_node", "transform_node", "decision_node"}:
+                        add_failure(t_failures, "PR-NODE-01", f"invalid node_type '{node_type}'", rel_file, line_no)
+
+                parents = node.get("parent_node_ids")
+                if parents is not None and "PR-LINK-01" in enabled_checks:
+                    if not isinstance(parents, list) or not all(isinstance(p, str) and p for p in parents):
+                        add_failure(t_failures, "PR-LINK-01", "parent_node_ids must be a non-empty string array when present", rel_file, line_no)
+                    else:
+                        for parent in parents:
+                            if parent not in known_nodes:
+                                add_failure(t_failures, "PR-LINK-01", f"unknown parent_node_id '{parent}'", rel_file, line_no)
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "PROVENANCE_DECLARE":
+                    graph_id = payload.get("graph_id") if isinstance(payload.get("graph_id"), str) else None
+                    nodes = payload.get("nodes")
+                    if isinstance(graph_id, str) and graph_id:
+                        if graph_id in graph_nodes and "PR-APPEND-01" in enabled_checks:
+                            add_failure(t_failures, "PR-APPEND-01", f"PROVENANCE_DECLARE.graph_id '{graph_id}' already declared", rel_file, line_no)
+                        known = graph_nodes.setdefault(graph_id, set())
+                    else:
+                        known = set()
+
+                    if isinstance(nodes, list):
+                        for node in nodes:
+                            if isinstance(node, dict):
+                                _check_node(node, known, line_no)
+                                node_id = node.get("node_id")
+                                if isinstance(node_id, str) and node_id:
+                                    if node_id in known and "PR-APPEND-01" in enabled_checks:
+                                        add_failure(t_failures, "PR-APPEND-01", f"duplicate provenance node_id '{node_id}'", rel_file, line_no)
+                                    known.add(node_id)
+                elif mtype == "PROVENANCE_APPEND":
+                    graph_id = payload.get("graph_id") if isinstance(payload.get("graph_id"), str) else None
+                    if graph_id not in graph_nodes and "PR-APPEND-01" in enabled_checks:
+                        add_failure(t_failures, "PR-APPEND-01", f"PROVENANCE_APPEND.graph_id '{graph_id}' must reference prior PROVENANCE_DECLARE", rel_file, line_no)
+                    known = graph_nodes.get(graph_id, set())
+                    node = payload.get("node") if isinstance(payload.get("node"), dict) else None
+                    if node is not None:
+                        _check_node(node, known, line_no)
+                        node_id = node.get("node_id")
+                        if isinstance(node_id, str) and node_id:
+                            if node_id in known and "PR-APPEND-01" in enabled_checks:
+                                add_failure(t_failures, "PR-APPEND-01", f"PROVENANCE_APPEND.node.node_id '{node_id}' must be unique within graph", rel_file, line_no)
+                            known.add(node_id)
+
+        if any(check in enabled_checks for check in {"ES-FLOW-01", "ES-BIND-01"}):
+            prepares: dict[str, dict[str, Any]] = {}
+            approves: dict[str, dict[str, Any]] = {}
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                escrow_id = payload.get("escrow_id") if isinstance(payload.get("escrow_id"), str) else None
+                if mtype == "ACTION_PREPARE" and isinstance(escrow_id, str):
+                    if escrow_id in prepares and "ES-FLOW-01" in enabled_checks:
+                        add_failure(t_failures, "ES-FLOW-01", f"duplicate ACTION_PREPARE for escrow_id '{escrow_id}'", rel_file, line_no)
+                    prepares[escrow_id] = payload
+                elif mtype == "ACTION_APPROVE" and isinstance(escrow_id, str):
+                    if escrow_id not in prepares and "ES-FLOW-01" in enabled_checks:
+                        add_failure(t_failures, "ES-FLOW-01", f"ACTION_APPROVE.escrow_id '{escrow_id}' must reference prior ACTION_PREPARE", rel_file, line_no)
+                    approves[escrow_id] = payload
+                elif mtype == "ACTION_COMMIT" and isinstance(escrow_id, str):
+                    if "ES-FLOW-01" in enabled_checks:
+                        if escrow_id not in prepares:
+                            add_failure(t_failures, "ES-FLOW-01", f"ACTION_COMMIT.escrow_id '{escrow_id}' must reference prior ACTION_PREPARE", rel_file, line_no)
+                        if escrow_id not in approves:
+                            add_failure(t_failures, "ES-FLOW-01", f"ACTION_COMMIT.escrow_id '{escrow_id}' must reference prior ACTION_APPROVE", rel_file, line_no)
+                    if "ES-BIND-01" in enabled_checks and escrow_id in prepares:
+                        prep = prepares[escrow_id]
+                        if payload.get("tool_call_request_hash") != prep.get("tool_call_request_hash"):
+                            add_failure(t_failures, "ES-BIND-01", "ACTION_COMMIT.tool_call_request_hash must match ACTION_PREPARE", rel_file, line_no)
+                        if payload.get("policy_context_hash") != prep.get("policy_context_hash"):
+                            add_failure(t_failures, "ES-BIND-01", "ACTION_COMMIT.policy_context_hash must match ACTION_PREPARE", rel_file, line_no)
+                    if "ES-BIND-01" in enabled_checks and escrow_id in approves:
+                        appr = approves[escrow_id]
+                        if payload.get("approval_hash") != appr.get("approval_hash"):
+                            add_failure(t_failures, "ES-BIND-01", "ACTION_COMMIT.approval_hash must match ACTION_APPROVE", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"RS-ASSIGN-01", "RS-ACCEPT-01", "RS-LIFECYCLE-01", "RS-CHAIN-01"}):
+            assignments: dict[str, dict[str, Any]] = {}
+            accepted: set[str] = set()
+            revoked: set[str] = set()
+            provenance_graph_ids: set[str] = set()
+
+            for _, msg in rows:
+                if msg.get("message_type") == "PROVENANCE_DECLARE":
+                    payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                    graph_id = payload.get("graph_id") if isinstance(payload.get("graph_id"), str) else None
+                    if graph_id:
+                        provenance_graph_ids.add(graph_id)
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "RESPONSIBILITY_ASSIGN":
+                    transfer_id = payload.get("transfer_id") if isinstance(payload.get("transfer_id"), str) else None
+                    if "RS-ASSIGN-01" in enabled_checks:
+                        for key in ("transfer_id", "action_ref", "from_party", "to_party", "warranty_class"):
+                            if not isinstance(payload.get(key), str) or not payload.get(key):
+                                add_failure(t_failures, "RS-ASSIGN-01", f"RESPONSIBILITY_ASSIGN.{key} must be a non-empty string", rel_file, line_no)
+                        wc = payload.get("warranty_class")
+                        if isinstance(wc, str) and warranty_classes_registry and wc not in warranty_classes_registry and not _is_namespaced_identifier(wc):
+                            add_failure(t_failures, "RS-ASSIGN-01", f"unknown warranty_class '{wc}'", rel_file, line_no)
+                    if isinstance(transfer_id, str) and transfer_id:
+                        assignments[transfer_id] = payload
+                elif mtype == "RESPONSIBILITY_ACCEPT":
+                    transfer_id = payload.get("transfer_id") if isinstance(payload.get("transfer_id"), str) else None
+                    if "RS-ACCEPT-01" in enabled_checks:
+                        if not isinstance(transfer_id, str) or transfer_id not in assignments:
+                            add_failure(t_failures, "RS-ACCEPT-01", f"RESPONSIBILITY_ACCEPT.transfer_id '{transfer_id}' must reference prior RESPONSIBILITY_ASSIGN", rel_file, line_no)
+                        else:
+                            expected = assignments[transfer_id].get("to_party")
+                            accepted_by = payload.get("accepted_by")
+                            if isinstance(expected, str) and isinstance(accepted_by, str) and accepted_by != expected:
+                                add_failure(t_failures, "RS-ACCEPT-01", f"RESPONSIBILITY_ACCEPT.accepted_by '{accepted_by}' must match assigned to_party '{expected}'", rel_file, line_no)
+                    if isinstance(transfer_id, str):
+                        accepted.add(transfer_id)
+                elif mtype == "RESPONSIBILITY_REVOKE":
+                    transfer_id = payload.get("transfer_id") if isinstance(payload.get("transfer_id"), str) else None
+                    if "RS-ACCEPT-01" in enabled_checks:
+                        if not isinstance(transfer_id, str) or transfer_id not in assignments:
+                            add_failure(t_failures, "RS-ACCEPT-01", f"RESPONSIBILITY_REVOKE.transfer_id '{transfer_id}' must reference prior RESPONSIBILITY_ASSIGN", rel_file, line_no)
+                        reason_code = payload.get("reason_code")
+                        if not isinstance(reason_code, str) or not reason_code:
+                            add_failure(t_failures, "RS-ACCEPT-01", "RESPONSIBILITY_REVOKE.reason_code must be a non-empty string", rel_file, line_no)
+                        elif reason_code not in policy_reason_codes and not _is_namespaced_identifier(reason_code):
+                            add_failure(t_failures, "RS-ACCEPT-01", f"unknown reason_code '{reason_code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+                    if isinstance(transfer_id, str):
+                        revoked.add(transfer_id)
+                elif mtype == "CHAIN_FAILURE_ATTEST":
+                    if "RS-CHAIN-01" in enabled_checks:
+                        classification = payload.get("classification")
+                        reason_code = payload.get("reason_code")
+                        if classification not in {"transient", "permanent"}:
+                            add_failure(t_failures, "RS-CHAIN-01", "CHAIN_FAILURE_ATTEST.classification must be 'transient' or 'permanent'", rel_file, line_no)
+                        if not isinstance(reason_code, str) or not reason_code:
+                            add_failure(t_failures, "RS-CHAIN-01", "CHAIN_FAILURE_ATTEST.reason_code must be a non-empty string", rel_file, line_no)
+                        elif reason_code not in policy_reason_codes and not _is_namespaced_identifier(reason_code):
+                            add_failure(t_failures, "RS-CHAIN-01", f"unknown reason_code '{reason_code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+                        transfer_id = payload.get("transfer_id")
+                        if transfer_id is not None and (not isinstance(transfer_id, str) or transfer_id not in assignments):
+                            add_failure(t_failures, "RS-CHAIN-01", f"CHAIN_FAILURE_ATTEST.transfer_id '{transfer_id}' must reference prior RESPONSIBILITY_ASSIGN", rel_file, line_no)
+                        graph_id = payload.get("provenance_graph_id")
+                        if graph_id is not None and (not isinstance(graph_id, str) or graph_id not in provenance_graph_ids):
+                            add_failure(t_failures, "RS-CHAIN-01", f"CHAIN_FAILURE_ATTEST.provenance_graph_id '{graph_id}' must reference prior PROVENANCE_DECLARE", rel_file, line_no)
+                        if classification == "transient":
+                            retry_after = payload.get("retry_after_seconds")
+                            if not isinstance(retry_after, int) or retry_after < 1:
+                                add_failure(t_failures, "RS-CHAIN-01", "CHAIN_FAILURE_ATTEST.retry_after_seconds must be a positive integer when classification=transient", rel_file, line_no)
+
+            if "RS-LIFECYCLE-01" in enabled_checks:
+                for transfer_id in assignments:
+                    if transfer_id not in accepted and transfer_id not in revoked:
+                        add_failure(t_failures, "RS-LIFECYCLE-01", f"responsibility transfer '{transfer_id}' has no explicit accept/revoke outcome", rel_file, rows[0][0] if rows else None)
 
         if any(check in enabled_checks for check in {"PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"}):
             first_contract = None
@@ -3731,6 +3923,406 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+        if any(check in enabled_checks for check in {"EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01", "EX-THREAD-REF-01", "EX-THREAD-CLOSED-01", "EX-STORE-REF-01", "EX-STORE-LINK-01", "EX-CROSS-BIND-01"}):
+            run_state: dict[str, str] = {}
+            run_terminal: set[str] = set()
+            run_thread_bind: dict[str, str] = {}
+            thread_created: set[str] = set()
+            thread_closed: set[str] = set()
+            thread_run_bind: dict[str, str] = {}
+            resolved_found_hashes: set[str] = set()
+            refs_requiring_resolution: list[tuple[int, str, str]] = []
+
+            def _validate_exec_ref(ref_obj: Any, line_no: int, label: str) -> None:
+                if not isinstance(ref_obj, dict):
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label} must be an object", rel_file, line_no)
+                    return
+                ref_id = ref_obj.get("ref_id")
+                obj_hash = ref_obj.get("object_hash")
+                obj_type = ref_obj.get("object_type")
+                access = ref_obj.get("access")
+                if not isinstance(ref_id, str) or not ref_id:
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label}.ref_id must be a non-empty string", rel_file, line_no)
+                if not isinstance(obj_hash, str) or not obj_hash:
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label}.object_hash must be a non-empty string", rel_file, line_no)
+                if not isinstance(obj_type, str) or not obj_type:
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label}.object_type must be a non-empty string", rel_file, line_no)
+                if not isinstance(access, dict):
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label}.access must be an object", rel_file, line_no)
+                    return
+                mode = access.get("mode")
+                constraint = access.get("constraint")
+                if mode not in {"read", "read_write", "delegated"}:
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label}.access.mode must be one of read/read_write/delegated", rel_file, line_no)
+                if not isinstance(constraint, str) or not constraint:
+                    add_failure(t_failures, "EX-STORE-REF-01", f"{label}.access.constraint must be a non-empty string", rel_file, line_no)
+                if access.get("resolution_required") is True and isinstance(obj_hash, str):
+                    refs_requiring_resolution.append((line_no, label, obj_hash))
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+
+                if mtype == "OBJECT_RESPONSE":
+                    entries = payload.get("entries") if isinstance(payload.get("entries"), list) else []
+                    for entry in entries:
+                        if not isinstance(entry, dict):
+                            continue
+                        if entry.get("status") == "FOUND" and isinstance(entry.get("object_hash"), str):
+                            resolved_found_hashes.add(entry.get("object_hash"))
+
+                if mtype in {"RUN_CREATE", "RUN_UPDATE", "RUN_CANCEL", "RUN_COMPLETE"}:
+                    run_id = payload.get("run_id")
+                    thread_id = payload.get("thread_id")
+                    if mtype != "RUN_CREATE":
+                        if "EX-RUN-REF-01" in enabled_checks and (not isinstance(run_id, str) or run_id not in run_state):
+                            add_failure(t_failures, "EX-RUN-REF-01", f"{mtype}.run_id '{run_id}' must reference prior RUN_CREATE", rel_file, line_no)
+                        if "EX-RUN-TERMINAL-01" in enabled_checks and isinstance(run_id, str) and run_id in run_terminal:
+                            add_failure(t_failures, "EX-RUN-TERMINAL-01", f"{mtype} is not allowed after terminal state for run_id '{run_id}'", rel_file, line_no)
+                    else:
+                        if "EX-RUN-TRANSITION-01" in enabled_checks and isinstance(run_id, str) and run_id in run_state:
+                            add_failure(t_failures, "EX-RUN-TRANSITION-01", f"RUN_CREATE for run_id '{run_id}' must be unique", rel_file, line_no)
+
+                    if isinstance(run_id, str):
+                        if mtype == "RUN_CREATE":
+                            run_state[run_id] = str(payload.get("status") or "created")
+                        elif mtype == "RUN_UPDATE":
+                            run_state[run_id] = str(payload.get("status") or run_state.get(run_id) or "running")
+                        elif mtype == "RUN_CANCEL":
+                            if "EX-RUN-TRANSITION-01" in enabled_checks and run_id in run_terminal:
+                                add_failure(t_failures, "EX-RUN-TRANSITION-01", f"RUN_CANCEL cannot repeat terminal transition for run_id '{run_id}'", rel_file, line_no)
+                            run_state[run_id] = "cancelled"
+                            run_terminal.add(run_id)
+                        elif mtype == "RUN_COMPLETE":
+                            if "EX-RUN-TRANSITION-01" in enabled_checks and run_id in run_terminal:
+                                add_failure(t_failures, "EX-RUN-TRANSITION-01", f"RUN_COMPLETE cannot repeat terminal transition for run_id '{run_id}'", rel_file, line_no)
+                            run_state[run_id] = "completed"
+                            run_terminal.add(run_id)
+
+                    if isinstance(run_id, str) and isinstance(thread_id, str):
+                        if "EX-CROSS-BIND-01" in enabled_checks:
+                            bound_thread = run_thread_bind.get(run_id)
+                            if bound_thread is not None and bound_thread != thread_id:
+                                add_failure(t_failures, "EX-CROSS-BIND-01", f"run_id '{run_id}' cannot rebind from thread_id '{bound_thread}' to '{thread_id}'", rel_file, line_no)
+                            bound_run = thread_run_bind.get(thread_id)
+                            if bound_run is not None and bound_run != run_id:
+                                add_failure(t_failures, "EX-CROSS-BIND-01", f"thread_id '{thread_id}' cannot rebind from run_id '{bound_run}' to '{run_id}'", rel_file, line_no)
+                        run_thread_bind[run_id] = thread_id
+                        thread_run_bind[thread_id] = run_id
+
+                if mtype in {"THREAD_CREATE", "THREAD_APPEND", "THREAD_CLOSE"}:
+                    thread_id = payload.get("thread_id")
+                    run_id = payload.get("run_id")
+
+                    if mtype in {"THREAD_APPEND", "THREAD_CLOSE"}:
+                        if "EX-THREAD-REF-01" in enabled_checks and (not isinstance(thread_id, str) or thread_id not in thread_created):
+                            add_failure(t_failures, "EX-THREAD-REF-01", f"{mtype}.thread_id '{thread_id}' must reference prior THREAD_CREATE", rel_file, line_no)
+                    if mtype in {"THREAD_APPEND", "THREAD_CLOSE"} and "EX-THREAD-CLOSED-01" in enabled_checks and isinstance(thread_id, str) and thread_id in thread_closed:
+                        add_failure(t_failures, "EX-THREAD-CLOSED-01", f"{mtype} is not allowed after THREAD_CLOSE for thread_id '{thread_id}'", rel_file, line_no)
+
+                    if isinstance(thread_id, str):
+                        if mtype == "THREAD_CREATE":
+                            thread_created.add(thread_id)
+                        elif mtype == "THREAD_CLOSE":
+                            thread_closed.add(thread_id)
+
+                    if isinstance(thread_id, str) and isinstance(run_id, str):
+                        if "EX-CROSS-BIND-01" in enabled_checks:
+                            bound_run = thread_run_bind.get(thread_id)
+                            if bound_run is not None and bound_run != run_id:
+                                add_failure(t_failures, "EX-CROSS-BIND-01", f"thread_id '{thread_id}' cannot rebind from run_id '{bound_run}' to '{run_id}'", rel_file, line_no)
+                            bound_thread = run_thread_bind.get(run_id)
+                            if bound_thread is not None and bound_thread != thread_id:
+                                add_failure(t_failures, "EX-CROSS-BIND-01", f"run_id '{run_id}' cannot rebind from thread_id '{bound_thread}' to '{thread_id}'", rel_file, line_no)
+                        thread_run_bind[thread_id] = run_id
+                        run_thread_bind[run_id] = thread_id
+
+                for ref_key in ("store_ref", "memory_ref"):
+                    ref_obj = payload.get(ref_key)
+                    if ref_obj is not None and "EX-STORE-REF-01" in enabled_checks:
+                        _validate_exec_ref(ref_obj, line_no, ref_key)
+
+            if "EX-STORE-LINK-01" in enabled_checks:
+                for line_no, label, obj_hash in refs_requiring_resolution:
+                    if obj_hash not in resolved_found_hashes:
+                        add_failure(t_failures, "EX-STORE-LINK-01", f"{label}.object_hash '{obj_hash}' requires OBJECT_RESPONSE status=FOUND evidence", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"CH-HIER-01", "CH-LIFECYCLE-01"}):
+            declared_channels: dict[str, dict[str, Any]] = {}
+            deprecated_channels: set[str] = set()
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "CHANNEL_DECLARE":
+                    channel_id = payload.get("channel_id") if isinstance(payload.get("channel_id"), str) else None
+                    if isinstance(channel_id, str):
+                        parent_id = payload.get("parent_channel_id") if isinstance(payload.get("parent_channel_id"), str) else None
+                        if "CH-HIER-01" in enabled_checks and isinstance(parent_id, str) and parent_id not in declared_channels:
+                            add_failure(t_failures, "CH-HIER-01", f"CHANNEL_DECLARE.parent_channel_id '{parent_id}' must reference prior declared channel", rel_file, line_no)
+                        vis = payload.get("visibility_class")
+                        if "CH-HIER-01" in enabled_checks and isinstance(parent_id, str) and parent_id in declared_channels:
+                            parent_vis = declared_channels[parent_id].get("visibility_class")
+                            if parent_vis == "private" and vis == "public":
+                                add_failure(t_failures, "CH-HIER-01", "child channel visibility_class cannot escalate from parent private to public", rel_file, line_no)
+                        declared_channels[channel_id] = payload
+                elif mtype == "CHANNEL_UPDATE":
+                    channel_id = payload.get("channel_id") if isinstance(payload.get("channel_id"), str) else None
+                    if "CH-LIFECYCLE-01" in enabled_checks and (not isinstance(channel_id, str) or channel_id not in declared_channels):
+                        add_failure(t_failures, "CH-LIFECYCLE-01", f"CHANNEL_UPDATE.channel_id '{channel_id}' must reference prior CHANNEL_DECLARE", rel_file, line_no)
+                    if isinstance(channel_id, str) and channel_id in deprecated_channels and "CH-LIFECYCLE-01" in enabled_checks:
+                        add_failure(t_failures, "CH-LIFECYCLE-01", f"CHANNEL_UPDATE.channel_id '{channel_id}' is already deprecated", rel_file, line_no)
+                    parent_id = payload.get("parent_channel_id") if isinstance(payload.get("parent_channel_id"), str) else None
+                    if "CH-HIER-01" in enabled_checks and isinstance(parent_id, str) and parent_id not in declared_channels:
+                        add_failure(t_failures, "CH-HIER-01", f"CHANNEL_UPDATE.parent_channel_id '{parent_id}' must reference prior declared channel", rel_file, line_no)
+                elif mtype == "CHANNEL_DEPRECATE":
+                    channel_id = payload.get("channel_id") if isinstance(payload.get("channel_id"), str) else None
+                    if "CH-LIFECYCLE-01" in enabled_checks and (not isinstance(channel_id, str) or channel_id not in declared_channels):
+                        add_failure(t_failures, "CH-LIFECYCLE-01", f"CHANNEL_DEPRECATE.channel_id '{channel_id}' must reference prior CHANNEL_DECLARE", rel_file, line_no)
+                    if isinstance(channel_id, str):
+                        deprecated_channels.add(channel_id)
+
+        if any(check in enabled_checks for check in {"SB-STATE-01", "SB-CURSOR-01"}):
+            known_subscriptions: set[str] = set()
+            cursor_order: dict[str, str] = {}
+
+            def _cursor_rank(value: str) -> int:
+                digits = "".join(ch for ch in value if ch.isdigit())
+                return int(digits) if digits else 0
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "SUBSCRIBE":
+                    sub_id = payload.get("subscription_id")
+                    if isinstance(sub_id, str):
+                        known_subscriptions.add(sub_id)
+                elif mtype == "SUBSCRIPTION_STATE":
+                    sub_id = payload.get("subscription_id")
+                    cursor = payload.get("cursor")
+                    if "SB-STATE-01" in enabled_checks and (not isinstance(sub_id, str) or sub_id not in known_subscriptions):
+                        add_failure(t_failures, "SB-STATE-01", f"SUBSCRIPTION_STATE.subscription_id '{sub_id}' must reference prior SUBSCRIBE", rel_file, line_no)
+                    if "SB-CURSOR-01" in enabled_checks and isinstance(sub_id, str) and isinstance(cursor, str):
+                        prev_cursor = cursor_order.get(sub_id)
+                        if isinstance(prev_cursor, str) and _cursor_rank(cursor) < _cursor_rank(prev_cursor):
+                            add_failure(t_failures, "SB-CURSOR-01", f"SUBSCRIPTION_STATE.cursor '{cursor}' regressed from '{prev_cursor}'", rel_file, line_no)
+                        cursor_order[sub_id] = cursor
+                elif mtype == "UNSUBSCRIBE":
+                    sub_id = payload.get("subscription_id")
+                    if "SB-STATE-01" in enabled_checks and (not isinstance(sub_id, str) or sub_id not in known_subscriptions):
+                        add_failure(t_failures, "SB-STATE-01", f"UNSUBSCRIBE.subscription_id '{sub_id}' must reference prior SUBSCRIBE", rel_file, line_no)
+                    if isinstance(sub_id, str):
+                        known_subscriptions.discard(sub_id)
+
+        if any(check in enabled_checks for check in {"PB-LIFECYCLE-01", "PB-REASON-01", "PB-DELIVERY-01"}):
+            publication_versions: dict[str, str] = {}
+            must_reach = False
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    ext = contract.get("ext") if isinstance(contract, dict) else None
+                    pubs = ext.get("publications") if isinstance(ext, dict) else None
+                    if isinstance(pubs, dict) and pubs.get("must_reach") is True:
+                        must_reach = True
+                    break
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "PUBLICATION_PUBLISH":
+                    publication_id = payload.get("publication_id")
+                    version_id = payload.get("version_id")
+                    if isinstance(publication_id, str) and isinstance(version_id, str):
+                        publication_versions[publication_id] = version_id
+                    if must_reach and "PB-DELIVERY-01" in enabled_checks:
+                        proof = payload.get("delivery_proof_ref")
+                        if not isinstance(proof, str) or not proof:
+                            add_failure(t_failures, "PB-DELIVERY-01", "must_reach publication requires payload.delivery_proof_ref", rel_file, line_no)
+                elif mtype == "PUBLICATION_UPDATE":
+                    publication_id = payload.get("publication_id")
+                    version_id = payload.get("version_id")
+                    prior_version_id = payload.get("prior_version_id")
+                    if "PB-LIFECYCLE-01" in enabled_checks:
+                        if not isinstance(publication_id, str) or publication_id not in publication_versions:
+                            add_failure(t_failures, "PB-LIFECYCLE-01", f"PUBLICATION_UPDATE.publication_id '{publication_id}' must reference prior PUBLICATION_PUBLISH", rel_file, line_no)
+                        else:
+                            expected_prior = publication_versions[publication_id]
+                            if prior_version_id != expected_prior:
+                                add_failure(t_failures, "PB-LIFECYCLE-01", f"PUBLICATION_UPDATE.prior_version_id '{prior_version_id}' must equal current version '{expected_prior}'", rel_file, line_no)
+                            if version_id == prior_version_id:
+                                add_failure(t_failures, "PB-LIFECYCLE-01", "PUBLICATION_UPDATE.version_id must progress beyond prior_version_id", rel_file, line_no)
+                    if must_reach and "PB-DELIVERY-01" in enabled_checks:
+                        proof = payload.get("delivery_proof_ref")
+                        if not isinstance(proof, str) or not proof:
+                            add_failure(t_failures, "PB-DELIVERY-01", "must_reach publication requires payload.delivery_proof_ref", rel_file, line_no)
+                    if isinstance(publication_id, str) and isinstance(version_id, str):
+                        publication_versions[publication_id] = version_id
+                elif mtype == "PUBLICATION_RETRACT":
+                    publication_id = payload.get("publication_id")
+                    prior_version_id = payload.get("prior_version_id")
+                    if "PB-LIFECYCLE-01" in enabled_checks:
+                        if not isinstance(publication_id, str) or publication_id not in publication_versions:
+                            add_failure(t_failures, "PB-LIFECYCLE-01", f"PUBLICATION_RETRACT.publication_id '{publication_id}' must reference known publication", rel_file, line_no)
+                        else:
+                            expected_prior = publication_versions[publication_id]
+                            if prior_version_id != expected_prior:
+                                add_failure(t_failures, "PB-LIFECYCLE-01", f"PUBLICATION_RETRACT.prior_version_id '{prior_version_id}' must equal current version '{expected_prior}'", rel_file, line_no)
+                    if "PB-REASON-01" in enabled_checks:
+                        reason_code = payload.get("reason_code")
+                        if not isinstance(reason_code, str) or not reason_code:
+                            add_failure(t_failures, "PB-REASON-01", "PUBLICATION_RETRACT.reason_code must be a non-empty string", rel_file, line_no)
+                        elif reason_code not in policy_reason_codes and not _is_namespaced_identifier(reason_code):
+                            add_failure(t_failures, "PB-REASON-01", f"unknown reason_code '{reason_code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+                    if must_reach and "PB-DELIVERY-01" in enabled_checks:
+                        proof = payload.get("delivery_proof_ref")
+                        if not isinstance(proof, str) or not proof:
+                            add_failure(t_failures, "PB-DELIVERY-01", "must_reach publication requires payload.delivery_proof_ref", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"IB-LINK-01", "IB-LEASE-01"}):
+            queued_items: dict[str, str] = {}
+            leased_items: dict[str, str] = {}
+            lease_by_id: dict[str, dict[str, Any]] = {}
+            require_queue_lease_ref = False
+            require_admission_ref = False
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    ext = contract.get("ext") if isinstance(contract, dict) else None
+                    inbox_ext = ext.get("inbox") if isinstance(ext, dict) else None
+                    if isinstance(inbox_ext, dict):
+                        require_queue_lease_ref = inbox_ext.get("require_queue_lease_ref") is True
+                        require_admission_ref = inbox_ext.get("require_admission_ref") is True
+                    break
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "INBOX_ENQUEUE":
+                    inbox_id = payload.get("inbox_id")
+                    item_id = payload.get("item_id")
+                    if isinstance(item_id, str) and isinstance(inbox_id, str):
+                        queued_items[item_id] = inbox_id
+                elif mtype == "INBOX_ROUTE":
+                    item_id = payload.get("item_id")
+                    if "IB-LINK-01" in enabled_checks and (not isinstance(item_id, str) or item_id not in queued_items):
+                        add_failure(t_failures, "IB-LINK-01", f"INBOX_ROUTE.item_id '{item_id}' must reference prior INBOX_ENQUEUE", rel_file, line_no)
+                elif mtype == "INBOX_LEASE_GRANT":
+                    inbox_id = payload.get("inbox_id")
+                    lease_id = payload.get("lease_id")
+                    item_id = payload.get("item_id")
+                    if isinstance(lease_id, str):
+                        lease_by_id[lease_id] = payload
+                    if isinstance(item_id, str) and isinstance(lease_id, str):
+                        leased_items[item_id] = lease_id
+                    if "IB-LINK-01" in enabled_checks and isinstance(item_id, str):
+                        if item_id not in queued_items:
+                            add_failure(t_failures, "IB-LINK-01", f"INBOX_LEASE_GRANT.item_id '{item_id}' must reference prior INBOX_ENQUEUE", rel_file, line_no)
+                        elif isinstance(inbox_id, str) and queued_items[item_id] != inbox_id:
+                            add_failure(t_failures, "IB-LINK-01", "INBOX_LEASE_GRANT.inbox_id must match enqueue inbox_id for item", rel_file, line_no)
+                    if "IB-LEASE-01" in enabled_checks:
+                        if require_queue_lease_ref:
+                            qref = payload.get("queue_lease_ref")
+                            if not isinstance(qref, str) or not qref:
+                                add_failure(t_failures, "IB-LEASE-01", "policy requires INBOX_LEASE_GRANT.queue_lease_ref", rel_file, line_no)
+                        if require_admission_ref:
+                            aref = payload.get("admission_ref")
+                            if not isinstance(aref, str) or not aref:
+                                add_failure(t_failures, "IB-LEASE-01", "policy requires INBOX_LEASE_GRANT.admission_ref", rel_file, line_no)
+                elif mtype == "INBOX_ACK":
+                    item_id = payload.get("item_id")
+                    lease_id = payload.get("lease_id")
+                    if "IB-LINK-01" in enabled_checks:
+                        if not isinstance(item_id, str) or item_id not in queued_items:
+                            add_failure(t_failures, "IB-LINK-01", f"INBOX_ACK.item_id '{item_id}' must reference prior INBOX_ENQUEUE", rel_file, line_no)
+                        if isinstance(lease_id, str):
+                            if lease_id not in lease_by_id:
+                                add_failure(t_failures, "IB-LINK-01", f"INBOX_ACK.lease_id '{lease_id}' must reference prior INBOX_LEASE_GRANT", rel_file, line_no)
+                        else:
+                            if isinstance(item_id, str) and item_id in leased_items:
+                                add_failure(t_failures, "IB-LINK-01", "INBOX_ACK.lease_id required when item has active lease", rel_file, line_no)
+
+        if any(check in enabled_checks for check in {"TW-CHECKPOINT-01", "TW-RECEIPT-01", "TW-HEAD-01", "TW-INCLUSION-01", "TW-EQUIVOCATION-01", "TW-NONREP-01"}):
+            submits_by_hash: dict[str, dict[str, Any]] = {}
+            checkpoints: dict[str, dict[str, Any]] = {}
+            seen_message_hashes = {m.get("message_hash") for _, m in rows if isinstance(m.get("message_hash"), str)}
+            strict_equivocation = False
+            require_nonrep = False
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    ext = contract.get("ext") if isinstance(contract, dict) else None
+                    tw = ext.get("transcript_witness") if isinstance(ext, dict) else None
+                    if isinstance(tw, dict):
+                        strict_equivocation = tw.get("require_strict_head_consensus") is True
+                        require_nonrep = tw.get("require_nonrep_signature_ref") is True
+                    break
+
+            equiv_index: dict[tuple[str, int], str] = {}
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "WITNESS_SUBMIT":
+                    checkpoint = payload.get("checkpoint") if isinstance(payload.get("checkpoint"), dict) else {}
+                    checkpoint_id = checkpoint.get("checkpoint_id")
+                    cp_session = checkpoint.get("session_id")
+                    head_hash = checkpoint.get("head_hash")
+                    seq = checkpoint.get("sequence_no") if isinstance(checkpoint.get("sequence_no"), int) else None
+                    if "TW-CHECKPOINT-01" in enabled_checks:
+                        if not isinstance(checkpoint_id, str) or not checkpoint_id:
+                            add_failure(t_failures, "TW-CHECKPOINT-01", "checkpoint.checkpoint_id must be a non-empty string", rel_file, line_no)
+                        if cp_session != msg.get("session_id"):
+                            add_failure(t_failures, "TW-CHECKPOINT-01", "checkpoint.session_id must match message session_id", rel_file, line_no)
+                        if not isinstance(head_hash, str) or head_hash not in seen_message_hashes:
+                            add_failure(t_failures, "TW-CHECKPOINT-01", f"checkpoint.head_hash '{head_hash}' must reference a known transcript message_hash", rel_file, line_no)
+                    if "TW-NONREP-01" in enabled_checks and require_nonrep:
+                        sig_ref = checkpoint.get("original_sender_sig_ref")
+                        if not isinstance(sig_ref, str) or not sig_ref:
+                            add_failure(t_failures, "TW-NONREP-01", "non-repudiation mode requires checkpoint.original_sender_sig_ref", rel_file, line_no)
+                    if isinstance(checkpoint_id, str):
+                        checkpoints[checkpoint_id] = checkpoint
+                    mh = msg.get("message_hash")
+                    if isinstance(mh, str):
+                        submits_by_hash[mh] = msg
+                    if strict_equivocation and isinstance(cp_session, str) and isinstance(seq, int) and isinstance(head_hash, str):
+                        key = (cp_session, seq)
+                        prev_head = equiv_index.get(key)
+                        if prev_head is not None and prev_head != head_hash and "TW-EQUIVOCATION-01" in enabled_checks:
+                            add_failure(t_failures, "TW-EQUIVOCATION-01", f"conflicting checkpoint heads for session '{cp_session}' sequence_no={seq}", rel_file, line_no)
+                        equiv_index[key] = head_hash
+
+                elif mtype == "WITNESS_RECEIPT":
+                    receipt = payload.get("receipt") if isinstance(payload.get("receipt"), dict) else {}
+                    submit_hash = receipt.get("submit_message_hash")
+                    checkpoint_id = receipt.get("checkpoint_id")
+                    if "TW-RECEIPT-01" in enabled_checks:
+                        if not isinstance(submit_hash, str) or submit_hash not in submits_by_hash:
+                            add_failure(t_failures, "TW-RECEIPT-01", f"receipt.submit_message_hash '{submit_hash}' must reference prior WITNESS_SUBMIT", rel_file, line_no)
+                        if not isinstance(checkpoint_id, str) or checkpoint_id not in checkpoints:
+                            add_failure(t_failures, "TW-RECEIPT-01", f"receipt.checkpoint_id '{checkpoint_id}' must reference submitted checkpoint", rel_file, line_no)
+                        if isinstance(submit_hash, str) and submit_hash in submits_by_hash and isinstance(checkpoint_id, str):
+                            sub_cp = (((submits_by_hash[submit_hash].get("payload") or {}).get("checkpoint") or {}).get("checkpoint_id"))
+                            if isinstance(sub_cp, str) and sub_cp != checkpoint_id:
+                                add_failure(t_failures, "TW-RECEIPT-01", "receipt.checkpoint_id must match referenced submit checkpoint_id", rel_file, line_no)
+
+                elif mtype == "HEAD_EXCHANGE":
+                    head = payload.get("head") if isinstance(payload.get("head"), dict) else {}
+                    hsess = head.get("session_id")
+                    hhash = head.get("head_hash")
+                    if "TW-HEAD-01" in enabled_checks:
+                        if hsess != msg.get("session_id"):
+                            add_failure(t_failures, "TW-HEAD-01", "head.session_id must match message session_id", rel_file, line_no)
+                        if not isinstance(hhash, str) or hhash not in seen_message_hashes:
+                            add_failure(t_failures, "TW-HEAD-01", f"head.head_hash '{hhash}' must reference known transcript message_hash", rel_file, line_no)
+
+                elif mtype == "INCLUSION_PROOF_DECLARE":
+                    proof = payload.get("proof") if isinstance(payload.get("proof"), dict) else {}
+                    checkpoint_id = proof.get("checkpoint_id")
+                    target_hash = proof.get("target_message_hash")
+                    if "TW-INCLUSION-01" in enabled_checks:
+                        if not isinstance(checkpoint_id, str) or checkpoint_id not in checkpoints:
+                            add_failure(t_failures, "TW-INCLUSION-01", f"proof.checkpoint_id '{checkpoint_id}' must reference known checkpoint", rel_file, line_no)
+                        if not isinstance(target_hash, str) or target_hash not in seen_message_hashes:
+                            add_failure(t_failures, "TW-INCLUSION-01", f"proof.target_message_hash '{target_hash}' must reference known transcript message_hash", rel_file, line_no)
 
         if any(check in enabled_checks for check in {"RS-ACTIONS-01", "RS-RESUME-MATCH-01", "RS-LOOP-01", "RS-PROBING-01"}):
             request_rows: list[tuple[int, dict[str, Any]]] = []

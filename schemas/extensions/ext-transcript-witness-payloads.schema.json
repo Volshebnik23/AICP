@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-transcript-witness-payloads.schema.json",
+  "title": "AICP EXT-TRANSCRIPT-WITNESS payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {"type": "string", "minLength": 1},
+    "CheckpointCommitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpoint_id", "session_id", "head_hash", "issued_at"],
+      "properties": {
+        "checkpoint_id": {"$ref": "#/$defs/NonEmptyString"},
+        "session_id": {"$ref": "#/$defs/NonEmptyString"},
+        "head_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "issued_at": {"$ref": "#/$defs/NonEmptyString"},
+        "sequence_no": {"type": "integer", "minimum": 0},
+        "original_sender_sig_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "WitnessReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_id", "checkpoint_id", "submit_message_hash", "witness_id", "issued_at"],
+      "properties": {
+        "receipt_id": {"$ref": "#/$defs/NonEmptyString"},
+        "checkpoint_id": {"$ref": "#/$defs/NonEmptyString"},
+        "submit_message_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "witness_id": {"$ref": "#/$defs/NonEmptyString"},
+        "issued_at": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "HeadAnnouncement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "head_hash", "as_of"],
+      "properties": {
+        "session_id": {"$ref": "#/$defs/NonEmptyString"},
+        "head_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "as_of": {"$ref": "#/$defs/NonEmptyString"},
+        "source_ref": {"$ref": "#/$defs/NonEmptyString"}
+      }
+    },
+    "InclusionProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proof_id", "checkpoint_id", "target_message_hash", "root_hash"],
+      "properties": {
+        "proof_id": {"$ref": "#/$defs/NonEmptyString"},
+        "checkpoint_id": {"$ref": "#/$defs/NonEmptyString"},
+        "target_message_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "root_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "path_hashes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/NonEmptyString"}
+        }
+      }
+    },
+    "WITNESS_SUBMIT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkpoint"],
+      "properties": {
+        "checkpoint": {"$ref": "#/$defs/CheckpointCommitment"}
+      }
+    },
+    "WITNESS_RECEIPT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt"],
+      "properties": {
+        "receipt": {"$ref": "#/$defs/WitnessReceipt"}
+      }
+    },
+    "HEAD_EXCHANGE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["head"],
+      "properties": {
+        "head": {"$ref": "#/$defs/HeadAnnouncement"}
+      }
+    },
+    "INCLUSION_PROOF_DECLARE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proof"],
+      "properties": {
+        "proof": {"$ref": "#/$defs/InclusionProof"}
+      }
+    }
+  }
+}

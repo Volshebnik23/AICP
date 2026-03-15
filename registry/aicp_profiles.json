@@ -185,5 +185,24 @@
     "required_policy_categories": [],
     "required_crypto_profiles": [],
     "description": "Workflow orchestration and delegation profile aligned with PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1 required suites; platform may enforce deployment-specific controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-EXECUTION-INTEROP@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Execution interop requires strict run/thread terminal-state enforcement, replay-safe resume mapping, and constrained store reference exposure.",
+    "profile_id": "AICP-EXECUTION-INTEROP",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-EXECUTION-LIFECYCLE",
+      "EXT-RESUME",
+      "EXT-OBJECT-RESYNC"
+    ],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Optional execution interoperability profile aligned with PF_AICP_EXECUTION_INTEROP_0.1 required suites."
   }
 ]

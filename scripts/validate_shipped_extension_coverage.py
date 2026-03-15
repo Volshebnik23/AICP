@@ -97,6 +97,8 @@ def main() -> int:
             ad_types = set(ad_payload_map.keys()) if isinstance(ad_payload_map, dict) else set()
             if "ADMISSION_REJECT" not in ad_types:
                 failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REJECT")
+            if "ADMISSION_REVOKE" not in ad_types:
+                failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 payload_schema_map is missing ADMISSION_REVOKE")
             if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ad_transcripts):
                 failures.append("ROADMAP marks M35 shipped, but AD_ADMISSION_0.1 has no expected-fail transcript")
 
@@ -125,6 +127,20 @@ def main() -> int:
             mp_payload_map = mp_suite.get("payload_schema_map", {}) if isinstance(mp_suite, dict) else {}
             mp_types = set(mp_payload_map.keys()) if isinstance(mp_payload_map, dict) else set()
             marketplace_checks = {c.get("test_id") for c in mp_suite.get("checks", []) if isinstance(c, dict)} if isinstance(mp_suite, dict) else set()
+            message_registry_path = ROOT / "registry/message_types.json"
+            message_registry = _load_json(message_registry_path) if message_registry_path.exists() else []
+            registry_types = {
+                entry.get("id")
+                for entry in message_registry
+                if isinstance(entry, dict) and entry.get("type") == "message_types" and isinstance(entry.get("id"), str)
+            }
+            mp_expected_failure_ids = {
+                f.get("test_id")
+                for t in mp_transcripts
+                if isinstance(t, dict) and t.get("expect_pass") is False
+                for f in t.get("expected_failures", [])
+                if isinstance(f, dict)
+            }
 
             canonical_m36_types = {
                 "RFW_POST",
@@ -157,11 +173,185 @@ def main() -> int:
             if legacy_m36_types & mp_types:
                 present_legacy = sorted(legacy_m36_types & mp_types)
                 failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 still includes legacy marketplace types: {', '.join(present_legacy)}")
+            if not canonical_m36_types.issubset(registry_types):
+                missing_registry = sorted(canonical_m36_types - registry_types)
+                failures.append(f"ROADMAP marks M36 shipped, but registry/message_types.json misses canonical marketplace types: {', '.join(missing_registry)}")
+            if legacy_m36_types & registry_types:
+                present_legacy_registry = sorted(legacy_m36_types & registry_types)
+                failures.append(f"ROADMAP marks M36 shipped, but registry/message_types.json still includes legacy marketplace types: {', '.join(present_legacy_registry)}")
 
             required_semantic_checks = {"MP-RFW-01", "MP-BID-01", "MP-AWARD-01", "MP-AUCTION-01", "MP-BLACKBOARD-01", "MP-SUBCHAT-01", "MP-ADMISSION-LINK-01"}
             if not required_semantic_checks.issubset(marketplace_checks):
                 missing_checks = sorted(required_semantic_checks - marketplace_checks)
                 failures.append(f"ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 is missing marketplace semantic checks: {', '.join(missing_checks)}")
+            if "MP-AWARD-01" not in mp_expected_failure_ids:
+                failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 has no expected-fail transcript asserting MP-AWARD-01")
+
+    if _has_shipped_milestone(roadmap, "M37"):
+        if "conformance/extensions/PR_PROVENANCE_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include PR_PROVENANCE_0.1")
+        if "conformance/extensions/ES_ACTION_ESCROW_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include ES_ACTION_ESCROW_0.1")
+        if "conformance/extensions/RP_RESPONSIBILITY_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include RP_RESPONSIBILITY_0.1")
+        if not (ROOT / "docs/extensions/RFC_EXT_PROVENANCE.md").exists():
+            failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_PROVENANCE.md is missing")
+        if not (ROOT / "docs/extensions/RFC_EXT_ACTION_ESCROW.md").exists():
+            failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_ACTION_ESCROW.md is missing")
+        if not (ROOT / "docs/extensions/RFC_EXT_RESPONSIBILITY.md").exists():
+            failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_RESPONSIBILITY.md is missing")
+        if not (ROOT / "schemas/extensions/ext-provenance-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M37 shipped, but schemas/extensions/ext-provenance-payloads.schema.json is missing")
+        if not (ROOT / "schemas/extensions/ext-action-escrow-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M37 shipped, but schemas/extensions/ext-action-escrow-payloads.schema.json is missing")
+        if not (ROOT / "schemas/extensions/ext-responsibility-payloads.schema.json").exists():
+            failures.append("ROADMAP marks M37 shipped, but schemas/extensions/ext-responsibility-payloads.schema.json is missing")
+        if not (ROOT / "scripts/generate_provenance_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/provenance").glob("*.jsonl")):
+            failures.append("ROADMAP marks M37 shipped, but no provenance fixture generator or deterministic fixtures are present")
+        if not (ROOT / "scripts/generate_action_escrow_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/action_escrow").glob("*.jsonl")):
+            failures.append("ROADMAP marks M37 shipped, but no action-escrow fixture generator or deterministic fixtures are present")
+        if not (ROOT / "scripts/generate_responsibility_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/responsibility").glob("*.jsonl")):
+            failures.append("ROADMAP marks M37 shipped, but no responsibility fixture generator or deterministic fixtures are present")
+
+        pr_suite_path = ROOT / "conformance/extensions/PR_PROVENANCE_0.1.json"
+        es_suite_path = ROOT / "conformance/extensions/ES_ACTION_ESCROW_0.1.json"
+        rp_suite_path = ROOT / "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+
+        if pr_suite_path.exists():
+            pr_suite = _load_json(pr_suite_path)
+            pr_transcripts = pr_suite.get("transcripts", []) if isinstance(pr_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in pr_transcripts):
+                failures.append("ROADMAP marks M37 shipped, but PR_PROVENANCE_0.1 has no expected-fail transcript")
+
+        if es_suite_path.exists():
+            es_suite = _load_json(es_suite_path)
+            es_transcripts = es_suite.get("transcripts", []) if isinstance(es_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in es_transcripts):
+                failures.append("ROADMAP marks M37 shipped, but ES_ACTION_ESCROW_0.1 has no expected-fail transcript")
+
+        if rp_suite_path.exists():
+            rp_suite = _load_json(rp_suite_path)
+            rp_transcripts = rp_suite.get("transcripts", []) if isinstance(rp_suite, dict) else []
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in rp_transcripts):
+                failures.append("ROADMAP marks M37 shipped, but RP_RESPONSIBILITY_0.1 has no expected-fail transcript")
+
+
+    if _has_shipped_milestone(roadmap, "M38"):
+        required_make = {
+            "conformance/extensions/CH_CHANNELS_0.1.json": "CH_CHANNELS_0.1",
+            "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json": "SB_SUBSCRIPTIONS_0.1",
+            "conformance/extensions/PB_PUBLICATIONS_0.1.json": "PB_PUBLICATIONS_0.1",
+            "conformance/extensions/IB_INBOX_0.1.json": "IB_INBOX_0.1",
+        }
+        for suite_path, label in required_make.items():
+            if suite_path not in makefile:
+                failures.append(f"ROADMAP marks M38 shipped, but Makefile conformance-ext does not include {label}")
+
+        required_docs = [
+            ROOT / "docs/extensions/RFC_EXT_CHANNELS.md",
+            ROOT / "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md",
+            ROOT / "docs/extensions/RFC_EXT_PUBLICATIONS.md",
+            ROOT / "docs/extensions/RFC_EXT_INBOX.md",
+        ]
+        for path in required_docs:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M38 shipped, but {path.relative_to(ROOT)} is missing")
+
+        required_schemas = [
+            ROOT / "schemas/extensions/ext-channels-payloads.schema.json",
+            ROOT / "schemas/extensions/ext-subscriptions-payloads.schema.json",
+            ROOT / "schemas/extensions/ext-publications-payloads.schema.json",
+            ROOT / "schemas/extensions/ext-inbox-payloads.schema.json",
+        ]
+        for path in required_schemas:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M38 shipped, but {path.relative_to(ROOT)} is missing")
+
+        suite_specs = [
+            (ROOT / "conformance/extensions/CH_CHANNELS_0.1.json", "CH-CHANNELS", {"CH-HIER-01", "CH-LIFECYCLE-01"}),
+            (ROOT / "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json", "SB-SUBSCRIPTIONS", {"SB-STATE-01", "SB-CURSOR-01"}),
+            (ROOT / "conformance/extensions/PB_PUBLICATIONS_0.1.json", "PB-PUBLICATIONS", {"PB-LIFECYCLE-01", "PB-REASON-01", "PB-DELIVERY-01"}),
+            (ROOT / "conformance/extensions/IB_INBOX_0.1.json", "IB-INBOX", {"IB-LINK-01", "IB-LEASE-01"}),
+        ]
+
+        for suite_path, label, required_checks in suite_specs:
+            if not suite_path.exists():
+                failures.append(f"ROADMAP marks M38 shipped, but {suite_path.relative_to(ROOT)} is missing")
+                continue
+            suite = _load_json(suite_path)
+            transcripts = suite.get("transcripts", []) if isinstance(suite, dict) else []
+            checks = {c.get("test_id") for c in suite.get("checks", []) if isinstance(c, dict)} if isinstance(suite, dict) else set()
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in transcripts):
+                failures.append(f"ROADMAP marks M38 shipped, but {label} has no expected-fail transcript")
+            if not required_checks.issubset(checks):
+                missing_checks = sorted(required_checks - checks)
+                failures.append(f"ROADMAP marks M38 shipped, but {label} is missing semantic checks: {', '.join(missing_checks)}")
+
+        generators_or_fixtures = [
+            (ROOT / "scripts/generate_channels_fixtures.py", ROOT / "fixtures/extensions/channels"),
+            (ROOT / "scripts/generate_subscriptions_fixtures.py", ROOT / "fixtures/extensions/subscriptions"),
+            (ROOT / "scripts/generate_publications_fixtures.py", ROOT / "fixtures/extensions/publications"),
+            (ROOT / "scripts/generate_inbox_fixtures.py", ROOT / "fixtures/extensions/inbox"),
+        ]
+        for script_path, fixture_dir in generators_or_fixtures:
+            if not script_path.exists() and not any(fixture_dir.glob("*.jsonl")):
+                failures.append(f"ROADMAP marks M38 shipped, but no generator or fixtures found for {fixture_dir.relative_to(ROOT)}")
+
+
+    if _has_shipped_milestone(roadmap, "M31"):
+        if "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M31 shipped, but Makefile conformance-ext does not include TW_TRANSCRIPT_WITNESS_0.1")
+        required = [
+            ROOT / "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md",
+            ROOT / "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+            ROOT / "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json",
+        ]
+        for path in required:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M31 shipped, but {path.relative_to(ROOT)} is missing")
+        if not (ROOT / "scripts/generate_transcript_witness_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/transcript_witness").glob("*.jsonl")):
+            failures.append("ROADMAP marks M31 shipped, but no transcript witness fixture generator or deterministic fixtures are present")
+
+        tw_suite_path = ROOT / "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        if tw_suite_path.exists():
+            tw_suite = _load_json(tw_suite_path)
+            tw_transcripts = tw_suite.get("transcripts", []) if isinstance(tw_suite, dict) else []
+            tw_checks = {c.get("test_id") for c in tw_suite.get("checks", []) if isinstance(c, dict)} if isinstance(tw_suite, dict) else set()
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in tw_transcripts):
+                failures.append("ROADMAP marks M31 shipped, but TW_TRANSCRIPT_WITNESS_0.1 has no expected-fail transcript")
+            required_tw_checks = {"TW-CHECKPOINT-01", "TW-RECEIPT-01", "TW-HEAD-01", "TW-INCLUSION-01", "TW-EQUIVOCATION-01"}
+            if not required_tw_checks.issubset(tw_checks):
+                missing = sorted(required_tw_checks - tw_checks)
+                failures.append(f"ROADMAP marks M31 shipped, but TW_TRANSCRIPT_WITNESS_0.1 is missing semantic checks: {', '.join(missing)}")
+
+    if _has_shipped_milestone(roadmap, "M32"):
+        if "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M32 shipped, but Makefile conformance-ext does not include EX_EXECUTION_LIFECYCLE_0.1")
+        required_paths = [
+            ROOT / "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md",
+            ROOT / "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+            ROOT / "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+            ROOT / "conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json",
+        ]
+        for path in required_paths:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M32 shipped, but {path.relative_to(ROOT)} is missing")
+
+        if not (ROOT / "scripts/generate_execution_lifecycle_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/execution_lifecycle").glob("*.jsonl")):
+            failures.append("ROADMAP marks M32 shipped, but no execution lifecycle fixture generator or deterministic fixtures are present")
+
+        ex_suite_path = ROOT / "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        if ex_suite_path.exists():
+            ex_suite = _load_json(ex_suite_path)
+            ex_transcripts = ex_suite.get("transcripts", []) if isinstance(ex_suite, dict) else []
+            ex_checks = {c.get("test_id") for c in ex_suite.get("checks", []) if isinstance(c, dict)} if isinstance(ex_suite, dict) else set()
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in ex_transcripts):
+                failures.append("ROADMAP marks M32 shipped, but EX_EXECUTION_LIFECYCLE_0.1 has no expected-fail transcript")
+            required_ex_checks = {"EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01", "EX-THREAD-REF-01", "EX-THREAD-CLOSED-01", "EX-STORE-REF-01", "EX-STORE-LINK-01", "EX-CROSS-BIND-01"}
+            if not required_ex_checks.issubset(ex_checks):
+                missing = sorted(required_ex_checks - ex_checks)
+                failures.append(f"ROADMAP marks M32 shipped, but EX_EXECUTION_LIFECYCLE_0.1 is missing semantic checks: {', '.join(missing)}")
+
 
     if failures:
         for item in failures:

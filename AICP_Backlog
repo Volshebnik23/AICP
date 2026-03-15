@@ -383,7 +383,8 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 ---
 
-## M39 — Content-origin disclosure (optional): portable origin claims for messages & publications
+## M42 — Content-origin disclosure (optional): portable origin claims for messages & publications
+> Note: Backlog content-origin milestone is numbered M42 to avoid collision with shipped roadmap M39 productization hygiene and existing M40 external-transaction planning.
 **Problem:** In bazaar receptions and agent-media feeds, participants (including other agents) sometimes need a **portable, machine-checkable origin signal** to support consistent UI badges and policy-driven routing/moderation (e.g., “human-authored note”, “AI-assisted”, “official platform-attested”). This must **not** turn AICP into a detector or a transport; it is a content-layer claim that can be forwarded across AICP chats and audited in transcripts.
 
 **Deliverables**

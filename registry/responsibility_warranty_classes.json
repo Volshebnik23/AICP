@@ -1,0 +1,38 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "best_effort",
+    "type": "responsibility_warranty_classes",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#transfer-lifecycle-semantics-normative",
+    "security_considerations": "Best-effort class indicates operational intent, not guaranteed completion."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "audited",
+    "type": "responsibility_warranty_classes",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#transfer-lifecycle-semantics-normative",
+    "security_considerations": "Audited class expects stronger evidence retention for transfer actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "regulated_domain",
+    "type": "responsibility_warranty_classes",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#transfer-lifecycle-semantics-normative",
+    "security_considerations": "Regulated-domain class should pair transfer artifacts with policy and approval controls."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "no_personal_data",
+    "type": "responsibility_warranty_classes",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#transfer-lifecycle-semantics-normative",
+    "security_considerations": "No-personal-data class signals constrained data handling expectations for delegated responsibility."
+  }
+]

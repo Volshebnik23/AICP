@@ -5,102 +5,49 @@
   "type": "object",
   "additionalProperties": false,
   "$defs": {
+    "NonEmptyString": {"type": "string", "minLength": 1},
+    "MirrorRefs": {"type": "array", "items": {"$ref": "#/$defs/NonEmptyString"}},
     "PUBLICATION_PUBLISH": {
       "type": "object",
-      "required": [
-        "publication_id",
-        "version_id",
-        "content_hash",
-        "ttl_seconds"
-      ],
+      "required": ["publication_id", "version_id", "content_hash", "ttl_seconds"],
       "properties": {
-        "publication_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "version_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "content_hash": {
-          "type": "string",
-          "minLength": 1
-        },
-        "ttl_seconds": {
-          "type": "integer",
-          "minimum": 0
-        }
+        "publication_id": {"$ref": "#/$defs/NonEmptyString"},
+        "version_id": {"$ref": "#/$defs/NonEmptyString"},
+        "content_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "ttl_seconds": {"type": "integer", "minimum": 0},
+        "policy_class": {"$ref": "#/$defs/NonEmptyString"},
+        "delivery_proof_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "provenance_graph_id": {"$ref": "#/$defs/NonEmptyString"},
+        "mirror_refs": {"$ref": "#/$defs/MirrorRefs"}
       },
       "additionalProperties": true
     },
     "PUBLICATION_UPDATE": {
       "type": "object",
-      "required": [
-        "publication_id",
-        "version_id",
-        "prior_version_id",
-        "content_hash",
-        "ttl_seconds"
-      ],
+      "required": ["publication_id", "version_id", "prior_version_id", "content_hash", "ttl_seconds"],
       "properties": {
-        "publication_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "version_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "prior_version_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "content_hash": {
-          "type": "string",
-          "minLength": 1
-        },
-        "ttl_seconds": {
-          "type": "integer",
-          "minimum": 0
-        }
+        "publication_id": {"$ref": "#/$defs/NonEmptyString"},
+        "version_id": {"$ref": "#/$defs/NonEmptyString"},
+        "prior_version_id": {"$ref": "#/$defs/NonEmptyString"},
+        "content_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "ttl_seconds": {"type": "integer", "minimum": 0},
+        "policy_class": {"$ref": "#/$defs/NonEmptyString"},
+        "delivery_proof_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "mirror_refs": {"$ref": "#/$defs/MirrorRefs"}
       },
       "additionalProperties": true
     },
     "PUBLICATION_RETRACT": {
       "type": "object",
-      "required": [
-        "publication_id",
-        "version_id",
-        "prior_version_id",
-        "content_hash",
-        "ttl_seconds",
-        "reason_code"
-      ],
+      "required": ["publication_id", "version_id", "prior_version_id", "content_hash", "ttl_seconds", "reason_code"],
       "properties": {
-        "publication_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "version_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "prior_version_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "content_hash": {
-          "type": "string",
-          "minLength": 1
-        },
-        "ttl_seconds": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "reason_code": {
-          "type": "string",
-          "minLength": 1
-        }
+        "publication_id": {"$ref": "#/$defs/NonEmptyString"},
+        "version_id": {"$ref": "#/$defs/NonEmptyString"},
+        "prior_version_id": {"$ref": "#/$defs/NonEmptyString"},
+        "content_hash": {"$ref": "#/$defs/NonEmptyString"},
+        "ttl_seconds": {"type": "integer", "minimum": 0},
+        "reason_code": {"$ref": "#/$defs/NonEmptyString"},
+        "delivery_proof_ref": {"$ref": "#/$defs/NonEmptyString"}
       },
       "additionalProperties": true
     }

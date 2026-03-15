@@ -109,6 +109,18 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Platform note:** Platform runtimes may enforce additional orchestration guardrails (rate limits, step approvals, environment policies).
 - **Pairing note:** To require acting-on-behalf-of subject binding, pair with `AICP-DELEGATED-IDENTITY@0.1`.
 
+
+#### `AICP-EXECUTION-INTEROP`
+- **Status:** Available now (optional).
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-EXECUTION-LIFECYCLE`, `EXT-RESUME`, and `EXT-OBJECT-RESYNC`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-EXECUTION-LIFECYCLE: `conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json`
+  - EXT-RESUME: `conformance/extensions/RS_RESUME_0.1.json`
+  - EXT-OBJECT-RESYNC: `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
+- **Intent:** Portable run/thread/store metadata interoperability with deterministic recovery/resync semantics across platforms.
+- **Pairing note:** `EXT-TOOL-GATING` is recommended for side-effecting execution and approval-sensitive deployments, but is not required by this profile.
+
 ## 3. Conformance Badge Semantics
 A **conformance badge** is a profile-level compatibility mark issued when all required suites for the profile pass.
 
@@ -136,6 +148,7 @@ Operational guidance:
 ## Experimental profiles currently in repo
 - **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases profile.
 - **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications profile with optional economics.
+- **AICP-EXECUTION-INTEROP@0.1**: optional run/thread/store metadata profile with resume+object-resync continuity.
 
 ## See also
 
