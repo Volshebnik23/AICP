@@ -1,0 +1,1 @@
+{"session_id":"sib-02","message_id":"m1","timestamp":"2026-03-24T12:10:00Z","sender":"agent:delivery","message_type":"INBOX_ACK","contract_id":"c-ib-02","payload":{"inbox_id":"in-02","item_id":"item-missing","lease_id":"lease-missing"},"message_hash":"sha256:Z_MC6s3uZr25FUaXm2TP0d8vv6-s975MiD3kxM_vHyA"}

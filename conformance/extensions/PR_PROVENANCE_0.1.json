@@ -2,7 +2,7 @@
   "suite_id": "PR-PROVENANCE-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "PR-PROVENANCE-0.1",
+  "description": "EXT-PROVENANCE conformance for DAG linkage and append-only semantics.",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
   "payload_schema_ref": "schemas/extensions/ext-provenance-payloads.schema.json",
   "payload_schema_map": {
@@ -12,10 +12,41 @@
   "transcripts": [
     {
       "id": "PR-01",
-      "path": "fixtures/extensions/provenance/PR-01_provenance_pass.jsonl",
+      "path": "fixtures/extensions/provenance/PR-01_dag_multi_agent_pass.jsonl",
+      "expected_message_types": [
+        "PROVENANCE_DECLARE",
+        "PROVENANCE_APPEND",
+        "PROVENANCE_APPEND"
+      ]
+    },
+    {
+      "id": "PR-02",
+      "path": "fixtures/extensions/provenance/PR-02_append_missing_parent_expected_fail.jsonl",
       "expected_message_types": [
         "PROVENANCE_DECLARE",
         "PROVENANCE_APPEND"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "PR-LINK-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "PR-03",
+      "path": "fixtures/extensions/provenance/PR-03_append_duplicate_node_expected_fail.jsonl",
+      "expected_message_types": [
+        "PROVENANCE_DECLARE",
+        "PROVENANCE_APPEND"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "PR-APPEND-01",
+          "min_count": 1
+        }
       ]
     }
   ],
@@ -51,7 +82,20 @@
     {
       "test_id": "CT-SEQUENCE-01",
       "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "PR-NODE-01",
+      "description": "provenance node types and required node fields are coherent"
+    },
+    {
+      "test_id": "PR-LINK-01",
+      "description": "parent linkage must reference known prior nodes in graph context"
+    },
+    {
+      "test_id": "PR-APPEND-01",
+      "description": "append operations are append-only and must target an existing graph"
     }
   ],
-  "compatibility_mark": "AICP-EXT-PROVENANCE-0.1"
+  "compatibility_mark": "AICP-EXT-PROVENANCE-0.1",
+  "extension_id": "EXT-PROVENANCE"
 }

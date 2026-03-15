@@ -5,6 +5,10 @@
   "type": "object",
   "additionalProperties": false,
   "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
     "ACTION_PREPARE": {
       "type": "object",
       "required": [
@@ -14,19 +18,16 @@
       ],
       "properties": {
         "escrow_id": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         },
         "tool_call_request_hash": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         },
         "policy_context_hash": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "ACTION_APPROVE": {
       "type": "object",
@@ -36,15 +37,13 @@
       ],
       "properties": {
         "escrow_id": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         },
         "approval_hash": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "ACTION_COMMIT": {
       "type": "object",
@@ -56,23 +55,19 @@
       ],
       "properties": {
         "escrow_id": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         },
         "tool_call_request_hash": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         },
         "approval_hash": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         },
         "policy_context_hash": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/NonEmptyString"
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   }
 }

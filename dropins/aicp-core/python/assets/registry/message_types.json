@@ -319,6 +319,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "CHAIN_FAILURE_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "CHAIN_FAILURE_ATTEST payloads should include reproducible reason/evidence references and be authenticated."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "CHALLENGE_ASSERTION",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
@@ -805,6 +814,33 @@
     "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
     "security_considerations": "Conflict resolution must be quorum-signed and reference full conflict context.",
     "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESPONSIBILITY_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "RESPONSIBILITY_ACCEPT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESPONSIBILITY_ASSIGN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "RESPONSIBILITY_ASSIGN payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESPONSIBILITY_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "RESPONSIBILITY_REVOKE payloads should be authenticated and hash-bound for replay-safe verification."
   },
   {
     "status": "experimental",
