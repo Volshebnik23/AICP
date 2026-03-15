@@ -21,6 +21,7 @@ Extension RFCs live in this folder (`docs/extensions/`).
 - M35 (`RFC_EXT_ADMISSION.md`, `RFC_EXT_QUEUE_LEASES.md`) is shipped with executable admission/queue-lease crowd-control conformance coverage and explicit overload signaling.
 - M36 (`RFC_EXT_MARKETPLACE.md`) is shipped with executable marketplace/orchestration conformance coverage for RFW/bid/award, auction modes, blackboard workflows, and subchat admission-aware routing.
 - M37 (`RFC_EXT_PROVENANCE.md`, `RFC_EXT_RESPONSIBILITY.md`, `RFC_EXT_ACTION_ESCROW.md`) is shipped with executable provenance DAG append checks, responsibility transfer lifecycle + chain-failure attest coverage, and escrow prepare/approve/commit hash-binding enforcement.
+- M38 (`RFC_EXT_CHANNELS.md`, `RFC_EXT_SUBSCRIPTIONS.md`, `RFC_EXT_PUBLICATIONS.md`, `RFC_EXT_INBOX.md`) is shipped with executable channel hierarchy, subscription cursor/state, publication delivery/retraction-reason semantics, and inbox lease/ack linkage checks.
 
 
 ## Where to look next

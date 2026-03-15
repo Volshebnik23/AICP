@@ -5,80 +5,48 @@
   "type": "object",
   "additionalProperties": false,
   "$defs": {
+    "NonEmptyString": {"type": "string", "minLength": 1},
     "INBOX_ENQUEUE": {
       "type": "object",
-      "required": [
-        "inbox_id",
-        "item_id"
-      ],
+      "required": ["inbox_id", "item_id"],
       "properties": {
-        "inbox_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "item_id": {
-          "type": "string",
-          "minLength": 1
-        }
+        "inbox_id": {"$ref": "#/$defs/NonEmptyString"},
+        "item_id": {"$ref": "#/$defs/NonEmptyString"},
+        "channel_id": {"$ref": "#/$defs/NonEmptyString"}
       },
       "additionalProperties": true
     },
     "INBOX_ROUTE": {
       "type": "object",
-      "required": [
-        "item_id",
-        "route_key"
-      ],
+      "required": ["item_id", "route_key"],
       "properties": {
-        "item_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "route_key": {
-          "type": "string",
-          "minLength": 1
-        }
+        "item_id": {"$ref": "#/$defs/NonEmptyString"},
+        "route_key": {"$ref": "#/$defs/NonEmptyString"},
+        "delivery_mode": {"$ref": "#/$defs/NonEmptyString"}
       },
       "additionalProperties": true
     },
     "INBOX_LEASE_GRANT": {
       "type": "object",
-      "required": [
-        "inbox_id",
-        "lease_id",
-        "ttl_seconds"
-      ],
+      "required": ["inbox_id", "lease_id", "ttl_seconds"],
       "properties": {
-        "inbox_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "lease_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "ttl_seconds": {
-          "type": "integer",
-          "minimum": 1
-        }
+        "inbox_id": {"$ref": "#/$defs/NonEmptyString"},
+        "lease_id": {"$ref": "#/$defs/NonEmptyString"},
+        "ttl_seconds": {"type": "integer", "minimum": 1},
+        "item_id": {"$ref": "#/$defs/NonEmptyString"},
+        "queue_lease_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "admission_ref": {"$ref": "#/$defs/NonEmptyString"},
+        "responsibility_transfer_id": {"$ref": "#/$defs/NonEmptyString"}
       },
       "additionalProperties": true
     },
     "INBOX_ACK": {
       "type": "object",
-      "required": [
-        "inbox_id",
-        "item_id"
-      ],
+      "required": ["inbox_id", "item_id"],
       "properties": {
-        "inbox_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "item_id": {
-          "type": "string",
-          "minLength": 1
-        }
+        "inbox_id": {"$ref": "#/$defs/NonEmptyString"},
+        "item_id": {"$ref": "#/$defs/NonEmptyString"},
+        "lease_id": {"$ref": "#/$defs/NonEmptyString"}
       },
       "additionalProperties": true
     }

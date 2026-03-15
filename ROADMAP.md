@@ -115,10 +115,12 @@ _Last updated: 2026-03-14_
 - **Shipped:** `EXT-PROVENANCE` now ships executable DAG + append-only linkage semantics with deterministic pass/expected-fail conformance vectors.
 - **Shipped:** `EXT-RESPONSIBILITY` now ships explicit assign/accept/revoke transfer lifecycle plus `CHAIN_FAILURE_ATTEST` classification/retry/rollback evidence checks.
 - **Shipped:** `EXT-ACTION-ESCROW` now ships executable prepare/approve/commit enforcement with required hash-binding checks and negative conformance vectors.
-- **Next concrete step:** advance M38 channels/subscriptions/publication distribution semantics while keeping M37 accountability surfaces operationally stable.
+- **Next concrete step:** keep M37 accountability surfaces operationally stable while closing out M38 channel/subscription/publication delivery semantics.
 
-### ⏳ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, content-level CDN, group policies)
-- **Exit:** EXT-CHANNELS + EXT-SUBSCRIPTIONS + EXT-FEEDS + CDN/inbox primitives + profiles for brand receptions and agent-media distribution.
+### ✅ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, publication delivery, inbox policies)
+- **Shipped:** canonical M38 model uses `EXT-CHANNELS` + `EXT-SUBSCRIPTIONS` + `EXT-PUBLICATIONS` + `EXT-INBOX` (feeds terminology is treated as publication-surface alias, not a separate extension ID).
+- **Shipped:** channel hierarchy/state, subscription cursor semantics, publication update/retract reason-code and must-reach delivery proof hooks, and inbox queue/admission linkage are executable with pass + expected-fail extension conformance.
+- **Next concrete step:** advance M39 content-origin disclosure while keeping M38 distribution semantics operationally stable.
 
 ## Suggested dependency order (high level)
 1) M16 → M17.1 → M17 → M18 → M33

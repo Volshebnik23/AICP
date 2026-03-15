@@ -235,6 +235,68 @@ def main() -> int:
             if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in rp_transcripts):
                 failures.append("ROADMAP marks M37 shipped, but RP_RESPONSIBILITY_0.1 has no expected-fail transcript")
 
+
+    if _has_shipped_milestone(roadmap, "M38"):
+        required_make = {
+            "conformance/extensions/CH_CHANNELS_0.1.json": "CH_CHANNELS_0.1",
+            "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json": "SB_SUBSCRIPTIONS_0.1",
+            "conformance/extensions/PB_PUBLICATIONS_0.1.json": "PB_PUBLICATIONS_0.1",
+            "conformance/extensions/IB_INBOX_0.1.json": "IB_INBOX_0.1",
+        }
+        for suite_path, label in required_make.items():
+            if suite_path not in makefile:
+                failures.append(f"ROADMAP marks M38 shipped, but Makefile conformance-ext does not include {label}")
+
+        required_docs = [
+            ROOT / "docs/extensions/RFC_EXT_CHANNELS.md",
+            ROOT / "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md",
+            ROOT / "docs/extensions/RFC_EXT_PUBLICATIONS.md",
+            ROOT / "docs/extensions/RFC_EXT_INBOX.md",
+        ]
+        for path in required_docs:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M38 shipped, but {path.relative_to(ROOT)} is missing")
+
+        required_schemas = [
+            ROOT / "schemas/extensions/ext-channels-payloads.schema.json",
+            ROOT / "schemas/extensions/ext-subscriptions-payloads.schema.json",
+            ROOT / "schemas/extensions/ext-publications-payloads.schema.json",
+            ROOT / "schemas/extensions/ext-inbox-payloads.schema.json",
+        ]
+        for path in required_schemas:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M38 shipped, but {path.relative_to(ROOT)} is missing")
+
+        suite_specs = [
+            (ROOT / "conformance/extensions/CH_CHANNELS_0.1.json", "CH-CHANNELS", {"CH-HIER-01", "CH-LIFECYCLE-01"}),
+            (ROOT / "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json", "SB-SUBSCRIPTIONS", {"SB-STATE-01", "SB-CURSOR-01"}),
+            (ROOT / "conformance/extensions/PB_PUBLICATIONS_0.1.json", "PB-PUBLICATIONS", {"PB-LIFECYCLE-01", "PB-REASON-01", "PB-DELIVERY-01"}),
+            (ROOT / "conformance/extensions/IB_INBOX_0.1.json", "IB-INBOX", {"IB-LINK-01", "IB-LEASE-01"}),
+        ]
+
+        for suite_path, label, required_checks in suite_specs:
+            if not suite_path.exists():
+                failures.append(f"ROADMAP marks M38 shipped, but {suite_path.relative_to(ROOT)} is missing")
+                continue
+            suite = _load_json(suite_path)
+            transcripts = suite.get("transcripts", []) if isinstance(suite, dict) else []
+            checks = {c.get("test_id") for c in suite.get("checks", []) if isinstance(c, dict)} if isinstance(suite, dict) else set()
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in transcripts):
+                failures.append(f"ROADMAP marks M38 shipped, but {label} has no expected-fail transcript")
+            if not required_checks.issubset(checks):
+                missing_checks = sorted(required_checks - checks)
+                failures.append(f"ROADMAP marks M38 shipped, but {label} is missing semantic checks: {', '.join(missing_checks)}")
+
+        generators_or_fixtures = [
+            (ROOT / "scripts/generate_channels_fixtures.py", ROOT / "fixtures/extensions/channels"),
+            (ROOT / "scripts/generate_subscriptions_fixtures.py", ROOT / "fixtures/extensions/subscriptions"),
+            (ROOT / "scripts/generate_publications_fixtures.py", ROOT / "fixtures/extensions/publications"),
+            (ROOT / "scripts/generate_inbox_fixtures.py", ROOT / "fixtures/extensions/inbox"),
+        ]
+        for script_path, fixture_dir in generators_or_fixtures:
+            if not script_path.exists() and not any(fixture_dir.glob("*.jsonl")):
+                failures.append(f"ROADMAP marks M38 shipped, but no generator or fixtures found for {fixture_dir.relative_to(ROOT)}")
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

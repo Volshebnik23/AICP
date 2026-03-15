@@ -2,7 +2,7 @@
   "suite_id": "SB-SUBSCRIPTIONS-0.1",
   "suite_version": "0.1.0-dev",
   "aicp_version": "0.1",
-  "description": "SB-SUBSCRIPTIONS-0.1",
+  "description": "EXT-SUBSCRIPTIONS conformance for state/cursor and preference semantics.",
   "schema_ref": "schemas/core/aicp-core-message.schema.json",
   "payload_schema_ref": "schemas/extensions/ext-subscriptions-payloads.schema.json",
   "payload_schema_map": {
@@ -19,41 +19,45 @@
         "SUBSCRIPTION_STATE",
         "UNSUBSCRIBE"
       ]
+    },
+    {
+      "id": "SB-02",
+      "path": "fixtures/extensions/subscriptions/SB-02_state_for_unknown_subscription_expected_fail.jsonl",
+      "expected_message_types": [
+        "SUBSCRIBE",
+        "SUBSCRIPTION_STATE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {"test_id": "SB-STATE-01", "min_count": 1}
+      ]
+    },
+    {
+      "id": "SB-03",
+      "path": "fixtures/extensions/subscriptions/SB-03_bad_cursor_progression_expected_fail.jsonl",
+      "expected_message_types": [
+        "SUBSCRIBE",
+        "SUBSCRIPTION_STATE",
+        "SUBSCRIPTION_STATE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {"test_id": "SB-CURSOR-01", "min_count": 1}
+      ]
     }
   ],
   "checks": [
-    {
-      "test_id": "CT-SCHEMA-JSONL-01",
-      "description": "Validate each JSONL record against Core message schema"
-    },
-    {
-      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
-      "description": "message_type values must be registered in registry/message_types.json"
-    },
-    {
-      "test_id": "CN-PAYLOAD-SCHEMA-01",
-      "description": "Validate payload against extension payload schema"
-    },
-    {
-      "test_id": "CT-HASH-CHAIN-01",
-      "description": "prev_msg_hash equals previous message_hash when present"
-    },
-    {
-      "test_id": "CT-MESSAGE-HASH-01",
-      "description": "recompute message_hash from message body and compare"
-    },
-    {
-      "test_id": "CT-PREV-MSG-REQUIRED-01",
-      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
-    },
-    {
-      "test_id": "CT-INVARIANTS-01",
-      "description": "session_id constant and message_id unique"
-    },
-    {
-      "test_id": "CT-SEQUENCE-01",
-      "description": "message_type sequence matches expected per transcript"
-    }
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CN-PAYLOAD-SCHEMA-01", "description": "Validate payload against extension payload schema"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id constant and message_id unique"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "SB-STATE-01", "description": "state/unsubscribe must reference known active subscriptions"},
+    {"test_id": "SB-CURSOR-01", "description": "cursor progression must be monotonic for each subscription"}
   ],
-  "compatibility_mark": "AICP-EXT-SUBSCRIPTIONS-0.1"
+  "compatibility_mark": "AICP-EXT-SUBSCRIPTIONS-0.1",
+  "extension_id": "EXT-SUBSCRIPTIONS"
 }

@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "7eb92bf02c9780a5164bc5a6286ed95b53ef5e5be04368721c196608506bcd92",
+      "combined_sha256": "f40db3e8c4fe3a27a4161e0e3f4343da7d9ad0d00babb0bf0f0358ffd52026ee",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -45,7 +45,7 @@
         },
         {
           "path": "conformance/extensions/CH_CHANNELS_0.1.json",
-          "sha256": "3e78c2ad5d4e12c543697eefbff878833be60c14bc85b38c27a5a84f2c991db2"
+          "sha256": "bcb439f4ccaaec8afe56a1c515a789a683a48422c052f126149adad25d22dbcc"
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
@@ -93,7 +93,7 @@
         },
         {
           "path": "conformance/extensions/IB_INBOX_0.1.json",
-          "sha256": "062efe9c273a5ce8e038645ec948871390f8ebcd1fb8800e8dce1f9b1673d43f"
+          "sha256": "7e1cf716df15f1d2792ebf6f0e2c434d968bdf177d0ddfdae174a8da267e3ef7"
         },
         {
           "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -117,7 +117,7 @@
         },
         {
           "path": "conformance/extensions/PB_PUBLICATIONS_0.1.json",
-          "sha256": "c98268f5d4db7580b36db6a14f7d7bddd8be1056d1312bd393c29207e26abbb1"
+          "sha256": "db6cff969e6a7d5f29ea05cfc614cf5b2807088be2cb7d53392ebed8550d740a"
         },
         {
           "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
@@ -153,7 +153,7 @@
         },
         {
           "path": "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json",
-          "sha256": "6cc0855b213d6c58de83aacbea90843815677fc78a037140b83c9db0d49c49ac"
+          "sha256": "2b2b7f6e2fe1c6688b0d450260d4bc764eaff08603a070c507ceac0bb1aba7bc"
         },
         {
           "path": "conformance/extensions/SC_STATUS_CHANNEL_0.1.json",
@@ -222,7 +222,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "9aa905e5f8ec13a8478d407765202c5eb0ef9b45815e9d0186d176d28e4bf9cb",
+      "combined_sha256": "455f0509e882271267d205e00b70504d1c147ec352a1cb8a86e5a28686eba0c9",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -454,7 +454,15 @@
         },
         {
           "path": "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl",
-          "sha256": "e1e96fb3c7b8ba7aba8d8d3d6a127834fa073e8283ab26ba461d14833feeda92"
+          "sha256": "dcf49e7b681efbfd53c226fbb744281b1aa7ba72f27f5c1163941270fb22af02"
+        },
+        {
+          "path": "fixtures/extensions/channels/CH-02_missing_parent_expected_fail.jsonl",
+          "sha256": "625903449de3189c520394db67c83092adc1588d59b947dec343c2430fec0709"
+        },
+        {
+          "path": "fixtures/extensions/channels/CH-03_visibility_escalation_expected_fail.jsonl",
+          "sha256": "9ce0a76488f7a1949434cdae7dd9d78c60a078815a7d6380b52b50f8c5681314"
         },
         {
           "path": "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
@@ -693,8 +701,16 @@
           "sha256": "da3b97cbe9daaad9b117f1a55c8996e4c806bb0b0def49f0b39d8b670e2819cb"
         },
         {
-          "path": "fixtures/extensions/inbox/IB-01_inbox_pass.jsonl",
-          "sha256": "5c95df3d925e11b781f50cc790d34b7b95ea93e3cf2b527b70bb7899c08baaef"
+          "path": "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl",
+          "sha256": "09648c29acada6004f28f9cee5855a28276046fdf65f33e7b3af9c8babdc47b6"
+        },
+        {
+          "path": "fixtures/extensions/inbox/IB-02_ack_without_enqueue_expected_fail.jsonl",
+          "sha256": "8818890815072d7b46b42e49e555c7f0b42c72573e83412b35eebcc29a8d6198"
+        },
+        {
+          "path": "fixtures/extensions/inbox/IB-03_missing_queue_lease_context_expected_fail.jsonl",
+          "sha256": "38edac99be087acdcd6dc1dd5caa8d1a53f0062e6d7e6d8404200cbfe10a8ad5"
         },
         {
           "path": "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
@@ -821,12 +837,24 @@
           "sha256": "87ee75061b29d9a9f2b67c06decbe5c475f2781a5d4331fea72bf33b4ca59f79"
         },
         {
-          "path": "fixtures/extensions/publications/PB-01_publication_pass.jsonl",
-          "sha256": "1a170be47bb2bab7c40eb4e1a23d253254f889e2b2eaf141bc30607042f81113"
+          "path": "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
+          "sha256": "6bc93666245747f78bc6f469047c6b923002b26521ffe44d9d56d709f5246c69"
         },
         {
           "path": "fixtures/extensions/publications/PB-02_update_without_publish_expected_fail.jsonl",
-          "sha256": "b069687185983556e5526589e37c8ef687d39f1cb52107b7743ab24b42532832"
+          "sha256": "f2ed431fb7237e1939b6828d12c14101d3dd22cf59faf84a303e060e42090795"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-03_update_without_version_progression_expected_fail.jsonl",
+          "sha256": "0e3dcc9a8a0054564ee063b93b3f5358e40bc7a46f54b53a94cef6d1cb5b7054"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-04_retract_with_unknown_reason_expected_fail.jsonl",
+          "sha256": "b17409e65ed14a750ac8575336eb5844c25c3a847a144c21fd8e9dc1d1859a95"
+        },
+        {
+          "path": "fixtures/extensions/publications/PB-05_must_reach_without_delivery_proof_expected_fail.jsonl",
+          "sha256": "bf494fc5171a91287ad8761903baccf7e5f4c1265716ce55f8ce2c49c0c4f79b"
         },
         {
           "path": "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
@@ -958,11 +986,15 @@
         },
         {
           "path": "fixtures/extensions/subscriptions/SB-01_subscription_pass.jsonl",
-          "sha256": "b448423972f3c48ddcd3904906f7d4a4f987d08bdb63d295aef246b4afc4b040"
+          "sha256": "2ed1cc2dcc2e25b3f483fd0073eac4b99069f43eacdfd2b1edf4ba4daa31e720"
         },
         {
-          "path": "fixtures/extensions/subscriptions/SB-02_subscription_cursor_expected_fail.jsonl",
-          "sha256": "e386bdf627882eb0d9c8f3246cb051bf323c9dafcda4651632abb48b4f8863d8"
+          "path": "fixtures/extensions/subscriptions/SB-02_state_for_unknown_subscription_expected_fail.jsonl",
+          "sha256": "eb736a30f5df40891b146d4dffac6358918035002b1f42b7bda772a3ad286790"
+        },
+        {
+          "path": "fixtures/extensions/subscriptions/SB-03_bad_cursor_progression_expected_fail.jsonl",
+          "sha256": "cdc13391aa5218d61159ea5c1c9f7e54caaca3878fffa5def1e275b77aec16a6"
         },
         {
           "path": "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
@@ -1204,7 +1236,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "d61b14af01cf34f50de0eb4cac2f5b771888ef941fc9513019c7227285804625",
+      "combined_sha256": "bc408d3f3dda44bf9eb8b1c657a3e524eea477b8954de44902151ddf6071eccc",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1304,7 +1336,7 @@
         },
         {
           "path": "schemas/extensions/ext-inbox-payloads.schema.json",
-          "sha256": "8a831bd3dfb164323dd734c5988b706abe48aa9e57cacf6a57b3671f6eb97528"
+          "sha256": "6c0ad2af19c9981b7f1bda248c81a616871cc05d27eabd57346a059cdfda562d"
         },
         {
           "path": "schemas/extensions/ext-marketplace-payloads.schema.json",
@@ -1332,7 +1364,7 @@
         },
         {
           "path": "schemas/extensions/ext-publications-payloads.schema.json",
-          "sha256": "f2a241e073af38ac958890504f447d635fe3e33faf0e96ec7b51af14fc9dd3ff"
+          "sha256": "e8b894b2c459c8df53491be369235be43d999f3fa9340e96b1a605b9db24e7c2"
         },
         {
           "path": "schemas/extensions/ext-queue-leases-payloads.schema.json",
