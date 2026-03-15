@@ -204,5 +204,59 @@
     "required_policy_categories": [],
     "required_crypto_profiles": [],
     "description": "Optional execution interoperability profile aligned with PF_AICP_EXECUTION_INTEROP_0.1 required suites."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-POLICY-OPA-REGO@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-opa-rego-01",
+    "security_considerations": "Requires deterministic bundle/context semantics with registered Rego language+binding and reason-code stability.",
+    "profile_id": "AICP-POLICY-OPA-REGO",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-POLICY-EVAL"
+    ],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Optional M25 policy semantic interoperability profile for deterministic OPA/Rego evaluation semantics.",
+    "compatibility_notes": "Stable optional policy semantic profile built on EXT-POLICY-EVAL plus PE_PROFILE_OPA_REGO_0.1 suite."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-POLICY-ABAC-RBAC@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-abac-rbac-01",
+    "security_considerations": "Requires deterministic interpretation of ABAC/RBAC subject/action/resource dimensions with registry-backed semantics.",
+    "profile_id": "AICP-POLICY-ABAC-RBAC",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-POLICY-EVAL"
+    ],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Optional M25 policy semantic interoperability profile for deterministic ABAC/RBAC policy interpretation.",
+    "compatibility_notes": "Stable optional policy semantic profile built on EXT-POLICY-EVAL plus PE_PROFILE_ABAC_RBAC_0.1 suite."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-POLICY-LLM-SAFETY@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01",
+    "security_considerations": "Requires evidence-bound LLM-safety semantics; classifier output is advisory and must not be treated as deterministic truth without transcript evidence.",
+    "profile_id": "AICP-POLICY-LLM-SAFETY",
+    "profile_version": "0.1",
+    "required_extensions": [
+      "EXT-POLICY-EVAL"
+    ],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Optional M25 policy semantic interoperability profile for deterministic LLM-safety transcript boundaries.",
+    "compatibility_notes": "Stable optional policy semantic profile built on EXT-POLICY-EVAL plus PE_PROFILE_LLM_SAFETY_0.1 suite."
   }
 ]

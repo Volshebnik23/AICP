@@ -110,6 +110,35 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Pairing note:** To require acting-on-behalf-of subject binding, pair with `AICP-DELEGATED-IDENTITY@0.1`.
 
 
+
+
+#### `AICP-POLICY-OPA-REGO`
+- **Status:** Available now (optional, stable).
+- **Required suites/extensions:**
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - OPA/Rego semantic profile suite: `conformance/extensions/PE_PROFILE_OPA_REGO_0.1.json`
+- **Intent:** Deterministic same-bundle/same-context OPA/Rego decision interoperability.
+- **Canonical spec:** `docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-opa-rego-01`
+
+#### `AICP-POLICY-ABAC-RBAC`
+- **Status:** Available now (optional, stable).
+- **Required suites/extensions:**
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - ABAC/RBAC semantic profile suite: `conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json`
+- **Intent:** Deterministic subject/action/resource policy dimension interpretation.
+- **Canonical spec:** `docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-abac-rbac-01`
+
+#### `AICP-POLICY-LLM-SAFETY`
+- **Status:** Available now (optional, stable).
+- **Required suites/extensions:**
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - LLM-safety semantic profile suite: `conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json`
+- **Intent:** Deterministic transcript boundary for LLM-safety decisions with evidence-bound semantics.
+- **Canonical spec:** `docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01`
+
 #### `AICP-EXECUTION-INTEROP`
 - **Status:** Available now (optional).
 - **Required suites/extensions:**

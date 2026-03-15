@@ -1,0 +1,11 @@
+{
+  "profile_id": "AICP-POLICY-ABAC-RBAC",
+  "profile_version": "0.1",
+  "description": "Optional M25 ABAC/RBAC semantic interoperability profile over EXT-POLICY-EVAL.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-POLICY-ABAC-RBAC-0.1"
+}
