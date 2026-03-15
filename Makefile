@@ -14,6 +14,7 @@ validate:
 	$(PYTHON) scripts/validate_productization_coverage.py
 	$(PYTHON) scripts/validate_errata.py
 	$(PYTHON) scripts/validate_planning_docs.py
+	$(PYTHON) scripts/validate_verification_gate_alignment.py
 	$(PYTHON) scripts/validate_shipped_extension_coverage.py
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
