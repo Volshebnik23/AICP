@@ -141,9 +141,11 @@ prepr:
 	$(MAKE) conformance
 	$(MAKE) conformance-ext
 	$(MAKE) conformance-bindings
+	$(MAKE) conformance-profiles
 	$(MAKE) test
 	$(MAKE) quickstart-py
 	$(MAKE) quickstart-ts
+	$(MAKE) template-smoke
 	cd sdk/typescript && npm ci && npm test
 
 lint:

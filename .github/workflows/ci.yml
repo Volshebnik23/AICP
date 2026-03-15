@@ -42,6 +42,9 @@ jobs:
       - name: Run make conformance-bindings
         run: make conformance-bindings
 
+      - name: Run make conformance-profiles
+        run: make conformance-profiles
+
       - name: Run make release-check on main branch
         if: github.ref == 'refs/heads/main'
         run: make release-check
