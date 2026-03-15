@@ -303,6 +303,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-TRANSCRIPT-WITNESS",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#registry-entry",
+    "security_considerations": "Witness checkpoints/receipts should be authenticated and hash-bound to transcript heads to detect equivocation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-TRUST-ATTESTATIONS",
     "type": "extension_ids",
     "spec_ref": "docs/rfc/RFC_Trust_Anchors_and_Issuer_Attestations.md#1-scope-normative",

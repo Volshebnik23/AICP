@@ -78,8 +78,10 @@ _Last updated: 2026-03-14_
 ### ✅ M28 — IAM bridge (OAuth/OIDC mapping for delegation/tool gating/human approval)
 - **Exit:** Normative mapping guidance + examples + security notes.
 
-### ⏳ M31 — Anti-equivocation & transparency witnessing (optional, internet-scale)
-- **Exit:** Witness checkpoints + gossip + inclusion proofs + conformance for required-witness deployments.
+### ✅ M31 — Anti-equivocation & transparency witnessing (optional, internet-scale)
+- **Shipped:** `EXT-TRANSCRIPT-WITNESS` now provides transcript-native checkpoint commitments, witness submit/receipt evidence, head exchange artifacts, and inclusion-proof declarations with deterministic pass/expected-fail conformance.
+- **Shipped:** equivocation detection (conflicting heads for same session/sequence), receipt linkage validation, and optional non-repudiation strengthening checks are executable in extension runner semantics.
+- **Next concrete step:** keep M31 witness semantics stable while optional M32 execution interoperability remains pending.
 
 ### ⏳ M32 — Agent execution interoperability profile (optional): Runs / Threads / Stores
 - **Exit:** Optional extension + profile + fixtures/conformance.
@@ -120,7 +122,7 @@ _Last updated: 2026-03-14_
 ### ✅ M38 — Agent media & brand reception feeds (channels/topics, subscriptions, publication delivery, inbox policies)
 - **Shipped:** canonical M38 model uses `EXT-CHANNELS` + `EXT-SUBSCRIPTIONS` + `EXT-PUBLICATIONS` + `EXT-INBOX` (feeds terminology is treated as publication-surface alias, not a separate extension ID).
 - **Shipped:** channel hierarchy/state, subscription cursor semantics, publication update/retract reason-code and must-reach delivery proof hooks, and inbox queue/admission linkage are executable with pass + expected-fail extension conformance.
-- **Next concrete step:** advance M39 content-origin disclosure while keeping M38 distribution semantics operationally stable.
+- **Next concrete step:** advance M42 content-origin disclosure while keeping M38 distribution semantics operationally stable.
 
 ## Suggested dependency order (high level)
 1) M16 → M17.1 → M17 → M18 → M33

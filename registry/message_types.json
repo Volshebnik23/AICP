@@ -512,6 +512,15 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "HEAD_EXCHANGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "HEAD_EXCHANGE payloads should carry auditable session/head bindings and source metadata."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "IDENTITY_ANNOUNCE",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
@@ -552,6 +561,15 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#message-types-normative",
     "security_considerations": "INBOX_ROUTE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INCLUSION_PROOF_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "INCLUSION_PROOF_DECLARE payloads should be hash-bound to known checkpoint and target message context."
   },
   {
     "status": "experimental",
@@ -1048,6 +1066,24 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md#message-types-normative",
     "security_considerations": "UNSUBSCRIBE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WITNESS_RECEIPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "WITNESS_RECEIPT payloads should bind to prior witness submissions and authenticated witness identity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WITNESS_SUBMIT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "WITNESS_SUBMIT payloads should include deterministic checkpoint commitments over transcript head state."
   },
   {
     "status": "experimental",

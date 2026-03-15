@@ -4117,6 +4117,89 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             if isinstance(item_id, str) and item_id in leased_items:
                                 add_failure(t_failures, "IB-LINK-01", "INBOX_ACK.lease_id required when item has active lease", rel_file, line_no)
 
+        if any(check in enabled_checks for check in {"TW-CHECKPOINT-01", "TW-RECEIPT-01", "TW-HEAD-01", "TW-INCLUSION-01", "TW-EQUIVOCATION-01", "TW-NONREP-01"}):
+            submits_by_hash: dict[str, dict[str, Any]] = {}
+            checkpoints: dict[str, dict[str, Any]] = {}
+            seen_message_hashes = {m.get("message_hash") for _, m in rows if isinstance(m.get("message_hash"), str)}
+            strict_equivocation = False
+            require_nonrep = False
+            for _, msg in rows:
+                if msg.get("message_type") == "CONTRACT_PROPOSE":
+                    contract = ((msg.get("payload") or {}).get("contract") or {})
+                    ext = contract.get("ext") if isinstance(contract, dict) else None
+                    tw = ext.get("transcript_witness") if isinstance(ext, dict) else None
+                    if isinstance(tw, dict):
+                        strict_equivocation = tw.get("require_strict_head_consensus") is True
+                        require_nonrep = tw.get("require_nonrep_signature_ref") is True
+                    break
+
+            equiv_index: dict[tuple[str, int], str] = {}
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                if mtype == "WITNESS_SUBMIT":
+                    checkpoint = payload.get("checkpoint") if isinstance(payload.get("checkpoint"), dict) else {}
+                    checkpoint_id = checkpoint.get("checkpoint_id")
+                    cp_session = checkpoint.get("session_id")
+                    head_hash = checkpoint.get("head_hash")
+                    seq = checkpoint.get("sequence_no") if isinstance(checkpoint.get("sequence_no"), int) else None
+                    if "TW-CHECKPOINT-01" in enabled_checks:
+                        if not isinstance(checkpoint_id, str) or not checkpoint_id:
+                            add_failure(t_failures, "TW-CHECKPOINT-01", "checkpoint.checkpoint_id must be a non-empty string", rel_file, line_no)
+                        if cp_session != msg.get("session_id"):
+                            add_failure(t_failures, "TW-CHECKPOINT-01", "checkpoint.session_id must match message session_id", rel_file, line_no)
+                        if not isinstance(head_hash, str) or head_hash not in seen_message_hashes:
+                            add_failure(t_failures, "TW-CHECKPOINT-01", f"checkpoint.head_hash '{head_hash}' must reference a known transcript message_hash", rel_file, line_no)
+                    if "TW-NONREP-01" in enabled_checks and require_nonrep:
+                        sig_ref = checkpoint.get("original_sender_sig_ref")
+                        if not isinstance(sig_ref, str) or not sig_ref:
+                            add_failure(t_failures, "TW-NONREP-01", "non-repudiation mode requires checkpoint.original_sender_sig_ref", rel_file, line_no)
+                    if isinstance(checkpoint_id, str):
+                        checkpoints[checkpoint_id] = checkpoint
+                    mh = msg.get("message_hash")
+                    if isinstance(mh, str):
+                        submits_by_hash[mh] = msg
+                    if strict_equivocation and isinstance(cp_session, str) and isinstance(seq, int) and isinstance(head_hash, str):
+                        key = (cp_session, seq)
+                        prev_head = equiv_index.get(key)
+                        if prev_head is not None and prev_head != head_hash and "TW-EQUIVOCATION-01" in enabled_checks:
+                            add_failure(t_failures, "TW-EQUIVOCATION-01", f"conflicting checkpoint heads for session '{cp_session}' sequence_no={seq}", rel_file, line_no)
+                        equiv_index[key] = head_hash
+
+                elif mtype == "WITNESS_RECEIPT":
+                    receipt = payload.get("receipt") if isinstance(payload.get("receipt"), dict) else {}
+                    submit_hash = receipt.get("submit_message_hash")
+                    checkpoint_id = receipt.get("checkpoint_id")
+                    if "TW-RECEIPT-01" in enabled_checks:
+                        if not isinstance(submit_hash, str) or submit_hash not in submits_by_hash:
+                            add_failure(t_failures, "TW-RECEIPT-01", f"receipt.submit_message_hash '{submit_hash}' must reference prior WITNESS_SUBMIT", rel_file, line_no)
+                        if not isinstance(checkpoint_id, str) or checkpoint_id not in checkpoints:
+                            add_failure(t_failures, "TW-RECEIPT-01", f"receipt.checkpoint_id '{checkpoint_id}' must reference submitted checkpoint", rel_file, line_no)
+                        if isinstance(submit_hash, str) and submit_hash in submits_by_hash and isinstance(checkpoint_id, str):
+                            sub_cp = (((submits_by_hash[submit_hash].get("payload") or {}).get("checkpoint") or {}).get("checkpoint_id"))
+                            if isinstance(sub_cp, str) and sub_cp != checkpoint_id:
+                                add_failure(t_failures, "TW-RECEIPT-01", "receipt.checkpoint_id must match referenced submit checkpoint_id", rel_file, line_no)
+
+                elif mtype == "HEAD_EXCHANGE":
+                    head = payload.get("head") if isinstance(payload.get("head"), dict) else {}
+                    hsess = head.get("session_id")
+                    hhash = head.get("head_hash")
+                    if "TW-HEAD-01" in enabled_checks:
+                        if hsess != msg.get("session_id"):
+                            add_failure(t_failures, "TW-HEAD-01", "head.session_id must match message session_id", rel_file, line_no)
+                        if not isinstance(hhash, str) or hhash not in seen_message_hashes:
+                            add_failure(t_failures, "TW-HEAD-01", f"head.head_hash '{hhash}' must reference known transcript message_hash", rel_file, line_no)
+
+                elif mtype == "INCLUSION_PROOF_DECLARE":
+                    proof = payload.get("proof") if isinstance(payload.get("proof"), dict) else {}
+                    checkpoint_id = proof.get("checkpoint_id")
+                    target_hash = proof.get("target_message_hash")
+                    if "TW-INCLUSION-01" in enabled_checks:
+                        if not isinstance(checkpoint_id, str) or checkpoint_id not in checkpoints:
+                            add_failure(t_failures, "TW-INCLUSION-01", f"proof.checkpoint_id '{checkpoint_id}' must reference known checkpoint", rel_file, line_no)
+                        if not isinstance(target_hash, str) or target_hash not in seen_message_hashes:
+                            add_failure(t_failures, "TW-INCLUSION-01", f"proof.target_message_hash '{target_hash}' must reference known transcript message_hash", rel_file, line_no)
+
         if any(check in enabled_checks for check in {"RS-ACTIONS-01", "RS-RESUME-MATCH-01", "RS-LOOP-01", "RS-PROBING-01"}):
             request_rows: list[tuple[int, dict[str, Any]]] = []
             response_rows: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}

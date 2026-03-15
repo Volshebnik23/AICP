@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "f40db3e8c4fe3a27a4161e0e3f4343da7d9ad0d00babb0bf0f0358ffd52026ee",
+      "combined_sha256": "cf8b6fa857b9c7e929946598530a34ca802a61a449b0f8e0d1ad3e7ece0fcce3",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -168,6 +168,10 @@
           "sha256": "f1646a39d7e43bb74e415b09cd44faa34564e4c4b23fe66c8112a11f904cddf7"
         },
         {
+          "path": "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json",
+          "sha256": "06b7b5abfde750987fd468c3e44055b527442e5f8ebdb48b145da4a2d6bfd8c8"
+        },
+        {
           "path": "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json",
           "sha256": "3e01da97745d33c5d18173df1774456e3f75540427d92db20fded7adfb03d02a"
         },
@@ -222,7 +226,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "455f0509e882271267d205e00b70504d1c147ec352a1cb8a86e5a28686eba0c9",
+      "combined_sha256": "6122a508ba81a4913c6fddbc960b0d48b8dcf63482a0b2c69f92b6e90c3ce26e",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -1029,6 +1033,30 @@
           "sha256": "b2cfe64bcaf9b10a92032137f33c68d7e66ac985ad710163baabb272aa2e77ea"
         },
         {
+          "path": "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl",
+          "sha256": "d6e3d32e0830f08011806a2a7744b599bf1062975d8c29682d2e3fb36b735337"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl",
+          "sha256": "da54e9b89b30bc12108cec6b07156ee4fb9b7dc67c9331f643147c5a734dbc23"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-03_receipt_without_submit_expected_fail.jsonl",
+          "sha256": "e0c2548c7675bba2425b82d36fc9d9b5263527657be6dee850996333453f2eb9"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-04_unknown_inclusion_target_expected_fail.jsonl",
+          "sha256": "2ae4a8afd3ef78f929e2ecaea8130a65b1d469f47bb01378c8d18e805a8e3dfa"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-05_split_history_expected_fail.jsonl",
+          "sha256": "0bee77e7ef7872eb28d410bbe2c0e1f45d2c600867d58f2314ad68217fceee47"
+        },
+        {
+          "path": "fixtures/extensions/transcript_witness/TW-06_nonrep_required_missing_sigref_expected_fail.jsonl",
+          "sha256": "c13082c68fcfe15942e77faeca618b86db14deafb7aaf0992f6963d21824d8a5"
+        },
+        {
           "path": "fixtures/extensions/trust_attestations/TA-01_trust_anchor_list_valid.json",
           "sha256": "b732eed72fe593f0e5a20628759b123213d5150de598f25178e3a0e2f499dc95"
         },
@@ -1131,7 +1159,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "aebe5b733596140f60001d743af679a40243d9c8e058c23ee0dde60432250476",
+      "combined_sha256": "89428524bf1943827812498842e2123dc6afe780ce501c5b0e3acdcfbe4fc1dc",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -1179,7 +1207,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "34618dfc55bd1e8bfacef595d9fea2bf6e7370c09b205f7f0709afba16c628cb"
+          "sha256": "f175df57b2e3e4e1c70eed45f8efd3065adc573c8440744d845b2db965ef5309"
         },
         {
           "path": "registry/hash_domains.json",
@@ -1187,7 +1215,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "212f811510e6ef667bd5a8a7373186be3cf96e05c224a1cfdb5d98ed850425af"
+          "sha256": "45f5d23d85ef549bd0cb6b97fdf3871b3a78e1907c72072e213156fe9d5a8fd5"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -1236,7 +1264,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "bc408d3f3dda44bf9eb8b1c657a3e524eea477b8954de44902151ddf6071eccc",
+      "combined_sha256": "347d34a1f0dfc5843b69fe04d9845f5df68903dd49890780b5a980cf7154f820",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1397,6 +1425,10 @@
         {
           "path": "schemas/extensions/ext-tool-gating-payloads.schema.json",
           "sha256": "85ec3513efa93f5d39af3ab1d354c7a425b7f48745529e9105225e43772e2ab0"
+        },
+        {
+          "path": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+          "sha256": "106407a8f2a2c8c1f17690355392ab42262be1edd2979450400cfdc601a3ffe7"
         },
         {
           "path": "schemas/extensions/ext-trust-attestations-artifacts.schema.json",
@@ -1608,6 +1640,10 @@
       {
         "mark": "AICP-EXT-TOOL-GATING-0.1",
         "path": "conformance/extensions/TG_TOOL_GATING_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-TRANSCRIPT-WITNESS-0.1",
+        "path": "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
       },
       {
         "mark": "AICP-EXT-WORKFLOW-SYNC-0.1",

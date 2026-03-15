@@ -297,6 +297,33 @@ def main() -> int:
             if not script_path.exists() and not any(fixture_dir.glob("*.jsonl")):
                 failures.append(f"ROADMAP marks M38 shipped, but no generator or fixtures found for {fixture_dir.relative_to(ROOT)}")
 
+
+    if _has_shipped_milestone(roadmap, "M31"):
+        if "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json" not in makefile:
+            failures.append("ROADMAP marks M31 shipped, but Makefile conformance-ext does not include TW_TRANSCRIPT_WITNESS_0.1")
+        required = [
+            ROOT / "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md",
+            ROOT / "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+            ROOT / "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json",
+        ]
+        for path in required:
+            if not path.exists():
+                failures.append(f"ROADMAP marks M31 shipped, but {path.relative_to(ROOT)} is missing")
+        if not (ROOT / "scripts/generate_transcript_witness_fixtures.py").exists() and not any((ROOT / "fixtures/extensions/transcript_witness").glob("*.jsonl")):
+            failures.append("ROADMAP marks M31 shipped, but no transcript witness fixture generator or deterministic fixtures are present")
+
+        tw_suite_path = ROOT / "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        if tw_suite_path.exists():
+            tw_suite = _load_json(tw_suite_path)
+            tw_transcripts = tw_suite.get("transcripts", []) if isinstance(tw_suite, dict) else []
+            tw_checks = {c.get("test_id") for c in tw_suite.get("checks", []) if isinstance(c, dict)} if isinstance(tw_suite, dict) else set()
+            if not any(isinstance(t, dict) and t.get("expect_pass") is False for t in tw_transcripts):
+                failures.append("ROADMAP marks M31 shipped, but TW_TRANSCRIPT_WITNESS_0.1 has no expected-fail transcript")
+            required_tw_checks = {"TW-CHECKPOINT-01", "TW-RECEIPT-01", "TW-HEAD-01", "TW-INCLUSION-01", "TW-EQUIVOCATION-01"}
+            if not required_tw_checks.issubset(tw_checks):
+                missing = sorted(required_tw_checks - tw_checks)
+                failures.append(f"ROADMAP marks M31 shipped, but TW_TRANSCRIPT_WITNESS_0.1 is missing semantic checks: {', '.join(missing)}")
+
     if failures:
         for item in failures:
             print(f"[FAIL] {item}")

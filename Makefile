@@ -78,6 +78,7 @@ conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RP_RESPONSIBILITY_0.1.json --out conformance/report_ext_responsibility.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json --out conformance/report_ext_trust_attestations.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SC_STATUS_CHANNEL_0.1.json --out conformance/report_ext_status_channel.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json --out conformance/report_ext_transcript_witness.json
 
 conformance-bindings:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/bindings/TB_MCP_0.1.json --out conformance/report_bind_mcp.json

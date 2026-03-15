@@ -1,0 +1,159 @@
+{
+  "suite_id": "TW-TRANSCRIPT-WITNESS-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "EXT-TRANSCRIPT-WITNESS conformance for checkpoint/receipt/head/inclusion and equivocation semantics.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+  "payload_schema_map": {
+    "WITNESS_SUBMIT": "#/$defs/WITNESS_SUBMIT",
+    "WITNESS_RECEIPT": "#/$defs/WITNESS_RECEIPT",
+    "HEAD_EXCHANGE": "#/$defs/HEAD_EXCHANGE",
+    "INCLUSION_PROOF_DECLARE": "#/$defs/INCLUSION_PROOF_DECLARE"
+  },
+  "transcripts": [
+    {
+      "id": "TW-01",
+      "path": "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl",
+      "expected_message_types": [
+        "ACTION_PREPARE",
+        "ACTION_APPROVE",
+        "ACTION_COMMIT",
+        "WITNESS_SUBMIT",
+        "WITNESS_RECEIPT"
+      ]
+    },
+    {
+      "id": "TW-02",
+      "path": "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl",
+      "expected_message_types": [
+        "PUBLICATION_PUBLISH",
+        "WITNESS_SUBMIT",
+        "HEAD_EXCHANGE",
+        "INCLUSION_PROOF_DECLARE"
+      ]
+    },
+    {
+      "id": "TW-03",
+      "path": "fixtures/extensions/transcript_witness/TW-03_receipt_without_submit_expected_fail.jsonl",
+      "expected_message_types": [
+        "WITNESS_RECEIPT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "TW-RECEIPT-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "TW-04",
+      "path": "fixtures/extensions/transcript_witness/TW-04_unknown_inclusion_target_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "WITNESS_SUBMIT",
+        "INCLUSION_PROOF_DECLARE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "TW-INCLUSION-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "TW-05",
+      "path": "fixtures/extensions/transcript_witness/TW-05_split_history_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "HEAD_EXCHANGE",
+        "WITNESS_SUBMIT",
+        "WITNESS_SUBMIT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "TW-EQUIVOCATION-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "TW-06",
+      "path": "fixtures/extensions/transcript_witness/TW-06_nonrep_required_missing_sigref_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "WITNESS_SUBMIT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "TW-NONREP-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered in registry/message_types.json"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against extension payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "CT-PREV-MSG-REQUIRED-01",
+      "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id constant and message_id unique"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "TW-CHECKPOINT-01",
+      "description": "checkpoint commitments must bind to transcript session and known head hash"
+    },
+    {
+      "test_id": "TW-RECEIPT-01",
+      "description": "witness receipt must bind to prior submit/checkpoint"
+    },
+    {
+      "test_id": "TW-HEAD-01",
+      "description": "head exchange must carry coherent latest-head binding"
+    },
+    {
+      "test_id": "TW-INCLUSION-01",
+      "description": "inclusion proof must bind to known target and checkpoint context"
+    },
+    {
+      "test_id": "TW-EQUIVOCATION-01",
+      "description": "conflicting heads for same session/sequence must fail when strict witness mode is required"
+    },
+    {
+      "test_id": "TW-NONREP-01",
+      "description": "optional non-repudiation mode requires checkpoint.original_sender_sig_ref"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-TRANSCRIPT-WITNESS-0.1",
+  "extension_id": "EXT-TRANSCRIPT-WITNESS"
+}
