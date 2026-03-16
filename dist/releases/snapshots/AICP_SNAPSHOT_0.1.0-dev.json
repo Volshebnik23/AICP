@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "07aeebc98edce65143a4fddb5bedf6b8cd057fbb16d75664e8d35b0f1222bb4d",
+      "combined_sha256": "8c6aa87c16d49ce87eaba27d923d1a811b25229d9fb864d4d203cfb6e464dda7",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -78,6 +78,10 @@
         {
           "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
           "sha256": "cc233cb4abdac46698f2ff5c7e5726f848c96c702db7e4f0e052b82647536ca1"
+        },
+        {
+          "path": "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "sha256": "fa7c73c3972c207bf9a9a52b7909c5e4d2998d98bc586f83a8333454de25a1ef"
         },
         {
           "path": "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
@@ -258,7 +262,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "c062fd8db74ae8690c57bc05d3836aaea528425f3a2f76e9c566f3d1f35ef71e",
+      "combined_sha256": "b9e90cf9252f2ec514e17bda2a262a1d419a39521e2ad5e4a62e3a73818f669a",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -671,6 +675,46 @@
         {
           "path": "fixtures/extensions/execution_lifecycle/EX-07_dangling_store_ref_expected_fail.jsonl",
           "sha256": "3a6288d402dcb6b5197e1e80a7bcf723e6bfdcf13d2572d444c5435af9120efa"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-01_basic_declare_result_pass.jsonl",
+          "sha256": "fb211365eef0db958779d39e9979852f548afd97aa32d264cc159b9c665c7dfe"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "sha256": "4021c53320747485379c1deea97b6e22cb0cff2b62cfd1347695a93c83bc9fa4"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "sha256": "4146169231e69f3475289470a7ab96b2677bb2a943784025a3d99dd8118bccd0"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
+          "sha256": "900b38bfb394f1b7f7cec833e7f5be0d7f1c7628f9e107bc739fef8b38e7f26c"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-05_result_without_declare_expected_fail.jsonl",
+          "sha256": "492400f1c3ba6bb0050a51da454ba19d2916607ebe0e3724a7e444365aab7706"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-06_irreversible_missing_approval_expected_fail.jsonl",
+          "sha256": "ec52995b67def4c2f590b8ce7f57fa85c654c635b26b4e11dd4d9fdb9aaeece4"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-07_policy_link_missing_expected_fail.jsonl",
+          "sha256": "d74080092b762fa78545870e4c5f3fc20629d822f18bfad6cbec7c1510dfccc0"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-08_receipt_digest_mismatch_expected_fail.jsonl",
+          "sha256": "1c73092b328e03ba16e2e437bd1a09029566c13ae01383eb8ef6e5684ec5ee41"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-09_inline_sensitive_receipt_expected_fail.jsonl",
+          "sha256": "5663d91c1cd328d656a825ba7d555c53f7e5c171972500bcecb0cc6f5c239bc5"
+        },
+        {
+          "path": "fixtures/extensions/external_transaction/ET-10_external_tx_id_mismatch_expected_fail.jsonl",
+          "sha256": "c2fd752e8528396d3307635ccb4804c21f8d1020c32de476c39d5b50ca0a5ad5"
         },
         {
           "path": "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
@@ -1243,7 +1287,7 @@
       ]
     },
     "registries": {
-      "combined_sha256": "ea4121072249d4750564d99bfd1906c80185bf8bc06cdcb6e8833055cac2403c",
+      "combined_sha256": "8be8b3b9d48ecd1c674527b7c753d7d7d2f413b866942abd27cc4444c3217344",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
@@ -1291,7 +1335,7 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "478aff5d9f9ca3426371b17ab6044ded37716190a5cdf15af31f971a6e6ce5e0"
+          "sha256": "e4ed4bc988d3e9a76b4daa69277a35465140254c4b731b4aa2db2883c401b7c6"
         },
         {
           "path": "registry/hash_domains.json",
@@ -1299,7 +1343,7 @@
         },
         {
           "path": "registry/message_types.json",
-          "sha256": "2fb680c4ce5a77a38f70d6d412e0e55c4ab07c27d786691a6734b01fa6ac2984"
+          "sha256": "5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
         },
         {
           "path": "registry/policy_bindings.json",
@@ -1315,7 +1359,7 @@
         },
         {
           "path": "registry/policy_reason_codes.json",
-          "sha256": "2f01e9ecbbeed748b866bc528cd70ee735c3fc0ee8c5f862164fd0d8161f1053"
+          "sha256": "5876f9a466ecb29116a6043f7c48a8cf424a4f19cc8987c2ac1a3848903fcca2"
         },
         {
           "path": "registry/privacy_modes.json",
@@ -1348,7 +1392,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "4f50e4b68c73ff5fd7726e6f46eaab5f14cf67eb2c145245fbd11eb707801ec1",
+      "combined_sha256": "4a9c0d604b5326547a955202ed017b0d67a370a90e5957ef82360222874ca266",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1433,6 +1477,10 @@
         {
           "path": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
           "sha256": "0aaac83cc900e3069f764d1dbd13bf18f3cd1cc132c77b34c6a450a055e49c63"
+        },
+        {
+          "path": "schemas/extensions/ext-external-transaction-payloads.schema.json",
+          "sha256": "af9e9ae6c9413a4003c7db657c6f98baf84e58a43aa6f1e86f0d138bec53e765"
         },
         {
           "path": "schemas/extensions/ext-facilitation-payloads.schema.json",
@@ -1656,6 +1704,10 @@
       {
         "mark": "AICP-EXT-ACTION-ESCROW-0.1",
         "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json"
+      },
+      {
+        "mark": "AICP-EXT-EXTERNAL-TRANSACTION-0.1",
+        "path": "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json"
       },
       {
         "mark": "AICP-EXT-EXECUTION-LIFECYCLE-0.1",

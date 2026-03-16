@@ -122,6 +122,24 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXT-EXECUTION-LIFECYCLE",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#registry-entry",
+    "security_considerations": "Execution lifecycle metadata should enforce run/thread terminal-state immutability and hash-bound store reference constraints."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXT-EXTERNAL-TRANSACTION",
+    "type": "extension_ids",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#13-registry-entries",
+    "security_considerations": "External transaction declarations/results must bind approvals, policy decisions, and receipt digests to prevent bypass and substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "EXT-FACILITATION",
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#registry-entry",
@@ -325,14 +343,5 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md",
     "security_considerations": "Workflow attestations must bind to contract head."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "EXT-EXECUTION-LIFECYCLE",
-    "type": "extension_ids",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#registry-entry",
-    "security_considerations": "Execution lifecycle metadata should enforce run/thread terminal-state immutability and hash-bound store reference constraints."
   }
 ]

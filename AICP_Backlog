@@ -40,27 +40,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 ---
 
-## M40 — External protocol transaction bridge (protocol-neutral; ACP as first mapping target)
-**Problem:** AICP needs a standard way to represent externally-executed irreversible steps (for example checkout/payment flows) as auditable, policy-gated transcript artifacts without making AICP itself a payment or commerce protocol.
-
-**Deliverables**
-1) **Extension + canonical objects**
-   - Add `EXT-EXTERNAL-TRANSACTION` with transaction declaration/result artifacts and digest-bound external receipts.
-2) **Registry updates**
-   - Add extension/message types and policy reason-code hooks required for external-step gating.
-3) **Schemas**
-   - Add strict payload schemas for external transaction artifacts.
-4) **Mapping appendix (non-binding)**
-   - Add informative ACP mapping notes while keeping protocol-neutral semantics.
-5) **Fixtures + conformance**
-   - deterministic pass/fail vectors for digest integrity, approval requirements, and policy-required linkage.
-
-**Acceptance**
-- Platforms can enforce “no external irreversible step without approval” using interoperable artifacts.
-- External receipts can be anchored as verifiable digests without leaking PII.
-
----
-
 ## M41 — Commerce-ready profile (AICP↔ACP bridge profile + conformance)
 **Problem:** Even with EXT-EXTERNAL-TRANSACTION, implementers need a turnkey optional profile for safe commerce orchestration with approvals, PII handling, and external-step anchoring.
 
