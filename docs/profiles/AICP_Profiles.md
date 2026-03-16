@@ -150,6 +150,23 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Intent:** Portable run/thread/store metadata interoperability with deterministic recovery/resync semantics across platforms.
 - **Pairing note:** `EXT-TOOL-GATING` is recommended for side-effecting execution and approval-sensitive deployments, but is not required by this profile.
 
+
+
+#### `AICP-COMMERCE-ACP`
+- **Status:** Available now (optional).
+- **Required suites/extensions:**
+- **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-ENFORCEMENT`, `EXT-POLICY-EVAL`, `EXT-EXTERNAL-TRANSACTION`, `EXT-HUMAN-APPROVAL`, and `EXT-REDACTION`.
+  - Core: `conformance/core/CT_CORE_0.1.json`
+  - EXT-CAPNEG: `conformance/extensions/CN_CAPNEG_0.1.json`
+  - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
+  - EXT-ENFORCEMENT: `conformance/extensions/ENF_ENFORCEMENT_0.1.json`
+  - EXT-EXTERNAL-TRANSACTION: `conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json`
+  - EXT-HUMAN-APPROVAL: `conformance/extensions/HA_HUMAN_APPROVAL_0.1.json`
+  - EXT-REDACTION: `conformance/extensions/RD_REDACTION_0.1.json`
+  - Cross-extension commerce semantics: `conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json`
+- **Intent:** Optional commerce-ready transcript interoperability profile for ACP-bridged orchestration while keeping checkout/payment rails external.
+- **Canonical profile spec:** `docs/profiles/AICP_Commerce_ACP_Profile.md`
+
 ## 3. Conformance Badge Semantics
 A **conformance badge** is a profile-level compatibility mark issued when all required suites for the profile pass.
 
@@ -178,6 +195,7 @@ Operational guidance:
 - **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases profile.
 - **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications profile with optional economics.
 - **AICP-EXECUTION-INTEROP@0.1**: optional run/thread/store metadata profile with resume+object-resync continuity.
+- **AICP-COMMERCE-ACP@0.1**: optional commerce-ready ACP-bridged orchestration profile with policy/approval/external-step/redaction coherence checks.
 
 ## See also
 

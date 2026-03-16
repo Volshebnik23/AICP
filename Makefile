@@ -45,6 +45,7 @@ conformance-core:
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CN_CAPNEG_0.1.json --out conformance/report_ext_capneg.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CF_CONFIDENTIALITY_0.1.json --out conformance/report_ext_confidentiality.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json --out conformance/report_ext_commerce_acp_profile.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RD_REDACTION_0.1.json --out conformance/report_ext_redaction.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/HA_HUMAN_APPROVAL_0.1.json --out conformance/report_ext_human_approval.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DS_DISPUTES_0.1.json --out conformance/report_ext_disputes.json
@@ -107,6 +108,7 @@ conformance-profiles:
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_BAZAAR_RECEPTION_0.1.json --out conformance/report_profile_bazaar_reception.json
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json --out conformance/report_profile_agent_media.json
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json --out conformance/report_profile_execution_interop.json
+	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_COMMERCE_ACP_0.1.json --out conformance/report_profile_commerce_acp.json
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_POLICY_OPA_REGO_0.1.json --out conformance/report_profile_policy_opa_rego.json
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_POLICY_ABAC_RBAC_0.1.json --out conformance/report_profile_policy_abac_rbac.json
 	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_POLICY_LLM_SAFETY_0.1.json --out conformance/report_profile_policy_llm_safety.json

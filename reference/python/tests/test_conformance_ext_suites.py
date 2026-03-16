@@ -33,6 +33,7 @@ def test_extension_conformance_suites_pass() -> None:
         ("conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json", "conformance/report_ext_artifact_manifests_pinning_test.json"),
         ("conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json", "conformance/report_ext_trust_attestations_test.json"),
         ("conformance/extensions/SC_STATUS_CHANNEL_0.1.json", "conformance/report_ext_status_channel_test.json"),
+        ("conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json", "conformance/report_ext_commerce_acp_profile_test.json"),
         ("conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json", "conformance/report_ext_external_transaction_test.json"),
     ]
     for suite, report in suites:

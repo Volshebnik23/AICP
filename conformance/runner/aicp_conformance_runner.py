@@ -2166,6 +2166,97 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             line_no,
                         )
 
+        if any(check in enabled_checks for check in {"CM-CAPNEG-PROFILE-01", "CM-APPROVAL-REQUIRED-01", "CM-POLICY-GATE-01", "CM-ENFORCEMENT-COHERENCE-01", "CM-EXT-TX-ANCHOR-01", "CM-PII-BOUNDARY-01", "CM-ACP-MAPPING-BOUNDARY-01"}):
+            target_profile = ("AICP-COMMERCE-ACP", "0.1")
+            selected_profile_ok = False
+            declared_required_profile = False
+            approvals_by_hash: set[str] = set()
+            policy_by_hash: dict[str, str | None] = {}
+            declares_by_hash: dict[str, dict[str, Any]] = {}
+            enforcement_by_target: dict[str, str] = {}
+            sensitive_keys = {"card_number", "pan", "cvv", "raw_receipt", "receipt_body"}
+            forbidden_runtime_keys = {"acp_runtime_state", "checkout_url", "vendor_cart_id"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                msg_hash = msg.get("message_hash") if isinstance(msg.get("message_hash"), str) else None
+
+                if mtype == "CAPABILITIES_DECLARE":
+                    req_profiles = payload.get("required_aicp_profiles") if isinstance(payload.get("required_aicp_profiles"), list) else []
+                    for item in req_profiles:
+                        if isinstance(item, dict) and item.get("profile_id") == target_profile[0] and item.get("profile_version") == target_profile[1]:
+                            declared_required_profile = True
+                elif mtype == "CAPABILITIES_PROPOSE":
+                    selected = (((payload.get("negotiation_result") or {}).get("selected") if isinstance(payload.get("negotiation_result"), dict) else {}) or {})
+                    aicp_profile = selected.get("aicp_profile") if isinstance(selected, dict) else None
+                    if isinstance(aicp_profile, dict) and aicp_profile.get("profile_id") == target_profile[0] and aicp_profile.get("profile_version") == target_profile[1]:
+                        selected_profile_ok = True
+                elif mtype == "APPROVAL_GRANT" and isinstance(msg_hash, str):
+                    approvals_by_hash.add(msg_hash)
+                elif mtype == "POLICY_EVAL_RESULT" and isinstance(msg_hash, str):
+                    decision = (payload.get("policy_decision") if isinstance(payload.get("policy_decision"), dict) else {})
+                    policy_by_hash[msg_hash] = decision.get("decision") if isinstance(decision.get("decision"), str) else None
+                elif mtype == "EXTERNAL_TX_DECLARE" and isinstance(msg_hash, str):
+                    tx = payload.get("external_transaction") if isinstance(payload.get("external_transaction"), dict) else {}
+                    declares_by_hash[msg_hash] = tx
+                elif mtype == "ENFORCEMENT_VERDICT":
+                    target = payload.get("target_message_hash") if isinstance(payload.get("target_message_hash"), str) else None
+                    decision = payload.get("decision") if isinstance(payload.get("decision"), str) else None
+                    if target and decision:
+                        enforcement_by_target[target] = decision
+
+                if mtype != "EXTERNAL_TX_RESULT":
+                    continue
+
+                tx = payload.get("external_transaction") if isinstance(payload.get("external_transaction"), dict) else {}
+                receipt = payload.get("external_receipt_anchor") if isinstance(payload.get("external_receipt_anchor"), dict) else {}
+                declared_hash = payload.get("declared_message_hash") if isinstance(payload.get("declared_message_hash"), str) else None
+                decl_tx = declares_by_hash.get(declared_hash) if declared_hash else None
+
+                if "CM-EXT-TX-ANCHOR-01" in enabled_checks:
+                    if decl_tx is None:
+                        add_failure(t_failures, "CM-EXT-TX-ANCHOR-01", "EXTERNAL_TX_RESULT must reference prior EXTERNAL_TX_DECLARE via declared_message_hash", rel_file, line_no)
+                    elif tx.get("external_tx_id") != decl_tx.get("external_tx_id"):
+                        add_failure(t_failures, "CM-EXT-TX-ANCHOR-01", "EXTERNAL_TX_RESULT external_tx_id must match declared external_tx_id", rel_file, line_no)
+
+                if "CM-APPROVAL-REQUIRED-01" in enabled_checks:
+                    if tx.get("irreversible") is True and (tx.get("approval_required") is True or decl_tx is None or decl_tx.get("approval_required") is True):
+                        approval_ref = tx.get("approval_ref") if isinstance(tx.get("approval_ref"), str) else None
+                        if not approval_ref or approval_ref not in approvals_by_hash:
+                            add_failure(t_failures, "CM-APPROVAL-REQUIRED-01", "irreversible external step requires prior APPROVAL_GRANT linkage", rel_file, line_no)
+
+                if "CM-POLICY-GATE-01" in enabled_checks:
+                    policy_ref = tx.get("policy_eval_ref") if isinstance(tx.get("policy_eval_ref"), str) else None
+                    if not policy_ref or policy_ref not in policy_by_hash:
+                        add_failure(t_failures, "CM-POLICY-GATE-01", "external step requires resolvable prior POLICY_EVAL_RESULT linkage", rel_file, line_no)
+                    elif policy_by_hash.get(policy_ref) != "ALLOW":
+                        add_failure(t_failures, "CM-POLICY-GATE-01", "external step progression requires ALLOW policy decision", rel_file, line_no)
+
+                if "CM-ENFORCEMENT-COHERENCE-01" in enabled_checks and isinstance(msg_hash, str):
+                    verdict = enforcement_by_target.get(msg_hash)
+                    if tx.get("policy_eval_ref") in policy_by_hash and policy_by_hash.get(tx.get("policy_eval_ref")) == "DENY" and verdict == "ALLOW":
+                        add_failure(t_failures, "CM-ENFORCEMENT-COHERENCE-01", "enforcement verdict ALLOW contradicts DENY policy state", rel_file, line_no)
+                    if payload.get("result") == "success" and verdict == "DENY":
+                        add_failure(t_failures, "CM-ENFORCEMENT-COHERENCE-01", "successful external result cannot be paired with DENY enforcement verdict", rel_file, line_no)
+
+                if "CM-PII-BOUNDARY-01" in enabled_checks:
+                    if any(k in receipt for k in sensitive_keys):
+                        add_failure(t_failures, "CM-PII-BOUNDARY-01", "external_receipt_anchor contains inline sensitive receipt fields", rel_file, line_no)
+                    artifact_inline = receipt.get("artifact_inline")
+                    if isinstance(artifact_inline, dict) and any(k in artifact_inline for k in sensitive_keys):
+                        add_failure(t_failures, "CM-PII-BOUNDARY-01", "artifact_inline contains inline sensitive receipt fields", rel_file, line_no)
+
+                if "CM-ACP-MAPPING-BOUNDARY-01" in enabled_checks:
+                    if any(k in tx for k in forbidden_runtime_keys):
+                        add_failure(t_failures, "CM-ACP-MAPPING-BOUNDARY-01", "profile payload must not require ACP/vendor runtime-only fields", rel_file, line_no)
+
+            if "CM-CAPNEG-PROFILE-01" in enabled_checks:
+                if not declared_required_profile:
+                    add_failure(t_failures, "CM-CAPNEG-PROFILE-01", "CAPABILITIES_DECLARE.required_aicp_profiles must include AICP-COMMERCE-ACP@0.1", rel_file, None)
+                if not selected_profile_ok:
+                    add_failure(t_failures, "CM-CAPNEG-PROFILE-01", "CAPABILITIES_PROPOSE must select AICP-COMMERCE-ACP@0.1", rel_file, None)
+
         if any(check in enabled_checks for check in {"DS-TARGET-01", "DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01", "SA-CAT-01", "SA-EVIDENCE-01", "SA-EVIDENCE-RESOLVE-01"}):
             prior_message_ids: set[str] = set()
             prior_message_hashes: set[str] = set()

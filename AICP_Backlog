@@ -40,22 +40,6 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 ---
 
-## M41 — Commerce-ready profile (AICP↔ACP bridge profile + conformance)
-**Problem:** Even with EXT-EXTERNAL-TRANSACTION, implementers need a turnkey optional profile for safe commerce orchestration with approvals, PII handling, and external-step anchoring.
-
-**Deliverables**
-1) **`AICP-Profile-COMMERCE-ACP@0.1` (optional)**
-   - Bundle Core + CAPNEG + ENFORCEMENT + POLICY-EVAL + EXTERNAL-TRANSACTION + HUMAN-APPROVAL + REDACTION/PII refs.
-2) **Conformance suite**
-   - Deterministic coverage for ACP-step anchoring, intervention flows, approval requirements, and PII handling policy.
-3) **Implementer guide**
-   - Protocol-level guide for anchoring external commerce steps without redefining AICP as a purchase protocol.
-
-**Acceptance**
-- Two vendors implementing the profile can exchange commerce-bound transcripts with deterministic enforcement and auditability.
-
----
-
 ## M47 — Adjacent protocol integration patterns and ecosystem stack guidance
 **Problem:** Implementers still need concrete adjacent-protocol integration guidance (especially a non-normative A2A-like calling/connectivity pattern) while preserving AICP layer boundaries.
 

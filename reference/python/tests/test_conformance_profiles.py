@@ -38,6 +38,11 @@ def test_profile_conformance_catalogs_pass() -> None:
             "conformance/report_profile_mediated_blocking_test.json",
             "AICP-Profile-MEDIATED-BLOCKING-0.1",
         ),
+        (
+            "conformance/profiles/PF_AICP_COMMERCE_ACP_0.1.json",
+            "conformance/report_profile_commerce_acp_test.json",
+            "AICP-Profile-COMMERCE-ACP-0.1",
+        ),
     ]
 
     for profile, report, expected_mark in cases:
