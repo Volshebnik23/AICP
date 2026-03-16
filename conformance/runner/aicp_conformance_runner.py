@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -1111,6 +1112,10 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     iam_bridge_claims_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/NormalizedClaimsSnapshot") if Draft202012Validator is not None else None
     iam_bridge_contract_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/ContractIamBridge") if Draft202012Validator is not None else None
     iam_bridge_message_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/MessageIamBridge") if Draft202012Validator is not None else None
+    external_tx_schema_path = ROOT / "schemas/extensions/ext-external-transaction-payloads.schema.json"
+    external_tx_schema = load_json(external_tx_schema_path) if external_tx_schema_path.exists() else {}
+    external_tx_declare_validator = _validator_for_schema_pointer(external_tx_schema, "/$defs/EXTERNAL_TX_DECLARE") if Draft202012Validator is not None and external_tx_schema else None
+    external_tx_result_validator = _validator_for_schema_pointer(external_tx_schema, "/$defs/EXTERNAL_TX_RESULT") if Draft202012Validator is not None and external_tx_schema else None
 
 
     failures: list[dict[str, Any]] = []
@@ -2029,6 +2034,106 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         if not valid:
                             add_failure(t_failures, "HA-EXPIRY-01", "TOOL_CALL_REQUEST requiring approval has only expired grants", rel_file, line_no)
 
+        if any(check in enabled_checks for check in {"ET-DECLARE-LINK-01", "ET-RESULT-LINK-01", "ET-IRREVERSIBLE-APPROVAL-01", "ET-POLICY-LINK-01", "ET-RECEIPT-DIGEST-01", "ET-RECEIPT-PRIVACY-01", "ET-PII-REF-01", "ET-CROSS-BIND-01"}):
+            declarations_by_hash: dict[str, tuple[dict[str, Any], int]] = {}
+            approvals_by_hash: set[str] = set()
+            policy_results_by_hash: dict[str, str | None] = {}
+            sensitive_keys = {"raw_receipt", "receipt_body", "card_number", "pan", "cvv"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                msg_hash = msg.get("message_hash") if isinstance(msg.get("message_hash"), str) else None
+
+                if mtype == "APPROVAL_GRANT" and isinstance(msg_hash, str):
+                    approvals_by_hash.add(msg_hash)
+                if mtype == "POLICY_EVAL_RESULT" and isinstance(msg_hash, str):
+                    decision = payload.get("policy_decision") if isinstance(payload.get("policy_decision"), dict) else {}
+                    policy_results_by_hash[msg_hash] = decision.get("decision") if isinstance(decision.get("decision"), str) else None
+
+                if mtype == "EXTERNAL_TX_DECLARE":
+                    if "ET-DECLARE-LINK-01" in enabled_checks and external_tx_declare_validator is not None:
+                        for err in sorted(external_tx_declare_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                            add_failure(t_failures, "ET-DECLARE-LINK-01", f"invalid external declare payload: {err.message}", rel_file, line_no)
+                    if isinstance(msg_hash, str):
+                        declarations_by_hash[msg_hash] = (msg, line_no)
+
+                if mtype != "EXTERNAL_TX_RESULT":
+                    continue
+
+                if "ET-RESULT-LINK-01" in enabled_checks and external_tx_result_validator is not None:
+                    for err in sorted(external_tx_result_validator.iter_errors(payload), key=lambda e: list(e.path)):
+                        add_failure(t_failures, "ET-RESULT-LINK-01", f"invalid external result payload: {err.message}", rel_file, line_no)
+
+                declared_hash = payload.get("declared_message_hash")
+                declaration_entry = declarations_by_hash.get(declared_hash) if isinstance(declared_hash, str) else None
+                tx_obj = payload.get("external_transaction") if isinstance(payload.get("external_transaction"), dict) else {}
+                receipt = payload.get("external_receipt_anchor") if isinstance(payload.get("external_receipt_anchor"), dict) else {}
+
+                if "ET-DECLARE-LINK-01" in enabled_checks and declaration_entry is None:
+                    add_failure(t_failures, "ET-DECLARE-LINK-01", "EXTERNAL_TX_RESULT.declared_message_hash must reference prior EXTERNAL_TX_DECLARE", rel_file, line_no)
+
+                declaration_tx = {}
+                if declaration_entry is not None:
+                    declaration_payload = declaration_entry[0].get("payload") if isinstance(declaration_entry[0].get("payload"), dict) else {}
+                    declaration_tx = declaration_payload.get("external_transaction") if isinstance(declaration_payload.get("external_transaction"), dict) else {}
+
+                if "ET-RESULT-LINK-01" in enabled_checks and declaration_tx:
+                    if tx_obj.get("external_tx_id") != declaration_tx.get("external_tx_id"):
+                        add_failure(t_failures, "ET-RESULT-LINK-01", "result external_tx_id must match declared external_tx_id", rel_file, line_no)
+
+                approval_required = bool(tx_obj.get("approval_required")) or bool(declaration_tx.get("approval_required"))
+                if tx_obj.get("irreversible") is True:
+                    approval_required = True if not isinstance(tx_obj.get("approval_required"), bool) else approval_required
+
+                approval_ref = tx_obj.get("approval_ref") if isinstance(tx_obj.get("approval_ref"), str) else None
+                if "ET-IRREVERSIBLE-APPROVAL-01" in enabled_checks and approval_required:
+                    if not approval_ref:
+                        add_failure(t_failures, "ET-IRREVERSIBLE-APPROVAL-01", "approval-required external result must include approval_ref", rel_file, line_no)
+                    elif approval_ref not in approvals_by_hash:
+                        add_failure(t_failures, "ET-IRREVERSIBLE-APPROVAL-01", "approval_ref must reference a prior APPROVAL_GRANT message hash", rel_file, line_no)
+
+                policy_required = bool(tx_obj.get("policy_required")) or bool(declaration_tx.get("policy_required"))
+                policy_ref = tx_obj.get("policy_eval_ref") if isinstance(tx_obj.get("policy_eval_ref"), str) else None
+                if "ET-POLICY-LINK-01" in enabled_checks and (policy_required or policy_ref is not None):
+                    if not policy_ref:
+                        add_failure(t_failures, "ET-POLICY-LINK-01", "policy-required external result must include policy_eval_ref", rel_file, line_no)
+                    elif policy_ref not in policy_results_by_hash:
+                        add_failure(t_failures, "ET-POLICY-LINK-01", "policy_eval_ref must reference a prior POLICY_EVAL_RESULT message hash", rel_file, line_no)
+                    elif policy_results_by_hash.get(policy_ref) == "DENY":
+                        add_failure(t_failures, "ET-POLICY-LINK-01", "policy_eval_ref cannot resolve to a DENY decision", rel_file, line_no)
+
+                if "ET-CROSS-BIND-01" in enabled_checks:
+                    if approval_ref and approval_ref not in approvals_by_hash:
+                        add_failure(t_failures, "ET-CROSS-BIND-01", "approval_ref must bind to APPROVAL_GRANT", rel_file, line_no)
+                    if policy_ref and policy_ref not in policy_results_by_hash:
+                        add_failure(t_failures, "ET-CROSS-BIND-01", "policy_eval_ref must bind to POLICY_EVAL_RESULT", rel_file, line_no)
+
+                if "ET-PII-REF-01" in enabled_checks:
+                    pii_refs = tx_obj.get("pii_refs")
+                    if isinstance(pii_refs, list) and pii_ref_validator is not None:
+                        for idx, ref in enumerate(pii_refs):
+                            for err in sorted(pii_ref_validator.iter_errors(ref), key=lambda e: list(e.path)):
+                                add_failure(t_failures, "ET-PII-REF-01", f"invalid pii_refs[{idx}]: {err.message}", rel_file, line_no)
+
+                if "ET-RECEIPT-DIGEST-01" in enabled_checks:
+                    digest = receipt.get("receipt_digest")
+                    if not isinstance(digest, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+                        add_failure(t_failures, "ET-RECEIPT-DIGEST-01", "external_receipt_anchor.receipt_digest must be sha256:<64 hex>", rel_file, line_no)
+                    artifact_inline = receipt.get("artifact_inline")
+                    if isinstance(artifact_inline, dict) and isinstance(digest, str):
+                        canonical = json.dumps(artifact_inline, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                        recomputed = "sha256:" + hashlib.sha256(canonical).hexdigest()
+                        if digest != recomputed:
+                            add_failure(t_failures, "ET-RECEIPT-DIGEST-01", f"receipt_digest mismatch (expected {recomputed}, got {digest})", rel_file, line_no)
+
+                if "ET-RECEIPT-PRIVACY-01" in enabled_checks:
+                    if any(k in receipt for k in sensitive_keys):
+                        add_failure(t_failures, "ET-RECEIPT-PRIVACY-01", "external_receipt_anchor contains prohibited inline sensitive fields", rel_file, line_no)
+                    artifact_inline = receipt.get("artifact_inline")
+                    if isinstance(artifact_inline, dict) and any(k in artifact_inline for k in sensitive_keys):
+                        add_failure(t_failures, "ET-RECEIPT-PRIVACY-01", "external_receipt_anchor.artifact_inline contains prohibited sensitive keys", rel_file, line_no)
+
         if "CN-DOWNGRADE-01" in enabled_checks:
             accepted_extensions: dict[str, set[str]] = {}
             for line_no, msg in rows:
@@ -2060,6 +2165,97 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+        if any(check in enabled_checks for check in {"CM-CAPNEG-PROFILE-01", "CM-APPROVAL-REQUIRED-01", "CM-POLICY-GATE-01", "CM-ENFORCEMENT-COHERENCE-01", "CM-EXT-TX-ANCHOR-01", "CM-PII-BOUNDARY-01", "CM-ACP-MAPPING-BOUNDARY-01"}):
+            target_profile = ("AICP-COMMERCE-ACP", "0.1")
+            selected_profile_ok = False
+            declared_required_profile = False
+            approvals_by_hash: set[str] = set()
+            policy_by_hash: dict[str, str | None] = {}
+            declares_by_hash: dict[str, dict[str, Any]] = {}
+            enforcement_by_target: dict[str, str] = {}
+            sensitive_keys = {"card_number", "pan", "cvv", "raw_receipt", "receipt_body"}
+            forbidden_runtime_keys = {"acp_runtime_state", "checkout_url", "vendor_cart_id"}
+
+            for line_no, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") if isinstance(msg.get("payload"), dict) else {}
+                msg_hash = msg.get("message_hash") if isinstance(msg.get("message_hash"), str) else None
+
+                if mtype == "CAPABILITIES_DECLARE":
+                    req_profiles = payload.get("required_aicp_profiles") if isinstance(payload.get("required_aicp_profiles"), list) else []
+                    for item in req_profiles:
+                        if isinstance(item, dict) and item.get("profile_id") == target_profile[0] and item.get("profile_version") == target_profile[1]:
+                            declared_required_profile = True
+                elif mtype == "CAPABILITIES_PROPOSE":
+                    selected = (((payload.get("negotiation_result") or {}).get("selected") if isinstance(payload.get("negotiation_result"), dict) else {}) or {})
+                    aicp_profile = selected.get("aicp_profile") if isinstance(selected, dict) else None
+                    if isinstance(aicp_profile, dict) and aicp_profile.get("profile_id") == target_profile[0] and aicp_profile.get("profile_version") == target_profile[1]:
+                        selected_profile_ok = True
+                elif mtype == "APPROVAL_GRANT" and isinstance(msg_hash, str):
+                    approvals_by_hash.add(msg_hash)
+                elif mtype == "POLICY_EVAL_RESULT" and isinstance(msg_hash, str):
+                    decision = (payload.get("policy_decision") if isinstance(payload.get("policy_decision"), dict) else {})
+                    policy_by_hash[msg_hash] = decision.get("decision") if isinstance(decision.get("decision"), str) else None
+                elif mtype == "EXTERNAL_TX_DECLARE" and isinstance(msg_hash, str):
+                    tx = payload.get("external_transaction") if isinstance(payload.get("external_transaction"), dict) else {}
+                    declares_by_hash[msg_hash] = tx
+                elif mtype == "ENFORCEMENT_VERDICT":
+                    target = payload.get("target_message_hash") if isinstance(payload.get("target_message_hash"), str) else None
+                    decision = payload.get("decision") if isinstance(payload.get("decision"), str) else None
+                    if target and decision:
+                        enforcement_by_target[target] = decision
+
+                if mtype != "EXTERNAL_TX_RESULT":
+                    continue
+
+                tx = payload.get("external_transaction") if isinstance(payload.get("external_transaction"), dict) else {}
+                receipt = payload.get("external_receipt_anchor") if isinstance(payload.get("external_receipt_anchor"), dict) else {}
+                declared_hash = payload.get("declared_message_hash") if isinstance(payload.get("declared_message_hash"), str) else None
+                decl_tx = declares_by_hash.get(declared_hash) if declared_hash else None
+
+                if "CM-EXT-TX-ANCHOR-01" in enabled_checks:
+                    if decl_tx is None:
+                        add_failure(t_failures, "CM-EXT-TX-ANCHOR-01", "EXTERNAL_TX_RESULT must reference prior EXTERNAL_TX_DECLARE via declared_message_hash", rel_file, line_no)
+                    elif tx.get("external_tx_id") != decl_tx.get("external_tx_id"):
+                        add_failure(t_failures, "CM-EXT-TX-ANCHOR-01", "EXTERNAL_TX_RESULT external_tx_id must match declared external_tx_id", rel_file, line_no)
+
+                if "CM-APPROVAL-REQUIRED-01" in enabled_checks:
+                    if tx.get("irreversible") is True and (tx.get("approval_required") is True or decl_tx is None or decl_tx.get("approval_required") is True):
+                        approval_ref = tx.get("approval_ref") if isinstance(tx.get("approval_ref"), str) else None
+                        if not approval_ref or approval_ref not in approvals_by_hash:
+                            add_failure(t_failures, "CM-APPROVAL-REQUIRED-01", "irreversible external step requires prior APPROVAL_GRANT linkage", rel_file, line_no)
+
+                if "CM-POLICY-GATE-01" in enabled_checks:
+                    policy_ref = tx.get("policy_eval_ref") if isinstance(tx.get("policy_eval_ref"), str) else None
+                    if not policy_ref or policy_ref not in policy_by_hash:
+                        add_failure(t_failures, "CM-POLICY-GATE-01", "external step requires resolvable prior POLICY_EVAL_RESULT linkage", rel_file, line_no)
+                    elif policy_by_hash.get(policy_ref) != "ALLOW":
+                        add_failure(t_failures, "CM-POLICY-GATE-01", "external step progression requires ALLOW policy decision", rel_file, line_no)
+
+                if "CM-ENFORCEMENT-COHERENCE-01" in enabled_checks and isinstance(msg_hash, str):
+                    verdict = enforcement_by_target.get(msg_hash)
+                    if tx.get("policy_eval_ref") in policy_by_hash and policy_by_hash.get(tx.get("policy_eval_ref")) == "DENY" and verdict == "ALLOW":
+                        add_failure(t_failures, "CM-ENFORCEMENT-COHERENCE-01", "enforcement verdict ALLOW contradicts DENY policy state", rel_file, line_no)
+                    if payload.get("result") == "success" and verdict == "DENY":
+                        add_failure(t_failures, "CM-ENFORCEMENT-COHERENCE-01", "successful external result cannot be paired with DENY enforcement verdict", rel_file, line_no)
+
+                if "CM-PII-BOUNDARY-01" in enabled_checks:
+                    if any(k in receipt for k in sensitive_keys):
+                        add_failure(t_failures, "CM-PII-BOUNDARY-01", "external_receipt_anchor contains inline sensitive receipt fields", rel_file, line_no)
+                    artifact_inline = receipt.get("artifact_inline")
+                    if isinstance(artifact_inline, dict) and any(k in artifact_inline for k in sensitive_keys):
+                        add_failure(t_failures, "CM-PII-BOUNDARY-01", "artifact_inline contains inline sensitive receipt fields", rel_file, line_no)
+
+                if "CM-ACP-MAPPING-BOUNDARY-01" in enabled_checks:
+                    if any(k in tx for k in forbidden_runtime_keys):
+                        add_failure(t_failures, "CM-ACP-MAPPING-BOUNDARY-01", "profile payload must not require ACP/vendor runtime-only fields", rel_file, line_no)
+
+            if "CM-CAPNEG-PROFILE-01" in enabled_checks:
+                if not declared_required_profile:
+                    add_failure(t_failures, "CM-CAPNEG-PROFILE-01", "CAPABILITIES_DECLARE.required_aicp_profiles must include AICP-COMMERCE-ACP@0.1", rel_file, None)
+                if not selected_profile_ok:
+                    add_failure(t_failures, "CM-CAPNEG-PROFILE-01", "CAPABILITIES_PROPOSE must select AICP-COMMERCE-ACP@0.1", rel_file, None)
 
         if any(check in enabled_checks for check in {"DS-TARGET-01", "DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01", "SA-CAT-01", "SA-EVIDENCE-01", "SA-EVIDENCE-RESOLVE-01"}):
             prior_message_ids: set[str] = set()

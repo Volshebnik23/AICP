@@ -114,3 +114,6 @@ Replaying prior session context can be unsafe when:
 - [AICP canonical flows](../flows/AICP_Canonical_Flows.md)
 - [AICP in the ecosystem](../architecture/AICP_in_the_Ecosystem.md)
 - [Enforcement models](../architecture/Enforcement_Models.md)
+
+
+Related adjacent-layer guidance: [docs/adjacent/A2A_Integration_Pattern.md](../adjacent/A2A_Integration_Pattern.md)
