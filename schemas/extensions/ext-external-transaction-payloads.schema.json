@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-external-transaction-payloads.schema.json",
+  "title": "AICP EXT-EXTERNAL-TRANSACTION payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DigestString": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "PiiRef": {
+      "$ref": "ext-redaction-payloads.schema.json#/$defs/PiiRef"
+    },
+    "ExternalTransaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_tx_id",
+        "step_kind",
+        "irreversible",
+        "provider_hint",
+        "transaction_ref"
+      ],
+      "properties": {
+        "external_tx_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "step_kind": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "irreversible": {
+          "type": "boolean"
+        },
+        "provider_hint": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "transaction_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "approval_required": {
+          "type": "boolean"
+        },
+        "policy_required": {
+          "type": "boolean"
+        },
+        "policy_eval_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "approval_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "redaction_policy_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "pii_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PiiRef"
+          },
+          "minItems": 1
+        },
+        "external_protocol_id": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "mapping_target": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      }
+    },
+    "ExternalReceiptAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt_digest",
+        "artifact_ref"
+      ],
+      "properties": {
+        "receipt_digest": {
+          "$ref": "#/$defs/DigestString"
+        },
+        "digest_alg": {
+          "type": "string",
+          "enum": [
+            "sha256"
+          ]
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "receipt_type": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "contains_pii": {
+          "type": "boolean"
+        },
+        "artifact_inline": {
+          "type": "object"
+        }
+      }
+    },
+    "EXTERNAL_TX_DECLARE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_transaction"
+      ],
+      "properties": {
+        "external_transaction": {
+          "$ref": "#/$defs/ExternalTransaction"
+        }
+      }
+    },
+    "EXTERNAL_TX_RESULT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_transaction",
+        "result",
+        "declared_message_hash",
+        "external_receipt_anchor"
+      ],
+      "properties": {
+        "external_transaction": {
+          "$ref": "#/$defs/ExternalTransaction"
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "success",
+            "failure"
+          ]
+        },
+        "declared_message_hash": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "external_receipt_anchor": {
+          "$ref": "#/$defs/ExternalReceiptAnchor"
+        }
+      }
+    }
+  }
+}

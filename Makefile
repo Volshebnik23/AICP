@@ -64,6 +64,7 @@ conformance-ext:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/IB_IAM_BRIDGE_0.1.json --out conformance/report_ext_iam_bridge.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/OB_OBSERVABILITY_0.1.json --out conformance/report_ext_observability.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json --out conformance/report_ext_enterprise_bindings.json
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json --out conformance/report_ext_external_transaction.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json --out conformance/report_ext_reception_chat_semantics.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/EC_ECONOMICS_0.1.json --out conformance/report_ext_economics.json
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AD_ADMISSION_0.1.json --out conformance/report_ext_admission.json
