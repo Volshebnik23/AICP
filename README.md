@@ -68,6 +68,8 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
    - `make conformance`
    - `make conformance-ext`
    - `make conformance-bindings`
+   - `make conformance-profiles`
+   - `make prepr`
 4. Reuse helpers:
    - Python reference: `reference/python/`
    - TypeScript SDK: `sdk/typescript/`
@@ -78,6 +80,9 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - `make test`
 - `make conformance`
 - `make conformance-ext`
+- `make conformance-bindings`
+- `make conformance-profiles`
+- `make prepr`
 
 ## Continue reading
 
@@ -86,4 +91,5 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - [docs/profiles/AICP_Profiles.md](docs/profiles/AICP_Profiles.md)
 - [docs/profiles/Profile_Selection_Guide.md](docs/profiles/Profile_Selection_Guide.md)
 - [docs/architecture/Enforcement_Models.md](docs/architecture/Enforcement_Models.md)
+- [docs/adjacent/A2A_Integration_Pattern.md](docs/adjacent/A2A_Integration_Pattern.md)
 - [docs/security/SECURITY_BEST_PRACTICES.md](docs/security/SECURITY_BEST_PRACTICES.md)

@@ -18,6 +18,16 @@
     "security_considerations": "Explains denial without disclosing sensitive internals."
   },
   {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "LLM_SAFETY_REVIEW_REQUIRED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01",
+    "security_considerations": "Signals deterministic boundary where classifier output requires secondary review/evidence handling.",
+    "compatibility_notes": "Stable reason code for LLM-safety evidence-bound interoperability semantics."
+  },
+  {
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
@@ -96,6 +106,42 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "external_receipt_digest_mismatch",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#8-receipt-digest-anchoring-semantics-normative",
+    "security_considerations": "Signals digest mismatch to prevent receipt substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "external_step_policy_denied",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#7-policy-linkage-semantics-normative",
+    "security_considerations": "Signals policy-denied external step to preserve deterministic gating behavior."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "external_step_requires_approval",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#6-irreversible-step-gating-semantics-normative",
+    "security_considerations": "Signals blocked irreversible external step until transcript-native approval evidence is present."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "external_transaction_linkage_missing",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#5-linkage-and-ordering-semantics-normative",
+    "security_considerations": "Signals missing declaration/policy/approval linkage for external transaction records."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "iam_bridge_approval_evidence_missing",
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
@@ -154,15 +200,5 @@
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
     "security_considerations": "Required OAuth scope for protected action/delegation mapping is absent."
-  },
-  {
-    "status": "stable",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "LLM_SAFETY_REVIEW_REQUIRED",
-    "type": "policy_reason_codes",
-    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01",
-    "security_considerations": "Signals deterministic boundary where classifier output requires secondary review/evidence handling.",
-    "compatibility_notes": "Stable reason code for LLM-safety evidence-bound interoperability semantics."
   }
 ]

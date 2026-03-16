@@ -200,5 +200,9 @@
       "description": "retention_policy.delete_semantics must use standardized values"
     }
   ],
-  "compatibility_mark": "AICP-EXT-REDACTION-0.1"
+  "compatibility_mark": "AICP-EXT-REDACTION-0.1",
+  "payload_schema_ref": "schemas/extensions/ext-redaction-payloads.schema.json",
+  "payload_schema_map": {
+    "CONTENT_REDACTED": "#/$defs/CONTENT_REDACTED"
+  }
 }

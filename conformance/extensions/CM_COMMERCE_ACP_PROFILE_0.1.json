@@ -1,0 +1,76 @@
+{
+  "suite_id": "CM-COMMERCE-ACP-PROFILE-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "Cross-extension commerce profile semantics for CAPNEG+POLICY_EVAL+ENFORCEMENT+HUMAN_APPROVAL+EXTERNAL_TRANSACTION+REDACTION composition.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {
+      "id": "CM-01",
+      "path": "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "APPROVAL_GRANT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT", "ENFORCEMENT_VERDICT"]
+    },
+    {
+      "id": "CM-02",
+      "path": "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "APPROVAL_CHALLENGE", "APPROVAL_GRANT", "POLICY_EVAL_RESULT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT"]
+    },
+    {
+      "id": "CM-03",
+      "path": "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "APPROVAL_GRANT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT"]
+    },
+    {
+      "id": "CM-04",
+      "path": "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "APPROVAL_GRANT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "CM-CAPNEG-PROFILE-01", "min_count": 1}]
+    },
+    {
+      "id": "CM-05",
+      "path": "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "CM-APPROVAL-REQUIRED-01", "min_count": 1}]
+    },
+    {
+      "id": "CM-06",
+      "path": "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "APPROVAL_GRANT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT", "ENFORCEMENT_VERDICT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "CM-POLICY-GATE-01", "min_count": 1}]
+    },
+    {
+      "id": "CM-07",
+      "path": "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "APPROVAL_GRANT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "CM-PII-BOUNDARY-01", "min_count": 1}]
+    },
+    {
+      "id": "CM-08",
+      "path": "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT", "POLICY_EVAL_RESULT", "APPROVAL_GRANT", "EXTERNAL_TX_DECLARE", "EXTERNAL_TX_RESULT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "CM-EXT-TX-ANCHOR-01", "min_count": 1}]
+    }
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01", "description": "Validate each JSONL record against Core message schema"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "description": "message_type values must be registered in registry/message_types.json"},
+    {"test_id": "CT-HASH-CHAIN-01", "description": "prev_msg_hash equals previous message_hash when present"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01", "description": "For non-first transcript records, prev_msg_hash must be present and non-empty"},
+    {"test_id": "CT-INVARIANTS-01", "description": "session_id is constant and message_id values are unique per transcript"},
+    {"test_id": "CT-SEQUENCE-01", "description": "message_type sequence matches expected per transcript"},
+    {"test_id": "CT-MESSAGE-HASH-01", "description": "recompute message_hash from message body and compare"},
+    {"test_id": "CM-CAPNEG-PROFILE-01", "description": "Commerce transcript must negotiate/select AICP-COMMERCE-ACP@0.1 via CAPNEG"},
+    {"test_id": "CM-APPROVAL-REQUIRED-01", "description": "Irreversible external step must link prior approval evidence when required"},
+    {"test_id": "CM-POLICY-GATE-01", "description": "Governed external step progression requires prior ALLOW policy result linkage"},
+    {"test_id": "CM-ENFORCEMENT-COHERENCE-01", "description": "Enforcement verdicts must be coherent with policy/approval state and external-step result"},
+    {"test_id": "CM-EXT-TX-ANCHOR-01", "description": "EXTERNAL_TX_RESULT must bind to declaration and keep external_tx_id coherent"},
+    {"test_id": "CM-PII-BOUNDARY-01", "description": "Profile rejects inline sensitive receipt data; prefers pii_ref/redaction-safe handling"},
+    {"test_id": "CM-ACP-MAPPING-BOUNDARY-01", "description": "ACP mapping remains informative-only: reject vendor runtime-only required fields in transcript payloads"}
+  ],
+  "compatibility_mark": "AICP-CM-COMMERCE-ACP-0.1"
+}
