@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 import sys
+from functools import lru_cache
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
@@ -31,8 +32,13 @@ from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
 
 
+@lru_cache(maxsize=512)
+def _load_json_cached(path_str: str) -> Any:
+    return json.loads(Path(path_str).read_text(encoding="utf-8"))
+
+
 def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return _load_json_cached(str(path.resolve()))
 
 
 def _display_path(path: Path) -> str:
@@ -70,6 +76,7 @@ def _schema_aliases(schema: dict[str, Any], schema_path: Path) -> set[str]:
     return aliases
 
 
+@lru_cache(maxsize=1)
 def _core_schema_resources() -> dict[str, Any]:
     if Resource is None:
         return {}
@@ -152,27 +159,22 @@ def _validator_for_schema_pointer(schema: dict[str, Any], pointer: str) -> Any:
     return Draft202012Validator(wrapper)
 
 
-def _validate_payload_schema(
-    msg: dict[str, Any],
-    line_no: int,
-    rel_file: str,
-    t_failures: list[dict[str, Any]],
-    payload_schema: dict[str, Any] | None,
-    payload_schema_map: dict[str, str] | None,
-    payload_schema_check_id: str,
-    enabled_checks: set[str],
-) -> None:
+@lru_cache(maxsize=256)
+def _validator_for_schema_path_pointer(schema_path_str: str, pointer: str) -> Any:
+    if Draft202012Validator is None:
+        return None
+    schema_path = Path(schema_path_str)
+    schema = load_json(schema_path)
+    return _validator_for_schema_pointer(schema, pointer)
+
+
+def _build_payload_validator_map(payload_schema: dict[str, Any] | None, payload_schema_map: dict[str, str] | None) -> dict[str, Any]:
     if payload_schema is None or payload_schema_map is None or Draft202012Validator is None:
-        return
-    if payload_schema_check_id not in enabled_checks:
-        return
-
-    mtype = msg.get("message_type")
-    schema_pointer = payload_schema_map.get(mtype)
-    if not schema_pointer:
-        return
-
-    try:
+        return {}
+    validators: dict[str, Any] = {}
+    for mtype, schema_pointer in payload_schema_map.items():
+        if not isinstance(mtype, str) or not isinstance(schema_pointer, str):
+            continue
         pointer = _normalize_pointer(schema_pointer)
         _resolve_json_pointer(payload_schema, pointer)
         wrapper = {
@@ -181,9 +183,27 @@ def _validate_payload_schema(
             "$ref": f"#{pointer}" if pointer else "#",
             "$defs": payload_schema.get("$defs", {}),
         }
-        validator = Draft202012Validator(wrapper)
-    except Exception as exc:
-        add_failure(t_failures, payload_schema_check_id, f"invalid payload schema configuration for {mtype}: {exc}", rel_file, line_no)
+        validators[mtype] = Draft202012Validator(wrapper)
+    return validators
+
+
+def _validate_payload_schema(
+    msg: dict[str, Any],
+    line_no: int,
+    rel_file: str,
+    t_failures: list[dict[str, Any]],
+    payload_validator_map: dict[str, Any] | None,
+    payload_schema_check_id: str,
+    enabled_checks: set[str],
+) -> None:
+    if not payload_validator_map:
+        return
+    if payload_schema_check_id not in enabled_checks:
+        return
+
+    mtype = msg.get("message_type")
+    validator = payload_validator_map.get(mtype)
+    if validator is None:
         return
 
     payload = msg.get("payload")
@@ -1057,6 +1077,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema = load_json(ROOT / payload_schema_ref) if payload_schema_ref else None
     payload_schema_map = suite.get("payload_schema_map")
     payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
+    payload_validator_map = _build_payload_validator_map(payload_schema, payload_schema_map)
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
     policy_language_ids = {e.get("id") for e in load_json(ROOT / "registry/policy_languages.json")}
     policy_binding_ids = {e.get("id") for e in load_json(ROOT / "registry/policy_bindings.json")}
@@ -1096,26 +1117,26 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     confidentiality_validator = _build_validator(confidentiality_schema, confidentiality_schema_path) if Draft202012Validator is not None else None
     redaction_schema_path = ROOT / "schemas/extensions/ext-redaction-payloads.schema.json"
     redaction_schema = load_json(redaction_schema_path)
-    redaction_payload_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/CONTENT_REDACTED") if Draft202012Validator is not None else None
-    redaction_proof_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RedactionProof") if Draft202012Validator is not None else None
-    pii_ref_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/PiiRef") if Draft202012Validator is not None else None
-    retention_policy_validator = _validator_for_schema_pointer(redaction_schema, "/$defs/RetentionPolicy") if Draft202012Validator is not None else None
+    redaction_payload_validator = _validator_for_schema_path_pointer(str(redaction_schema_path.resolve()), "/$defs/CONTENT_REDACTED") if Draft202012Validator is not None else None
+    redaction_proof_validator = _validator_for_schema_path_pointer(str(redaction_schema_path.resolve()), "/$defs/RedactionProof") if Draft202012Validator is not None else None
+    pii_ref_validator = _validator_for_schema_path_pointer(str(redaction_schema_path.resolve()), "/$defs/PiiRef") if Draft202012Validator is not None else None
+    retention_policy_validator = _validator_for_schema_path_pointer(str(redaction_schema_path.resolve()), "/$defs/RetentionPolicy") if Draft202012Validator is not None else None
     human_approval_schema_path = ROOT / "schemas/extensions/ext-human-approval-payloads.schema.json"
     human_approval_schema = load_json(human_approval_schema_path)
-    approval_challenge_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_CHALLENGE") if Draft202012Validator is not None else None
-    approval_grant_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_GRANT") if Draft202012Validator is not None else None
-    approval_deny_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/APPROVAL_DENY") if Draft202012Validator is not None else None
-    intervention_required_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_REQUIRED") if Draft202012Validator is not None else None
-    intervention_complete_validator = _validator_for_schema_pointer(human_approval_schema, "/$defs/INTERVENTION_COMPLETE") if Draft202012Validator is not None else None
+    approval_challenge_validator = _validator_for_schema_path_pointer(str(human_approval_schema_path.resolve()), "/$defs/APPROVAL_CHALLENGE") if Draft202012Validator is not None else None
+    approval_grant_validator = _validator_for_schema_path_pointer(str(human_approval_schema_path.resolve()), "/$defs/APPROVAL_GRANT") if Draft202012Validator is not None else None
+    approval_deny_validator = _validator_for_schema_path_pointer(str(human_approval_schema_path.resolve()), "/$defs/APPROVAL_DENY") if Draft202012Validator is not None else None
+    intervention_required_validator = _validator_for_schema_path_pointer(str(human_approval_schema_path.resolve()), "/$defs/INTERVENTION_REQUIRED") if Draft202012Validator is not None else None
+    intervention_complete_validator = _validator_for_schema_path_pointer(str(human_approval_schema_path.resolve()), "/$defs/INTERVENTION_COMPLETE") if Draft202012Validator is not None else None
     iam_bridge_schema_path = ROOT / "schemas/extensions/ext-iam-bridge-payloads.schema.json"
     iam_bridge_schema = load_json(iam_bridge_schema_path)
-    iam_bridge_claims_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/NormalizedClaimsSnapshot") if Draft202012Validator is not None else None
-    iam_bridge_contract_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/ContractIamBridge") if Draft202012Validator is not None else None
-    iam_bridge_message_validator = _validator_for_schema_pointer(iam_bridge_schema, "/$defs/MessageIamBridge") if Draft202012Validator is not None else None
+    iam_bridge_claims_validator = _validator_for_schema_path_pointer(str(iam_bridge_schema_path.resolve()), "/$defs/NormalizedClaimsSnapshot") if Draft202012Validator is not None else None
+    iam_bridge_contract_validator = _validator_for_schema_path_pointer(str(iam_bridge_schema_path.resolve()), "/$defs/ContractIamBridge") if Draft202012Validator is not None else None
+    iam_bridge_message_validator = _validator_for_schema_path_pointer(str(iam_bridge_schema_path.resolve()), "/$defs/MessageIamBridge") if Draft202012Validator is not None else None
     external_tx_schema_path = ROOT / "schemas/extensions/ext-external-transaction-payloads.schema.json"
     external_tx_schema = load_json(external_tx_schema_path) if external_tx_schema_path.exists() else {}
-    external_tx_declare_validator = _validator_for_schema_pointer(external_tx_schema, "/$defs/EXTERNAL_TX_DECLARE") if Draft202012Validator is not None and external_tx_schema else None
-    external_tx_result_validator = _validator_for_schema_pointer(external_tx_schema, "/$defs/EXTERNAL_TX_RESULT") if Draft202012Validator is not None and external_tx_schema else None
+    external_tx_declare_validator = _validator_for_schema_path_pointer(str(external_tx_schema_path.resolve()), "/$defs/EXTERNAL_TX_DECLARE") if Draft202012Validator is not None and external_tx_schema else None
+    external_tx_result_validator = _validator_for_schema_path_pointer(str(external_tx_schema_path.resolve()), "/$defs/EXTERNAL_TX_RESULT") if Draft202012Validator is not None and external_tx_schema else None
 
 
     failures: list[dict[str, Any]] = []
@@ -1146,8 +1167,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 i,
                 rel_file,
                 t_failures,
-                payload_schema,
-                payload_schema_map,
+                payload_validator_map,
                 payload_schema_check_id,
                 enabled_checks,
             )
