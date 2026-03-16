@@ -35,3 +35,25 @@ def test_batch_runner_emits_reports_and_pass_status() -> None:
     finally:
         out1.unlink(missing_ok=True)
         out2.unlink(missing_ok=True)
+
+
+def test_batch_runner_emits_profile_reports_and_pass_status() -> None:
+    out = ROOT / "conformance/report_profile_base_batch_test.json"
+
+    cmd = [
+        sys.executable,
+        str(BATCH_RUNNER),
+        "--profile-out",
+        "conformance/profiles/PF_AICP_BASE_0.1.json::conformance/report_profile_base_batch_test.json",
+    ]
+    result = subprocess.run(cmd, cwd=ROOT, check=False, capture_output=True, text=True)
+    try:
+        assert result.returncode == 0
+        assert out.exists()
+
+        report = json.loads(out.read_text(encoding="utf-8"))
+        assert report["passed"] is True
+        assert report["profile_id"] == "AICP-BASE"
+        assert "Profile conformance PASSED" in result.stdout
+    finally:
+        out.unlink(missing_ok=True)

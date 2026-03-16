@@ -99,20 +99,21 @@ conformance-all:
 	$(MAKE) conformance-security
 
 conformance-profiles:
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_BASE_0.1.json --out conformance/report_profile_base.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json --out conformance/report_profile_mediated_blocking.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json --out conformance/report_profile_mediated_blocking_ops.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json --out conformance/report_profile_resumable_sessions.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json --out conformance/report_profile_reception_chat.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json --out conformance/report_profile_delegated_identity.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json --out conformance/report_profile_workflow_orchestration_delegation.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_BAZAAR_RECEPTION_0.1.json --out conformance/report_profile_bazaar_reception.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json --out conformance/report_profile_agent_media.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json --out conformance/report_profile_execution_interop.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_COMMERCE_ACP_0.1.json --out conformance/report_profile_commerce_acp.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_POLICY_OPA_REGO_0.1.json --out conformance/report_profile_policy_opa_rego.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_POLICY_ABAC_RBAC_0.1.json --out conformance/report_profile_policy_abac_rbac.json
-	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_POLICY_LLM_SAFETY_0.1.json --out conformance/report_profile_policy_llm_safety.json
+	$(PYTHON) conformance/runner/aicp_batch_runner.py \
+		--profile-out conformance/profiles/PF_AICP_BASE_0.1.json::conformance/report_profile_base.json \
+		--profile-out conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json::conformance/report_profile_mediated_blocking.json \
+		--profile-out conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json::conformance/report_profile_mediated_blocking_ops.json \
+		--profile-out conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json::conformance/report_profile_resumable_sessions.json \
+		--profile-out conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json::conformance/report_profile_reception_chat.json \
+		--profile-out conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json::conformance/report_profile_delegated_identity.json \
+		--profile-out conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json::conformance/report_profile_workflow_orchestration_delegation.json \
+		--profile-out conformance/profiles/PF_AICP_BAZAAR_RECEPTION_0.1.json::conformance/report_profile_bazaar_reception.json \
+		--profile-out conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json::conformance/report_profile_agent_media.json \
+		--profile-out conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json::conformance/report_profile_execution_interop.json \
+		--profile-out conformance/profiles/PF_AICP_COMMERCE_ACP_0.1.json::conformance/report_profile_commerce_acp.json \
+		--profile-out conformance/profiles/PF_AICP_POLICY_OPA_REGO_0.1.json::conformance/report_profile_policy_opa_rego.json \
+		--profile-out conformance/profiles/PF_AICP_POLICY_ABAC_RBAC_0.1.json::conformance/report_profile_policy_abac_rbac.json \
+		--profile-out conformance/profiles/PF_AICP_POLICY_LLM_SAFETY_0.1.json::conformance/report_profile_policy_llm_safety.json
 
 conformance-demos:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json --out conformance/report_demo_enforcement_behavioral.json
