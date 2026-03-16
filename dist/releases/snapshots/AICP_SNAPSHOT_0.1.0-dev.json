@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "bb11b1f57134be24d197abb3f659033d97b31e53712c189515f5c74e4c3f4269",
+      "combined_sha256": "07aeebc98edce65143a4fddb5bedf6b8cd057fbb16d75664e8d35b0f1222bb4d",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -128,6 +128,18 @@
           "sha256": "f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
         },
         {
+          "path": "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json",
+          "sha256": "8df0746d9be5f70eb962a80d677bbfd8a361ab75c47538216c80606ccab1ed0a"
+        },
+        {
+          "path": "conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json",
+          "sha256": "75ac774897d0d76a52cf1e8c7a98134fb556f3f8d57fc8344286c67d820c6b6d"
+        },
+        {
+          "path": "conformance/extensions/PE_PROFILE_OPA_REGO_0.1.json",
+          "sha256": "c0185afaca360f3978302265ea2711f111fae8be56f3b818d7ed48b6afa2fa86"
+        },
+        {
           "path": "conformance/extensions/PR_PROVENANCE_0.1.json",
           "sha256": "b658f9d19a03e4e9053ec85a3610b6985cb1fd543797e2831111831fbcbe1890"
         },
@@ -212,6 +224,18 @@
           "sha256": "6ebd9fd8934646181eb22a996f3a8b72e5572f7a07475c68b1de8bea6074ee50"
         },
         {
+          "path": "conformance/profiles/PF_AICP_POLICY_ABAC_RBAC_0.1.json",
+          "sha256": "9c2fc37f7a4d81944c33e5b8fe98d6a7dfe948fd2c39db245a19b8950216cdd7"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_POLICY_LLM_SAFETY_0.1.json",
+          "sha256": "dbc33938bb4e314fa50f6ff29eaed29b304853338c284d7654f8e21828833e40"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_POLICY_OPA_REGO_0.1.json",
+          "sha256": "75f8e644fa30b834fac058a82862acf8e3a36a717baf214cd06f0e75877f4929"
+        },
+        {
           "path": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json",
           "sha256": "825f9e2b8f21ab000f2b7ea69301da2e13b308ce9d10aaf001c17b22ed00e055"
         },
@@ -234,7 +258,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "fe247b535a3ddf0860008ae8e21254f9b1730afc3cd96b7e2151745e2b4e6bfd",
+      "combined_sha256": "c062fd8db74ae8690c57bc05d3836aaea528425f3a2f76e9c566f3d1f35ef71e",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -865,6 +889,30 @@
           "sha256": "4fb2e0aa4b58966e2e5c565fbd1f95db2084fe9fa928ecb6775c70d2b8830088"
         },
         {
+          "path": "fixtures/extensions/policy_profiles/PPS-ABAC-01_dimensions_deterministic_pass.jsonl",
+          "sha256": "9abf186d06645588007bc045a19b09f9c8bde0e4bf924310d7fc8b92056f7606"
+        },
+        {
+          "path": "fixtures/extensions/policy_profiles/PPS-ABAC-02_semantic_mismatch_expected_fail.jsonl",
+          "sha256": "75f4d3f5876b92af2cc14dae0ca1815903b2da13b5b534c436f4f9381f75246b"
+        },
+        {
+          "path": "fixtures/extensions/policy_profiles/PPS-LLM-01_evidence_boundary_pass.jsonl",
+          "sha256": "37901702d0d65b55569c324d3893460ea058b38ccdfad584749ea9de87abcf18"
+        },
+        {
+          "path": "fixtures/extensions/policy_profiles/PPS-LLM-02_missing_evidence_expected_fail.jsonl",
+          "sha256": "6792cb834a6d03e28ce481cfc9c77fbdbedee5617177b9c4e28a40a8e71830f5"
+        },
+        {
+          "path": "fixtures/extensions/policy_profiles/PPS-OPA-01_deterministic_pass.jsonl",
+          "sha256": "9e707c305849b3b020034cd7be82a85464630b0dfe5a9ec6523779b766d04ad6"
+        },
+        {
+          "path": "fixtures/extensions/policy_profiles/PPS-OPA-02_unregistered_language_binding_expected_fail.jsonl",
+          "sha256": "6f3c956d59cb7446eba20383b74873e6ac31c49a775099a197824f12530279cd"
+        },
+        {
           "path": "fixtures/extensions/provenance/PR-01_dag_multi_agent_pass.jsonl",
           "sha256": "06828606dc6b33592b8f6b4bae139b635df749a5fbe5bd712f364641cc17f045"
         },
@@ -1195,11 +1243,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "e3ecb4bf28ddb1f7898ae79524f33d84e344deb18ba971d911f7690955fd756d",
+      "combined_sha256": "ea4121072249d4750564d99bfd1906c80185bf8bc06cdcb6e8833055cac2403c",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "f20a7491f099770bc5cce2923987c4c27bf0d5c269562024ee5e96c6651cbd92"
+          "sha256": "60c29069ffef53235e0ed619d9db8d0f0442d8b7754e609f191898c223a33d37"
         },
         {
           "path": "registry/alert_codes.json",
@@ -1255,7 +1303,7 @@
         },
         {
           "path": "registry/policy_bindings.json",
-          "sha256": "751669a16e338563714300ea1b7cfacdd2b4421965f894f8b42f909fca2c4be2"
+          "sha256": "b90f1c4679dcd9c3accea07fa36a09c0d0c80098d25d7a1ceeb9f6d441ee0b59"
         },
         {
           "path": "registry/policy_categories.json",
@@ -1263,11 +1311,11 @@
         },
         {
           "path": "registry/policy_languages.json",
-          "sha256": "2fad0324739c65529d148558003fa707e5f9b8508896cb11c820a42c2016d757"
+          "sha256": "d7557df3281dc8246222e44480d7e26e84a5079d2c83148708611b0c061034ac"
         },
         {
           "path": "registry/policy_reason_codes.json",
-          "sha256": "9701534a3fd6a0d851eb77617f65a6f7ef3cf8c20c504dc8a845e9c0fd94c76b"
+          "sha256": "2f01e9ecbbeed748b866bc528cd70ee735c3fc0ee8c5f862164fd0d8161f1053"
         },
         {
           "path": "registry/privacy_modes.json",
@@ -1510,6 +1558,18 @@
       {
         "mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1",
         "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-POLICY-ABAC-RBAC-0.1",
+        "path": "conformance/profiles/PF_AICP_POLICY_ABAC_RBAC_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-POLICY-LLM-SAFETY-0.1",
+        "path": "conformance/profiles/PF_AICP_POLICY_LLM_SAFETY_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-POLICY-OPA-REGO-0.1",
+        "path": "conformance/profiles/PF_AICP_POLICY_OPA_REGO_0.1.json"
       },
       {
         "mark": "AICP-Profile-RECEPTION-CHAT-0.1",

@@ -1,11 +1,32 @@
 [
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "opa.input.v1",
     "type": "policy_bindings",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
-    "security_considerations": "Binding must preserve canonical input construction and context hash integrity."
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-opa-rego-01",
+    "security_considerations": "Binding must preserve canonical input construction and context hash integrity.",
+    "compatibility_notes": "Stable canonical OPA input binding for deterministic policy context construction."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "abac-rbac.input.v1",
+    "type": "policy_bindings",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-abac-rbac-01",
+    "security_considerations": "Binding must preserve deterministic transcript semantics and context hash integrity.",
+    "compatibility_notes": "Stable ABAC/RBAC input binding for deterministic policy-dimension normalization."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "llm-safety.evidence.v1",
+    "type": "policy_bindings",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01",
+    "security_considerations": "Binding must preserve deterministic transcript semantics and context hash integrity.",
+    "compatibility_notes": "Stable evidence-bound binding for LLM-safety policy evaluations at transcript boundary."
   }
 ]

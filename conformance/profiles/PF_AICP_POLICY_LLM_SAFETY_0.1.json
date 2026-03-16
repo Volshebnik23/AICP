@@ -1,0 +1,11 @@
+{
+  "profile_id": "AICP-POLICY-LLM-SAFETY",
+  "profile_version": "0.1",
+  "description": "Optional M25 LLM-safety semantic interoperability profile over EXT-POLICY-EVAL.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-POLICY-LLM-SAFETY-0.1"
+}

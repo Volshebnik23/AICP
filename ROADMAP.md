@@ -93,6 +93,13 @@ _Last updated: 2026-03-14_
 - **Shipped:** transcript-level `OBS_SIGNAL` artifacts now cover trace correlation, standardized SLA/error signals, and normalized metering events with machine-checkable negative vectors.
 - **Next concrete step:** keep M27 observability stable while enterprise binding integrations advance under M29.
 
+
+### ✅ M25 — Policy semantic interoperability profiles (OPA/Rego, ABAC/RBAC, LLM-safety)
+- **Shipped:** three optional semantic profiles (`AICP-POLICY-OPA-REGO@0.1`, `AICP-POLICY-ABAC-RBAC@0.1`, `AICP-POLICY-LLM-SAFETY@0.1`) now have normative profile docs, profile registry entries, and executable conformance profile catalogs.
+- **Shipped:** deterministic fixtures and semantic conformance suites now cover same-bundle/same-context determinism, registered language/binding enforcement, reason-code determinism, ABAC/RBAC interpretation consistency, and LLM-safety evidence-bound boundaries.
+- **Shipped:** key policy registries (`policy_languages`, `policy_bindings`, selected `policy_reason_codes`) are promoted to stable with compatibility notes anchored to shipped M25 normative/profile artifacts.
+- **Next concrete step:** expand vendor-pair interoperability submissions against the shipped M25 profile suites without widening protocol surface.
+
 ### ✅ M29 — Enterprise domain bindings (OpenAPI/OData/OPA/ABAC)
 - **Shipped:** `EXT-ENTERPRISE-BINDINGS` RFC + strict payload schema + deterministic generator-backed fixtures + executable extension conformance (`EB-ENTERPRISE-BINDINGS-0.1`) are in-repo and wired through `make conformance-ext`.
 - **Shipped:** enterprise binding surface now standardizes OpenAPI operation mapping, OData retrieval target mapping, and ABAC/RBAC/OPA policy cross-references as transcript-auditable references.

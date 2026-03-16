@@ -31,6 +31,7 @@ Upgrade profile strictness when you need:
 | Hosted moderated ops-heavy environment | `AICP-MEDIATED-BLOCKING-OPS@0.1` | Blocking+ops profile set | DISPUTES, POLICY-EVAL | Monitoring/ops pipelines |
 | Long-running sessions with reconnect/resume | `AICP-RESUMABLE-SESSIONS@0.1` | Resume-oriented profile set | OBJECT-RESYNC | Durable state + recovery tooling |
 | Cross-platform run/thread/store metadata portability | `AICP-EXECUTION-INTEROP@0.1` | Execution lifecycle + resume + object-resync profile set | TOOL-GATING (recommended for side effects) | Durable state references + deterministic recovery evidence |
+| Cross-vendor policy semantic interoperability (OPA/Rego, ABAC/RBAC, LLM-safety) | `AICP-POLICY-OPA-REGO@0.1`, `AICP-POLICY-ABAC-RBAC@0.1`, or `AICP-POLICY-LLM-SAFETY@0.1` | Policy semantic profile suite + EXT-POLICY-EVAL | CAPNEG (recommended) | Registry-governed policy bundle + binding pipeline |
 | Delegated/enterprise workflow environment | `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` | Workflow/delegation profile set | TOOL-GATING, POLICY-EVAL | IAM bridge + approval controls |
 | Delegated identity sensitive interactions | `AICP-DELEGATED-IDENTITY@0.1` | Delegated identity profile set | SECURITY-ALERT, DISPUTES | Identity lifecycle and revocation infra |
 | Bazaar/agent-media channels | `AICP-BAZAAR-RECEPTION@0.1`, `AICP-AGENT-MEDIA@0.1` | Bazaar/media profile sets | Subscriptions/publications/inbox combinations | Channel infra, moderation, distribution controls |
@@ -41,6 +42,7 @@ Upgrade profile strictness when you need:
 
 - **Reception + continuity:** `AICP-MEDIATED-BLOCKING@0.1` + `AICP-RESUMABLE-SESSIONS@0.1`
 - **Execution metadata interop:** `AICP-EXECUTION-INTEROP@0.1` (+ `EXT-TOOL-GATING` when side effects/approvals are required)
+- **Policy semantic interop:** one of `AICP-POLICY-OPA-REGO@0.1`, `AICP-POLICY-ABAC-RBAC@0.1`, or `AICP-POLICY-LLM-SAFETY@0.1` depending on policy surface and determinism boundary.
 - **Enterprise delegation:** `AICP-DELEGATED-IDENTITY@0.1` + `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1`
 - **Media with moderated intake:** `AICP-AGENT-MEDIA@0.1` + `AICP-BAZAAR-RECEPTION@0.1`
 
@@ -56,6 +58,7 @@ Upgrade profile strictness when you need:
 ## See also
 
 - [Profiles catalog](AICP_Profiles.md)
+- [Policy semantic profiles](AICP_Policy_Semantic_Profiles.md)
 - [Personas/stories/features/profiles map](AICP_Personas_Stories_Features_Profiles.md)
 - [Playbooks](../playbooks/)
 - [Session topology cookbook](../playbooks/Session_Topologies.md)

@@ -1057,6 +1057,8 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     payload_schema_map = suite.get("payload_schema_map")
     payload_schema_check_id = suite.get("payload_schema_check_id", "CN-PAYLOAD-SCHEMA-01")
     policy_reason_codes = {e.get("id") for e in load_json(ROOT / "registry/policy_reason_codes.json")}
+    policy_language_ids = {e.get("id") for e in load_json(ROOT / "registry/policy_languages.json")}
+    policy_binding_ids = {e.get("id") for e in load_json(ROOT / "registry/policy_bindings.json")}
     enforcement_sanction_codes = {e.get("id") for e in load_json(ROOT / "registry/enforcement_sanction_codes.json")}
     alert_codes_registry = {e.get("id"): e for e in load_json(ROOT / "registry/alert_codes.json")}
     alert_recommended_actions = {e.get("id") for e in load_json(ROOT / "registry/alert_recommended_actions.json")}
@@ -1367,16 +1369,75 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                         )
 
 
-        # PE-REASON-CODES-01 + PE-CONTEXT-HASH-01
-        if "PE-REASON-CODES-01" in enabled_checks or "PE-CONTEXT-HASH-01" in enabled_checks:
+        # PE-REASON-CODES-01 + PE-CONTEXT-HASH-01 + PE-LANGUAGE-BINDING-01 + PE-DETERMINISM-01 + PE-LLM-EVIDENCE-01
+        if any(check in enabled_checks for check in {"PE-REASON-CODES-01", "PE-CONTEXT-HASH-01", "PE-LANGUAGE-BINDING-01", "PE-DETERMINISM-01", "PE-LLM-EVIDENCE-01"}):
+            eval_request_index: dict[str, dict[str, Any]] = {}
+            decision_key_index: dict[tuple[str, str, str], dict[str, Any]] = {}
+            prior_message_ids: set[str] = set()
+            prior_message_hashes: set[str] = set()
+            prior_payload_object_hashes: set[str] = set()
             for line_no, msg in rows:
                 payload = msg.get("payload") or {}
+                mtype = msg.get("message_type")
+                if isinstance(msg.get("message_id"), str):
+                    prior_message_ids.add(msg.get("message_id"))
+                if isinstance(msg.get("message_hash"), str):
+                    prior_message_hashes.add(msg.get("message_hash"))
+                for _, _, obj_hash in _collect_object_hash_triples(payload):
+                    if isinstance(obj_hash, str):
+                        prior_payload_object_hashes.add(obj_hash)
+
+                if mtype == "POLICY_EVAL_REQUEST":
+                    eval_id = payload.get("eval_id")
+                    if isinstance(eval_id, str):
+                        eval_request_index[eval_id] = payload
+                    if "PE-LANGUAGE-BINDING-01" in enabled_checks:
+                        bundle = payload.get("policy_bundle_ref") or {}
+                        binding = payload.get("policy_binding_ref") or {}
+                        language_id = bundle.get("language_id")
+                        binding_id = binding.get("binding_id")
+                        if isinstance(language_id, str) and language_id not in policy_language_ids:
+                            add_failure(t_failures, "PE-LANGUAGE-BINDING-01", f"unknown policy language_id '{language_id}'", rel_file, line_no)
+                        if isinstance(binding_id, str) and binding_id not in policy_binding_ids:
+                            add_failure(t_failures, "PE-LANGUAGE-BINDING-01", f"unknown policy binding_id '{binding_id}'", rel_file, line_no)
+
                 if msg.get("message_type") == "POLICY_EVAL_RESULT":
                     decision = payload.get("policy_decision") or {}
                     if "PE-REASON-CODES-01" in enabled_checks:
                         for code in decision.get("reason_codes", []) or []:
                             if code not in policy_reason_codes and not _is_namespaced_identifier(code):
                                 add_failure(t_failures, "PE-REASON-CODES-01", f"unknown reason_code '{code}' (must be registered or namespaced vendor:/org:)", rel_file, line_no)
+                    if "PE-DETERMINISM-01" in enabled_checks:
+                        eval_id = payload.get("eval_id")
+                        req = eval_request_index.get(eval_id) if isinstance(eval_id, str) else None
+                        if isinstance(req, dict):
+                            bundle = req.get("policy_bundle_ref") or {}
+                            binding = req.get("policy_binding_ref") or {}
+                            eval_ctx = req.get("evaluation_context") or {}
+                            key = (
+                                json.dumps(bundle, sort_keys=True, separators=(",", ":")),
+                                json.dumps(binding, sort_keys=True, separators=(",", ":")),
+                                json.dumps(eval_ctx, sort_keys=True, separators=(",", ":")),
+                            )
+                            normalized_decision = {
+                                "decision": decision.get("decision"),
+                                "reason_codes": list(decision.get("reason_codes") or []),
+                            }
+                            prior = decision_key_index.get(key)
+                            if prior is None:
+                                decision_key_index[key] = normalized_decision
+                            elif prior != normalized_decision:
+                                add_failure(t_failures, "PE-DETERMINISM-01", "same policy bundle + binding + evaluation_context produced different decision semantics", rel_file, line_no)
+
+                    if "PE-LLM-EVIDENCE-01" in enabled_checks:
+                        eval_id = payload.get("eval_id")
+                        req = eval_request_index.get(eval_id) if isinstance(eval_id, str) else None
+                        language_id = (((req or {}).get("policy_bundle_ref") or {}).get("language_id")) if isinstance(req, dict) else None
+                        if language_id == "llm-safety-taxonomy.v1":
+                            if decision.get("decision") != "INCONCLUSIVE":
+                                add_failure(t_failures, "PE-LLM-EVIDENCE-01", "llm-safety profile requires INCONCLUSIVE decision at deterministic transcript boundary", rel_file, line_no)
+                            if not _has_resolvable_evidence_ref(payload.get("evidence_refs"), prior_message_ids, prior_message_hashes, prior_payload_object_hashes):
+                                add_failure(t_failures, "PE-LLM-EVIDENCE-01", "llm-safety profile result must include resolvable evidence_refs", rel_file, line_no)
                 if msg.get("message_type") == "POLICY_EVAL_REQUEST" and "PE-CONTEXT-HASH-01" in enabled_checks:
                     ctx = (payload.get("evaluation_context") or {})
                     if "context_hash" in ctx:

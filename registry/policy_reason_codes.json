@@ -36,13 +36,14 @@
     "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "PROMPT_INJECTION_SUSPECTED",
     "type": "policy_reason_codes",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
-    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#registry-stability-baseline-m25",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement.",
+    "compatibility_notes": "Stable interoperable policy semantic reason code for M25 profile conformance."
   },
   {
     "status": "experimental",
@@ -54,13 +55,14 @@
     "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "SCOPE_VIOLATION",
     "type": "policy_reason_codes",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
-    "security_considerations": "Highlights boundary crossing attempts for audit."
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#registry-stability-baseline-m25",
+    "security_considerations": "Highlights boundary crossing attempts for audit.",
+    "compatibility_notes": "Stable interoperable policy semantic reason code for M25 profile conformance."
   },
   {
     "status": "experimental",
@@ -81,13 +83,14 @@
     "security_considerations": "Standardized timeout reason for cross-vendor SLA signaling."
   },
   {
-    "status": "experimental",
+    "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "TOOL_ACCESS_DENIED",
     "type": "policy_reason_codes",
-    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#121-core-objects-normative",
-    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement."
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#registry-stability-baseline-m25",
+    "security_considerations": "Machine-readable denial reason for interoperable policy enforcement.",
+    "compatibility_notes": "Stable interoperable policy semantic reason code for M25 profile conformance."
   },
   {
     "status": "experimental",
@@ -151,5 +154,15 @@
     "type": "policy_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#8-enforcement-semantics-normative",
     "security_considerations": "Required OAuth scope for protected action/delegation mapping is absent."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "LLM_SAFETY_REVIEW_REQUIRED",
+    "type": "policy_reason_codes",
+    "spec_ref": "docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01",
+    "security_considerations": "Signals deterministic boundary where classifier output requires secondary review/evidence handling.",
+    "compatibility_notes": "Stable reason code for LLM-safety evidence-bound interoperability semantics."
   }
 ]

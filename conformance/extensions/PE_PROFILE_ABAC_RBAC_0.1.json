@@ -1,0 +1,88 @@
+{
+  "suite_id": "PE-PROFILE-ABAC-RBAC-0.1",
+  "suite_version": "0.1.0-dev",
+  "aicp_version": "0.1",
+  "description": "M25 ABAC/RBAC policy semantic interoperability profile checks over EXT-POLICY-EVAL.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+  "payload_schema_map": {
+    "POLICY_EVAL_REQUEST": "#/$defs/POLICY_EVAL_REQUEST",
+    "POLICY_EVAL_RESULT": "#/$defs/POLICY_EVAL_RESULT"
+  },
+  "transcripts": [
+    {
+      "id": "PPS-ABAC-01",
+      "path": "fixtures/extensions/policy_profiles/PPS-ABAC-01_dimensions_deterministic_pass.jsonl",
+      "expected_message_types": [
+        "POLICY_EVAL_REQUEST",
+        "POLICY_EVAL_RESULT",
+        "POLICY_EVAL_REQUEST",
+        "POLICY_EVAL_RESULT"
+      ]
+    },
+    {
+      "id": "PPS-ABAC-02",
+      "path": "fixtures/extensions/policy_profiles/PPS-ABAC-02_semantic_mismatch_expected_fail.jsonl",
+      "expected_message_types": [
+        "POLICY_EVAL_REQUEST",
+        "POLICY_EVAL_RESULT",
+        "POLICY_EVAL_REQUEST",
+        "POLICY_EVAL_RESULT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "PE-DETERMINISM-01",
+          "min_count": 1
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01",
+      "description": "Validate each JSONL record against Core message schema"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01",
+      "description": "message_type values must be registered"
+    },
+    {
+      "test_id": "CN-PAYLOAD-SCHEMA-01",
+      "description": "Validate payload against EXT-POLICY-EVAL payload schema"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01",
+      "description": "prev_msg_hash equals previous message_hash when present"
+    },
+    {
+      "test_id": "CT-INVARIANTS-01",
+      "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01",
+      "description": "message_type sequence matches expected per transcript"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01",
+      "description": "recompute message_hash from message body and compare"
+    },
+    {
+      "test_id": "PE-REASON-CODES-01",
+      "description": "policy_decision.reason_codes must be registered"
+    },
+    {
+      "test_id": "PE-CONTEXT-HASH-01",
+      "description": "evaluation_context.context_hash must recompute"
+    },
+    {
+      "test_id": "PE-LANGUAGE-BINDING-01",
+      "description": "policy_bundle_ref.language_id and policy_binding_ref.binding_id must be registered"
+    },
+    {
+      "test_id": "PE-DETERMINISM-01",
+      "description": "same bundle+binding+evaluation_context yields same decision and reason_codes"
+    }
+  ],
+  "extension_id": "EXT-POLICY-EVAL"
+}
