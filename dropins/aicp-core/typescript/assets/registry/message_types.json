@@ -512,6 +512,24 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "EXTERNAL_TX_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#3-message-types-normative",
+    "security_considerations": "Declaration linkage must prevent replay or substitution of external transaction intent."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXTERNAL_TX_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#3-message-types-normative",
+    "security_considerations": "Result payload must bind declaration, external transaction id, and receipt digest evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "HEAD_EXCHANGE",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
@@ -900,6 +918,42 @@
     "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
+    "id": "RUN_CANCEL",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_CANCEL payloads should mark terminal cancellation and prevent post-terminal mutation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_COMPLETE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_COMPLETE payloads should mark terminal completion with hash-bound result/store references."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_CREATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_CREATE payloads should initialize run lifecycle with portable run/thread/store references only."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_UPDATE payloads should mutate only pre-terminal run state and preserve run/thread binding coherence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
     "id": "SECURITY_ALERT",
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#1541-message-types-normative",
@@ -985,6 +1039,33 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md#message-types-normative",
     "security_considerations": "SUBSCRIPTION_STATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THREAD_APPEND",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "THREAD_APPEND payloads should append only to open threads and preserve declared run/thread bindings."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THREAD_CLOSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "THREAD_CLOSE payloads should mark terminal thread close and reject further append/close mutations."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THREAD_CREATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "THREAD_CREATE payloads should initialize thread lifecycle with optional run binding metadata."
   },
   {
     "status": "experimental",
@@ -1111,68 +1192,5 @@
     "type": "message_types",
     "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
     "security_considerations": "Workflow updates should bind to prior workflow hash/version to prevent drift or replay."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "RUN_CREATE",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "RUN_CREATE payloads should initialize run lifecycle with portable run/thread/store references only."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "RUN_UPDATE",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "RUN_UPDATE payloads should mutate only pre-terminal run state and preserve run/thread binding coherence."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "RUN_CANCEL",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "RUN_CANCEL payloads should mark terminal cancellation and prevent post-terminal mutation."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "RUN_COMPLETE",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "RUN_COMPLETE payloads should mark terminal completion with hash-bound result/store references."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "THREAD_CREATE",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "THREAD_CREATE payloads should initialize thread lifecycle with optional run binding metadata."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "THREAD_APPEND",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "THREAD_APPEND payloads should append only to open threads and preserve declared run/thread bindings."
-  },
-  {
-    "status": "experimental",
-    "introduced_in": "0.1.0-dev",
-    "maintainer": "AICP Working Group",
-    "id": "THREAD_CLOSE",
-    "type": "message_types",
-    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
-    "security_considerations": "THREAD_CLOSE payloads should mark terminal thread close and reject further append/close mutations."
   }
 ]
