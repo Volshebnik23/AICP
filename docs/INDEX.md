@@ -21,7 +21,7 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - **Agent developer:** start with [START_HERE_IMPLEMENTERS.md](../START_HERE_IMPLEMENTERS.md) and [docs/guides/AGENT_DEVELOPERS_GUIDE.md](guides/AGENT_DEVELOPERS_GUIDE.md).
 - **Mediator / Host developer:** use [docs/guides/PLATFORM_BUILDERS_GUIDE.md](guides/PLATFORM_BUILDERS_GUIDE.md), [docs/playbooks/Session_Topologies.md](playbooks/Session_Topologies.md), and [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md).
 - **Enforcer / Moderator developer:** use [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md) and extension RFCs under [docs/extensions/](extensions/).
-- **Platform architect:** start with [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md).
+- **Platform architect:** start with [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md) and [docs/adjacent/A2A_Integration_Pattern.md](adjacent/A2A_Integration_Pattern.md).
 - **Product / Solution architect:** start with [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md) and [docs/playbooks/](playbooks/).
 
 ## Start here by goal
@@ -68,6 +68,7 @@ Note: document/fixture/schema presence does not by itself mean a milestone is sh
 - Profiles: [docs/profiles/AICP_Profiles.md](profiles/AICP_Profiles.md)
 - Profile selection: [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md)
 - Ecosystem positioning: [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md)
+- Adjacent integration pattern (informative): [docs/adjacent/A2A_Integration_Pattern.md](adjacent/A2A_Integration_Pattern.md)
 - Solution playbooks: [docs/playbooks/](playbooks/)
   - Security/ops cookbooks: [Mediated Blocking in Production](playbooks/Mediated_Blocking_in_Production.md), [OAuth Bridge Cookbook](playbooks/OAuth_Bridge_Cookbook.md), [Tool Catalog Pinning Cookbook](playbooks/Tool_Catalog_Pinning_Cookbook.md), [Context Hub Fresh Content Cookbook](playbooks/Context_Hub_Fresh_Content_Cookbook.md)
 - Enforcement models: [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md)

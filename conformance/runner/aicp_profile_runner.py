@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from functools import lru_cache
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -16,8 +17,18 @@ if str(RUNNER_DIR) not in sys.path:
 from aicp_conformance_runner import run_suite  # noqa: E402
 
 
+@lru_cache(maxsize=256)
+def _load_json_cached(path_str: str) -> Any:
+    return json.loads(Path(path_str).read_text(encoding="utf-8"))
+
+
 def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return _load_json_cached(str(path.resolve()))
+
+
+def _resolve_repo_path(path_like: str) -> Path:
+    p = Path(path_like)
+    return (ROOT / p).resolve() if not p.is_absolute() else p
 
 
 def _format_out_path(out_path: Path) -> str:
@@ -37,7 +48,7 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
     observed_protocol_versions: set[str] = set()
 
     for rel_suite in profile.get("required_suites", []):
-        suite_path = (ROOT / rel_suite).resolve() if not Path(rel_suite).is_absolute() else Path(rel_suite)
+        suite_path = _resolve_repo_path(rel_suite)
         suite_report = run_suite(suite_path)
         suite_reports.append(suite_report)
 
@@ -102,8 +113,8 @@ def main() -> int:
     parser.add_argument("--out", required=True, help="Path to output profile report JSON")
     args = parser.parse_args()
 
-    profile_path = (ROOT / args.profile).resolve() if not Path(args.profile).is_absolute() else Path(args.profile)
-    out_path = (ROOT / args.out).resolve() if not Path(args.out).is_absolute() else Path(args.out)
+    profile_path = _resolve_repo_path(args.profile)
+    out_path = _resolve_repo_path(args.out)
 
     try:
         report = run_profile(profile_path)

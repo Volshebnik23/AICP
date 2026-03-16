@@ -43,3 +43,6 @@ Describe a personal agent coordinating external specialist agents/services while
 ## Failure/rollback notes
 - If direct foreign session access fails, use relay pattern with explicit provenance/evidence references.
 - Avoid uncontrolled context replay into new sessions without policy revalidation.
+
+
+Related adjacent-layer guidance: [docs/adjacent/A2A_Integration_Pattern.md](../adjacent/A2A_Integration_Pattern.md)

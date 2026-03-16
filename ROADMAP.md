@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-14_
+_Last updated: 2026-03-16_
 
 ## Current / Next
 
@@ -25,7 +25,30 @@ _Last updated: 2026-03-14_
 - **Progress:** Solution playbooks for reception/support, enterprise orchestration, personal-agent coordination, agent media feeds, and commerce-assisted purchase shipped with profile and dependency guidance.
 - **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
 
+
+### ✅ M48 — Conformance runner internal modularity hardening
+- **Shipped:** `aicp_conformance_runner.py` now keeps stable CLI/orchestration behavior while internal IO/cache and schema-pointer/validator context helpers are extracted into dedicated runner modules for maintainability.
+- **Shipped:** focused modularity regression coverage now verifies extracted helper module loading, cache behavior, pointer resolution, and continued `run_suite` entrypoint availability.
+- **Shipped (RTSS):** conformance-core regression guard restored by keeping a runner-level `_normalize_pointer` compatibility shim delegated to the extracted context helper, with focused test coverage to prevent missing-symbol regressions.
+- **Next concrete step:** continue small internal refactors only when protected by behavior-equivalence tests and without changing conformance/report semantics.
+
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
+### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)
+- **Shipped:** `EXT-EXTERNAL-TRANSACTION` baseline is now in-repo with normative RFC surface for declaration/result linkage, irreversible-step gating, policy/approval evidence binding, receipt digest anchoring, and privacy boundaries.
+- **Shipped:** extension payload schema + registry updates + deterministic pass/fail fixtures + executable conformance suite (`ET_EXTERNAL_TRANSACTION_0.1`) are wired into existing extension CI commands.
+- **Next concrete step:** execute M41 as a separate optional commerce-ready profile without expanding M40 into payment or checkout protocol semantics.
+
+### ✅ M41 — Commerce-ready profile (AICP↔ACP optional bridge profile + conformance)
+- **Shipped:** optional `AICP-COMMERCE-ACP@0.1` profile is now registry-backed with normative profile documentation and profile-runner catalog wiring.
+- **Shipped:** executable cross-extension commerce semantics suite (`CM_COMMERCE_ACP_PROFILE_0.1`) and deterministic profile fixtures cover CAPNEG selection, policy/approval gating, enforcement coherence, external-step anchoring, and PII-safe receipt handling.
+- **Next concrete step:** treat profile hardening/expansion as future optional profile revisions without redefining AICP as a payment/checkout protocol.
+
+### ✅ M47 — Adjacent protocol integration patterns and ecosystem stack guidance
+- **Shipped:** ecosystem architecture guidance is now strengthened with clearer replace/complement/reference/orthogonal boundaries and operational “use AICP when / not when” selection guidance.
+- **Shipped:** informative `docs/adjacent/A2A_Integration_Pattern.md` added with layered composition model and practical rendezvous/bootstrap, specialist handoff, relay/fallback, and failure-continuity guidance.
+- **Shipped:** docs front-door/guides/playbooks now cross-link adjacent integration guidance for faster architect discovery without changing protocol semantics.
+- **Next concrete step:** collect implementer feedback and iterate examples while preserving strict non-normative adjacent-layer boundaries.
+
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
 - **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
