@@ -1,0 +1,16 @@
+{
+  "profile_id": "AICP-COMMERCE-ACP",
+  "profile_version": "0.1",
+  "description": "Optional commerce-ready profile for ACP-bridged orchestration using transcript-native policy, approval, external-step anchoring, and redaction-safe evidence.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/extensions/CN_CAPNEG_0.1.json",
+    "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+    "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+    "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+    "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+    "conformance/extensions/RD_REDACTION_0.1.json",
+    "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-COMMERCE-ACP-0.1"
+}

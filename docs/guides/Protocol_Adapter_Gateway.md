@@ -20,6 +20,7 @@ This implementation guide is the practical adapter view. For architecture positi
 - `docs/architecture/Protocol_Adapter_Gateway.md`
 - `docs/architecture/AICP_in_the_Ecosystem.md`
 - `docs/architecture/Enforcement_Models.md`
+- `docs/adjacent/A2A_Integration_Pattern.md`
 
 ## CAPNEG as input filter
 Use negotiated CAPNEG outputs as machine-readable admission checks:
