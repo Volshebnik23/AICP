@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 import sys
+from functools import lru_cache
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
@@ -56,6 +57,34 @@ def _validator_for_schema_path_pointer(schema_path_str: str, pointer: str) -> An
 
 def _build_payload_validator_map(payload_schema: dict[str, Any] | None, payload_schema_map: dict[str, str] | None) -> dict[str, Any]:
     return _ctx_build_payload_validator_map(payload_schema, payload_schema_map, Draft202012Validator)
+
+
+@lru_cache(maxsize=256)
+def _validator_for_schema_path_pointer(schema_path_str: str, pointer: str) -> Any:
+    if Draft202012Validator is None:
+        return None
+    schema_path = Path(schema_path_str)
+    schema = load_json(schema_path)
+    return _validator_for_schema_pointer(schema, pointer)
+
+
+def _build_payload_validator_map(payload_schema: dict[str, Any] | None, payload_schema_map: dict[str, str] | None) -> dict[str, Any]:
+    if payload_schema is None or payload_schema_map is None or Draft202012Validator is None:
+        return {}
+    validators: dict[str, Any] = {}
+    for mtype, schema_pointer in payload_schema_map.items():
+        if not isinstance(mtype, str) or not isinstance(schema_pointer, str):
+            continue
+        pointer = _normalize_pointer(schema_pointer)
+        _resolve_json_pointer(payload_schema, pointer)
+        wrapper = {
+            "$schema": payload_schema.get("$schema"),
+            "$id": payload_schema.get("$id"),
+            "$ref": f"#{pointer}" if pointer else "#",
+            "$defs": payload_schema.get("$defs", {}),
+        }
+        validators[mtype] = Draft202012Validator(wrapper)
+    return validators
 
 
 def _validate_payload_schema(
