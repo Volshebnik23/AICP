@@ -43,46 +43,47 @@ conformance-core:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json --out conformance/report_core_numeric_guardrails.json
 
 conformance-ext:
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CN_CAPNEG_0.1.json --out conformance/report_ext_capneg.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CF_CONFIDENTIALITY_0.1.json --out conformance/report_ext_confidentiality.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json --out conformance/report_ext_commerce_acp_profile.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RD_REDACTION_0.1.json --out conformance/report_ext_redaction.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/HA_HUMAN_APPROVAL_0.1.json --out conformance/report_ext_human_approval.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DS_DISPUTES_0.1.json --out conformance/report_ext_disputes.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SA_SECURITY_ALERT_0.1.json --out conformance/report_ext_security_alerts.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PA_PARTICIPANTS_0.1.json --out conformance/report_ext_participants.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TG_TOOL_GATING_0.1.json --out conformance/report_ext_tool_gating.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json --out conformance/report_ext_artifact_manifests_pinning.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ID_IDENTITY_LC_0.1.json --out conformance/report_ext_identity_lc.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DL_DELEGATION_0.1.json --out conformance/report_ext_delegation.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/WF_WORKFLOW_SYNC_0.1.json --out conformance/report_ext_workflow_sync.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/OR_OBJECT_RESYNC_0.1.json --out conformance/report_ext_object_resync.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PE_POLICY_EVAL_0.1.json --out conformance/report_ext_policy_eval.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ENF_ENFORCEMENT_0.1.json --out conformance/report_ext_enforcement.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AL_ALERTS_0.1.json --out conformance/report_ext_alerts.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RS_RESUME_0.1.json --out conformance/report_ext_resume.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json --out conformance/report_ext_delegated_identity.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/IB_IAM_BRIDGE_0.1.json --out conformance/report_ext_iam_bridge.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/OB_OBSERVABILITY_0.1.json --out conformance/report_ext_observability.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json --out conformance/report_ext_enterprise_bindings.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json --out conformance/report_ext_external_transaction.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json --out conformance/report_ext_reception_chat_semantics.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/EC_ECONOMICS_0.1.json --out conformance/report_ext_economics.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/AD_ADMISSION_0.1.json --out conformance/report_ext_admission.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/QL_QUEUE_LEASES_0.1.json --out conformance/report_ext_queue_leases.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/FA_FACILITATION_0.1.json --out conformance/report_ext_facilitation.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/CH_CHANNELS_0.1.json --out conformance/report_ext_channels.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SB_SUBSCRIPTIONS_0.1.json --out conformance/report_ext_subscriptions.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PB_PUBLICATIONS_0.1.json --out conformance/report_ext_publications.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/IB_INBOX_0.1.json --out conformance/report_ext_inbox.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/MP_MARKETPLACE_0.1.json --out conformance/report_ext_marketplace.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/PR_PROVENANCE_0.1.json --out conformance/report_ext_provenance.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/ES_ACTION_ESCROW_0.1.json --out conformance/report_ext_action_escrow.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/RP_RESPONSIBILITY_0.1.json --out conformance/report_ext_responsibility.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json --out conformance/report_ext_trust_attestations.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/SC_STATUS_CHANNEL_0.1.json --out conformance/report_ext_status_channel.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json --out conformance/report_ext_transcript_witness.json
-	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json --out conformance/report_ext_execution_lifecycle.json
+	$(PYTHON) conformance/runner/aicp_batch_runner.py \
+		--suite-out conformance/extensions/CN_CAPNEG_0.1.json::conformance/report_ext_capneg.json \
+		--suite-out conformance/extensions/CF_CONFIDENTIALITY_0.1.json::conformance/report_ext_confidentiality.json \
+		--suite-out conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json::conformance/report_ext_commerce_acp_profile.json \
+		--suite-out conformance/extensions/RD_REDACTION_0.1.json::conformance/report_ext_redaction.json \
+		--suite-out conformance/extensions/HA_HUMAN_APPROVAL_0.1.json::conformance/report_ext_human_approval.json \
+		--suite-out conformance/extensions/DS_DISPUTES_0.1.json::conformance/report_ext_disputes.json \
+		--suite-out conformance/extensions/SA_SECURITY_ALERT_0.1.json::conformance/report_ext_security_alerts.json \
+		--suite-out conformance/extensions/PA_PARTICIPANTS_0.1.json::conformance/report_ext_participants.json \
+		--suite-out conformance/extensions/TG_TOOL_GATING_0.1.json::conformance/report_ext_tool_gating.json \
+		--suite-out conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json::conformance/report_ext_artifact_manifests_pinning.json \
+		--suite-out conformance/extensions/ID_IDENTITY_LC_0.1.json::conformance/report_ext_identity_lc.json \
+		--suite-out conformance/extensions/DL_DELEGATION_0.1.json::conformance/report_ext_delegation.json \
+		--suite-out conformance/extensions/WF_WORKFLOW_SYNC_0.1.json::conformance/report_ext_workflow_sync.json \
+		--suite-out conformance/extensions/OR_OBJECT_RESYNC_0.1.json::conformance/report_ext_object_resync.json \
+		--suite-out conformance/extensions/PE_POLICY_EVAL_0.1.json::conformance/report_ext_policy_eval.json \
+		--suite-out conformance/extensions/ENF_ENFORCEMENT_0.1.json::conformance/report_ext_enforcement.json \
+		--suite-out conformance/extensions/AL_ALERTS_0.1.json::conformance/report_ext_alerts.json \
+		--suite-out conformance/extensions/RS_RESUME_0.1.json::conformance/report_ext_resume.json \
+		--suite-out conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json::conformance/report_ext_delegated_identity.json \
+		--suite-out conformance/extensions/IB_IAM_BRIDGE_0.1.json::conformance/report_ext_iam_bridge.json \
+		--suite-out conformance/extensions/OB_OBSERVABILITY_0.1.json::conformance/report_ext_observability.json \
+		--suite-out conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json::conformance/report_ext_enterprise_bindings.json \
+		--suite-out conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json::conformance/report_ext_external_transaction.json \
+		--suite-out conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json::conformance/report_ext_reception_chat_semantics.json \
+		--suite-out conformance/extensions/EC_ECONOMICS_0.1.json::conformance/report_ext_economics.json \
+		--suite-out conformance/extensions/AD_ADMISSION_0.1.json::conformance/report_ext_admission.json \
+		--suite-out conformance/extensions/QL_QUEUE_LEASES_0.1.json::conformance/report_ext_queue_leases.json \
+		--suite-out conformance/extensions/FA_FACILITATION_0.1.json::conformance/report_ext_facilitation.json \
+		--suite-out conformance/extensions/CH_CHANNELS_0.1.json::conformance/report_ext_channels.json \
+		--suite-out conformance/extensions/SB_SUBSCRIPTIONS_0.1.json::conformance/report_ext_subscriptions.json \
+		--suite-out conformance/extensions/PB_PUBLICATIONS_0.1.json::conformance/report_ext_publications.json \
+		--suite-out conformance/extensions/IB_INBOX_0.1.json::conformance/report_ext_inbox.json \
+		--suite-out conformance/extensions/MP_MARKETPLACE_0.1.json::conformance/report_ext_marketplace.json \
+		--suite-out conformance/extensions/PR_PROVENANCE_0.1.json::conformance/report_ext_provenance.json \
+		--suite-out conformance/extensions/ES_ACTION_ESCROW_0.1.json::conformance/report_ext_action_escrow.json \
+		--suite-out conformance/extensions/RP_RESPONSIBILITY_0.1.json::conformance/report_ext_responsibility.json \
+		--suite-out conformance/extensions/TA_TRUST_ATTESTATIONS_0.1.json::conformance/report_ext_trust_attestations.json \
+		--suite-out conformance/extensions/SC_STATUS_CHANNEL_0.1.json::conformance/report_ext_status_channel.json \
+		--suite-out conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json::conformance/report_ext_transcript_witness.json \
+		--suite-out conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json::conformance/report_ext_execution_lifecycle.json
 
 conformance-bindings:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/bindings/TB_MCP_0.1.json --out conformance/report_bind_mcp.json
