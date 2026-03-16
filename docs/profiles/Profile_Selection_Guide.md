@@ -31,6 +31,7 @@ Upgrade profile strictness when you need:
 | Hosted moderated ops-heavy environment | `AICP-MEDIATED-BLOCKING-OPS@0.1` | Blocking+ops profile set | DISPUTES, POLICY-EVAL | Monitoring/ops pipelines |
 | Long-running sessions with reconnect/resume | `AICP-RESUMABLE-SESSIONS@0.1` | Resume-oriented profile set | OBJECT-RESYNC | Durable state + recovery tooling |
 | Cross-platform run/thread/store metadata portability | `AICP-EXECUTION-INTEROP@0.1` | Execution lifecycle + resume + object-resync profile set | TOOL-GATING (recommended for side effects) | Durable state references + deterministic recovery evidence |
+| Commerce-assisted purchase orchestration with external checkout rails | `AICP-COMMERCE-ACP@0.1` | CAPNEG + POLICY-EVAL + ENFORCEMENT + EXTERNAL-TRANSACTION + HUMAN-APPROVAL + REDACTION + cross-extension commerce semantics suite | WORKFLOW-ORCHESTRATION-DELEGATION (if multi-party approvals/workflows) | External commerce/payment rails remain out-of-protocol; transcript anchors evidence only |
 | Cross-vendor policy semantic interoperability (OPA/Rego, ABAC/RBAC, LLM-safety) | `AICP-POLICY-OPA-REGO@0.1`, `AICP-POLICY-ABAC-RBAC@0.1`, or `AICP-POLICY-LLM-SAFETY@0.1` | Policy semantic profile suite + EXT-POLICY-EVAL | CAPNEG (recommended) | Registry-governed policy bundle + binding pipeline |
 | Delegated/enterprise workflow environment | `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` | Workflow/delegation profile set | TOOL-GATING, POLICY-EVAL | IAM bridge + approval controls |
 | Delegated identity sensitive interactions | `AICP-DELEGATED-IDENTITY@0.1` | Delegated identity profile set | SECURITY-ALERT, DISPUTES | Identity lifecycle and revocation infra |
@@ -45,6 +46,7 @@ Upgrade profile strictness when you need:
 - **Policy semantic interop:** one of `AICP-POLICY-OPA-REGO@0.1`, `AICP-POLICY-ABAC-RBAC@0.1`, or `AICP-POLICY-LLM-SAFETY@0.1` depending on policy surface and determinism boundary.
 - **Enterprise delegation:** `AICP-DELEGATED-IDENTITY@0.1` + `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1`
 - **Media with moderated intake:** `AICP-AGENT-MEDIA@0.1` + `AICP-BAZAAR-RECEPTION@0.1`
+- **Commerce-assisted purchase orchestration:** `AICP-COMMERCE-ACP@0.1` (checkout/payment rails remain external)
 
 ## 6) If you are building X, start with Y
 
@@ -53,6 +55,7 @@ Upgrade profile strictness when you need:
 - **Personal-agent gateway into external services:** start with `AICP-BASE@0.1`, then add `AICP-RESUMABLE-SESSIONS@0.1` if continuity is critical.
 - **Run/thread interoperability across platforms:** start with `AICP-EXECUTION-INTEROP@0.1` and add `EXT-TOOL-GATING` when execution can trigger side effects.
 - **Agent media distribution channel:** start with `AICP-AGENT-MEDIA@0.1`.
+- **Commerce-assisted purchase orchestration:** start with `AICP-COMMERCE-ACP@0.1`; keep payment rails external and anchor receipts/policy/approval evidence in transcript.
 - **Marketplace-like multi-party intake:** start with `AICP-BAZAAR-RECEPTION@0.1`.
 
 ## See also

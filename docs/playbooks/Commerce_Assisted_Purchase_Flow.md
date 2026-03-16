@@ -16,7 +16,7 @@ Describe product/service guidance conversations where specialist agents assist u
 - Final checkout/payment execution runs in external commerce protocols.
 
 ## Recommended AICP profile(s)
-- Primary: `AICP-MEDIATED-BLOCKING@0.1`
+- Primary: `AICP-COMMERCE-ACP@0.1`
 - Upgrade: `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` for complex approval chains
 
 ## Required / optional extensions
@@ -44,3 +44,10 @@ Describe product/service guidance conversations where specialist agents assist u
 ## Failure/rollback notes
 - If checkout fails externally, record failure reason/evidence refs in AICP artifacts.
 - Avoid replaying irreversible external actions without idempotency/approval re-check.
+
+
+## Commerce profile composition
+- CAPNEG MUST select `AICP-COMMERCE-ACP@0.1` for profile-bound flows.
+- Irreversible external steps MUST link policy + approval evidence before `EXTERNAL_TX_RESULT`.
+- Receipt evidence SHOULD be digest/reference anchored; use `pii_ref` redaction-safe handles for sensitive details.
+- ACP mapping is informative only; conformance is determined by AICP profile semantics and suite evidence.

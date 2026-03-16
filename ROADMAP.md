@@ -26,6 +26,17 @@ _Last updated: 2026-03-14_
 - **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
+### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)
+- **Shipped:** `EXT-EXTERNAL-TRANSACTION` baseline is now in-repo with normative RFC surface for declaration/result linkage, irreversible-step gating, policy/approval evidence binding, receipt digest anchoring, and privacy boundaries.
+- **Shipped:** extension payload schema + registry updates + deterministic pass/fail fixtures + executable conformance suite (`ET_EXTERNAL_TRANSACTION_0.1`) are wired into existing extension CI commands.
+- **Next concrete step:** execute M41 as a separate optional commerce-ready profile without expanding M40 into payment or checkout protocol semantics.
+
+### ✅ M41 — Commerce-ready profile (AICP↔ACP optional bridge profile + conformance)
+- **Shipped:** optional `AICP-COMMERCE-ACP@0.1` profile is now registry-backed with normative profile documentation and profile-runner catalog wiring.
+- **Shipped:** executable cross-extension commerce semantics suite (`CM_COMMERCE_ACP_PROFILE_0.1`) and deterministic profile fixtures cover CAPNEG selection, policy/approval gating, enforcement coherence, external-step anchoring, and PII-safe receipt handling.
+- **Next concrete step:** treat profile hardening/expansion as future optional profile revisions without redefining AICP as a payment/checkout protocol.
+
+
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
 - **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
