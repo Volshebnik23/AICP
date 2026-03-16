@@ -8,8 +8,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MAKEFILE = ROOT / "Makefile"
 CI_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
+README = ROOT / "README.md"
 
 PREPR_BLOCK_RE = re.compile(r"(?ms)^prepr:\n(.*?)(?=^\S|\Z)")
+ONE_COMMAND_CHECKS_RE = re.compile(r"(?ms)^## One-command checks\n\n(.*?)(?=^## |\Z)")
 
 
 def _load(path: Path) -> str:
@@ -23,6 +25,7 @@ def main() -> int:
 
     makefile = _load(MAKEFILE)
     ci = _load(CI_WORKFLOW)
+    readme = _load(README)
 
     match = PREPR_BLOCK_RE.search(makefile)
     if not match:
@@ -36,6 +39,16 @@ def main() -> int:
 
     if "run: make conformance-profiles" not in ci:
         errors.append("CI workflow must include 'run: make conformance-profiles'")
+
+    one_command_match = ONE_COMMAND_CHECKS_RE.search(readme)
+    if not one_command_match:
+        errors.append("README.md is missing '## One-command checks' section")
+    else:
+        one_command_block = one_command_match.group(1)
+        if "- `make conformance-profiles`" not in one_command_block:
+            errors.append("README One-command checks must include 'make conformance-profiles'")
+        if "- `make template-smoke`" not in one_command_block:
+            errors.append("README One-command checks must include 'make template-smoke'")
 
     if errors:
         print("[FAIL] verification-gate alignment validation failed")

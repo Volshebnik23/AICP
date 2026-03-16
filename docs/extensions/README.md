@@ -25,6 +25,8 @@ Extension RFCs live in this folder (`docs/extensions/`).
 - M37 (`RFC_EXT_PROVENANCE.md`, `RFC_EXT_RESPONSIBILITY.md`, `RFC_EXT_ACTION_ESCROW.md`) is shipped with executable provenance DAG append checks, responsibility transfer lifecycle + chain-failure attest coverage, and escrow prepare/approve/commit hash-binding enforcement.
 - M38 (`RFC_EXT_CHANNELS.md`, `RFC_EXT_SUBSCRIPTIONS.md`, `RFC_EXT_PUBLICATIONS.md`, `RFC_EXT_INBOX.md`) is shipped with executable channel hierarchy, subscription cursor/state, publication delivery/retraction-reason semantics, and inbox lease/ack linkage checks.
 
+- M40 (`RFC_EXT_EXTERNAL_TRANSACTION.md`) is shipped with executable protocol-neutral external transaction declaration/result linkage, approval/policy evidence binding, receipt-digest anchoring, and privacy-safe `pii_ref` coverage.
+
 
 ## Where to look next
 
