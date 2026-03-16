@@ -40,20 +40,3 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 ---
 
-## M47 — Adjacent protocol integration patterns and ecosystem stack guidance
-**Problem:** Implementers still need concrete adjacent-protocol integration guidance (especially a non-normative A2A-like calling/connectivity pattern) while preserving AICP layer boundaries.
-
-**Deliverables**
-1) Strengthen ecosystem architecture guidance in `docs/architecture/AICP_in_the_Ecosystem.md`.
-2) Complete/refine adjacent capability matrix (replace/complement/reference/orthogonal).
-3) Complete anti-misuse and “use AICP when…” guidance.
-4) Add informative `docs/adjacent/A2A_Integration_Pattern.md` with explicit non-normative boundary rules.
-5) Add practical patterns (rendezvous/bootstrap, specialist handoff, relay/fallback).
-6) Add bootstrap/failure/fallback guidance.
-7) Cross-link from `docs/INDEX.md`, playbooks, and adapter/gateway guidance.
-
-**Acceptance**
-- Architects can place AICP cleanly in a multi-protocol stack without collapsing concerns.
-- A2A-related material is concrete and clearly non-normative.
-
----

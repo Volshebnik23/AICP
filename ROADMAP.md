@@ -36,6 +36,11 @@ _Last updated: 2026-03-14_
 - **Shipped:** executable cross-extension commerce semantics suite (`CM_COMMERCE_ACP_PROFILE_0.1`) and deterministic profile fixtures cover CAPNEG selection, policy/approval gating, enforcement coherence, external-step anchoring, and PII-safe receipt handling.
 - **Next concrete step:** treat profile hardening/expansion as future optional profile revisions without redefining AICP as a payment/checkout protocol.
 
+### ✅ M47 — Adjacent protocol integration patterns and ecosystem stack guidance
+- **Shipped:** ecosystem architecture guidance is now strengthened with clearer replace/complement/reference/orthogonal boundaries and operational “use AICP when / not when” selection guidance.
+- **Shipped:** informative `docs/adjacent/A2A_Integration_Pattern.md` added with layered composition model and practical rendezvous/bootstrap, specialist handoff, relay/fallback, and failure-continuity guidance.
+- **Shipped:** docs front-door/guides/playbooks now cross-link adjacent integration guidance for faster architect discovery without changing protocol semantics.
+- **Next concrete step:** collect implementer feedback and iterate examples while preserving strict non-normative adjacent-layer boundaries.
 
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.

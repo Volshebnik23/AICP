@@ -6,6 +6,8 @@ This guide helps solution and platform teams select practical AICP profile targe
 
 Profiles convert optional extension space into concrete implementation targets with measurable conformance outcomes. They reduce ambiguity about what must be implemented for a given deployment pattern.
 
+For adjacent-layer placement (discovery/calling vs content governance), see [docs/adjacent/A2A_Integration_Pattern.md](../adjacent/A2A_Integration_Pattern.md) and [docs/architecture/AICP_in_the_Ecosystem.md](../architecture/AICP_in_the_Ecosystem.md).
+
 ## 2) How to choose a minimum viable profile
 
 1. Define your session ownership model (hosted, foreign, relay, mixed).
