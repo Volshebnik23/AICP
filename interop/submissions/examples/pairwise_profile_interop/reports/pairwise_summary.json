@@ -1,0 +1,11 @@
+{
+  "summary_type": "pairwise_example",
+  "timestamp": "2026-03-20T00:00:00Z",
+  "participants": [
+    "example-impl-a",
+    "example-impl-b"
+  ],
+  "profile_id": "AICP-MEDIATED-BLOCKING",
+  "result": "interoperable",
+  "notes": "Example-only summary artifact showing how a pairwise package can carry additional contextual evidence."
+}

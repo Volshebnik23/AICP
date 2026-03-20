@@ -1,0 +1,29 @@
+{
+  "submission_id": "example-single-profile-claim",
+  "implementation_id": "example-impl-a",
+  "implementation_version": "0.1.0-example",
+  "profile_ids": [
+    "AICP-BASE"
+  ],
+  "evidence_types": [
+    "profile_report",
+    "conformance_report"
+  ],
+  "evidence_status": "example",
+  "report_refs": [
+    "reports/report_profile_base.json",
+    "reports/report_core.json"
+  ],
+  "suite_refs": [
+    "PF_AICP_BASE_0.1",
+    "CT_CORE_0.1"
+  ],
+  "claim_type": "implements_profile",
+  "claim_scope": "self_attested",
+  "generated_at": "2026-03-20T00:00:00Z",
+  "notes": "Example-only package showing a narrow shipped-profile claim.",
+  "disclosures": [
+    "Example artifact only; not a real external implementation submission.",
+    "Uses fictional implementation identifiers for documentation and validation coverage."
+  ]
+}
