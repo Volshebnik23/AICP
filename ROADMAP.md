@@ -39,6 +39,7 @@ _Last updated: 2026-03-20_
 ### ✅ M48 — Runner modularity hardening
 - **Shipped:** conformance runner schema/pointer validator helpers are now split into a private helper module while `aicp_conformance_runner.py` remains the stable CLI and `run_suite(...)` entrypoint.
 - **Shipped:** compatibility shims keep the historical helper symbols available from `aicp_conformance_runner.py`, reducing missing-symbol regression risk for internal imports/tests.
+- **Shipped:** repo-path resolution, report writing, and status-line formatting are now centralized in a private runner IO helper and reused by the suite, batch, and profile CLIs without changing report semantics.
 - **Next concrete step:** keep runner internals maintainable with similarly narrow extractions only when behavior-preserving coverage exists.
 
 ### ✅ M47 — Adjacent protocol integration patterns and ecosystem stack guidance

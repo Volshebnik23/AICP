@@ -35,6 +35,12 @@ from _runner_context import (  # noqa: E402
     validator_for_schema_path_pointer as _context_validator_for_schema_path_pointer,
     validator_for_schema_pointer as _context_validator_for_schema_pointer,
 )
+from _runner_io import (  # noqa: E402
+    display_path as _io_display_path,
+    format_status_line as _io_format_status_line,
+    resolve_repo_path as _io_resolve_repo_path,
+    write_json_report as _io_write_json_report,
+)
 
 
 def load_json(path: Path) -> Any:
@@ -42,10 +48,7 @@ def load_json(path: Path) -> Any:
 
 
 def _display_path(path: Path) -> str:
-    try:
-        return str(path.relative_to(ROOT))
-    except ValueError:
-        return str(path)
+    return _io_display_path(path, root=ROOT)
 
 
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
@@ -74,6 +77,18 @@ def _validator_for_schema_path_pointer(schema_path_str: str, pointer: str) -> An
 
 def _build_payload_validator_map(payload_schema: dict[str, Any] | None, payload_schema_map: dict[str, str] | None) -> dict[str, Any]:
     return _context_build_payload_validator_map(payload_schema, payload_schema_map)
+
+
+def _resolve_repo_path(path_like: str) -> Path:
+    return _io_resolve_repo_path(path_like, root=ROOT)
+
+
+def _write_report(out_path: Path, report: dict[str, Any]) -> None:
+    _io_write_json_report(out_path, report)
+
+
+def _format_report_status(prefix: str, report_id: str | None, out_path: Path, passed: bool, degraded: bool) -> str:
+    return _io_format_status_line(prefix, report_id, out_path, passed, degraded, root=ROOT)
 
 
 def _validate_payload_schema(
@@ -4786,8 +4801,8 @@ def main() -> int:
     parser.add_argument("--out", required=True, help="Path to output report JSON")
     args = parser.parse_args()
 
-    suite_path = (ROOT / args.suite).resolve() if not Path(args.suite).is_absolute() else Path(args.suite)
-    out_path = (ROOT / args.out).resolve() if not Path(args.out).is_absolute() else Path(args.out)
+    suite_path = _resolve_repo_path(args.suite)
+    out_path = _resolve_repo_path(args.out)
 
     try:
         report = run_suite(suite_path)
@@ -4807,13 +4822,9 @@ def main() -> int:
     else:
         print("[WARN] jsonschema is not installed. Skipping conformance report schema validation.")
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    _write_report(out_path, report)
 
-    status = 'PASSED' if report['passed'] else 'FAILED'
-    if report.get('degraded'):
-        status = f"{status} (DEGRADED)"
-    print(f"Conformance {status}: {report['suite_id']} -> {_display_path(out_path)}")
+    print(_format_report_status("Conformance", report["suite_id"], out_path, bool(report["passed"]), bool(report.get("degraded"))))
     if report["failures"]:
         for f in report["failures"]:
             print(f" - [{f['test_id']}] {f['file']}:{f['line']} {f['message']}")

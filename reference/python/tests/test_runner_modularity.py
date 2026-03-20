@@ -6,6 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 CONTEXT_HELPERS = ROOT / "conformance/runner/_runner_context.py"
+IO_HELPERS = ROOT / "conformance/runner/_runner_io.py"
 CONFORMANCE_RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
 
 
@@ -48,3 +49,22 @@ def test_run_suite_still_works_via_public_entrypoint() -> None:
 
     assert report["passed"] is True
     assert report["suite_id"] == "CT-CORE-0.1"
+
+
+def test_runner_io_helpers_cover_repo_paths_reporting_and_json_write(tmp_path: Path) -> None:
+    helpers = _load_module(IO_HELPERS, "aicp_runner_io_test")
+
+    repo_relative = helpers.resolve_repo_path("conformance/report_modularity_test.json")
+    assert repo_relative == (ROOT / "conformance/report_modularity_test.json").resolve()
+    assert helpers.display_path(repo_relative) == "conformance/report_modularity_test.json"
+
+    external = tmp_path / "outside.json"
+    report = {"passed": True, "suite_id": "CT-CORE-0.1"}
+    helpers.write_json_report(external, report)
+    assert external.read_text(encoding="utf-8").endswith("\n")
+    assert '  "passed": true' in external.read_text(encoding="utf-8")
+
+    status = helpers.format_status_line("Conformance", "CT-CORE-0.1", repo_relative, True, False)
+    degraded = helpers.format_status_line("Profile conformance", "AICP-BASE", repo_relative, True, True)
+    assert status == "Conformance PASSED: CT-CORE-0.1 -> conformance/report_modularity_test.json"
+    assert degraded == "Profile conformance PASSED (DEGRADED): AICP-BASE -> conformance/report_modularity_test.json"
