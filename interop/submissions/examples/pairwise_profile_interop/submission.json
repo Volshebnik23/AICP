@@ -1,0 +1,33 @@
+{
+  "submission_id": "example-pairwise-profile-interop",
+  "implementation_id": "example-impl-a",
+  "peer_implementation_id": "example-impl-b",
+  "implementation_version": "0.1.0-example",
+  "profile_ids": [
+    "AICP-MEDIATED-BLOCKING"
+  ],
+  "evidence_types": [
+    "profile_report",
+    "pairwise_transcript",
+    "human_summary"
+  ],
+  "report_refs": [
+    "reports/report_profile_mediated_blocking_a.json",
+    "reports/report_profile_mediated_blocking_b.json",
+    "reports/pairwise_summary.json"
+  ],
+  "suite_refs": [
+    "PF_AICP_MEDIATED_BLOCKING_0.1",
+    "CN_CAPNEG_0.1",
+    "PE_POLICY_EVAL_0.1",
+    "ENF_ENFORCEMENT_0.1"
+  ],
+  "claim_type": "pairwise_interop",
+  "claim_scope": "pairwise",
+  "generated_at": "2026-03-20T00:00:00Z",
+  "notes": "Example-only package showing how pairwise evidence can be packaged for a shipped profile.",
+  "disclosures": [
+    "Example artifact only; not a real external implementation submission.",
+    "The peer implementation identifier is fictional and used only to demonstrate pairwise evidence packaging."
+  ]
+}

@@ -25,6 +25,7 @@ _Last updated: 2026-03-20_
 - **Progress:** Solution playbooks for reception/support, enterprise orchestration, personal-agent coordination, agent media feeds, and commerce-assisted purchase shipped with profile and dependency guidance.
 - **Progress:** adoption framing is now explicitly packaged via an Adoption Core and tier model so readers can distinguish the must-implement center from optional governance and ecosystem overlays without adding protocol surface.
 - **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
+- **Progress:** public interop corpus docs, compatibility-claims guidance, lightweight submission schema, example/template packages, and example-validation wiring now exist so profile-scoped interop evidence can be packaged without reintroducing adoption-core scope.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
 ### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)
