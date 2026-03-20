@@ -88,6 +88,17 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - `make template-smoke`
 - `make prepr`
 
+## Legal and vendor-adoption quick links
+
+- [LICENSING.md](LICENSING.md)
+- [LICENSE](LICENSE)
+- [LICENSE-docs](LICENSE-docs)
+- [NOTICE](NOTICE)
+- [PATENTS.md](PATENTS.md)
+- [TRADEMARKS.md](TRADEMARKS.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [DCO](DCO)
+
 ## Continue reading
 
 - [docs/INDEX.md](docs/INDEX.md)
