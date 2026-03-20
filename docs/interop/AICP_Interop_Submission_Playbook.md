@@ -13,7 +13,7 @@ This playbook covers:
 - what a minimal real submission package contains,
 - how to package single-implementation and pairwise claims,
 - what disclosures to include,
-- how the repo validators and matrix treat submission records,
+- how the repo validators and matrix treat submission records and placeholder templates,
 - how examples/templates differ from real external submissions.
 
 ## Explicit non-goals
@@ -104,7 +104,7 @@ Expected evidence files are usually JSON artifacts referenced by `report_refs`, 
 - profile report outputs,
 - pairwise summary/report JSON that explains how a joint exercise was packaged.
 
-The validator expects referenced files to exist for real submissions and examples.
+The validator expects referenced files to exist for real submissions and examples. Templates may intentionally keep placeholder `report_refs` until a real submitter replaces them; the matrix renders those as instructional warnings rather than as failed real-submission evidence.
 
 ## How to avoid overstating compatibility
 

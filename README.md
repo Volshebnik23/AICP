@@ -8,7 +8,8 @@ AICP is a practical, implementable standard for governed multi-agent conversatio
 ➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)  
 ➡️ **Adoption core + tiers:** [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md)
 ➡️ **Interop corpus + claims:** [docs/interop/AICP_Public_Interop_Corpus.md](docs/interop/AICP_Public_Interop_Corpus.md)
-➡️ **Interop submission playbook:** [docs/interop/AICP_Interop_Submission_Playbook.md](docs/interop/AICP_Interop_Submission_Playbook.md)
+➡️ **Interop submission playbook:** [docs/interop/AICP_Interop_Submission_Playbook.md](docs/interop/AICP_Interop_Submission_Playbook.md)  
+➡️ **Interop validator + matrix entrypoints:** [interop/README.md](interop/README.md)
 
 ## What problem AICP solves
 

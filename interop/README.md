@@ -38,7 +38,8 @@ make interop-validate
 This intake path checks that:
 - shipped examples/templates remain valid,
 - real submission folders validate separately from instructional artifacts,
-- shipped `profile_id` values and referenced files resolve correctly.
+- shipped `profile_id` values and referenced files resolve correctly,
+- template placeholder references stay clearly instructional instead of being mistaken for failed real submissions.
 
 ## Generate the interop matrix
 
@@ -52,4 +53,4 @@ This aggregates real submission folders under `interop/submissions/` into:
 - `interop/interop_matrix.json`
 - `interop/INTEROP_MATRIX.md`
 
-Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions.
+Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions. Template placeholder references appear as instructional warnings, while real missing evidence still renders as invalid.
