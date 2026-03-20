@@ -23,6 +23,7 @@ _Last updated: 2026-03-20_
 - **Progress:** Canonical docs front door (`docs/INDEX.md`) shipped with role/goal navigation and cross-links across overview, profiles, architecture, playbooks, and flows.
 - **Progress:** Ecosystem positioning, profile selection guide, session topology cookbook, and enforcement models docs shipped with explicit protocol-vs-adjacent-layer boundaries.
 - **Progress:** Solution playbooks for reception/support, enterprise orchestration, personal-agent coordination, agent media feeds, and commerce-assisted purchase shipped with profile and dependency guidance.
+- **Progress:** adoption framing is now explicitly packaged via an Adoption Core and tier model so readers can distinguish the must-implement center from optional governance and ecosystem overlays without adding protocol surface.
 - **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
