@@ -5,7 +5,7 @@ An AICP **profile** is a named interoperability bundle consisting of:
 1. required extension set (which protocol capabilities MUST be present), and
 2. required canonical conformance suites (which executable checks MUST pass).
 
-An implementation claiming profile conformance MUST satisfy all required suites for that profile.
+An implementation claiming profile conformance MUST satisfy all required suites for that profile. For adoption packaging guidance (core vs optional tiers), see [docs/architecture/AICP_Adoption_Core_and_Tiers.md](../architecture/AICP_Adoption_Core_and_Tiers.md); this document remains the canonical executable profile catalog.
 
 ## 2. Profile Catalog and Status
 

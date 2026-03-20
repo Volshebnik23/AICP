@@ -5,7 +5,8 @@
 AICP is a practical, implementable standard for governed multi-agent conversation/context artifacts.
 
 ➡️ **Docs front door:** [docs/INDEX.md](docs/INDEX.md)  
-➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
+➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)  
+➡️ **Adoption core + tiers:** [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md)
 
 ## What problem AICP solves
 
@@ -32,9 +33,11 @@ Multi-agent systems often need portable, verifiable conversation/context semanti
 
 AICP sits as the **governed content layer** between transport/connectivity and domain/application behavior. It complements (does not replace) discovery, calling/connectivity, tool integration, IAM, commerce, and trust infrastructure.
 
-See: [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_Ecosystem.md).
+See: [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_Ecosystem.md) and [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md).
 
 ## Practical adoption patterns
+
+Start with the packaged adoption model in [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md), then choose the smallest shipped profile that satisfies your need.
 
 1. **Embed AICP directly in an agent/app**
    - Use drop-ins/templates, then validate against conformance/profile suites.
@@ -90,6 +93,7 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - [docs/INDEX.md](docs/INDEX.md)
 - [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
 - [docs/overview/AICP_STANDARD_OVERVIEW.md](docs/overview/AICP_STANDARD_OVERVIEW.md)
+- [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md)
 - [docs/profiles/AICP_Profiles.md](docs/profiles/AICP_Profiles.md)
 - [docs/profiles/Profile_Selection_Guide.md](docs/profiles/Profile_Selection_Guide.md)
 - [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_Ecosystem.md)
