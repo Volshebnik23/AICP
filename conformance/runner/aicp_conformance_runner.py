@@ -6,7 +6,6 @@ import hashlib
 import json
 import re
 import sys
-from functools import lru_cache
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
@@ -16,13 +15,10 @@ try:
 except Exception:  # pragma: no cover - environment dependent
     Draft202012Validator = None
 
-try:
-    from referencing import Registry, Resource
-except Exception:  # pragma: no cover - environment dependent
-    Registry = None
-    Resource = None
-
 ROOT = Path(__file__).resolve().parents[2]
+RUNNER_DIR = Path(__file__).resolve().parent
+if str(RUNNER_DIR) not in sys.path:
+    sys.path.insert(0, str(RUNNER_DIR))
 REF_PY = ROOT / "reference/python"
 if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
@@ -30,161 +26,70 @@ if str(REF_PY) not in sys.path:
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
-
-
-@lru_cache(maxsize=512)
-def _load_json_cached(path_str: str) -> Any:
-    return json.loads(Path(path_str).read_text(encoding="utf-8"))
+from _runner_context import (  # noqa: E402
+    build_payload_validator_map as _context_build_payload_validator_map,
+    build_validator as _context_build_validator,
+    load_json as _context_load_json,
+    normalize_pointer as _context_normalize_pointer,
+    resolve_json_pointer as _context_resolve_json_pointer,
+    validator_for_schema_path_pointer as _context_validator_for_schema_path_pointer,
+    validator_for_schema_pointer as _context_validator_for_schema_pointer,
+)
+from _runner_io import (  # noqa: E402
+    display_path as _io_display_path,
+    format_status_line as _io_format_status_line,
+    resolve_repo_path as _io_resolve_repo_path,
+    write_json_report as _io_write_json_report,
+)
+from _runner_reporting import build_conformance_report as _build_conformance_report_record  # noqa: E402
 
 
 def load_json(path: Path) -> Any:
-    return _load_json_cached(str(path.resolve()))
+    return _context_load_json(path)
 
 
 def _display_path(path: Path) -> str:
-    try:
-        return str(path.relative_to(ROOT))
-    except ValueError:
-        return str(path)
+    return _io_display_path(path, root=ROOT)
 
 
 def add_failure(failures: list[dict[str, Any]], test_id: str, message: str, file: str, line: int | None = None) -> None:
     failures.append({"test_id": test_id, "message": message, "file": file, "line": line})
 
-def _collect_refs(node: Any) -> list[str]:
-    refs: list[str] = []
-    if isinstance(node, dict):
-        ref = node.get("$ref")
-        if isinstance(ref, str):
-            refs.append(ref)
-        for v in node.values():
-            refs.extend(_collect_refs(v))
-    elif isinstance(node, list):
-        for v in node:
-            refs.extend(_collect_refs(v))
-    return refs
-
-
-def _schema_aliases(schema: dict[str, Any], schema_path: Path) -> set[str]:
-    aliases = {schema_path.resolve().as_uri()}
-    schema_id = schema.get("$id")
-    if isinstance(schema_id, str) and schema_id:
-        aliases.add(schema_id)
-    for legacy in schema.get("x-legacy-ids", []):
-        if isinstance(legacy, str) and legacy:
-            aliases.add(legacy)
-    return aliases
-
-
-@lru_cache(maxsize=1)
-def _core_schema_resources() -> dict[str, Any]:
-    if Resource is None:
-        return {}
-    core_path = ROOT / "schemas/core/aicp-core-message.schema.json"
-    core_schema = load_json(core_path)
-    resource = Resource.from_contents(core_schema)
-    return {alias: resource for alias in _schema_aliases(core_schema, core_path)}
-
 
 def _build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
-    if Draft202012Validator is None:
-        return None
-
-    remote_refs = {
-        ref for ref in _collect_refs(schema)
-        if ref.startswith("http://") or ref.startswith("https://")
-    }
-
-    if Registry is None or Resource is None:
-        if remote_refs:
-            raise ValueError("Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:.")
-        return Draft202012Validator(schema)
-
-    resources = _core_schema_resources()
-    schema_resource = Resource.from_contents(schema)
-    for alias in _schema_aliases(schema, schema_path):
-        resources[alias] = schema_resource
-
-    allowed_remote = {u for u in resources if u.startswith("http://") or u.startswith("https://")}
-    unresolved = sorted(remote_refs - allowed_remote)
-    if unresolved:
-        raise ValueError(
-            "Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:. "
-            f"Unmapped refs: {', '.join(unresolved)}"
-        )
-
-    registry = Registry().with_resources(resources.items())
-    return Draft202012Validator(schema, registry=registry)
+    return _context_build_validator(schema, schema_path)
 
 
 def _normalize_pointer(pointer: str) -> str:
-    if pointer.startswith("#"):
-        pointer = pointer[1:]
-    if pointer == "":
-        return ""
-    if not pointer.startswith("/"):
-        raise ValueError(f"Invalid JSON pointer format: {pointer}")
-    return pointer
+    return _context_normalize_pointer(pointer)
 
 
 def _resolve_json_pointer(doc: dict[str, Any], pointer: str) -> Any:
-    pointer = _normalize_pointer(pointer)
-    if pointer == "":
-        return doc
-    cur: Any = doc
-    for raw in pointer.lstrip("/").split("/"):
-        token = raw.replace("~1", "/").replace("~0", "~")
-        if isinstance(cur, dict):
-            cur = cur[token]
-        elif isinstance(cur, list):
-            cur = cur[int(token)]
-        else:
-            raise KeyError(token)
-    return cur
-
-
+    return _context_resolve_json_pointer(doc, pointer)
 
 
 def _validator_for_schema_pointer(schema: dict[str, Any], pointer: str) -> Any:
-    if Draft202012Validator is None:
-        return None
-    norm_pointer = _normalize_pointer(pointer)
-    _resolve_json_pointer(schema, norm_pointer)
-    wrapper = {
-        "$schema": schema.get("$schema"),
-        "$id": schema.get("$id"),
-        "$ref": f"#{norm_pointer}" if norm_pointer else "#",
-        "$defs": schema.get("$defs", {}),
-    }
-    return Draft202012Validator(wrapper)
+    return _context_validator_for_schema_pointer(schema, pointer)
 
 
-@lru_cache(maxsize=256)
 def _validator_for_schema_path_pointer(schema_path_str: str, pointer: str) -> Any:
-    if Draft202012Validator is None:
-        return None
-    schema_path = Path(schema_path_str)
-    schema = load_json(schema_path)
-    return _validator_for_schema_pointer(schema, pointer)
+    return _context_validator_for_schema_path_pointer(schema_path_str, pointer)
 
 
 def _build_payload_validator_map(payload_schema: dict[str, Any] | None, payload_schema_map: dict[str, str] | None) -> dict[str, Any]:
-    if payload_schema is None or payload_schema_map is None or Draft202012Validator is None:
-        return {}
-    validators: dict[str, Any] = {}
-    for mtype, schema_pointer in payload_schema_map.items():
-        if not isinstance(mtype, str) or not isinstance(schema_pointer, str):
-            continue
-        pointer = _normalize_pointer(schema_pointer)
-        _resolve_json_pointer(payload_schema, pointer)
-        wrapper = {
-            "$schema": payload_schema.get("$schema"),
-            "$id": payload_schema.get("$id"),
-            "$ref": f"#{pointer}" if pointer else "#",
-            "$defs": payload_schema.get("$defs", {}),
-        }
-        validators[mtype] = Draft202012Validator(wrapper)
-    return validators
+    return _context_build_payload_validator_map(payload_schema, payload_schema_map)
+
+
+def _resolve_repo_path(path_like: str) -> Path:
+    return _io_resolve_repo_path(path_like, root=ROOT)
+
+
+def _write_report(out_path: Path, report: dict[str, Any]) -> None:
+    _io_write_json_report(out_path, report)
+
+
+def _format_report_status(prefix: str, report_id: str | None, out_path: Path, passed: bool, degraded: bool) -> str:
+    return _io_format_status_line(prefix, report_id, out_path, passed, degraded, root=ROOT)
 
 
 def _validate_payload_schema(
@@ -1046,18 +951,17 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
     passed = not failures
     suite_mark = suite.get("compatibility_mark")
     marks = [suite_mark] if passed and isinstance(suite_mark, str) else (["AICP-BIND-MCP-0.1"] if passed else [])
-    return {
-        "aicp_version": protocol_version,
-        "suite_id": suite["suite_id"],
-        "suite_version": suite["suite_version"],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "passed": passed,
-        "failures": failures,
-        "compatibility_marks": marks,
-        "degraded": False,
-        "degraded_reasons": [],
-        "skipped_checks": [],
-    }
+    return _build_conformance_report_record(
+        aicp_version=protocol_version,
+        suite_id=suite["suite_id"],
+        suite_version=suite["suite_version"],
+        passed=passed,
+        failures=failures,
+        compatibility_marks=marks,
+        degraded=False,
+        degraded_reasons=[],
+        skipped_checks=[],
+    )
 
 
 def run_suite(suite_path: Path) -> dict[str, Any]:
@@ -4877,18 +4781,17 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     suite_mark = suite.get("compatibility_mark")
     marks = [suite_mark] if (passed and not degraded and isinstance(suite_mark, str)) else []
 
-    return {
-        "aicp_version": protocol_version,
-        "suite_id": suite["suite_id"],
-        "suite_version": suite["suite_version"],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "passed": passed,
-        "failures": failures,
-        "compatibility_marks": marks,
-        "degraded": degraded,
-        "degraded_reasons": degraded_reasons,
-        "skipped_checks": skipped_checks,
-    }
+    return _build_conformance_report_record(
+        aicp_version=protocol_version,
+        suite_id=suite["suite_id"],
+        suite_version=suite["suite_version"],
+        passed=passed,
+        failures=failures,
+        compatibility_marks=marks,
+        degraded=degraded,
+        degraded_reasons=degraded_reasons,
+        skipped_checks=skipped_checks,
+    )
 
 
 def main() -> int:
@@ -4897,8 +4800,8 @@ def main() -> int:
     parser.add_argument("--out", required=True, help="Path to output report JSON")
     args = parser.parse_args()
 
-    suite_path = (ROOT / args.suite).resolve() if not Path(args.suite).is_absolute() else Path(args.suite)
-    out_path = (ROOT / args.out).resolve() if not Path(args.out).is_absolute() else Path(args.out)
+    suite_path = _resolve_repo_path(args.suite)
+    out_path = _resolve_repo_path(args.out)
 
     try:
         report = run_suite(suite_path)
@@ -4918,13 +4821,9 @@ def main() -> int:
     else:
         print("[WARN] jsonschema is not installed. Skipping conformance report schema validation.")
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    _write_report(out_path, report)
 
-    status = 'PASSED' if report['passed'] else 'FAILED'
-    if report.get('degraded'):
-        status = f"{status} (DEGRADED)"
-    print(f"Conformance {status}: {report['suite_id']} -> {_display_path(out_path)}")
+    print(_format_report_status("Conformance", report["suite_id"], out_path, bool(report["passed"]), bool(report.get("degraded"))))
     if report["failures"]:
         for f in report["failures"]:
             print(f" - [{f['test_id']}] {f['file']}:{f['line']} {f['message']}")

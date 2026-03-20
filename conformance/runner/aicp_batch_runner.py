@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -14,18 +13,15 @@ if str(RUNNER_DIR) not in sys.path:
 
 from aicp_conformance_runner import run_suite  # noqa: E402
 from aicp_profile_runner import run_profile  # noqa: E402
+from _runner_io import (  # noqa: E402
+    format_status_line as _io_format_status_line,
+    resolve_repo_path as _io_resolve_repo_path,
+    write_json_report as _io_write_json_report,
+)
 
 
 def _resolve_repo_path(path_like: str) -> Path:
-    p = Path(path_like)
-    return (ROOT / p).resolve() if not p.is_absolute() else p
-
-
-def _display_path(path: Path) -> str:
-    try:
-        return str(path.relative_to(ROOT))
-    except ValueError:
-        return str(path)
+    return _io_resolve_repo_path(path_like, root=ROOT)
 
 
 def _parse_pair(raw: str) -> tuple[str, str]:
@@ -38,8 +34,7 @@ def _parse_pair(raw: str) -> tuple[str, str]:
 
 
 def _write_report(out_path: Path, report: dict[str, Any]) -> None:
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    _io_write_json_report(out_path, report)
 
 
 def run_batch(suite_out: list[str], profile_out: list[str]) -> int:
@@ -55,10 +50,7 @@ def run_batch(suite_out: list[str], profile_out: list[str]) -> int:
 
         passed = bool(report.get("passed"))
         overall_ok = overall_ok and passed
-        status = "PASSED" if passed else "FAILED"
-        if report.get("degraded"):
-            status = f"{status} (DEGRADED)"
-        print(f"Conformance {status}: {report.get('suite_id')} -> {_display_path(out_path)}")
+        print(_io_format_status_line("Conformance", report.get("suite_id"), out_path, passed, bool(report.get("degraded")), root=ROOT))
 
     for raw in profile_out:
         profile_ref, out_ref = _parse_pair(raw)
@@ -70,10 +62,7 @@ def run_batch(suite_out: list[str], profile_out: list[str]) -> int:
 
         passed = bool(report.get("passed"))
         overall_ok = overall_ok and passed
-        status = "PASSED" if passed else "FAILED"
-        if report.get("degraded"):
-            status = f"{status} (DEGRADED)"
-        print(f"Profile conformance {status}: {report.get('profile_id')} -> {_display_path(out_path)}")
+        print(_io_format_status_line("Profile conformance", report.get("profile_id"), out_path, passed, bool(report.get("degraded")), root=ROOT))
 
     return 0 if overall_ok else 1
 

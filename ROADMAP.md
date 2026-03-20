@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-14_
+_Last updated: 2026-03-20_
 
 ## Current / Next
 
@@ -35,6 +35,13 @@ _Last updated: 2026-03-14_
 - **Shipped:** optional `AICP-COMMERCE-ACP@0.1` profile is now registry-backed with normative profile documentation and profile-runner catalog wiring.
 - **Shipped:** executable cross-extension commerce semantics suite (`CM_COMMERCE_ACP_PROFILE_0.1`) and deterministic profile fixtures cover CAPNEG selection, policy/approval gating, enforcement coherence, external-step anchoring, and PII-safe receipt handling.
 - **Next concrete step:** treat profile hardening/expansion as future optional profile revisions without redefining AICP as a payment/checkout protocol.
+
+### ✅ M48 — Runner modularity hardening
+- **Shipped:** conformance runner schema/pointer validator helpers are now split into a private helper module while `aicp_conformance_runner.py` remains the stable CLI and `run_suite(...)` entrypoint.
+- **Shipped:** compatibility shims keep the historical helper symbols available from `aicp_conformance_runner.py`, reducing missing-symbol regression risk for internal imports/tests.
+- **Shipped:** repo-path resolution, report writing, and status-line formatting are now centralized in a private runner IO helper and reused by the suite, batch, and profile CLIs without changing report semantics.
+- **Shipped:** suite/binding report-record assembly is now centralized in a private reporting helper instead of being duplicated inline in the monolithic runner.
+- **Next concrete step:** keep runner internals maintainable with similarly narrow extractions only when behavior-preserving coverage exists.
 
 ### ✅ M47 — Adjacent protocol integration patterns and ecosystem stack guidance
 - **Shipped:** ecosystem architecture guidance is now strengthened with clearer replace/complement/reference/orthogonal boundaries and operational “use AICP when / not when” selection guidance.
