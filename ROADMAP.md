@@ -33,6 +33,7 @@ _Last updated: 2026-03-20_
 - **Progress:** maintainer-facing interop review workflow guidance, submitter intake templates, and a small reviewer-summary helper now make it clearer how real external submissions should be reviewed before matrix publication without overstating ecosystem maturity.
 - **Progress:** a repo-owned dry-run submission package plus `make interop-dryrun` now rehearse package validation, reviewer summary output, and matrix regeneration without fabricating real external interoperability proof.
 - **Progress:** a concise UAT release pack and implementer checklist now package the already-shipped Adoption Core, pilot baseline, validation path, and defect-reporting entrypoints for pilot adopters without expanding protocol surface.
+- **Progress:** a dedicated UAT architecture/support freeze doc now defines the pilot-phase frozen baseline, bugfix/errata-only change envelope, and post-UAT deferral rule for findings that would widen semantics or move compatibility goalposts.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
 ### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)

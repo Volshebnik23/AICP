@@ -14,6 +14,7 @@ This directory now supports two shapes:
 - `docs/interop/AICP_Interop_Review_Workflow.md`
 - `docs/interop/AICP_Interop_Dry_Run_Workflow.md`
 - `docs/release/AICP_UAT_Release_Pack.md`
+- `docs/release/AICP_UAT_Architecture_Freeze.md`
 - `docs/release/AICP_UAT_Checklist.md`
 
 ## Public submission package shape
@@ -80,7 +81,7 @@ The builder copies the supplied reports into `<out-root>/<submission-id>/reports
 
 ## Validate and review interop intake artifacts
 
-Real external submissions should normally arrive as a PR that adds or updates `interop/submissions/<submission_id>/`. If a submitter needs preflight help before the PR, they can open the dedicated interop submission issue template first. Pilot adopters using the repo-backed UAT path should start with `docs/release/AICP_UAT_Release_Pack.md` so the interop workflow stays grounded in the conservative pilot baseline instead of implying every optional surface is required.
+Real external submissions should normally arrive as a PR that adds or updates `interop/submissions/<submission_id>/`. If a submitter needs preflight help before the PR, they can open the dedicated interop submission issue template first. Pilot adopters using the repo-backed UAT path should start with `docs/release/AICP_UAT_Release_Pack.md` and `docs/release/AICP_UAT_Architecture_Freeze.md` so the interop workflow stays grounded in the conservative pilot baseline and its frozen support envelope instead of implying every optional surface is required.
 
 Run:
 

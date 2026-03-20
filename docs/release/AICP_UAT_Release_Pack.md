@@ -1,6 +1,6 @@
 # AICP UAT Release Pack
 
-> **Purpose:** provide one concise, repo-backed package for pilot adopters evaluating the already-shipped AICP surface.
+> **Purpose:** provide one concise, repo-backed package for pilot adopters evaluating the already-shipped AICP surface. The companion freeze/support policy for this pilot phase lives in `docs/release/AICP_UAT_Architecture_Freeze.md`.
 
 ## 1) What this pack is for
 
@@ -29,7 +29,7 @@ This pack is **not**:
 - a claim that every shipped optional surface is required for pilot adoption,
 - a replacement for the canonical profile/spec/conformance documents.
 
-Use this pack as a release-facing entrypoint, not as a new source of protocol truth.
+Use this pack as a release-facing entrypoint, not as a new source of protocol truth. During UAT, read it together with `docs/release/AICP_UAT_Architecture_Freeze.md` so the pilot baseline is understood as a frozen support envelope rather than a moving target.
 
 ## 3) UAT scope in this repository
 
@@ -140,6 +140,8 @@ A concise, truthful pilot validation path is:
    - `make template-smoke`
 4. Run the full shipped verification bundle before publishing claims:
    - `make prepr`
+5. Treat pilot findings under the UAT freeze/support envelope:
+   - `docs/release/AICP_UAT_Architecture_Freeze.md`
 
 For interop evidence packaging/review:
 - `python scripts/validate_interop_submission_examples.py`
@@ -170,6 +172,8 @@ Good reports should say:
 - which command failed or produced confusing output,
 - whether the issue is Core, profile, interop packaging, docs, or tooling,
 - what evidence/transcript/report JSON is attached or reproducible.
+
+If resolving the finding would widen the baseline or redefine semantics, record it for explicit post-UAT review instead of treating it as an automatic in-UAT scope change.
 
 ## 10) What UAT does **not** mean
 

@@ -6,6 +6,7 @@ Use this checklist when starting or reviewing a pilot adoption.
 
 - [ ] Read `START_HERE_IMPLEMENTERS.md`.
 - [ ] Read `docs/release/AICP_UAT_Release_Pack.md`.
+- [ ] Read `docs/release/AICP_UAT_Architecture_Freeze.md`.
 - [ ] Read `docs/architecture/AICP_Adoption_Core_and_Tiers.md`.
 - [ ] Read `docs/profiles/Profile_Selection_Guide.md`.
 - [ ] Read the relevant interop docs in `docs/interop/` before publishing compatibility claims.
@@ -17,6 +18,7 @@ Use this checklist when starting or reviewing a pilot adoption.
 - [ ] Add `AICP-RESUMABLE-SESSIONS@0.1` only if continuity/resume/resync is required.
 - [ ] Add `AICP-DELEGATED-IDENTITY@0.1` only if delegated identity authority matters.
 - [ ] Treat all other shipped overlays/profiles as optional unless your pilot actually needs them.
+- [ ] Do not treat pilot feedback as permission to redefine the baseline during UAT; use the freeze policy.
 
 ## 3) Run the shipped commands
 
@@ -49,5 +51,6 @@ Use this checklist when starting or reviewing a pilot adoption.
 ## 6) Report findings
 
 - [ ] Open a GitHub issue or PR with exact commands, outputs, targeted profile/binding IDs, and reproduction notes.
+- [ ] If the fix would widen semantics or baseline scope, record it for explicit post-UAT review rather than treating it as an in-UAT baseline change.
 - [ ] If the finding is interop-evidence-related, include the relevant submission/review artifacts.
 - [ ] Keep claims and defect reports evidence-backed and narrow.

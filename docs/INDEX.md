@@ -22,12 +22,12 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - **Mediator / Host developer:** use [docs/guides/PLATFORM_BUILDERS_GUIDE.md](guides/PLATFORM_BUILDERS_GUIDE.md), [docs/playbooks/Session_Topologies.md](playbooks/Session_Topologies.md), and [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md).
 - **Enforcer / Moderator developer:** use [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md) and extension RFCs under [docs/extensions/](extensions/).
 - **Platform architect:** start with [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md) and [docs/adjacent/A2A_Integration_Pattern.md](adjacent/A2A_Integration_Pattern.md).
-- **Product / Solution architect:** start with [docs/architecture/AICP_Adoption_Core_and_Tiers.md](architecture/AICP_Adoption_Core_and_Tiers.md), then use [docs/release/AICP_UAT_Release_Pack.md](release/AICP_UAT_Release_Pack.md), [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md), and [docs/playbooks/](playbooks/).
+- **Product / Solution architect:** start with [docs/architecture/AICP_Adoption_Core_and_Tiers.md](architecture/AICP_Adoption_Core_and_Tiers.md), then use [docs/release/AICP_UAT_Release_Pack.md](release/AICP_UAT_Release_Pack.md), [docs/release/AICP_UAT_Architecture_Freeze.md](release/AICP_UAT_Architecture_Freeze.md), [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md), and [docs/playbooks/](playbooks/).
 
 ## Start here by goal
 
 - **I want to integrate AICP into an existing agent** → [START_HERE_IMPLEMENTERS.md](../START_HERE_IMPLEMENTERS.md), [templates/](../templates/).
-- **I want the pilot/UAT scope in one place** → [docs/release/AICP_UAT_Release_Pack.md](release/AICP_UAT_Release_Pack.md), [docs/release/AICP_UAT_Checklist.md](release/AICP_UAT_Checklist.md).
+- **I want the pilot/UAT scope in one place** → [docs/release/AICP_UAT_Release_Pack.md](release/AICP_UAT_Release_Pack.md), [docs/release/AICP_UAT_Architecture_Freeze.md](release/AICP_UAT_Architecture_Freeze.md), [docs/release/AICP_UAT_Checklist.md](release/AICP_UAT_Checklist.md).
 - **I want to host moderated AICP sessions** → [docs/playbooks/Brand_Reception_and_Support.md](playbooks/Brand_Reception_and_Support.md), [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md).
 - **I want to validate compatibility with a profile** → [docs/architecture/AICP_Adoption_Core_and_Tiers.md](architecture/AICP_Adoption_Core_and_Tiers.md), [docs/profiles/AICP_Profiles.md](profiles/AICP_Profiles.md), [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md).
 - **I want to publish or review interop evidence** → [docs/interop/AICP_Public_Interop_Corpus.md](interop/AICP_Public_Interop_Corpus.md), [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](interop/AICP_Compatibility_Claims_and_Evidence.md), [docs/interop/AICP_Interop_Submission_Playbook.md](interop/AICP_Interop_Submission_Playbook.md), [interop/README.md](../interop/README.md), then run `make interop-validate` / `make interop-matrix`.
@@ -79,6 +79,7 @@ Note: document/fixture/schema presence does not by itself mean a milestone is sh
 - Standard overview: [docs/overview/AICP_STANDARD_OVERVIEW.md](overview/AICP_STANDARD_OVERVIEW.md)
 - Adoption core and tiers: [docs/architecture/AICP_Adoption_Core_and_Tiers.md](architecture/AICP_Adoption_Core_and_Tiers.md)
 - UAT release pack: [docs/release/AICP_UAT_Release_Pack.md](release/AICP_UAT_Release_Pack.md)
+- UAT freeze policy: [docs/release/AICP_UAT_Architecture_Freeze.md](release/AICP_UAT_Architecture_Freeze.md)
 - UAT checklist: [docs/release/AICP_UAT_Checklist.md](release/AICP_UAT_Checklist.md)
 - Profiles: [docs/profiles/AICP_Profiles.md](profiles/AICP_Profiles.md)
 - Profile selection: [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md)

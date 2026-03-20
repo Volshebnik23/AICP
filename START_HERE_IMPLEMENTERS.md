@@ -1,6 +1,6 @@
 # Start Here for Implementers (AICP in < 1 hour)
 
-AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, chains, schemas, conformance). It is **not** a hosted chat/enforcer platform. For the public packaging model of what to adopt first, see `docs/architecture/AICP_Adoption_Core_and_Tiers.md`. For the pilot-facing package of what is in scope for UAT, see `docs/release/AICP_UAT_Release_Pack.md` and `docs/release/AICP_UAT_Checklist.md`.
+AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, chains, schemas, conformance). It is **not** a hosted chat/enforcer platform. For the public packaging model of what to adopt first, see `docs/architecture/AICP_Adoption_Core_and_Tiers.md`. For the pilot-facing package of what is in scope for UAT, see `docs/release/AICP_UAT_Release_Pack.md`, `docs/release/AICP_UAT_Architecture_Freeze.md`, and `docs/release/AICP_UAT_Checklist.md`.
 
 ## Choose your role
 
@@ -81,6 +81,7 @@ Use this guide to choose based on trust, privacy, and operational constraints:
 
 If you are evaluating AICP for a pilot or UAT-style rollout, use:
 - `docs/release/AICP_UAT_Release_Pack.md`
+- `docs/release/AICP_UAT_Architecture_Freeze.md`
 - `docs/release/AICP_UAT_Checklist.md`
 
 Then continue with the role-specific and quickstart paths below.
