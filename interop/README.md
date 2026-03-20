@@ -44,6 +44,7 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_BASE_0.1 \
   --suite-ref CT_CORE_0.1 \
   --disclosure "Fictional example package only; not a market-facing claim." \
+  --with-integrity \
   --validate
 ```
 
@@ -65,10 +66,13 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
   --suite-ref ENF_ENFORCEMENT_0.1 \
   --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --with-integrity \
   --validate
 ```
 
-The builder copies the supplied reports into `<out-root>/<submission-id>/reports/`, writes `submission.json`, and fails clearly instead of inventing missing pairwise metadata.
+The builder copies the supplied reports into `<out-root>/<submission-id>/reports/`, writes `submission.json`, and fails clearly instead of inventing missing pairwise metadata. Pass `--with-integrity` to also write `bundle-integrity.json` for the packaged files the builder actually emitted.
+
+`bundle-integrity.json` helps reviewers detect accidental drift or tampering after packaging. It does **not** prove signer identity, endorsement, or certification, and validators treat it as optional-but-strict: missing is allowed, present-and-invalid fails.
 
 ## Validate interop intake artifacts
 

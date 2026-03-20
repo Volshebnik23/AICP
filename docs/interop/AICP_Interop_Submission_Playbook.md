@@ -153,6 +153,7 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_BASE_0.1 \
   --suite-ref CT_CORE_0.1 \
   --disclosure "Fictional example package only; not a market-facing claim." \
+  --with-integrity \
   --validate
 ```
 
@@ -174,10 +175,28 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
   --suite-ref ENF_ENFORCEMENT_0.1 \
   --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --with-integrity \
   --validate
 ```
 
 The builder copies the supplied report files into the package's `reports/` folder, writes predictable `report_refs`, and refuses incomplete pairwise inputs instead of guessing missing peer metadata.
+
+## Optional bundle integrity manifest
+
+When you are ready to transport or review a package, prefer `--with-integrity` so the builder also writes `bundle-integrity.json`.
+
+Use that file to protect against:
+- accidental file drift after packaging,
+- mismatched copied reports inside the bundle,
+- silent tampering between package creation and review.
+
+Do **not** treat it as:
+- signer identity proof,
+- endorsement,
+- certification, or
+- a replacement for the claim semantics already expressed in `submission.json`.
+
+The validators verify `bundle-integrity.json` when present. A package without it is still acceptable; a package with it must match the actual bundled files.
 
 After building a package, validate and inspect it with:
 

@@ -149,6 +149,7 @@ interop-build-example:
 		--suite-ref PF_AICP_BASE_0.1 \
 		--suite-ref CT_CORE_0.1 \
 		--disclosure "Fictional example package only; not a market-facing claim." \
+		--with-integrity \
 		--validate
 
 demo-enforcement-behavioral:
