@@ -19,8 +19,13 @@ if str(SCRIPTS_DIR) not in sys.path:
 from interop_submission_validation import (  # noqa: E402
     ALLOWED_CLAIM_TYPES,
     ALLOWED_EVIDENCE_STATUSES,
+    INTEGRITY_FILENAME,
+    build_integrity_manifest,
     load_json,
     load_schema_and_registry,
+    load_integrity_schema_validator,
+    manifest_tracked_paths,
+    validate_bundle_integrity,
     validate_common_rules,
     validate_schema,
 )
@@ -53,6 +58,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--disclosure", action="append", dest="disclosures")
     parser.add_argument("--note")
     parser.add_argument("--generated-at", help="Override generated_at (RFC3339 / date-time)")
+    parser.add_argument(
+        "--with-integrity",
+        action="store_true",
+        help=f"Write {INTEGRITY_FILENAME} with digests for submission.json and copied package evidence",
+    )
     parser.add_argument(
         "--validate",
         action="store_true",
@@ -140,21 +150,48 @@ def _build_manifest(args: argparse.Namespace, report_refs: list[str], evidence_t
     return manifest
 
 
-def _write_package(package_dir: Path, report_paths: list[Path], manifest: dict[str, Any]) -> None:
+def _write_package(package_dir: Path, report_paths: list[Path], manifest: dict[str, Any], *, with_integrity: bool) -> None:
     reports_dir = package_dir / "reports"
     reports_dir.mkdir(parents=True, exist_ok=False)
     for report_path in report_paths:
         shutil.copy2(report_path, reports_dir / report_path.name)
-    (package_dir / "submission.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    submission_path = package_dir / "submission.json"
+    submission_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    if with_integrity:
+        tracked_paths = manifest_tracked_paths(manifest)
+        missing_paths = [tracked_path.as_posix() for tracked_path in tracked_paths if not (package_dir / tracked_path).is_file()]
+        if missing_paths:
+            raise FileNotFoundError(
+                "cannot generate bundle integrity manifest because required package files are missing: "
+                + ", ".join(missing_paths)
+            )
+        integrity_manifest = build_integrity_manifest(
+            package_dir,
+            manifest["submission_id"],
+            tracked_paths,
+            generated_at=manifest["generated_at"],
+        )
+        (package_dir / INTEGRITY_FILENAME).write_text(
+            json.dumps(integrity_manifest, indent=2) + "\n", encoding="utf-8"
+        )
 
 
 def _validate_package(package_dir: Path) -> list[str]:
     submission_path = package_dir / "submission.json"
     _, validator, known_profiles = load_schema_and_registry()
+    _, integrity_validator = load_integrity_schema_validator()
     manifest, errors = validate_schema(submission_path, validator)
     if manifest is None:
         return errors
     errors.extend(validate_common_rules(submission_path, manifest, known_profiles, require_existing_refs=True))
+    _, integrity_errors = validate_bundle_integrity(
+        package_dir,
+        manifest["submission_id"],
+        integrity_validator=integrity_validator,
+    )
+    errors.extend(integrity_errors)
     return errors
 
 
@@ -169,9 +206,7 @@ def main() -> int:
         )
     unknown_evidence_types = [value for value in evidence_types if value not in ALLOWED_EVIDENCE_TYPES]
     if unknown_evidence_types:
-        errors.append(
-            "evidence_type must be one of: " + ", ".join(sorted(ALLOWED_EVIDENCE_TYPES))
-        )
+        errors.append("evidence_type must be one of: " + ", ".join(sorted(ALLOWED_EVIDENCE_TYPES)))
     if errors:
         for error in errors:
             print(f"[FAIL] {error}")
@@ -187,7 +222,7 @@ def main() -> int:
 
     package_dir.mkdir(parents=True, exist_ok=False)
     try:
-        _write_package(package_dir, report_paths, manifest)
+        _write_package(package_dir, report_paths, manifest, with_integrity=args.with_integrity)
         if args.validate:
             validation_errors = _validate_package(package_dir)
             if validation_errors:
@@ -201,6 +236,8 @@ def main() -> int:
     print(f"[OK] wrote {package_dir / 'submission.json'}")
     for ref in report_refs:
         print(f"[OK] copied evidence -> {package_dir / ref}")
+    if args.with_integrity:
+        print(f"[OK] wrote {package_dir / INTEGRITY_FILENAME}")
     if args.validate:
         print(f"[OK] validated generated package: {package_dir}")
     return 0

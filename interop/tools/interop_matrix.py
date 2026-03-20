@@ -12,9 +12,9 @@ SCRIPTS_DIR = ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-from interop_submission_validation import (
+from interop_submission_validation import (  # noqa: E402
     RESERVED_DIRS,
-    classify_manifest_path,
+    classify_artifact_kind,
     load_json,
 )
 
@@ -41,6 +41,8 @@ def _add_warning(entry: dict[str, Any], code: str, message: str) -> None:
 
 
 def _entry_status(entry: dict[str, Any]) -> str:
+    if entry.get("artifact_kind") == "dry_run":
+        return "REHEARSAL" if entry.get("valid") else "INVALID"
     if not entry.get("valid"):
         return "INVALID"
     if entry.get("artifact_kind") == "template":
@@ -100,7 +102,7 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         entry["matrix_status"] = _entry_status(entry)
         return entry
 
-    artifact_kind = classify_manifest_path(submission_path)
+    artifact_kind = classify_artifact_kind(submission_path, manifest)
     entry["submission_id"] = manifest.get("submission_id")
     entry["implementation_id"] = manifest.get("implementation_id")
     entry["implementation"] = {
@@ -218,7 +220,7 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
     return entry
 
 
-def _collect_real_submissions(submissions_dir: Path) -> list[dict[str, Any]]:
+def _collect_realish_submissions(submissions_dir: Path) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     if not submissions_dir.exists() or not submissions_dir.is_dir():
         return entries
@@ -242,19 +244,29 @@ def _collect_instructional(root: Path) -> list[dict[str, Any]]:
 
 
 def build_matrix(submissions_dir: Path) -> dict[str, Any]:
-    real_entries = _collect_real_submissions(submissions_dir)
+    realish_entries = _collect_realish_submissions(submissions_dir)
+    real_entries = [
+        entry
+        for entry in realish_entries
+        if entry.get("artifact_kind") in {"submission", "legacy_submission"}
+    ]
+    dry_run_entries = [entry for entry in realish_entries if entry.get("artifact_kind") == "dry_run"]
     instructional_entries = _collect_instructional(submissions_dir / "examples") + _collect_instructional(submissions_dir / "templates")
     note = ""
-    if not real_entries and not instructional_entries:
+    if not real_entries and not dry_run_entries and not instructional_entries:
         note = "No submissions found."
+    elif not real_entries:
+        note = "No real external submissions are currently present; only rehearsal/instructional artifacts were found."
     return {
         "submissions_dir": str(submissions_dir),
         "columns": LEGACY_MARK_COLUMNS,
         "implementations": real_entries,
         "real_submissions": real_entries,
+        "dry_run_artifacts": dry_run_entries,
         "instructional_artifacts": instructional_entries,
         "note": note,
         "notes": [
+            "Dry-run artifacts are listed separately from real external submissions and from instructional examples/templates.",
             "Instructional artifacts are listed separately from real submissions.",
             "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
             "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
@@ -337,6 +349,13 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     else:
         lines.append("No real submission folders are currently present.")
 
+    lines.extend(["", "## Dry-run artifacts", ""])
+    dry_run_entries = matrix.get("dry_run_artifacts", [])
+    if dry_run_entries:
+        lines.extend(_render_rows(dry_run_entries, include_peer=True))
+    else:
+        lines.append("No dry-run rehearsal artifacts found.")
+
     lines.extend(["", "## Instructional artifacts", ""])
     instructional_entries = matrix.get("instructional_artifacts", [])
     if instructional_entries:
@@ -347,6 +366,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     lines.extend(["", "## Parsing notes", ""])
     for section_name, entries in (
         ("real submissions", real_entries),
+        ("dry-run artifacts", dry_run_entries),
         ("instructional artifacts", instructional_entries),
     ):
         if not entries:
@@ -363,35 +383,28 @@ def render_markdown(matrix: dict[str, Any]) -> str:
                 parts.append(
                     "; ".join(f"{w.get('warning_code')}: {w.get('warning_message')}" for w in entry["warnings"])
                 )
-            if parts:
-                lines.append(f"- `{label}`: {'; '.join(parts)}")
-            else:
-                lines.append(f"- `{label}`: no parsing errors or instructional warnings.")
-    lines.append("")
-    return "\n".join(lines)
+            if not parts:
+                parts.append("no parsing errors or instructional warnings")
+            lines.append(f"- `{label}`: {' | '.join(parts)}")
+    return "\n".join(lines) + "\n"
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Generate a markdown + JSON interop matrix.")
+    parser.add_argument("--submissions", type=Path, default=DEFAULT_SUBMISSIONS)
+    parser.add_argument("--out-md", type=Path, default=DEFAULT_OUT_MD)
+    parser.add_argument("--out-json", type=Path, default=DEFAULT_OUT_JSON)
+    return parser.parse_args()
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate AICP interop matrix artifacts from submission folders")
-    parser.add_argument("--submissions", default=str(DEFAULT_SUBMISSIONS), help="Submissions directory path")
-    parser.add_argument("--out-md", default=str(DEFAULT_OUT_MD), help="Markdown output path")
-    parser.add_argument("--out-json", default=str(DEFAULT_OUT_JSON), help="JSON output path")
-    args = parser.parse_args()
-
-    submissions_dir = Path(args.submissions)
-    out_md = Path(args.out_md)
-    out_json = Path(args.out_json)
-
+    args = _parse_args()
+    submissions_dir = args.submissions
     matrix = build_matrix(submissions_dir)
-    md = render_markdown(matrix)
-
-    out_md.parent.mkdir(parents=True, exist_ok=True)
-    out_json.parent.mkdir(parents=True, exist_ok=True)
-    out_md.write_text(md, encoding="utf-8")
-    out_json.write_text(json.dumps(matrix, indent=2) + "\n", encoding="utf-8")
-
-    print(f"Wrote {out_md}")
-    print(f"Wrote {out_json}")
+    args.out_md.write_text(render_markdown(matrix), encoding="utf-8")
+    args.out_json.write_text(json.dumps(matrix, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {args.out_md}")
+    print(f"Wrote {args.out_json}")
     return 0
 
 

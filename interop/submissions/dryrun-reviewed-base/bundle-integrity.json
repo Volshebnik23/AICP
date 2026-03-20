@@ -1,0 +1,20 @@
+{
+  "submission_id": "dryrun-reviewed-base",
+  "manifest_version": "1.0",
+  "generated_at": "2026-03-20T00:00:00Z",
+  "digest_alg": "sha256",
+  "files": [
+    {
+      "path": "submission.json",
+      "digest": "3643b614ea0bd687e255378dbc7f5a0e1c6e990e99cc796dd1f7944bfd573d10"
+    },
+    {
+      "path": "reports/report_profile_base.json",
+      "digest": "1c7c972058ae75a3a780af77fd3b45b266f78a024ecbd817349a408d7e953f35"
+    },
+    {
+      "path": "reports/report_core.json",
+      "digest": "fce2fc2ee3fe8001a61cc13928d2ebea19c76c89f6be7afef02dff3db7788bed"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -131,6 +131,16 @@ interop-validate:
 	$(PYTHON) scripts/validate_interop_submissions.py
 	$(MAKE) interop-matrix
 
+interop-review:
+	@: $${SUBMISSION:?set SUBMISSION=interop/submissions/<submission_id> (or an example/template path) }
+	$(PYTHON) scripts/validate_interop_submissions.py
+	$(PYTHON) scripts/review_interop_submission.py "$${SUBMISSION}"
+
+interop-dryrun:
+	$(PYTHON) scripts/validate_interop_submissions.py
+	$(PYTHON) scripts/review_interop_submission.py interop/submissions/dryrun-reviewed-base
+	$(MAKE) interop-matrix
+
 interop-matrix:
 	$(PYTHON) interop/tools/interop_matrix.py --submissions interop/submissions --out-md interop/INTEROP_MATRIX.md --out-json interop/interop_matrix.json
 
@@ -149,6 +159,7 @@ interop-build-example:
 		--suite-ref PF_AICP_BASE_0.1 \
 		--suite-ref CT_CORE_0.1 \
 		--disclosure "Fictional example package only; not a market-facing claim." \
+		--with-integrity \
 		--validate
 
 demo-enforcement-behavioral:

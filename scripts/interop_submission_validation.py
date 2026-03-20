@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -12,8 +13,12 @@ SUBMISSIONS_ROOT = ROOT / "interop" / "submissions"
 EXAMPLES_ROOT = SUBMISSIONS_ROOT / "examples"
 TEMPLATES_ROOT = SUBMISSIONS_ROOT / "templates"
 SCHEMA_PATH = SUBMISSIONS_ROOT / "submission.schema.json"
+INTEGRITY_SCHEMA_PATH = SUBMISSIONS_ROOT / "integrity.schema.json"
 PROFILE_REGISTRY_PATH = ROOT / "registry" / "aicp_profiles.json"
 RESERVED_DIRS = {"examples", "templates"}
+INTEGRITY_FILENAME = "bundle-integrity.json"
+INTEGRITY_MANIFEST_VERSION = "1.0"
+ALLOWED_DIGEST_ALGS = {"sha256": hashlib.sha256}
 ALLOWED_CLAIM_TYPES = {
     "implements_profile",
     "compatible_with_profile",
@@ -118,15 +123,11 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
 
     claim_type = manifest.get("claim_type")
     if isinstance(claim_type, str) and claim_type not in ALLOWED_CLAIM_TYPES:
-        errors.append(
-            "claim_type must be one of: " + ", ".join(sorted(ALLOWED_CLAIM_TYPES))
-        )
+        errors.append("claim_type must be one of: " + ", ".join(sorted(ALLOWED_CLAIM_TYPES)))
 
     evidence_status = manifest.get("evidence_status")
     if isinstance(evidence_status, str) and evidence_status not in ALLOWED_EVIDENCE_STATUSES:
-        errors.append(
-            "evidence_status must be one of: " + ", ".join(sorted(ALLOWED_EVIDENCE_STATUSES))
-        )
+        errors.append("evidence_status must be one of: " + ", ".join(sorted(ALLOWED_EVIDENCE_STATUSES)))
 
     allowed_scopes = {"self_attested", "pairwise"}
     claim_scope = manifest.get("claim_scope")
@@ -156,6 +157,42 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
     return errors
 
 
+def fallback_integrity_schema_errors(manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    required_fields = {"submission_id", "manifest_version", "generated_at", "digest_alg", "files"}
+    missing = sorted(required_fields - set(manifest.keys()))
+    for field in missing:
+        errors.append(f"missing required property '{field}'")
+
+    for field in ["submission_id", "manifest_version", "generated_at", "digest_alg"]:
+        value = manifest.get(field)
+        if value is not None and not isinstance(value, str):
+            errors.append(f"{field} must be a string")
+
+    files = manifest.get("files")
+    if files is None:
+        return errors
+    if not isinstance(files, list) or not files:
+        errors.append("files must be a non-empty array")
+        return errors
+
+    for index, entry in enumerate(files):
+        if not isinstance(entry, dict):
+            errors.append(f"files[{index}] must be an object")
+            continue
+        for field in ["path", "digest"]:
+            value = entry.get(field)
+            if not isinstance(value, str) or not value:
+                errors.append(f"files[{index}].{field} must be a non-empty string")
+        rel_path = entry.get("path")
+        if isinstance(rel_path, str) and (
+            rel_path.startswith("/") or rel_path.startswith("..") or "/../" in rel_path
+        ):
+            errors.append(f"files[{index}].path must be a relative non-traversing path: {rel_path}")
+
+    return errors
+
+
 def validate_schema(path: Path, validator: Any) -> tuple[dict[str, Any] | None, list[str]]:
     try:
         obj = load_json(path)
@@ -172,6 +209,22 @@ def validate_schema(path: Path, validator: Any) -> tuple[dict[str, Any] | None, 
     return obj, errors
 
 
+def validate_integrity_schema(path: Path, validator: Any) -> tuple[dict[str, Any] | None, list[str]]:
+    try:
+        obj = load_json(path)
+    except Exception as exc:
+        return None, [f"invalid JSON: {exc}"]
+
+    if not isinstance(obj, dict):
+        return None, ["integrity manifest must be a JSON object"]
+
+    if validator is None:
+        return obj, fallback_integrity_schema_errors(obj)
+
+    errors = [error.message for error in sorted(validator.iter_errors(obj), key=lambda err: list(err.path))]
+    return obj, errors
+
+
 def classify_manifest_path(path: Path) -> str:
     parent = path.parent.parent.name
     if parent == "examples":
@@ -179,6 +232,85 @@ def classify_manifest_path(path: Path) -> str:
     if parent == "templates":
         return "template"
     return "submission"
+
+
+def classify_artifact_kind(path: Path, manifest: dict[str, Any] | None = None) -> str:
+    kind = classify_manifest_path(path)
+    if kind != "submission":
+        return kind
+
+    identifiers: list[str] = [path.parent.name]
+    if isinstance(manifest, dict):
+        for field in ("submission_id", "implementation_id"):
+            value = manifest.get(field)
+            if isinstance(value, str):
+                identifiers.append(value)
+        for field in ("notes",):
+            value = manifest.get(field)
+            if isinstance(value, str):
+                identifiers.append(value)
+        for item in manifest.get("disclosures", []):
+            if isinstance(item, str):
+                identifiers.append(item)
+
+    lowered = " ".join(identifiers).lower()
+    if "dryrun-" in lowered or "dry-run" in lowered or "rehearsal" in lowered:
+        return "dry_run"
+    return kind
+
+
+def manifest_tracked_paths(manifest: dict[str, Any]) -> list[Path]:
+    tracked_paths = [Path("submission.json")]
+    for ref in manifest.get("report_refs", []):
+        if isinstance(ref, str) and ref:
+            tracked_paths.append(Path(ref))
+    return tracked_paths
+
+
+def compute_file_digest(path: Path, digest_alg: str = "sha256") -> str:
+    algorithm = ALLOWED_DIGEST_ALGS.get(digest_alg)
+    if algorithm is None:
+        raise ValueError(f"unsupported digest algorithm: {digest_alg}")
+    hasher = algorithm()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def build_integrity_manifest(
+    package_dir: Path,
+    submission_id: str,
+    tracked_paths: list[Path],
+    *,
+    generated_at: str,
+    digest_alg: str = "sha256",
+) -> dict[str, Any]:
+    if digest_alg not in ALLOWED_DIGEST_ALGS:
+        raise ValueError(f"unsupported digest algorithm: {digest_alg}")
+
+    files: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for tracked_path in tracked_paths:
+        relative_path = tracked_path.as_posix()
+        if relative_path in seen:
+            continue
+        seen.add(relative_path)
+        target = package_dir / tracked_path
+        if not target.exists() or not target.is_file():
+            raise FileNotFoundError(f"cannot add missing package file to integrity manifest: {relative_path}")
+        files.append({"path": relative_path, "digest": compute_file_digest(target, digest_alg)})
+
+    if not files:
+        raise ValueError("integrity manifest requires at least one tracked file")
+
+    return {
+        "submission_id": submission_id,
+        "manifest_version": INTEGRITY_MANIFEST_VERSION,
+        "generated_at": generated_at,
+        "digest_alg": digest_alg,
+        "files": files,
+    }
 
 
 def validate_common_rules(
@@ -198,9 +330,7 @@ def validate_common_rules(
         errors.append(f"claim_type must be one of: {', '.join(sorted(ALLOWED_CLAIM_TYPES))}")
 
     if evidence_status not in ALLOWED_EVIDENCE_STATUSES:
-        errors.append(
-            f"evidence_status must be one of: {', '.join(sorted(ALLOWED_EVIDENCE_STATUSES))}"
-        )
+        errors.append(f"evidence_status must be one of: {', '.join(sorted(ALLOWED_EVIDENCE_STATUSES))}")
 
     for profile_id in manifest.get("profile_ids", []):
         if isinstance(profile_id, str) and profile_id not in known_profiles:
@@ -251,6 +381,79 @@ def validate_common_rules(
     return errors
 
 
+def validate_bundle_integrity(
+    package_dir: Path,
+    submission_id: str,
+    *,
+    integrity_validator: Any | None = None,
+) -> tuple[str, list[str]]:
+    integrity_path = package_dir / INTEGRITY_FILENAME
+    if not integrity_path.exists():
+        return "absent", []
+    if not integrity_path.is_file():
+        return "invalid", [f"{INTEGRITY_FILENAME} exists but is not a file"]
+
+    manifest, errors = validate_integrity_schema(integrity_path, integrity_validator)
+    if manifest is None:
+        return "invalid", errors
+
+    manifest_submission_id = manifest.get("submission_id")
+    if manifest_submission_id != submission_id:
+        errors.append(
+            f"integrity manifest submission_id '{manifest_submission_id}' does not match submission.json '{submission_id}'"
+        )
+
+    manifest_version = manifest.get("manifest_version")
+    if manifest_version != INTEGRITY_MANIFEST_VERSION:
+        errors.append(
+            f"integrity manifest_version must be '{INTEGRITY_MANIFEST_VERSION}'"
+        )
+
+    digest_alg = manifest.get("digest_alg")
+    if digest_alg not in ALLOWED_DIGEST_ALGS:
+        errors.append(
+            "integrity digest_alg must be one of: " + ", ".join(sorted(ALLOWED_DIGEST_ALGS))
+        )
+        return "invalid", errors
+
+    seen_paths: set[str] = set()
+    for index, entry in enumerate(manifest.get("files", [])):
+        if not isinstance(entry, dict):
+            continue
+        relative_path = entry.get("path")
+        expected_digest = entry.get("digest")
+        if not isinstance(relative_path, str) or not isinstance(expected_digest, str):
+            continue
+        if relative_path in seen_paths:
+            errors.append(f"integrity files[{index}].path is duplicated: {relative_path}")
+            continue
+        seen_paths.add(relative_path)
+        if relative_path == INTEGRITY_FILENAME:
+            errors.append(f"integrity manifest must not track itself ({INTEGRITY_FILENAME})")
+            continue
+
+        target = package_dir / relative_path
+        if not target.exists():
+            errors.append(f"integrity manifest references missing file: {relative_path}")
+            continue
+        if not target.is_file():
+            errors.append(f"integrity manifest references non-file path: {relative_path}")
+            continue
+
+        actual_digest = compute_file_digest(target, digest_alg)
+        if actual_digest != expected_digest:
+            errors.append(
+                f"digest mismatch for {relative_path}: expected {expected_digest}, got {actual_digest}"
+            )
+
+    return ("valid", []) if not errors else ("invalid", errors)
+
+
 def load_schema_and_registry() -> tuple[dict[str, Any], Any, set[str]]:
     schema = load_json(SCHEMA_PATH)
     return schema, load_validator(schema), registry_profile_ids()
+
+
+def load_integrity_schema_validator() -> tuple[dict[str, Any], Any]:
+    schema = load_json(INTEGRITY_SCHEMA_PATH)
+    return schema, load_validator(schema)
