@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/submissions/submission.schema.json",
+  "title": "AICP Public Interop Submission Manifest",
+  "type": "object",
+  "required": [
+    "submission_id",
+    "implementation_id",
+    "implementation_version",
+    "profile_ids",
+    "evidence_types",
+    "evidence_status",
+    "report_refs",
+    "suite_refs",
+    "claim_type",
+    "claim_scope",
+    "generated_at"
+  ],
+  "properties": {
+    "submission_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "implementation_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "peer_implementation_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "implementation_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidence_types": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "conformance_report",
+          "profile_report",
+          "golden_transcript",
+          "pairwise_transcript",
+          "human_summary"
+        ]
+      }
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": [
+        "example",
+        "template",
+        "self_attested",
+        "reproducible",
+        "pairwise"
+      ]
+    },
+    "report_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/relativePath"
+      }
+    },
+    "suite_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "claim_type": {
+      "type": "string",
+      "enum": [
+        "implements_profile",
+        "compatible_with_profile",
+        "pairwise_interop"
+      ]
+    },
+    "claim_scope": {
+      "type": "string",
+      "enum": [
+        "self_attested",
+        "pairwise"
+      ]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "disclosures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\./).+"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "claim_type": {
+            "const": "pairwise_interop"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "peer_implementation_id"
+        ],
+        "properties": {
+          "claim_scope": {
+            "const": "pairwise"
+          },
+          "report_refs": {
+            "minItems": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence_status": {
+            "const": "pairwise"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "claim_type": {
+            "const": "pairwise_interop"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

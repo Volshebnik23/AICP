@@ -1,0 +1,26 @@
+{
+  "submission_id": "replace-with-submission-id",
+  "implementation_id": "replace-with-implementation-id",
+  "implementation_version": "replace-with-version",
+  "profile_ids": [
+    "AICP-BASE"
+  ],
+  "evidence_types": [
+    "profile_report"
+  ],
+  "evidence_status": "template",
+  "report_refs": [
+    "reports/replace-with-profile-report.json"
+  ],
+  "suite_refs": [
+    "PF_AICP_BASE_0.1"
+  ],
+  "claim_type": "compatible_with_profile",
+  "claim_scope": "self_attested",
+  "generated_at": "2026-03-20T00:00:00Z",
+  "notes": "Template only. Replace every placeholder field before publishing any external claim.",
+  "disclosures": [
+    "Template artifact only; not a real submission.",
+    "Update profile_ids, report_refs, suite_refs, and disclosures to match actual evidence."
+  ]
+}

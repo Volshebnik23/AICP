@@ -9,5 +9,156 @@
     "AICP-EXT-RESUME-0.1"
   ],
   "implementations": [],
-  "note": "No submissions found."
+  "real_submissions": [],
+  "instructional_artifacts": [
+    {
+      "folder": "pairwise_profile_interop",
+      "submission_id": "example-pairwise-profile-interop",
+      "implementation_id": "example-impl-a",
+      "implementation": {
+        "implementation_id": "example-impl-a",
+        "implementation_version": "0.1.0-example",
+        "peer_implementation_id": "example-impl-b",
+        "claim_type": "pairwise_interop",
+        "claim_scope": "pairwise",
+        "evidence_status": "example"
+      },
+      "peer_implementation_id": "example-impl-b",
+      "artifact_kind": "example",
+      "evidence_status": "example",
+      "claim_type": "pairwise_interop",
+      "claim_scope": "pairwise",
+      "profile_ids": [
+        "AICP-MEDIATED-BLOCKING"
+      ],
+      "reports": [
+        {
+          "path": "reports/report_profile_mediated_blocking_a.json",
+          "suite_id": null,
+          "profile_id": "AICP-MEDIATED-BLOCKING",
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Profile-MEDIATED-BLOCKING-0.1",
+            "AICP-EXT-ENFORCEMENT-0.1"
+          ]
+        },
+        {
+          "path": "reports/report_profile_mediated_blocking_b.json",
+          "suite_id": null,
+          "profile_id": "AICP-MEDIATED-BLOCKING",
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Profile-MEDIATED-BLOCKING-0.1",
+            "AICP-EXT-ENFORCEMENT-0.1"
+          ]
+        },
+        {
+          "path": "reports/pairwise_summary.json",
+          "suite_id": null,
+          "profile_id": "AICP-MEDIATED-BLOCKING",
+          "passed": null,
+          "compatibility_marks": []
+        }
+      ],
+      "compatibility_marks": [
+        "AICP-EXT-ENFORCEMENT-0.1",
+        "AICP-Profile-MEDIATED-BLOCKING-0.1"
+      ],
+      "computed_marks": [
+        "AICP-EXT-ENFORCEMENT-0.1",
+        "AICP-Profile-MEDIATED-BLOCKING-0.1"
+      ],
+      "errors": [],
+      "valid": true
+    },
+    {
+      "folder": "single_profile_claim",
+      "submission_id": "example-single-profile-claim",
+      "implementation_id": "example-impl-a",
+      "implementation": {
+        "implementation_id": "example-impl-a",
+        "implementation_version": "0.1.0-example",
+        "peer_implementation_id": null,
+        "claim_type": "implements_profile",
+        "claim_scope": "self_attested",
+        "evidence_status": "example"
+      },
+      "peer_implementation_id": null,
+      "artifact_kind": "example",
+      "evidence_status": "example",
+      "claim_type": "implements_profile",
+      "claim_scope": "self_attested",
+      "profile_ids": [
+        "AICP-BASE"
+      ],
+      "reports": [
+        {
+          "path": "reports/report_profile_base.json",
+          "suite_id": null,
+          "profile_id": "AICP-BASE",
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Profile-BASE-0.1",
+            "AICP-Core-0.1"
+          ]
+        },
+        {
+          "path": "reports/report_core.json",
+          "suite_id": "CT-CORE-0.1",
+          "profile_id": null,
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Core-0.1"
+          ]
+        }
+      ],
+      "compatibility_marks": [
+        "AICP-Core-0.1",
+        "AICP-Profile-BASE-0.1"
+      ],
+      "computed_marks": [
+        "AICP-Core-0.1",
+        "AICP-Profile-BASE-0.1"
+      ],
+      "errors": [],
+      "valid": true
+    },
+    {
+      "folder": "basic_submission",
+      "submission_id": "replace-with-submission-id",
+      "implementation_id": "replace-with-implementation-id",
+      "implementation": {
+        "implementation_id": "replace-with-implementation-id",
+        "implementation_version": "replace-with-version",
+        "peer_implementation_id": null,
+        "claim_type": "compatible_with_profile",
+        "claim_scope": "self_attested",
+        "evidence_status": "template"
+      },
+      "peer_implementation_id": null,
+      "artifact_kind": "template",
+      "evidence_status": "template",
+      "claim_type": "compatible_with_profile",
+      "claim_scope": "self_attested",
+      "profile_ids": [
+        "AICP-BASE"
+      ],
+      "reports": [],
+      "compatibility_marks": [],
+      "computed_marks": [],
+      "errors": [
+        {
+          "error_code": "MISSING_REPORT_REF_TARGET",
+          "error_message": "report_refs target missing: reports/replace-with-profile-report.json"
+        }
+      ],
+      "valid": false
+    }
+  ],
+  "note": "",
+  "notes": [
+    "Instructional artifacts are listed separately from real submissions.",
+    "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
+    "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only."
+  ]
 }
