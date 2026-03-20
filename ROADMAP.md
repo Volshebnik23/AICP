@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-14_
+_Last updated: 2026-03-20_
 
 ## Current / Next
 
@@ -35,6 +35,12 @@ _Last updated: 2026-03-14_
 - **Shipped:** optional `AICP-COMMERCE-ACP@0.1` profile is now registry-backed with normative profile documentation and profile-runner catalog wiring.
 - **Shipped:** executable cross-extension commerce semantics suite (`CM_COMMERCE_ACP_PROFILE_0.1`) and deterministic profile fixtures cover CAPNEG selection, policy/approval gating, enforcement coherence, external-step anchoring, and PII-safe receipt handling.
 - **Next concrete step:** treat profile hardening/expansion as future optional profile revisions without redefining AICP as a payment/checkout protocol.
+
+### ✅ M33 — Legal readiness pack for vendor adoption
+- **Shipped:** root legal pack now includes Apache-2.0 code licensing, CC BY 4.0 documentation/reference-artifact coverage, a minimal Apache-style `NOTICE`, canonical `DCO` text, and a top-level licensing map for vendor packaging clarity.
+- **Shipped:** contribution workflow now makes DCO-vs-CLA policy explicit, and repo front doors now link licensing, patent/IPR, and trademark/compatibility policy documents for vendor discoverability.
+- **Shipped:** conservative project-policy `PATENTS.md` and `TRADEMARKS.md` establish an explicit maintainer-reviewable patent posture and practical compatibility-claim guidance without changing protocol surface.
+- **Next concrete step:** keep legal-policy docs aligned with maintainer decisions and future release packaging changes without expanding protocol semantics.
 
 ### ✅ M47 — Adjacent protocol integration patterns and ecosystem stack guidance
 - **Shipped:** ecosystem architecture guidance is now strengthened with clearer replace/complement/reference/orthogonal boundaries and operational “use AICP when / not when” selection guidance.
