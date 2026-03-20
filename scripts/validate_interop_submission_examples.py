@@ -6,8 +6,10 @@ from __future__ import annotations
 from interop_submission_validation import (
     EXAMPLES_ROOT,
     TEMPLATES_ROOT,
+    load_integrity_schema_validator,
     load_schema_and_registry,
     manifest_paths,
+    validate_bundle_integrity,
     validate_common_rules,
     validate_schema,
 )
@@ -18,6 +20,7 @@ def main() -> int:
 
     try:
         _, validator, known_profiles = load_schema_and_registry()
+        _, integrity_validator = load_integrity_schema_validator()
     except Exception as exc:
         print(f"[FAIL] setup error: {exc}")
         return 1
@@ -50,10 +53,16 @@ def main() -> int:
                 require_existing_refs=path.parent.parent.name == "examples",
             )
         )
+        integrity_status, integrity_errors = validate_bundle_integrity(
+            path.parent,
+            manifest["submission_id"],
+            integrity_validator=integrity_validator,
+        )
+        errors.extend(integrity_errors)
         if errors:
             failures.extend([f"{path}: {error}" for error in errors])
         else:
-            print(f"[OK] {path}")
+            print(f"[OK] {path} (integrity={integrity_status})")
 
     if failures:
         for failure in failures:

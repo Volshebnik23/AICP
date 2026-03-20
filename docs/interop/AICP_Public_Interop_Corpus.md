@@ -62,6 +62,24 @@ A valid submission package should include:
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
+## Optional bundle integrity manifest
+
+Submission bundles may also carry `bundle-integrity.json`, validated against `interop/submissions/integrity.schema.json`.
+
+The integrity manifest is intentionally lightweight. It records:
+- `submission_id`,
+- a manifest version marker,
+- `generated_at`,
+- `digest_alg` (currently `sha256`), and
+- the tracked package files plus digest for each relative path.
+
+Use it to detect accidental drift or post-packaging tampering of the files actually present inside the bundle. Do **not** treat it as signer identity proof, maintainer endorsement, certification, or a replacement for the claim semantics already carried by `submission.json`.
+
+Validators treat the integrity manifest additively:
+- packages **without** `bundle-integrity.json` remain valid when the rest of the submission is valid,
+- packages **with** a valid integrity manifest get an extra file-integrity check,
+- packages **with** an invalid integrity manifest fail validation clearly.
+
 ## Example/template artifacts vs real external submissions
 
 The repository ships **examples** and **templates** to show packaging shape.
