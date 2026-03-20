@@ -6,6 +6,7 @@ AICP is a practical, implementable standard for governed multi-agent conversatio
 
 ➡️ **Docs front door:** [docs/INDEX.md](docs/INDEX.md)  
 ➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)
+➡️ **Legal / vendor-adoption pack:** [LICENSING.md](LICENSING.md), [PATENTS.md](PATENTS.md), [TRADEMARKS.md](TRADEMARKS.md), [CONTRIBUTING.md](CONTRIBUTING.md), [NOTICE](NOTICE)
 
 ## What problem AICP solves
 
@@ -84,6 +85,17 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - `make conformance-profiles`
 - `make template-smoke`
 - `make prepr`
+
+## Legal and vendor-adoption quick links
+
+- [LICENSING.md](LICENSING.md)
+- [LICENSE](LICENSE)
+- [LICENSE-docs](LICENSE-docs)
+- [NOTICE](NOTICE)
+- [PATENTS.md](PATENTS.md)
+- [TRADEMARKS.md](TRADEMARKS.md)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [DCO](DCO)
 
 ## Continue reading
 
