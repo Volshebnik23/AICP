@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
+.PHONY: validate interop-validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -12,6 +12,7 @@ validate:
 	$(PYTHON) scripts/validate_channel_properties_alignment.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
 	$(PYTHON) scripts/validate_interop_submission_examples.py
+	$(PYTHON) scripts/validate_interop_submissions.py
 	$(PYTHON) scripts/validate_productization_coverage.py
 	$(PYTHON) scripts/validate_errata.py
 	$(PYTHON) scripts/validate_planning_docs.py
@@ -124,6 +125,11 @@ conformance-ops:
 
 conformance-security:
 	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/security/SIG_SIGNED_PATHS_0.1.json --out conformance/report_security_signed_path.json
+
+interop-validate:
+	$(PYTHON) scripts/validate_interop_submission_examples.py
+	$(PYTHON) scripts/validate_interop_submissions.py
+	$(MAKE) interop-matrix
 
 interop-matrix:
 	$(PYTHON) interop/tools/interop_matrix.py --submissions interop/submissions --out-md interop/INTEROP_MATRIX.md --out-json interop/interop_matrix.json

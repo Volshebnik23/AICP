@@ -9,6 +9,7 @@
     "implementation_version",
     "profile_ids",
     "evidence_types",
+    "evidence_status",
     "report_refs",
     "suite_refs",
     "claim_type",
@@ -55,6 +56,16 @@
           "human_summary"
         ]
       }
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": [
+        "example",
+        "template",
+        "self_attested",
+        "reproducible",
+        "pairwise"
+      ]
     },
     "report_refs": {
       "type": "array",
@@ -127,6 +138,22 @@
           },
           "report_refs": {
             "minItems": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence_status": {
+            "const": "pairwise"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "claim_type": {
+            "const": "pairwise_interop"
           }
         }
       }

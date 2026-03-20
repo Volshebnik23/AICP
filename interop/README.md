@@ -10,6 +10,7 @@ This directory now supports two shapes:
 
 - `docs/interop/AICP_Public_Interop_Corpus.md`
 - `docs/interop/AICP_Compatibility_Claims_and_Evidence.md`
+- `docs/interop/AICP_Interop_Submission_Playbook.md`
 
 ## Public submission package shape
 
@@ -24,18 +25,20 @@ Examples and templates live under:
 
 They are instructional artifacts only and must not be presented as external market evidence.
 
-## Validate shipped examples/templates
+## Validate interop intake artifacts
 
 Run:
 
 ```bash
 python scripts/validate_interop_submission_examples.py
+python scripts/validate_interop_submissions.py
+make interop-validate
 ```
 
-This checks that shipped examples/templates:
-- conform to `interop/submissions/submission.schema.json`,
-- use shipped `profile_id` values from `registry/aicp_profiles.json`,
-- reference files correctly for example packages.
+This intake path checks that:
+- shipped examples/templates remain valid,
+- real submission folders validate separately from instructional artifacts,
+- shipped `profile_id` values and referenced files resolve correctly.
 
 ## Generate the interop matrix
 
@@ -49,4 +52,4 @@ This aggregates real submission folders under `interop/submissions/` into:
 - `interop/interop_matrix.json`
 - `interop/INTEROP_MATRIX.md`
 
-Reserved instructional directories such as `examples/` and `templates/` are ignored by the matrix generator.
+Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions.

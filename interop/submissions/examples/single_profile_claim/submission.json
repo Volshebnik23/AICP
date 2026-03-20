@@ -9,6 +9,7 @@
     "profile_report",
     "conformance_report"
   ],
+  "evidence_status": "example",
   "report_refs": [
     "reports/report_profile_base.json",
     "reports/report_core.json"

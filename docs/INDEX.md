@@ -29,7 +29,7 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - **I want to integrate AICP into an existing agent** → [START_HERE_IMPLEMENTERS.md](../START_HERE_IMPLEMENTERS.md), [templates/](../templates/).
 - **I want to host moderated AICP sessions** → [docs/playbooks/Brand_Reception_and_Support.md](playbooks/Brand_Reception_and_Support.md), [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md).
 - **I want to validate compatibility with a profile** → [docs/architecture/AICP_Adoption_Core_and_Tiers.md](architecture/AICP_Adoption_Core_and_Tiers.md), [docs/profiles/AICP_Profiles.md](profiles/AICP_Profiles.md), [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md).
-- **I want to publish or review interop evidence** → [docs/interop/AICP_Public_Interop_Corpus.md](interop/AICP_Public_Interop_Corpus.md), [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](interop/AICP_Compatibility_Claims_and_Evidence.md), [interop/README.md](../interop/README.md).
+- **I want to publish or review interop evidence** → [docs/interop/AICP_Public_Interop_Corpus.md](interop/AICP_Public_Interop_Corpus.md), [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](interop/AICP_Compatibility_Claims_and_Evidence.md), [docs/interop/AICP_Interop_Submission_Playbook.md](interop/AICP_Interop_Submission_Playbook.md), [interop/README.md](../interop/README.md).
 - **I want to understand architecture boundaries** → [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md).
 - **I want to design a real product around AICP** → [docs/playbooks/](playbooks/) + [docs/playbooks/Session_Topologies.md](playbooks/Session_Topologies.md).
 
@@ -86,5 +86,5 @@ Note: document/fixture/schema presence does not by itself mean a milestone is sh
 - Enforcement models: [docs/architecture/Enforcement_Models.md](architecture/Enforcement_Models.md)
 - Security best practices: [docs/security/SECURITY_BEST_PRACTICES.md](security/SECURITY_BEST_PRACTICES.md)
 - Repo-truth recovery workflow (RTSS): [docs/process/RTSS.md](process/RTSS.md)
-- Public interop corpus + claims guidance: [docs/interop/AICP_Public_Interop_Corpus.md](interop/AICP_Public_Interop_Corpus.md), [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](interop/AICP_Compatibility_Claims_and_Evidence.md)
+- Public interop corpus + claims guidance: [docs/interop/AICP_Public_Interop_Corpus.md](interop/AICP_Public_Interop_Corpus.md), [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](interop/AICP_Compatibility_Claims_and_Evidence.md), [docs/interop/AICP_Interop_Submission_Playbook.md](interop/AICP_Interop_Submission_Playbook.md)
 - Canonical flows: [docs/flows/AICP_Canonical_Flows.md](flows/AICP_Canonical_Flows.md)

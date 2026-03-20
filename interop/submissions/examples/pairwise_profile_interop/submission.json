@@ -11,6 +11,7 @@
     "pairwise_transcript",
     "human_summary"
   ],
+  "evidence_status": "example",
   "report_refs": [
     "reports/report_profile_mediated_blocking_a.json",
     "reports/report_profile_mediated_blocking_b.json",

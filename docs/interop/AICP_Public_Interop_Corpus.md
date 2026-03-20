@@ -23,7 +23,8 @@ The public interop corpus covers:
 The corpus is grounded in already-shipped repo artifacts such as:
 - `registry/aicp_profiles.json`,
 - conformance/profile report JSON emitted by repo runners,
-- repo documentation for compatibility claims and trademark boundaries.
+- repo documentation for compatibility claims and trademark boundaries,
+- the submitter onboarding guidance in `docs/interop/AICP_Interop_Submission_Playbook.md`.
 
 ## Explicit non-goals
 
@@ -98,6 +99,17 @@ Typical shape:
 - disclosures explaining whether the package contains both sides' evidence directly or references a shared joint report.
 
 Pairwise claims should be narrower than generic product claims. They should identify the exact peer and profile instead of implying broad ecosystem endorsement.
+
+## Claim / evidence status vocabulary
+
+Submission packages use a small controlled vocabulary in `evidence_status`:
+- `example`
+- `template`
+- `self_attested`
+- `reproducible`
+- `pairwise`
+
+This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement.
 
 ## Truthfulness expectations
 

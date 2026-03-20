@@ -8,6 +8,7 @@
   "evidence_types": [
     "profile_report"
   ],
+  "evidence_status": "template",
   "report_refs": [
     "reports/replace-with-profile-report.json"
   ],

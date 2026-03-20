@@ -6,6 +6,7 @@ This document defines the **truthful claim language** implementers should use wh
 
 It complements:
 - `docs/interop/AICP_Public_Interop_Corpus.md` for packaging guidance,
+- `docs/interop/AICP_Interop_Submission_Playbook.md` for submitter onboarding,
 - `docs/adoption/COMPATIBILITY_AND_BADGES.md` for marks/badge framing,
 - `TRADEMARKS.md` for trademark and endorsement boundaries.
 
@@ -56,6 +57,16 @@ The following are not acceptable public claim forms:
 - unsupported marks or logos not backed by shipped repo evidence,
 - claims that imply interoperability with unnamed third parties,
 - examples/templates presented as if they were real external market evidence.
+
+## Claim / evidence status vocabulary
+
+The interop intake path uses a small `evidence_status` vocabulary to describe package strength without implying endorsement: `example`, `template`, `self_attested`, `reproducible`, and `pairwise`.
+
+The status should stay aligned with the actual package:
+- `example` / `template` for instructional artifacts only,
+- `self_attested` for a real submitter-published claim package,
+- `reproducible` when repo-style conformance/profile outputs are actually included,
+- `pairwise` only for named peer interoperability claims.
 
 ## Evidence expectations by claim shape
 
