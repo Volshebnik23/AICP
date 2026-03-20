@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 import argparse
-import json
 import sys
-from functools import lru_cache
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -15,27 +13,20 @@ if str(RUNNER_DIR) not in sys.path:
     sys.path.insert(0, str(RUNNER_DIR))
 
 from aicp_conformance_runner import run_suite  # noqa: E402
-
-
-@lru_cache(maxsize=256)
-def _load_json_cached(path_str: str) -> Any:
-    return json.loads(Path(path_str).read_text(encoding="utf-8"))
+from _runner_context import load_json as _context_load_json  # noqa: E402
+from _runner_io import (  # noqa: E402
+    format_status_line as _io_format_status_line,
+    resolve_repo_path as _io_resolve_repo_path,
+    write_json_report as _io_write_json_report,
+)
 
 
 def load_json(path: Path) -> Any:
-    return _load_json_cached(str(path.resolve()))
+    return _context_load_json(path)
 
 
 def _resolve_repo_path(path_like: str) -> Path:
-    p = Path(path_like)
-    return (ROOT / p).resolve() if not p.is_absolute() else p
-
-
-def _format_out_path(out_path: Path) -> str:
-    try:
-        return str(out_path.relative_to(ROOT))
-    except ValueError:
-        return str(out_path)
+    return _io_resolve_repo_path(path_like, root=ROOT)
 
 
 def run_profile(profile_path: Path) -> dict[str, Any]:
@@ -122,16 +113,9 @@ def main() -> int:
         print(f"[FAIL] {exc}")
         return 1
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    _io_write_json_report(out_path, report)
 
-    status = 'PASSED' if report['passed'] else 'FAILED'
-    if report.get('degraded'):
-        status = f"{status} (DEGRADED)"
-    print(
-        f"Profile conformance {status}: "
-        f"{report['profile_id']} -> {_format_out_path(out_path)}"
-    )
+    print(_io_format_status_line("Profile conformance", report["profile_id"], out_path, bool(report["passed"]), bool(report.get("degraded")), root=ROOT))
     return 0 if report["passed"] else 1
 
 
