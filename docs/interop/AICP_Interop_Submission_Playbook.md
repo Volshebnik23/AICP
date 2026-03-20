@@ -205,15 +205,19 @@ python scripts/validate_interop_submissions.py
 make interop-matrix
 ```
 
-## Validation and matrix entrypoints
+## Validation, PR path, and matrix entrypoints
+
+Real external submissions should normally be opened as a PR that adds or updates `interop/submissions/<submission_id>/`. If you need maintainer guidance before that PR, open the interop submission intake issue template first.
 
 Before opening a submission PR, run:
 
 ```bash
 python scripts/validate_interop_submission_examples.py
 python scripts/validate_interop_submissions.py
+python scripts/review_interop_submission.py interop/submissions/<submission_id>
 make interop-validate
-make interop-matrix
 ```
+
+Only expect public matrix publication after maintainer review confirms that the package is a real submission, the claim remains truthful, and the validators/reviewer summary show it as publication-ready. Examples/templates stay instructional and separate from public external rows.
 
 Then run the broader repo verification commands required by the repo's one-command standard.

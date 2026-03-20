@@ -11,6 +11,7 @@ This directory now supports two shapes:
 - `docs/interop/AICP_Public_Interop_Corpus.md`
 - `docs/interop/AICP_Compatibility_Claims_and_Evidence.md`
 - `docs/interop/AICP_Interop_Submission_Playbook.md`
+- `docs/interop/AICP_Interop_Review_Workflow.md`
 
 ## Public submission package shape
 
@@ -74,13 +75,16 @@ The builder copies the supplied reports into `<out-root>/<submission-id>/reports
 
 `bundle-integrity.json` helps reviewers detect accidental drift or tampering after packaging. It does **not** prove signer identity, endorsement, or certification, and validators treat it as optional-but-strict: missing is allowed, present-and-invalid fails.
 
-## Validate interop intake artifacts
+## Validate and review interop intake artifacts
+
+Real external submissions should normally arrive as a PR that adds or updates `interop/submissions/<submission_id>/`. If a submitter needs preflight help before the PR, they can open the dedicated interop submission issue template first.
 
 Run:
 
 ```bash
 python scripts/validate_interop_submission_examples.py
 python scripts/validate_interop_submissions.py
+python scripts/review_interop_submission.py interop/submissions/<submission_id>
 make interop-validate
 ```
 
@@ -88,7 +92,11 @@ This intake path checks that:
 - shipped examples/templates remain valid,
 - real submission folders validate separately from instructional artifacts,
 - shipped `profile_id` values and referenced files resolve correctly,
+- optional integrity manifests are verified when present,
+- reviewer summaries can call out whether a package is matrix-eligible,
 - template placeholder references stay clearly instructional instead of being mistaken for failed real submissions.
+
+Maintainer workflow details live in `docs/interop/AICP_Interop_Review_Workflow.md`.
 
 ## Generate the interop matrix
 
@@ -103,3 +111,5 @@ This aggregates real submission folders under `interop/submissions/` into:
 - `interop/INTEROP_MATRIX.md`
 
 Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions. Template placeholder references appear as instructional warnings, while real missing evidence still renders as invalid.
+
+Regenerate the matrix after a real submission is reviewable and acceptable for publication. Do not publish invalid real submissions in the matrix, and do not treat examples/templates as external interoperability rows.

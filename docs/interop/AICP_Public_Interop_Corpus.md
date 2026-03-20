@@ -129,6 +129,14 @@ Submission packages use a small controlled vocabulary in `evidence_status`:
 
 This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement. Template packages may retain placeholder `report_refs`; those placeholders are treated as instructional warnings in the matrix, not as real-submission failures or compatibility proof.
 
+## Review and publication workflow
+
+Real external submissions should arrive as PRs that add or update `interop/submissions/<submission_id>/`. Maintainers review them using the shipped validators plus `docs/interop/AICP_Interop_Review_Workflow.md` and `scripts/review_interop_submission.py`.
+
+Only valid real submissions are eligible for public matrix publication. Examples/templates stay instructional and separate from real external rows, even when they validate as examples/templates.
+
+A valid package in the matrix remains evidence packaging only. Matrix presence does **not** mean endorsement, certification, or automatic trust.
+
 ## Truthfulness expectations
 
 Submission packages should use the claim language defined in:

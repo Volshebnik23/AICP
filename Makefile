@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
+.PHONY: validate interop-validate interop-review interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -130,6 +130,11 @@ interop-validate:
 	$(PYTHON) scripts/validate_interop_submission_examples.py
 	$(PYTHON) scripts/validate_interop_submissions.py
 	$(MAKE) interop-matrix
+
+interop-review:
+	@: $${SUBMISSION:?set SUBMISSION=interop/submissions/<submission_id> (or an example/template path) }
+	$(PYTHON) scripts/validate_interop_submissions.py
+	$(PYTHON) scripts/review_interop_submission.py "$${SUBMISSION}"
 
 interop-matrix:
 	$(PYTHON) interop/tools/interop_matrix.py --submissions interop/submissions --out-md interop/INTEROP_MATRIX.md --out-json interop/interop_matrix.json
