@@ -1,6 +1,7 @@
 # AICP Interop Matrix
 
 Generated from `interop/submissions/*` using `interop/tools/interop_matrix.py`.
+Reserved instructional directories (`examples/`, `templates/`) are ignored.
 
 > No submissions found.
 

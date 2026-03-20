@@ -47,6 +47,8 @@ Adoption framing reminder:
 
 > Use [docs/profiles/AICP_Profiles.md](AICP_Profiles.md) as the canonical profile definition source, and [AICP Adoption Core and Tiers](../architecture/AICP_Adoption_Core_and_Tiers.md) for the required-vs-optional packaging model.
 
+When you need to publish compatibility evidence for the selected profile, package it using the public interop corpus guidance in [docs/interop/AICP_Public_Interop_Corpus.md](../interop/AICP_Public_Interop_Corpus.md) and the claim-language rules in [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](../interop/AICP_Compatibility_Claims_and_Evidence.md).
+
 ## 5) Common profile combinations
 
 - **Reception + continuity:** `AICP-MEDIATED-BLOCKING@0.1` + `AICP-RESUMABLE-SESSIONS@0.1`
