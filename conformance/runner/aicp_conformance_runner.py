@@ -41,6 +41,7 @@ from _runner_io import (  # noqa: E402
     resolve_repo_path as _io_resolve_repo_path,
     write_json_report as _io_write_json_report,
 )
+from _runner_reporting import build_conformance_report as _build_conformance_report_record  # noqa: E402
 
 
 def load_json(path: Path) -> Any:
@@ -950,18 +951,17 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
     passed = not failures
     suite_mark = suite.get("compatibility_mark")
     marks = [suite_mark] if passed and isinstance(suite_mark, str) else (["AICP-BIND-MCP-0.1"] if passed else [])
-    return {
-        "aicp_version": protocol_version,
-        "suite_id": suite["suite_id"],
-        "suite_version": suite["suite_version"],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "passed": passed,
-        "failures": failures,
-        "compatibility_marks": marks,
-        "degraded": False,
-        "degraded_reasons": [],
-        "skipped_checks": [],
-    }
+    return _build_conformance_report_record(
+        aicp_version=protocol_version,
+        suite_id=suite["suite_id"],
+        suite_version=suite["suite_version"],
+        passed=passed,
+        failures=failures,
+        compatibility_marks=marks,
+        degraded=False,
+        degraded_reasons=[],
+        skipped_checks=[],
+    )
 
 
 def run_suite(suite_path: Path) -> dict[str, Any]:
@@ -4781,18 +4781,17 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     suite_mark = suite.get("compatibility_mark")
     marks = [suite_mark] if (passed and not degraded and isinstance(suite_mark, str)) else []
 
-    return {
-        "aicp_version": protocol_version,
-        "suite_id": suite["suite_id"],
-        "suite_version": suite["suite_version"],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "passed": passed,
-        "failures": failures,
-        "compatibility_marks": marks,
-        "degraded": degraded,
-        "degraded_reasons": degraded_reasons,
-        "skipped_checks": skipped_checks,
-    }
+    return _build_conformance_report_record(
+        aicp_version=protocol_version,
+        suite_id=suite["suite_id"],
+        suite_version=suite["suite_version"],
+        passed=passed,
+        failures=failures,
+        compatibility_marks=marks,
+        degraded=degraded,
+        degraded_reasons=degraded_reasons,
+        skipped_checks=skipped_checks,
+    )
 
 
 def main() -> int:
