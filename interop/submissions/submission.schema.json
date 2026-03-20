@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/submissions/submission.schema.json",
+  "title": "AICP Interop Submission Manifest",
+  "type": "object",
+  "required": [
+    "submission_id",
+    "implementation_id",
+    "implementation_version",
+    "profile_ids",
+    "claim_type",
+    "claim_scope",
+    "evidence_types",
+    "suite_refs",
+    "report_refs",
+    "generated_at",
+    "disclosures"
+  ],
+  "properties": {
+    "submission_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementation_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "claim_type": {
+      "type": "string",
+      "enum": [
+        "reproducibly_evidenced_profile_implementation",
+        "pairwise_profile_interop"
+      ]
+    },
+    "claim_scope": {
+      "type": "string",
+      "enum": [
+        "single_implementation",
+        "pairwise"
+      ]
+    },
+    "evidence_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "profile_report",
+          "suite_report",
+          "implementation_disclosure",
+          "pairwise_disclosure"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "suite_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "report_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "peer_implementation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "disclosures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "claim_type": {
+            "const": "pairwise_profile_interop"
+          }
+        },
+        "required": [
+          "claim_type"
+        ]
+      },
+      "then": {
+        "required": [
+          "peer_implementation_id"
+        ],
+        "properties": {
+          "claim_scope": {
+            "const": "pairwise"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "claim_type": {
+            "const": "reproducibly_evidenced_profile_implementation"
+          }
+        },
+        "required": [
+          "claim_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "claim_scope": {
+            "const": "single_implementation"
+          }
+        }
+      }
+    }
+  ]
+}

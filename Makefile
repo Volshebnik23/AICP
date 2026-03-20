@@ -11,6 +11,7 @@ validate:
 	$(PYTHON) scripts/validate_binding_case_instances.py
 	$(PYTHON) scripts/validate_channel_properties_alignment.py
 	$(PYTHON) scripts/validate_compatibility_marks.py
+	$(PYTHON) scripts/validate_interop_submission_examples.py
 	$(PYTHON) scripts/validate_productization_coverage.py
 	$(PYTHON) scripts/validate_errata.py
 	$(PYTHON) scripts/validate_planning_docs.py

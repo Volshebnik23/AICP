@@ -1,6 +1,6 @@
 # Profile Selection Guide
 
-This guide helps solution and platform teams select practical AICP profile targets.
+This guide helps solution and platform teams select practical AICP profile targets. Use [AICP Adoption Core and Tiers](../architecture/AICP_Adoption_Core_and_Tiers.md) as the packaging/framing layer, treat [AICP_Profiles.md](AICP_Profiles.md) as the canonical executable profile truth, and use [AICP Compatibility Claims and Evidence](../interop/AICP_Compatibility_Claims_and_Evidence.md) when packaging external interoperability claims.
 
 ## 1) Why profiles exist
 
@@ -14,7 +14,8 @@ For adjacent-layer placement (discovery/calling vs content governance), see [doc
 2. Define enforcement strictness (advisory, blocking, audited).
 3. Define continuity needs (resume/resync required or not).
 4. Pick the smallest profile that covers those needs.
-5. Add extensions only where your use case requires them.
+5. Prefer the smallest shipped profile that satisfies your need before adding optional governance overlays.
+6. Add extensions only where your use case requires them.
 
 ## 3) When to upgrade to stricter profiles
 
@@ -23,6 +24,11 @@ Upgrade profile strictness when you need:
 - resumable sessions and durable continuity,
 - delegated identity or workflow-governed orchestration,
 - broader bazaar/agent-media ecosystem capabilities.
+
+Adoption framing reminder:
+- **Adoption Core / Tier 0** starts with `AICP-BASE@0.1`.
+- **Tier 1** adds baseline mediation, continuity, or delegated identity only when needed.
+- **Tier 2+** overlays (policy semantics, approval, privacy, trust, enterprise, observability, commerce, execution interop) remain optional unless your deployment requires them.
 
 ## 4) Selection matrix
 
@@ -39,7 +45,7 @@ Upgrade profile strictness when you need:
 | Delegated identity sensitive interactions | `AICP-DELEGATED-IDENTITY@0.1` | Delegated identity profile set | SECURITY-ALERT, DISPUTES | Identity lifecycle and revocation infra |
 | Bazaar/agent-media channels | `AICP-BAZAAR-RECEPTION@0.1`, `AICP-AGENT-MEDIA@0.1` | Bazaar/media profile sets | Subscriptions/publications/inbox combinations | Channel infra, moderation, distribution controls |
 
-> Use [docs/profiles/AICP_Profiles.md](AICP_Profiles.md) as the canonical profile definition source.
+> Use [docs/profiles/AICP_Profiles.md](AICP_Profiles.md) as the canonical profile definition source, and [AICP Adoption Core and Tiers](../architecture/AICP_Adoption_Core_and_Tiers.md) for the required-vs-optional packaging model.
 
 ## 5) Common profile combinations
 

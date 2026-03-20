@@ -1,61 +1,10 @@
-# AICP Plugfest Interoperability Kit
+# AICP Interop Workspace
 
-AICP plugfest submissions let independent implementations prove interoperability using the same conformance and profile reports.
+This folder contains repo-local interoperability packaging artifacts.
 
-## What is an AICP plugfest?
-A plugfest is a coordinated interoperability exercise where multiple independent implementations run the same conformance/profile suites and submit machine-readable results for transparent comparison.
+Use these as the primary entry points:
+- `docs/interop/AICP_Public_Interop_Corpus.md`
+- `docs/interop/AICP_Compatibility_Claims_and_Evidence.md`
+- `interop/submissions/submission.schema.json`
 
-## Required submission artifacts
-Each submission must include:
-1. **Conformance/profile reports (JSON)** generated from this repository's runners.
-2. **Implementation manifest (`implementation.json`)** describing identity, language/runtime, version, and contact.
-
-## Generate reports locally
-From the repository root:
-
-```bash
-make conformance-all
-```
-
-This produces report files under `conformance/`, including `conformance/report*.json` outputs.
-
-## Submit results
-1. Create a folder:
-   - `interop/submissions/<implementation_id>/`
-2. Add implementation manifest:
-   - `interop/submissions/<implementation_id>/implementation.json`
-3. Add report files:
-   - `interop/submissions/<implementation_id>/reports/*.json`
-   - Copy selected `conformance/report*.json` outputs.
-4. Open a pull request.
-
-## Aggregation into the interop matrix
-Run:
-
-```bash
-make interop-matrix
-```
-
-This aggregates all submission manifests and reports into:
-- `interop/interop_matrix.json` (machine-readable)
-- `interop/INTEROP_MATRIX.md` (human-readable matrix)
-
-
-## Before you submit (checklist)
-- Run `make conformance-all` (optional but recommended).
-- Copy report JSON files into `interop/submissions/<implementation_id>/reports/`.
-- Ensure folder name equals `implementation.json:implementation_id`.
-- Run `make interop-matrix`.
-- Commit `interop/INTEROP_MATRIX.md` and `interop/interop_matrix.json` (CI will enforce freshness).
-
-## Errata workflow during plugfest
-If a finding indicates a protocol/spec/schema/conformance inconsistency, file it in [`ERRATA.md`](../ERRATA.md) and link the related submission PR.
-
-Use `ERRATA.md` for cross-implementation protocol/tooling inconsistencies (spec ambiguity, schema mismatch, conformance runner defect). Use a submission issue/PR comment for implementation-local packaging mistakes (missing report file, malformed manifest, wrong folder naming).
-
-When filing plugfest errata, include:
-- `implementation_id`
-- affected suite/profile id(s)
-- failing report path under `interop/submissions/<implementation_id>/reports/`
-- minimal transcript snippet or fixture reference when possible
-- cross-reference to the corresponding `interop/INTEROP_MATRIX.md` row and submission path
+The `INTEROP_MATRIX.md` / `interop_matrix.json` artifacts remain an optional aggregation view over real future submissions; reserved directories such as `interop/submissions/examples/` and `interop/submissions/templates/` are not treated as live submissions.

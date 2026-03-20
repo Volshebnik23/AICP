@@ -1,0 +1,30 @@
+{
+  "$schema": "../../submission.schema.json",
+  "submission_id": "example-single-profile-claim",
+  "implementation_id": "example-impl-a",
+  "implementation_version": "0.1.0-dev",
+  "profile_ids": [
+    "AICP-BASE@0.1"
+  ],
+  "claim_type": "reproducibly_evidenced_profile_implementation",
+  "claim_scope": "single_implementation",
+  "evidence_types": [
+    "profile_report",
+    "suite_report",
+    "implementation_disclosure"
+  ],
+  "suite_refs": [
+    "conformance/profiles/PF_AICP_BASE_0.1.json",
+    "conformance/core/CT_CORE_0.1.json"
+  ],
+  "report_refs": [
+    "conformance/report_profile_base.json",
+    "conformance/report.json"
+  ],
+  "generated_at": "2026-03-20T00:00:00Z",
+  "notes": "Example only. Uses local repo evidence artifacts to illustrate manifest shape.",
+  "disclosures": [
+    "Example package only; not a real market-facing implementation claim.",
+    "Compatibility language must stay tied to shipped profile IDs and machine-readable reports."
+  ]
+}

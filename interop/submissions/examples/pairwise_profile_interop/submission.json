@@ -1,0 +1,32 @@
+{
+  "$schema": "../../submission.schema.json",
+  "submission_id": "example-pairwise-base-interop",
+  "implementation_id": "example-impl-a",
+  "implementation_version": "0.1.0-dev",
+  "profile_ids": [
+    "AICP-BASE@0.1"
+  ],
+  "claim_type": "pairwise_profile_interop",
+  "claim_scope": "pairwise",
+  "evidence_types": [
+    "profile_report",
+    "suite_report",
+    "implementation_disclosure",
+    "pairwise_disclosure"
+  ],
+  "suite_refs": [
+    "conformance/profiles/PF_AICP_BASE_0.1.json",
+    "conformance/core/CT_CORE_0.1.json"
+  ],
+  "report_refs": [
+    "conformance/report_profile_base.json",
+    "conformance/report.json"
+  ],
+  "peer_implementation_id": "example-impl-b",
+  "generated_at": "2026-03-20T00:00:00Z",
+  "notes": "Example format only. Pairwise claims are narrower than ecosystem-wide compatibility claims.",
+  "disclosures": [
+    "Example package only; not a real interoperability result.",
+    "A pairwise claim does not imply ecosystem-wide compatibility or endorsement."
+  ]
+}

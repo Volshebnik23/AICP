@@ -9,6 +9,7 @@ from typing import Any
 DEFAULT_SUBMISSIONS = Path("interop/submissions")
 DEFAULT_OUT_MD = Path("interop/INTEROP_MATRIX.md")
 DEFAULT_OUT_JSON = Path("interop/interop_matrix.json")
+RESERVED_SUBMISSION_DIRS = {"examples", "templates"}
 
 MATRIX_MARK_COLUMNS = [
     "AICP-Profile-BASE-0.1",
@@ -33,6 +34,7 @@ def collect_submission(submission_dir: Path) -> dict[str, Any]:
     entry: dict[str, Any] = {
         "implementation_folder": submission_dir.name,
         "implementation": None,
+        "submission": None,
         "reports": [],
         "computed_marks": [],
         "profiles": {},
@@ -40,9 +42,22 @@ def collect_submission(submission_dir: Path) -> dict[str, Any]:
         "valid": True,
     }
 
+    submission_path = submission_dir / "submission.json"
     impl_path = submission_dir / "implementation.json"
-    if not impl_path.exists():
-        _add_error(entry, "MISSING_IMPLEMENTATION_MANIFEST", "missing implementation.json")
+    if submission_path.exists():
+        try:
+            submission_obj = _load_json(submission_path)
+            if not isinstance(submission_obj, dict):
+                _add_error(entry, "INVALID_SUBMISSION_MANIFEST", "submission.json must be an object")
+            else:
+                entry["submission"] = submission_obj
+                impl_id = submission_obj.get("implementation_id")
+                if not isinstance(impl_id, str):
+                    _add_error(entry, "INVALID_IMPLEMENTATION_ID", "submission.json implementation_id must be a string")
+        except Exception as exc:
+            _add_error(entry, "INVALID_SUBMISSION_MANIFEST", f"invalid submission.json: {exc}")
+    elif not impl_path.exists():
+        _add_error(entry, "MISSING_IMPLEMENTATION_MANIFEST", "missing submission.json or implementation.json")
     else:
         try:
             impl_obj = _load_json(impl_path)
@@ -62,31 +77,51 @@ def collect_submission(submission_dir: Path) -> dict[str, Any]:
         except Exception as exc:
             _add_error(entry, "INVALID_IMPLEMENTATION_MANIFEST", f"invalid implementation.json: {exc}")
 
-    reports_dir = submission_dir / "reports"
     marks: set[str] = set()
 
-    if not reports_dir.exists() or not reports_dir.is_dir():
-        _add_error(entry, "MISSING_REPORTS_DIR", "missing reports directory")
-    else:
-        for report_path in sorted(reports_dir.glob("*.json")):
-            report_rec: dict[str, Any] = {"path": str(report_path.relative_to(submission_dir))}
-            try:
-                report_obj = _load_json(report_path)
-                report_rec["suite_id"] = report_obj.get("suite_id")
-                report_rec["profile_id"] = report_obj.get("profile_id")
-                report_rec["passed"] = report_obj.get("passed")
-                report_rec["compatibility_marks"] = report_obj.get("compatibility_marks", [])
-                for mark in report_obj.get("compatibility_marks", []) or []:
-                    if isinstance(mark, str):
-                        marks.add(mark)
+    def ingest_report_path(report_path: Path, display_path: str) -> None:
+        report_rec: dict[str, Any] = {"path": display_path}
+        try:
+            report_obj = _load_json(report_path)
+            report_rec["suite_id"] = report_obj.get("suite_id")
+            report_rec["profile_id"] = report_obj.get("profile_id")
+            report_rec["passed"] = report_obj.get("passed")
+            report_rec["compatibility_marks"] = report_obj.get("compatibility_marks", [])
+            for mark in report_obj.get("compatibility_marks", []) or []:
+                if isinstance(mark, str):
+                    marks.add(mark)
 
-                profile_id = report_obj.get("profile_id")
-                if isinstance(profile_id, str):
-                    entry["profiles"][profile_id] = bool(report_obj.get("passed"))
-            except Exception as exc:
-                report_rec["error"] = f"malformed report: {exc}"
-                _add_error(entry, "MALFORMED_REPORT", f"{report_path.name}: malformed report")
-            entry["reports"].append(report_rec)
+            profile_id = report_obj.get("profile_id")
+            if isinstance(profile_id, str):
+                entry["profiles"][profile_id] = bool(report_obj.get("passed"))
+        except Exception as exc:
+            report_rec["error"] = f"malformed report: {exc}"
+            _add_error(entry, "MALFORMED_REPORT", f"{display_path}: malformed report")
+        entry["reports"].append(report_rec)
+
+    if entry["submission"] is not None:
+        report_refs = entry["submission"].get("report_refs")
+        if not isinstance(report_refs, list) or not report_refs:
+            _add_error(entry, "MISSING_REPORT_REFS", "submission.json must include non-empty report_refs")
+        else:
+            for report_ref in report_refs:
+                if not isinstance(report_ref, str):
+                    _add_error(entry, "INVALID_REPORT_REF", "submission.json report_refs entries must be strings")
+                    continue
+                report_path = Path(report_ref)
+                if not report_path.is_absolute():
+                    report_path = Path.cwd() / report_path
+                if not report_path.exists():
+                    _add_error(entry, "MISSING_REPORT_REF_TARGET", f"referenced report does not exist: {report_ref}")
+                    continue
+                ingest_report_path(report_path, report_ref)
+    else:
+        reports_dir = submission_dir / "reports"
+        if not reports_dir.exists() or not reports_dir.is_dir():
+            _add_error(entry, "MISSING_REPORTS_DIR", "missing reports directory")
+        else:
+            for report_path in sorted(reports_dir.glob("*.json")):
+                ingest_report_path(report_path, str(report_path.relative_to(submission_dir)))
 
     entry["computed_marks"] = sorted(marks) if entry["valid"] else []
     return entry
@@ -104,7 +139,7 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
         matrix["note"] = "Submissions directory not found."
         return matrix
 
-    dirs = sorted([d for d in submissions_dir.iterdir() if d.is_dir()])
+    dirs = sorted([d for d in submissions_dir.iterdir() if d.is_dir() and d.name not in RESERVED_SUBMISSION_DIRS])
     if not dirs:
         matrix["note"] = "No submissions found."
         return matrix
@@ -134,7 +169,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     lines.append("| " + " | ".join(["---"] * len(header)) + " |")
 
     for impl in matrix.get("implementations", []):
-        impl_meta = impl.get("implementation") or {}
+        impl_meta = impl.get("submission") or impl.get("implementation") or {}
         impl_name = impl_meta.get("implementation_id") or impl.get("implementation_folder") or "unknown"
         status = "VALID" if impl.get("valid") else "INVALID"
         marks = set(impl.get("computed_marks", [])) if impl.get("valid") else set()
@@ -151,7 +186,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
         lines.append("- No implementation submissions available.")
     else:
         for impl in matrix["implementations"]:
-            impl_meta = impl.get("implementation") or {}
+            impl_meta = impl.get("submission") or impl.get("implementation") or {}
             impl_name = impl_meta.get("implementation_id") or impl.get("implementation_folder") or "unknown"
             errors = impl.get("errors", [])
             if errors:
