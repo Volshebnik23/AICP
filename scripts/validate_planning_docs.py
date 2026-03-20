@@ -101,8 +101,10 @@ def main() -> int:
             )
 
     milestone_headers = [line.strip() for line in backlog.splitlines() if line.startswith("## M")]
-    if not milestone_headers:
-        errors.append("AICP_Backlog must include at least one remaining milestone section")
+    if not milestone_headers and "no remaining in-repo protocol backlog milestones" not in backlog.lower():
+        errors.append(
+            "AICP_Backlog must include at least one remaining milestone section or explicitly state that no remaining in-repo protocol backlog milestones exist"
+        )
 
     for section in MILESTONE_SECTION_RE.findall(backlog):
         if "**Status:** Delivered" in section:
