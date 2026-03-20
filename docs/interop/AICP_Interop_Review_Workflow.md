@@ -51,6 +51,8 @@ If a submitter needs help before opening the PR, they may open the dedicated int
 
 That issue is a preflight/intake aid only. It does **not** publish evidence and it does **not** place the submission into the matrix.
 
+For a repo-owned rehearsal of this same lifecycle, see `docs/interop/AICP_Interop_Dry_Run_Workflow.md`. The dry-run path is for operational practice only, not external evidence publication.
+
 ## Maintainer review workflow
 
 1. **Confirm this is a real submission path.**

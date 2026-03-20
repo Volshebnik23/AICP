@@ -8,6 +8,7 @@ from pathlib import Path
 from interop_submission_validation import (
     RESERVED_DIRS,
     SUBMISSIONS_ROOT,
+    classify_artifact_kind,
     load_integrity_schema_validator,
     load_schema_and_registry,
     validate_bundle_integrity,
@@ -67,10 +68,11 @@ def main() -> int:
             integrity_validator=integrity_validator,
         )
         errors.extend(integrity_errors)
+        artifact_kind = classify_artifact_kind(submission_path, manifest)
         if errors:
             failures.extend([f"{submission_path}: {error}" for error in errors])
         else:
-            print(f"[OK] {submission_path} (integrity={integrity_status})")
+            print(f"[OK] {submission_path} (kind={artifact_kind}, integrity={integrity_status})")
 
     if failures:
         for failure in failures:

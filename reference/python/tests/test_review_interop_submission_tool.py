@@ -92,3 +92,14 @@ def test_review_interop_submission_reports_real_submission_as_matrix_eligible(tm
     assert summary["integrity"]["status"] == "valid"
     assert summary["matrix_publication_possible"] is True
     assert "eligible for matrix publication" in summary["matrix_publication_reason"]
+
+
+def test_review_interop_submission_root_lists_dry_run_and_examples() -> None:
+    result = _run_review("interop/submissions", "--json")
+    assert result.returncode == 0, result.stderr
+    summaries = json.loads(result.stdout)
+
+    assert isinstance(summaries, list)
+    kinds = {summary["submission_id"]: summary["kind"] for summary in summaries}
+    assert kinds["dryrun-reviewed-base"] == "dry_run"
+    assert kinds["example-single-profile-claim"] == "example"

@@ -12,6 +12,7 @@ This directory now supports two shapes:
 - `docs/interop/AICP_Compatibility_Claims_and_Evidence.md`
 - `docs/interop/AICP_Interop_Submission_Playbook.md`
 - `docs/interop/AICP_Interop_Review_Workflow.md`
+- `docs/interop/AICP_Interop_Dry_Run_Workflow.md`
 
 ## Public submission package shape
 
@@ -98,6 +99,8 @@ This intake path checks that:
 
 Maintainer workflow details live in `docs/interop/AICP_Interop_Review_Workflow.md`.
 
+For repo-owned rehearsal of the full path, use the dry-run package at `interop/submissions/dryrun-reviewed-base/` together with `make interop-dryrun`. That path is intentionally fictional and stays separate from both examples/templates and real external submissions.
+
 ## Generate the interop matrix
 
 Run:
@@ -113,3 +116,5 @@ This aggregates real submission folders under `interop/submissions/` into:
 Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions. Template placeholder references appear as instructional warnings, while real missing evidence still renders as invalid.
 
 Regenerate the matrix after a real submission is reviewable and acceptable for publication. Do not publish invalid real submissions in the matrix, and do not treat examples/templates as external interoperability rows.
+
+Dry-run artifacts appear in a separate rehearsal section so maintainers can rehearse the flow without implying real external ecosystem proof.

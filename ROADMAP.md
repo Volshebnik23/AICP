@@ -31,6 +31,7 @@ _Last updated: 2026-03-20_
 - **Progress:** a small interop submission builder now assembles `submission.json` plus copied `reports/` evidence from explicit CLI inputs, helping external implementers package truthful submissions without inventing metadata.
 - **Progress:** optional `bundle-integrity.json` support now seals packaged submission files with SHA-256 digests so copied evidence bundles are easier to transport and review without silent drift, while remaining explicitly non-signature and non-endorsement metadata.
 - **Progress:** maintainer-facing interop review workflow guidance, submitter intake templates, and a small reviewer-summary helper now make it clearer how real external submissions should be reviewed before matrix publication without overstating ecosystem maturity.
+- **Progress:** a repo-owned dry-run submission package plus `make interop-dryrun` now rehearse package validation, reviewer summary output, and matrix regeneration without fabricating real external interoperability proof.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
 ### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)

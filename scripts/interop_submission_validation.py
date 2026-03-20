@@ -234,6 +234,31 @@ def classify_manifest_path(path: Path) -> str:
     return "submission"
 
 
+def classify_artifact_kind(path: Path, manifest: dict[str, Any] | None = None) -> str:
+    kind = classify_manifest_path(path)
+    if kind != "submission":
+        return kind
+
+    identifiers: list[str] = [path.parent.name]
+    if isinstance(manifest, dict):
+        for field in ("submission_id", "implementation_id"):
+            value = manifest.get(field)
+            if isinstance(value, str):
+                identifiers.append(value)
+        for field in ("notes",):
+            value = manifest.get(field)
+            if isinstance(value, str):
+                identifiers.append(value)
+        for item in manifest.get("disclosures", []):
+            if isinstance(item, str):
+                identifiers.append(item)
+
+    lowered = " ".join(identifiers).lower()
+    if "dryrun-" in lowered or "dry-run" in lowered or "rehearsal" in lowered:
+        return "dry_run"
+    return kind
+
+
 def manifest_tracked_paths(manifest: dict[str, Any]) -> list[Path]:
     tracked_paths = [Path("submission.json")]
     for ref in manifest.get("report_refs", []):

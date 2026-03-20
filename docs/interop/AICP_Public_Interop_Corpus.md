@@ -133,7 +133,7 @@ This vocabulary is about package strength/scope only. It is not a certification 
 
 Real external submissions should arrive as PRs that add or update `interop/submissions/<submission_id>/`. Maintainers review them using the shipped validators plus `docs/interop/AICP_Interop_Review_Workflow.md` and `scripts/review_interop_submission.py`.
 
-Only valid real submissions are eligible for public matrix publication. Examples/templates stay instructional and separate from real external rows, even when they validate as examples/templates.
+Only valid real submissions are eligible for public matrix publication. Examples/templates stay instructional and separate from real external rows, even when they validate as examples/templates. Repo-owned dry-run artifacts also stay separate from real external rows and are rendered only as rehearsal infrastructure.
 
 A valid package in the matrix remains evidence packaging only. Matrix presence does **not** mean endorsement, certification, or automatic trust.
 

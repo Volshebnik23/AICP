@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Print a concise reviewer summary for one interop submission folder."""
+"""Print a concise reviewer summary for one interop submission folder or tree."""
 
 from __future__ import annotations
 
@@ -10,7 +10,8 @@ from typing import Any
 
 from interop_submission_validation import (
     INTEGRITY_FILENAME,
-    classify_manifest_path,
+    RESERVED_DIRS,
+    classify_artifact_kind,
     load_integrity_schema_validator,
     load_schema_and_registry,
     validate_bundle_integrity,
@@ -23,8 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Summarize one interop submission folder for maintainer review.")
-    parser.add_argument("submission", help="Path to a submission folder or submission.json")
+    parser = argparse.ArgumentParser(description="Summarize one interop submission folder or submission tree for review.")
+    parser.add_argument("submission", help="Path to a submission folder, submission.json, or submissions root")
     parser.add_argument("--json", action="store_true", help="Emit the review summary as JSON")
     return parser.parse_args()
 
@@ -76,11 +77,10 @@ def _review_summary(path: Path) -> dict[str, Any]:
     manifest, errors = validate_schema(submission_path, validator)
     if manifest is None:
         summary["errors"].extend(errors)
-        summary["kind"] = classify_manifest_path(submission_path)
         summary["matrix_publication_reason"] = "submission manifest is invalid"
         return summary
 
-    kind = classify_manifest_path(submission_path)
+    kind = classify_artifact_kind(submission_path, manifest)
     require_existing_refs = kind != "template"
     common_errors = validate_common_rules(
         submission_path,
@@ -109,7 +109,9 @@ def _review_summary(path: Path) -> dict[str, Any]:
 
     all_errors = [*errors, *common_errors, *integrity_errors]
     matrix_ok = kind == "submission" and not all_errors
-    if kind != "submission":
+    if kind == "dry_run":
+        matrix_reason = "dry-run packages are rehearsal-only and stay separate from real external matrix rows"
+    elif kind != "submission":
         matrix_reason = f"{kind} packages are instructional and stay separate from real external matrix rows"
     elif all_errors:
         matrix_reason = "submission requires fixes before public matrix publication"
@@ -139,6 +141,26 @@ def _review_summary(path: Path) -> dict[str, Any]:
         }
     )
     return summary
+
+
+def _expand_target(path: Path) -> list[Path]:
+    if path.is_file():
+        return [path]
+    manifest_path = path / "submission.json"
+    if manifest_path.exists():
+        return [path]
+    if not path.is_dir():
+        return [path]
+
+    targets: list[Path] = []
+    for child in sorted(p for p in path.iterdir() if p.is_dir() and not p.name.startswith('.')):
+        if child.name in RESERVED_DIRS:
+            targets.extend(sorted(grandchild for grandchild in child.glob('*/submission.json')))
+            continue
+        child_manifest = child / "submission.json"
+        if child_manifest.exists():
+            targets.append(child)
+    return targets or [path]
 
 
 def _print_text(summary: dict[str, Any]) -> None:
@@ -176,12 +198,19 @@ def _print_text(summary: dict[str, Any]) -> None:
 
 def main() -> int:
     args = _parse_args()
-    summary = _review_summary(_resolve_submission_path(args.submission))
+    targets = _expand_target(_resolve_submission_path(args.submission))
+    summaries = [_review_summary(target) for target in targets]
+
     if args.json:
-        print(json.dumps(summary, indent=2))
+        payload: Any = summaries[0] if len(summaries) == 1 else summaries
+        print(json.dumps(payload, indent=2))
     else:
-        _print_text(summary)
-    return 0 if summary.get("validation_status") == "valid" else 1
+        for index, summary in enumerate(summaries):
+            if index:
+                print("\n---\n")
+            _print_text(summary)
+
+    return 0 if all(summary.get("validation_status") == "valid" for summary in summaries) else 1
 
 
 if __name__ == "__main__":

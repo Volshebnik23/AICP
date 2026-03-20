@@ -220,4 +220,6 @@ make interop-validate
 
 Only expect public matrix publication after maintainer review confirms that the package is a real submission, the claim remains truthful, and the validators/reviewer summary show it as publication-ready. Examples/templates stay instructional and separate from public external rows.
 
+If you want to rehearse the maintainer flow without creating fake external proof, use the repo-owned dry run documented in `docs/interop/AICP_Interop_Dry_Run_Workflow.md` and exercised by `make interop-dryrun`.
+
 Then run the broader repo verification commands required by the repo's one-command standard.
