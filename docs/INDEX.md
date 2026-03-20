@@ -60,6 +60,16 @@ Note: document/fixture/schema presence does not by itself mean a milestone is sh
 - [Tool Catalog Pinning Cookbook](playbooks/Tool_Catalog_Pinning_Cookbook.md)
 - [Context Hub Fresh Content Cookbook](playbooks/Context_Hub_Fresh_Content_Cookbook.md)
 
+## Legal and vendor-adoption pack
+
+- License map: [LICENSING.md](../LICENSING.md)
+- Code license: [LICENSE](../LICENSE)
+- Docs/reference-artifact license: [LICENSE-docs](../LICENSE-docs)
+- NOTICE: [NOTICE](../NOTICE)
+- Patent/IPR posture: [PATENTS.md](../PATENTS.md)
+- Trademark / compatibility policy: [TRADEMARKS.md](../TRADEMARKS.md)
+- Contribution policy and DCO workflow: [CONTRIBUTING.md](../CONTRIBUTING.md), [DCO](../DCO)
+
 ## Core docs map
 
 - Repo front door: [README.md](../README.md)
