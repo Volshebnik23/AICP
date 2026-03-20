@@ -10,6 +10,62 @@
   ],
   "implementations": [],
   "real_submissions": [],
+  "dry_run_artifacts": [
+    {
+      "folder": "dryrun-reviewed-base",
+      "submission_id": "dryrun-reviewed-base",
+      "implementation_id": "dryrun-impl-a",
+      "implementation": {
+        "implementation_id": "dryrun-impl-a",
+        "implementation_version": "0.1.0-dryrun",
+        "peer_implementation_id": null,
+        "claim_type": "implements_profile",
+        "claim_scope": "self_attested",
+        "evidence_status": "reproducible"
+      },
+      "peer_implementation_id": null,
+      "artifact_kind": "dry_run",
+      "evidence_status": "reproducible",
+      "claim_type": "implements_profile",
+      "claim_scope": "self_attested",
+      "profile_ids": [
+        "AICP-BASE"
+      ],
+      "reports": [
+        {
+          "path": "reports/report_profile_base.json",
+          "suite_id": null,
+          "profile_id": "AICP-BASE",
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Profile-BASE-0.1",
+            "AICP-Core-0.1"
+          ]
+        },
+        {
+          "path": "reports/report_core.json",
+          "suite_id": "CT-CORE-0.1",
+          "profile_id": null,
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Core-0.1"
+          ]
+        }
+      ],
+      "compatibility_marks": [
+        "AICP-Core-0.1",
+        "AICP-Profile-BASE-0.1"
+      ],
+      "computed_marks": [
+        "AICP-Core-0.1",
+        "AICP-Profile-BASE-0.1"
+      ],
+      "errors": [],
+      "warnings": [],
+      "valid": true,
+      "matrix_status": "REHEARSAL"
+    }
+  ],
   "instructional_artifacts": [
     {
       "folder": "pairwise_profile_interop",
@@ -161,8 +217,9 @@
       "matrix_status": "INSTRUCTIONAL"
     }
   ],
-  "note": "",
+  "note": "No real external submissions are currently present; only rehearsal/instructional artifacts were found.",
   "notes": [
+    "Dry-run artifacts are listed separately from real external submissions and from instructional examples/templates.",
     "Instructional artifacts are listed separately from real submissions.",
     "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
     "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",

@@ -1,0 +1,99 @@
+name: Interop Submission Intake
+description: Preflight or intake issue for a real external interoperability submission.
+title: "Interop Submission: "
+labels:
+  - interop
+body:
+  - type: input
+    id: submission_id
+    attributes:
+      label: submission_id
+      description: Folder/manifest submission identifier.
+    validations:
+      required: true
+
+  - type: input
+    id: implementation_id
+    attributes:
+      label: implementation_id
+      description: Submitting implementation identifier.
+    validations:
+      required: true
+
+  - type: textarea
+    id: profile_ids
+    attributes:
+      label: profile_id(s)
+      description: One or more shipped AICP profile IDs.
+      placeholder: |
+        AICP-BASE
+        AICP-MEDIATED-BLOCKING
+    validations:
+      required: true
+
+  - type: input
+    id: claim_type
+    attributes:
+      label: claim_type
+      description: implements_profile / compatible_with_profile / pairwise_interop.
+    validations:
+      required: true
+
+  - type: input
+    id: claim_scope
+    attributes:
+      label: claim_scope
+      description: self_attested or pairwise.
+    validations:
+      required: true
+
+  - type: input
+    id: evidence_status
+    attributes:
+      label: evidence_status
+      description: self_attested / reproducible / pairwise.
+    validations:
+      required: true
+
+  - type: input
+    id: peer_implementation_id
+    attributes:
+      label: peer_implementation_id
+      description: Required for pairwise submissions; otherwise leave blank.
+
+  - type: textarea
+    id: disclosures
+    attributes:
+      label: disclosures
+      description: Truthfulness/limit disclosures that keep the claim narrow.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation_commands
+    attributes:
+      label: Validation commands run
+      description: Exact commands and short results.
+      placeholder: |
+        python scripts/validate_interop_submissions.py
+        python scripts/review_interop_submission.py interop/submissions/<submission_id>
+    validations:
+      required: true
+
+  - type: dropdown
+    id: bundle_integrity_present
+    attributes:
+      label: Is bundle integrity present?
+      options:
+        - yes
+        - no
+    validations:
+      required: true
+
+  - type: textarea
+    id: matrix_publication_intent
+    attributes:
+      label: Matrix publication intent / expectation
+      description: Should the submission appear in the public interop matrix after review? Why or why not?
+    validations:
+      required: true
