@@ -1,0 +1,39 @@
+{
+  "aicp_version": "0.1",
+  "profile_id": "AICP-MEDIATED-BLOCKING",
+  "profile_version": "0.1",
+  "timestamp": "2026-03-20T00:00:00Z",
+  "passed": true,
+  "suite_reports": [
+    {
+      "suite_id": "CN-CAPNEG-0.1",
+      "passed": true,
+      "compatibility_marks": [],
+      "degraded": false,
+      "degraded_reasons": []
+    },
+    {
+      "suite_id": "PE-POLICY-EVAL-0.1",
+      "passed": true,
+      "compatibility_marks": [],
+      "degraded": false,
+      "degraded_reasons": []
+    },
+    {
+      "suite_id": "ENF-ENFORCEMENT-0.1",
+      "passed": true,
+      "compatibility_marks": [
+        "AICP-EXT-ENFORCEMENT-0.1"
+      ],
+      "degraded": false,
+      "degraded_reasons": []
+    }
+  ],
+  "failures": [],
+  "compatibility_marks": [
+    "AICP-Profile-MEDIATED-BLOCKING-0.1",
+    "AICP-EXT-ENFORCEMENT-0.1"
+  ],
+  "degraded": false,
+  "degraded_reasons": []
+}
