@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
+.PHONY: validate interop-validate interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -133,6 +133,23 @@ interop-validate:
 
 interop-matrix:
 	$(PYTHON) interop/tools/interop_matrix.py --submissions interop/submissions --out-md interop/INTEROP_MATRIX.md --out-json interop/interop_matrix.json
+
+interop-build-example:
+	$(PYTHON) interop/tools/build_submission.py \
+		--out-root out/interop-submissions \
+		--submission-id fictional-single-impl \
+		--implementation-id fictional-impl-a \
+		--implementation-version 1.2.3 \
+		--profile-id AICP-BASE \
+		--claim-type implements_profile \
+		--claim-scope self_attested \
+		--evidence-status reproducible \
+		--report-path interop/submissions/examples/single_profile_claim/reports/report_profile_base.json \
+		--report-path interop/submissions/examples/single_profile_claim/reports/report_core.json \
+		--suite-ref PF_AICP_BASE_0.1 \
+		--suite-ref CT_CORE_0.1 \
+		--disclosure "Fictional example package only; not a market-facing claim." \
+		--validate
 
 demo-enforcement-behavioral:
 	$(PYTHON) demos/enforcement_behavioral/scripts/run_demo.py

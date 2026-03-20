@@ -132,6 +132,60 @@ They show:
 
 They do **not** prove real external interoperability. Real submissions must use non-placeholder package data and truthful disclosures.
 
+## Build a package from existing evidence
+
+Use `interop/tools/build_submission.py` when you already have report JSON files and want the repo to assemble a submission package layout for you.
+
+### Single-implementation example
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id fictional-single-impl \
+  --implementation-id fictional-impl-a \
+  --implementation-version 1.2.3 \
+  --profile-id AICP-BASE \
+  --claim-type implements_profile \
+  --claim-scope self_attested \
+  --evidence-status reproducible \
+  --report-path interop/submissions/examples/single_profile_claim/reports/report_profile_base.json \
+  --report-path interop/submissions/examples/single_profile_claim/reports/report_core.json \
+  --suite-ref PF_AICP_BASE_0.1 \
+  --suite-ref CT_CORE_0.1 \
+  --disclosure "Fictional example package only; not a market-facing claim." \
+  --validate
+```
+
+### Pairwise example
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id fictional-pairwise \
+  --implementation-id fictional-impl-a \
+  --peer-implementation-id fictional-impl-b \
+  --implementation-version 2.0.0 \
+  --profile-id AICP-MEDIATED-BLOCKING \
+  --claim-type pairwise_interop \
+  --claim-scope pairwise \
+  --evidence-status pairwise \
+  --report-path interop/submissions/examples/pairwise_profile_interop/reports/report_profile_mediated_blocking_a.json \
+  --report-path interop/submissions/examples/pairwise_profile_interop/reports/report_profile_mediated_blocking_b.json \
+  --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
+  --suite-ref ENF_ENFORCEMENT_0.1 \
+  --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --validate
+```
+
+The builder copies the supplied report files into the package's `reports/` folder, writes predictable `report_refs`, and refuses incomplete pairwise inputs instead of guessing missing peer metadata.
+
+After building a package, validate and inspect it with:
+
+```bash
+python scripts/validate_interop_submissions.py
+make interop-matrix
+```
+
 ## Validation and matrix entrypoints
 
 Before opening a submission PR, run:
