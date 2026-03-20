@@ -153,6 +153,7 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_BASE_0.1 \
   --suite-ref CT_CORE_0.1 \
   --disclosure "Fictional example package only; not a market-facing claim." \
+  --with-integrity \
   --validate
 ```
 
@@ -174,10 +175,28 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
   --suite-ref ENF_ENFORCEMENT_0.1 \
   --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --with-integrity \
   --validate
 ```
 
 The builder copies the supplied report files into the package's `reports/` folder, writes predictable `report_refs`, and refuses incomplete pairwise inputs instead of guessing missing peer metadata.
+
+## Optional bundle integrity manifest
+
+When you are ready to transport or review a package, prefer `--with-integrity` so the builder also writes `bundle-integrity.json`.
+
+Use that file to protect against:
+- accidental file drift after packaging,
+- mismatched copied reports inside the bundle,
+- silent tampering between package creation and review.
+
+Do **not** treat it as:
+- signer identity proof,
+- endorsement,
+- certification, or
+- a replacement for the claim semantics already expressed in `submission.json`.
+
+The validators verify `bundle-integrity.json` when present. A package without it is still acceptable; a package with it must match the actual bundled files.
 
 After building a package, validate and inspect it with:
 
@@ -186,15 +205,19 @@ python scripts/validate_interop_submissions.py
 make interop-matrix
 ```
 
-## Validation and matrix entrypoints
+## Validation, PR path, and matrix entrypoints
+
+Real external submissions should normally be opened as a PR that adds or updates `interop/submissions/<submission_id>/`. If you need maintainer guidance before that PR, open the interop submission intake issue template first.
 
 Before opening a submission PR, run:
 
 ```bash
 python scripts/validate_interop_submission_examples.py
 python scripts/validate_interop_submissions.py
+python scripts/review_interop_submission.py interop/submissions/<submission_id>
 make interop-validate
-make interop-matrix
 ```
+
+Only expect public matrix publication after maintainer review confirms that the package is a real submission, the claim remains truthful, and the validators/reviewer summary show it as publication-ready. Examples/templates stay instructional and separate from public external rows.
 
 Then run the broader repo verification commands required by the repo's one-command standard.

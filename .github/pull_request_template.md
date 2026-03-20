@@ -33,3 +33,16 @@ Links:
 - [ ] None
 - [ ] Backward compatible
 - [ ] Breaking (explain + migration)
+
+## Interop Submission (complete only if this PR adds/updates a real external interop submission)
+- `submission_id`:
+- `implementation_id`:
+- `profile_id(s)`:
+- `claim_type`:
+- `claim_scope`:
+- `evidence_status`:
+- `peer_implementation_id` (if pairwise):
+- `disclosures`:
+- `validation commands run`:
+- `bundle integrity present?`:
+- `matrix publication intended after review?`:
