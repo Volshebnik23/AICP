@@ -11,6 +11,11 @@ This directory now supports two shapes:
 - `docs/interop/AICP_Public_Interop_Corpus.md`
 - `docs/interop/AICP_Compatibility_Claims_and_Evidence.md`
 - `docs/interop/AICP_Interop_Submission_Playbook.md`
+- `docs/interop/AICP_Interop_Review_Workflow.md`
+- `docs/interop/AICP_Interop_Dry_Run_Workflow.md`
+- `docs/release/AICP_UAT_Release_Pack.md`
+- `docs/release/AICP_UAT_Architecture_Freeze.md`
+- `docs/release/AICP_UAT_Checklist.md`
 
 ## Public submission package shape
 
@@ -44,6 +49,7 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_BASE_0.1 \
   --suite-ref CT_CORE_0.1 \
   --disclosure "Fictional example package only; not a market-facing claim." \
+  --with-integrity \
   --validate
 ```
 
@@ -65,18 +71,24 @@ python interop/tools/build_submission.py \
   --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
   --suite-ref ENF_ENFORCEMENT_0.1 \
   --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --with-integrity \
   --validate
 ```
 
-The builder copies the supplied reports into `<out-root>/<submission-id>/reports/`, writes `submission.json`, and fails clearly instead of inventing missing pairwise metadata.
+The builder copies the supplied reports into `<out-root>/<submission-id>/reports/`, writes `submission.json`, and fails clearly instead of inventing missing pairwise metadata. Pass `--with-integrity` to also write `bundle-integrity.json` for the packaged files the builder actually emitted.
 
-## Validate interop intake artifacts
+`bundle-integrity.json` helps reviewers detect accidental drift or tampering after packaging. It does **not** prove signer identity, endorsement, or certification, and validators treat it as optional-but-strict: missing is allowed, present-and-invalid fails.
+
+## Validate and review interop intake artifacts
+
+Real external submissions should normally arrive as a PR that adds or updates `interop/submissions/<submission_id>/`. If a submitter needs preflight help before the PR, they can open the dedicated interop submission issue template first. Pilot adopters using the repo-backed UAT path should start with `docs/release/AICP_UAT_Release_Pack.md` and `docs/release/AICP_UAT_Architecture_Freeze.md` so the interop workflow stays grounded in the conservative pilot baseline and its frozen support envelope instead of implying every optional surface is required.
 
 Run:
 
 ```bash
 python scripts/validate_interop_submission_examples.py
 python scripts/validate_interop_submissions.py
+python scripts/review_interop_submission.py interop/submissions/<submission_id>
 make interop-validate
 ```
 
@@ -84,7 +96,13 @@ This intake path checks that:
 - shipped examples/templates remain valid,
 - real submission folders validate separately from instructional artifacts,
 - shipped `profile_id` values and referenced files resolve correctly,
+- optional integrity manifests are verified when present,
+- reviewer summaries can call out whether a package is matrix-eligible,
 - template placeholder references stay clearly instructional instead of being mistaken for failed real submissions.
+
+Maintainer workflow details live in `docs/interop/AICP_Interop_Review_Workflow.md`.
+
+For repo-owned rehearsal of the full path, use the dry-run package at `interop/submissions/dryrun-reviewed-base/` together with `make interop-dryrun`. That path is intentionally fictional and stays separate from both examples/templates and real external submissions.
 
 ## Generate the interop matrix
 
@@ -99,3 +117,7 @@ This aggregates real submission folders under `interop/submissions/` into:
 - `interop/INTEROP_MATRIX.md`
 
 Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions. Template placeholder references appear as instructional warnings, while real missing evidence still renders as invalid.
+
+Regenerate the matrix after a real submission is reviewable and acceptable for publication. Do not publish invalid real submissions in the matrix, and do not treat examples/templates as external interoperability rows.
+
+Dry-run artifacts appear in a separate rehearsal section so maintainers can rehearse the flow without implying real external ecosystem proof.
