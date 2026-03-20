@@ -34,7 +34,7 @@ Instructional artifacts live in:
 - `reproducible`
 - `pairwise`
 
-Use `example` and `template` only for the shipped instructional artifacts. Real submission folders should use `self_attested`, `reproducible`, or `pairwise`.
+Use `example` and `template` only for the shipped instructional artifacts. Real submission folders should use `self_attested`, `reproducible`, or `pairwise`. Template placeholder `report_refs` are allowed for instructional starter packs, but real submissions and examples must resolve their referenced files.
 
 ## Validation entrypoints
 

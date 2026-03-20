@@ -109,7 +109,7 @@ Submission packages use a small controlled vocabulary in `evidence_status`:
 - `reproducible`
 - `pairwise`
 
-This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement.
+This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement. Template packages may retain placeholder `report_refs`; those placeholders are treated as instructional warnings in the matrix, not as real-submission failures or compatibility proof.
 
 ## Truthfulness expectations
 
