@@ -69,7 +69,9 @@
         "AICP-Profile-MEDIATED-BLOCKING-0.1"
       ],
       "errors": [],
-      "valid": true
+      "warnings": [],
+      "valid": true,
+      "matrix_status": "VALID"
     },
     {
       "folder": "single_profile_claim",
@@ -121,7 +123,9 @@
         "AICP-Profile-BASE-0.1"
       ],
       "errors": [],
-      "valid": true
+      "warnings": [],
+      "valid": true,
+      "matrix_status": "VALID"
     },
     {
       "folder": "basic_submission",
@@ -146,19 +150,22 @@
       "reports": [],
       "compatibility_marks": [],
       "computed_marks": [],
-      "errors": [
+      "errors": [],
+      "warnings": [
         {
-          "error_code": "MISSING_REPORT_REF_TARGET",
-          "error_message": "report_refs target missing: reports/replace-with-profile-report.json"
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/replace-with-profile-report.json"
         }
       ],
-      "valid": false
+      "valid": true,
+      "matrix_status": "INSTRUCTIONAL"
     }
   ],
   "note": "",
   "notes": [
     "Instructional artifacts are listed separately from real submissions.",
     "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
+    "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
     "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only."
   ]
 }

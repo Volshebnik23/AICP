@@ -25,6 +25,51 @@ Examples and templates live under:
 
 They are instructional artifacts only and must not be presented as external market evidence.
 
+## Build a submission package from existing evidence
+
+Use the builder to create a real-submission package skeleton from explicit metadata plus existing report JSON files:
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id fictional-single-impl \
+  --implementation-id fictional-impl-a \
+  --implementation-version 1.2.3 \
+  --profile-id AICP-BASE \
+  --claim-type implements_profile \
+  --claim-scope self_attested \
+  --evidence-status reproducible \
+  --report-path interop/submissions/examples/single_profile_claim/reports/report_profile_base.json \
+  --report-path interop/submissions/examples/single_profile_claim/reports/report_core.json \
+  --suite-ref PF_AICP_BASE_0.1 \
+  --suite-ref CT_CORE_0.1 \
+  --disclosure "Fictional example package only; not a market-facing claim." \
+  --validate
+```
+
+For a pairwise package, supply two or more `--report-path` values plus an explicit peer ID:
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id fictional-pairwise \
+  --implementation-id fictional-impl-a \
+  --peer-implementation-id fictional-impl-b \
+  --implementation-version 2.0.0 \
+  --profile-id AICP-MEDIATED-BLOCKING \
+  --claim-type pairwise_interop \
+  --claim-scope pairwise \
+  --evidence-status pairwise \
+  --report-path interop/submissions/examples/pairwise_profile_interop/reports/report_profile_mediated_blocking_a.json \
+  --report-path interop/submissions/examples/pairwise_profile_interop/reports/report_profile_mediated_blocking_b.json \
+  --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
+  --suite-ref ENF_ENFORCEMENT_0.1 \
+  --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --validate
+```
+
+The builder copies the supplied reports into `<out-root>/<submission-id>/reports/`, writes `submission.json`, and fails clearly instead of inventing missing pairwise metadata.
+
 ## Validate interop intake artifacts
 
 Run:
@@ -38,7 +83,8 @@ make interop-validate
 This intake path checks that:
 - shipped examples/templates remain valid,
 - real submission folders validate separately from instructional artifacts,
-- shipped `profile_id` values and referenced files resolve correctly.
+- shipped `profile_id` values and referenced files resolve correctly,
+- template placeholder references stay clearly instructional instead of being mistaken for failed real submissions.
 
 ## Generate the interop matrix
 
@@ -52,4 +98,4 @@ This aggregates real submission folders under `interop/submissions/` into:
 - `interop/interop_matrix.json`
 - `interop/INTEROP_MATRIX.md`
 
-Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions.
+Instructional example/template artifacts are rendered in a separate matrix section so they are not confused with real external submissions. Template placeholder references appear as instructional warnings, while real missing evidence still renders as invalid.

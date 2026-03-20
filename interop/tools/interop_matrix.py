@@ -36,6 +36,18 @@ def _add_error(entry: dict[str, Any], code: str, message: str) -> None:
     entry["valid"] = False
 
 
+def _add_warning(entry: dict[str, Any], code: str, message: str) -> None:
+    entry["warnings"].append({"warning_code": code, "warning_message": message})
+
+
+def _entry_status(entry: dict[str, Any]) -> str:
+    if not entry.get("valid"):
+        return "INVALID"
+    if entry.get("artifact_kind") == "template":
+        return "INSTRUCTIONAL"
+    return "VALID"
+
+
 def _read_report(report_path: Path, relative_to: Path) -> tuple[dict[str, Any], set[str], list[str]]:
     report_rec: dict[str, Any] = {"path": str(report_path.relative_to(relative_to))}
     marks: set[str] = set()
@@ -72,18 +84,23 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         "compatibility_marks": [],
         "computed_marks": [],
         "errors": [],
+        "warnings": [],
         "valid": True,
+        "matrix_status": "VALID",
     }
     try:
         manifest = load_json(submission_path)
     except Exception as exc:
         _add_error(entry, "INVALID_SUBMISSION_MANIFEST", f"invalid submission.json: {exc}")
+        entry["matrix_status"] = _entry_status(entry)
         return entry
 
     if not isinstance(manifest, dict):
         _add_error(entry, "INVALID_SUBMISSION_MANIFEST", "submission.json must be an object")
+        entry["matrix_status"] = _entry_status(entry)
         return entry
 
+    artifact_kind = classify_manifest_path(submission_path)
     entry["submission_id"] = manifest.get("submission_id")
     entry["implementation_id"] = manifest.get("implementation_id")
     entry["implementation"] = {
@@ -95,7 +112,7 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         "evidence_status": manifest.get("evidence_status"),
     }
     entry["peer_implementation_id"] = manifest.get("peer_implementation_id")
-    entry["artifact_kind"] = classify_manifest_path(submission_path)
+    entry["artifact_kind"] = artifact_kind
     entry["evidence_status"] = manifest.get("evidence_status")
     entry["claim_type"] = manifest.get("claim_type")
     entry["claim_scope"] = manifest.get("claim_scope")
@@ -108,7 +125,14 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
             continue
         report_path = submission_dir / ref
         if not report_path.exists() or not report_path.is_file():
-            _add_error(entry, "MISSING_REPORT_REF_TARGET", f"report_refs target missing: {ref}")
+            if artifact_kind == "template":
+                _add_warning(
+                    entry,
+                    "TEMPLATE_PLACEHOLDER_REF",
+                    f"template placeholder report_refs target not yet replaced: {ref}",
+                )
+            else:
+                _add_error(entry, "MISSING_REPORT_REF_TARGET", f"report_refs target missing: {ref}")
             continue
         report_rec, report_marks, report_errors = _read_report(report_path, submission_dir)
         entry["reports"].append(report_rec)
@@ -118,6 +142,7 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
 
     entry["compatibility_marks"] = sorted(marks)
     entry["computed_marks"] = sorted(marks) if entry["valid"] else []
+    entry["matrix_status"] = _entry_status(entry)
     return entry
 
 
@@ -137,17 +162,21 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
         "compatibility_marks": [],
         "computed_marks": [],
         "errors": [],
+        "warnings": [],
         "valid": True,
+        "matrix_status": "VALID",
     }
     impl_path = submission_dir / "implementation.json"
     if not impl_path.exists():
         _add_error(entry, "MISSING_IMPLEMENTATION_MANIFEST", "missing implementation.json")
+        entry["matrix_status"] = _entry_status(entry)
         return entry
 
     try:
         impl_obj = load_json(impl_path)
     except Exception as exc:
         _add_error(entry, "INVALID_IMPLEMENTATION_MANIFEST", f"invalid implementation.json: {exc}")
+        entry["matrix_status"] = _entry_status(entry)
         return entry
 
     if isinstance(impl_obj, dict):
@@ -163,11 +192,13 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
             )
     else:
         _add_error(entry, "INVALID_IMPLEMENTATION_MANIFEST", "implementation.json must be an object")
+        entry["matrix_status"] = _entry_status(entry)
         return entry
 
     reports_dir = submission_dir / "reports"
     if not reports_dir.exists() or not reports_dir.is_dir():
         _add_error(entry, "MISSING_REPORTS_DIR", "missing reports directory")
+        entry["matrix_status"] = _entry_status(entry)
         return entry
 
     marks: set[str] = set()
@@ -183,6 +214,7 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
 
     entry["compatibility_marks"] = sorted(marks)
     entry["computed_marks"] = sorted(marks) if entry["valid"] else []
+    entry["matrix_status"] = _entry_status(entry)
     return entry
 
 
@@ -225,6 +257,7 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
         "notes": [
             "Instructional artifacts are listed separately from real submissions.",
             "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
+            "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
             "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only.",
         ],
     }
@@ -243,13 +276,17 @@ def _fmt_marks(value: Any) -> str:
 
 
 def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[str]:
-    header = ["Folder", "Implementation"]
+    header = ["Folder", "Implementation", "Artifact kind"]
     if include_peer:
         header.append("Peer")
-    header.extend(["Evidence status", "Claim type", "Claim scope", "Profiles", "Marks", "Validity"])
+    header.extend(["Evidence status", "Claim type", "Claim scope", "Profiles", "Marks", "Matrix status"])
     rows = ["| " + " | ".join(header) + " |", "| " + " | ".join(["---"] * len(header)) + " |"]
     for entry in entries:
-        row = [entry.get("folder") or "unknown", entry.get("implementation_id") or "unknown"]
+        row = [
+            entry.get("folder") or "unknown",
+            entry.get("implementation_id") or "unknown",
+            entry.get("artifact_kind") or "unknown",
+        ]
         if include_peer:
             row.append(entry.get("peer_implementation_id") or "—")
         row.extend(
@@ -259,7 +296,7 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
                 entry.get("claim_scope") or "—",
                 _fmt_profiles(entry.get("profile_ids")),
                 _fmt_marks(entry.get("compatibility_marks")),
-                "VALID" if entry.get("valid") else "INVALID",
+                entry.get("matrix_status") or _entry_status(entry),
             ]
         )
         rows.append("| " + " | ".join(row) + " |")
@@ -279,13 +316,13 @@ def render_markdown(matrix: dict[str, Any]) -> str:
         lines.append("")
 
     real_entries = matrix.get("real_submissions", [])
-    header = ["Implementation", "Status"] + matrix.get("columns", [])
+    header = ["Implementation", "Status", "Evidence status"] + matrix.get("columns", [])
     lines.append("| " + " | ".join(header) + " |")
     lines.append("| " + " | ".join(["---"] * len(header)) + " |")
     for entry in real_entries:
         impl_name = entry.get("implementation_id") or entry.get("folder") or "unknown"
         marks = set(entry.get("compatibility_marks", [])) if entry.get("valid") else set()
-        row = [impl_name, "VALID" if entry.get("valid") else "INVALID"]
+        row = [impl_name, entry.get("matrix_status") or _entry_status(entry), entry.get("evidence_status") or "—"]
         for col in matrix.get("columns", []):
             row.append("✅" if col in marks else "❌")
         lines.append("| " + " | ".join(row) + " |")
@@ -317,11 +354,19 @@ def render_markdown(matrix: dict[str, Any]) -> str:
             continue
         for entry in entries:
             label = entry.get("submission_id") or entry.get("folder") or "unknown"
+            parts: list[str] = []
             if entry.get("errors"):
-                rendered = "; ".join(f"{e.get('error_code')}: {e.get('error_message')}" for e in entry["errors"])
-                lines.append(f"- `{label}`: {rendered}")
+                parts.append(
+                    "; ".join(f"{e.get('error_code')}: {e.get('error_message')}" for e in entry["errors"])
+                )
+            if entry.get("warnings"):
+                parts.append(
+                    "; ".join(f"{w.get('warning_code')}: {w.get('warning_message')}" for w in entry["warnings"])
+                )
+            if parts:
+                lines.append(f"- `{label}`: {'; '.join(parts)}")
             else:
-                lines.append(f"- `{label}`: no parsing errors.")
+                lines.append(f"- `{label}`: no parsing errors or instructional warnings.")
     lines.append("")
     return "\n".join(lines)
 
