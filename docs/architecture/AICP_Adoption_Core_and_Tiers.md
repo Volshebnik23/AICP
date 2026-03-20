@@ -1,8 +1,11 @@
 # AICP Adoption Core and Tiers
 
-> **Purpose:** adoption framing for already-shipped AICP repo truth. This document packages the existing Core, profiles, bindings, and compatibility evidence model into a simpler public adoption model. It does **not** define new protocol semantics.
+> **Purpose:** adoption framing for already-shipped AICP repo truth. This document packages the existing Core, profiles, bindings, and compatibility evidence model into a simpler public adoption model. It does **not** define new protocol semantics. For the pilot-facing UAT package built on top of this framing, see `docs/release/AICP_UAT_Release_Pack.md`.
 
 ## 1) What this document is for
+
+If you need the shortest release-facing answer for pilot adopters, start with `docs/release/AICP_UAT_Release_Pack.md` and then return here for the canonical tier framing.
+
 
 AICP already ships a large amount of executable protocol surface: Core narrative requirements, schemas, conformance suites, bindings, profiles, extension RFCs, and implementation guidance. This document defines the **AICP Adoption Core** and a practical **tier model** so architects and implementers can answer four questions quickly:
 

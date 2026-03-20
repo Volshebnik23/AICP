@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke prepr lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -179,6 +179,15 @@ template-smoke:
 	node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
 	$(PYTHON) sandbox/run.py out/template-ts-agent/thread.jsonl --no-signature-verify
 	$(PYTHON) templates/protocol-adapter/adapter.py fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl > out/template-protocol-adapter/events.json
+
+uat-check:
+	$(MAKE) validate
+	$(MAKE) conformance
+	$(MAKE) conformance-bindings
+	$(MAKE) conformance-profiles
+	$(PYTHON) scripts/validate_interop_submission_examples.py
+	$(PYTHON) scripts/validate_interop_submissions.py
+	$(PYTHON) scripts/review_interop_submission.py interop/submissions/
 
 prepr:
 	$(MAKE) validate
