@@ -1,0 +1,20 @@
+{
+  "submission_id": "example-single-profile-claim",
+  "integrity_manifest_version": "1",
+  "generated_at": "2026-03-20T00:00:00Z",
+  "digest_alg": "sha256",
+  "tracked_files": [
+    {
+      "path": "submission.json",
+      "digest": "sha256:7e3bdcdd7cf19a074374b23cf0ad1381221e9f98e53861de199d3f064b5cab12"
+    },
+    {
+      "path": "reports/report_profile_base.json",
+      "digest": "sha256:1c7c972058ae75a3a780af77fd3b45b266f78a024ecbd817349a408d7e953f35"
+    },
+    {
+      "path": "reports/report_core.json",
+      "digest": "sha256:fce2fc2ee3fe8001a61cc13928d2ebea19c76c89f6be7afef02dff3db7788bed"
+    }
+  ]
+}

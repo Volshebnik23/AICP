@@ -9,6 +9,7 @@ from interop_submission_validation import (
     load_schema_and_registry,
     manifest_paths,
     validate_common_rules,
+    validate_integrity_manifest,
     validate_schema,
 )
 
@@ -50,10 +51,13 @@ def main() -> int:
                 require_existing_refs=path.parent.parent.name == "examples",
             )
         )
+        integrity_status, integrity_errors = validate_integrity_manifest(path.parent)
+        if integrity_status == "invalid":
+            errors.extend(integrity_errors)
         if errors:
             failures.extend([f"{path}: {error}" for error in errors])
         else:
-            print(f"[OK] {path}")
+            print(f"[OK] {path} (integrity: {integrity_status})")
 
     if failures:
         for failure in failures:

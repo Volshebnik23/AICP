@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,8 @@ SUBMISSIONS_ROOT = ROOT / "interop" / "submissions"
 EXAMPLES_ROOT = SUBMISSIONS_ROOT / "examples"
 TEMPLATES_ROOT = SUBMISSIONS_ROOT / "templates"
 SCHEMA_PATH = SUBMISSIONS_ROOT / "submission.schema.json"
+INTEGRITY_SCHEMA_PATH = SUBMISSIONS_ROOT / "integrity.schema.json"
+INTEGRITY_FILENAME = "bundle-integrity.json"
 PROFILE_REGISTRY_PATH = ROOT / "registry" / "aicp_profiles.json"
 RESERVED_DIRS = {"examples", "templates"}
 ALLOWED_CLAIM_TYPES = {
@@ -26,6 +29,7 @@ ALLOWED_EVIDENCE_STATUSES = {
     "reproducible",
     "pairwise",
 }
+SUPPORTED_DIGEST_ALGS = {"sha256"}
 
 
 def load_json(path: Path) -> Any:
@@ -60,6 +64,43 @@ def manifest_paths(root: Path) -> list[Path]:
     if not root.exists():
         return []
     return sorted(root.glob("*/submission.json"))
+
+
+def _is_safe_relative_path(value: str) -> bool:
+    return not (value.startswith("/") or value.startswith("..") or "/../" in value or "../" in value)
+
+
+def compute_file_digest(path: Path, *, digest_alg: str = "sha256") -> str:
+    if digest_alg not in SUPPORTED_DIGEST_ALGS:
+        raise ValueError(f"unsupported digest algorithm: {digest_alg}")
+    hasher = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            hasher.update(chunk)
+    return f"{digest_alg}:{hasher.hexdigest()}"
+
+
+def build_integrity_manifest(
+    package_dir: Path,
+    *,
+    submission_id: str,
+    tracked_paths: list[str],
+    generated_at: str,
+    digest_alg: str = "sha256",
+) -> dict[str, Any]:
+    return {
+        "submission_id": submission_id,
+        "integrity_manifest_version": "1",
+        "generated_at": generated_at,
+        "digest_alg": digest_alg,
+        "tracked_files": [
+            {
+                "path": relative_path,
+                "digest": compute_file_digest(package_dir / relative_path, digest_alg=digest_alg),
+            }
+            for relative_path in tracked_paths
+        ],
+    }
 
 
 def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
@@ -137,11 +178,11 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
         value = manifest.get(field)
         if value is None:
             continue
-        if isinstance(value, str) and (value.startswith("/") or "../" in value):
+        if isinstance(value, str) and not _is_safe_relative_path(value):
             errors.append(f"{field} must not contain path-like traversal values")
 
     for ref in manifest.get("report_refs", []):
-        if isinstance(ref, str) and (ref.startswith("/") or ref.startswith("..") or "/../" in ref):
+        if isinstance(ref, str) and not _is_safe_relative_path(ref):
             errors.append(f"report_refs entry must be a relative non-traversing path: {ref}")
 
     if claim_type == "pairwise_interop":
@@ -153,6 +194,45 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
         if isinstance(report_refs, list) and len(report_refs) < 2:
             errors.append("pairwise_interop claims require at least two report_refs")
 
+    return errors
+
+
+def fallback_integrity_errors(obj: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    required_fields = {
+        "submission_id",
+        "integrity_manifest_version",
+        "generated_at",
+        "digest_alg",
+        "tracked_files",
+    }
+    missing = sorted(required_fields - set(obj.keys()))
+    for field in missing:
+        errors.append(f"missing required property '{field}'")
+    for field in ["submission_id", "integrity_manifest_version", "generated_at", "digest_alg"]:
+        value = obj.get(field)
+        if value is not None and not isinstance(value, str):
+            errors.append(f"{field} must be a string")
+    tracked = obj.get("tracked_files")
+    if tracked is None:
+        return errors
+    if not isinstance(tracked, list) or not tracked:
+        errors.append("tracked_files must be a non-empty array")
+        return errors
+    for idx, entry in enumerate(tracked):
+        if not isinstance(entry, dict):
+            errors.append(f"tracked_files[{idx}] must be an object")
+            continue
+        for field in ["path", "digest"]:
+            value = entry.get(field)
+            if not isinstance(value, str) or not value:
+                errors.append(f"tracked_files[{idx}].{field} must be a non-empty string")
+        path_value = entry.get("path")
+        if isinstance(path_value, str) and not _is_safe_relative_path(path_value):
+            errors.append(f"tracked_files[{idx}].path must be a relative non-traversing path")
+        digest_value = entry.get("digest")
+        if isinstance(digest_value, str) and ":" not in digest_value:
+            errors.append(f"tracked_files[{idx}].digest must be prefixed with the digest algorithm")
     return errors
 
 
@@ -168,6 +248,19 @@ def validate_schema(path: Path, validator: Any) -> tuple[dict[str, Any] | None, 
     if validator is None:
         return obj, fallback_schema_errors(obj)
 
+    errors = [error.message for error in sorted(validator.iter_errors(obj), key=lambda err: list(err.path))]
+    return obj, errors
+
+
+def validate_integrity_schema(path: Path, validator: Any) -> tuple[dict[str, Any] | None, list[str]]:
+    try:
+        obj = load_json(path)
+    except Exception as exc:
+        return None, [f"invalid JSON: {exc}"]
+    if not isinstance(obj, dict):
+        return None, ["integrity manifest must be a JSON object"]
+    if validator is None:
+        return obj, fallback_integrity_errors(obj)
     errors = [error.message for error in sorted(validator.iter_errors(obj), key=lambda err: list(err.path))]
     return obj, errors
 
@@ -249,6 +342,66 @@ def validate_common_rules(
                 errors.append(f"referenced file is not valid JSON ({ref}): {exc}")
 
     return errors
+
+
+def validate_integrity_manifest(package_dir: Path) -> tuple[str, list[str]]:
+    integrity_path = package_dir / INTEGRITY_FILENAME
+    if not integrity_path.exists():
+        return "absent", []
+
+    try:
+        schema = load_json(INTEGRITY_SCHEMA_PATH)
+    except Exception as exc:
+        return "invalid", [f"unable to load integrity schema: {exc}"]
+    validator = load_validator(schema)
+    obj, errors = validate_integrity_schema(integrity_path, validator)
+    if obj is None:
+        return "invalid", errors
+
+    digest_alg = obj.get("digest_alg")
+    if digest_alg not in SUPPORTED_DIGEST_ALGS:
+        errors.append(f"unsupported digest_alg '{digest_alg}' (expected one of: {', '.join(sorted(SUPPORTED_DIGEST_ALGS))})")
+
+    tracked_entries = obj.get("tracked_files", [])
+    seen_paths: set[str] = set()
+    for entry in tracked_entries if isinstance(tracked_entries, list) else []:
+        if not isinstance(entry, dict):
+            continue
+        rel_path = entry.get("path")
+        digest = entry.get("digest")
+        if not isinstance(rel_path, str) or not isinstance(digest, str):
+            continue
+        if rel_path in seen_paths:
+            errors.append(f"duplicate tracked file path in integrity manifest: {rel_path}")
+            continue
+        seen_paths.add(rel_path)
+        file_path = package_dir / rel_path
+        if not file_path.exists() or not file_path.is_file():
+            errors.append(f"integrity tracked file is missing: {rel_path}")
+            continue
+        try:
+            actual_digest = compute_file_digest(file_path, digest_alg=digest_alg)
+        except Exception as exc:
+            errors.append(f"unable to compute digest for {rel_path}: {exc}")
+            continue
+        if actual_digest != digest:
+            errors.append(f"digest mismatch for {rel_path}: expected {digest}, got {actual_digest}")
+
+    submission_path = package_dir / "submission.json"
+    if submission_path.exists():
+        try:
+            submission = load_json(submission_path)
+        except Exception as exc:
+            errors.append(f"unable to load submission.json while checking integrity linkage: {exc}")
+        else:
+            if isinstance(submission, dict):
+                submission_id = submission.get("submission_id")
+                if isinstance(submission_id, str) and obj.get("submission_id") != submission_id:
+                    errors.append(
+                        "integrity submission_id does not match submission.json submission_id"
+                    )
+
+    return ("invalid", errors) if errors else ("valid", [])
 
 
 def load_schema_and_registry() -> tuple[dict[str, Any], Any, set[str]]:

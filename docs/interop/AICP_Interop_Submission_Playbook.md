@@ -13,7 +13,7 @@ This playbook covers:
 - what a minimal real submission package contains,
 - how to package single-implementation and pairwise claims,
 - what disclosures to include,
-- how the repo validators and matrix treat submission records,
+- how the repo validators and matrix treat submission records and placeholder templates,
 - how examples/templates differ from real external submissions.
 
 ## Explicit non-goals
@@ -104,7 +104,7 @@ Expected evidence files are usually JSON artifacts referenced by `report_refs`, 
 - profile report outputs,
 - pairwise summary/report JSON that explains how a joint exercise was packaged.
 
-The validator expects referenced files to exist for real submissions and examples.
+The validator expects referenced files to exist for real submissions and examples. Templates may intentionally keep placeholder `report_refs` until a real submitter replaces them; the matrix renders those as instructional warnings rather than as failed real-submission evidence.
 
 ## How to avoid overstating compatibility
 
@@ -131,6 +131,79 @@ They show:
 - validator expectations.
 
 They do **not** prove real external interoperability. Real submissions must use non-placeholder package data and truthful disclosures.
+
+## Build a package from existing evidence
+
+Use `interop/tools/build_submission.py` when you already have report JSON files and want the repo to assemble a submission package layout for you.
+
+### Single-implementation example
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id fictional-single-impl \
+  --implementation-id fictional-impl-a \
+  --implementation-version 1.2.3 \
+  --profile-id AICP-BASE \
+  --claim-type implements_profile \
+  --claim-scope self_attested \
+  --evidence-status reproducible \
+  --report-path interop/submissions/examples/single_profile_claim/reports/report_profile_base.json \
+  --report-path interop/submissions/examples/single_profile_claim/reports/report_core.json \
+  --suite-ref PF_AICP_BASE_0.1 \
+  --suite-ref CT_CORE_0.1 \
+  --disclosure "Fictional example package only; not a market-facing claim." \
+  --with-integrity \
+  --validate
+```
+
+### Pairwise example
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id fictional-pairwise \
+  --implementation-id fictional-impl-a \
+  --peer-implementation-id fictional-impl-b \
+  --implementation-version 2.0.0 \
+  --profile-id AICP-MEDIATED-BLOCKING \
+  --claim-type pairwise_interop \
+  --claim-scope pairwise \
+  --evidence-status pairwise \
+  --report-path interop/submissions/examples/pairwise_profile_interop/reports/report_profile_mediated_blocking_a.json \
+  --report-path interop/submissions/examples/pairwise_profile_interop/reports/report_profile_mediated_blocking_b.json \
+  --suite-ref PF_AICP_MEDIATED_BLOCKING_0.1 \
+  --suite-ref ENF_ENFORCEMENT_0.1 \
+  --disclosure "Fictional pairwise example only; not a real interoperability claim." \
+  --with-integrity \
+  --validate
+```
+
+The builder copies the supplied report files into the package's `reports/` folder, writes predictable `report_refs`, and refuses incomplete pairwise inputs instead of guessing missing peer metadata.
+
+After building a package, validate and inspect it with:
+
+```bash
+python scripts/validate_interop_submissions.py
+make interop-matrix
+```
+
+## Optional bundle integrity manifest
+
+When you are ready to package a submission for transport or review, prefer generating `bundle-integrity.json` alongside `submission.json`.
+
+Use it to protect against:
+- accidental file drift after packaging,
+- mismatched copied reports,
+- silent changes while moving a bundle between systems.
+
+Do **not** treat it as:
+- signer identity proof,
+- an endorsement signal,
+- a certification artifact,
+- a replacement for the claim semantics already carried by `submission.json`.
+
+The builder writes this file when you pass `--with-integrity`, and the validator verifies it when present.
 
 ## Validation and matrix entrypoints
 

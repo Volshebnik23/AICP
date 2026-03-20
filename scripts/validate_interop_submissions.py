@@ -10,6 +10,7 @@ from interop_submission_validation import (
     SUBMISSIONS_ROOT,
     load_schema_and_registry,
     validate_common_rules,
+    validate_integrity_manifest,
     validate_schema,
 )
 
@@ -58,10 +59,13 @@ def main() -> int:
             continue
 
         errors.extend(validate_common_rules(submission_path, manifest, known_profiles, require_existing_refs=True))
+        integrity_status, integrity_errors = validate_integrity_manifest(submission_dir)
+        if integrity_status == "invalid":
+            errors.extend(integrity_errors)
         if errors:
             failures.extend([f"{submission_path}: {error}" for error in errors])
         else:
-            print(f"[OK] {submission_path}")
+            print(f"[OK] {submission_path} (integrity: {integrity_status})")
 
     if failures:
         for failure in failures:

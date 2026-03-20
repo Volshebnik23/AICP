@@ -27,6 +27,9 @@ _Last updated: 2026-03-20_
 - **Next concrete step:** gather implementer feedback from first integration cohorts and tighten examples/diagrams without changing protocol semantics.
 - **Progress:** public interop corpus docs, compatibility-claims guidance, lightweight submission schema, example/template packages, and example-validation wiring now exist so profile-scoped interop evidence can be packaged without reintroducing adoption-core scope.
 - **Progress:** submitter playbook, real-submission intake validation, evidence-status vocabulary, and matrix semantics now make it clearer how future external implementers can package truthful submissions without implying endorsement or fake ecosystem proof.
+- **Progress:** matrix output now treats template placeholder evidence as instructional warnings while keeping real missing evidence invalid, which keeps starter packs discoverable without overstating readiness.
+- **Progress:** a small interop submission builder now assembles `submission.json` plus copied `reports/` evidence from explicit CLI inputs, helping external implementers package truthful submissions without inventing metadata.
+- **Progress:** optional `bundle-integrity.json` support now seals packaged submission files with SHA-256 digests so copied evidence bundles are easier to transport and review without silent drift, while remaining explicitly non-signature and non-endorsement metadata.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
 ### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)
