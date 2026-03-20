@@ -36,11 +36,10 @@ _Last updated: 2026-03-20_
 - **Shipped:** executable cross-extension commerce semantics suite (`CM_COMMERCE_ACP_PROFILE_0.1`) and deterministic profile fixtures cover CAPNEG selection, policy/approval gating, enforcement coherence, external-step anchoring, and PII-safe receipt handling.
 - **Next concrete step:** treat profile hardening/expansion as future optional profile revisions without redefining AICP as a payment/checkout protocol.
 
-### ✅ M33 — Legal readiness pack for vendor adoption
-- **Shipped:** root legal pack now includes Apache-2.0 code licensing, CC BY 4.0 documentation/reference-artifact coverage, a minimal Apache-style `NOTICE`, canonical `DCO` text, and a top-level licensing map for vendor packaging clarity.
-- **Shipped:** contribution workflow now makes DCO-vs-CLA policy explicit, and repo front doors now link licensing, patent/IPR, and trademark/compatibility policy documents for vendor discoverability.
-- **Shipped:** conservative project-policy `PATENTS.md` and `TRADEMARKS.md` establish an explicit maintainer-reviewable patent posture and practical compatibility-claim guidance without changing protocol surface.
-- **Next concrete step:** keep legal-policy docs aligned with maintainer decisions and future release packaging changes without expanding protocol semantics.
+### ✅ M48 — Runner modularity hardening
+- **Shipped:** conformance runner schema/pointer validator helpers are now split into a private helper module while `aicp_conformance_runner.py` remains the stable CLI and `run_suite(...)` entrypoint.
+- **Shipped:** compatibility shims keep the historical helper symbols available from `aicp_conformance_runner.py`, reducing missing-symbol regression risk for internal imports/tests.
+- **Next concrete step:** keep runner internals maintainable with similarly narrow extractions only when behavior-preserving coverage exists.
 
 ### ✅ M47 — Adjacent protocol integration patterns and ecosystem stack guidance
 - **Shipped:** ecosystem architecture guidance is now strengthened with clearer replace/complement/reference/orthogonal boundaries and operational “use AICP when / not when” selection guidance.
