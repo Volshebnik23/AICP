@@ -9,7 +9,7 @@ def verify_transcript_chain(messages: list[dict[str, Any]]) -> list[str]:
     for idx, msg in enumerate(messages, start=1):
         current_prev = msg.get("prev_msg_hash")
         if prev_hash is not None:
-            if current_prev is None:
+            if current_prev in (None, ""):
                 errors.append(f"line {idx}: missing prev_msg_hash for non-first message")
             elif current_prev != prev_hash:
                 errors.append(

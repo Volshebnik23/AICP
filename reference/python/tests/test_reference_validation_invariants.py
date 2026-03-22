@@ -27,6 +27,13 @@ def test_non_first_message_requires_prev_msg_hash() -> None:
     assert "line 2: missing prev_msg_hash for non-first message" in errors
 
 
+def test_empty_prev_msg_hash_is_rejected_for_non_first_message() -> None:
+    first = _message(message_id="m1")
+    second = _message(message_id="m2", prev_msg_hash="")
+    errors = verify_transcript_chain([first, second])
+    assert "line 2: missing prev_msg_hash for non-first message" in errors
+
+
 def test_signature_object_hash_must_match_message_hash() -> None:
     msg = _message(message_id="m1")
     msg["signatures"] = [
