@@ -89,6 +89,8 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 
 - `make validate`
 - `make test`
+- `make lint`
+  - repo hygiene checks (`check_naming`, `check_terms`, no-binary-drift) plus `make release-check`
 - `make conformance`
 - `make conformance-ext`
 - `make conformance-bindings`
