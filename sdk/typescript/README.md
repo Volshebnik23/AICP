@@ -7,7 +7,7 @@ This lightweight SDK is validator-focused. It provides:
 - deterministic canonicalization (`src/jcs.ts`)
 - object/message hashing (`src/hashing.ts`)
 - base64url helpers (`src/base64url.ts`)
-- `prev_msg_hash` chain verification (`src/chain.ts`)
+- `prev_msg_hash` chain verification (`src/chain.ts`), including the Core rule that every non-first transcript record must include a non-empty `prev_msg_hash` matching the previous `message_hash`
 
 ## Install and test
 
