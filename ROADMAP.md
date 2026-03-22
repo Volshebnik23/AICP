@@ -61,6 +61,7 @@ _Last updated: 2026-03-20_
 
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
+- **Progress:** Python and TypeScript transcript chain helpers now symmetrically enforce Core `prev_msg_hash` semantics for non-first records, including missing/empty-field rejection and deterministic mismatch errors.
 - **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
 - **Progress:** CI/test coverage now includes deterministic smoke checks for shipped onboarding templates.
 - **Next concrete step:** expand template smoke checks into profile-specific onboarding packs without increasing default CI runtime significantly.
