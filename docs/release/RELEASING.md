@@ -6,6 +6,8 @@ This is a short maintainer guide for cutting a repo tag and preparing the matchi
 - Update `VERSION`.
 - Update `RELEASE_NOTES.md` with the target release-candidate summary.
 - Update `CHANGELOG.md` with a concise entry for the release.
+- Update `sdk/typescript/package.json` and `sdk/typescript/package-lock.json` to match `VERSION` while keeping the SDK private.
+- Run `make release-check` to fail fast on version drift before broader verification.
 
 ## 2. Run the repo-backed checks
 From repo root, run the existing validation and conformance commands already used by CI:
@@ -16,13 +18,14 @@ From repo root, run the existing validation and conformance commands already use
 - `make conformance-bindings`
 - `make conformance-profiles`
 - `make template-smoke`
+- `make release-check`
 
 Also run the TypeScript SDK test command:
 - `cd sdk/typescript && npm ci && npm test`
 
 ## 3. Review release readiness
 Before tagging, verify that:
-- release metadata files are consistent,
+- release metadata files are consistent and `make release-check` is green,
 - CI is green,
 - release notes describe only shipped repo truth,
 - compatibility claims remain grounded in conformance/profile evidence,

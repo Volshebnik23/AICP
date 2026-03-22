@@ -6,6 +6,8 @@ Use this checklist before calling a release candidate "ready enough to tag."
 - [ ] `VERSION` matches the intended tag.
 - [ ] `RELEASE_NOTES.md` contains a truthful section for the target release.
 - [ ] `CHANGELOG.md` contains a concise entry for the target release.
+- [ ] `sdk/typescript/package.json` and `sdk/typescript/package-lock.json` match `VERSION` and keep `private: true`.
+- [ ] `make release-check` passes.
 
 ## Executable verification
 - [ ] `make validate` passes.
