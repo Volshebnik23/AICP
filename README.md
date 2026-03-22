@@ -12,6 +12,9 @@ AICP is a practical, implementable standard for governed multi-agent conversatio
 ➡️ **Interop corpus + claims:** [docs/interop/AICP_Public_Interop_Corpus.md](docs/interop/AICP_Public_Interop_Corpus.md)
 ➡️ **Interop submission playbook:** [docs/interop/AICP_Interop_Submission_Playbook.md](docs/interop/AICP_Interop_Submission_Playbook.md)  
 ➡️ **Interop validator + matrix entrypoints:** [interop/README.md](interop/README.md)
+➡️ **Release process:** [docs/release/RELEASING.md](docs/release/RELEASING.md)  
+➡️ **Governance:** [GOVERNANCE.md](GOVERNANCE.md)  
+➡️ **Productization DoD:** [checklists/productization_dod.md](checklists/productization_dod.md)
 
 ## What problem AICP solves
 

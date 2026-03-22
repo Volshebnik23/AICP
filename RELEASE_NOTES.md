@@ -1,33 +1,36 @@
 # Release Notes
 
-## Unreleased
+## 0.1.0-rc.1 — Release candidate
 
-### Added
-- M17.1 anti-drift lint gate now validates compatibility mark alignment for extensions, profiles, and bindings, plus global mark uniqueness under `conformance/**`.
-- Ops docs for release discipline: compatibility policy and release checklist.
+AICP is moving from a pure development posture to a conservative first release candidate posture. This is **not** a GA release. The goal of `0.1.0-rc.1` is to package the repo's already-shipped executable Core/profile/conformance work with clearer release metadata, lightweight maintainer guidance, and a small TypeScript SDK regression guardrail set.
 
-### Changed
-- Core narrative/docs now explicitly align shipped `ERROR` baseline with schema/conformance and clarify spec → schemas → conformance → reference helper boundaries.
-- TS onboarding template now reuses the official TypeScript hashing helper path and emits deterministic two-message JSONL as documented.
-- Protocol-adapter template now preserves audit-critical envelope fields (`prev_msg_hash`, `signatures`, `contract_ref`, relation/extension projection) and labels remaining projection lossiness as demo-only.
-- Conformance reports now emit protocol `aicp_version` from suite/profile inputs while preserving artifact `suite_version`.
-- Numeric canonicalization updated to M16b: finite floats are now supported using deterministic ECMAScript/RFC8785-aligned tokens; non-finite values remain rejected.
-- CAPNEG guidance now treats `BIND-MCP-0.1` as canonical negotiated binding ID (with `EXT-BIND-MCP` as deprecated alias).
+### Highlights
+- TypeScript SDK regression coverage now includes transcript chain validation cases for missing, empty, mismatched, and valid `prev_msg_hash` linkage.
+- Release metadata is now aligned around a single pre-GA repo version: `0.1.0-rc.1`.
+- Lightweight release/governance/productization docs now exist to make tagging and GitHub release preparation easier for maintainers.
 
-### Fixed
-- Python reference transcript validation now rejects non-first messages missing `prev_msg_hash`, rejects signature `object_hash` mismatches against `message_hash`, and enforces consistent signer/`kid` handling.
-- Template quickstart docs now reference existing fixture paths and executable commands.
-- Pytest degraded-badge test mocks now include protocol version fields required by profile aggregation.
+### Included in this release candidate
+- Core narrative, schemas, fixtures, registries, and conformance suites already shipped in the repository.
+- Profile, binding, and extension conformance runners already wired into CI and the repo's one-command validation workflow.
+- Minimal TypeScript SDK and Python reference/helper artifacts intended to support implementers rather than redefine normative protocol truth.
 
-### Compatibility
-- **Backward compatible** for protocol/schema surfaces; this release is a productization hardening pass (validation strictness + doc/template/CI alignment).
-- Implementations relying on previously under-enforced Python reference checks may now fail fast on invalid chains/signatures and should correct generated transcripts.
-- Stability graduation: `EXT-CAPNEG` and `AICP-BASE@0.1` are now marked stable (non-breaking; signals stricter compatibility expectations).
-- **Backward compatible** for current Core schema shapes.
-- **Policy tightening**: unsafe integers are now rejected during canonicalization; encode out-of-range values as strings.
+### Release-candidate expectations
+- Treat this as a stabilization checkpoint for packaging, validation, and release discipline.
+- Compatibility claims should continue to be grounded in repo-backed conformance/profile evidence, not generic marketing statements.
+- Maintainers should prefer narrow fixes, doc clarifications, and executable proof over new protocol surface during the RC phase.
 
-- Compatibility note: implementations may now exchange finite float payload values in canonical JSON. Integer values still MUST remain within IEEE-754 safe integer range (±(2^53-1)).
+### Verification baseline
+Run the existing repo-backed checks before tagging or publishing a GitHub release:
+- `make validate`
+- `make test`
+- `make conformance`
+- `make conformance-ext`
+- `make conformance-bindings`
+- `make conformance-profiles`
+- `make template-smoke`
+- `cd sdk/typescript && npm ci && npm test`
 
-
-## v88 / 0.1.0-dev (experimental extensions)
-Added experimental EXT-ECONOMICS, EXT-ADMISSION, EXT-QUEUE-LEASES, EXT-FACILITATION, EXT-CHANNELS, EXT-SUBSCRIPTIONS, EXT-PUBLICATIONS, EXT-INBOX, EXT-MARKETPLACE, EXT-PROVENANCE, and EXT-ACTION-ESCROW with schemas, fixtures, suites, and runner checks.
+### Known limits
+- Package publication strategy is intentionally unchanged; the TypeScript SDK remains private in-repo helper tooling.
+- Adapter/gateway guidance remains template- and doc-oriented; this release candidate does not introduce a production adapter runtime.
+- This RC does not broaden persona/profile positioning or claim GA stability across the full optional ecosystem surface.
