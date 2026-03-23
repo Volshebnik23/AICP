@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-20_
+_Last updated: 2026-03-23_
 
 ## Current / Next
 
@@ -34,6 +34,10 @@ _Last updated: 2026-03-20_
 - **Progress:** a repo-owned dry-run submission package plus `make interop-dryrun` now rehearse package validation, reviewer summary output, and matrix regeneration without fabricating real external interoperability proof.
 - **Progress:** a concise UAT release pack and implementer checklist now package the already-shipped Adoption Core, pilot baseline, validation path, and defect-reporting entrypoints for pilot adopters without expanding protocol surface.
 - **Progress:** a dedicated UAT architecture/support freeze doc now defines the pilot-phase frozen baseline, bugfix/errata-only change envelope, and post-UAT deferral rule for findings that would widen semantics or move compatibility goalposts.
+
+### ✅ M49 — Core conformance stress-audit hardening
+- **Shipped:** Core stress-audit coverage now includes explicit schema-permissive/conformance-strict regression tests for empty `contract_id` handling and envelope/payload `contract_id` mismatch rejection in the conformance runner.
+- **Next concrete step:** add similarly narrow negative coverage for other schema-admissible Core edge cases only when they expose real interoperability ambiguity.
 
 ### ✅ M39 — Productization hygiene: Core/template/reference/CI alignment
 ### ✅ M40 — External protocol transaction bridge (protocol-neutral; ACP mapping informative-only)
