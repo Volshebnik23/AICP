@@ -3,7 +3,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-20_
+_Last updated: 2026-03-23_
 
 ## Current / Next
 
@@ -62,9 +62,10 @@ _Last updated: 2026-03-20_
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
 - **Progress:** Python and TypeScript transcript chain helpers now symmetrically enforce Core `prev_msg_hash` semantics for non-first records, including missing/empty-field rejection and deterministic mismatch errors.
+- **Progress:** Core conformance now includes an expected-fail transcript for schema-admissible empty `contract_id` envelopes plus direct regression coverage for multi-step hash-chain corruption, reinforcing the permissive-boundary/strict-semantic split without widening Core schemas.
 - **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
 - **Progress:** CI/test coverage now includes deterministic smoke checks for shipped onboarding templates.
-- **Next concrete step:** expand template smoke checks into profile-specific onboarding packs without increasing default CI runtime significantly.
+- **Next concrete step:** add similarly targeted Core regressions for contract/version-reference semantics and replay-like identity linkage edge cases without broadening runtime behavior.
 
 ### ✅ M22 — Transport bindings and channel properties (completed)
 - **Shipped:** replay-window hardening now includes additional deterministic replay evidence (`TB-HTTP-18`) plus session-scoped replay checks in runner enforcement.
