@@ -20,6 +20,8 @@ Validation helpers in `aicp_ref/validate.py` enforce key Core invariants includi
 - signature `object_hash` matching the enclosing `message_hash`,
 - consistent signer/`kid` key selection when `kid` is present.
 
+Shared Python ↔ TypeScript overlap and intentional boundary notes are documented in `docs/guides/AICP_Python_TS_Helper_Parity.md`.
+
 ## Run tests
 
 ```bash
