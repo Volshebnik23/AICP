@@ -17,16 +17,35 @@ function rejectUnsupportedNumbers(value) {
   }
 
   if (value && typeof value === "object") {
-    for (const item of Object.values(value)) rejectUnsupportedNumbers(item);
+    for (const item of Object.values(value)) {
+      rejectUnsupportedNumbers(item);
+    }
   }
+}
+
+function compareUnicodeCodePointOrder(left, right) {
+  const leftPoints = Array.from(left);
+  const rightPoints = Array.from(right);
+  const limit = Math.min(leftPoints.length, rightPoints.length);
+
+  for (let i = 0; i < limit; i += 1) {
+    const leftPoint = leftPoints[i].codePointAt(0);
+    const rightPoint = rightPoints[i].codePointAt(0);
+    if (leftPoint !== rightPoint) {
+      return leftPoint - rightPoint;
+    }
+  }
+
+  return leftPoints.length - rightPoints.length;
 }
 
 function sortDeep(value) {
   if (Array.isArray(value)) return value.map(sortDeep);
   if (value && typeof value === "object") {
+    const src = value;
     const out = {};
-    for (const key of Object.keys(value).sort()) {
-      out[key] = sortDeep(value[key]);
+    for (const key of Object.keys(src).sort(compareUnicodeCodePointOrder)) {
+      out[key] = sortDeep(src[key]);
     }
     return out;
   }

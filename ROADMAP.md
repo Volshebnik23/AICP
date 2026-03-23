@@ -62,6 +62,7 @@ _Last updated: 2026-03-23_
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
 - **Progress:** Python and TypeScript transcript chain helpers now symmetrically enforce Core `prev_msg_hash` semantics for non-first records, including missing/empty-field rejection and deterministic mismatch errors.
+- **Progress:** shared helper parity is now documented explicitly across the Python reference layer and TypeScript SDK, with fixture-backed regression coverage for canonicalization/hash/chain overlap and a Unicode code-point key-order fix in the TS canonicalizer.
 - **Progress:** Core conformance now includes an expected-fail transcript for schema-admissible empty `contract_id` envelopes plus direct regression coverage for multi-step hash-chain corruption, reinforcing the permissive-boundary/strict-semantic split without widening Core schemas.
 - **Progress:** TS agent + protocol-adapter templates are aligned to actual commands/output and now preserve onboarding-safe audit metadata.
 - **Progress:** CI/test coverage now includes deterministic smoke checks for shipped onboarding templates.
