@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "1f83158df50e7bb9bd11b30bd37a73d3915c071634171bca98a15e0ef63def02",
+      "combined_sha256": "90e63ca38c2379921a9a4a5d694e9ee9760d5868b380b54794798cfeef46ecdd",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -53,7 +53,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "1e45fdb44485c20ecfeeee6d98dc4a705a87b13b534ed0b6f61f7d0261e44d63"
+          "sha256": "ff1119bbce86421977322248f3ad54510238f68616f7ec2fd4300fb1d73dceb9"
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -270,7 +270,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "775845ca70d1cb7af4b1007256b559758da5cb994291c2f9402f39770e9d8959",
+      "combined_sha256": "9657dcd42e615f938c7ee07314af8c439f6920c02f4e0f7cb63542540daa7963",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -495,6 +495,10 @@
         {
           "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
           "sha256": "250bc11684fa3b1c3cedef0930c464b82574397debd46ab86518ad90ab5c4f03"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+          "sha256": "64698a10d7e0072a186c39b496eb583f120da606f85de366c5e84cab492c6e67"
         },
         {
           "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",

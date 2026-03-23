@@ -65,9 +65,18 @@ def main() -> None:
         {"session_id": "sCN8", "message_id": "m6", "timestamp": "2026-01-10T00:20:10Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cCN8", "contract_ref": cref, "payload": {"accepted": True}},
     ])
 
+
+    cn10 = finalize([
+        {"session_id": "sCN10", "message_id": "m1", "timestamp": "2026-01-11T00:00:00Z", "sender": "adapter:chatgpt", "message_type": "CAPABILITIES_DECLARE", "contract_id": "cCN10", "payload": {"capabilities_id": "cap-chatgpt-10", "party_id": "adapter:chatgpt", "supported_profiles": ["AICP-JCS-1", "AICP-HASH-SHA256-1", "AICP-SIG-ED25519-1"], "supported_privacy_modes": ["standard"], "supported_extensions": ["EXT-CAPNEG", "EXT-IDENTITY-LC", "EXT-DELEGATED-IDENTITY"], "supported_aicp_profiles": [{"profile_id": "AICP-DELEGATED-IDENTITY", "profile_version": "0.1"}, {"profile_id": "AICP-BASE", "profile_version": "0.1"}], "required_aicp_profiles": [{"profile_id": "AICP-DELEGATED-IDENTITY", "profile_version": "0.1"}] }},
+        {"session_id": "sCN10", "message_id": "m2", "timestamp": "2026-01-11T00:00:02Z", "sender": "adapter:lovable", "message_type": "CAPABILITIES_DECLARE", "contract_id": "cCN10", "payload": {"capabilities_id": "cap-lovable-10", "party_id": "adapter:lovable", "supported_profiles": ["AICP-JCS-1", "AICP-HASH-SHA256-1", "AICP-SIG-ED25519-1"], "supported_privacy_modes": ["standard"], "supported_extensions": ["EXT-CAPNEG"], "supported_aicp_profiles": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}], "required_aicp_profiles": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}] }},
+        {"session_id": "sCN10", "message_id": "m3", "timestamp": "2026-01-11T00:00:04Z", "sender": "adapter:lovable", "message_type": "CAPABILITIES_PROPOSE", "contract_id": "cCN10", "payload": {"negotiation_result": {"negotiation_id": "NEG-CN10", "session_id": "sCN10", "contract_id": "cCN10", "participants": ["adapter:chatgpt", "adapter:lovable"], "selected": {"crypto_profile": ["AICP-JCS-1", "AICP-HASH-SHA256-1", "AICP-SIG-ED25519-1"], "privacy_mode": "standard", "required_extensions": ["EXT-CAPNEG"], "aicp_profile": {"profile_id": "AICP-BASE", "profile_version": "0.1"}}, "transcript_binding": "msgid:cn10-m3"}}},
+        {"session_id": "sCN10", "message_id": "m4", "timestamp": "2026-01-11T00:00:06Z", "sender": "adapter:chatgpt", "message_type": "CAPABILITIES_REJECT", "contract_id": "cCN10", "payload": {"negotiation_id": "NEG-CN10", "reason_code": "INVALID_SELECTION", "reason_detail": "delegated identity evidence is required for owner-bound action"}},
+    ])
+
     out = ROOT / "fixtures/extensions/capneg"
     write(out / "CN-07_negotiation_bound_into_contract_pass.jsonl", cn07)
     write(out / "CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl", cn08)
+    write(out / "CN-10_profile_rejection_reason_expected_fail.jsonl", cn10)
     print("Generated CAPNEG binding fixtures")
 
 

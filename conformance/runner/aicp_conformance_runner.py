@@ -1468,6 +1468,66 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 if reason_code not in capneg_reason_codes:
                     add_failure(t_failures, "CN-REASON-CODES-01", f"unknown CAPNEG reason_code '{reason_code}'", rel_file, line_no)
 
+        if "CN-PROFILE-REJECT-SEMANTICS-01" in enabled_checks:
+            declares_by_party: dict[str, dict[str, Any]] = {}
+            proposals_by_negotiation_id: dict[str, dict[str, Any]] = {}
+            for _, msg in rows:
+                mtype = msg.get("message_type")
+                payload = msg.get("payload") or {}
+                if mtype == "CAPABILITIES_DECLARE":
+                    party_id = payload.get("party_id")
+                    if isinstance(party_id, str):
+                        declares_by_party[party_id] = payload
+                elif mtype == "CAPABILITIES_PROPOSE":
+                    result = payload.get("negotiation_result") or {}
+                    neg_id = result.get("negotiation_id")
+                    if isinstance(neg_id, str):
+                        proposals_by_negotiation_id[neg_id] = result
+
+            for line_no, msg in rows:
+                if msg.get("message_type") != "CAPABILITIES_REJECT":
+                    continue
+                payload = msg.get("payload") or {}
+                neg_id = payload.get("negotiation_id")
+                reason_code = payload.get("reason_code")
+                if not isinstance(neg_id, str):
+                    continue
+                proposal = proposals_by_negotiation_id.get(neg_id) or {}
+                selected = proposal.get("selected") or {}
+                aicp_profile = selected.get("aicp_profile")
+                if not isinstance(aicp_profile, dict):
+                    continue
+                profile_tuple = (aicp_profile.get("profile_id"), aicp_profile.get("profile_version"))
+                participants = proposal.get("participants") or []
+
+                unsupported = False
+                unacceptable = False
+                for participant in participants:
+                    if not isinstance(participant, str):
+                        continue
+                    declared = declares_by_party.get(participant)
+                    if not isinstance(declared, dict):
+                        continue
+                    supported_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("supported_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    required_profiles = {
+                        (p.get("profile_id"), p.get("profile_version"))
+                        for p in (declared.get("required_aicp_profiles") or [])
+                        if isinstance(p, dict)
+                    }
+                    if supported_profiles and profile_tuple not in supported_profiles:
+                        unsupported = True
+                    elif required_profiles and profile_tuple not in required_profiles:
+                        unacceptable = True
+
+                if unsupported and reason_code != "REQUIRED_PROFILE_UNSUPPORTED":
+                    add_failure(t_failures, "CN-PROFILE-REJECT-SEMANTICS-01", "profile support mismatch should reject with reason_code=REQUIRED_PROFILE_UNSUPPORTED", rel_file, line_no)
+                elif unacceptable and reason_code not in {"PROFILE_NOT_ACCEPTABLE", "DOWNGRADE_NOT_ALLOWED"}:
+                    add_failure(t_failures, "CN-PROFILE-REJECT-SEMANTICS-01", "policy/profile acceptability mismatch should reject with reason_code=PROFILE_NOT_ACCEPTABLE or DOWNGRADE_NOT_ALLOWED", rel_file, line_no)
+
         if "CN-PRIVACY-MODES-01" in enabled_checks:
             for line_no, msg in rows:
                 mtype = msg.get("message_type")

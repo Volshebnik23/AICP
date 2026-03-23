@@ -58,6 +58,9 @@ _Last updated: 2026-03-23_
 - **Shipped:** informative `docs/adjacent/A2A_Integration_Pattern.md` added with layered composition model and practical rendezvous/bootstrap, specialist handoff, relay/fallback, and failure-continuity guidance.
 - **Shipped:** docs front-door/guides/playbooks now cross-link adjacent integration guidance for faster architect discovery without changing protocol semantics.
 - **Next concrete step:** collect implementer feedback and iterate examples while preserving strict non-normative adjacent-layer boundaries.
+- **Progress:** foreign-runtime interoperability hardening guidance now exists as a concise playbook covering truthful adapter claims, deterministic CAPNEG rejection, approval-boundary separation, delegated-identity ambiguity, and resume-vs-resync limits for heterogeneous external runtimes without implying vendor support.
+- **Progress:** EXT-CAPNEG conformance now also checks deterministic profile-rejection reason semantics so unsupported-vs-unacceptable profile mismatches produce machine-checkable rejection evidence instead of only generic failure.
+- **Next concrete step:** add a small cross-extension dry-run that combines CAPNEG rejection, delegated identity, approval, and resume/resync stress in one adapter-mediated interop rehearsal.
 
 - **Progress:** Core narrative now explicitly matches shipped `ERROR` message set and clarifies narrative/spec/schema/conformance/reference boundaries.
 - **Progress:** Python reference validator now enforces non-first `prev_msg_hash`, signature `object_hash == message_hash`, and consistent signer/`kid` key selection checks.
