@@ -109,6 +109,20 @@
       "expected_message_types": [
         "ERROR"
       ]
+    },
+    {
+      "id": "GT-11",
+      "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_ACCEPT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-CONTRACT-ID-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -135,6 +149,10 @@
     {
       "test_id": "CT-INVARIANTS-01",
       "description": "session_id is constant and message_id values are unique per transcript"
+    },
+    {
+      "test_id": "CT-CONTRACT-ID-01",
+      "description": "contract_id must be present as a non-empty string on every Core message envelope"
     },
     {
       "test_id": "CT-SEQUENCE-01",

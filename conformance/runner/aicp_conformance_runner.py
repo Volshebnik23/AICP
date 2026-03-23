@@ -1099,6 +1099,17 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             else:
                 seen_ids.add(mid)
 
+            if "CT-CONTRACT-ID-01" in enabled_checks:
+                contract_id = msg.get("contract_id")
+                if not isinstance(contract_id, str) or not contract_id:
+                    add_failure(
+                        t_failures,
+                        "CT-CONTRACT-ID-01",
+                        "contract_id must be a non-empty string",
+                        rel_file,
+                        line_no,
+                    )
+
         if "CT-PREV-MSG-REQUIRED-01" in enabled_checks:
             for idx, (line_no, msg) in enumerate(rows):
                 if idx == 0:
