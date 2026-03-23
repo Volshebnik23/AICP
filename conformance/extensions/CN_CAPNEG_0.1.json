@@ -114,6 +114,27 @@
         "CAPABILITIES_PROPOSE",
         "CAPABILITIES_ACCEPT"
       ]
+    },
+    {
+      "id": "CN-10",
+      "path": "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_REJECT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CN-AICP-PROFILE-NEGOTIATION-01",
+          "min_count": 1
+        },
+        {
+          "test_id": "CN-PROFILE-REJECT-SEMANTICS-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -152,6 +173,10 @@
     {
       "test_id": "CN-AICP-PROFILE-NEGOTIATION-01",
       "description": "selected.aicp_profile must be registered and acceptable/supported by declared participants"
+    },
+    {
+      "test_id": "CN-PROFILE-REJECT-SEMANTICS-01",
+      "description": "CAPABILITIES_REJECT reason_code must semantically match deterministic selected.aicp_profile mismatch outcomes"
     },
     {
       "test_id": "CN-REASON-CODES-01",
