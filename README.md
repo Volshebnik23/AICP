@@ -5,16 +5,25 @@ An open content-layer protocol for agent-to-agent interaction with enforceable p
 AICP is a practical, implementable standard for governed multi-agent conversation/context artifacts.
 
 ➡️ **Docs front door:** [docs/INDEX.md](docs/INDEX.md)  
+
 ➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)  
+
 ➡️ **Adoption core + tiers:** [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md)
 
 ➡️ **UAT release pack:** [docs/release/AICP_UAT_Release_Pack.md](docs/release/AICP_UAT_Release_Pack.md)
+
 ➡️ **UAT freeze policy:** [docs/release/AICP_UAT_Architecture_Freeze.md](docs/release/AICP_UAT_Architecture_Freeze.md)
+
 ➡️ **Interop corpus + claims:** [docs/interop/AICP_Public_Interop_Corpus.md](docs/interop/AICP_Public_Interop_Corpus.md)
+
 ➡️ **Interop submission playbook:** [docs/interop/AICP_Interop_Submission_Playbook.md](docs/interop/AICP_Interop_Submission_Playbook.md)  
+
 ➡️ **Interop validator + matrix entrypoints:** [interop/README.md](interop/README.md)
+
 ➡️ **Release process:** [docs/release/RELEASING.md](docs/release/RELEASING.md)  
+
 ➡️ **Governance:** [GOVERNANCE.md](GOVERNANCE.md)  
+
 ➡️ **Productization DoD:** [checklists/productization_dod.md](checklists/productization_dod.md)
 
 ## What problem AICP solves
