@@ -11,7 +11,12 @@ _Last updated: 2026-05-06_
 - **Shipped:** `make prepr` is now the PR/onboarding gate and runs full conformance through `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests.
 - **Shipped:** `make compatibility-gate` and `make release-gate` now give compatibility/badge evidence and release hygiene distinct one-command entrypoints.
 - **Shipped:** CI now runs `make conformance-all` instead of a partial conformance surface, so demos, ops, and security evidence suites stay aligned with PR verification.
-- **Next concrete step:** resolve cross-platform docs path casing (`docs/INDEX.md` vs `docs/index.md`) in a separate PR before further broad structural work.
+- **Next concrete step:** keep verification-gate taxonomy stable while later structural work changes runner internals.
+
+### M50 - Cross-platform docs path casing cleanup
+- **Shipped:** removed the case-only duplicate `docs/index.md` so case-insensitive filesystems can check out the canonical `docs/INDEX.md` without dirtying the working tree.
+- **Shipped:** `make validate` now includes a case-unique tracked-path guard to prevent future case-only collisions.
+- **Next concrete step:** begin the conformance runner modularity work in a separate PR with the cross-platform checkout issue removed.
 
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
