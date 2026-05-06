@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[3]
 CONTEXT_HELPERS = ROOT / "conformance/runner/_runner_context.py"
 IO_HELPERS = ROOT / "conformance/runner/_runner_io.py"
 REPORTING_HELPERS = ROOT / "conformance/runner/_runner_reporting.py"
+CORE_CHECK_HELPERS = ROOT / "conformance/runner/_runner_core_checks.py"
 CONFORMANCE_RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
 
 
@@ -96,3 +97,51 @@ def test_runner_reporting_helper_builds_expected_report_shape() -> None:
     assert report["degraded_reasons"] == []
     assert report["skipped_checks"] == ["CT-OPTIONAL-01"]
     assert isinstance(report["timestamp"], str) and report["timestamp"]
+
+
+def test_runner_core_check_helper_preserves_basic_failure_shape() -> None:
+    helpers = _load_module(CORE_CHECK_HELPERS, "aicp_runner_core_checks_test")
+    failures: list[dict[str, object]] = []
+
+    helpers.run_core_transcript_checks(
+        rows=[
+            (
+                1,
+                {
+                    "session_id": "s1",
+                    "message_id": "m1",
+                    "message_type": "KNOWN",
+                    "message_hash": "h1",
+                    "contract_id": "c1",
+                    "signatures": [{"object_hash": "wrong"}],
+                },
+            ),
+            (
+                2,
+                {
+                    "session_id": "s2",
+                    "message_id": "m1",
+                    "message_type": "UNKNOWN",
+                    "message_hash": "h2",
+                    "prev_msg_hash": "",
+                    "contract_id": "",
+                },
+            ),
+        ],
+        transcript={"expected_message_types": ["KNOWN", "KNOWN"]},
+        enabled_checks={"CT-MESSAGE-TYPE-REGISTRY-01", "CT-CONTRACT-ID-01", "CT-PREV-MSG-REQUIRED-01"},
+        registered_message_types={"KNOWN"},
+        rel_file="fixtures/test.jsonl",
+        failures=failures,
+    )
+
+    assert failures == [
+        {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01", "message": "unregistered message_type 'UNKNOWN'", "file": "fixtures/test.jsonl", "line": 2},
+        {"test_id": "CT-INVARIANTS-01", "message": "session_id changed within transcript", "file": "fixtures/test.jsonl", "line": 2},
+        {"test_id": "CT-INVARIANTS-01", "message": "duplicate message_id 'm1'", "file": "fixtures/test.jsonl", "line": 2},
+        {"test_id": "CT-CONTRACT-ID-01", "message": "contract_id must be a non-empty string", "file": "fixtures/test.jsonl", "line": 2},
+        {"test_id": "CT-PREV-MSG-REQUIRED-01", "message": "prev_msg_hash is required and must be a non-empty string for non-first messages", "file": "fixtures/test.jsonl", "line": 2},
+        {"test_id": "CT-HASH-CHAIN-01", "message": "prev_msg_hash mismatch (expected h1, got )", "file": "fixtures/test.jsonl", "line": 2},
+        {"test_id": "CT-SEQUENCE-01", "message": "message_type sequence mismatch (expected ['KNOWN', 'KNOWN'], got ['KNOWN', 'UNKNOWN'])", "file": "fixtures/test.jsonl", "line": None},
+        {"test_id": "CT-SIGNATURE-HASH-01", "message": "signatures.object_hash mismatch (expected h1, got wrong)", "file": "fixtures/test.jsonl", "line": 1},
+    ]
