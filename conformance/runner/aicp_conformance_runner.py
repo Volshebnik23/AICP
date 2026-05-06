@@ -41,6 +41,7 @@ from _runner_io import (  # noqa: E402
     resolve_repo_path as _io_resolve_repo_path,
     write_json_report as _io_write_json_report,
 )
+from _runner_alert_checks import run_alert_transcript_checks as _run_alert_transcript_checks  # noqa: E402
 from _runner_core_checks import run_core_transcript_checks as _run_core_transcript_checks  # noqa: E402
 from _runner_enforcement_checks import run_enforcement_transcript_checks as _run_enforcement_transcript_checks  # noqa: E402
 from _runner_reporting import build_conformance_report as _build_conformance_report_record  # noqa: E402
@@ -4071,42 +4072,15 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                     if same_artifact_initial and all(pin.get("version") != version for pin in same_artifact_initial) and not saw_amend:
                         add_failure(t_failures, "AM-RENEG-01", "pinned artifact version changed without explicit CONTEXT_AMEND", rel_file, line_no)
 
-        if "AL-ALERT-CODES-01" in enabled_checks or "AL-ALERT-ACTIONS-01" in enabled_checks:
-            for line_no, msg in rows:
-                if msg.get("message_type") != "ALERT":
-                    continue
-                payload = msg.get("payload") or {}
-                if "AL-ALERT-CODES-01" in enabled_checks:
-                    code = payload.get("code")
-                    if code not in alert_codes_registry:
-                        add_failure(t_failures, "AL-ALERT-CODES-01", f"unknown alert code '{code}'", rel_file, line_no)
-                if "AL-ALERT-ACTIONS-01" in enabled_checks:
-                    for action in payload.get("recommended_actions", []) or []:
-                        if action not in alert_recommended_actions:
-                            add_failure(t_failures, "AL-ALERT-ACTIONS-01", f"unknown recommended_action '{action}'", rel_file, line_no)
-
-        if "AL-VERBOSITY-01" in enabled_checks:
-            for line_no, msg in rows:
-                if msg.get("message_type") != "ALERT":
-                    continue
-                payload = msg.get("payload") or {}
-                message = payload.get("message")
-                if isinstance(message, str) and len(message) > 256:
-                    add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.message exceeds 256 characters (got {len(message)})", rel_file, line_no)
-                if "details" in payload:
-                    try:
-                        details_size = len(canonicalize_json(payload.get("details")))
-                    except Exception as exc:
-                        add_failure(t_failures, "AL-VERBOSITY-01", f"ALERT payload.details canonicalization failed: {exc}", rel_file, line_no)
-                        continue
-                    if details_size > 4096:
-                        add_failure(
-                            t_failures,
-                            "AL-VERBOSITY-01",
-                            f"ALERT payload.details canonical JSON exceeds 4096 bytes (got {details_size})",
-                            rel_file,
-                            line_no,
-                        )
+        _run_alert_transcript_checks(
+            rows=rows,
+            enabled_checks=enabled_checks,
+            alert_codes_registry=alert_codes_registry,
+            alert_recommended_actions=alert_recommended_actions,
+            canonicalize_json_fn=canonicalize_json,
+            rel_file=rel_file,
+            failures=t_failures,
+        )
 
         if any(check in enabled_checks for check in {"EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01", "EX-THREAD-REF-01", "EX-THREAD-CLOSED-01", "EX-STORE-REF-01", "EX-STORE-LINK-01", "EX-CROSS-BIND-01"}):
             run_state: dict[str, str] = {}

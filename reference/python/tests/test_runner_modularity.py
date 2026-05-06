@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[3]
 CONTEXT_HELPERS = ROOT / "conformance/runner/_runner_context.py"
 IO_HELPERS = ROOT / "conformance/runner/_runner_io.py"
 REPORTING_HELPERS = ROOT / "conformance/runner/_runner_reporting.py"
+ALERT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_alert_checks.py"
 CORE_CHECK_HELPERS = ROOT / "conformance/runner/_runner_core_checks.py"
 ENFORCEMENT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_enforcement_checks.py"
 CONFORMANCE_RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
@@ -185,4 +186,50 @@ def test_runner_enforcement_check_helper_preserves_failure_shape() -> None:
         {"test_id": "ENF-SANCTION-CODES-01", "message": "unknown sanction code 'unknown'", "file": "fixtures/enforcement.jsonl", "line": 1},
         {"test_id": "ENF-SANCTION-CODES-01", "message": "sanctions[].code must be a string", "file": "fixtures/enforcement.jsonl", "line": 1},
         {"test_id": "ENF-VERDICT-STORM-01", "message": "multiple ENFORCEMENT_VERDICT messages reference target_message_hash 'target-1'", "file": "fixtures/enforcement.jsonl", "line": 2},
+    ]
+
+
+def test_runner_alert_check_helper_preserves_failure_shape() -> None:
+    helpers = _load_module(ALERT_CHECK_HELPERS, "aicp_runner_alert_checks_test")
+    failures: list[dict[str, object]] = []
+
+    helpers.run_alert_transcript_checks(
+        rows=[
+            (
+                3,
+                {
+                    "message_type": "ALERT",
+                    "payload": {
+                        "code": "UNKNOWN",
+                        "recommended_actions": ["BAD_ACTION"],
+                        "message": "x" * 257,
+                        "details": {"note": "ok"},
+                    },
+                },
+            ),
+            (
+                4,
+                {
+                    "message_type": "ALERT",
+                    "payload": {
+                        "code": "KNOWN",
+                        "recommended_actions": ["GOOD_ACTION"],
+                        "details": {"large": "x" * 4100},
+                    },
+                },
+            ),
+        ],
+        enabled_checks={"AL-ALERT-CODES-01", "AL-ALERT-ACTIONS-01", "AL-VERBOSITY-01"},
+        alert_codes_registry={"KNOWN": {}},
+        alert_recommended_actions={"GOOD_ACTION"},
+        canonicalize_json_fn=lambda value: __import__("json").dumps(value, separators=(",", ":"), sort_keys=True),
+        rel_file="fixtures/alerts.jsonl",
+        failures=failures,
+    )
+
+    assert failures == [
+        {"test_id": "AL-ALERT-CODES-01", "message": "unknown alert code 'UNKNOWN'", "file": "fixtures/alerts.jsonl", "line": 3},
+        {"test_id": "AL-ALERT-ACTIONS-01", "message": "unknown recommended_action 'BAD_ACTION'", "file": "fixtures/alerts.jsonl", "line": 3},
+        {"test_id": "AL-VERBOSITY-01", "message": "ALERT payload.message exceeds 256 characters (got 257)", "file": "fixtures/alerts.jsonl", "line": 3},
+        {"test_id": "AL-VERBOSITY-01", "message": "ALERT payload.details canonical JSON exceeds 4096 bytes (got 4112)", "file": "fixtures/alerts.jsonl", "line": 4},
     ]
