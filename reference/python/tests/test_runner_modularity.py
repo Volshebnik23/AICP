@@ -9,6 +9,7 @@ CONTEXT_HELPERS = ROOT / "conformance/runner/_runner_context.py"
 IO_HELPERS = ROOT / "conformance/runner/_runner_io.py"
 REPORTING_HELPERS = ROOT / "conformance/runner/_runner_reporting.py"
 CORE_CHECK_HELPERS = ROOT / "conformance/runner/_runner_core_checks.py"
+ENFORCEMENT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_enforcement_checks.py"
 CONFORMANCE_RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
 
 
@@ -144,4 +145,44 @@ def test_runner_core_check_helper_preserves_basic_failure_shape() -> None:
         {"test_id": "CT-HASH-CHAIN-01", "message": "prev_msg_hash mismatch (expected h1, got )", "file": "fixtures/test.jsonl", "line": 2},
         {"test_id": "CT-SEQUENCE-01", "message": "message_type sequence mismatch (expected ['KNOWN', 'KNOWN'], got ['KNOWN', 'UNKNOWN'])", "file": "fixtures/test.jsonl", "line": None},
         {"test_id": "CT-SIGNATURE-HASH-01", "message": "signatures.object_hash mismatch (expected h1, got wrong)", "file": "fixtures/test.jsonl", "line": 1},
+    ]
+
+
+def test_runner_enforcement_check_helper_preserves_failure_shape() -> None:
+    helpers = _load_module(ENFORCEMENT_CHECK_HELPERS, "aicp_runner_enforcement_checks_test")
+    failures: list[dict[str, object]] = []
+
+    helpers.run_enforcement_transcript_checks(
+        rows=[
+            (
+                1,
+                {
+                    "message_type": "ENFORCEMENT_VERDICT",
+                    "payload": {
+                        "target_message_hash": "target-1",
+                        "sanctions": [{"code": "allowed"}, {"code": "unknown"}, {"code": 7}],
+                    },
+                },
+            ),
+            (
+                2,
+                {
+                    "message_type": "ENFORCEMENT_VERDICT",
+                    "payload": {
+                        "target_message_hash": "target-1",
+                        "sanctions": [{"code": "x-vendor.ok"}, {"code": "vendor:ok"}],
+                    },
+                },
+            ),
+        ],
+        enabled_checks={"ENF-SANCTION-CODES-01", "ENF-VERDICT-STORM-01"},
+        enforcement_sanction_codes={"allowed"},
+        rel_file="fixtures/enforcement.jsonl",
+        failures=failures,
+    )
+
+    assert failures == [
+        {"test_id": "ENF-SANCTION-CODES-01", "message": "unknown sanction code 'unknown'", "file": "fixtures/enforcement.jsonl", "line": 1},
+        {"test_id": "ENF-SANCTION-CODES-01", "message": "sanctions[].code must be a string", "file": "fixtures/enforcement.jsonl", "line": 1},
+        {"test_id": "ENF-VERDICT-STORM-01", "message": "multiple ENFORCEMENT_VERDICT messages reference target_message_hash 'target-1'", "file": "fixtures/enforcement.jsonl", "line": 2},
     ]

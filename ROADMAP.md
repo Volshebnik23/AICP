@@ -27,7 +27,12 @@ _Last updated: 2026-05-06_
 ### M52 - Core transcript check-handler extraction
 - **Shipped:** basic Core transcript checks now live in `conformance/runner/_runner_core_checks.py`, reducing `run_suite(...)` inline responsibilities while preserving the public runner entrypoint.
 - **Shipped:** runner modularity tests cover the extracted helper failure shape.
-- **Next concrete step:** extract the next extension-specific check family behind similarly narrow helper tests.
+- **Next concrete step:** continue extracting extension-specific check families behind similarly narrow helper tests.
+
+### M53 - Enforcement transcript check-handler extraction
+- **Shipped:** enforcement sanction-code and verdict-storm checks now live in `conformance/runner/_runner_enforcement_checks.py`, leaving contract-dependent enforcement checks in the main runner until they can be extracted safely.
+- **Shipped:** runner modularity tests cover the extracted enforcement helper failure shape and ordering.
+- **Next concrete step:** extract the next low-coupling extension check family without changing report semantics.
 
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
