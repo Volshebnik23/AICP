@@ -18,6 +18,7 @@ from _runner_io import (  # noqa: E402
     resolve_repo_path as _io_resolve_repo_path,
     write_json_report as _io_write_json_report,
 )
+from _suite_catalog import catalog_names, catalog_pairs  # noqa: E402
 
 
 def _resolve_repo_path(path_like: str) -> Path:
@@ -67,8 +68,28 @@ def run_batch(suite_out: list[str], profile_out: list[str]) -> int:
     return 0 if overall_ok else 1
 
 
+def _expand_catalogs(names: list[str]) -> tuple[list[str], list[str]]:
+    suite_out: list[str] = []
+    profile_out: list[str] = []
+    for name in names:
+        for kind, pairs in catalog_pairs(name):
+            formatted = [f"{input_ref}::{out_ref}" for input_ref, out_ref in pairs]
+            if kind == "suite":
+                suite_out.extend(formatted)
+            else:
+                profile_out.extend(formatted)
+    return suite_out, profile_out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run multiple AICP conformance/profile catalogs in one process")
+    parser.add_argument(
+        "--catalog",
+        action="append",
+        choices=catalog_names(),
+        default=[],
+        help="Named catalog to run (repeatable)",
+    )
     parser.add_argument(
         "--suite-out",
         action="append",
@@ -83,12 +104,16 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    if not args.suite_out and not args.profile_out:
-        print("[FAIL] provide at least one --suite-out or --profile-out pair")
+    catalog_suite_out, catalog_profile_out = _expand_catalogs(args.catalog)
+    suite_out = catalog_suite_out + args.suite_out
+    profile_out = catalog_profile_out + args.profile_out
+
+    if not suite_out and not profile_out:
+        print("[FAIL] provide at least one --catalog, --suite-out, or --profile-out")
         return 1
 
     try:
-        return run_batch(args.suite_out, args.profile_out)
+        return run_batch(suite_out, profile_out)
     except Exception as exc:
         print(f"[FAIL] {exc}")
         return 1
