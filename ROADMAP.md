@@ -44,6 +44,11 @@ _Last updated: 2026-05-06_
 - **Shipped:** runner modularity tests cover the extracted execution helper failure shape and ordering.
 - **Next concrete step:** stop low-coupling runner extraction here unless another family can be moved with similarly narrow behavioral proof.
 
+### M56 - Media delivery check-handler extraction
+- **Shipped:** channel, subscription, publication, and inbox delivery checks now live in `conformance/runner/_runner_media_checks.py`, with policy reason-code and namespaced-identifier dependencies passed in explicitly.
+- **Shipped:** runner modularity tests cover the extracted media delivery helper failure shape and ordering.
+- **Next concrete step:** stop behavior-preserving runner extraction unless a later refactor adds equivalent focused coverage for the remaining higher-coupling check families.
+
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
 
