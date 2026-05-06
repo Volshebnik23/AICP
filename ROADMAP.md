@@ -39,6 +39,11 @@ _Last updated: 2026-05-06_
 - **Shipped:** runner modularity tests cover the extracted alert helper failure shape and ordering.
 - **Next concrete step:** extract another low-coupling extension check family or stop runner extraction once marginal risk exceeds readability gain.
 
+### M55 - Execution lifecycle check-handler extraction
+- **Shipped:** execution lifecycle run/thread/store-ref checks now live in `conformance/runner/_runner_execution_checks.py`, reducing `run_suite(...)` inline extension-specific responsibilities while preserving report semantics.
+- **Shipped:** runner modularity tests cover the extracted execution helper failure shape and ordering.
+- **Next concrete step:** stop low-coupling runner extraction here unless another family can be moved with similarly narrow behavioral proof.
+
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
 

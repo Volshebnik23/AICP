@@ -11,6 +11,7 @@ REPORTING_HELPERS = ROOT / "conformance/runner/_runner_reporting.py"
 ALERT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_alert_checks.py"
 CORE_CHECK_HELPERS = ROOT / "conformance/runner/_runner_core_checks.py"
 ENFORCEMENT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_enforcement_checks.py"
+EXECUTION_CHECK_HELPERS = ROOT / "conformance/runner/_runner_execution_checks.py"
 CONFORMANCE_RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
 
 
@@ -232,4 +233,103 @@ def test_runner_alert_check_helper_preserves_failure_shape() -> None:
         {"test_id": "AL-ALERT-ACTIONS-01", "message": "unknown recommended_action 'BAD_ACTION'", "file": "fixtures/alerts.jsonl", "line": 3},
         {"test_id": "AL-VERBOSITY-01", "message": "ALERT payload.message exceeds 256 characters (got 257)", "file": "fixtures/alerts.jsonl", "line": 3},
         {"test_id": "AL-VERBOSITY-01", "message": "ALERT payload.details canonical JSON exceeds 4096 bytes (got 4112)", "file": "fixtures/alerts.jsonl", "line": 4},
+    ]
+
+
+def test_runner_execution_check_helper_preserves_failure_shape() -> None:
+    helpers = _load_module(EXECUTION_CHECK_HELPERS, "aicp_runner_execution_checks_test")
+    failures: list[dict[str, object]] = []
+
+    helpers.run_execution_transcript_checks(
+        rows=[
+            (1, {"message_type": "RUN_UPDATE", "payload": {"run_id": "missing"}}),
+            (2, {"message_type": "RUN_CREATE", "payload": {"run_id": "r1", "thread_id": "t1"}}),
+            (3, {"message_type": "RUN_COMPLETE", "payload": {"run_id": "r1"}}),
+            (4, {"message_type": "RUN_UPDATE", "payload": {"run_id": "r1"}}),
+            (5, {"message_type": "THREAD_APPEND", "payload": {"thread_id": "t-missing"}}),
+            (6, {"message_type": "THREAD_CREATE", "payload": {"thread_id": "t2"}}),
+            (7, {"message_type": "THREAD_CLOSE", "payload": {"thread_id": "t2"}}),
+            (8, {"message_type": "THREAD_APPEND", "payload": {"thread_id": "t2"}}),
+            (9, {"message_type": "RUN_CREATE", "payload": {"run_id": "r2", "thread_id": "t3"}}),
+            (10, {"message_type": "THREAD_CREATE", "payload": {"thread_id": "t4", "run_id": "r2"}}),
+            (
+                11,
+                {
+                    "message_type": "RUN_UPDATE",
+                    "payload": {"run_id": "r2", "store_ref": {"ref_id": "s1", "object_hash": "h1", "object_type": "blob"}},
+                },
+            ),
+            (
+                12,
+                {
+                    "message_type": "RUN_UPDATE",
+                    "payload": {
+                        "run_id": "r2",
+                        "memory_ref": {
+                            "ref_id": "m1",
+                            "object_hash": "h-missing",
+                            "object_type": "memory",
+                            "access": {"mode": "read", "constraint": "same-run", "resolution_required": True},
+                        },
+                    },
+                },
+            ),
+        ],
+        enabled_checks={
+            "EX-RUN-REF-01",
+            "EX-RUN-TRANSITION-01",
+            "EX-RUN-TERMINAL-01",
+            "EX-THREAD-REF-01",
+            "EX-THREAD-CLOSED-01",
+            "EX-STORE-REF-01",
+            "EX-STORE-LINK-01",
+            "EX-CROSS-BIND-01",
+        },
+        rel_file="fixtures/execution.jsonl",
+        failures=failures,
+    )
+
+    assert failures == [
+        {
+            "test_id": "EX-RUN-REF-01",
+            "message": "RUN_UPDATE.run_id 'missing' must reference prior RUN_CREATE",
+            "file": "fixtures/execution.jsonl",
+            "line": 1,
+        },
+        {
+            "test_id": "EX-RUN-TERMINAL-01",
+            "message": "RUN_UPDATE is not allowed after terminal state for run_id 'r1'",
+            "file": "fixtures/execution.jsonl",
+            "line": 4,
+        },
+        {
+            "test_id": "EX-THREAD-REF-01",
+            "message": "THREAD_APPEND.thread_id 't-missing' must reference prior THREAD_CREATE",
+            "file": "fixtures/execution.jsonl",
+            "line": 5,
+        },
+        {
+            "test_id": "EX-THREAD-CLOSED-01",
+            "message": "THREAD_APPEND is not allowed after THREAD_CLOSE for thread_id 't2'",
+            "file": "fixtures/execution.jsonl",
+            "line": 8,
+        },
+        {
+            "test_id": "EX-CROSS-BIND-01",
+            "message": "run_id 'r2' cannot rebind from thread_id 't3' to 't4'",
+            "file": "fixtures/execution.jsonl",
+            "line": 10,
+        },
+        {
+            "test_id": "EX-STORE-REF-01",
+            "message": "store_ref.access must be an object",
+            "file": "fixtures/execution.jsonl",
+            "line": 11,
+        },
+        {
+            "test_id": "EX-STORE-LINK-01",
+            "message": "memory_ref.object_hash 'h-missing' requires OBJECT_RESPONSE status=FOUND evidence",
+            "file": "fixtures/execution.jsonl",
+            "line": 12,
+        },
     ]
