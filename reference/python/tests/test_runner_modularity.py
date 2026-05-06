@@ -12,6 +12,7 @@ ALERT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_alert_checks.py"
 CORE_CHECK_HELPERS = ROOT / "conformance/runner/_runner_core_checks.py"
 ENFORCEMENT_CHECK_HELPERS = ROOT / "conformance/runner/_runner_enforcement_checks.py"
 EXECUTION_CHECK_HELPERS = ROOT / "conformance/runner/_runner_execution_checks.py"
+MEDIA_CHECK_HELPERS = ROOT / "conformance/runner/_runner_media_checks.py"
 CONFORMANCE_RUNNER = ROOT / "conformance/runner/aicp_conformance_runner.py"
 
 
@@ -331,5 +332,164 @@ def test_runner_execution_check_helper_preserves_failure_shape() -> None:
             "message": "memory_ref.object_hash 'h-missing' requires OBJECT_RESPONSE status=FOUND evidence",
             "file": "fixtures/execution.jsonl",
             "line": 12,
+        },
+    ]
+
+
+def test_runner_media_delivery_check_helper_preserves_failure_shape() -> None:
+    helpers = _load_module(MEDIA_CHECK_HELPERS, "aicp_runner_media_checks_test")
+    failures: list[dict[str, object]] = []
+
+    helpers.run_media_delivery_transcript_checks(
+        rows=[
+            (1, {"message_type": "CHANNEL_UPDATE", "payload": {"channel_id": "missing", "parent_channel_id": "parent-missing"}}),
+            (2, {"message_type": "CHANNEL_DECLARE", "payload": {"channel_id": "parent", "visibility_class": "private"}}),
+            (3, {"message_type": "CHANNEL_DECLARE", "payload": {"channel_id": "child", "parent_channel_id": "parent", "visibility_class": "public"}}),
+            (10, {"message_type": "SUBSCRIBE", "payload": {"subscription_id": "sub-1"}}),
+            (11, {"message_type": "SUBSCRIPTION_STATE", "payload": {"subscription_id": "sub-1", "cursor": "c10"}}),
+            (12, {"message_type": "SUBSCRIPTION_STATE", "payload": {"subscription_id": "sub-1", "cursor": "c2"}}),
+            (13, {"message_type": "SUBSCRIPTION_STATE", "payload": {"subscription_id": "missing", "cursor": "c1"}}),
+            (
+                20,
+                {
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                        "contract": {
+                            "ext": {
+                                "publications": {"must_reach": True},
+                                "inbox": {"require_queue_lease_ref": True, "require_admission_ref": True},
+                            }
+                        }
+                    },
+                },
+            ),
+            (21, {"message_type": "PUBLICATION_PUBLISH", "payload": {"publication_id": "pub-1", "version_id": "v1"}}),
+            (22, {"message_type": "PUBLICATION_UPDATE", "payload": {"publication_id": "pub-1", "prior_version_id": "v0", "version_id": "v2"}}),
+            (23, {"message_type": "PUBLICATION_RETRACT", "payload": {"publication_id": "pub-1", "prior_version_id": "v2", "reason_code": "UNKNOWN"}}),
+            (30, {"message_type": "INBOX_ROUTE", "payload": {"item_id": "missing"}}),
+            (31, {"message_type": "INBOX_ENQUEUE", "payload": {"inbox_id": "inbox-a", "item_id": "item-1"}}),
+            (32, {"message_type": "INBOX_LEASE_GRANT", "payload": {"inbox_id": "inbox-b", "item_id": "item-1", "lease_id": "lease-1"}}),
+            (33, {"message_type": "INBOX_ACK", "payload": {"item_id": "item-1"}}),
+            (34, {"message_type": "INBOX_ACK", "payload": {"item_id": "missing", "lease_id": "lease-missing"}}),
+        ],
+        enabled_checks={
+            "CH-HIER-01",
+            "CH-LIFECYCLE-01",
+            "SB-STATE-01",
+            "SB-CURSOR-01",
+            "PB-LIFECYCLE-01",
+            "PB-REASON-01",
+            "PB-DELIVERY-01",
+            "IB-LINK-01",
+            "IB-LEASE-01",
+        },
+        policy_reason_codes=set(),
+        is_namespaced_identifier_fn=lambda value: False,
+        rel_file="fixtures/media.jsonl",
+        failures=failures,
+    )
+
+    assert failures == [
+        {
+            "test_id": "CH-LIFECYCLE-01",
+            "message": "CHANNEL_UPDATE.channel_id 'missing' must reference prior CHANNEL_DECLARE",
+            "file": "fixtures/media.jsonl",
+            "line": 1,
+        },
+        {
+            "test_id": "CH-HIER-01",
+            "message": "CHANNEL_UPDATE.parent_channel_id 'parent-missing' must reference prior declared channel",
+            "file": "fixtures/media.jsonl",
+            "line": 1,
+        },
+        {
+            "test_id": "CH-HIER-01",
+            "message": "child channel visibility_class cannot escalate from parent private to public",
+            "file": "fixtures/media.jsonl",
+            "line": 3,
+        },
+        {
+            "test_id": "SB-CURSOR-01",
+            "message": "SUBSCRIPTION_STATE.cursor 'c2' regressed from 'c10'",
+            "file": "fixtures/media.jsonl",
+            "line": 12,
+        },
+        {
+            "test_id": "SB-STATE-01",
+            "message": "SUBSCRIPTION_STATE.subscription_id 'missing' must reference prior SUBSCRIBE",
+            "file": "fixtures/media.jsonl",
+            "line": 13,
+        },
+        {
+            "test_id": "PB-DELIVERY-01",
+            "message": "must_reach publication requires payload.delivery_proof_ref",
+            "file": "fixtures/media.jsonl",
+            "line": 21,
+        },
+        {
+            "test_id": "PB-LIFECYCLE-01",
+            "message": "PUBLICATION_UPDATE.prior_version_id 'v0' must equal current version 'v1'",
+            "file": "fixtures/media.jsonl",
+            "line": 22,
+        },
+        {
+            "test_id": "PB-DELIVERY-01",
+            "message": "must_reach publication requires payload.delivery_proof_ref",
+            "file": "fixtures/media.jsonl",
+            "line": 22,
+        },
+        {
+            "test_id": "PB-REASON-01",
+            "message": "unknown reason_code 'UNKNOWN' (must be registered or namespaced vendor:/org:)",
+            "file": "fixtures/media.jsonl",
+            "line": 23,
+        },
+        {
+            "test_id": "PB-DELIVERY-01",
+            "message": "must_reach publication requires payload.delivery_proof_ref",
+            "file": "fixtures/media.jsonl",
+            "line": 23,
+        },
+        {
+            "test_id": "IB-LINK-01",
+            "message": "INBOX_ROUTE.item_id 'missing' must reference prior INBOX_ENQUEUE",
+            "file": "fixtures/media.jsonl",
+            "line": 30,
+        },
+        {
+            "test_id": "IB-LINK-01",
+            "message": "INBOX_LEASE_GRANT.inbox_id must match enqueue inbox_id for item",
+            "file": "fixtures/media.jsonl",
+            "line": 32,
+        },
+        {
+            "test_id": "IB-LEASE-01",
+            "message": "policy requires INBOX_LEASE_GRANT.queue_lease_ref",
+            "file": "fixtures/media.jsonl",
+            "line": 32,
+        },
+        {
+            "test_id": "IB-LEASE-01",
+            "message": "policy requires INBOX_LEASE_GRANT.admission_ref",
+            "file": "fixtures/media.jsonl",
+            "line": 32,
+        },
+        {
+            "test_id": "IB-LINK-01",
+            "message": "INBOX_ACK.lease_id required when item has active lease",
+            "file": "fixtures/media.jsonl",
+            "line": 33,
+        },
+        {
+            "test_id": "IB-LINK-01",
+            "message": "INBOX_ACK.item_id 'missing' must reference prior INBOX_ENQUEUE",
+            "file": "fixtures/media.jsonl",
+            "line": 34,
+        },
+        {
+            "test_id": "IB-LINK-01",
+            "message": "INBOX_ACK.lease_id 'lease-missing' must reference prior INBOX_LEASE_GRANT",
+            "file": "fixtures/media.jsonl",
+            "line": 34,
         },
     ]
