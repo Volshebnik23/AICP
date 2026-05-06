@@ -44,7 +44,7 @@ When behavior changes, update:
 - PRD / RFC (if intent/design changed)
 - ADR (if a decision was made)
 - Runbook (if ops behavior changed)
-- Any relevant `docs/index.md`
+- Any relevant docs index, such as this repo's canonical `docs/INDEX.md`
 
 ## 5) CI/Lint ergonomics rule
 **Fail messages must teach.**  
