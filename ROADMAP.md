@@ -16,7 +16,13 @@ _Last updated: 2026-05-06_
 ### M50 - Cross-platform docs path casing cleanup
 - **Shipped:** removed the case-only duplicate `docs/index.md` so case-insensitive filesystems can check out the canonical `docs/INDEX.md` without dirtying the working tree.
 - **Shipped:** `make validate` now includes a case-unique tracked-path guard to prevent future case-only collisions.
-- **Next concrete step:** begin the conformance runner modularity work in a separate PR with the cross-platform checkout issue removed.
+- **Next concrete step:** continue conformance runner modularity with behavior-preserving check-handler extraction.
+
+### M51 - Conformance catalog metadata extraction
+- **Shipped:** conformance suite/profile input-output mappings are now centralized in `conformance/runner/_suite_catalog.py` and consumed by `aicp_batch_runner.py` through named `--catalog` targets.
+- **Shipped:** Makefile conformance targets now delegate to the catalog instead of carrying long duplicate `suite::report` lists.
+- **Shipped:** `make validate` now checks that catalog inputs exist and report outputs are unique.
+- **Next concrete step:** extract the first focused runner check-handler from `aicp_conformance_runner.py` without changing report semantics.
 
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.

@@ -7,7 +7,11 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 ROADMAP = ROOT / "ROADMAP.md"
-MAKEFILE = ROOT / "Makefile"
+RUNNER_DIR = ROOT / "conformance" / "runner"
+if str(RUNNER_DIR) not in sys.path:
+    sys.path.insert(0, str(RUNNER_DIR))
+
+from _suite_catalog import SUITE_CATALOGS  # noqa: E402
 
 
 def _read(path: Path) -> str:
@@ -22,27 +26,35 @@ def _load_json(path: Path) -> dict | list:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _extension_catalog_paths() -> set[str]:
+    return {suite_ref for suite_ref, _out_ref in SUITE_CATALOGS["extensions"]}
+
+
+def _has_extension_suite(extension_catalog_paths: set[str], suite_ref: str) -> bool:
+    return suite_ref in extension_catalog_paths
+
+
 def main() -> int:
     roadmap = _read(ROADMAP)
-    makefile = _read(MAKEFILE)
+    extension_catalog_paths = _extension_catalog_paths()
 
     failures: list[str] = []
 
     if _has_shipped_milestone(roadmap, "M23"):
-        if "conformance/extensions/CF_CONFIDENTIALITY_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M23 shipped, but Makefile conformance-ext does not include CF_CONFIDENTIALITY_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/CF_CONFIDENTIALITY_0.1.json"):
+            failures.append("ROADMAP marks M23 shipped, but conformance extensions catalog does not include CF_CONFIDENTIALITY_0.1")
 
     if _has_shipped_milestone(roadmap, "M24"):
-        if "conformance/extensions/RD_REDACTION_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M24 shipped, but Makefile conformance-ext does not include RD_REDACTION_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/RD_REDACTION_0.1.json"):
+            failures.append("ROADMAP marks M24 shipped, but conformance extensions catalog does not include RD_REDACTION_0.1")
 
     if _has_shipped_milestone(roadmap, "M26"):
-        if "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M26 shipped, but Makefile conformance-ext does not include HA_HUMAN_APPROVAL_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json"):
+            failures.append("ROADMAP marks M26 shipped, but conformance extensions catalog does not include HA_HUMAN_APPROVAL_0.1")
 
     if _has_shipped_milestone(roadmap, "M27"):
-        if "conformance/extensions/OB_OBSERVABILITY_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M27 shipped, but Makefile conformance-ext does not include OB_OBSERVABILITY_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/OB_OBSERVABILITY_0.1.json"):
+            failures.append("ROADMAP marks M27 shipped, but conformance extensions catalog does not include OB_OBSERVABILITY_0.1")
         if not (ROOT / "docs/extensions/RFC_EXT_OBSERVABILITY.md").exists():
             failures.append("ROADMAP marks M27 shipped, but docs/extensions/RFC_EXT_OBSERVABILITY.md is missing")
         if not (ROOT / "schemas/extensions/ext-observability-payloads.schema.json").exists():
@@ -53,8 +65,8 @@ def main() -> int:
             failures.append("ROADMAP marks M27 shipped, but no fixture generator or deterministic fixtures for observability are present")
 
     if _has_shipped_milestone(roadmap, "M29"):
-        if "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M29 shipped, but Makefile conformance-ext does not include EB_ENTERPRISE_BINDINGS_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json"):
+            failures.append("ROADMAP marks M29 shipped, but conformance extensions catalog does not include EB_ENTERPRISE_BINDINGS_0.1")
         if not (ROOT / "docs/extensions/RFC_EXT_ENTERPRISE_BINDINGS.md").exists():
             failures.append("ROADMAP marks M29 shipped, but docs/extensions/RFC_EXT_ENTERPRISE_BINDINGS.md is missing")
         if not (ROOT / "schemas/extensions/ext-enterprise-bindings-payloads.schema.json").exists():
@@ -66,10 +78,10 @@ def main() -> int:
 
 
     if _has_shipped_milestone(roadmap, "M35"):
-        if "conformance/extensions/AD_ADMISSION_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M35 shipped, but Makefile conformance-ext does not include AD_ADMISSION_0.1")
-        if "conformance/extensions/QL_QUEUE_LEASES_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M35 shipped, but Makefile conformance-ext does not include QL_QUEUE_LEASES_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/AD_ADMISSION_0.1.json"):
+            failures.append("ROADMAP marks M35 shipped, but conformance extensions catalog does not include AD_ADMISSION_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/QL_QUEUE_LEASES_0.1.json"):
+            failures.append("ROADMAP marks M35 shipped, but conformance extensions catalog does not include QL_QUEUE_LEASES_0.1")
         if not (ROOT / "docs/extensions/RFC_EXT_ADMISSION.md").exists():
             failures.append("ROADMAP marks M35 shipped, but docs/extensions/RFC_EXT_ADMISSION.md is missing")
         if not (ROOT / "docs/extensions/RFC_EXT_QUEUE_LEASES.md").exists():
@@ -109,8 +121,8 @@ def main() -> int:
                 failures.append("ROADMAP marks M35 shipped, but QL_QUEUE_LEASES_0.1 has no expected-fail transcript")
 
     if _has_shipped_milestone(roadmap, "M36"):
-        if "conformance/extensions/MP_MARKETPLACE_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M36 shipped, but Makefile conformance-ext does not include MP_MARKETPLACE_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/MP_MARKETPLACE_0.1.json"):
+            failures.append("ROADMAP marks M36 shipped, but conformance extensions catalog does not include MP_MARKETPLACE_0.1")
         if not (ROOT / "docs/extensions/RFC_EXT_MARKETPLACE.md").exists():
             failures.append("ROADMAP marks M36 shipped, but docs/extensions/RFC_EXT_MARKETPLACE.md is missing")
         if not (ROOT / "schemas/extensions/ext-marketplace-payloads.schema.json").exists():
@@ -188,12 +200,12 @@ def main() -> int:
                 failures.append("ROADMAP marks M36 shipped, but MP_MARKETPLACE_0.1 has no expected-fail transcript asserting MP-AWARD-01")
 
     if _has_shipped_milestone(roadmap, "M37"):
-        if "conformance/extensions/PR_PROVENANCE_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include PR_PROVENANCE_0.1")
-        if "conformance/extensions/ES_ACTION_ESCROW_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include ES_ACTION_ESCROW_0.1")
-        if "conformance/extensions/RP_RESPONSIBILITY_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M37 shipped, but Makefile conformance-ext does not include RP_RESPONSIBILITY_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/PR_PROVENANCE_0.1.json"):
+            failures.append("ROADMAP marks M37 shipped, but conformance extensions catalog does not include PR_PROVENANCE_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/ES_ACTION_ESCROW_0.1.json"):
+            failures.append("ROADMAP marks M37 shipped, but conformance extensions catalog does not include ES_ACTION_ESCROW_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/RP_RESPONSIBILITY_0.1.json"):
+            failures.append("ROADMAP marks M37 shipped, but conformance extensions catalog does not include RP_RESPONSIBILITY_0.1")
         if not (ROOT / "docs/extensions/RFC_EXT_PROVENANCE.md").exists():
             failures.append("ROADMAP marks M37 shipped, but docs/extensions/RFC_EXT_PROVENANCE.md is missing")
         if not (ROOT / "docs/extensions/RFC_EXT_ACTION_ESCROW.md").exists():
@@ -244,8 +256,8 @@ def main() -> int:
             "conformance/extensions/IB_INBOX_0.1.json": "IB_INBOX_0.1",
         }
         for suite_path, label in required_make.items():
-            if suite_path not in makefile:
-                failures.append(f"ROADMAP marks M38 shipped, but Makefile conformance-ext does not include {label}")
+            if not _has_extension_suite(extension_catalog_paths, suite_path):
+                failures.append(f"ROADMAP marks M38 shipped, but conformance extensions catalog does not include {label}")
 
         required_docs = [
             ROOT / "docs/extensions/RFC_EXT_CHANNELS.md",
@@ -299,8 +311,8 @@ def main() -> int:
 
 
     if _has_shipped_milestone(roadmap, "M31"):
-        if "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M31 shipped, but Makefile conformance-ext does not include TW_TRANSCRIPT_WITNESS_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"):
+            failures.append("ROADMAP marks M31 shipped, but conformance extensions catalog does not include TW_TRANSCRIPT_WITNESS_0.1")
         required = [
             ROOT / "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md",
             ROOT / "schemas/extensions/ext-transcript-witness-payloads.schema.json",
@@ -325,8 +337,8 @@ def main() -> int:
                 failures.append(f"ROADMAP marks M31 shipped, but TW_TRANSCRIPT_WITNESS_0.1 is missing semantic checks: {', '.join(missing)}")
 
     if _has_shipped_milestone(roadmap, "M32"):
-        if "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json" not in makefile:
-            failures.append("ROADMAP marks M32 shipped, but Makefile conformance-ext does not include EX_EXECUTION_LIFECYCLE_0.1")
+        if not _has_extension_suite(extension_catalog_paths, "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"):
+            failures.append("ROADMAP marks M32 shipped, but conformance extensions catalog does not include EX_EXECUTION_LIFECYCLE_0.1")
         required_paths = [
             ROOT / "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md",
             ROOT / "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
@@ -359,7 +371,7 @@ def main() -> int:
         print("Fix roadmap/Makefile mismatch before claiming shipped milestone coverage.")
         return 1
 
-    print("OK: shipped milestone claims align with conformance-ext suite coverage in Makefile.")
+    print("OK: shipped milestone claims align with conformance extensions catalog coverage.")
     return 0
 
 
