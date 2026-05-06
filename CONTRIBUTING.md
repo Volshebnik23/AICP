@@ -25,16 +25,23 @@ If local assumptions, public `main`, roadmap/docs, and executable CI surfaces dr
 
 Run before opening a PR:
 
+- `make prepr`
+
+Use individual targets below while isolating failures:
+
 - `make validate`
 - `make conformance`
 - `make conformance-ext`
 - `make conformance-bindings`
 - `make conformance-profiles`
+- `make conformance-all`
 - `make test`
 - `make quickstart-py`
 - `make quickstart-ts`
 - `make template-smoke`
 - `cd sdk/typescript && npm ci && npm test && cd ../..`
+
+Run `make compatibility-gate` when making compatibility or badge claims. Run `make release-gate` before release hygiene PRs.
 
 Use the PR template and include risk and compatibility impact.
 

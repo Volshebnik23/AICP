@@ -22,5 +22,6 @@ A change is breaking if it can cause previously-valid artifacts to fail validati
 - Deprecated IDs MAY remain as aliases for a transition window; canonical IDs MUST be documented.
 
 ## Conformance evidence
-- Compatibility claims MUST be backed by current `make validate`, `make conformance-all`, and snapshot outputs.
+- Compatibility claims MUST be backed by current `make compatibility-gate` output.
+- `make compatibility-gate` runs `make validate`, `make conformance-all`, and `make snapshot`.
 - Degraded-mode reports do not grant compatibility marks.

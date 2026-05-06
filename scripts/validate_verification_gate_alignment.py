@@ -11,6 +11,8 @@ CI_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
 README = ROOT / "README.md"
 
 PREPR_BLOCK_RE = re.compile(r"(?ms)^prepr:\n(.*?)(?=^\S|\Z)")
+COMPATIBILITY_GATE_BLOCK_RE = re.compile(r"(?ms)^compatibility-gate:\n(.*?)(?=^\S|\Z)")
+RELEASE_GATE_BLOCK_RE = re.compile(r"(?ms)^release-gate:\n(.*?)(?=^\S|\Z)")
 ONE_COMMAND_CHECKS_RE = re.compile(r"(?ms)^## One-command checks\n\n(.*?)(?=^## |\Z)")
 
 
@@ -32,23 +34,52 @@ def main() -> int:
         errors.append("Makefile is missing 'prepr' target block")
     else:
         prepr_block = match.group(1)
-        if "$(MAKE) conformance-profiles" not in prepr_block:
-            errors.append("Makefile prepr target must include '$(MAKE) conformance-profiles'")
-        if "$(MAKE) template-smoke" not in prepr_block:
-            errors.append("Makefile prepr target must include '$(MAKE) template-smoke'")
+        for required in (
+            "$(MAKE) validate",
+            "$(MAKE) conformance-all",
+            "$(MAKE) test",
+            "$(MAKE) quickstart-py",
+            "$(MAKE) quickstart-ts",
+            "$(MAKE) template-smoke",
+            "cd sdk/typescript && npm ci && npm test",
+        ):
+            if required not in prepr_block:
+                errors.append(f"Makefile prepr target must include '{required}'")
 
-    if "run: make conformance-profiles" not in ci:
-        errors.append("CI workflow must include 'run: make conformance-profiles'")
+    compatibility_match = COMPATIBILITY_GATE_BLOCK_RE.search(makefile)
+    if not compatibility_match:
+        errors.append("Makefile is missing 'compatibility-gate' target block")
+    else:
+        compatibility_block = compatibility_match.group(1)
+        for required in ("$(MAKE) validate", "$(MAKE) conformance-all", "$(MAKE) snapshot"):
+            if required not in compatibility_block:
+                errors.append(f"Makefile compatibility-gate target must include '{required}'")
+
+    release_match = RELEASE_GATE_BLOCK_RE.search(makefile)
+    if not release_match:
+        errors.append("Makefile is missing 'release-gate' target block")
+    else:
+        release_block = release_match.group(1)
+        for required in ("$(MAKE) compatibility-gate", "$(MAKE) test", "$(MAKE) release-check"):
+            if required not in release_block:
+                errors.append(f"Makefile release-gate target must include '{required}'")
+
+    if "run: make conformance-all" not in ci:
+        errors.append("CI workflow must include 'run: make conformance-all'")
 
     one_command_match = ONE_COMMAND_CHECKS_RE.search(readme)
     if not one_command_match:
         errors.append("README.md is missing '## One-command checks' section")
     else:
         one_command_block = one_command_match.group(1)
-        if "- `make conformance-profiles`" not in one_command_block:
-            errors.append("README One-command checks must include 'make conformance-profiles'")
-        if "- `make template-smoke`" not in one_command_block:
-            errors.append("README One-command checks must include 'make template-smoke'")
+        for required in (
+            "- `make conformance-all`",
+            "- `make prepr`",
+            "- `make compatibility-gate`",
+            "- `make release-gate`",
+        ):
+            if required not in one_command_block:
+                errors.append(f"README One-command checks must include '{required}'")
 
     if errors:
         print("[FAIL] verification-gate alignment validation failed")
