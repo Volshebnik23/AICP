@@ -16,7 +16,7 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 2. Run the generator (from repo root): `make quickstart-ts`.
 3. Inspect output: `out/quickstart/ts/minimal_core.jsonl`.
 4. Validate output: `python sandbox/run.py out/quickstart/ts/minimal_core.jsonl --no-signature-verify`.
-5. Optional full gate: `make prepr`.
+5. Optional PR/onboarding gate: `make prepr`.
 
 ## Fastest path (Python)
 
@@ -24,7 +24,7 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 2. Run the generator (from repo root): `make quickstart-py`.
 3. Inspect output: `out/quickstart/py/minimal_core.jsonl`.
 4. Validate output: `python sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify`.
-5. Optional full gate: `make prepr`.
+5. Optional PR/onboarding gate: `make prepr`.
 
 ## Role-specific first steps
 
@@ -60,7 +60,9 @@ If you are integrating AICP with an existing platform gateway, start with:
 - Guide: `docs/guides/Protocol_Adapter_Gateway.md`
 - Template: `templates/protocol-adapter/`
 
-Recommended CI baseline: `make prepr` (includes validation, conformance, profile conformance, quickstarts, template smoke, and TypeScript SDK tests).
+Recommended CI baseline: `make prepr` (includes validation, full conformance via `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests).
+
+For compatibility or badge evidence, run `make compatibility-gate` so validation, `make conformance-all`, and snapshot generation stay aligned.
 
 
 ## Template smoke commands (shipped onboarding)

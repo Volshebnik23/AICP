@@ -1,10 +1,14 @@
 # Release Checklist (MVP)
 
 ## Required verification commands
+- `make release-gate`
+
+`make release-gate` includes:
 - `make validate`
 - `make test`
 - `make conformance-all`
 - `make snapshot`
+- `make release-check`
 
 ## Required content updates
 - Update `RELEASE_NOTES.md` (Added/Changed/Fixed/Compatibility sections).

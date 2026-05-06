@@ -3,9 +3,15 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-03-23_
+_Last updated: 2026-05-06_
 
 ## Current / Next
+
+### M49 - Verification gate taxonomy alignment
+- **Shipped:** `make prepr` is now the PR/onboarding gate and runs full conformance through `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests.
+- **Shipped:** `make compatibility-gate` and `make release-gate` now give compatibility/badge evidence and release hygiene distinct one-command entrypoints.
+- **Shipped:** CI now runs `make conformance-all` instead of a partial conformance surface, so demos, ops, and security evidence suites stay aligned with PR verification.
+- **Next concrete step:** resolve cross-platform docs path casing (`docs/INDEX.md` vs `docs/index.md`) in a separate PR before further broad structural work.
 
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.

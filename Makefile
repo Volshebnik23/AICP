@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -191,15 +191,22 @@ uat-check:
 
 prepr:
 	$(MAKE) validate
-	$(MAKE) conformance
-	$(MAKE) conformance-ext
-	$(MAKE) conformance-bindings
-	$(MAKE) conformance-profiles
+	$(MAKE) conformance-all
 	$(MAKE) test
 	$(MAKE) quickstart-py
 	$(MAKE) quickstart-ts
 	$(MAKE) template-smoke
 	cd sdk/typescript && npm ci && npm test
+
+compatibility-gate:
+	$(MAKE) validate
+	$(MAKE) conformance-all
+	$(MAKE) snapshot
+
+release-gate:
+	$(MAKE) compatibility-gate
+	$(MAKE) test
+	$(MAKE) release-check
 
 lint:
 	$(PYTHON) scripts/check_naming.py

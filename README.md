@@ -90,6 +90,7 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
    - `make conformance-ext`
    - `make conformance-bindings`
    - `make conformance-profiles`
+   - `make conformance-all`
    - `make prepr`
 4. Reuse helpers:
    - Python reference: `reference/python/`
@@ -105,8 +106,15 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - `make conformance-ext`
 - `make conformance-bindings`
 - `make conformance-profiles`
+- `make conformance-all`
+  - all conformance suites, including core, extensions, bindings, profiles, demos, ops, and security evidence
 - `make template-smoke`
 - `make prepr`
+  - PR/onboarding gate: validation, full conformance, tests, quickstarts, template smoke, and TypeScript SDK tests
+- `make compatibility-gate`
+  - compatibility evidence gate: validation, full conformance, and snapshot generation
+- `make release-gate`
+  - release hygiene gate: compatibility evidence, tests, and release metadata checks
 
 ## Legal and vendor-adoption quick links
 

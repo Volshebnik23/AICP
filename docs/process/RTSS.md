@@ -62,16 +62,24 @@ RTSS is complete only when all are true:
 ## 7) Standard verification gate
 
 Run before opening an RTSS PR:
+- `make prepr`
+
+`make prepr` is the PR/onboarding gate. It includes validation, `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests.
+
+Use the narrower commands below only while isolating a failing surface:
 - `make validate`
-- `make conformance`
-- `make conformance-ext`
-- `make conformance-bindings`
-- `make conformance-profiles`
+- `make conformance-all`
 - `make test`
 - `make quickstart-py`
 - `make quickstart-ts`
 - `make template-smoke`
 - `cd sdk/typescript && npm ci && npm test && cd ../..`
+
+For compatibility or badge evidence, run:
+- `make compatibility-gate`
+
+For release hygiene, run:
+- `make release-gate`
 
 ## 8) Relationship to shipped-vs-stability wording
 
