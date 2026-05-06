@@ -41,6 +41,7 @@ from _runner_io import (  # noqa: E402
     resolve_repo_path as _io_resolve_repo_path,
     write_json_report as _io_write_json_report,
 )
+from _runner_core_checks import run_core_transcript_checks as _run_core_transcript_checks  # noqa: E402
 from _runner_reporting import build_conformance_report as _build_conformance_report_record  # noqa: E402
 
 
@@ -1081,84 +1082,14 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
             failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
             continue
 
-        if "CT-MESSAGE-TYPE-REGISTRY-01" in enabled_checks:
-            for line_no, msg in rows:
-                mtype = msg.get("message_type")
-                if mtype not in registered_message_types:
-                    add_failure(t_failures, "CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message_type '{mtype}'", rel_file, line_no)
-
-        session_id = rows[0][1].get("session_id")
-        seen_ids: set[str] = set()
-        for line_no, msg in rows:
-            if msg.get("session_id") != session_id:
-                add_failure(t_failures, "CT-INVARIANTS-01", "session_id changed within transcript", rel_file, line_no)
-
-            mid = msg.get("message_id")
-            if mid in seen_ids:
-                add_failure(t_failures, "CT-INVARIANTS-01", f"duplicate message_id '{mid}'", rel_file, line_no)
-            else:
-                seen_ids.add(mid)
-
-            if "CT-CONTRACT-ID-01" in enabled_checks:
-                contract_id = msg.get("contract_id")
-                if not isinstance(contract_id, str) or not contract_id:
-                    add_failure(
-                        t_failures,
-                        "CT-CONTRACT-ID-01",
-                        "contract_id must be a non-empty string",
-                        rel_file,
-                        line_no,
-                    )
-
-        if "CT-PREV-MSG-REQUIRED-01" in enabled_checks:
-            for idx, (line_no, msg) in enumerate(rows):
-                if idx == 0:
-                    continue
-                prev_msg_hash = msg.get("prev_msg_hash")
-                if not isinstance(prev_msg_hash, str) or not prev_msg_hash:
-                    add_failure(
-                        t_failures,
-                        "CT-PREV-MSG-REQUIRED-01",
-                        "prev_msg_hash is required and must be a non-empty string for non-first messages",
-                        rel_file,
-                        line_no,
-                    )
-
-        prev_hash = None
-        for line_no, msg in rows:
-            if prev_hash is not None and "prev_msg_hash" in msg and msg.get("prev_msg_hash") != prev_hash:
-                add_failure(
-                    t_failures,
-                    "CT-HASH-CHAIN-01",
-                    f"prev_msg_hash mismatch (expected {prev_hash}, got {msg.get('prev_msg_hash')})",
-                    rel_file,
-                    line_no,
-                )
-            prev_hash = msg.get("message_hash")
-
-        actual_types = [m.get("message_type") for _, m in rows]
-        expected_types = transcript.get("expected_message_types", [])
-        if actual_types != expected_types:
-            add_failure(
-                t_failures,
-                "CT-SEQUENCE-01",
-                f"message_type sequence mismatch (expected {expected_types}, got {actual_types})",
-                rel_file,
-                None,
-            )
-
-        for line_no, msg in rows:
-            mhash = msg.get("message_hash")
-            for sig in msg.get("signatures", []) or []:
-                obj_hash = sig.get("object_hash")
-                if obj_hash is not None and obj_hash != mhash:
-                    add_failure(
-                        t_failures,
-                        "CT-SIGNATURE-HASH-01",
-                        f"signatures.object_hash mismatch (expected {mhash}, got {obj_hash})",
-                        rel_file,
-                        line_no,
-                    )
+        _run_core_transcript_checks(
+            rows=rows,
+            transcript=transcript,
+            enabled_checks=enabled_checks,
+            registered_message_types=registered_message_types,
+            rel_file=rel_file,
+            failures=t_failures,
+        )
 
         for line_no, msg in rows:
             stored = msg.get("message_hash")

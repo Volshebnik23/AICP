@@ -22,7 +22,12 @@ _Last updated: 2026-05-06_
 - **Shipped:** conformance suite/profile input-output mappings are now centralized in `conformance/runner/_suite_catalog.py` and consumed by `aicp_batch_runner.py` through named `--catalog` targets.
 - **Shipped:** Makefile conformance targets now delegate to the catalog instead of carrying long duplicate `suite::report` lists.
 - **Shipped:** `make validate` now checks that catalog inputs exist and report outputs are unique.
-- **Next concrete step:** extract the first focused runner check-handler from `aicp_conformance_runner.py` without changing report semantics.
+- **Next concrete step:** continue extracting focused runner check-handlers from `aicp_conformance_runner.py` without changing report semantics.
+
+### M52 - Core transcript check-handler extraction
+- **Shipped:** basic Core transcript checks now live in `conformance/runner/_runner_core_checks.py`, reducing `run_suite(...)` inline responsibilities while preserving the public runner entrypoint.
+- **Shipped:** runner modularity tests cover the extracted helper failure shape.
+- **Next concrete step:** extract the next extension-specific check family behind similarly narrow helper tests.
 
 ### ✅ M16b — RFC8785 float canonicalization
 - **Progress:** Finite-float canonicalization landed with cross-language vector parity coverage and updated conformance/docs.
