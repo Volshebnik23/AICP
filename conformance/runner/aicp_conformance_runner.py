@@ -42,6 +42,7 @@ from _runner_io import (  # noqa: E402
     write_json_report as _io_write_json_report,
 )
 from _runner_core_checks import run_core_transcript_checks as _run_core_transcript_checks  # noqa: E402
+from _runner_enforcement_checks import run_enforcement_transcript_checks as _run_enforcement_transcript_checks  # noqa: E402
 from _runner_reporting import build_conformance_report as _build_conformance_report_record  # noqa: E402
 
 
@@ -4656,23 +4657,13 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             None,
                         )
 
-        if "ENF-SANCTION-CODES-01" in enabled_checks:
-            namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
-            namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
-            for line_no, msg in rows:
-                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
-                    continue
-                sanctions = (msg.get("payload") or {}).get("sanctions", []) or []
-                for sanction in sanctions:
-                    code = sanction.get("code") if isinstance(sanction, dict) else None
-                    if not isinstance(code, str):
-                        add_failure(t_failures, "ENF-SANCTION-CODES-01", "sanctions[].code must be a string", rel_file, line_no)
-                        continue
-                    if code in enforcement_sanction_codes:
-                        continue
-                    if namespaced_dash.match(code) or namespaced_colon.match(code):
-                        continue
-                    add_failure(t_failures, "ENF-SANCTION-CODES-01", f"unknown sanction code '{code}'", rel_file, line_no)
+        _run_enforcement_transcript_checks(
+            rows=rows,
+            enabled_checks=enabled_checks,
+            enforcement_sanction_codes=enforcement_sanction_codes,
+            rel_file=rel_file,
+            failures=t_failures,
+        )
 
         if "ENF-AUTH-01" in enabled_checks:
             first_contract = None
@@ -4756,25 +4747,6 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
 
                     if gated_types is not None and original_message.get("message_type") not in gated_types:
                         add_failure(t_failures, "ENF-GATE-01", "embedded original_message.message_type is not listed in gated_message_types", rel_file, line_no)
-
-        if "ENF-VERDICT-STORM-01" in enabled_checks:
-            verdict_counts: dict[str, int] = {}
-            for line_no, msg in rows:
-                if msg.get("message_type") != "ENFORCEMENT_VERDICT":
-                    continue
-                payload = msg.get("payload") or {}
-                target_hash = payload.get("target_message_hash")
-                if not isinstance(target_hash, str):
-                    continue
-                verdict_counts[target_hash] = verdict_counts.get(target_hash, 0) + 1
-                if verdict_counts[target_hash] > 1:
-                    add_failure(
-                        t_failures,
-                        "ENF-VERDICT-STORM-01",
-                        f"multiple ENFORCEMENT_VERDICT messages reference target_message_hash '{target_hash}'",
-                        rel_file,
-                        line_no,
-                    )
 
         failures.extend(_evaluate_transcript_expectations(transcript, t_failures, rel_file))
 
