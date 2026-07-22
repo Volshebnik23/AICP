@@ -52,7 +52,7 @@ def _entry_status(entry: dict[str, Any]) -> str:
 
 
 def _read_report(report_path: Path, relative_to: Path) -> tuple[dict[str, Any], set[str], list[str]]:
-    report_rec: dict[str, Any] = {"path": str(report_path.relative_to(relative_to))}
+    report_rec: dict[str, Any] = {"path": report_path.relative_to(relative_to).as_posix()}
     marks: set[str] = set()
     errors: list[str] = []
     try:
@@ -280,7 +280,7 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
     elif not real_entries:
         note = "No real external submissions are currently present; only rehearsal/instructional artifacts were found."
     return {
-        "submissions_dir": str(submissions_dir),
+        "submissions_dir": submissions_dir.as_posix(),
         "columns": LEGACY_MARK_COLUMNS,
         "implementations": real_entries,
         "real_submissions": real_entries,

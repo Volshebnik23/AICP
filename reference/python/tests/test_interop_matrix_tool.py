@@ -63,6 +63,8 @@ def test_interop_matrix_tool_with_submission(tmp_path: Path) -> None:
     assert impl["compatibility_marks"] == ["AICP-Profile-BASE-0.1"]
     assert impl["computed_marks"] == []
     assert impl["evidence_validation_status"] == "not_promotable"
+    assert data["submissions_dir"] == submissions.as_posix()
+    assert all("\\" not in item["path"] for item in impl["reports"])
 
 
 def test_interop_matrix_tool_marks_id_mismatch_invalid(tmp_path: Path) -> None:

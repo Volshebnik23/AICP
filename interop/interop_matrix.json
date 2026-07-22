@@ -1,5 +1,5 @@
 {
-  "submissions_dir": "interop\\submissions",
+  "submissions_dir": "interop/submissions",
   "columns": [
     "AICP-Profile-BASE-0.1",
     "AICP-Profile-MEDIATED-BLOCKING-0.1",
@@ -33,7 +33,7 @@
       ],
       "reports": [
         {
-          "path": "reports\\report_profile_base.json",
+          "path": "reports/report_profile_base.json",
           "suite_id": null,
           "profile_id": "AICP-BASE",
           "passed": true,
@@ -43,7 +43,7 @@
           ]
         },
         {
-          "path": "reports\\report_core.json",
+          "path": "reports/report_core.json",
           "suite_id": "CT-CORE-0.1",
           "profile_id": null,
           "passed": true,
@@ -92,7 +92,7 @@
       ],
       "reports": [
         {
-          "path": "reports\\report_profile_mediated_blocking_a.json",
+          "path": "reports/report_profile_mediated_blocking_a.json",
           "suite_id": null,
           "profile_id": "AICP-MEDIATED-BLOCKING",
           "passed": true,
@@ -102,7 +102,7 @@
           ]
         },
         {
-          "path": "reports\\report_profile_mediated_blocking_b.json",
+          "path": "reports/report_profile_mediated_blocking_b.json",
           "suite_id": null,
           "profile_id": "AICP-MEDIATED-BLOCKING",
           "passed": true,
@@ -112,7 +112,7 @@
           ]
         },
         {
-          "path": "reports\\pairwise_summary.json",
+          "path": "reports/pairwise_summary.json",
           "suite_id": null,
           "profile_id": "AICP-MEDIATED-BLOCKING",
           "passed": null,
@@ -157,7 +157,7 @@
       ],
       "reports": [
         {
-          "path": "reports\\report_profile_base.json",
+          "path": "reports/report_profile_base.json",
           "suite_id": null,
           "profile_id": "AICP-BASE",
           "passed": true,
@@ -167,7 +167,7 @@
           ]
         },
         {
-          "path": "reports\\report_core.json",
+          "path": "reports/report_core.json",
           "suite_id": "CT-CORE-0.1",
           "profile_id": null,
           "passed": true,
