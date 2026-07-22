@@ -35,6 +35,20 @@ AICP is a **content-layer protocol** for governed agent-to-agent interactions. I
 - **Not responsible for:** discovery, transport internals, tool runtime execution, payment processing.
 - **Expects from adjacent layers:** delivery path + optional externally issued identity/trust/policy artifacts.
 
+### Protocol artifacts versus a platform product
+
+An AICP platform may contain chat/mediator, rules or policy, enforcer, and
+transcript/state components. A deployment may co-locate them in one service or distribute
+them among agents, mediators, organizations, enforcers, and witnesses. AICP standardizes
+the interoperable messages, hashes, signatures, references, declared projections, and
+observable acceptance/delivery evidence between those functions. It does not standardize
+their databases, reducers, queues, model internals, key custody, or product UI.
+
+The strict `aicp.session_state_projection.v1` surface follows this boundary: it is a
+portable, content-addressed claim about externally relevant session state, not a required
+platform state machine. Its authority comes from the selected authentication, identity,
+trust, or witness evidence, not from the object shape alone.
+
 ### Tool / API integration layer
 - **Responsible for:** external action invocation, side-effect execution, runtime API adaptation.
 - **Not responsible for:** transcript governance by itself.

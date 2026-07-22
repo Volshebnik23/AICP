@@ -160,7 +160,7 @@ def test_build_submission_tool_requires_peer_for_pairwise(tmp_path: Path) -> Non
     assert "--peer-implementation-id is required" in result.stdout
 
 
-def test_build_submission_tool_pairwise_package_with_integrity_validates(tmp_path: Path) -> None:
+def test_build_submission_tool_pairwise_package_with_integrity_fails_closed(tmp_path: Path) -> None:
     report_one = _write_json(
         tmp_path / "inputs" / "pair_a.json",
         {"profile_id": "AICP-MEDIATED-BLOCKING", "passed": True, "compatibility_marks": ["AICP-Profile-MEDIATED-BLOCKING-0.1"]},
@@ -180,6 +180,8 @@ def test_build_submission_tool_pairwise_package_with_integrity_validates(tmp_pat
         "fictional-impl-a",
         "--peer-implementation-id",
         "fictional-impl-b",
+        "--peer-implementation-version",
+        "2.0.0",
         "--implementation-version",
         "2.0.0",
         "--profile-id",
@@ -204,11 +206,13 @@ def test_build_submission_tool_pairwise_package_with_integrity_validates(tmp_pat
         "--validate",
     )
 
-    assert result.returncode == 0, result.stderr
+    assert result.returncode == 1, result.stderr
+    assert "PAIRWISE_JOINT_EVIDENCE_REQUIRED" in result.stdout
     package_dir = out_root / "fictional-pairwise"
     manifest = json.loads((package_dir / "submission.json").read_text(encoding="utf-8"))
 
     assert manifest["peer_implementation_id"] == "fictional-impl-b"
+    assert manifest["peer_implementation_version"] == "2.0.0"
     assert manifest["claim_type"] == "pairwise_interop"
     assert manifest["evidence_status"] == "pairwise"
     assert manifest["report_refs"] == ["reports/pair_a.json", "reports/pair_b.json"]

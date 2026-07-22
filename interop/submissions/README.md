@@ -24,7 +24,23 @@ Instructional artifacts live in:
 - `claim_scope`
 - `generated_at`
 
-`peer_implementation_id` is required for pairwise interoperability claims.
+`peer_implementation_id` and `peer_implementation_version` are required for pairwise
+interoperability claims.
+
+Real public submissions must add `profile_refs` with exact `profile_id` and
+`profile_version` values. Reproducible implementation/compatibility claims must include an
+eligible, full-profile, passed, non-degraded external-IUT v1 report whose execution subject,
+complete mandatory case set, and registered TCK digests match the manifest. Smoke and legacy
+reports are migration errors for this strong claim. Real `pairwise_interop` publication is
+currently rejected with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; two independent IUT reports or a
+summary are not joint proof. Examples,
+templates, and repo-owned dry runs remain instructional and cannot substantiate an external
+claim.
+
+`implements_profile` and `compatible_with_profile` are strong claims: real packages using
+either must set `evidence_status=reproducible`. `self_attested` remains in the schema for
+migration/informational packaging but cannot receive an ordinary profile mark. The matrix
+reuses this same independent eligibility check and does not promote raw report marks.
 
 ## Evidence-status vocabulary
 
@@ -34,7 +50,11 @@ Instructional artifacts live in:
 - `reproducible`
 - `pairwise`
 
-Use `example` and `template` only for the shipped instructional artifacts. Real submission folders should use `self_attested`, `reproducible`, or `pairwise`. Template placeholder `report_refs` are allowed for instructional starter packs, but real submissions and examples must resolve their referenced files.
+Use `example` and `template` only for the shipped instructional artifacts. Real strong
+profile claims must use `reproducible`; `self_attested` is retained only for migration or
+informational packaging, and `pairwise` remains fail-closed. Template placeholder
+`report_refs` are allowed for instructional starter packs, but real submissions and
+examples must resolve their referenced files.
 
 ## Validation entrypoints
 

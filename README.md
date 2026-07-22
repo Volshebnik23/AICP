@@ -34,6 +34,8 @@ Multi-agent systems often need portable, verifiable conversation/context semanti
 
 - Agent-to-agent **content-layer** message/envelope semantics.
 - Governed contract/policy/attestation references in transcripts.
+- An experimental strict portable session-state projection and authenticated-base profile,
+  both explicitly post-UAT and additive to the frozen baseline.
 - Hash/canonicalization-based verifiable artifacts.
 - Conformance/profile model for interoperability targets.
 - Enforcement-compatible transcript/evidence semantics.
@@ -44,6 +46,7 @@ Multi-agent systems often need portable, verifiable conversation/context semanti
 - Calling/connectivity/transport protocols.
 - Tool execution protocols or tool catalogs.
 - IAM provider internals.
+- Platform databases, reducers, queues, consensus services, hosted key custody, or UI.
 - Commerce/payment rails.
 - A universal trust fabric.
 

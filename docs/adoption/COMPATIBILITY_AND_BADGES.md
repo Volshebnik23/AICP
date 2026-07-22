@@ -13,9 +13,8 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 - Meaning: extension suite-specific requirements pass (for example CAPNEG, ENFORCEMENT, ALERTS, RESUME).
 
 ### 3) Profile compatibility
-- Marks:
-  - `AICP-Profile-BASE-0.1`
-  - `AICP-Profile-MEDIATED-BLOCKING-0.1`
+- Marks are defined by the exact catalogs under `conformance/profiles/`; do not maintain a
+  duplicate hard-coded list here.
 - Meaning: all required suites for that named profile pass.
 
 ### 4) Security evidence marks
@@ -30,6 +29,7 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 ## Badge eligibility and degraded mode
 
 - If `degraded == true` for any required suite, compatibility marks MUST NOT be awarded for the affected suite/profile.
+- Any skipped mandatory check suppresses eligibility even if the adapter declares `degraded=false`.
 - A report can be `passed=true` but still non-badge-eligible when critical checks are unavailable.
 
 ## How to verify
@@ -46,11 +46,27 @@ Common report outputs:
 - `conformance/report_security_signed_path.json` (Security evidence)
 - `conformance/report_ops_hardening.json` (Ops hardening evidence)
 
-Read marks from report JSON:
+The frozen UAT `conformance/report*.json` and ordinary profile reports retain their legacy
+report shape. Read their existing `compatibility_marks`, `passed`, `degraded`, and
+`skipped_checks` fields as before.
 
+Post-UAT provenance and external-IUT v1 reports additionally provide:
+
+- `report_format_version`
+- `execution_subject` (reference corpus versus external implementation/build)
+- `runner.source_revision`, suite/profile digest, and input/generated artifact digests
 - `compatibility_marks` list
 - `passed` boolean
-- `degraded` and `degraded_reasons`
+- `degraded`, `degraded_reasons`, and `skipped_checks`
+
+Opt-in provenance repository runs label their subject `reference_corpus`. They prove the
+checked-in corpus/runner behavior, not an external product. IUT smoke reports also cannot
+support an ordinary profile claim. Only a full-profile, complete, non-degraded external-IUT
+v1 report with no skipped mandatory checks may carry an external product-profile mark.
+Public interop matrix marks are recomputed through the same eligibility validator; they are
+never copied from arbitrary report JSON. `self_attested` packaging alone is not eligible for
+an ordinary profile mark. File digests prove artifact integrity,
+not organizational identity, certification, or endorsement.
 
 ## Reusable CI snippet for adopters
 

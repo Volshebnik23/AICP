@@ -1,0 +1,10 @@
+{
+  "vector_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+  "object_type": "canon_case",
+  "object": {
+    "😀": "supplementary",
+    "": "bmp-private-use"
+  },
+  "canonical_json": "{\"\":\"bmp-private-use\",\"😀\":\"supplementary\"}",
+  "object_hash": "sha256:YFXD1nqfz4_hqNVqJ4zGZWbsAjuPaIG9SecY83H_7-I"
+}

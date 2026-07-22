@@ -204,3 +204,23 @@ If you need a one-screen answer for a pilot:
 ## 12) Companion checklist
 
 Use `docs/release/AICP_UAT_Checklist.md` as the concise operator checklist that goes with this pack.
+
+## 13) Post-UAT experiments excluded from this pack
+
+The repository also contains experimental `AICP-AUTHENTICATED-BASE@0.1` and strict
+`aicp.session_state_projection.v1` artifacts. They are post-UAT, opt-in targets with their
+own conformance evidence. They are not additions to this pack's frozen baseline, and pilot
+implementers are not required to implement them unless a future versioned pilot decision
+explicitly says so.
+
+The new provenance-rich report formats are additive as well. The UAT commands keep emitting
+the legacy report shape by default. Maintainers and tool authors can explicitly request
+conformance/profile v1 reports with `--report-format v1`; external-IUT evidence is governed
+separately by `conformance/iut/iut_report_v1.schema.json`. Neither opt-in path changes the
+frozen UAT baseline, and a future default-format migration requires an explicit maintainer
+decision.
+
+External full-profile IUT reports cover one exact product profile and cannot include the
+strict state-projection capability overlay. Emit that capability evidence separately; this
+restriction keeps post-UAT report provenance unambiguous without changing the frozen UAT
+baseline.

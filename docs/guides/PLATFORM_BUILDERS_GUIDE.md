@@ -8,13 +8,17 @@ This guide is for teams building mediated AICP channels. For canonical term defi
 - Mediator enforces hard gates before delivery or external side-effects.
 - Enforcer/moderator emits protocol artifacts (`ENFORCEMENT_VERDICT`, `ALERT`) that can be audited later.
 
-## Minimum state to store
+## Protocol-visible records to retain
 
 - `contract_id`
 - current head `message_hash`
-- participant identities (sender set and role mapping)
-- strike counters per participant
-- last verdict per `target_message_hash`
+- participant and role references used by emitted protocol artifacts
+- verdict and evidence references bound to each `target_message_hash`
+
+This is retention guidance for externally checkable protocol evidence, not a mandatory
+internal storage schema. A platform may use any database, reducer, cache, or event model.
+Internal moderation counters, queue state, model state, and host configuration are not
+AICP session-state fields.
 
 ## What to log (audit events)
 
@@ -40,6 +44,9 @@ Example policy:
 
 Keep thresholds explicit in policy/config and emit sanctions as protocol artifacts.
 
+The strike example is deployment policy only. AICP does not standardize the counter,
+storage mechanism, or threshold algorithm.
+
 ## Operational recovery
 
 - Use ALERT `recommended_actions` taxonomy (`RETRY`, `REMEDIATE`, `DISCONNECT`, `ESCALATE`, `ACK_REQUIRED`, `NO_ACTION`).
@@ -48,6 +55,9 @@ Keep thresholds explicit in policy/config and emit sanctions as protocol artifac
   - `RESUME_RESPONSE(OK)` when in sync
   - `RESUME_RESPONSE(NEEDS_RESYNC)` + remediation path when out of sync
 - Escalate to object/state resync only when required and authorized.
+- When advertising strict portable state, use
+  `aicp.session_state_projection.v1` and its separate `session_state_hash`; do not serialize
+  the platform's internal state into `session_state`.
 
 ## Badge semantics and degraded mode
 

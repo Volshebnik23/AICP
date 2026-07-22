@@ -3,9 +3,40 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-05-06_
+_Last updated: 2026-07-22_
 
 ## Current / Next
+
+### ✅ M57 — Post-UAT protocol hardening and evidence truthfulness
+- **Shipped:** smoke and full-profile IUT execution are distinct; smoke emits no ordinary
+  product-profile mark, while full external coverage requires 21 mandatory BASE cases or
+  37 mandatory authenticated-base cases from the registered TCK release.
+- **Shipped:** strong external evidence is schema-, coverage-, subject-, mark-, and
+  provenance-driven; incomplete, forged, degraded, skipped, reference-corpus, or
+  digest-mismatched reports are rejected.
+- **Shipped:** strong profile claims require reproducible external-IUT evidence;
+  self-attested, legacy, instructional, and hand-shaped raw marks are never promoted by the
+  matrix.
+- **Shipped:** consumer result fields fail closed, adapter-reported skips are always processed,
+  and full producer output is bound to scenario identity/crypto inputs plus a repeated
+  canonical-digest determinism check.
+- **Shipped:** full-profile capability overlays fail before adapter launch; strict session
+  projection remains a separately reported capability until overlay provenance is modeled.
+- **Shipped:** adapter requests use opaque challenges and neutral producer scenarios, and
+  one monotonic deadline now bounds stdin, stdout/stderr, process completion, cleanup, and
+  child reaping.
+- **Shipped:** real pairwise publication fails closed with
+  `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; examples remain instructional until a dedicated
+  joint-execution format exists.
+- **Shipped:** ordinary conformance/profile commands retain the frozen legacy report shape;
+  provenance-rich conformance/profile v1 and IUT v1 are additive post-UAT artifacts.
+- **Preserved:** experimental strict portable session-state projection,
+  `AICP-AUTHENTICATED-BASE@0.1`, Unicode code-point parity, sandbox signature validation,
+  legacy object-resync behavior, and all existing `@0.1` profile semantics.
+- **Verification:** `make prepr` (170 Python tests and 16 TypeScript tests),
+  `make compatibility-gate`, `make release-check`, planning validation, full reference IUT,
+  positive external-kind fake IUT, and required negative fake-adapter paths all passed on
+  2026-07-22.
 
 ### M49 - Verification gate taxonomy alignment
 - **Shipped:** `make prepr` is now the PR/onboarding gate and runs full conformance through `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests.

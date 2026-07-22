@@ -135,6 +135,18 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "CN-11",
+      "path": "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT"]
+    },
+    {
+      "id": "CN-12",
+      "path": "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+      "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT"],
+      "expect_pass": false,
+      "expected_failures": [{"test_id": "CN-AUTHENTICATED-CRYPTO-01"}]
     }
   ],
   "checks": [
@@ -173,6 +185,10 @@
     {
       "test_id": "CN-AICP-PROFILE-NEGOTIATION-01",
       "description": "selected.aicp_profile must be registered and acceptable/supported by declared participants"
+    },
+    {
+      "test_id": "CN-AUTHENTICATED-CRYPTO-01",
+      "description": "selected authenticated-base profile must include its registered crypto requirements and participant support"
     },
     {
       "test_id": "CN-PROFILE-REJECT-SEMANTICS-01",

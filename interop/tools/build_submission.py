@@ -20,6 +20,7 @@ from interop_submission_validation import (  # noqa: E402
     ALLOWED_CLAIM_TYPES,
     ALLOWED_EVIDENCE_STATUSES,
     INTEGRITY_FILENAME,
+    PAIRWISE_JOINT_EVIDENCE_ERROR,
     build_integrity_manifest,
     load_json,
     load_schema_and_registry,
@@ -48,10 +49,17 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--implementation-id", required=True)
     parser.add_argument("--implementation-version", required=True)
     parser.add_argument("--profile-id", action="append", required=True, dest="profile_ids")
+    parser.add_argument(
+        "--profile-ref",
+        action="append",
+        dest="profile_refs",
+        help="Exact PROFILE_ID@VERSION claim; repeat for every --profile-id in a real public package",
+    )
     parser.add_argument("--claim-type", required=True, choices=sorted(ALLOWED_CLAIM_TYPES))
     parser.add_argument("--claim-scope", required=True, choices=sorted(ALLOWED_CLAIM_SCOPES))
     parser.add_argument("--evidence-status", required=True, choices=sorted(REAL_EVIDENCE_STATUSES))
     parser.add_argument("--peer-implementation-id")
+    parser.add_argument("--peer-implementation-version")
     parser.add_argument("--report-path", action="append", required=True, dest="report_paths")
     parser.add_argument("--suite-ref", action="append", required=True, dest="suite_refs")
     parser.add_argument("--evidence-type", action="append", dest="evidence_types")
@@ -110,6 +118,8 @@ def _validate_inputs(args: argparse.Namespace, report_paths: list[Path]) -> list
     if args.claim_type == "pairwise_interop":
         if not args.peer_implementation_id:
             errors.append("--peer-implementation-id is required for --claim-type pairwise_interop")
+        if not args.peer_implementation_version:
+            errors.append("--peer-implementation-version is required for --claim-type pairwise_interop")
         if args.claim_scope != "pairwise":
             errors.append("--claim-scope must be pairwise for --claim-type pairwise_interop")
         if len(report_paths) < 2:
@@ -120,6 +130,17 @@ def _validate_inputs(args: argparse.Namespace, report_paths: list[Path]) -> list
         errors.append("--evidence-status pairwise requires --claim-type pairwise_interop")
     if args.peer_implementation_id and args.claim_type != "pairwise_interop":
         errors.append("--peer-implementation-id is only supported for --claim-type pairwise_interop")
+    if args.peer_implementation_version and args.claim_type != "pairwise_interop":
+        errors.append("--peer-implementation-version is only supported for --claim-type pairwise_interop")
+    if args.profile_refs:
+        parsed_ids: list[str] = []
+        for value in args.profile_refs:
+            if "@" not in value or not all(value.rsplit("@", 1)):
+                errors.append(f"--profile-ref must use PROFILE_ID@VERSION syntax: {value}")
+                continue
+            parsed_ids.append(value.rsplit("@", 1)[0])
+        if set(parsed_ids) != set(args.profile_ids):
+            errors.append("--profile-ref IDs must exactly match --profile-id values")
     for report_path in report_paths:
         if not report_path.exists() or not report_path.is_file():
             errors.append(f"report path does not exist or is not a file: {report_path}")
@@ -145,6 +166,13 @@ def _build_manifest(args: argparse.Namespace, report_refs: list[str], evidence_t
     }
     if args.peer_implementation_id:
         manifest["peer_implementation_id"] = args.peer_implementation_id
+    if args.peer_implementation_version:
+        manifest["peer_implementation_version"] = args.peer_implementation_version
+    if args.profile_refs:
+        manifest["profile_refs"] = [
+            {"profile_id": value.rsplit("@", 1)[0], "profile_version": value.rsplit("@", 1)[1]}
+            for value in _stable_unique(args.profile_refs)
+        ]
     if args.note:
         manifest["notes"] = args.note
     return manifest
@@ -186,6 +214,8 @@ def _validate_package(package_dir: Path) -> list[str]:
     if manifest is None:
         return errors
     errors.extend(validate_common_rules(submission_path, manifest, known_profiles, require_existing_refs=True))
+    if manifest.get("claim_type") == "pairwise_interop" and manifest.get("evidence_status") == "pairwise":
+        errors.append(PAIRWISE_JOINT_EVIDENCE_ERROR)
     _, integrity_errors = validate_bundle_integrity(
         package_dir,
         manifest["submission_id"],

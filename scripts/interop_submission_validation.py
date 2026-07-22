@@ -5,6 +5,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
+from collections import Counter
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +18,18 @@ TEMPLATES_ROOT = SUBMISSIONS_ROOT / "templates"
 SCHEMA_PATH = SUBMISSIONS_ROOT / "submission.schema.json"
 INTEGRITY_SCHEMA_PATH = SUBMISSIONS_ROOT / "integrity.schema.json"
 PROFILE_REGISTRY_PATH = ROOT / "registry" / "aicp_profiles.json"
+IUT_CASES_PATH = ROOT / "conformance" / "iut" / "cases.json"
+IUT_REPORT_SCHEMA_PATH = ROOT / "conformance" / "iut" / "iut_report_v1.schema.json"
+IUT_TCK_RELEASES_PATH = ROOT / "conformance" / "iut" / "tck_releases.json"
+IUT_DIR = ROOT / "conformance" / "iut"
+RUNNER_DIR = ROOT / "conformance" / "runner"
+for import_path in (IUT_DIR, RUNNER_DIR):
+    if str(import_path) not in sys.path:
+        sys.path.insert(0, str(import_path))
+
+from _runner_context import build_validator as build_local_validator  # noqa: E402
+from _runner_provenance import canonical_content_digest, sha256_file  # noqa: E402
+from aicp_iut_catalog import mandatory_case_ids  # noqa: E402
 RESERVED_DIRS = {"examples", "templates"}
 INTEGRITY_FILENAME = "bundle-integrity.json"
 INTEGRITY_MANIFEST_VERSION = "1.0"
@@ -31,6 +46,23 @@ ALLOWED_EVIDENCE_STATUSES = {
     "reproducible",
     "pairwise",
 }
+PAIRWISE_JOINT_EVIDENCE_ERROR = (
+    "PAIRWISE_JOINT_EVIDENCE_REQUIRED: real pairwise_interop publication is disabled until "
+    "a dedicated joint-execution format binds one shared run, both named builds, and "
+    "artifacts consumed in every required direction"
+)
+STRONG_PROFILE_CLAIM_EVIDENCE_ERROR = (
+    "STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_IUT: "
+    "implements_profile and compatible_with_profile claims require evidence_status='reproducible' "
+    "and an independently eligible external full-profile IUT report"
+)
+
+
+@dataclass(frozen=True)
+class StrongEvidenceEvaluation:
+    errors: tuple[str, ...]
+    eligible_marks: tuple[str, ...]
+    status: str
 
 
 def load_json(path: Path) -> Any:
@@ -100,7 +132,7 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
         if value is not None and not isinstance(value, str):
             errors.append(f"{field} must be a string")
 
-    optional_string_fields = ["peer_implementation_id", "notes"]
+    optional_string_fields = ["peer_implementation_id", "peer_implementation_version", "notes"]
     for field in optional_string_fields:
         value = manifest.get(field)
         if value is not None and not isinstance(value, str):
@@ -120,6 +152,21 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
     if disclosures is not None:
         if not isinstance(disclosures, list) or not all(isinstance(item, str) for item in disclosures):
             errors.append("disclosures must be an array of strings when present")
+
+    profile_refs = manifest.get("profile_refs")
+    if profile_refs is not None:
+        if not isinstance(profile_refs, list) or not profile_refs:
+            errors.append("profile_refs must be a non-empty array when present")
+        else:
+            for index, profile_ref in enumerate(profile_refs):
+                if not isinstance(profile_ref, dict):
+                    errors.append(f"profile_refs[{index}] must be an object")
+                    continue
+                if set(profile_ref) != {"profile_id", "profile_version"}:
+                    errors.append(f"profile_refs[{index}] must contain only profile_id and profile_version")
+                for field in ("profile_id", "profile_version"):
+                    if not isinstance(profile_ref.get(field), str) or not profile_ref.get(field):
+                        errors.append(f"profile_refs[{index}].{field} must be a non-empty string")
 
     claim_type = manifest.get("claim_type")
     if isinstance(claim_type, str) and claim_type not in ALLOWED_CLAIM_TYPES:
@@ -148,6 +195,8 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
     if claim_type == "pairwise_interop":
         if not manifest.get("peer_implementation_id"):
             errors.append("peer_implementation_id is required for pairwise_interop claims")
+        if not manifest.get("peer_implementation_version"):
+            errors.append("peer_implementation_version is required for pairwise_interop claims")
         if manifest.get("claim_scope") != "pairwise":
             errors.append("claim_scope must be 'pairwise' for pairwise_interop claims")
         report_refs = manifest.get("report_refs")
@@ -272,9 +321,10 @@ def compute_file_digest(path: Path, digest_alg: str = "sha256") -> str:
     if algorithm is None:
         raise ValueError(f"unsupported digest algorithm: {digest_alg}")
     hasher = algorithm()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(65536), b""):
-            hasher.update(chunk)
+    data = path.read_bytes()
+    if path.suffix.lower() in {".json", ".jsonl", ".md", ".py", ".ts", ".mjs", ".yml", ".yaml"}:
+        data = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    hasher.update(data)
     return hasher.hexdigest()
 
 
@@ -321,7 +371,7 @@ def validate_common_rules(
     require_existing_refs: bool,
 ) -> list[str]:
     errors: list[str] = []
-    kind = classify_manifest_path(path)
+    kind = classify_artifact_kind(path, manifest)
     claim_type = manifest.get("claim_type")
     evidence_status = manifest.get("evidence_status")
     disclosures = manifest.get("disclosures")
@@ -335,6 +385,17 @@ def validate_common_rules(
     for profile_id in manifest.get("profile_ids", []):
         if isinstance(profile_id, str) and profile_id not in known_profiles:
             errors.append(f"unknown profile_id '{profile_id}' (not present in registry/aicp_profiles.json)")
+
+    profile_refs = manifest.get("profile_refs")
+    if isinstance(profile_refs, list):
+        ref_ids = {
+            item.get("profile_id")
+            for item in profile_refs
+            if isinstance(item, dict) and isinstance(item.get("profile_id"), str)
+        }
+        declared_ids = {item for item in manifest.get("profile_ids", []) if isinstance(item, str)}
+        if ref_ids != declared_ids:
+            errors.append("profile_refs profile_id values must exactly match profile_ids")
 
     if kind == "example":
         if evidence_status != "example":
@@ -378,7 +439,332 @@ def validate_common_rules(
             except Exception as exc:
                 errors.append(f"referenced file is not valid JSON ({ref}): {exc}")
 
+    try:
+        is_public_submission = path.resolve().is_relative_to(SUBMISSIONS_ROOT.resolve())
+    except AttributeError:  # pragma: no cover - Python < 3.9 compatibility
+        is_public_submission = str(path.resolve()).startswith(str(SUBMISSIONS_ROOT.resolve()))
+    if kind == "submission" and require_existing_refs and is_public_submission:
+        errors.extend(_validate_strong_report_evidence(path, manifest))
+
     return errors
+
+
+def _profile_claims(manifest: dict[str, Any]) -> list[tuple[str, str]]:
+    refs = manifest.get("profile_refs")
+    if not isinstance(refs, list):
+        return []
+    return [
+        (item["profile_id"], item["profile_version"])
+        for item in refs
+        if isinstance(item, dict)
+        and isinstance(item.get("profile_id"), str)
+        and isinstance(item.get("profile_version"), str)
+    ]
+
+
+def _profile_catalog(profile_id: str, profile_version: str) -> tuple[Path | None, dict[str, Any] | None]:
+    for catalog_path in sorted((ROOT / "conformance" / "profiles").glob("PF_*.json")):
+        try:
+            catalog = load_json(catalog_path)
+        except Exception:
+            continue
+        if (
+            isinstance(catalog, dict)
+            and catalog.get("profile_id") == profile_id
+            and catalog.get("profile_version") == profile_version
+        ):
+            return catalog_path, catalog
+    return None, None
+
+
+def _eligible_external_profile_report(
+    report: dict[str, Any],
+    *,
+    implementation_id: str,
+    implementation_version: str,
+    profile_id: str,
+    profile_version: str,
+) -> list[str]:
+    errors: list[str] = []
+    schema = load_json(IUT_REPORT_SCHEMA_PATH)
+    validator = build_local_validator(schema, IUT_REPORT_SCHEMA_PATH)
+    if validator is None:
+        return ["IUT_REPORT_SCHEMA_VALIDATION_UNAVAILABLE"]
+    schema_errors = sorted(validator.iter_errors(report), key=lambda item: list(item.path))
+    if schema_errors:
+        return [
+            "IUT_REPORT_SCHEMA_INVALID: "
+            + ("/" + "/".join(str(part) for part in error.path) if error.path else "/")
+            + f": {error.message}"
+            for error in schema_errors
+        ]
+
+    catalog = load_json(IUT_CASES_PATH)
+    target = f"{profile_id}@{profile_version}"
+    profile_config = catalog.get("profiles", {}).get(target)
+    if not isinstance(profile_config, dict):
+        return [f"no full-profile IUT catalog exists for {target}"]
+    if report.get("execution_mode") != "full-profile":
+        errors.append("IUT_SMOKE_EVIDENCE_INELIGIBLE: execution_mode must be 'full-profile'")
+
+    subject = report.get("execution_subject")
+    if report.get("report_format_version") != "1.0":
+        errors.append("report_format_version must be '1.0'")
+    if not isinstance(subject, dict) or subject.get("kind") != "external_implementation":
+        errors.append("execution_subject.kind must be 'external_implementation'")
+    else:
+        if subject.get("implementation_id") != implementation_id:
+            errors.append("execution_subject.implementation_id does not match submission manifest")
+        if subject.get("implementation_version") != implementation_version:
+            errors.append("execution_subject.implementation_version does not match submission manifest")
+        if (
+            not isinstance(subject.get("implementation_digest"), str)
+            or not subject.get("implementation_digest")
+            or subject.get("implementation_digest") == "unknown"
+        ):
+            errors.append("execution_subject.implementation_digest must be present")
+    release_registry = load_json(IUT_TCK_RELEASES_PATH)
+    tck = report.get("tck_release")
+    release = next(
+        (
+            item
+            for item in release_registry.get("releases", [])
+            if isinstance(item, dict)
+            and isinstance(tck, dict)
+            and item.get("release_id") == tck.get("release_id")
+        ),
+        None,
+    )
+    if not isinstance(release, dict):
+        errors.append("report does not resolve to a registered IUT TCK release")
+        release_profile: dict[str, Any] = {}
+    else:
+        release_profile = release.get("profiles", {}).get(target) or {}
+        if not release_profile:
+            errors.append(f"registered TCK release does not support {target}")
+        expected_case_digest = release.get("case_catalog", {}).get("content_digest")
+        expected_runner_digest = release.get("runner_bundle", {}).get("digest")
+        if tck.get("registry_digest") != sha256_file(IUT_TCK_RELEASES_PATH):
+            errors.append("TCK registry digest does not match the checked-in release registry")
+        if tck.get("case_catalog_digest") != expected_case_digest:
+            errors.append("TCK case-catalog digest does not match the registered release")
+        if tck.get("runner_bundle_digest") != expected_runner_digest:
+            errors.append("TCK runner-bundle digest does not match the registered release")
+        runner = report.get("runner")
+        if (
+            not isinstance(runner, dict)
+            or runner.get("name") != "aicp-iut-runner"
+            or runner.get("source_revision") != expected_runner_digest
+        ):
+            errors.append("report runner provenance does not match the registered TCK runner bundle")
+
+    profile = report.get("profile")
+    if not isinstance(profile, dict):
+        errors.append("report must contain profile provenance")
+    else:
+        if profile.get("profile_id") != profile_id or profile.get("profile_version") != profile_version:
+            errors.append(f"report profile must be exactly {profile_id}@{profile_version}")
+        catalog_path, product_profile = _profile_catalog(profile_id, profile_version)
+        if catalog_path is None or product_profile is None:
+            errors.append(f"no conformance profile catalog exists for {profile_id}@{profile_version}")
+        else:
+            expected_digest = release_profile.get("profile_catalog", {}).get("content_digest")
+            if profile.get("profile_digest") != expected_digest:
+                errors.append("profile provenance digest does not match the registered TCK release")
+    if report.get("passed") is not True:
+        errors.append("report must have passed=true")
+    if report.get("degraded") is not False:
+        errors.append("report must have degraded=false")
+    if report.get("skipped_checks") not in ([], None):
+        errors.append("report must not contain skipped checks")
+    if report.get("failures") != []:
+        errors.append("report failures must be an empty array")
+
+    suite = report.get("suite")
+    expected_suite_digest = release.get("case_catalog", {}).get("content_digest") if release else None
+    if (
+        not isinstance(suite, dict)
+        or suite.get("suite_id") != catalog.get("suite_id")
+        or suite.get("suite_version") != catalog.get("suite_version")
+        or suite.get("suite_digest") != expected_suite_digest
+    ):
+        errors.append("report suite provenance does not match the registered IUT case catalog")
+
+    expected_suites = {
+        item.get("path"): item.get("content_digest")
+        for item in release_profile.get("required_suites", [])
+        if isinstance(item, dict)
+    }
+    reported_suites = report.get("required_suites")
+    actual_suite_records: dict[str, str] = {}
+    if isinstance(reported_suites, list):
+        for record in reported_suites:
+            if not isinstance(record, dict):
+                continue
+            matching_ref = next(
+                (
+                    suite_ref
+                    for suite_ref in expected_suites
+                    if load_json(ROOT / suite_ref).get("suite_id") == record.get("suite_id")
+                ),
+                None,
+            )
+            if matching_ref is not None:
+                if matching_ref in actual_suite_records:
+                    errors.append(f"duplicate required suite provenance for {matching_ref}")
+                actual_suite_records[matching_ref] = str(record.get("suite_digest"))
+    if actual_suite_records != expected_suites:
+        errors.append("required suite provenance does not exactly match the registered TCK release")
+
+    expected_inputs = {
+        item.get("path"): item.get("content_digest")
+        for item in release_profile.get("required_input_artifacts", [])
+        if isinstance(item, dict)
+    }
+    inputs = report.get("input_artifacts")
+    input_counts = Counter(
+        item.get("path") for item in inputs if isinstance(item, dict)
+    ) if isinstance(inputs, list) else Counter()
+    if any(count != 1 for count in input_counts.values()):
+        errors.append("report input_artifacts contains duplicate paths")
+    actual_inputs = {
+        item.get("path"): item.get("content_digest")
+        for item in inputs or []
+        if isinstance(item, dict) and item.get("path") in expected_inputs
+    } if isinstance(inputs, list) else {}
+    if actual_inputs != expected_inputs:
+        errors.append("report input provenance does not contain every registered fixture/vector digest")
+
+    expected_generated_ids = {
+        str(item["case_id"])
+        for item in profile_config["full_profile"]["producer_scenarios"]
+    }
+    generated = report.get("generated_artifacts")
+    generated_counts = Counter(
+        item.get("artifact_id") for item in generated if isinstance(item, dict)
+    ) if isinstance(generated, list) else Counter()
+    if set(generated_counts) != expected_generated_ids or any(count != 1 for count in generated_counts.values()):
+        errors.append("generated artifacts do not exactly cover every mandatory producer scenario")
+    for item in generated or []:
+        if not isinstance(item, dict):
+            continue
+        if item.get("content_digest") != canonical_content_digest(item.get("content")):
+            errors.append(f"generated artifact digest mismatch for {item.get('artifact_id')}")
+        if item.get("repeat_content_digest") != item.get("content_digest"):
+            errors.append(
+                f"generated artifact determinism evidence mismatch for {item.get('artifact_id')}"
+            )
+
+    expected_cases = mandatory_case_ids(catalog, target, "full-profile")
+    case_results = report.get("case_results")
+    case_counts = Counter(
+        item.get("case_id") for item in case_results if isinstance(item, dict)
+    ) if isinstance(case_results, list) else Counter()
+    expected_counts = Counter(expected_cases)
+    if case_counts != expected_counts:
+        missing = sorted((expected_counts - case_counts).elements())
+        duplicate_or_unknown = sorted((case_counts - expected_counts).elements())
+        errors.append(
+            "mandatory IUT case coverage mismatch"
+            + (f"; missing={missing}" if missing else "")
+            + (f"; duplicate_or_unknown={duplicate_or_unknown}" if duplicate_or_unknown else "")
+        )
+    if isinstance(case_results, list) and any(item.get("passed") is not True for item in case_results if isinstance(item, dict)):
+        errors.append("every mandatory IUT case result must have passed=true")
+
+    expected_mark = profile_config.get("expected_mark")
+    computed_marks = [expected_mark] if not errors and isinstance(expected_mark, str) else []
+    if report.get("compatibility_marks") != computed_marks:
+        errors.append(
+            "compatibility_marks do not equal independently computed full-profile eligibility marks"
+        )
+    return errors
+
+
+def evaluate_strong_report_evidence(
+    path: Path, manifest: dict[str, Any]
+) -> StrongEvidenceEvaluation:
+    errors: list[str] = []
+    claims = _profile_claims(manifest)
+    if not claims:
+        return StrongEvidenceEvaluation(
+            ("real submissions require exact profile_refs with profile_id and profile_version",),
+            (),
+            "rejected",
+        )
+
+    claim_type = manifest.get("claim_type")
+    if claim_type in {"implements_profile", "compatible_with_profile"}:
+        if manifest.get("evidence_status") != "reproducible":
+            return StrongEvidenceEvaluation(
+                (STRONG_PROFILE_CLAIM_EVIDENCE_ERROR,),
+                (),
+                "rejected",
+            )
+    elif claim_type == "pairwise_interop":
+        return StrongEvidenceEvaluation(
+            (PAIRWISE_JOINT_EVIDENCE_ERROR,),
+            (),
+            "rejected",
+        )
+    else:
+        return StrongEvidenceEvaluation((), (), "not_applicable")
+
+    reports: list[tuple[str, dict[str, Any]]] = []
+    for ref in manifest.get("report_refs", []):
+        if not isinstance(ref, str):
+            continue
+        target = path.parent / ref
+        if not target.is_file():
+            continue
+        try:
+            report = load_json(target)
+        except Exception:
+            continue
+        if isinstance(report, dict):
+            reports.append((ref, report))
+
+    implementation_id = manifest.get("implementation_id")
+    implementation_version = manifest.get("implementation_version")
+    if not isinstance(implementation_id, str) or not isinstance(implementation_version, str):
+        return StrongEvidenceEvaluation((), (), "rejected")
+
+    eligible_marks: set[str] = set()
+    catalog = load_json(IUT_CASES_PATH)
+    for profile_id, profile_version in claims:
+        eligible = False
+        report_errors: list[str] = []
+        for ref, report in reports:
+            current = _eligible_external_profile_report(
+                report,
+                implementation_id=implementation_id,
+                implementation_version=implementation_version,
+                profile_id=profile_id,
+                profile_version=profile_version,
+            )
+            if not current:
+                eligible = True
+                break
+            report_errors.append(f"{ref}: " + "; ".join(current))
+        if not eligible:
+            errors.append(
+                f"no eligible external IUT report proves {profile_id}@{profile_version} for "
+                f"{implementation_id}@{implementation_version}"
+            )
+            errors.extend(report_errors)
+            continue
+        profile = catalog.get("profiles", {}).get(f"{profile_id}@{profile_version}")
+        expected_mark = profile.get("expected_mark") if isinstance(profile, dict) else None
+        if isinstance(expected_mark, str):
+            eligible_marks.add(expected_mark)
+
+    if errors:
+        return StrongEvidenceEvaluation(tuple(errors), (), "rejected")
+    return StrongEvidenceEvaluation((), tuple(sorted(eligible_marks)), "eligible")
+
+
+def _validate_strong_report_evidence(path: Path, manifest: dict[str, Any]) -> list[str]:
+    return list(evaluate_strong_report_evidence(path, manifest).errors)
 
 
 def validate_bundle_integrity(

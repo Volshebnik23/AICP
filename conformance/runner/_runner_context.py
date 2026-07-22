@@ -60,7 +60,18 @@ def _core_schema_resources() -> dict[str, Any]:
     core_path = ROOT / "schemas/core/aicp-core-message.schema.json"
     core_schema = load_json(core_path)
     resource = Resource.from_contents(core_schema)
-    return {alias: resource for alias in _schema_aliases(core_schema, core_path)}
+    resources = {alias: resource for alias in _schema_aliases(core_schema, core_path)}
+    for report_ref in (
+        "conformance/conformance_report_schema.json",
+        "conformance/conformance_report_v1.schema.json",
+    ):
+        report_path = ROOT / report_ref
+        if report_path.exists():
+            report_schema = load_json(report_path)
+            report_resource = Resource.from_contents(report_schema)
+            for alias in _schema_aliases(report_schema, report_path):
+                resources[alias] = report_resource
+    return resources
 
 
 def build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
@@ -83,7 +94,9 @@ def build_validator(schema: dict[str, Any], schema_path: Path) -> Any:
         resources[alias] = schema_resource
 
     allowed_remote = {uri for uri in resources if uri.startswith("http://") or uri.startswith("https://")}
-    unresolved = sorted(remote_refs - allowed_remote)
+    unresolved = sorted(
+        ref for ref in remote_refs if ref.split("#", 1)[0] not in allowed_remote
+    )
     if unresolved:
         raise ValueError(
             "Remote schema retrieval is disabled; add local mapping or replace $ref with aicp:. "

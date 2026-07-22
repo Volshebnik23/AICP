@@ -65,6 +65,9 @@ A composition of required suites representing a practical implementation target.
 
 ## Badge eligibility vs Degraded mode
 A report may be `passed=true` yet `degraded=true` when critical checks are unavailable (e.g., signature backend missing); degraded reports are not badge-eligible and MUST NOT emit compatibility marks.
+An unexpected skipped mandatory check has the same eligibility effect even if an adapter
+incorrectly declares `degraded=false`; external-IUT consumer results must report all skip
+and degradation fields explicitly.
 
 ## Coexistence with non-AICP chats
 AICP is optional: agents may operate in channels that do not use AICP. Enforcement semantics apply only where a mediated channel actually uses AICP artifacts.

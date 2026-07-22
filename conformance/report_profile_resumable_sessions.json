@@ -2,14 +2,14 @@
   "aicp_version": "0.1",
   "profile_id": "AICP-RESUMABLE-SESSIONS",
   "profile_version": "0.1",
-  "timestamp": "2026-03-20T07:45:20.839487+00:00",
+  "timestamp": "2026-07-22T17:05:02.881728+00:00",
   "passed": true,
   "suite_reports": [
     {
       "aicp_version": "0.1",
       "suite_id": "CT-CORE-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.823512+00:00",
+      "timestamp": "2026-07-22T17:05:02.828696+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -23,7 +23,7 @@
       "aicp_version": "0.1",
       "suite_id": "RS-RESUME-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.826762+00:00",
+      "timestamp": "2026-07-22T17:05:02.851482+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -37,7 +37,7 @@
       "aicp_version": "0.1",
       "suite_id": "OR-OBJECT-RESYNC-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.839260+00:00",
+      "timestamp": "2026-07-22T17:05:02.880730+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [

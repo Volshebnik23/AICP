@@ -71,7 +71,11 @@ For a repo-owned rehearsal of this same lifecycle, see `docs/interop/AICP_Intero
 
 4. **Verify evidence packaging.**
    - referenced files actually exist inside the package,
-   - reports/evidence are inspectable and match the stated claim,
+   - exact `profile_refs` match the claim,
+   - reports are schema-valid full-profile external-IUT v1 artifacts matching the manifest,
+     registered TCK release, exact mandatory case set, and all required digests,
+   - passed reports are non-degraded, have no mandatory skips, and carry exactly the
+     independently recomputed mark list,
    - optional `bundle-integrity.json` validates when present.
 
 5. **Decide matrix publication readiness.**
@@ -87,21 +91,23 @@ Maintainers should verify:
 - the claim is clearly self-published,
 - disclosures explain any evidence limitations,
 - the package does not imply third-party confirmation.
+- `claim_type` is not `implements_profile` or `compatible_with_profile`, and no ordinary
+  profile mark is computed or published from the package.
 
 ### `reproducible`
 
 Maintainers should verify:
-- the package includes actual report artifacts supporting the stated profile claim,
+- the package includes an eligible external-IUT report supporting the exact profile claim,
 - the reports are present inside the bundle,
 - optional integrity data, if present, matches the bundled files.
 
 ### `pairwise`
 
-Maintainers should verify:
-- `peer_implementation_id` is present,
-- the package stays specific to the named peer and profile,
-- disclosures explain whether the package includes both sides' evidence directly or only one side's package plus a shared summary,
-- the submission does not imply general ecosystem-wide compatibility.
+Real pairwise submissions are not publication-eligible in this release. The validator must
+return `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; maintainers must not waive this using two
+single-IUT reports, co-conformance, or a summary. Examples/templates remain instructional.
+A future review path requires a dedicated joint run binding both builds and exchanged
+artifacts in every required direction.
 
 ## Required maintainer checklist
 
@@ -153,6 +159,8 @@ Matrix publication should happen **after** the real submission is reviewable and
 - real valid submissions can appear in the public matrix,
 - examples/templates remain clearly instructional and separate from real external rows,
 - `evidence_status` is shown as package-strength/scope metadata only and does not imply endorsement.
+- computed marks come only from the shared full-profile eligibility validator; raw legacy,
+  instructional, or hand-shaped report marks are never promoted.
 
 ## What does not happen during review
 

@@ -7,5 +7,14 @@
     "type": "hash_domains",
     "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#6-attestations-and-crypto-minimum-core-v01",
     "security_considerations": "Domain separation avoids cross-context hash confusion."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "session_state_projection",
+    "type": "hash_domains",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#strict-portable-session-state-projection-v1",
+    "security_considerations": "The hash binds the externally portable projection only; it does not authenticate the producer or expose internal platform state."
   }
 ]

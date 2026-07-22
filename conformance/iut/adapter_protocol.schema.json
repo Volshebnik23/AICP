@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/iut-adapter-protocol-1.1.json",
+  "title": "AICP IUT Adapter JSONL Record",
+  "oneOf": [
+    { "$ref": "#/$defs/Request" },
+    { "$ref": "#/$defs/Response" }
+  ],
+  "$defs": {
+    "Request": {
+      "type": "object",
+      "required": ["adapter_protocol_version", "request_id", "operation", "input"],
+      "properties": {
+        "adapter_protocol_version": { "const": "1.1" },
+        "request_id": { "type": "string", "minLength": 1 },
+        "operation": { "enum": ["describe", "canonicalize_hash", "validate_transcript", "generate_scenario", "project_session_state"] },
+        "input": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "Response": {
+      "type": "object",
+      "required": ["adapter_protocol_version", "request_id", "operation", "success"],
+      "properties": {
+        "adapter_protocol_version": { "const": "1.1" },
+        "request_id": { "type": "string", "minLength": 1 },
+        "operation": { "enum": ["describe", "canonicalize_hash", "validate_transcript", "generate_scenario", "project_session_state"] },
+        "success": { "type": "boolean" },
+        "result": { "type": "object" },
+        "error": {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string", "minLength": 1 },
+            "message": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

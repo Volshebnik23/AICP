@@ -83,3 +83,10 @@ AICP product profiles (AICP-BASE, AICP-MEDIATED-BLOCKING, …) are negotiated vi
 • If negotiation_result introduces a new hash domain, it MUST be registered (Section 8, Object Hash Domains).
 
 Security note: downgrade/inconsistent negotiation is a security concern; conformance checks `CN-DOWNGRADE-01` and `CN-AICP-PROFILE-NEGOTIATION-01` in `conformance/extensions/CN_CAPNEG_0.1.json` provide executable detection coverage.
+
+For `AICP-AUTHENTICATED-BASE@0.1`, an exact runtime selection is compatible only when
+`selected.crypto_profile` contains registered `aicp.crypto.ed25519.v1` and every required
+participant declaration supports that exact crypto profile. `EXT-CAPNEG` is not a static
+dependency of authenticated base, but an implementation that chooses to negotiate the
+profile MUST reject a missing or different required crypto selection. `CN-11` and `CN-12`
+provide positive and negative executable examples.

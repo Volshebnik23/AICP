@@ -26,10 +26,10 @@ def _collect_files(patterns: list[str], exclude_predicate: Any | None = None) ->
         rel_paths.update(path.relative_to(ROOT) for path in ROOT.glob(pattern) if path.is_file())
 
     files: list[dict[str, str]] = []
-    for rel_path in sorted(rel_paths, key=lambda p: str(p)):
+    for rel_path in sorted(rel_paths, key=lambda p: p.as_posix()):
         if exclude_predicate is not None and exclude_predicate(rel_path):
             continue
-        files.append({"path": str(rel_path), "sha256": _sha256_file(ROOT / rel_path)})
+        files.append({"path": rel_path.as_posix(), "sha256": _sha256_file(ROOT / rel_path)})
     return files
 
 
@@ -44,20 +44,20 @@ def _load_json(path: Path) -> Any:
 
 def _extract_compatibility_marks() -> dict[str, list[dict[str, str]]]:
     suite_marks: list[dict[str, str]] = []
-    for path in sorted((ROOT / "conformance").glob("**/*.json"), key=lambda p: str(p.relative_to(ROOT))):
+    for path in sorted((ROOT / "conformance").glob("**/*.json"), key=lambda p: p.relative_to(ROOT).as_posix()):
         rel = path.relative_to(ROOT)
         if rel.parts[:2] == ("conformance", "profiles"):
             continue
         payload = _load_json(path)
         if isinstance(payload, dict) and isinstance(payload.get("compatibility_mark"), str):
-            suite_marks.append({"path": str(rel), "mark": payload["compatibility_mark"]})
+            suite_marks.append({"path": rel.as_posix(), "mark": payload["compatibility_mark"]})
 
     profile_marks: list[dict[str, str]] = []
-    for path in sorted((ROOT / "conformance/profiles").glob("*.json"), key=lambda p: str(p.relative_to(ROOT))):
+    for path in sorted((ROOT / "conformance/profiles").glob("*.json"), key=lambda p: p.relative_to(ROOT).as_posix()):
         rel = path.relative_to(ROOT)
         payload = _load_json(path)
         if isinstance(payload, dict) and isinstance(payload.get("compatibility_mark"), str):
-            profile_marks.append({"path": str(rel), "mark": payload["compatibility_mark"]})
+            profile_marks.append({"path": rel.as_posix(), "mark": payload["compatibility_mark"]})
 
     return {"suites": suite_marks, "profiles": profile_marks}
 
@@ -67,7 +67,7 @@ def build_manifest() -> dict[str, Any]:
     schemas = _collect_files(["schemas/**/*.json"])
     conformance = _collect_files(
         ["conformance/**/*.json"],
-        exclude_predicate=lambda rel: rel.name.startswith("report") and rel.parent == Path("conformance"),
+        exclude_predicate=lambda rel: rel.name.startswith("report"),
     )
     fixtures = _collect_files(["fixtures/**/*.json", "fixtures/**/*.jsonl"])
 

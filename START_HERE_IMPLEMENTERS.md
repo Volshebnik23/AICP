@@ -2,6 +2,12 @@
 
 AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, chains, schemas, conformance). It is **not** a hosted chat/enforcer platform. For the public packaging model of what to adopt first, see `docs/architecture/AICP_Adoption_Core_and_Tiers.md`. For the pilot-facing package of what is in scope for UAT, see `docs/release/AICP_UAT_Release_Pack.md`, `docs/release/AICP_UAT_Architecture_Freeze.md`, and `docs/release/AICP_UAT_Checklist.md`.
 
+Choose `AICP-BASE@0.1` for the stable Core-only baseline, where signatures are optional.
+Choose experimental `AICP-AUTHENTICATED-BASE@0.1` only when every message must carry a
+verified Ed25519 signature from its declared envelope sender. That profile authenticates a
+message binding, not real-world identity, delegation, trust, revocation, witnessing,
+policy correctness, or transport security.
+
 ## Choose your role
 
 | Role | What you build | Smoke-check finish line |
@@ -36,6 +42,11 @@ AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, c
 5. Chain `prev_msg_hash` from the previous message.
 6. Validate with [sandbox/run.py](sandbox/run.py).
 
+`--no-signature-verify` skips only key resolution and cryptographic verification. It still
+recomputes `message_hash` and checks every present signature's `object_type` and
+`object_hash` binding. Omit the flag and pass `--keys <key-map.json>` when cryptographic
+verification is required.
+
 ### Mediator/Host developer
 1. Reuse the drop-in message builder to ensure deterministic hashes.
 2. Keep transcript ordering deterministic and immutable.
@@ -63,6 +74,36 @@ If you are integrating AICP with an existing platform gateway, start with:
 Recommended CI baseline: `make prepr` (includes validation, full conformance via `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests).
 
 For compatibility or badge evidence, run `make compatibility-gate` so validation, `make conformance-all`, and snapshot generation stay aligned.
+
+## External implementation conformance
+
+Repository suites exercise the checked-in reference corpus and label it
+`execution_subject.kind=reference_corpus`; that is not evidence for an external product.
+To test an implementation, expose the test-only JSONL adapter described in
+`conformance/iut/README.md`, then run:
+
+```text
+python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-BASE@0.1 --mode smoke --out out/iut-base-smoke.json
+python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-BASE@0.1 --mode full-profile --out out/iut-base-full.json
+python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-AUTHENTICATED-BASE@0.1 --mode full-profile --out out/iut-authenticated-base-full.json
+```
+
+Smoke is fast diagnostic evidence and never emits an ordinary product-profile mark. Full
+profile execution covers every registered mandatory case (21 for Base; 37 for authenticated
+Base), checks producer and consumer behavior, and binds report eligibility to the registered
+TCK release and all required digests. Marks are suppressed for reference-corpus, degraded,
+skipped, incomplete, or digest-inconsistent runs. `make conformance-iut-smoke` tests only the
+deterministic in-repo reference adapter.
+
+The authenticated catalog includes the required unavailable-crypto behavior probe. Its
+expected `AUTH-SIGNATURE-VERIFY-01` skip is recorded at report level, so the current
+37-case authenticated report is behavioral evidence and emits no ordinary profile mark.
+
+Full-profile producer scenarios are executed twice and must be bound to the requested
+session, contract, participants, exact profile, crypto mode, and deterministic seed. Do not
+combine full-profile execution with `--include-session-state-projection`; emit strict state
+projection evidence as a separate capability run. Every skipped mandatory check
+suppresses profile eligibility even if an adapter reports `degraded=false`.
 
 
 ## Template smoke commands (shipped onboarding)
@@ -93,5 +134,7 @@ Then continue with the role-specific and quickstart paths below.
 - `docs/INDEX.md`
 - `docs/architecture/AICP_in_the_Ecosystem.md`
 - `docs/profiles/Profile_Selection_Guide.md`
+- `docs/extensions/RFC_EXT_OBJECT_RESYNC.md`
+- `conformance/iut/README.md`
 - `docs/playbooks/Session_Topologies.md`
 - `docs/guides/MEDIATED_BLOCKING_PRODUCTION.md`

@@ -26,6 +26,7 @@ if str(REF_PY) not in sys.path:
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available, verify_ed25519  # noqa: E402
+from aicp_ref.validate import validate_message_signatures  # noqa: E402
 from _runner_context import (  # noqa: E402
     build_payload_validator_map as _context_build_payload_validator_map,
     build_validator as _context_build_validator,
@@ -46,6 +47,7 @@ from _runner_core_checks import run_core_transcript_checks as _run_core_transcri
 from _runner_enforcement_checks import run_enforcement_transcript_checks as _run_enforcement_transcript_checks  # noqa: E402
 from _runner_execution_checks import run_execution_transcript_checks as _run_execution_transcript_checks  # noqa: E402
 from _runner_media_checks import run_media_delivery_transcript_checks as _run_media_delivery_transcript_checks  # noqa: E402
+from _runner_state_projection_checks import run_state_projection_checks as _run_state_projection_checks  # noqa: E402
 from _runner_reporting import build_conformance_report as _build_conformance_report_record  # noqa: E402
 
 
@@ -239,7 +241,12 @@ def _evaluate_transcript_expectations(
     return errors
 
 
-def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> dict[str, Any]:
+def _run_binding_suite(
+    suite: dict[str, Any],
+    schema: dict[str, Any] | None,
+    suite_path: Path,
+    report_format: str,
+) -> dict[str, Any]:
     enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     case_validator = _build_validator(schema, ROOT / suite["schema_ref"]) if schema is not None else None
     core_schema_path = ROOT / "schemas/core/aicp-core-message.schema.json"
@@ -966,17 +973,20 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None) -> 
         degraded=False,
         degraded_reasons=[],
         skipped_checks=[],
+        suite_path=suite_path,
+        suite_catalog=suite,
+        report_format=report_format,
     )
 
 
-def run_suite(suite_path: Path) -> dict[str, Any]:
+def run_suite(suite_path: Path, *, report_format: str = "legacy") -> dict[str, Any]:
     suite = load_json(suite_path)
     enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     schema_path = ROOT / suite["schema_ref"]
     schema = load_json(schema_path)
 
     if "cases" in suite:
-        return _run_binding_suite(suite, schema)
+        return _run_binding_suite(suite, schema, suite_path, report_format)
 
     validator = _build_validator(schema, schema_path)
 
@@ -1013,10 +1023,21 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
     channel_property_ids = {e.get("id") for e in load_json(ROOT / "registry/channel_properties.json") if isinstance(e, dict)}
     dispute_claim_types = {e.get("id") for e in load_json(ROOT / "registry/dispute_claim_types.json")}
     security_alert_categories = {e.get("id") for e in load_json(ROOT / "registry/security_alert_categories.json")}
-    aicp_profiles_registry = {
-        (e.get("profile_id"), e.get("profile_version"))
+    aicp_profile_entries = {
+        (e.get("profile_id"), e.get("profile_version")): e
         for e in load_json(ROOT / "registry/aicp_profiles.json")
         if isinstance(e, dict)
+    }
+    aicp_profiles_registry = set(aicp_profile_entries)
+    crypto_profiles_registry = {
+        e.get("id")
+        for e in load_json(ROOT / "registry/crypto_profiles.json")
+        if isinstance(e, dict) and isinstance(e.get("id"), str)
+    }
+    registered_extensions = {
+        e.get("id")
+        for e in load_json(ROOT / "registry/extension_ids.json")
+        if isinstance(e, dict) and isinstance(e.get("id"), str)
     }
     contract_schema_path = ROOT / "schemas/core/aicp-core-contract.schema.json"
     contract_schema = load_json(contract_schema_path)
@@ -1151,15 +1172,15 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             if old_ok and new_ok and isinstance(new_kid, str) and isinstance(new_public, str):
                                 keyring.setdefault(sender, {})[new_kid] = new_public
 
-                    for sig in msg.get("signatures", []) or []:
-                        signer = sig.get("signer")
-                        kid = sig.get("kid")
-                        key = keyring.get(signer, {}).get(kid) if isinstance(signer, str) and isinstance(kid, str) else None
-                        if not key:
-                            add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", f"missing public key for signer {signer} kid {kid}", rel_file, line_no)
-                            continue
-                        if not verify_ed25519(key, sig.get("sig_b64url", ""), sig.get("object_hash", "")):
-                            add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification failed", rel_file, line_no)
+                    for issue in validate_message_signatures(msg, keyring, verify_crypto=True):
+                        if issue["code"] == "object_hash_mismatch":
+                            test_id = "CT-SIGNATURE-HASH-01"
+                        elif issue["code"] == "object_type_mismatch":
+                            test_id = "CT-SIGNATURE-STRUCTURE-01"
+                        else:
+                            test_id = "CT-SIGNATURE-VERIFY-01"
+                        if test_id in enabled_checks:
+                            add_failure(t_failures, test_id, issue["message"], rel_file, line_no)
             else:
                 degraded = True
                 reason = "signature verification unavailable"
@@ -1170,6 +1191,60 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                 expected = {e.get("test_id") for e in transcript.get("expected_failures", [])}
                 if "CT-SIGNATURE-VERIFY-01" in expected:
                     add_failure(t_failures, "CT-SIGNATURE-VERIFY-01", "signature verification unavailable in environment", rel_file, None)
+
+        auth_checks = {
+            "AUTH-MESSAGE-HASH-REQUIRED-01",
+            "AUTH-SIGNATURES-REQUIRED-01",
+            "AUTH-OBJECT-TYPE-01",
+            "AUTH-SENDER-SIGNATURE-01",
+            "AUTH-KID-01",
+            "AUTH-KEY-RESOLUTION-01",
+            "AUTH-SIGNATURE-VERIFY-01",
+        }
+        if enabled_checks & auth_checks:
+            keyring = _baseline_keyring(key_map)
+            crypto_available = signature_verifier_available()
+            expected_auth_failures = {
+                entry.get("test_id") for entry in transcript.get("expected_failures", [])
+            }
+            observed_auth_failures: set[str] = set()
+            for line_no, msg in rows:
+                if not isinstance(msg.get("message_hash"), str) or not msg.get("message_hash"):
+                    test_id = "AUTH-MESSAGE-HASH-REQUIRED-01"
+                    if test_id in enabled_checks:
+                        observed_auth_failures.add(test_id)
+                        add_failure(t_failures, test_id, "message_hash must be present", rel_file, line_no)
+                for issue in validate_message_signatures(
+                    msg,
+                    keyring,
+                    verify_crypto=crypto_available,
+                    require_signatures=True,
+                    require_sender_signature=True,
+                ):
+                    issue_map = {
+                        "signatures_required": "AUTH-SIGNATURES-REQUIRED-01",
+                        "signatures_invalid": "AUTH-SIGNATURES-REQUIRED-01",
+                        "object_type_mismatch": "AUTH-OBJECT-TYPE-01",
+                        "object_hash_mismatch": "CT-SIGNATURE-HASH-01",
+                        "sender_signature_required": "AUTH-SENDER-SIGNATURE-01",
+                        "kid_mismatch": "AUTH-KID-01",
+                        "missing_key": "AUTH-KEY-RESOLUTION-01",
+                        "signature_invalid": "AUTH-SIGNATURE-VERIFY-01",
+                    }
+                    test_id = issue_map.get(issue["code"])
+                    if test_id in enabled_checks:
+                        observed_auth_failures.add(test_id)
+                        add_failure(t_failures, test_id, issue["message"], rel_file, line_no)
+
+            if not crypto_available:
+                degraded = True
+                reason = "authenticated-message Ed25519 verification unavailable"
+                if reason not in degraded_reasons:
+                    degraded_reasons.append(reason)
+                if "AUTH-SIGNATURE-VERIFY-01" not in skipped_checks:
+                    skipped_checks.append("AUTH-SIGNATURE-VERIFY-01")
+                for test_id in sorted((expected_auth_failures & auth_checks) - observed_auth_failures):
+                    add_failure(t_failures, test_id, "cryptographic authentication check unavailable", rel_file, None)
 
         if "CT-CONTRACT-SCHEMA-01" in enabled_checks:
             for line_no, msg in rows:
@@ -1242,6 +1317,15 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+        _run_state_projection_checks(
+            rows=rows,
+            enabled_checks=enabled_checks,
+            registered_profiles=aicp_profiles_registry,
+            registered_extensions=registered_extensions,
+            rel_file=rel_file,
+            failures=t_failures,
+        )
 
 
         # PE-REASON-CODES-01 + PE-CONTEXT-HASH-01 + PE-LANGUAGE-BINDING-01 + PE-DETERMINISM-01 + PE-LLM-EVIDENCE-01
@@ -1328,7 +1412,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             add_failure(t_failures, "PE-CONTEXT-HASH-01", f"context_hash mismatch (expected {stored_ctx_hash}, got {computed_ctx_hash})", rel_file, line_no)
 
 
-        if "CN-AICP-PROFILE-NEGOTIATION-01" in enabled_checks:
+        if {"CN-AICP-PROFILE-NEGOTIATION-01", "CN-AUTHENTICATED-CRYPTO-01"} & enabled_checks:
             declares_by_party: dict[str, dict[str, Any]] = {}
             for _, msg in rows:
                 if msg.get("message_type") != "CAPABILITIES_DECLARE":
@@ -1393,6 +1477,31 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
                             rel_file,
                             line_no,
                         )
+
+                if "CN-AUTHENTICATED-CRYPTO-01" in enabled_checks:
+                    profile_entry = aicp_profile_entries.get(profile_tuple) or {}
+                    required_crypto = {
+                        item
+                        for item in profile_entry.get("required_crypto_profiles", [])
+                        if isinstance(item, str)
+                    }
+                    selected_crypto = {
+                        item for item in selected.get("crypto_profile", []) if isinstance(item, str)
+                    }
+                    unknown_required = required_crypto - crypto_profiles_registry
+                    if unknown_required:
+                        add_failure(t_failures, "CN-AUTHENTICATED-CRYPTO-01", f"profile requires unregistered crypto profiles {sorted(unknown_required)}", rel_file, line_no)
+                    missing_selected = required_crypto - selected_crypto
+                    if missing_selected:
+                        add_failure(t_failures, "CN-AUTHENTICATED-CRYPTO-01", f"selected.crypto_profile omits required values {sorted(missing_selected)}", rel_file, line_no)
+                    for participant in participants:
+                        declared = declares_by_party.get(participant) if isinstance(participant, str) else None
+                        supported_crypto = {
+                            item for item in (declared or {}).get("supported_profiles", []) if isinstance(item, str)
+                        }
+                        missing_declared = required_crypto - supported_crypto
+                        if missing_declared:
+                            add_failure(t_failures, "CN-AUTHENTICATED-CRYPTO-01", f"participant '{participant}' does not declare required crypto profiles {sorted(missing_declared)}", rel_file, line_no)
 
         if "CN-REASON-CODES-01" in enabled_checks:
             for line_no, msg in rows:
@@ -4440,6 +4549,9 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
         degraded=degraded,
         degraded_reasons=degraded_reasons,
         skipped_checks=skipped_checks,
+        suite_path=suite_path,
+        suite_catalog=suite,
+        report_format=report_format,
     )
 
 
@@ -4447,13 +4559,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run AICP conformance suite")
     parser.add_argument("--suite", required=True, help="Path to suite catalog JSON")
     parser.add_argument("--out", required=True, help="Path to output report JSON")
+    parser.add_argument("--report-format", choices=["legacy", "v1"], default="legacy")
     args = parser.parse_args()
 
     suite_path = _resolve_repo_path(args.suite)
     out_path = _resolve_repo_path(args.out)
 
     try:
-        report = run_suite(suite_path)
+        report = run_suite(suite_path, report_format=args.report_format)
     except Exception as exc:
         print(f"[FAIL] {exc}")
         return 1
@@ -4464,7 +4577,11 @@ def main() -> int:
         print("[WARN] cryptography is not installed. Signature verification checks are limited.")
 
     if Draft202012Validator is not None:
-        report_schema_path = ROOT / "conformance/conformance_report_schema.json"
+        report_schema_path = ROOT / (
+            "conformance/conformance_report_v1.schema.json"
+            if args.report_format == "v1"
+            else "conformance/conformance_report_schema.json"
+        )
         report_schema = load_json(report_schema_path)
         _build_validator(report_schema, report_schema_path).validate(report)
     else:

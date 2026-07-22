@@ -177,3 +177,25 @@ That means:
 - pilot adopters should target the already-documented baseline,
 - maintainers should fix bugs and clarify truth,
 - findings that would expand or redefine the baseline should be recorded for explicit post-UAT review instead of being folded into UAT by default.
+
+### Post-UAT experimental additions
+
+`AICP-AUTHENTICATED-BASE@0.1` and strict
+`aicp.session_state_projection.v1` support are experimental post-UAT additions. They are
+version-selected, separately tested surfaces and are explicitly excluded from this frozen
+pilot center. Their presence does not alter the meaning of `AICP-BASE@0.1`,
+`AICP-RESUMABLE-SESSIONS@0.1`, or any other existing `@0.1` profile. A later pilot may
+adopt them only through an explicit maintainer decision and versioned baseline update.
+
+The evidence/report migration follows the same rule. Existing conformance commands retain
+their legacy report shape by default, including the frozen
+`conformance/conformance_report_schema.json` contract. Provenance-rich conformance/profile
+v1 reports are opt-in through `--report-format v1`, while IUT evidence uses the separate
+`conformance/iut/iut_report_v1.schema.json` contract. These additive artifacts do not alter
+the frozen UAT protocol or profile semantics. Changing the default report format or making
+the new experimental profile part of a pilot requires an explicit, versioned maintainer
+decision after UAT.
+
+Post-UAT IUT product-profile reports cover one exact profile target. They cannot currently
+compose `aicp.session_state_projection.v1` as a full-profile overlay; strict projection
+evidence is emitted separately until a versioned overlay-provenance model exists.

@@ -15,6 +15,7 @@ if str(SCRIPTS_DIR) not in sys.path:
 from interop_submission_validation import (  # noqa: E402
     RESERVED_DIRS,
     classify_artifact_kind,
+    evaluate_strong_report_evidence,
     load_json,
 )
 
@@ -45,13 +46,13 @@ def _entry_status(entry: dict[str, Any]) -> str:
         return "REHEARSAL" if entry.get("valid") else "INVALID"
     if not entry.get("valid"):
         return "INVALID"
-    if entry.get("artifact_kind") == "template":
+    if entry.get("artifact_kind") in {"example", "template"}:
         return "INSTRUCTIONAL"
     return "VALID"
 
 
 def _read_report(report_path: Path, relative_to: Path) -> tuple[dict[str, Any], set[str], list[str]]:
-    report_rec: dict[str, Any] = {"path": str(report_path.relative_to(relative_to))}
+    report_rec: dict[str, Any] = {"path": report_path.relative_to(relative_to).as_posix()}
     marks: set[str] = set()
     errors: list[str] = []
     try:
@@ -85,6 +86,7 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         "reports": [],
         "compatibility_marks": [],
         "computed_marks": [],
+        "evidence_validation_status": "not_evaluated",
         "errors": [],
         "warnings": [],
         "valid": True,
@@ -143,7 +145,21 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
             _add_error(entry, "MALFORMED_REPORT", message)
 
     entry["compatibility_marks"] = sorted(marks)
-    entry["computed_marks"] = sorted(marks) if entry["valid"] else []
+    if artifact_kind == "submission":
+        evaluation = evaluate_strong_report_evidence(submission_path, manifest)
+        entry["evidence_validation_status"] = evaluation.status
+        for message in evaluation.errors:
+            _add_error(entry, "STRONG_EVIDENCE_INELIGIBLE", message)
+        if entry["valid"] and evaluation.status == "eligible":
+            entry["computed_marks"] = list(evaluation.eligible_marks)
+    else:
+        entry["evidence_validation_status"] = "not_promotable"
+        if marks:
+            _add_warning(
+                entry,
+                "NON_PUBLICATION_MARKS_NOT_PROMOTED",
+                "reported marks remain visible for audit but are not promoted outside a real eligible submission",
+            )
     entry["matrix_status"] = _entry_status(entry)
     return entry
 
@@ -163,6 +179,7 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
         "reports": [],
         "compatibility_marks": [],
         "computed_marks": [],
+        "evidence_validation_status": "not_promotable",
         "errors": [],
         "warnings": [],
         "valid": True,
@@ -215,7 +232,12 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
             entry["profile_ids"].append(profile_id)
 
     entry["compatibility_marks"] = sorted(marks)
-    entry["computed_marks"] = sorted(marks) if entry["valid"] else []
+    if marks:
+        _add_warning(
+            entry,
+            "LEGACY_MARKS_NOT_PROMOTED",
+            "legacy reported marks remain visible for audit but are not independently eligible",
+        )
     entry["matrix_status"] = _entry_status(entry)
     return entry
 
@@ -258,7 +280,7 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
     elif not real_entries:
         note = "No real external submissions are currently present; only rehearsal/instructional artifacts were found."
     return {
-        "submissions_dir": str(submissions_dir),
+        "submissions_dir": submissions_dir.as_posix(),
         "columns": LEGACY_MARK_COLUMNS,
         "implementations": real_entries,
         "real_submissions": real_entries,
@@ -271,6 +293,7 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
             "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
             "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
             "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only.",
+            "Only independently validated reproducible external full-profile IUT evidence produces computed marks.",
         ],
     }
 
@@ -291,7 +314,17 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
     header = ["Folder", "Implementation", "Artifact kind"]
     if include_peer:
         header.append("Peer")
-    header.extend(["Evidence status", "Claim type", "Claim scope", "Profiles", "Marks", "Matrix status"])
+    header.extend(
+        [
+            "Evidence status",
+            "Claim type",
+            "Claim scope",
+            "Profiles",
+            "Reported marks",
+            "Eligible marks",
+            "Matrix status",
+        ]
+    )
     rows = ["| " + " | ".join(header) + " |", "| " + " | ".join(["---"] * len(header)) + " |"]
     for entry in entries:
         row = [
@@ -308,6 +341,7 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
                 entry.get("claim_scope") or "—",
                 _fmt_profiles(entry.get("profile_ids")),
                 _fmt_marks(entry.get("compatibility_marks")),
+                _fmt_marks(entry.get("computed_marks")),
                 entry.get("matrix_status") or _entry_status(entry),
             ]
         )
@@ -333,7 +367,7 @@ def render_markdown(matrix: dict[str, Any]) -> str:
     lines.append("| " + " | ".join(["---"] * len(header)) + " |")
     for entry in real_entries:
         impl_name = entry.get("implementation_id") or entry.get("folder") or "unknown"
-        marks = set(entry.get("compatibility_marks", [])) if entry.get("valid") else set()
+        marks = set(entry.get("computed_marks", [])) if entry.get("valid") else set()
         row = [impl_name, entry.get("matrix_status") or _entry_status(entry), entry.get("evidence_status") or "—"]
         for col in matrix.get("columns", []):
             row.append("✅" if col in marks else "❌")

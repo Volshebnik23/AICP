@@ -58,7 +58,17 @@ A valid submission package should include:
 2. Referenced report files under paths listed in `report_refs` when the package is an example or a real submission.
 3. `suite_refs` that identify the suite/profile evidence set the claim depends on.
 4. `profile_ids` that match profile identifiers already shipped in `registry/aicp_profiles.json`.
-5. Notes/disclosures when the evidence is limited, synthetic, or example-only.
+5. For a real claim, exact `profile_refs` carrying both `profile_id` and `profile_version`.
+6. Notes/disclosures when the evidence is limited, synthetic, or example-only.
+
+For real `reproducible` implementation/compatibility claims, at least one report must be a
+schema-valid `full-profile` external-IUT v1 report. The validator independently checks the
+manifest subject, registered TCK release, complete mandatory case set, suite/profile and
+every required fixture/vector digest, generated artifacts, non-degraded/no-skip state, and
+the exact recomputed mark list. Smoke, legacy, and `reference_corpus` reports are migration
+errors for strong external evidence, not proof of an external product.
+Strong `implements_profile` and `compatible_with_profile` claims also require
+`evidence_status=reproducible`; `self_attested` cannot bypass this rule.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
@@ -96,25 +106,34 @@ The corpus supports two common packaging shapes.
 
 ### Self-attested / single-implementation claim package
 
-Use this when one implementation is claiming profile implementation or compatibility based on its own reproducible conformance/profile evidence.
+Use this packaging shape for one implementation's material. A strong profile claim remains
+publication-ineligible unless its evidence status is `reproducible` and its full-profile
+external-IUT v1 report passes independent eligibility validation.
 
 Typical shape:
 - one `implementation_id`,
 - no `peer_implementation_id`,
+- exact `profile_refs`,
 - one or more profile/conformance reports in `report_refs`,
 - `claim_scope` of `self_attested`.
 
-### Pairwise interoperability claim package
+### Pairwise interoperability claim package (instructional only)
 
 Use this when the claim is specifically about two implementations interoperating for a named profile.
 
 Typical shape:
 - one submitting `implementation_id`,
 - one `peer_implementation_id`,
+- one `peer_implementation_version`,
 - `claim_type` of `pairwise_interop`,
 - `claim_scope` of `pairwise`,
-- evidence package containing reports and/or transcript-linked artifacts that show the pairwise result,
-- disclosures explaining whether the package contains both sides' evidence directly or references a shared joint report.
+- example/template evidence illustrating the reserved packaging vocabulary.
+
+Real pairwise publication currently fails closed with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
+Two independent reports and a summary are insufficient. A later dedicated joint path must
+prove one shared run, both exact builds, cross-consumption in every required direction,
+artifact/transcript digests, authenticated-profile verification material, and no degraded or
+skipped mandatory checks.
 
 Pairwise claims should be narrower than generic product claims. They should identify the exact peer and profile instead of implying broad ecosystem endorsement.
 
@@ -128,6 +147,10 @@ Submission packages use a small controlled vocabulary in `evidence_status`:
 - `pairwise`
 
 This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement. Template packages may retain placeholder `report_refs`; those placeholders are treated as instructional warnings in the matrix, not as real-submission failures or compatibility proof.
+
+The matrix preserves raw legacy/instructional report contents for audit visibility but
+computes ordinary profile marks only by reusing the strong-evidence validator. It never
+promotes a hand-shaped or legacy `compatibility_marks` string.
 
 ## Review and publication workflow
 

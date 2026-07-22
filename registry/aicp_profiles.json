@@ -21,6 +21,23 @@
     "description": "Agent-media profile for channelized publish/update/retract feeds with subscription controls."
   },
   {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-AUTHENTICATED-BASE@0.1",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/profiles/AICP_Profiles.md#aicp-authenticated-base",
+    "security_considerations": "Authenticates the declared envelope sender to the message hash only; identity authority, trust, revocation, witnessing, policy, and transport security remain separate concerns.",
+    "profile_id": "AICP-AUTHENTICATED-BASE",
+    "profile_version": "0.1",
+    "required_extensions": [],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [
+      "aicp.crypto.ed25519.v1"
+    ],
+    "description": "Experimental Core profile requiring a valid Ed25519 sender signature on every AICP message."
+  },
+  {
     "status": "stable",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",

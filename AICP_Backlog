@@ -19,7 +19,7 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 # Backlog epics and milestones
 
-AICP currently has **no remaining in-repo protocol backlog milestones**.
+AICP currently has no remaining in-repo protocol backlog milestones.
 
 The previously remaining legal-readiness work item (M33) has been moved to `ROADMAP.md` because its shipped artifacts are now present in-repo.
 
