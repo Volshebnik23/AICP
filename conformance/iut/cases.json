@@ -1,0 +1,55 @@
+{
+  "adapter_protocol_version": "1.0",
+  "suite_id": "AICP-IUT-TCK-0.1",
+  "suite_version": "0.1.0-experimental",
+  "canonicalization_vector": "conformance/vectors/unicode_codepoint_key_order.json",
+  "profiles": {
+    "AICP-BASE@0.1": {
+      "profile_catalog": "conformance/profiles/PF_AICP_BASE_0.1.json",
+      "expected_mark": "AICP-Profile-BASE-0.1",
+      "producer_case": {"case_id": "AICP-BASE-VALID", "fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "consumer_cases": [
+        {"case_id": "BASE-CONSUMER-VALID", "fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl", "accepted": true},
+        {"case_id": "BASE-CONSUMER-INVALID-CHAIN", "fixture": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl", "accepted": false}
+      ]
+    },
+    "AICP-AUTHENTICATED-BASE@0.1": {
+      "profile_catalog": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",
+      "expected_mark": "AICP-Profile-AUTHENTICATED-BASE-0.1",
+      "producer_case": {"case_id": "AUTHENTICATED-BASE-VALID", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl"},
+      "consumer_cases": [
+        {"case_id": "AUTH-CONSUMER-VALID", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true},
+        {"case_id": "AUTH-CONSUMER-MULTISIG-VALID", "fixture": "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl", "accepted": true},
+        {"case_id": "AUTH-CONSUMER-UNSIGNED", "fixture": "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-EMPTY", "fixture": "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-MISSING-HASH", "fixture": "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-STALE-HASH", "fixture": "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-OBJECT-HASH", "fixture": "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-OBJECT-TYPE", "fixture": "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-NO-SENDER", "fixture": "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-KID", "fixture": "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-UNKNOWN-KEY", "fixture": "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-INVALID-SIGNATURE", "fixture": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-COPIED-SIGNATURE", "fixture": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl", "accepted": false},
+        {"case_id": "AUTH-CONSUMER-HIDDEN-INVALID-SIGNATURE", "fixture": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl", "accepted": false}
+      ]
+    }
+  },
+  "session_state_projection": {
+    "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+    "producer_case": {"case_id": "SESSION-STATE-PROJECTION-V1-VALID", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl"},
+    "consumer_cases": [
+      {"case_id": "STATE-CONSUMER-VALID", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl", "accepted": true},
+      {"case_id": "STATE-CONSUMER-SESSION-MISMATCH", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-CONTRACT-MISMATCH", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-HASH-MISMATCH", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-CONTRACT-REF", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-PROFILE", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-EXTENSION", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-HEAD", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-EVIDENCE", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-CONTRADICTION", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-CONSUMER-AS-OF", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl", "accepted": false}
+    ]
+  }
+}

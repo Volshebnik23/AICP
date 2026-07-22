@@ -1,8 +1,38 @@
 {
+  "report_format_version": "1.0",
+  "execution_subject": {
+    "kind": "reference_corpus",
+    "implementation_id": "aicp-reference-corpus",
+    "implementation_version": "0.1.0-rc.1",
+    "implementation_digest": "sha256:0013dea61de471cf94b435a9a2e7aad3415361ca89b6ca5604414b31723933b3"
+  },
+  "runner": {
+    "name": "aicp-conformance-runner",
+    "version": "1.0",
+    "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+  },
+  "suite": {
+    "suite_id": "SIG-SIGNED-PATHS-0.1",
+    "suite_version": "0.1.0-dev",
+    "suite_digest": "sha256:17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
+  },
+  "input_artifacts": [
+    {
+      "artifact_id": "SP-01",
+      "path": "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl",
+      "content_digest": "sha256:9ef0e105a5f5d3fc57ba2b75b60656b1bac88c77fcb5fb7a4fcda3cd2039abaa"
+    },
+    {
+      "artifact_id": "SP-02",
+      "path": "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+      "content_digest": "sha256:356123c0c3c5d4ce984f98e57cc6a77631172350d16b81ade3995c0d483df42d"
+    }
+  ],
+  "generated_artifacts": [],
   "aicp_version": "0.1",
   "suite_id": "SIG-SIGNED-PATHS-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-03-03T03:21:02.939905+00:00",
+  "timestamp": "2026-07-22T12:47:32.759145+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [

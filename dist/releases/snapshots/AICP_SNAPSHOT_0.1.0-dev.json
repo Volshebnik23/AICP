@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "90e63ca38c2379921a9a4a5d694e9ee9760d5868b380b54794798cfeef46ecdd",
+      "combined_sha256": "7735502acd6819f1dccaa6b8471d78ee536bb773bc1ccec94ffb31cb3ee93418",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -13,11 +13,11 @@
         },
         {
           "path": "conformance/conformance_report_schema.json",
-          "sha256": "ecd747cd38beeef05a95002d84a4beb43a7e05ee4e048a435fb6ab789fda96be"
+          "sha256": "bc83dbd29e540495509a56c63e3b707666ef8d1f5966a304a3afadc91d03d28b"
         },
         {
           "path": "conformance/core/CT_CORE_0.1.json",
-          "sha256": "3cb22472a44ab632724a5d830533b1bb7451de72d4f75cdb0247186d8ef0f332"
+          "sha256": "51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
@@ -53,7 +53,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "ff1119bbce86421977322248f3ad54510238f68616f7ec2fd4300fb1d73dceb9"
+          "sha256": "ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -122,6 +122,10 @@
         {
           "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
           "sha256": "24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+        },
+        {
+          "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+          "sha256": "9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
         },
         {
           "path": "conformance/extensions/PA_PARTICIPANTS_0.1.json",
@@ -200,12 +204,32 @@
           "sha256": "3e01da97745d33c5d18173df1774456e3f75540427d92db20fded7adfb03d02a"
         },
         {
+          "path": "conformance/iut/adapter_protocol.schema.json",
+          "sha256": "853a285045c3bba2b11070465bef1469e63bb9b045802b7f2619ff978fd7f44e"
+        },
+        {
+          "path": "conformance/iut/cases.json",
+          "sha256": "d5fe94bccea6cb41b6ec7300e63dd9f9957048e081ecc9856edb4089b014ea4b"
+        },
+        {
+          "path": "conformance/iut/iut_report_schema.json",
+          "sha256": "aa4e0dbf496cfe27cf1b0240484e279c74149dcd34bf7a715e49e5cd98baf8cb"
+        },
+        {
           "path": "conformance/ops/OPS_HARDENING_0.1.json",
           "sha256": "8abfdad2808a125d20552bb745494ffe6f6dcc7c53f73190e0dfc120c3c84aea"
         },
         {
+          "path": "conformance/profile_report_schema.json",
+          "sha256": "95818aeb28b6a83e91f6e24d65b3fbbb9841e702a83d45de29ad10aa0a48686f"
+        },
+        {
           "path": "conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json",
           "sha256": "9fbcb02b441f6eb0416a539009673579d0b58131b8f02fd1d5646aebf987aba9"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",
+          "sha256": "1bb2ed7493f7cd2bc5356a27ed7222e9747af119d1f8c7df569bf3e54f909152"
         },
         {
           "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
@@ -260,17 +284,25 @@
           "sha256": "8272cd5f5e9ec09e96f8790d9833407df7aefdba835cb49b49763e159fd5099f"
         },
         {
+          "path": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json",
+          "sha256": "b24849f465ea3690e99a8e1cb99ea5a1c893ef0239ca8f40d326c3d608f5f0a4"
+        },
+        {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
           "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
         },
         {
           "path": "conformance/vectors/rfc8785_float64_vectors.json",
           "sha256": "8d9ef197022297a538da8693897fdbe0808592b491cf7aecad337f55642a2b99"
+        },
+        {
+          "path": "conformance/vectors/unicode_codepoint_key_order.json",
+          "sha256": "369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
         }
       ]
     },
     "fixtures": {
-      "combined_sha256": "9657dcd42e615f938c7ee07314af8c439f6920c02f4e0f7cb63542540daa7963",
+      "combined_sha256": "d6aa408159f31b73ff09920fa9f994055c0281c655f8e111a99c37c2c1267577",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -499,6 +531,14 @@
         {
           "path": "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
           "sha256": "64698a10d7e0072a186c39b496eb583f120da606f85de366c5e84cab492c6e67"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+          "sha256": "f44fe65e0ebcea59b053fd4bbde5ab451eb43a7b82ecbcc9d8fe1f36052ee6cf"
+        },
+        {
+          "path": "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "sha256": "07248a142b50ca9b1b712f9a3b15da541bc0855da5dfd7fefb659ed997a5d7f4"
         },
         {
           "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
@@ -875,6 +915,54 @@
         {
           "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
           "sha256": "05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+          "sha256": "e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+          "sha256": "6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+          "sha256": "2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+          "sha256": "ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+          "sha256": "eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+          "sha256": "9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+          "sha256": "03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+          "sha256": "a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+          "sha256": "def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+          "sha256": "bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+          "sha256": "d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+          "sha256": "4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
         },
         {
           "path": "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
@@ -1317,6 +1405,62 @@
           "sha256": "196ef76906b50688576fc8839a075c1486281365e2320107002e64fcdb4a8dd2"
         },
         {
+          "path": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl",
+          "sha256": "9e4981057f50a505c0698a2f45a1c059961bf894099662990bb5091d94f3ac0b"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl",
+          "sha256": "d75516ba0174605c6bd7767a55443cd60b87ebb68a9964afe5ee71f069ef0eb3"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl",
+          "sha256": "f63f0fde3af449c89644766f20c9358180f579e3a931610a7bc5a1f188cff88e"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl",
+          "sha256": "d19b7fd26538e46a106d8356ed26c17cc98828d76994f7d57b7d131d442161eb"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl",
+          "sha256": "97d897e66e947f9ca97fc03126af4b9052362ebc3502146a8c9b7a4b492a5274"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl",
+          "sha256": "5f26f88cca39265e004651a36631aa95fc235d675e21948863352b6ab3e2c2cc"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl",
+          "sha256": "0cfbc9501f188f0e405fce5a42b33a583e136505d3e23652603e1998d9a51933"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl",
+          "sha256": "eed31078fe639985534d5c1ea9d49a5cba6f242c67e1aa445e9b92ea67da893b"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl",
+          "sha256": "30fa48424217d4ec59a4fd3639fbf666b6ab04a9fe91d3087b83fdbd8c092652"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl",
+          "sha256": "38aac4ebb16a6f194b38eaabda672de8954e391d060823e874e501ae62199524"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl",
+          "sha256": "a6cc5225f19ce248ef3364dd396a6e5a039651f805f5d100c908265bcce636e9"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl",
+          "sha256": "60f179309bfe21cfa22069e85208193f0d1ea56f7d5f55ad4a184bab91853166"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl",
+          "sha256": "4137d86993f37dfed2bd9209afe97d32c75ecaa812c261434eda0394a7e73ab7"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl",
+          "sha256": "36e8f52bfa3aa27704235cbf6304122f2bf2bb9921984371ab38ba9f0a194395"
+        },
+        {
           "path": "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl",
           "sha256": "9ef0e105a5f5d3fc57ba2b75b60656b1bac88c77fcb5fb7a4fcda3cd2039abaa"
         },
@@ -1335,11 +1479,11 @@
       ]
     },
     "registries": {
-      "combined_sha256": "c73e8f7738146cdd550df4bcb88353c9aa0803357fd3faafb9764aec83831cdc",
+      "combined_sha256": "fc7573590f049ea95824a9dc5489a8965d4a642479a5daf960053b9391a2d705",
       "files": [
         {
           "path": "registry/aicp_profiles.json",
-          "sha256": "45944db549f28673d5f926464bfff7682913d25e29ad6c27a89a89fc2a7dbcc7"
+          "sha256": "dfb3266e0867057df7c760c10da81d864ead4d4c628444c0fba99f4ea3e1ad33"
         },
         {
           "path": "registry/alert_codes.json",
@@ -1387,7 +1531,7 @@
         },
         {
           "path": "registry/hash_domains.json",
-          "sha256": "71c3525bdcdd0d2187203864005af7709150c08e8cea24af378fe508a20db9b1"
+          "sha256": "6195f561c89ac455387aee87d4095657b6ea2e834c5a032d113da2409f187475"
         },
         {
           "path": "registry/message_types.json",
@@ -1440,7 +1584,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "4a9c0d604b5326547a955202ed017b0d67a370a90e5957ef82360222874ca266",
+      "combined_sha256": "50d7056b30a63d42b706d1d0253fad28780dec20f47b805edeb19ba49faec0ab",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1556,7 +1700,7 @@
         },
         {
           "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
-          "sha256": "6bb488bdc87fa7c7a0c253d19454c53475201a4ead98d6e610a5b17edc2223b6"
+          "sha256": "32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
         },
         {
           "path": "schemas/extensions/ext-observability-payloads.schema.json",
@@ -1630,6 +1774,10 @@
       {
         "mark": "AICP-Profile-AGENT-MEDIA-0.1",
         "path": "conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json"
+      },
+      {
+        "mark": "AICP-Profile-AUTHENTICATED-BASE-0.1",
+        "path": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json"
       },
       {
         "mark": "AICP-Profile-BASE-0.1",
@@ -1802,6 +1950,10 @@
         "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
       },
       {
+        "mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+        "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
+      },
+      {
         "mark": "AICP-EXT-PARTICIPANTS-0.1",
         "path": "conformance/extensions/PA_PARTICIPANTS_0.1.json"
       },
@@ -1868,6 +2020,10 @@
       {
         "mark": "AICP-OPS-HARDENING-0.1",
         "path": "conformance/ops/OPS_HARDENING_0.1.json"
+      },
+      {
+        "mark": "AICP-Security-AUTHENTICATED-MESSAGES-0.1",
+        "path": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
       },
       {
         "mark": "AICP-SECURITY-SIGNED-PATH-0.1",

@@ -26,6 +26,7 @@ SUITE_CATALOGS: dict[CatalogKind, tuple[CatalogPair, ...]] = {
         ("conformance/extensions/DL_DELEGATION_0.1.json", "conformance/report_ext_delegation.json"),
         ("conformance/extensions/WF_WORKFLOW_SYNC_0.1.json", "conformance/report_ext_workflow_sync.json"),
         ("conformance/extensions/OR_OBJECT_RESYNC_0.1.json", "conformance/report_ext_object_resync.json"),
+        ("conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json", "conformance/report_ext_session_state_projection_v1.json"),
         ("conformance/extensions/PE_POLICY_EVAL_0.1.json", "conformance/report_ext_policy_eval.json"),
         ("conformance/extensions/ENF_ENFORCEMENT_0.1.json", "conformance/report_ext_enforcement.json"),
         ("conformance/extensions/AL_ALERTS_0.1.json", "conformance/report_ext_alerts.json"),
@@ -65,6 +66,7 @@ SUITE_CATALOGS: dict[CatalogKind, tuple[CatalogPair, ...]] = {
     ),
     "security": (
         ("conformance/security/SIG_SIGNED_PATHS_0.1.json", "conformance/report_security_signed_path.json"),
+        ("conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "conformance/report_security_authenticated_messages.json"),
     ),
     "profiles": (),
 }
@@ -72,6 +74,7 @@ SUITE_CATALOGS: dict[CatalogKind, tuple[CatalogPair, ...]] = {
 PROFILE_CATALOGS: dict[CatalogKind, tuple[CatalogPair, ...]] = {
     "profiles": (
         ("conformance/profiles/PF_AICP_BASE_0.1.json", "conformance/report_profile_base.json"),
+        ("conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json", "conformance/report_profile_authenticated_base.json"),
         ("conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json", "conformance/report_profile_mediated_blocking.json"),
         ("conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json", "conformance/report_profile_mediated_blocking_ops.json"),
         ("conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json", "conformance/report_profile_resumable_sessions.json"),

@@ -163,6 +163,10 @@
       "description": "if signatures[*].object_hash is present, it equals message_hash"
     },
     {
+      "test_id": "CT-SIGNATURE-STRUCTURE-01",
+      "description": "message signature entries use object_type=message"
+    },
+    {
       "test_id": "CT-MESSAGE-HASH-01",
       "description": "recompute message_hash from message body (excluding signatures/message_hash) and compare"
     },

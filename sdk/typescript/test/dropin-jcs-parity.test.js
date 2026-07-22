@@ -3,7 +3,15 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 import { canonicalizeJson as sdkCanonicalize } from "../src/jcs.js";
+import {
+  canonicalizeJson as sdkSourceCanonicalize,
+} from "../src/jcs.ts";
+import {
+  canonicalizeJson as dropinSourceCanonicalize,
+  objectHash as dropinSourceObjectHash,
+} from "../../../dropins/aicp-core/typescript/src/aicp_core.ts";
 import { canonicalizeJson as dropinCanonicalize } from "../../../dropins/aicp-core/typescript/src/aicp_core.mjs";
+import { objectHash as dropinObjectHash } from "../../../dropins/aicp-core/typescript/src/aicp_core.mjs";
 
 function fromBits(hex) {
   const bits = hex.replace(/^0x/, "");
@@ -35,4 +43,15 @@ test("shared float vectors match sdk and dropin tokens", () => {
     assert.equal(sdkCanonicalize({ n: value }), `{"n":${row.expected}}`);
     assert.equal(dropinCanonicalize({ n: value }), `{"n":${row.expected}}`);
   }
+});
+
+test("supplementary-plane key vector matches SDK and both drop-in source paths", () => {
+  const vector = JSON.parse(
+    readFileSync(new URL("../../../conformance/vectors/unicode_codepoint_key_order.json", import.meta.url), "utf8")
+  );
+  for (const canonicalize of [sdkCanonicalize, sdkSourceCanonicalize, dropinSourceCanonicalize, dropinCanonicalize]) {
+    assert.equal(canonicalize(vector.object), vector.canonical_json);
+  }
+  assert.equal(dropinSourceObjectHash(vector.object_type, vector.object), vector.object_hash);
+  assert.equal(dropinObjectHash(vector.object_type, vector.object), vector.object_hash);
 });

@@ -3,9 +3,20 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-05-06_
+_Last updated: 2026-07-22_
 
 ## Current / Next
+
+### ✅ M57 — Post-UAT protocol hardening
+- **Shipped:** experimental strict portable session-state
+  projection within `EXT-OBJECT-RESYNC`, without changing legacy object-resync or the
+  frozen `AICP-RESUMABLE-SESSIONS@0.1` profile.
+- **Shipped:** experimental
+  `AICP-AUTHENTICATED-BASE@0.1`, Unicode code-point parity fixes, shared sandbox signature
+  validation, external-IUT test adapter/runner, and report/interop provenance binding.
+- **Verification:** focused hardening tests, validation, all 64 conformance catalog outputs,
+  133 Python tests, 16 TypeScript tests, quickstarts, template/IUT smoke, `make prepr`, and
+  compatibility/release gates plus `git diff --check` passed on 2026-07-22.
 
 ### M49 - Verification gate taxonomy alignment
 - **Shipped:** `make prepr` is now the PR/onboarding gate and runs full conformance through `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests.

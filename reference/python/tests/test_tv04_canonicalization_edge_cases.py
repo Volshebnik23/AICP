@@ -18,3 +18,11 @@ def test_tv04_to_tv06_canonicalization_vectors() -> None:
         obj = case["object"]
         assert canonicalize_json(obj) == case["canonical_json"]
         assert object_hash(case["object_type"], obj) == case["object_hash"]
+
+
+def test_supplementary_plane_key_order_vector() -> None:
+    case = json.loads(
+        (ROOT / "conformance/vectors/unicode_codepoint_key_order.json").read_text(encoding="utf-8")
+    )
+    assert canonicalize_json(case["object"]) == case["canonical_json"]
+    assert object_hash(case["object_type"], case["object"]) == case["object_hash"]

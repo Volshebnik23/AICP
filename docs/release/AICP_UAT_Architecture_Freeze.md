@@ -177,3 +177,12 @@ That means:
 - pilot adopters should target the already-documented baseline,
 - maintainers should fix bugs and clarify truth,
 - findings that would expand or redefine the baseline should be recorded for explicit post-UAT review instead of being folded into UAT by default.
+
+### Post-UAT experimental additions
+
+`AICP-AUTHENTICATED-BASE@0.1` and strict
+`aicp.session_state_projection.v1` support are experimental post-UAT additions. They are
+version-selected, separately tested surfaces and are explicitly excluded from this frozen
+pilot center. Their presence does not alter the meaning of `AICP-BASE@0.1`,
+`AICP-RESUMABLE-SESSIONS@0.1`, or any other existing `@0.1` profile. A later pilot may
+adopt them only through an explicit maintainer decision and versioned baseline update.

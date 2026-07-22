@@ -1,0 +1,41 @@
+{
+  "suite_id": "AUTH-AUTHENTICATED-MESSAGES-0.1",
+  "suite_version": "0.1.0-experimental",
+  "aicp_version": "0.1",
+  "description": "Authenticated-message checks for AICP-AUTHENTICATED-BASE@0.1.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "transcripts": [
+    {"id": "AB-01", "path": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION"]},
+    {"id": "AB-02", "path": "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl", "expected_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION"]},
+    {"id": "AB-03", "path": "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-SIGNATURES-REQUIRED-01"}]},
+    {"id": "AB-04", "path": "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-SIGNATURES-REQUIRED-01"}]},
+    {"id": "AB-05", "path": "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "CT-MESSAGE-HASH-01"}, {"test_id": "AUTH-MESSAGE-HASH-REQUIRED-01"}, {"test_id": "CT-SIGNATURE-HASH-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-06", "path": "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "CT-MESSAGE-HASH-01"}]},
+    {"id": "AB-07", "path": "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "CT-SIGNATURE-HASH-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-08", "path": "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-OBJECT-TYPE-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-09", "path": "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-10", "path": "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-KID-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-11", "path": "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-KEY-RESOLUTION-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-12", "path": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-SIGNATURE-VERIFY-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-13", "path": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "CT-SIGNATURE-HASH-01"}, {"test_id": "AUTH-SENDER-SIGNATURE-01"}]},
+    {"id": "AB-14", "path": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl", "expected_message_types": ["CONTRACT_PROPOSE"], "expect_pass": false, "expected_failures": [{"test_id": "AUTH-SIGNATURE-VERIFY-01"}]}
+  ],
+  "checks": [
+    {"test_id": "CT-SCHEMA-JSONL-01"},
+    {"test_id": "CT-MESSAGE-TYPE-REGISTRY-01"},
+    {"test_id": "CT-PREV-MSG-REQUIRED-01"},
+    {"test_id": "CT-HASH-CHAIN-01"},
+    {"test_id": "CT-INVARIANTS-01"},
+    {"test_id": "CT-SEQUENCE-01"},
+    {"test_id": "CT-MESSAGE-HASH-01"},
+    {"test_id": "CT-SIGNATURE-HASH-01"},
+    {"test_id": "AUTH-MESSAGE-HASH-REQUIRED-01"},
+    {"test_id": "AUTH-SIGNATURES-REQUIRED-01"},
+    {"test_id": "AUTH-OBJECT-TYPE-01"},
+    {"test_id": "AUTH-SENDER-SIGNATURE-01"},
+    {"test_id": "AUTH-KID-01"},
+    {"test_id": "AUTH-KEY-RESOLUTION-01"},
+    {"test_id": "AUTH-SIGNATURE-VERIFY-01"}
+  ],
+  "compatibility_mark": "AICP-Security-AUTHENTICATED-MESSAGES-0.1"
+}

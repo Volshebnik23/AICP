@@ -13,7 +13,7 @@ if str(REF_PY) not in sys.path:
     sys.path.insert(0, str(REF_PY))
 
 from aicp_ref.hashing import message_hash_from_body
-from aicp_ref.signatures import signature_verifier_available, verify_ed25519
+from aicp_ref.validate import message_body_without_hash_and_signatures, validate_message_signatures
 
 
 def _display_path(path: Path) -> str:
@@ -99,10 +99,7 @@ def main() -> int:
                     f"line {line_no}: prev_msg_hash mismatch (expected {prev_hash}, got {msg.get('prev_msg_hash')})"
                 )
 
-            body = dict(msg)
-            body.pop("message_hash", None)
-            body.pop("signatures", None)
-            computed = message_hash_from_body(body)
+            computed = message_hash_from_body(message_body_without_hash_and_signatures(msg))
             if computed != msg.get("message_hash"):
                 failures.append(
                     f"line {line_no}: message_hash mismatch (expected {msg.get('message_hash')}, got {computed})"
@@ -110,20 +107,12 @@ def main() -> int:
 
             prev_hash = msg.get("message_hash")
 
-            if msg.get("signatures"):
-                if args.no_signature_verify:
-                    continue
-                if not signature_verifier_available():
-                    failures.append(f"line {line_no}: signatures present but cryptography unavailable")
-                else:
-                    for sig in msg.get("signatures", []):
-                        signer = sig.get("signer")
-                        key = key_map.get(signer, {}).get("public_key_b64url", "")
-                        if not key:
-                            failures.append(f"line {line_no}: missing public key for signer {signer}")
-                            continue
-                        if not verify_ed25519(key, sig.get("sig_b64url", ""), sig.get("object_hash", "")):
-                            failures.append(f"line {line_no}: signature verification failed for signer {signer}")
+            for issue in validate_message_signatures(
+                msg,
+                key_map,
+                verify_crypto=not args.no_signature_verify,
+            ):
+                failures.append(f"line {line_no}: {issue['message']}")
 
     if args.no_signature_verify:
         print("[WARN] --no-signature-verify enabled; badge eligibility may be affected in conformance/profile reports.")

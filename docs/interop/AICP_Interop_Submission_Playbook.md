@@ -46,6 +46,7 @@ It should contain:
 2. Report/evidence files referenced by `report_refs`.
 3. At least one disclosure explaining any limitations, assumptions, or scope boundaries.
 4. Exact shipped `profile_ids` from `registry/aicp_profiles.json`.
+5. Exact `profile_refs` containing each claimed `profile_id` and `profile_version`.
 
 ## Claim / evidence status model
 
@@ -70,7 +71,8 @@ Recommended shape:
 - `claim_scope`: `self_attested`
 - `evidence_status`: `self_attested` or `reproducible`
 - no `peer_implementation_id`
-- one or more report JSON files in `report_refs`
+- one or more report JSON files in `report_refs`, including an eligible
+  `external_implementation` IUT report for a real reproducible claim
 
 Prefer `reproducible` when the package includes actual conformance/profile report outputs generated from shipped repo tooling.
 
@@ -83,7 +85,10 @@ Required shape:
 - `claim_scope`: `pairwise`
 - `evidence_status`: `pairwise`
 - `peer_implementation_id` present
-- report/evidence references sufficient to inspect the pairwise claim
+- `peer_implementation_version` present
+- eligible external-IUT reports for both exact implementation subjects on the same exact
+  profile ID/version
+- an explicit pairwise summary naming both participants, profile ID/version, and result
 
 Do not translate a pairwise result into a broad ecosystem-wide compatibility statement.
 
@@ -103,6 +108,11 @@ Expected evidence files are usually JSON artifacts referenced by `report_refs`, 
 - conformance report outputs,
 - profile report outputs,
 - pairwise summary/report JSON that explains how a joint exercise was packaged.
+
+Repository self-test reports identify `execution_subject.kind=reference_corpus` and cannot
+support a real external claim. Use `conformance/iut/aicp_iut_runner.py` against the external
+adapter so the report binds implementation/build metadata, runner revision, suite/profile
+digests, and input artifacts. Required checks must pass without degradation or skips.
 
 The validator expects referenced files to exist for real submissions and examples. Templates may intentionally keep placeholder `report_refs` until a real submitter replaces them; the matrix renders those as instructional warnings rather than as failed real-submission evidence.
 
@@ -145,6 +155,7 @@ python interop/tools/build_submission.py \
   --implementation-id fictional-impl-a \
   --implementation-version 1.2.3 \
   --profile-id AICP-BASE \
+  --profile-ref AICP-BASE@0.1 \
   --claim-type implements_profile \
   --claim-scope self_attested \
   --evidence-status reproducible \
@@ -165,8 +176,10 @@ python interop/tools/build_submission.py \
   --submission-id fictional-pairwise \
   --implementation-id fictional-impl-a \
   --peer-implementation-id fictional-impl-b \
+  --peer-implementation-version 2.0.0 \
   --implementation-version 2.0.0 \
   --profile-id AICP-MEDIATED-BLOCKING \
+  --profile-ref AICP-MEDIATED-BLOCKING@0.1 \
   --claim-type pairwise_interop \
   --claim-scope pairwise \
   --evidence-status pairwise \

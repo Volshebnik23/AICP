@@ -61,6 +61,12 @@ Why these four:
 
 This is intentionally **not** the full profile catalog. More specialized bundles remain available and optional.
 
+`AICP-AUTHENTICATED-BASE@0.1` is an experimental, post-UAT Tier-0 security
+variant. It adds mandatory Ed25519 binding from every envelope sender to the message hash,
+without changing the frozen baseline or adding identity, trust, witnessing, policy, or
+transport-security claims. Existing profiles are not silently strengthened; deployments
+may compose them only as separate, explicit targets.
+
 ### 3.3 Transport/binding floor
 
 AICP is transport-independent, but networked interoperable deployments still need an executable floor. The repo-backed transport/binding baseline is the shipped HTTP/WS binding surface:
@@ -115,6 +121,7 @@ The tier model below is **adoption framing only**. It introduces no new protocol
 - implementers embedding AICP into an existing app or adapter/gateway.
 
 **Still optional at Tier 0:**
+- the experimental `AICP-AUTHENTICATED-BASE@0.1` sender-authentication variant,
 - policy engines,
 - approval workflows,
 - privacy/redaction overlays,
@@ -192,6 +199,7 @@ The tier model below is **adoption framing only**. It introduces no new protocol
 |---|---|---|
 | Core transcript integrity | **Yes** | Core narrative + schemas + `CT_CORE_0.1` |
 | Baseline profile claim | **Yes** | `AICP-BASE@0.1` |
+| Authenticated Core variant | Optional, experimental/post-UAT | `AICP-AUTHENTICATED-BASE@0.1` |
 | Baseline mediated adoption | Usually yes for hosted/governed deployments | `AICP-MEDIATED-BLOCKING@0.1` |
 | Continuity | Optional unless reconnect/resume matters | `AICP-RESUMABLE-SESSIONS@0.1` |
 | Delegated identity | Optional unless acting-on-behalf-of matters | `AICP-DELEGATED-IDENTITY@0.1` |
@@ -213,7 +221,9 @@ Prefer claims in this form:
 Those claims should map to:
 - shipped profile and binding identifiers,
 - required conformance suites,
-- reproducible, non-degraded report evidence.
+- reproducible, non-degraded external-IUT report evidence bound to the implementation,
+  runner revision, suite/profile digest, and input artifacts. Repository corpus self-tests
+  remain `reference_corpus` evidence and do not prove an unnamed external product.
 
 For compatibility-mark and badge policy, see:
 - `docs/adoption/COMPATIBILITY_AND_BADGES.md`

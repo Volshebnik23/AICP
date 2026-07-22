@@ -180,6 +180,8 @@ def test_build_submission_tool_pairwise_package_with_integrity_validates(tmp_pat
         "fictional-impl-a",
         "--peer-implementation-id",
         "fictional-impl-b",
+        "--peer-implementation-version",
+        "2.0.0",
         "--implementation-version",
         "2.0.0",
         "--profile-id",
@@ -209,6 +211,7 @@ def test_build_submission_tool_pairwise_package_with_integrity_validates(tmp_pat
     manifest = json.loads((package_dir / "submission.json").read_text(encoding="utf-8"))
 
     assert manifest["peer_implementation_id"] == "fictional-impl-b"
+    assert manifest["peer_implementation_version"] == "2.0.0"
     assert manifest["claim_type"] == "pairwise_interop"
     assert manifest["evidence_status"] == "pairwise"
     assert manifest["report_refs"] == ["reports/pair_a.json", "reports/pair_b.json"]

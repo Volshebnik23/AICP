@@ -204,3 +204,11 @@ If you need a one-screen answer for a pilot:
 ## 12) Companion checklist
 
 Use `docs/release/AICP_UAT_Checklist.md` as the concise operator checklist that goes with this pack.
+
+## 13) Post-UAT experiments excluded from this pack
+
+The repository also contains experimental `AICP-AUTHENTICATED-BASE@0.1` and strict
+`aicp.session_state_projection.v1` artifacts. They are post-UAT, opt-in targets with their
+own conformance evidence. They are not additions to this pack's frozen baseline, and pilot
+implementers are not required to implement them unless a future versioned pilot decision
+explicitly says so.

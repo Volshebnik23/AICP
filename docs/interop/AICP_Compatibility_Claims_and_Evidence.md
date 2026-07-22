@@ -19,8 +19,9 @@ Prefer the smallest truthful statement the evidence supports.
 Use this when the implementation has evidence that it implements the named shipped profile target.
 
 Minimum expected evidence:
-- the exact shipped profile identifier (for example `AICP-BASE@0.1`),
-- reproducible profile/conformance report evidence for the required suites,
+- the exact shipped profile identifier and version (for example `AICP-BASE@0.1`) in
+  `profile_refs`,
+- an eligible external-IUT report bound to the implementation ID/version/build digest,
 - non-degraded report outputs where compatibility marks are being relied on,
 - implementation/version identification in the submission manifest.
 
@@ -31,9 +32,10 @@ This is a claim about **what your implementation implements**, not about other i
 Use this when the evidence shows compatibility with the named shipped profile target.
 
 Minimum expected evidence:
-- the exact shipped profile identifier,
-- report evidence from the repo's shipped validation/conformance/profile tooling,
-- disclosures if any required checks were skipped, downgraded, synthetic, or limited to examples.
+- the exact shipped profile identifier/version,
+- a passed, non-degraded external-IUT report with the normal profile compatibility mark and
+  suite/profile/input digests,
+- no skipped mandatory checks, plus explicit disclosures.
 
 This is still a **profile-scoped** claim. It is not equivalent to claiming broad compatibility with every AICP implementation.
 
@@ -44,7 +46,9 @@ Use this only when the evidence is specifically about interoperability between t
 Minimum expected evidence:
 - the exact shipped profile identifier,
 - `peer_implementation_id` identifying the other implementation,
-- pairwise evidence packaging that includes report/transcript references sufficient to review the specific interaction,
+- `peer_implementation_version`, one eligible external-IUT execution subject for each named
+  implementation/version on the same exact profile, and an explicit pairwise summary that
+  identifies both participants and the shared profile version,
 - disclosures that explain whether the evidence is joint, mirrored, or assembled from both sides' artifacts.
 
 This claim is narrower than general compatibility. It should not be rephrased into a blanket ecosystem-wide statement.
@@ -76,6 +80,10 @@ The status should stay aligned with the actual package:
 | Compatible with profile X | Submission manifest + shipped profile ID + compatible report evidence + disclosures for any limitations |
 | Pairwise interoperable with implementation Y on profile X | Submission manifest + peer implementation ID + shipped profile ID + pairwise evidence references + disclosures about evidence provenance |
 
+Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
+repository's canonical artifacts but cannot substantiate an external implementation claim.
+Examples, templates, and dry runs may carry those reports only as instructional evidence.
+
 ## Badges, marks, and endorsement boundaries
 
 AICP compatibility evidence is evidence-first, not slogan-first.
@@ -87,6 +95,11 @@ That means:
 - do not use compatibility marks without the corresponding evidence.
 
 If compatibility marks are cited, they should trace back to actual report JSON fields such as `compatibility_marks`, together with the associated pass/degraded state.
+
+Report and bundle digests prove integrity of the tested artifacts, not organizational
+identity. `bundle-integrity.json` is not certification; a self-attested report is not
+maintainer endorsement. Publication, signing, and human review of external implementation
+identity remain outside the report format.
 
 ## Relationship to `TRADEMARKS.md`
 

@@ -2,6 +2,7 @@
   "submission_id": "example-pairwise-profile-interop",
   "implementation_id": "example-impl-a",
   "peer_implementation_id": "example-impl-b",
+  "peer_implementation_version": "0.1.0-example",
   "implementation_version": "0.1.0-example",
   "profile_ids": [
     "AICP-MEDIATED-BLOCKING"

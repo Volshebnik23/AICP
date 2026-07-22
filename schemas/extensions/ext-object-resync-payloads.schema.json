@@ -6,6 +6,86 @@
   "additionalProperties": false,
   "$defs": {
     "ObjectHash": { "type": "string", "pattern": "^sha256:[A-Za-z0-9_-]+$" },
+    "StrictObjectHash": { "type": "string", "pattern": "^sha256:[A-Za-z0-9_-]{43}$" },
+    "PortableReference": {
+      "type": "string",
+      "minLength": 3,
+      "pattern": "^[A-Za-z][A-Za-z0-9._-]*:[^\\s]+$"
+    },
+    "PortableReferenceArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/PortableReference" }
+    },
+    "CoreContractRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch_id", "base_version", "head_version"],
+      "properties": {
+        "branch_id": { "type": "string", "minLength": 1 },
+        "base_version": { "type": "string", "minLength": 1 },
+        "head_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "AICPProfileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version"],
+      "properties": {
+        "profile_id": { "type": "string", "pattern": "^AICP-[A-Z0-9-]+$" },
+        "profile_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "SessionStateProjectionV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projection_version",
+        "session_id",
+        "contract_id",
+        "as_of_message_hash",
+        "session_status"
+      ],
+      "properties": {
+        "projection_version": { "const": "aicp.session_state_projection.v1" },
+        "session_id": { "type": "string", "minLength": 1 },
+        "contract_id": { "type": "string", "minLength": 1 },
+        "as_of_message_hash": { "$ref": "#/$defs/StrictObjectHash" },
+        "session_status": {
+          "type": "string",
+          "enum": ["OPEN", "SUSPENDED", "CONFLICTED", "CLOSED", "UNKNOWN"]
+        },
+        "active_contract_ref": { "$ref": "#/$defs/CoreContractRef" },
+        "selected_aicp_profile": { "$ref": "#/$defs/AICPProfileRef" },
+        "active_extensions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "participant_refs": { "$ref": "#/$defs/PortableReferenceArray" },
+        "policy_refs": { "$ref": "#/$defs/PortableReferenceArray" },
+        "unresolved_conflict_refs": { "$ref": "#/$defs/PortableReferenceArray" },
+        "authority_refs": { "$ref": "#/$defs/PortableReferenceArray" },
+        "evidence_refs": { "$ref": "#/$defs/PortableReferenceArray" },
+        "extension_data": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?:x-[a-z0-9][a-z0-9._-]*|(?:vendor|org):[A-Za-z0-9][A-Za-z0-9._-]*)$"
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+    "DeclaredBranchHead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch_id", "head_version", "message_hash"],
+      "properties": {
+        "branch_id": { "type": "string", "minLength": 1 },
+        "head_version": { "type": "string", "minLength": 1 },
+        "message_hash": { "$ref": "#/$defs/StrictObjectHash" }
+      }
+    },
     "OBJECT_REQUEST_ITEM": {
       "type": "object",
       "additionalProperties": false,
@@ -70,8 +150,19 @@
       "required": ["request_id", "session_state", "branch_heads"],
       "properties": {
         "request_id": { "type": "string", "minLength": 1 },
-        "session_state": { "type": "string", "minLength": 1 },
-        "branch_heads": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "session_state": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            { "$ref": "#/$defs/SessionStateProjectionV1" }
+          ]
+        },
+        "session_state_hash": { "$ref": "#/$defs/StrictObjectHash" },
+        "branch_heads": {
+          "oneOf": [
+            { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+            { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/DeclaredBranchHead" } }
+          ]
+        },
         "active_head_version": { "type": "string", "minLength": 1 },
         "final_head_version": { "type": "string", "minLength": 1 },
         "replication_hints": {
@@ -82,7 +173,32 @@
             "next_request_after_s": { "type": "integer", "minimum": 0 }
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "session_state": {
+                "type": "object",
+                "properties": {
+                  "projection_version": { "const": "aicp.session_state_projection.v1" }
+                },
+                "required": ["projection_version"]
+              }
+            }
+          },
+          "then": {
+            "required": ["session_state_hash"],
+            "properties": {
+              "branch_heads": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/DeclaredBranchHead" }
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

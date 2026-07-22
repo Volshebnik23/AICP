@@ -5,6 +5,9 @@
   "type": "module",
   "description": "Minimal AICP core helpers for TypeScript/JavaScript implementers.",
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --import tsx --test test/*.test.js"
+  },
+  "devDependencies": {
+    "tsx": "4.20.6"
   }
 }

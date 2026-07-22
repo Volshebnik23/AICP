@@ -58,7 +58,14 @@ A valid submission package should include:
 2. Referenced report files under paths listed in `report_refs` when the package is an example or a real submission.
 3. `suite_refs` that identify the suite/profile evidence set the claim depends on.
 4. `profile_ids` that match profile identifiers already shipped in `registry/aicp_profiles.json`.
-5. Notes/disclosures when the evidence is limited, synthetic, or example-only.
+5. For a real claim, exact `profile_refs` carrying both `profile_id` and `profile_version`.
+6. Notes/disclosures when the evidence is limited, synthetic, or example-only.
+
+For real `reproducible` implementation/compatibility claims, at least one report must have
+`execution_subject.kind=external_implementation`, match the manifest implementation ID and
+version, bind the exact profile and checked-in profile digest, pass without degradation or
+skips, and carry the normal compatibility mark. A `reference_corpus` report alone is a
+migration error, not proof of an external product.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
@@ -101,6 +108,7 @@ Use this when one implementation is claiming profile implementation or compatibi
 Typical shape:
 - one `implementation_id`,
 - no `peer_implementation_id`,
+- exact `profile_refs`,
 - one or more profile/conformance reports in `report_refs`,
 - `claim_scope` of `self_attested`.
 
@@ -111,9 +119,12 @@ Use this when the claim is specifically about two implementations interoperating
 Typical shape:
 - one submitting `implementation_id`,
 - one `peer_implementation_id`,
+- one `peer_implementation_version`,
 - `claim_type` of `pairwise_interop`,
 - `claim_scope` of `pairwise`,
 - evidence package containing reports and/or transcript-linked artifacts that show the pairwise result,
+- eligible external-IUT reports for both exact execution subjects on the same profile
+  ID/version, plus an explicit joint summary naming both participants,
 - disclosures explaining whether the package contains both sides' evidence directly or references a shared joint report.
 
 Pairwise claims should be narrower than generic product claims. They should identify the exact peer and profile instead of implying broad ecosystem endorsement.

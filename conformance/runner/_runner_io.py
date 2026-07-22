@@ -14,7 +14,7 @@ def resolve_repo_path(path_like: str, root: Path = ROOT) -> Path:
 
 def display_path(path: Path, root: Path = ROOT) -> str:
     try:
-        return str(path.relative_to(root))
+        return path.relative_to(root).as_posix()
     except ValueError:
         return str(path)
 

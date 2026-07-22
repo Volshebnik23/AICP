@@ -1,8 +1,68 @@
 {
+  "report_format_version": "1.0",
+  "execution_subject": {
+    "kind": "reference_corpus",
+    "implementation_id": "aicp-reference-corpus",
+    "implementation_version": "0.1.0-rc.1",
+    "implementation_digest": "sha256:40c0f523970514cc52f258216ab6e35fc903da1ed53b14f9861785016a2cab1d"
+  },
+  "runner": {
+    "name": "aicp-conformance-runner",
+    "version": "1.0",
+    "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+  },
+  "suite": {
+    "suite_id": "DEMO-ENFORCEMENT-BEHAVIORAL-0.1",
+    "suite_version": "0.1.0-dev",
+    "suite_digest": "sha256:e625966cff52ec3a5b9a6c72db8fb3433123ab235649fe3edf1f38d1a4eb0ef0"
+  },
+  "input_artifacts": [
+    {
+      "artifact_id": "DEMO-01",
+      "path": "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+      "content_digest": "sha256:9390ab7a05e4cf13be2b27ec99ba79dea29d9a18aaa1c6533c7015941cc54c52"
+    },
+    {
+      "artifact_id": "DEMO-02",
+      "path": "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+      "content_digest": "sha256:8bb71a12279a10f1f0dc265b7ddc5c4b1a4bcf540467d099cf53c981f6c8f720"
+    },
+    {
+      "artifact_id": "DEMO-03",
+      "path": "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+      "content_digest": "sha256:d9e551e3eaafe8b6f29789b5b475de15890844962cf641ce5882f5960797cf8e"
+    },
+    {
+      "artifact_id": "DEMO-04",
+      "path": "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+      "content_digest": "sha256:afe40b2d16ae98a4883fdb3e5bbb2e5f58dbd9c07e90043f1a32bf115f04656f"
+    },
+    {
+      "artifact_id": "DEMO-05",
+      "path": "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+      "content_digest": "sha256:5cb8aeda1b353b2d9926707b6af6f5bafebc66e2255f689d73d0f15e349371f0"
+    },
+    {
+      "artifact_id": "DEMO-06",
+      "path": "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+      "content_digest": "sha256:1aa778325f54ae13c1c7364b6e04c8c72541c369543294995c9b9f06906ebc4c"
+    },
+    {
+      "artifact_id": "DEMO-07",
+      "path": "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+      "content_digest": "sha256:b160d1de8ed461687ee28a066ba0aba2200787bc00de431e8febe5416314f718"
+    },
+    {
+      "artifact_id": "DEMO-08",
+      "path": "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
+      "content_digest": "sha256:dbe63ca6fccdd4398c44e98962b106e4405bdfe9b55fdf0fccbb4e83dee10cfc"
+    }
+  ],
+  "generated_artifacts": [],
   "aicp_version": "0.1",
   "suite_id": "DEMO-ENFORCEMENT-BEHAVIORAL-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-03-03T03:21:01.490235+00:00",
+  "timestamp": "2026-07-22T12:47:30.885594+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [

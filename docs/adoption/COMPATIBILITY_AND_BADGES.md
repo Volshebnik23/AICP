@@ -13,9 +13,8 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 - Meaning: extension suite-specific requirements pass (for example CAPNEG, ENFORCEMENT, ALERTS, RESUME).
 
 ### 3) Profile compatibility
-- Marks:
-  - `AICP-Profile-BASE-0.1`
-  - `AICP-Profile-MEDIATED-BLOCKING-0.1`
+- Marks are defined by the exact catalogs under `conformance/profiles/`; do not maintain a
+  duplicate hard-coded list here.
 - Meaning: all required suites for that named profile pass.
 
 ### 4) Security evidence marks
@@ -48,9 +47,17 @@ Common report outputs:
 
 Read marks from report JSON:
 
+- `report_format_version`
+- `execution_subject` (reference corpus versus external implementation/build)
+- `runner.source_revision`, suite/profile digest, and input/generated artifact digests
 - `compatibility_marks` list
 - `passed` boolean
-- `degraded` and `degraded_reasons`
+- `degraded`, `degraded_reasons`, and `skipped_checks`
+
+Ordinary repository runs label their subject `reference_corpus`. They prove the checked-in
+corpus/runner behavior, not an external product. Use the JSONL IUT path in
+`conformance/iut/README.md` for a report bound to an external implementation. File digests
+prove artifact integrity, not organizational identity, certification, or endorsement.
 
 ## Reusable CI snippet for adopters
 

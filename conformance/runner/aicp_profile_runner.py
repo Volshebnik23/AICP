@@ -19,6 +19,8 @@ from _runner_io import (  # noqa: E402
     resolve_repo_path as _io_resolve_repo_path,
     write_json_report as _io_write_json_report,
 )
+from _runner_provenance import build_profile_provenance  # noqa: E402
+from _runner_context import build_validator as _build_validator  # noqa: E402
 
 
 def load_json(path: Path) -> Any:
@@ -36,6 +38,7 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
     marks: list[str] = []
     degraded = False
     degraded_reasons: list[str] = []
+    skipped_checks: list[str] = []
     observed_protocol_versions: set[str] = set()
 
     for rel_suite in profile.get("required_suites", []):
@@ -63,6 +66,9 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
             for reason in suite_report.get("degraded_reasons", []) or []:
                 if isinstance(reason, str) and reason not in degraded_reasons:
                     degraded_reasons.append(reason)
+        for check_id in suite_report.get("skipped_checks", []) or []:
+            if isinstance(check_id, str) and check_id not in skipped_checks:
+                skipped_checks.append(check_id)
 
         for mark in suite_report.get("compatibility_marks", []):
             if isinstance(mark, str) and mark not in marks:
@@ -85,6 +91,7 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
             raise ValueError(f"Profile suites disagree on aicp_version: {sorted(observed_protocol_versions)}")
 
     return {
+        **build_profile_provenance(profile_path, profile),
         "aicp_version": protocol_version,
         "profile_id": profile.get("profile_id"),
         "profile_version": profile.get("profile_version"),
@@ -95,6 +102,7 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
         "compatibility_marks": marks,
         "degraded": degraded,
         "degraded_reasons": degraded_reasons,
+        "skipped_checks": skipped_checks,
     }
 
 
@@ -112,6 +120,13 @@ def main() -> int:
     except Exception as exc:
         print(f"[FAIL] {exc}")
         return 1
+
+    profile_report_schema_path = ROOT / "conformance/profile_report_schema.json"
+    if profile_report_schema_path.exists():
+        schema = load_json(profile_report_schema_path)
+        validator = _build_validator(schema, profile_report_schema_path)
+        if validator is not None:
+            validator.validate(report)
 
     _io_write_json_report(out_path, report)
 

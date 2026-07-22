@@ -19,6 +19,45 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 - **Intent:** Minimal interoperable profile for AICP Core v0.1 behavior.
 - **Canonical flow:** `docs/flows/AICP_Canonical_Flows.md#21-core-happy-path-signed-transcript`
 
+### AICP-AUTHENTICATED-BASE
+
+- **Identifier:** `AICP-AUTHENTICATED-BASE@0.1`.
+- **Status:** Experimental, post-UAT; it is not part of the frozen pilot center.
+- **Required extensions:** none.
+- **Required crypto profile:** `aicp.crypto.ed25519.v1`.
+- **Required suites:** `CT_CORE_0.1.json` and
+  `AUTH_AUTHENTICATED_MESSAGES_0.1.json`.
+- **Compatibility mark:** `AICP-Profile-AUTHENTICATED-BASE-0.1`, emitted only after a
+  complete non-degraded profile pass with no skipped required crypto check.
+
+Every transcript message claiming this profile MUST have a recomputable `message_hash` and
+a non-empty `signatures` array. Every signature entry MUST use `object_type="message"`,
+MUST bind `signature.object_hash` to the envelope `message_hash`, MUST resolve `signer` and
+`kid` unambiguously to supplied Ed25519 verification material, and MUST verify. At least
+one valid signature MUST have `signer` exactly equal to the envelope `sender`. Extra
+co-signatures are allowed, but one invalid entry invalidates the claim.
+
+Missing key material is failure, not compatibility evidence. If the crypto backend is
+unavailable, structural checks may pass in degraded mode, but the compatibility mark MUST
+be suppressed. Key discovery, custody, rotation, revocation, transport security, and
+identity issuance are outside this profile. When CAPNEG is used, its selected AICP profile
+and crypto profile must satisfy these exact requirements; CAPNEG is not itself a static
+dependency of this profile.
+
+This profile proves only a cryptographic binding between the declared envelope sender and
+that message hash. It does not establish real-world identity, account ownership,
+acting-on-behalf-of authority, delegation scope, issuer trust, revocation freshness,
+non-equivocation, witnessing, policy/moderation correctness, or universal trust.
+
+| Surface | What it establishes | What it does not replace |
+|---|---|---|
+| `AICP-BASE@0.1` | Core structure, hashing, and transcript integrity; signatures remain optional | Sender authentication |
+| `AICP-AUTHENTICATED-BASE@0.1` | Ed25519 sender-to-message authentication | Real-world or delegated identity |
+| `AICP-DELEGATED-IDENTITY@0.1` | Acting-on-behalf-of issuer, scope, and expiry semantics | Message authentication; it may be composed with authenticated base |
+| `EXT-IDENTITY-LC` and trust/status extensions | Identity/key lifecycle, trust anchors, revocation or status | Authenticated-base message binding |
+| `EXT-TRANSCRIPT-WITNESS` | External checkpoint/witness evidence and anti-equivocation signals | Sender authentication |
+| `AICP-MEDIATED-BLOCKING@0.1` | Policy-evaluation and delivery-gating semantics | Sender authentication |
+
 #### `AICP-MEDIATED-BLOCKING`
 - **Status:** Available now.
 - **Required suites/extensions:**
@@ -174,6 +213,8 @@ Normative rules:
 - Badge computation MUST be derived from machine-readable conformance reports.
 - Badge issuance MUST NOT be self-asserted without report evidence.
 - If any required suite fails, the profile badge MUST NOT be granted.
+- If a required check is skipped or a report is degraded, profile compatibility marks MUST
+  NOT be granted.
 
 Profile runners MAY include child suite compatibility marks in profile reports for transparency, but profile-level pass/fail is determined by all required suites.
 
@@ -192,6 +233,7 @@ Operational guidance:
 
 
 ## Experimental profiles currently in repo
+- **AICP-AUTHENTICATED-BASE@0.1**: Core plus mandatory Ed25519 envelope-sender signatures; experimental and post-UAT.
 - **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases profile.
 - **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications profile with optional economics.
 - **AICP-EXECUTION-INTEROP@0.1**: optional run/thread/store metadata profile with resume+object-resync continuity.

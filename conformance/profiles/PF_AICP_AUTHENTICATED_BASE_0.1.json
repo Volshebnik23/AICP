@@ -1,0 +1,13 @@
+{
+  "profile_id": "AICP-AUTHENTICATED-BASE",
+  "profile_version": "0.1",
+  "status": "experimental",
+  "description": "Core baseline plus sender-to-message Ed25519 authentication on every AICP message.",
+  "required_extensions": [],
+  "required_crypto_profiles": ["aicp.crypto.ed25519.v1"],
+  "required_suites": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
+  ],
+  "compatibility_mark": "AICP-Profile-AUTHENTICATED-BASE-0.1"
+}

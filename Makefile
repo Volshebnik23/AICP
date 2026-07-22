@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-iut-smoke interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -37,7 +37,7 @@ validate-snapshot:
 	$(PYTHON) scripts/validate_snapshot_manifest.py
 
 test:
-	$(PYTHON) -c "import importlib.util, subprocess, sys; spec=importlib.util.find_spec('pytest'); raise SystemExit((print('pytest not installed; skipping make test.') or 0) if spec is None else subprocess.call(['pytest','-q','reference/python/tests']))"
+	$(PYTHON) -c "import importlib.util, subprocess, sys; spec=importlib.util.find_spec('pytest'); raise SystemExit((print('pytest not installed; skipping make test.') or 0) if spec is None else subprocess.call([sys.executable,'-m','pytest','-q','reference/python/tests']))"
 
 conformance:
 	$(MAKE) conformance-core
@@ -71,6 +71,10 @@ conformance-ops:
 
 conformance-security:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog security
+
+conformance-iut-smoke:
+	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-BASE@0.1 --include-session-state-projection --out conformance/iut/report_reference_base.json
+	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-AUTHENTICATED-BASE@0.1 --out conformance/iut/report_reference_authenticated_base.json
 
 interop-validate:
 	$(PYTHON) scripts/validate_interop_submission_examples.py
@@ -121,7 +125,7 @@ quickstart-py:
 	$(PYTHON) sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify
 
 template-smoke:
-	mkdir -p out/template-ts-agent out/template-protocol-adapter
+	$(PYTHON) -c "from pathlib import Path; Path('out/template-ts-agent').mkdir(parents=True, exist_ok=True); Path('out/template-protocol-adapter').mkdir(parents=True, exist_ok=True)"
 	node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
 	$(PYTHON) sandbox/run.py out/template-ts-agent/thread.jsonl --no-signature-verify
 	$(PYTHON) templates/protocol-adapter/adapter.py fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl > out/template-protocol-adapter/events.json
@@ -142,6 +146,7 @@ prepr:
 	$(MAKE) quickstart-py
 	$(MAKE) quickstart-ts
 	$(MAKE) template-smoke
+	$(MAKE) conformance-iut-smoke
 	cd sdk/typescript && npm ci && npm test
 
 compatibility-gate:

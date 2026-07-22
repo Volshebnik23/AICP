@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/profile-report-1.0.json",
+  "title": "AICP Profile Conformance Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_format_version",
+    "execution_subject",
+    "runner",
+    "profile",
+    "input_artifacts",
+    "generated_artifacts",
+    "aicp_version",
+    "profile_id",
+    "profile_version",
+    "timestamp",
+    "passed",
+    "suite_reports",
+    "failures",
+    "compatibility_marks",
+    "degraded",
+    "degraded_reasons",
+    "skipped_checks"
+  ],
+  "properties": {
+    "report_format_version": { "const": "1.0" },
+    "execution_subject": { "$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/ExecutionSubject" },
+    "runner": { "$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Runner" },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version", "profile_digest"],
+      "properties": {
+        "profile_id": { "type": "string", "minLength": 1 },
+        "profile_version": { "type": "string", "minLength": 1 },
+        "profile_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "input_artifacts": { "$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Artifacts" },
+    "generated_artifacts": { "$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Artifacts" },
+    "aicp_version": { "type": "string", "minLength": 1 },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "profile_version": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "passed": { "type": "boolean" },
+    "suite_reports": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "https://aicp.dev/schemas/conformance-report-1.0.json" }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["test_id", "message", "file", "line", "suite_id", "suite_path"],
+        "properties": {
+          "test_id": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "file": { "type": "string" },
+          "line": { "type": ["integer", "null"], "minimum": 1 },
+          "suite_id": { "type": ["string", "null"] },
+          "suite_path": { "type": "string" }
+        }
+      }
+    },
+    "compatibility_marks": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "degraded": { "type": "boolean" },
+    "degraded_reasons": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "skipped_checks": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}

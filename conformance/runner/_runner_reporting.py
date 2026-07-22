@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from _runner_provenance import build_suite_provenance
+
 
 def build_conformance_report(
     *,
@@ -15,8 +17,16 @@ def build_conformance_report(
     degraded: bool,
     degraded_reasons: list[str],
     skipped_checks: list[str],
+    suite_path: Any | None = None,
+    suite_catalog: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    suite_catalog = suite_catalog or {
+        "suite_id": suite_id,
+        "suite_version": suite_version,
+    }
+    provenance = build_suite_provenance(suite_path, suite_catalog)
     return {
+        **provenance,
         "aicp_version": aicp_version,
         "suite_id": suite_id,
         "suite_version": suite_version,

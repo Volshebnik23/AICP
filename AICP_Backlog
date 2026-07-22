@@ -21,6 +21,9 @@ This backlog is a **planning artifact for remaining product deliverables**. It t
 
 AICP currently has **no remaining in-repo protocol backlog milestones**.
 
+The post-UAT protocol hardening milestone (M57) is recorded in `ROADMAP.md` because its
+artifacts and required verification gates are complete.
+
 The previously remaining legal-readiness work item (M33) has been moved to `ROADMAP.md` because its shipped artifacts are now present in-repo.
 
 New backlog entries should be added here only when maintainers decide to open a new not-yet-shipped in-repo milestone.

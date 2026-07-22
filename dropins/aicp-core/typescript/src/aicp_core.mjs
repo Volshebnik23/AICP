@@ -28,11 +28,25 @@ function rejectUnsupportedNumbers(value) {
   }
 }
 
+function compareUnicodeCodePointOrder(left, right) {
+  const leftPoints = Array.from(left);
+  const rightPoints = Array.from(right);
+  const limit = Math.min(leftPoints.length, rightPoints.length);
+
+  for (let i = 0; i < limit; i += 1) {
+    const leftPoint = leftPoints[i].codePointAt(0);
+    const rightPoint = rightPoints[i].codePointAt(0);
+    if (leftPoint !== rightPoint) return leftPoint - rightPoint;
+  }
+
+  return leftPoints.length - rightPoints.length;
+}
+
 function sortDeep(value) {
   if (Array.isArray(value)) return value.map(sortDeep);
   if (value && typeof value === "object") {
     const out = {};
-    for (const key of Object.keys(value).sort()) out[key] = sortDeep(value[key]);
+    for (const key of Object.keys(value).sort(compareUnicodeCodePointOrder)) out[key] = sortDeep(value[key]);
     return out;
   }
   return value;

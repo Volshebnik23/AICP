@@ -71,7 +71,10 @@ For a repo-owned rehearsal of this same lifecycle, see `docs/interop/AICP_Intero
 
 4. **Verify evidence packaging.**
    - referenced files actually exist inside the package,
-   - reports/evidence are inspectable and match the stated claim,
+   - exact `profile_refs` match the claim,
+   - reports identify an external execution subject matching the manifest implementation
+     ID/version and checked-in profile digest,
+   - passed reports are non-degraded, have no mandatory skips, and carry the expected mark,
    - optional `bundle-integrity.json` validates when present.
 
 5. **Decide matrix publication readiness.**
@@ -91,7 +94,7 @@ Maintainers should verify:
 ### `reproducible`
 
 Maintainers should verify:
-- the package includes actual report artifacts supporting the stated profile claim,
+- the package includes an eligible external-IUT report supporting the exact profile claim,
 - the reports are present inside the bundle,
 - optional integrity data, if present, matches the bundled files.
 
@@ -99,6 +102,9 @@ Maintainers should verify:
 
 Maintainers should verify:
 - `peer_implementation_id` is present,
+- `peer_implementation_version` is present,
+- eligible reports identify both exact execution subjects and the same exact profile,
+- a joint summary explicitly names both participants and the interaction result,
 - the package stays specific to the named peer and profile,
 - disclosures explain whether the package includes both sides' evidence directly or only one side's package plus a shared summary,
 - the submission does not imply general ecosystem-wide compatibility.

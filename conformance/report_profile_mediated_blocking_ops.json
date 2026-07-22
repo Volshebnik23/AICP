@@ -1,15 +1,140 @@
 {
+  "report_format_version": "1.0",
+  "execution_subject": {
+    "kind": "reference_corpus",
+    "implementation_id": "aicp-reference-corpus",
+    "implementation_version": "0.1.0-rc.1",
+    "implementation_digest": "sha256:ede66d9c532278a218c08b436bffaf3dc686ef55bd718b202c181ea33277b6e4"
+  },
+  "runner": {
+    "name": "aicp-profile-runner",
+    "version": "1.0",
+    "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+  },
+  "profile": {
+    "profile_id": "AICP-MEDIATED-BLOCKING-OPS",
+    "profile_version": "0.1",
+    "profile_digest": "sha256:ede66d9c532278a218c08b436bffaf3dc686ef55bd718b202c181ea33277b6e4"
+  },
+  "input_artifacts": [
+    {
+      "artifact_id": "AICP-MEDIATED-BLOCKING-OPS@0.1",
+      "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json",
+      "content_digest": "sha256:6ebd9fd8934646181eb22a996f3a8b72e5572f7a07475c68b1de8bea6074ee50"
+    },
+    {
+      "artifact_id": "CT_CORE_0.1",
+      "path": "conformance/core/CT_CORE_0.1.json",
+      "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+    },
+    {
+      "artifact_id": "CN_CAPNEG_0.1",
+      "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+      "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+    },
+    {
+      "artifact_id": "PE_POLICY_EVAL_0.1",
+      "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+      "content_digest": "sha256:f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
+    },
+    {
+      "artifact_id": "ENF_ENFORCEMENT_0.1",
+      "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+      "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+    },
+    {
+      "artifact_id": "AL_ALERTS_0.1",
+      "path": "conformance/extensions/AL_ALERTS_0.1.json",
+      "content_digest": "sha256:0cdc4e818385b772d5a0a194dfee0e6324e7d0850a1bc3f3553461c39446b211"
+    },
+    {
+      "artifact_id": "RS_RESUME_0.1",
+      "path": "conformance/extensions/RS_RESUME_0.1.json",
+      "content_digest": "sha256:513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
+    }
+  ],
+  "generated_artifacts": [],
   "aicp_version": "0.1",
   "profile_id": "AICP-MEDIATED-BLOCKING-OPS",
   "profile_version": "0.1",
-  "timestamp": "2026-03-20T07:45:20.812441+00:00",
+  "timestamp": "2026-07-22T12:47:22.454813+00:00",
   "passed": true,
   "suite_reports": [
     {
+      "report_format_version": "1.0",
+      "execution_subject": {
+        "kind": "reference_corpus",
+        "implementation_id": "aicp-reference-corpus",
+        "implementation_version": "0.1.0-rc.1",
+        "implementation_digest": "sha256:c0a268a9cbf662c73d6be074bb48b1ea997eba9ca39a7bbab7c2e3ca3950402d"
+      },
+      "runner": {
+        "name": "aicp-conformance-runner",
+        "version": "1.0",
+        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+      },
+      "suite": {
+        "suite_id": "CT-CORE-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+      },
+      "input_artifacts": [
+        {
+          "artifact_id": "GT-01",
+          "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+        },
+        {
+          "artifact_id": "GT-02",
+          "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+          "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+        },
+        {
+          "artifact_id": "GT-04",
+          "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+          "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+        },
+        {
+          "artifact_id": "GT-05",
+          "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+          "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+        },
+        {
+          "artifact_id": "GT-06",
+          "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+          "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+        },
+        {
+          "artifact_id": "GT-07",
+          "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+          "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+        },
+        {
+          "artifact_id": "GT-08",
+          "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+          "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+        },
+        {
+          "artifact_id": "GT-09",
+          "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+          "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+        },
+        {
+          "artifact_id": "GT-10",
+          "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+          "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+        },
+        {
+          "artifact_id": "GT-11",
+          "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+          "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+        }
+      ],
+      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "CT-CORE-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.792595+00:00",
+      "timestamp": "2026-07-22T12:47:22.007696+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -20,10 +145,85 @@
       "skipped_checks": []
     },
     {
+      "report_format_version": "1.0",
+      "execution_subject": {
+        "kind": "reference_corpus",
+        "implementation_id": "aicp-reference-corpus",
+        "implementation_version": "0.1.0-rc.1",
+        "implementation_digest": "sha256:8551b1566cf94f2152d207af3203c781ab03a9c000cd9a5937bfcd807a1ccba1"
+      },
+      "runner": {
+        "name": "aicp-conformance-runner",
+        "version": "1.0",
+        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+      },
+      "suite": {
+        "suite_id": "CN-CAPNEG-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+      },
+      "input_artifacts": [
+        {
+          "artifact_id": "CN-01",
+          "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
+          "content_digest": "sha256:da612d4ccbc99b97344a5b85836ef7466c661275428cf1f03ca93a6a2c75259e"
+        },
+        {
+          "artifact_id": "CN-02",
+          "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
+          "content_digest": "sha256:1fb4d08f16a51338fc727efc6ea62bde74d2495c9d5bf3c4363b9d153778ec39"
+        },
+        {
+          "artifact_id": "CN-NEG-01",
+          "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+          "content_digest": "sha256:6e81f3e1c6151784016ff415efe74bf0599ef0e28ecd8a366b5802c49493ec21"
+        },
+        {
+          "artifact_id": "CN-05",
+          "path": "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+          "content_digest": "sha256:0e858fa9f4da695760e92da55a0e28826d30a893ac51ab083ba4eb8eb29222aa"
+        },
+        {
+          "artifact_id": "CN-06",
+          "path": "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+          "content_digest": "sha256:d702ba121282838448a6dbd0b26fb422b426eb888e6e680654600f326fab5e58"
+        },
+        {
+          "artifact_id": "CN-07",
+          "path": "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "content_digest": "sha256:b980293a3f6d13b1ef1621fa160c81daf8d04ffc974cef84db2e1cb6484a238e"
+        },
+        {
+          "artifact_id": "CN-08",
+          "path": "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "content_digest": "sha256:1541b934996b73a4047568ab22ba9a128ae983d02a5437805ae829a086c69fe9"
+        },
+        {
+          "artifact_id": "CN-09",
+          "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+          "content_digest": "sha256:250bc11684fa3b1c3cedef0930c464b82574397debd46ab86518ad90ab5c4f03"
+        },
+        {
+          "artifact_id": "CN-10",
+          "path": "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+          "content_digest": "sha256:64698a10d7e0072a186c39b496eb583f120da606f85de366c5e84cab492c6e67"
+        },
+        {
+          "artifact_id": "CN-11",
+          "path": "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+          "content_digest": "sha256:f44fe65e0ebcea59b053fd4bbde5ab451eb43a7b82ecbcc9d8fe1f36052ee6cf"
+        },
+        {
+          "artifact_id": "CN-12",
+          "path": "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "content_digest": "sha256:07248a142b50ca9b1b712f9a3b15da541bc0855da5dfd7fefb659ed997a5d7f4"
+        }
+      ],
+      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "CN-CAPNEG-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.802985+00:00",
+      "timestamp": "2026-07-22T12:47:22.132697+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -34,10 +234,40 @@
       "skipped_checks": []
     },
     {
+      "report_format_version": "1.0",
+      "execution_subject": {
+        "kind": "reference_corpus",
+        "implementation_id": "aicp-reference-corpus",
+        "implementation_version": "0.1.0-rc.1",
+        "implementation_digest": "sha256:8545147713aa16348d3807afa4069a8befea9a948b438b0f33cb359a7ac2c31d"
+      },
+      "runner": {
+        "name": "aicp-conformance-runner",
+        "version": "1.0",
+        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+      },
+      "suite": {
+        "suite_id": "PE-POLICY-EVAL-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
+      },
+      "input_artifacts": [
+        {
+          "artifact_id": "PE-01",
+          "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+          "content_digest": "sha256:d89b1505c9e831a95a9594e4b3d14ab76b0905a643b6de8e95c55cdd89dba9d0"
+        },
+        {
+          "artifact_id": "PE-02",
+          "path": "fixtures/extensions/policy_eval/PE-02_unknown_reason_code_expected_fail.jsonl",
+          "content_digest": "sha256:b51a0daee7409dc4ee915e92e1672eacd88272ed68ea07196d33632135f5bc0a"
+        }
+      ],
+      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "PE-POLICY-EVAL-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.805415+00:00",
+      "timestamp": "2026-07-22T12:47:22.209703+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -48,10 +278,40 @@
       "skipped_checks": []
     },
     {
+      "report_format_version": "1.0",
+      "execution_subject": {
+        "kind": "reference_corpus",
+        "implementation_id": "aicp-reference-corpus",
+        "implementation_version": "0.1.0-rc.1",
+        "implementation_digest": "sha256:d3f1248c0af415ea369af1e98bbf98d66aa04174fe7e9408b4ec6ee1218e1aff"
+      },
+      "runner": {
+        "name": "aicp-conformance-runner",
+        "version": "1.0",
+        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+      },
+      "suite": {
+        "suite_id": "ENF-ENFORCEMENT-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+      },
+      "input_artifacts": [
+        {
+          "artifact_id": "ENF-01",
+          "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+          "content_digest": "sha256:23735f224687a44494a10027a658a42e2149fe056533959ffb96a93a019828f3"
+        },
+        {
+          "artifact_id": "ENF-02",
+          "path": "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "content_digest": "sha256:1372f1adea3d4b8ddaf3fc12eed808ab1b9151812542867a0b74e5fa6da6e9bb"
+        }
+      ],
+      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "ENF-ENFORCEMENT-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.807439+00:00",
+      "timestamp": "2026-07-22T12:47:22.268248+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -62,10 +322,40 @@
       "skipped_checks": []
     },
     {
+      "report_format_version": "1.0",
+      "execution_subject": {
+        "kind": "reference_corpus",
+        "implementation_id": "aicp-reference-corpus",
+        "implementation_version": "0.1.0-rc.1",
+        "implementation_digest": "sha256:fe325973a02a37408f47dccbffc7580d887f81e06f4357f7c96d87376168a557"
+      },
+      "runner": {
+        "name": "aicp-conformance-runner",
+        "version": "1.0",
+        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+      },
+      "suite": {
+        "suite_id": "AL-ALERTS-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:0cdc4e818385b772d5a0a194dfee0e6324e7d0850a1bc3f3553461c39446b211"
+      },
+      "input_artifacts": [
+        {
+          "artifact_id": "AL-01",
+          "path": "fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl",
+          "content_digest": "sha256:fe156205a3d0cfc95a0bc039b32759fc1bdc36e93635821c9e3baf8d1973448a"
+        },
+        {
+          "artifact_id": "AL-02",
+          "path": "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "content_digest": "sha256:dab290347a0898dc7eb8b9618f772a83158a2433795035b4cbd274222059d563"
+        }
+      ],
+      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "AL-ALERTS-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.809426+00:00",
+      "timestamp": "2026-07-22T12:47:22.343744+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -76,10 +366,50 @@
       "skipped_checks": []
     },
     {
+      "report_format_version": "1.0",
+      "execution_subject": {
+        "kind": "reference_corpus",
+        "implementation_id": "aicp-reference-corpus",
+        "implementation_version": "0.1.0-rc.1",
+        "implementation_digest": "sha256:49191088794c4c77f00c985a5908be54b60077827dfa383a1c8e505e0c96e208"
+      },
+      "runner": {
+        "name": "aicp-conformance-runner",
+        "version": "1.0",
+        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
+      },
+      "suite": {
+        "suite_id": "RS-RESUME-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
+      },
+      "input_artifacts": [
+        {
+          "artifact_id": "RS-01",
+          "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+          "content_digest": "sha256:c98c62d03ed26e7b44443f3ae6982a579ce333b9bf93f0103d18d3e910c24543"
+        },
+        {
+          "artifact_id": "RS-02",
+          "path": "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+          "content_digest": "sha256:b3fea03ac976dcdd32efbb3df7e1849ebec6ebdeba5826516562222c7250afb1"
+        },
+        {
+          "artifact_id": "RS-03",
+          "path": "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
+          "content_digest": "sha256:e5623cdcad58e30d19b9efb3d0b7f7199c756e70e0b4780c4db46ff9cc00e490"
+        },
+        {
+          "artifact_id": "RS-NEG-01",
+          "path": "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+          "content_digest": "sha256:e15b9948130f5e48a9f1e3d89bcfabccd9e497557d9282e188314780d5a9e9d8"
+        }
+      ],
+      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "RS-RESUME-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-03-20T07:45:20.812396+00:00",
+      "timestamp": "2026-07-22T12:47:22.430798+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -101,5 +431,6 @@
     "AICP-EXT-RESUME-0.1"
   ],
   "degraded": false,
-  "degraded_reasons": []
+  "degraded_reasons": [],
+  "skipped_checks": []
 }
