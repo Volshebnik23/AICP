@@ -37,6 +37,11 @@ summary are not joint proof. Examples,
 templates, and repo-owned dry runs remain instructional and cannot substantiate an external
 claim.
 
+`implements_profile` and `compatible_with_profile` are strong claims: real packages using
+either must set `evidence_status=reproducible`. `self_attested` remains in the schema for
+migration/informational packaging but cannot receive an ordinary profile mark. The matrix
+reuses this same independent eligibility check and does not promote raw report marks.
+
 ## Evidence-status vocabulary
 
 - `example`
@@ -45,7 +50,11 @@ claim.
 - `reproducible`
 - `pairwise`
 
-Use `example` and `template` only for the shipped instructional artifacts. Real submission folders should use `self_attested`, `reproducible`, or `pairwise`. Template placeholder `report_refs` are allowed for instructional starter packs, but real submissions and examples must resolve their referenced files.
+Use `example` and `template` only for the shipped instructional artifacts. Real strong
+profile claims must use `reproducible`; `self_attested` is retained only for migration or
+informational packaging, and `pairwise` remains fail-closed. Template placeholder
+`report_refs` are allowed for instructional starter packs, but real submissions and
+examples must resolve their referenced files.
 
 ## Validation entrypoints
 

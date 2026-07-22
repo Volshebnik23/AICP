@@ -95,6 +95,16 @@ TCK release and all required digests. Marks are suppressed for reference-corpus,
 skipped, incomplete, or digest-inconsistent runs. `make conformance-iut-smoke` tests only the
 deterministic in-repo reference adapter.
 
+The authenticated catalog includes the required unavailable-crypto behavior probe. Its
+expected `AUTH-SIGNATURE-VERIFY-01` skip is recorded at report level, so the current
+37-case authenticated report is behavioral evidence and emits no ordinary profile mark.
+
+Full-profile producer scenarios are executed twice and must be bound to the requested
+session, contract, participants, exact profile, crypto mode, and deterministic seed. Do not
+combine full-profile execution with `--include-session-state-projection`; emit strict state
+projection evidence as a separate capability run. Every skipped mandatory check
+suppresses profile eligibility even if an adapter reports `degraded=false`.
+
 
 ## Template smoke commands (shipped onboarding)
 

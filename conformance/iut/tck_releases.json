@@ -6,7 +6,7 @@
       "status": "experimental-post-uat",
       "case_catalog": {
         "path": "conformance/iut/cases.json",
-        "content_digest": "sha256:092936a38f47a96eed58580b5c1e4e25cd321cbd1277a376249b327e1e13d140"
+        "content_digest": "sha256:c3d4b86f7b7401703e1156a8f05bc2a3794f5f84bb38e3f7d9c9e73ca7c2e5a8"
       },
       "runner_bundle": {
         "paths": [
@@ -35,7 +35,7 @@
           "reference/python/aicp_ref/signatures.py",
           "reference/python/aicp_ref/validate.py"
         ],
-        "digest": "sha256:b1b4ae03c3ce9c2ac5b0db6ef9987bd06762586409dd4d6468be0ddd31669f06"
+        "digest": "sha256:4dd6c335d24e5ece4e4be963cce25fd0eb5d667aec2bfdfb6ae94a7e42e64bba"
       },
       "profiles": {
         "AICP-BASE@0.1": {
@@ -56,15 +56,15 @@
             },
             {
               "path": "conformance/iut/adapter_protocol.schema.json",
-              "content_digest": "sha256:f5317cc1a30c4e1d4ba5a8a6dea985bd4042c410cf4a7289a98254d6486a5d88"
+              "content_digest": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
             },
             {
               "path": "conformance/iut/cases.json",
-              "content_digest": "sha256:092936a38f47a96eed58580b5c1e4e25cd321cbd1277a376249b327e1e13d140"
+              "content_digest": "sha256:c3d4b86f7b7401703e1156a8f05bc2a3794f5f84bb38e3f7d9c9e73ca7c2e5a8"
             },
             {
               "path": "conformance/iut/iut_report_v1.schema.json",
-              "content_digest": "sha256:fd1db38eff8ca98b58887ff332c2b6e92033013004cf08c4bf7ce71e5eda7429"
+              "content_digest": "sha256:3ed6f8a8c0f5ba6ec52b1f3a9004ce54fbd74dd103e5790ff2754a976d111a3f"
             },
             {
               "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
@@ -142,15 +142,15 @@
             },
             {
               "path": "conformance/iut/adapter_protocol.schema.json",
-              "content_digest": "sha256:f5317cc1a30c4e1d4ba5a8a6dea985bd4042c410cf4a7289a98254d6486a5d88"
+              "content_digest": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
             },
             {
               "path": "conformance/iut/cases.json",
-              "content_digest": "sha256:092936a38f47a96eed58580b5c1e4e25cd321cbd1277a376249b327e1e13d140"
+              "content_digest": "sha256:c3d4b86f7b7401703e1156a8f05bc2a3794f5f84bb38e3f7d9c9e73ca7c2e5a8"
             },
             {
               "path": "conformance/iut/iut_report_v1.schema.json",
-              "content_digest": "sha256:fd1db38eff8ca98b58887ff332c2b6e92033013004cf08c4bf7ce71e5eda7429"
+              "content_digest": "sha256:3ed6f8a8c0f5ba6ec52b1f3a9004ce54fbd74dd103e5790ff2754a976d111a3f"
             },
             {
               "path": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",

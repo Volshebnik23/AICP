@@ -25,6 +25,7 @@
             "scenario": {
               "profile": "AICP-BASE@0.1",
               "participants": ["agent:A", "agent:B"],
+              "required_participants": ["agent:A", "agent:B"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION"],
               "session_id": "sGT1",
               "contract_id": "cGT1",
@@ -38,6 +39,7 @@
             "scenario": {
               "profile": "AICP-BASE@0.1",
               "participants": ["agent:A", "agent:B"],
+              "required_participants": ["agent:A", "agent:B"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "RESOLVE_CONFLICT"],
               "session_id": "sGT2",
               "contract_id": "cGT2",
@@ -51,6 +53,7 @@
             "scenario": {
               "profile": "AICP-BASE@0.1",
               "participants": ["agent:A", "agent:B"],
+              "required_participants": ["agent:A", "agent:B"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "ATTEST_ACTION"],
               "session_id": "sGT4",
               "contract_id": "cGT4",
@@ -64,6 +67,7 @@
             "scenario": {
               "profile": "AICP-BASE@0.1",
               "participants": ["agent:A", "agent:B"],
+              "required_participants": ["agent:A", "agent:B"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "ATTEST_ACTION"],
               "session_id": "sGT5",
               "contract_id": "cGT5",
@@ -77,6 +81,7 @@
             "scenario": {
               "profile": "AICP-BASE@0.1",
               "participants": ["agent:A", "agent:B"],
+              "required_participants": ["agent:A", "agent:B"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "STATE_SYNC_REQUEST", "STATE_SYNC_RESPONSE", "CONTEXT_AMEND"],
               "session_id": "sGT6",
               "contract_id": "cGT6",
@@ -90,6 +95,7 @@
             "scenario": {
               "profile": "AICP-BASE@0.1",
               "participants": ["agent:A"],
+              "required_participants": ["agent:A"],
               "desired_message_types": ["ERROR"],
               "session_id": "sGT10",
               "contract_id": "cGT10",
@@ -131,6 +137,7 @@
             "scenario": {
               "profile": "AICP-AUTHENTICATED-BASE@0.1",
               "participants": ["agent:S", "agent:T"],
+              "required_participants": ["agent:S", "agent:T"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION"],
               "session_id": "sGT1",
               "contract_id": "cGT1",
@@ -144,6 +151,7 @@
             "scenario": {
               "profile": "AICP-AUTHENTICATED-BASE@0.1",
               "participants": ["agent:S", "agent:T"],
+              "required_participants": ["agent:S", "agent:T"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "RESOLVE_CONFLICT"],
               "session_id": "sGT2",
               "contract_id": "cGT2",
@@ -157,6 +165,7 @@
             "scenario": {
               "profile": "AICP-AUTHENTICATED-BASE@0.1",
               "participants": ["agent:S", "agent:T"],
+              "required_participants": ["agent:S", "agent:T"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "ATTEST_ACTION"],
               "session_id": "sGT4",
               "contract_id": "cGT4",
@@ -170,6 +179,7 @@
             "scenario": {
               "profile": "AICP-AUTHENTICATED-BASE@0.1",
               "participants": ["agent:S", "agent:T"],
+              "required_participants": ["agent:S", "agent:T"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "ATTEST_ACTION"],
               "session_id": "sGT5",
               "contract_id": "cGT5",
@@ -183,6 +193,7 @@
             "scenario": {
               "profile": "AICP-AUTHENTICATED-BASE@0.1",
               "participants": ["agent:S", "agent:T"],
+              "required_participants": ["agent:S", "agent:T"],
               "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "STATE_SYNC_REQUEST", "STATE_SYNC_RESPONSE", "CONTEXT_AMEND"],
               "session_id": "sGT6",
               "contract_id": "cGT6",
@@ -196,6 +207,7 @@
             "scenario": {
               "profile": "AICP-AUTHENTICATED-BASE@0.1",
               "participants": ["agent:S"],
+              "required_participants": ["agent:S"],
               "desired_message_types": ["ERROR"],
               "session_id": "sGT10",
               "contract_id": "cGT10",
@@ -229,7 +241,7 @@
           {"case_id": "AUTH-AB-12", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-12", "fixture": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl", "accepted": false},
           {"case_id": "AUTH-AB-13", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-13", "fixture": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl", "accepted": false},
           {"case_id": "AUTH-AB-14", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-14", "fixture": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl", "accepted": false},
-          {"case_id": "AUTH-CRYPTO-UNAVAILABLE", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-01", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true, "expected_degraded": true, "runtime_options": {"cryptographic_verification": "unavailable"}, "additional": true}
+          {"case_id": "AUTH-CRYPTO-UNAVAILABLE", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-01", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true, "expected_degraded": true, "expected_degraded_reasons": ["Ed25519 verification backend unavailable for requested test mode"], "expected_skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"], "runtime_options": {"cryptographic_verification": "unavailable"}, "additional": true}
         ]
       }
     }

@@ -195,3 +195,7 @@ v1 reports are opt-in through `--report-format v1`, while IUT evidence uses the 
 the frozen UAT protocol or profile semantics. Changing the default report format or making
 the new experimental profile part of a pilot requires an explicit, versioned maintainer
 decision after UAT.
+
+Post-UAT IUT product-profile reports cover one exact profile target. They cannot currently
+compose `aicp.session_state_projection.v1` as a full-profile overlay; strict projection
+evidence is emitted separately until a versioned overlay-provenance model exists.

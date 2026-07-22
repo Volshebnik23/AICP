@@ -71,7 +71,8 @@ The interop intake path uses a small `evidence_status` vocabulary to describe pa
 
 The status should stay aligned with the actual package:
 - `example` / `template` for instructional artifacts only,
-- `self_attested` for a real submitter-published claim package,
+- `self_attested` remains a migration/informational packaging status, but it is not eligible
+  for an ordinary profile mark or a strong profile claim,
 - `reproducible` when repo-style conformance/profile outputs are actually included,
 - `pairwise` only for named peer interoperability claims.
 
@@ -79,8 +80,8 @@ The status should stay aligned with the actual package:
 
 | Claim shape | Minimum evidence expectation |
 |---|---|
-| Implements profile X | Submission manifest + shipped profile ID + reproducible report references + implementation/version metadata |
-| Compatible with profile X | Submission manifest + shipped profile ID + compatible report evidence + disclosures for any limitations |
+| Implements profile X | `evidence_status=reproducible` + exact profile/version + eligible full-profile external-IUT v1 evidence bound to the implementation/build |
+| Compatible with profile X | `evidence_status=reproducible` + exact profile/version + eligible full-profile external-IUT v1 evidence + truthful disclosures |
 | Pairwise interoperable with implementation Y on profile X | Not currently publishable; reserved manifest vocabulary and instructional examples fail closed until a dedicated joint-execution runner exists |
 
 Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
@@ -98,7 +99,9 @@ That means:
 - do not imply the AICP project endorses a vendor or product,
 - do not use compatibility marks without the corresponding evidence.
 
-If compatibility marks are cited, they should trace back to actual report JSON fields such as `compatibility_marks`, together with the associated pass/degraded state.
+If compatibility marks are cited, they must be independently recomputed from eligible
+evidence. The public matrix does not trust or promote arbitrary strings found in a report's
+`compatibility_marks` field; legacy and instructional raw marks remain audit-only content.
 
 Report and bundle digests prove integrity of the tested artifacts, not organizational
 identity. `bundle-integrity.json` is not certification; a self-attested report is not

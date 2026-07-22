@@ -23,7 +23,11 @@ child reaping. `--cmd-json` is the least ambiguous command form.
 Canonical case IDs, fixture paths, expected outcomes, and invalidity labels remain inside
 the runner. Generated output is validated by the runner against the selected profile's
 schemas, hashes, chain invariants, semantic relations, and authentication requirements; it
-is not trusted or compared byte-for-byte merely because the adapter returned it.
+is not trusted or compared byte-for-byte merely because the adapter returned it. Every
+producer message is also bound to the requested exact profile, session, contract,
+declared/required participants, and crypto mode. In `full-profile` mode each scenario runs
+twice with distinct opaque request IDs and the same seed; both results are validated and
+their canonical content digests must match.
 
 ## Smoke versus full profile
 
@@ -45,6 +49,22 @@ A full product-profile mark is emitted only for a complete, passed, non-degraded
 profile, suite, fixture/vector, runner-bundle, and generated-artifact digests. The reference
 adapter always reports `execution_subject.kind=reference_corpus` and therefore receives no
 external implementation profile mark, even when every functional case passes.
+
+The authenticated catalog's required unavailable-crypto probe intentionally reports the
+expected `AUTH-SIGNATURE-VERIFY-01` skip. The runner records that skip and therefore the
+current 37-case authenticated full-profile report is behavioral evidence but does not emit
+an ordinary product-profile mark. This is fail-closed until the catalog can model such a
+probe without claiming that its mandatory crypto check actually ran.
+
+Every consumer result must explicitly contain boolean `accepted`/`degraded` fields and
+array `errors`, `degraded_reasons`, and `skipped_checks` fields. Missing or contradictory
+fields fail closed. Any adapter-reported mandatory skip is recorded and suppresses eligibility,
+including when an adapter incorrectly declares `degraded=false`.
+
+`full-profile` cannot be combined with `--include-session-state-projection`. A product
+profile report covers one exact profile target; strict projection evidence must currently
+be emitted through a separate smoke/capability run until overlay provenance has an explicit
+report model.
 
 Examples:
 

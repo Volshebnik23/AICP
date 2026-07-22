@@ -69,6 +69,7 @@
         "properties": {
           "artifact_id": {"type": "string", "minLength": 1},
           "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "repeat_content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
           "content": {}
         }
       }

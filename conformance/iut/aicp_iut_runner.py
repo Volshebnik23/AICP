@@ -272,8 +272,24 @@ def build_execution_plan(
         append(
             "generate_scenario",
             {"target_profile": profile, "scenario": producer["scenario"]},
-            {"kind": "generate", "required_suites": config["required_suites"], **producer},
+            {
+                "kind": "generate",
+                "target_profile": profile,
+                "required_suites": config["required_suites"],
+                **producer,
+            },
         )
+        if mode == "full-profile":
+            append(
+                "generate_scenario",
+                {"target_profile": profile, "scenario": producer["scenario"]},
+                {
+                    "kind": "generate_repeat",
+                    "target_profile": profile,
+                    "required_suites": config["required_suites"],
+                    **producer,
+                },
+            )
     for case in consumers:
         append(
             "validate_transcript",
@@ -328,6 +344,12 @@ def run_iut(
     max_stdout_bytes: int = 8_388_608,
     max_stderr_bytes: int = 262_144,
 ) -> dict[str, Any]:
+    if mode == "full-profile" and include_session_state_projection:
+        raise IUTProtocolError(
+            "FULL_PROFILE_OVERLAYS_NOT_SUPPORTED: a product-profile full-conformance report "
+            "covers one exact profile target; emit strict session-state projection evidence "
+            "as a separate capability report until overlay provenance is formally modeled"
+        )
     catalog, requests, checks = build_execution_plan(
         profile,
         mode,
@@ -356,6 +378,8 @@ def run_iut(
     skipped_checks: list[str] = []
     first_metadata: dict[str, Any] | None = None
     final_metadata: dict[str, Any] | None = None
+    producer_results: dict[str, dict[str, Any]] = {}
+    producer_artifacts: dict[str, dict[str, Any]] = {}
 
     def record(case_id: str, passed: bool, message: str) -> None:
         case_results.append({"case_id": case_id, "passed": passed, "message": message})
@@ -405,29 +429,53 @@ def run_iut(
                 passed,
                 "canonical bytes/hash match" if passed else "canonical bytes or hash mismatch",
             )
-        elif kind == "generate":
+        elif kind in {"generate", "generate_repeat"}:
             artifact = result.get("artifact")
             generation_errors = validate_generated_artifact(
                 artifact,
                 check["scenario"],
                 check["required_suites"],
+                check["target_profile"],
             )
-            passed = not generation_errors
-            record(
-                check["case_id"],
-                passed,
-                "generated transcript satisfies the neutral scenario and required suites"
-                if passed
-                else "; ".join(generation_errors),
-            )
-            if artifact is not None:
-                generated_artifacts.append(
-                    {
-                        "artifact_id": check["case_id"],
-                        "content_digest": canonical_content_digest(artifact),
+            digest = canonical_content_digest(artifact) if artifact is not None else None
+            case_id = check["case_id"]
+            if kind == "generate":
+                passed = not generation_errors
+                message = (
+                    "generated transcript satisfies the bound neutral scenario and required suites"
+                    if passed
+                    else "; ".join(generation_errors)
+                )
+                record(case_id, passed, message)
+                producer_results[case_id] = case_results[-1]
+                if artifact is not None and digest is not None:
+                    artifact_record = {
+                        "artifact_id": case_id,
+                        "content_digest": digest,
                         "content": artifact,
                     }
-                )
+                    generated_artifacts.append(artifact_record)
+                    producer_artifacts[case_id] = artifact_record
+            else:
+                first_record = producer_results[case_id]
+                first_artifact = producer_artifacts.get(case_id)
+                determinism_errors = list(generation_errors)
+                if first_artifact is None or digest is None:
+                    determinism_errors.append("both deterministic producer executions must return an artifact")
+                elif digest != first_artifact["content_digest"]:
+                    determinism_errors.append(
+                        "repeated generation for the same deterministic scenario and seed changed canonical digest"
+                    )
+                if first_artifact is not None and digest is not None:
+                    first_artifact["repeat_content_digest"] = digest
+                if determinism_errors:
+                    first_record["passed"] = False
+                    repeat_message = "; ".join(determinism_errors)
+                    first_record["message"] = first_record["message"] + "; " + repeat_message
+                    if not any(item["test_id"] == case_id for item in failures):
+                        failures.append({"test_id": case_id, "message": first_record["message"]})
+                elif first_record["passed"]:
+                    first_record["message"] += "; deterministic repeat digest matched"
         elif kind == "project":
             projection_ok = result.get("projection") == check["projection"]
             hash_ok = result.get("session_state_hash") == check["session_state_hash"]
@@ -452,28 +500,76 @@ def run_iut(
                     }
                 )
         elif kind == "validate":
+            missing = [
+                field
+                for field in ("accepted", "errors", "degraded", "degraded_reasons", "skipped_checks")
+                if field not in result
+            ]
             accepted = result.get("accepted")
             errors = result.get("errors")
-            response_degraded = result.get("degraded") is True
+            response_degraded = result.get("degraded")
+            response_reasons = result.get("degraded_reasons")
+            response_skips = result.get("skipped_checks")
             expected_degraded = check.get("expected_degraded") is True
-            passed = accepted is check["accepted"] and isinstance(errors, list)
+            shape_errors: list[str] = []
+            if missing:
+                shape_errors.append("missing required result fields: " + ", ".join(missing))
+            if type(accepted) is not bool:
+                shape_errors.append("accepted must be boolean")
+            if not isinstance(errors, list):
+                shape_errors.append("errors must be an array")
+            if type(response_degraded) is not bool:
+                shape_errors.append("degraded must be boolean")
+            if not isinstance(response_reasons, list) or not all(
+                isinstance(item, str) and item for item in response_reasons or []
+            ):
+                shape_errors.append("degraded_reasons must be an array of non-empty strings")
+            if not isinstance(response_skips, list) or not all(
+                isinstance(item, str) and item for item in response_skips or []
+            ):
+                shape_errors.append("skipped_checks must be an array of non-empty strings")
+
+            reasons = response_reasons if isinstance(response_reasons, list) else []
+            skips = response_skips if isinstance(response_skips, list) else []
+            passed = not shape_errors and accepted is check["accepted"]
+            passed = passed and isinstance(errors, list)
             passed = passed and (not errors if check["accepted"] else bool(errors))
             if expected_degraded:
-                passed = passed and response_degraded and bool(result.get("degraded_reasons"))
-            elif response_degraded:
-                passed = False
-                degraded = True
-                for reason in result.get("degraded_reasons", []) or []:
+                expected_reasons = check.get("expected_degraded_reasons")
+                expected_skips = check.get("expected_skipped_checks")
+                passed = (
+                    passed
+                    and response_degraded is True
+                    and reasons == expected_reasons
+                    and skips == expected_skips
+                )
+                if response_degraded is True:
+                    degraded = True
+                for reason in reasons:
                     if isinstance(reason, str) and reason not in degraded_reasons:
                         degraded_reasons.append(reason)
-                for check_id in result.get("skipped_checks", []) or []:
+                for check_id in skips:
                     if isinstance(check_id, str) and check_id not in skipped_checks:
                         skipped_checks.append(check_id)
+            else:
+                if response_degraded is not False or reasons or skips:
+                    passed = False
+                if response_degraded is True:
+                    degraded = True
+                for reason in reasons:
+                    if isinstance(reason, str) and reason not in degraded_reasons:
+                        degraded_reasons.append(reason)
+                for check_id in skips:
+                    if isinstance(check_id, str) and check_id not in skipped_checks:
+                        skipped_checks.append(check_id)
+            detail = "; ".join(shape_errors)
             record(
                 check["case_id"],
                 passed,
                 f"consumer accepted={accepted}; expected={check['accepted']}; "
-                f"degraded={response_degraded}; expected_degraded={expected_degraded}",
+                f"degraded={response_degraded}; expected_degraded={expected_degraded}; "
+                f"degraded_reasons={reasons}; skipped_checks={skips}"
+                + (f"; {detail}" if detail else ""),
             )
 
     if first_metadata is None or final_metadata is None or first_metadata != final_metadata:

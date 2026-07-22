@@ -1,5 +1,5 @@
 {
-  "submissions_dir": "interop/submissions",
+  "submissions_dir": "interop\\submissions",
   "columns": [
     "AICP-Profile-BASE-0.1",
     "AICP-Profile-MEDIATED-BLOCKING-0.1",
@@ -33,7 +33,7 @@
       ],
       "reports": [
         {
-          "path": "reports/report_profile_base.json",
+          "path": "reports\\report_profile_base.json",
           "suite_id": null,
           "profile_id": "AICP-BASE",
           "passed": true,
@@ -43,7 +43,7 @@
           ]
         },
         {
-          "path": "reports/report_core.json",
+          "path": "reports\\report_core.json",
           "suite_id": "CT-CORE-0.1",
           "profile_id": null,
           "passed": true,
@@ -56,12 +56,15 @@
         "AICP-Core-0.1",
         "AICP-Profile-BASE-0.1"
       ],
-      "computed_marks": [
-        "AICP-Core-0.1",
-        "AICP-Profile-BASE-0.1"
-      ],
+      "computed_marks": [],
+      "evidence_validation_status": "not_promotable",
       "errors": [],
-      "warnings": [],
+      "warnings": [
+        {
+          "warning_code": "NON_PUBLICATION_MARKS_NOT_PROMOTED",
+          "warning_message": "reported marks remain visible for audit but are not promoted outside a real eligible submission"
+        }
+      ],
       "valid": true,
       "matrix_status": "REHEARSAL"
     }
@@ -89,7 +92,7 @@
       ],
       "reports": [
         {
-          "path": "reports/report_profile_mediated_blocking_a.json",
+          "path": "reports\\report_profile_mediated_blocking_a.json",
           "suite_id": null,
           "profile_id": "AICP-MEDIATED-BLOCKING",
           "passed": true,
@@ -99,7 +102,7 @@
           ]
         },
         {
-          "path": "reports/report_profile_mediated_blocking_b.json",
+          "path": "reports\\report_profile_mediated_blocking_b.json",
           "suite_id": null,
           "profile_id": "AICP-MEDIATED-BLOCKING",
           "passed": true,
@@ -109,7 +112,7 @@
           ]
         },
         {
-          "path": "reports/pairwise_summary.json",
+          "path": "reports\\pairwise_summary.json",
           "suite_id": null,
           "profile_id": "AICP-MEDIATED-BLOCKING",
           "passed": null,
@@ -120,14 +123,17 @@
         "AICP-EXT-ENFORCEMENT-0.1",
         "AICP-Profile-MEDIATED-BLOCKING-0.1"
       ],
-      "computed_marks": [
-        "AICP-EXT-ENFORCEMENT-0.1",
-        "AICP-Profile-MEDIATED-BLOCKING-0.1"
-      ],
+      "computed_marks": [],
+      "evidence_validation_status": "not_promotable",
       "errors": [],
-      "warnings": [],
+      "warnings": [
+        {
+          "warning_code": "NON_PUBLICATION_MARKS_NOT_PROMOTED",
+          "warning_message": "reported marks remain visible for audit but are not promoted outside a real eligible submission"
+        }
+      ],
       "valid": true,
-      "matrix_status": "VALID"
+      "matrix_status": "INSTRUCTIONAL"
     },
     {
       "folder": "single_profile_claim",
@@ -151,7 +157,7 @@
       ],
       "reports": [
         {
-          "path": "reports/report_profile_base.json",
+          "path": "reports\\report_profile_base.json",
           "suite_id": null,
           "profile_id": "AICP-BASE",
           "passed": true,
@@ -161,7 +167,7 @@
           ]
         },
         {
-          "path": "reports/report_core.json",
+          "path": "reports\\report_core.json",
           "suite_id": "CT-CORE-0.1",
           "profile_id": null,
           "passed": true,
@@ -174,14 +180,17 @@
         "AICP-Core-0.1",
         "AICP-Profile-BASE-0.1"
       ],
-      "computed_marks": [
-        "AICP-Core-0.1",
-        "AICP-Profile-BASE-0.1"
-      ],
+      "computed_marks": [],
+      "evidence_validation_status": "not_promotable",
       "errors": [],
-      "warnings": [],
+      "warnings": [
+        {
+          "warning_code": "NON_PUBLICATION_MARKS_NOT_PROMOTED",
+          "warning_message": "reported marks remain visible for audit but are not promoted outside a real eligible submission"
+        }
+      ],
       "valid": true,
-      "matrix_status": "VALID"
+      "matrix_status": "INSTRUCTIONAL"
     },
     {
       "folder": "basic_submission",
@@ -206,6 +215,7 @@
       "reports": [],
       "compatibility_marks": [],
       "computed_marks": [],
+      "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
         {
@@ -223,6 +233,7 @@
     "Instructional artifacts are listed separately from real submissions.",
     "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
     "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
-    "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only."
+    "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only.",
+    "Only independently validated reproducible external full-profile IUT evidence produces computed marks."
   ]
 }

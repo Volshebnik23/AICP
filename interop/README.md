@@ -83,6 +83,12 @@ For single-implementation claims, the builder copies supplied reports into
 `bundle-integrity.json`. For the pairwise example, the deterministic validation failure is
 intentional: two independent reports do not establish a shared bidirectional run.
 
+The command above demonstrates package assembly with fictional instructional reports; it
+does not create publication-eligible profile evidence. A real `implements_profile` or
+`compatible_with_profile` package must use `evidence_status=reproducible` and include an
+eligible full-profile external-IUT v1 report. `self_attested`, legacy, instructional, or
+hand-shaped raw marks are never promoted into matrix `computed_marks`.
+
 `bundle-integrity.json` helps reviewers detect accidental drift or tampering after packaging. It does **not** prove signer identity, endorsement, or certification, and validators treat it as optional-but-strict: missing is allowed, present-and-invalid fails.
 
 ## Validate and review interop intake artifacts

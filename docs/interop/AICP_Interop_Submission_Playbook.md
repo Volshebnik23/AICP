@@ -54,7 +54,8 @@ Use the small controlled vocabulary in `submission.json:evidence_status`.
 
 - `example` — instructional artifact only; never market-facing evidence.
 - `template` — starter package only; placeholders must be replaced before any real claim.
-- `self_attested` — real submission published by one implementation with evidence scoped to the submitter's own package.
+- `self_attested` — migration/informational packaging status for submitter-published
+  material; it cannot support an ordinary profile mark or a strong profile claim.
 - `reproducible` — real submission where the package includes reproducible repo-style conformance/profile report evidence for the stated profile claim.
 - `pairwise` — reserved vocabulary for a future joint-execution evidence format. Real
   submissions using it currently fail closed with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
@@ -70,13 +71,17 @@ Use this path when you are making a claim such as:
 Recommended shape:
 - `claim_type`: `implements_profile` or `compatible_with_profile`
 - `claim_scope`: `self_attested`
-- `evidence_status`: `self_attested` or `reproducible`
+- `evidence_status`: exactly `reproducible`
 - no `peer_implementation_id`
 - one or more report JSON files in `report_refs`, including an eligible `full-profile`
   external-IUT v1 report for a real reproducible claim. Smoke and legacy reports are
   diagnostic/migration artifacts and are not eligible for this claim.
 
 Prefer `reproducible` when the package includes actual conformance/profile report outputs generated from shipped repo tooling.
+
+The validator rejects `implements_profile` or `compatible_with_profile` paired with
+`self_attested` using `STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_IUT`. Retaining that enum
+does not create a weaker certification tier.
 
 ## Pairwise vocabulary is currently instructional only
 
@@ -113,6 +118,9 @@ support a real external claim. Use `conformance/iut/aicp_iut_runner.py` against 
 adapter in `full-profile` mode so the v1 report binds implementation/build metadata, the
 registered TCK release and runner digest, suite/profile digests, exact mandatory cases, and
 input/generated artifact digests. Required checks must pass without degradation or skips.
+Full-profile producer output is bound to the requested session, contract, participants,
+exact profile, crypto mode, and deterministic seed. Capability overlays are not part of a
+product-profile report: strict state-projection evidence must be emitted separately.
 
 The validator expects referenced files to exist for real submissions and examples. Templates may intentionally keep placeholder `report_refs` until a real submitter replaces them; the matrix renders those as instructional warnings rather than as failed real-submission evidence.
 

@@ -7,6 +7,7 @@ import hashlib
 import json
 import sys
 from collections import Counter
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -50,6 +51,18 @@ PAIRWISE_JOINT_EVIDENCE_ERROR = (
     "a dedicated joint-execution format binds one shared run, both named builds, and "
     "artifacts consumed in every required direction"
 )
+STRONG_PROFILE_CLAIM_EVIDENCE_ERROR = (
+    "STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_IUT: "
+    "implements_profile and compatible_with_profile claims require evidence_status='reproducible' "
+    "and an independently eligible external full-profile IUT report"
+)
+
+
+@dataclass(frozen=True)
+class StrongEvidenceEvaluation:
+    errors: tuple[str, ...]
+    eligible_marks: tuple[str, ...]
+    status: str
 
 
 def load_json(path: Path) -> Any:
@@ -637,6 +650,10 @@ def _eligible_external_profile_report(
             continue
         if item.get("content_digest") != canonical_content_digest(item.get("content")):
             errors.append(f"generated artifact digest mismatch for {item.get('artifact_id')}")
+        if item.get("repeat_content_digest") != item.get("content_digest"):
+            errors.append(
+                f"generated artifact determinism evidence mismatch for {item.get('artifact_id')}"
+            )
 
     expected_cases = mandatory_case_ids(catalog, target, "full-profile")
     case_results = report.get("case_results")
@@ -664,11 +681,34 @@ def _eligible_external_profile_report(
     return errors
 
 
-def _validate_strong_report_evidence(path: Path, manifest: dict[str, Any]) -> list[str]:
+def evaluate_strong_report_evidence(
+    path: Path, manifest: dict[str, Any]
+) -> StrongEvidenceEvaluation:
     errors: list[str] = []
     claims = _profile_claims(manifest)
     if not claims:
-        return ["real submissions require exact profile_refs with profile_id and profile_version"]
+        return StrongEvidenceEvaluation(
+            ("real submissions require exact profile_refs with profile_id and profile_version",),
+            (),
+            "rejected",
+        )
+
+    claim_type = manifest.get("claim_type")
+    if claim_type in {"implements_profile", "compatible_with_profile"}:
+        if manifest.get("evidence_status") != "reproducible":
+            return StrongEvidenceEvaluation(
+                (STRONG_PROFILE_CLAIM_EVIDENCE_ERROR,),
+                (),
+                "rejected",
+            )
+    elif claim_type == "pairwise_interop":
+        return StrongEvidenceEvaluation(
+            (PAIRWISE_JOINT_EVIDENCE_ERROR,),
+            (),
+            "rejected",
+        )
+    else:
+        return StrongEvidenceEvaluation((), (), "not_applicable")
 
     reports: list[tuple[str, dict[str, Any]]] = []
     for ref in manifest.get("report_refs", []):
@@ -684,41 +724,47 @@ def _validate_strong_report_evidence(path: Path, manifest: dict[str, Any]) -> li
         if isinstance(report, dict):
             reports.append((ref, report))
 
-    claim_type = manifest.get("claim_type")
     implementation_id = manifest.get("implementation_id")
     implementation_version = manifest.get("implementation_version")
     if not isinstance(implementation_id, str) or not isinstance(implementation_version, str):
-        return errors
+        return StrongEvidenceEvaluation((), (), "rejected")
 
-    if claim_type in {"implements_profile", "compatible_with_profile"}:
-        if manifest.get("evidence_status") != "reproducible":
-            return errors
-        for profile_id, profile_version in claims:
-            eligible = False
-            report_errors: list[str] = []
-            for ref, report in reports:
-                current = _eligible_external_profile_report(
-                    report,
-                    implementation_id=implementation_id,
-                    implementation_version=implementation_version,
-                    profile_id=profile_id,
-                    profile_version=profile_version,
-                )
-                if not current:
-                    eligible = True
-                    break
-                report_errors.append(f"{ref}: " + "; ".join(current))
-            if not eligible:
-                errors.append(
-                    f"no eligible external IUT report proves {profile_id}@{profile_version} for "
-                    f"{implementation_id}@{implementation_version}"
-                )
-                errors.extend(report_errors)
-        return errors
+    eligible_marks: set[str] = set()
+    catalog = load_json(IUT_CASES_PATH)
+    for profile_id, profile_version in claims:
+        eligible = False
+        report_errors: list[str] = []
+        for ref, report in reports:
+            current = _eligible_external_profile_report(
+                report,
+                implementation_id=implementation_id,
+                implementation_version=implementation_version,
+                profile_id=profile_id,
+                profile_version=profile_version,
+            )
+            if not current:
+                eligible = True
+                break
+            report_errors.append(f"{ref}: " + "; ".join(current))
+        if not eligible:
+            errors.append(
+                f"no eligible external IUT report proves {profile_id}@{profile_version} for "
+                f"{implementation_id}@{implementation_version}"
+            )
+            errors.extend(report_errors)
+            continue
+        profile = catalog.get("profiles", {}).get(f"{profile_id}@{profile_version}")
+        expected_mark = profile.get("expected_mark") if isinstance(profile, dict) else None
+        if isinstance(expected_mark, str):
+            eligible_marks.add(expected_mark)
 
-    if claim_type != "pairwise_interop":
-        return errors
-    return [PAIRWISE_JOINT_EVIDENCE_ERROR]
+    if errors:
+        return StrongEvidenceEvaluation(tuple(errors), (), "rejected")
+    return StrongEvidenceEvaluation((), tuple(sorted(eligible_marks)), "eligible")
+
+
+def _validate_strong_report_evidence(path: Path, manifest: dict[str, Any]) -> list[str]:
+    return list(evaluate_strong_report_evidence(path, manifest).errors)
 
 
 def validate_bundle_integrity(

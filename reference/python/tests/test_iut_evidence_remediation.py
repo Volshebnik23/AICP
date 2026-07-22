@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parents[3]
 IUT_DIR = ROOT / "conformance/iut"
 RUNNER_DIR = ROOT / "conformance/runner"
 SCRIPTS_DIR = ROOT / "scripts"
-for path in (IUT_DIR, RUNNER_DIR, SCRIPTS_DIR):
+INTEROP_TOOLS_DIR = ROOT / "interop/tools"
+for path in (IUT_DIR, RUNNER_DIR, SCRIPTS_DIR, INTEROP_TOOLS_DIR):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
@@ -27,7 +28,12 @@ from aicp_iut_runner import (  # noqa: E402
     run_iut,
 )
 from aicp_profile_runner import run_profile  # noqa: E402
-from interop_submission_validation import _validate_strong_report_evidence  # noqa: E402
+from interop_matrix import build_matrix  # noqa: E402
+from interop_submission_validation import (  # noqa: E402
+    STRONG_PROFILE_CLAIM_EVIDENCE_ERROR,
+    _validate_strong_report_evidence,
+)
+from generate_iut_tck_release_registry import build_registry  # noqa: E402
 
 
 def _cmd(*parts: str) -> list[str]:
@@ -51,6 +57,7 @@ def external_auth_report() -> dict:
         _fake("external_good"),
         "AICP-AUTHENTICATED-BASE@0.1",
         mode="full-profile",
+        timeout_seconds=60,
     )
     assert report["passed"] is True, report["failures"]
     return report
@@ -80,9 +87,9 @@ def test_full_profile_marks_require_external_complete_coverage(
     assert len(external_base_report["case_results"]) == 21
     assert external_base_report["compatibility_marks"] == ["AICP-Profile-BASE-0.1"]
     assert len(external_auth_report["case_results"]) == 37
-    assert external_auth_report["compatibility_marks"] == [
-        "AICP-Profile-AUTHENTICATED-BASE-0.1"
-    ]
+    assert external_auth_report["degraded"] is True
+    assert external_auth_report["skipped_checks"] == ["AUTH-SIGNATURE-VERIFY-01"]
+    assert external_auth_report["compatibility_marks"] == []
     reference = run_iut(
         _cmd(str(IUT_DIR / "reference_adapter.py")),
         "AICP-BASE@0.1",
@@ -107,7 +114,7 @@ def test_full_profile_marks_require_external_complete_coverage(
 def test_full_profile_rejects_deliberately_incomplete_or_forged_adapters(
     mode: str, profile: str
 ) -> None:
-    report = run_iut(_fake(mode), profile, mode="full-profile")
+    report = run_iut(_fake(mode), profile, mode="full-profile", timeout_seconds=60)
     assert report["passed"] is False
     assert report["compatibility_marks"] == []
 
@@ -135,6 +142,11 @@ def test_adapter_requests_do_not_leak_runner_answers() -> None:
         assert "_expected_fail" not in serialized
         assert "AUTH-AB-" not in serialized
         assert "AUTH-CORE-GT-" not in serialized
+    producer_requests = [item for item in requests if item["operation"] == "generate_scenario"]
+    assert len(producer_requests) == 12
+    assert len({item["request_id"] for item in producer_requests}) == 12
+    for first, repeat in zip(producer_requests[::2], producer_requests[1::2]):
+        assert first["input"] == repeat["input"]
 
 
 def _probe_request(payload_size: int = 0) -> list[dict]:
@@ -162,20 +174,22 @@ def test_never_read_stdin_is_bounded_across_large_pipe_write() -> None:
 
 
 @pytest.mark.parametrize(
-    "mode,match",
+    "mode,match,timeout_seconds",
     [
-        ("stdout_overflow", "stdout exceeded"),
-        ("stderr_overflow", "stderr exceeded"),
-        ("partial_hang", "timed out"),
-        ("early_exit", "exited before consuming|returned 0 responses"),
+        ("stdout_overflow", "stdout exceeded", 10.0),
+        ("stderr_overflow", "stderr exceeded", 10.0),
+        ("partial_hang", "timed out", 2.0),
+        ("early_exit", "exited before consuming|returned 0 responses", 10.0),
     ],
 )
-def test_process_supervision_fails_closed(mode: str, match: str) -> None:
+def test_process_supervision_fails_closed(
+    mode: str, match: str, timeout_seconds: float
+) -> None:
     with pytest.raises(IUTProtocolError, match=match):
         invoke_adapter(
             _fake(mode),
             _probe_request(200_000 if mode == "early_exit" else 0),
-            timeout_seconds=2.0,
+            timeout_seconds=timeout_seconds,
             max_stdout_bytes=4096,
             max_stderr_bytes=4096,
         )
@@ -242,6 +256,7 @@ def test_strong_evidence_rejects_incomplete_coverage_and_forged_provenance(
     add("wrong_tck_runner_digest", lambda report: report["tck_release"].update({"runner_bundle_digest": "sha256:" + "0" * 64}))
     add("wrong_tck_case_digest", lambda report: report["tck_release"].update({"case_catalog_digest": "sha256:" + "0" * 64}))
     add("wrong_generated_digest", lambda report: report["generated_artifacts"][0].update({"content_digest": "sha256:" + "0" * 64}))
+    add("wrong_repeat_digest", lambda report: report["generated_artifacts"][0].update({"repeat_content_digest": "sha256:" + "0" * 64}))
     add("reference_subject", lambda report: report["execution_subject"].update({"kind": "reference_corpus"}))
     add("degraded", lambda report: report.update({"degraded": True, "degraded_reasons": ["test"]}))
     add("skipped", lambda report: report.update({"skipped_checks": ["MANDATORY"]}))
@@ -251,6 +266,98 @@ def test_strong_evidence_rejects_incomplete_coverage_and_forged_provenance(
         mutate(candidate)
         errors = _validate_report(tmp_path, candidate)
         assert errors, name
+
+
+@pytest.mark.parametrize("claim_type", ["implements_profile", "compatible_with_profile"])
+def test_self_attested_strong_profile_claims_fail_closed(
+    tmp_path: Path, external_base_report: dict, claim_type: str
+) -> None:
+    manifest = _manifest_for(external_base_report)
+    manifest.update({"claim_type": claim_type, "evidence_status": "self_attested"})
+    errors = _validate_report(tmp_path, external_base_report, manifest)
+    assert errors == [STRONG_PROFILE_CLAIM_EVIDENCE_ERROR]
+
+
+def test_reproducible_strong_claim_without_eligible_report_is_rejected(tmp_path: Path) -> None:
+    package = tmp_path / "empty"
+    package.mkdir()
+    manifest = {
+        "implementation_id": "external-a",
+        "implementation_version": "1.0.0",
+        "profile_refs": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}],
+        "report_refs": [],
+        "claim_type": "implements_profile",
+        "evidence_status": "reproducible",
+    }
+    errors = _validate_strong_report_evidence(package / "submission.json", manifest)
+    assert any("no eligible external IUT report" in error for error in errors)
+
+
+def test_smoke_report_cannot_prove_compatible_with_profile(
+    tmp_path: Path, external_base_report: dict
+) -> None:
+    report = copy.deepcopy(external_base_report)
+    report["execution_mode"] = "smoke"
+    report["compatibility_marks"] = []
+    manifest = _manifest_for(report)
+    manifest["claim_type"] = "compatible_with_profile"
+    errors = _validate_report(tmp_path, report, manifest)
+    assert any("IUT_SMOKE_EVIDENCE_INELIGIBLE" in error for error in errors)
+
+
+def test_matrix_computes_only_independently_eligible_marks(
+    tmp_path: Path, external_base_report: dict
+) -> None:
+    submissions = tmp_path / "submissions"
+
+    def write_package(name: str, report: dict, *, evidence_status: str = "reproducible") -> None:
+        package = submissions / name
+        reports = package / "reports"
+        reports.mkdir(parents=True)
+        (reports / "iut.json").write_text(json.dumps(report), encoding="utf-8")
+        manifest = _manifest_for(external_base_report)
+        manifest.update(
+            {
+                "submission_id": name,
+                "evidence_status": evidence_status,
+                "report_refs": ["reports/iut.json"],
+            }
+        )
+        (package / "submission.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    write_package("eligible", external_base_report)
+    hand_shaped = {
+        "compatibility_marks": ["AICP-Profile-BASE-0.1"],
+        "passed": True,
+    }
+    write_package("hand-shaped", hand_shaped)
+    write_package("self-attested", external_base_report, evidence_status="self_attested")
+
+    entries = {item["folder"]: item for item in build_matrix(submissions)["real_submissions"]}
+    assert entries["eligible"]["computed_marks"] == ["AICP-Profile-BASE-0.1"]
+    assert entries["eligible"]["evidence_validation_status"] == "eligible"
+    for name in ("hand-shaped", "self-attested"):
+        assert entries[name]["computed_marks"] == []
+        assert entries[name]["evidence_validation_status"] == "rejected"
+        assert any(item["error_code"] == "STRONG_EVIDENCE_INELIGIBLE" for item in entries[name]["errors"])
+
+
+def test_generated_tck_registry_is_exact_and_all_artifacts_recompute() -> None:
+    committed = json.loads((IUT_DIR / "tck_releases.json").read_text(encoding="utf-8"))
+    assert committed == build_registry()
+    release = committed["releases"][0]
+    for record in [release["case_catalog"]]:
+        assert (ROOT / record["path"]).is_file()
+    for path in release["runner_bundle"]["paths"]:
+        assert (ROOT / path).is_file()
+    for profile in release["profiles"].values():
+        records = [
+            profile["profile_catalog"],
+            *profile["required_suites"],
+            *profile["required_input_artifacts"],
+        ]
+        for record in records:
+            assert (ROOT / record["path"]).is_file()
 
 
 def test_subject_version_mismatch_is_rejected(

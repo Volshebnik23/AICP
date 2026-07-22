@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "cb3b34380b6cc58d305e1e53214f902c1fe67777d2137e8d84d4972215d0baae",
+      "combined_sha256": "8299bc54c0a2f8a49eb0032dd37c2275c330c0a102547cf7ccafe0423529e65e",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -209,19 +209,19 @@
         },
         {
           "path": "conformance/iut/adapter_protocol.schema.json",
-          "sha256": "f5317cc1a30c4e1d4ba5a8a6dea985bd4042c410cf4a7289a98254d6486a5d88"
+          "sha256": "6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
         },
         {
           "path": "conformance/iut/cases.json",
-          "sha256": "092936a38f47a96eed58580b5c1e4e25cd321cbd1277a376249b327e1e13d140"
+          "sha256": "c3d4b86f7b7401703e1156a8f05bc2a3794f5f84bb38e3f7d9c9e73ca7c2e5a8"
         },
         {
           "path": "conformance/iut/iut_report_v1.schema.json",
-          "sha256": "fd1db38eff8ca98b58887ff332c2b6e92033013004cf08c4bf7ce71e5eda7429"
+          "sha256": "3ed6f8a8c0f5ba6ec52b1f3a9004ce54fbd74dd103e5790ff2754a976d111a3f"
         },
         {
           "path": "conformance/iut/tck_releases.json",
-          "sha256": "f65316a7ac9043991ce3b91221c873e9a3a7d1dce5352f2106ace26af938ba36"
+          "sha256": "6f5868f46917bd78d752f68edbee5df6523edc4325b67e06bcd6bfc36629558c"
         },
         {
           "path": "conformance/ops/OPS_HARDENING_0.1.json",

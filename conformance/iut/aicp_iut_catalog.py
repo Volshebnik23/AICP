@@ -171,6 +171,34 @@ def validate_catalog_coverage(catalog: dict[str, Any], profile: str) -> list[str
     for item in producers:
         if not (ROOT / str(item.get("template_fixture", ""))).is_file():
             errors.append(f"producer template fixture is missing for {item.get('case_id')}")
+        scenario = item.get("scenario")
+        if not isinstance(scenario, dict):
+            errors.append(f"producer scenario is missing for {item.get('case_id')}")
+            continue
+        if scenario.get("profile") != profile:
+            errors.append(f"producer scenario profile must exactly match {profile} for {item.get('case_id')}")
+        for field in ("session_id", "contract_id", "deterministic_seed"):
+            if not isinstance(scenario.get(field), str) or not scenario.get(field):
+                errors.append(f"producer scenario {field} must be non-empty for {item.get('case_id')}")
+        participants = scenario.get("participants")
+        required_participants = scenario.get("required_participants")
+        if not isinstance(participants, list) or not all(
+            isinstance(value, str) and value for value in participants
+        ):
+            errors.append(f"producer scenario participants must be non-empty strings for {item.get('case_id')}")
+        if not isinstance(required_participants, list) or not all(
+            isinstance(value, str) and value for value in required_participants
+        ):
+            errors.append(
+                f"producer scenario required_participants must be non-empty strings for {item.get('case_id')}"
+            )
+        elif isinstance(participants, list) and not set(required_participants).issubset(set(participants)):
+            errors.append(f"producer required participants exceed declared participants for {item.get('case_id')}")
+        expected_crypto = "required" if profile == "AICP-AUTHENTICATED-BASE@0.1" else "optional"
+        if scenario.get("cryptographic_mode") != expected_crypto:
+            errors.append(
+                f"producer cryptographic_mode must be {expected_crypto!r} for {item.get('case_id')}"
+            )
     for item in consumers:
         if not (ROOT / str(item.get("fixture", ""))).is_file():
             errors.append(f"consumer fixture is missing for {item.get('case_id')}")

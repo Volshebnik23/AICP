@@ -83,6 +83,7 @@ def validate_generated_artifact(
     artifact: Any,
     scenario: dict[str, Any],
     suite_refs: list[str],
+    target_profile: str,
 ) -> list[str]:
     if not isinstance(artifact, list) or not artifact or not all(isinstance(item, dict) for item in artifact):
         return ["generated artifact must be a non-empty transcript array"]
@@ -92,10 +93,37 @@ def validate_generated_artifact(
     errors: list[str] = []
     if actual_types != desired_types:
         errors.append("generated transcript message-type sequence does not match the neutral scenario")
+    if scenario.get("profile") != target_profile:
+        errors.append("neutral scenario profile does not match the requested exact target profile")
+    expected_session = scenario.get("session_id")
+    if any(message.get("session_id") != expected_session for message in messages):
+        errors.append("generated transcript is not bound to the requested session_id")
+    expected_contract = scenario.get("contract_id")
+    if any(message.get("contract_id") != expected_contract for message in messages):
+        errors.append("generated transcript is not bound to the requested contract_id")
     participants = set(item for item in scenario.get("participants", []) if isinstance(item, str))
     senders = set(message.get("sender") for message in messages if isinstance(message.get("sender"), str))
     if not senders.issubset(participants):
         errors.append("generated transcript contains a sender outside the scenario participants")
+    required_participants = set(
+        item for item in scenario.get("required_participants", []) if isinstance(item, str)
+    )
+    if not required_participants.issubset(senders):
+        errors.append("generated transcript omits a participant required by the neutral scenario")
+    crypto_mode = scenario.get("cryptographic_mode")
+    if crypto_mode == "required":
+        if target_profile != "AICP-AUTHENTICATED-BASE@0.1":
+            errors.append("cryptographic_mode=required must target AICP-AUTHENTICATED-BASE@0.1")
+        for index, message in enumerate(messages, start=1):
+            signatures = message.get("signatures")
+            sender = message.get("sender")
+            if not isinstance(signatures, list) or not any(
+                isinstance(signature, dict) and signature.get("signer") == sender
+                for signature in signatures
+            ):
+                errors.append(f"generated message {index} lacks a sender signature required by the profile")
+    elif crypto_mode != "optional":
+        errors.append("neutral scenario cryptographic_mode must be 'optional' or 'required'")
     suite_errors, degraded, reasons, skipped = evaluate_transcript(messages, suite_refs)
     errors.extend(f"{item['code']}: {item['message']}" for item in suite_errors)
     if degraded:

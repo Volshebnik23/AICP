@@ -219,3 +219,8 @@ conformance/profile v1 reports with `--report-format v1`; external-IUT evidence 
 separately by `conformance/iut/iut_report_v1.schema.json`. Neither opt-in path changes the
 frozen UAT baseline, and a future default-format migration requires an explicit maintainer
 decision.
+
+External full-profile IUT reports cover one exact product profile and cannot include the
+strict state-projection capability overlay. Emit that capability evidence separately; this
+restriction keeps post-UAT report provenance unambiguous without changing the frozen UAT
+baseline.

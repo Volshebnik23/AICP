@@ -14,6 +14,14 @@ _Last updated: 2026-07-22_
 - **Shipped:** strong external evidence is schema-, coverage-, subject-, mark-, and
   provenance-driven; incomplete, forged, degraded, skipped, reference-corpus, or
   digest-mismatched reports are rejected.
+- **Shipped:** strong profile claims require reproducible external-IUT evidence;
+  self-attested, legacy, instructional, and hand-shaped raw marks are never promoted by the
+  matrix.
+- **Shipped:** consumer result fields fail closed, adapter-reported skips are always processed,
+  and full producer output is bound to scenario identity/crypto inputs plus a repeated
+  canonical-digest determinism check.
+- **Shipped:** full-profile capability overlays fail before adapter launch; strict session
+  projection remains a separately reported capability until overlay provenance is modeled.
 - **Shipped:** adapter requests use opaque challenges and neutral producer scenarios, and
   one monotonic deadline now bounds stdin, stdout/stderr, process completion, cleanup, and
   child reaping.
@@ -25,7 +33,7 @@ _Last updated: 2026-07-22_
 - **Preserved:** experimental strict portable session-state projection,
   `AICP-AUTHENTICATED-BASE@0.1`, Unicode code-point parity, sandbox signature validation,
   legacy object-resync behavior, and all existing `@0.1` profile semantics.
-- **Verification:** `make prepr` (153 Python tests and 16 TypeScript tests),
+- **Verification:** `make prepr` (170 Python tests and 16 TypeScript tests),
   `make compatibility-gate`, `make release-check`, planning validation, full reference IUT,
   positive external-kind fake IUT, and required negative fake-adapter paths all passed on
   2026-07-22.

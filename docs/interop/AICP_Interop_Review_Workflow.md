@@ -91,6 +91,8 @@ Maintainers should verify:
 - the claim is clearly self-published,
 - disclosures explain any evidence limitations,
 - the package does not imply third-party confirmation.
+- `claim_type` is not `implements_profile` or `compatible_with_profile`, and no ordinary
+  profile mark is computed or published from the package.
 
 ### `reproducible`
 
@@ -157,6 +159,8 @@ Matrix publication should happen **after** the real submission is reviewable and
 - real valid submissions can appear in the public matrix,
 - examples/templates remain clearly instructional and separate from real external rows,
 - `evidence_status` is shown as package-strength/scope metadata only and does not imply endorsement.
+- computed marks come only from the shared full-profile eligibility validator; raw legacy,
+  instructional, or hand-shaped report marks are never promoted.
 
 ## What does not happen during review
 

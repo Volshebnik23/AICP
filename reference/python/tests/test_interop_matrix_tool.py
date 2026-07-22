@@ -60,7 +60,9 @@ def test_interop_matrix_tool_with_submission(tmp_path: Path) -> None:
     assert "| impl-one | VALID |" in md
     impl = next(i for i in data["implementations"] if i.get("implementation", {}).get("implementation_id") == "impl-one")
     assert impl["valid"] is True
-    assert "AICP-Profile-BASE-0.1" in impl["computed_marks"]
+    assert impl["compatibility_marks"] == ["AICP-Profile-BASE-0.1"]
+    assert impl["computed_marks"] == []
+    assert impl["evidence_validation_status"] == "not_promotable"
 
 
 def test_interop_matrix_tool_marks_id_mismatch_invalid(tmp_path: Path) -> None:

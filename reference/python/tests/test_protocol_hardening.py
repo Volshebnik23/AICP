@@ -152,13 +152,60 @@ def test_iut_fake_adapters_are_rejected(
     report = run_iut(
         _cmd(str(IUT_DIR / "fakes/fake_adapter.py"), "--mode", mode),
         profile,
-        mode="full-profile",
+        mode="smoke" if include_state else "full-profile",
         include_session_state_projection=include_state,
-        timeout_seconds=20,
+        timeout_seconds=60,
     )
     assert report["passed"] is False
     assert report["compatibility_marks"] == []
     assert any(expected_case in failure["test_id"] for failure in report["failures"])
+
+
+@pytest.mark.parametrize(
+    ("mode", "profile"),
+    [
+        ("skipped_without_degraded", "AICP-BASE@0.1"),
+        ("degraded_reason_without_degraded", "AICP-BASE@0.1"),
+        ("wrong_degraded_skip", "AICP-AUTHENTICATED-BASE@0.1"),
+        ("missing_skipped_checks_field", "AICP-BASE@0.1"),
+        ("wrong_producer_session", "AICP-BASE@0.1"),
+        ("wrong_producer_contract", "AICP-BASE@0.1"),
+        ("undeclared_producer_sender", "AICP-BASE@0.1"),
+        ("unsigned_authenticated_producer", "AICP-AUTHENTICATED-BASE@0.1"),
+        ("nondeterministic_producer", "AICP-BASE@0.1"),
+    ],
+)
+def test_iut_truthfulness_fakes_fail_without_marks(mode: str, profile: str) -> None:
+    report = run_iut(
+        _cmd(str(IUT_DIR / "fakes/fake_adapter.py"), "--mode", mode),
+        profile,
+        mode="full-profile",
+        timeout_seconds=60,
+    )
+    assert report["passed"] is False
+    assert report["compatibility_marks"] == []
+    if mode == "skipped_without_degraded":
+        assert "MANDATORY" in report["skipped_checks"]
+
+
+def test_full_profile_overlay_rejected_before_adapter_launch(monkeypatch) -> None:
+    def unexpected_launch(*args, **kwargs):
+        raise AssertionError("adapter must not launch")
+
+    monkeypatch.setattr("aicp_iut_runner.invoke_adapter", unexpected_launch)
+    with pytest.raises(IUTProtocolError, match="FULL_PROFILE_OVERLAYS_NOT_SUPPORTED"):
+        run_iut(
+            _cmd(str(IUT_DIR / "reference_adapter.py")),
+            "AICP-BASE@0.1",
+            mode="full-profile",
+            include_session_state_projection=True,
+        )
+
+
+def test_adapter_protocol_schema_identifier_matches_version() -> None:
+    schema = json.loads((IUT_DIR / "adapter_protocol.schema.json").read_text(encoding="utf-8"))
+    assert schema["$id"] == "https://aicp.dev/schemas/iut-adapter-protocol-1.1.json"
+    assert schema["$defs"]["Request"]["properties"]["adapter_protocol_version"]["const"] == "1.1"
 
 
 def test_iut_timeout_is_bounded() -> None:

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://aicp.dev/schemas/iut-adapter-protocol-1.0.json",
+  "$id": "https://aicp.dev/schemas/iut-adapter-protocol-1.1.json",
   "title": "AICP IUT Adapter JSONL Record",
   "oneOf": [
     { "$ref": "#/$defs/Request" },

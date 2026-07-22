@@ -67,6 +67,8 @@ manifest subject, registered TCK release, complete mandatory case set, suite/pro
 every required fixture/vector digest, generated artifacts, non-degraded/no-skip state, and
 the exact recomputed mark list. Smoke, legacy, and `reference_corpus` reports are migration
 errors for strong external evidence, not proof of an external product.
+Strong `implements_profile` and `compatible_with_profile` claims also require
+`evidence_status=reproducible`; `self_attested` cannot bypass this rule.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
@@ -104,7 +106,9 @@ The corpus supports two common packaging shapes.
 
 ### Self-attested / single-implementation claim package
 
-Use this when one implementation is claiming profile implementation or compatibility based on its own reproducible conformance/profile evidence.
+Use this packaging shape for one implementation's material. A strong profile claim remains
+publication-ineligible unless its evidence status is `reproducible` and its full-profile
+external-IUT v1 report passes independent eligibility validation.
 
 Typical shape:
 - one `implementation_id`,
@@ -143,6 +147,10 @@ Submission packages use a small controlled vocabulary in `evidence_status`:
 - `pairwise`
 
 This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement. Template packages may retain placeholder `report_refs`; those placeholders are treated as instructional warnings in the matrix, not as real-submission failures or compatibility proof.
+
+The matrix preserves raw legacy/instructional report contents for audit visibility but
+computes ordinary profile marks only by reusing the strong-evidence validator. It never
+promotes a hand-shaped or legacy `compatibility_marks` string.
 
 ## Review and publication workflow
 

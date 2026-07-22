@@ -14,6 +14,7 @@ if str(IUT_DIR) not in sys.path:
     sys.path.insert(0, str(IUT_DIR))
 
 from reference_adapter import handle_request  # noqa: E402
+from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 
 
 MODES = [
@@ -24,6 +25,15 @@ MODES = [
     "incomplete_core",
     "incomplete_authenticated",
     "missing_mandatory_case_support",
+    "skipped_without_degraded",
+    "degraded_reason_without_degraded",
+    "wrong_degraded_skip",
+    "missing_skipped_checks_field",
+    "wrong_producer_session",
+    "wrong_producer_contract",
+    "undeclared_producer_sender",
+    "unsigned_authenticated_producer",
+    "nondeterministic_producer",
     "mismatched_projection",
     "forged_metadata",
     "lies_metadata",
@@ -50,6 +60,23 @@ def _errors_contain(result: dict[str, Any], fragments: tuple[str, ...]) -> bool:
     return False
 
 
+def _make_valid_unsigned_variant(transcript: list[dict[str, Any]]) -> None:
+    """Change canonical content while preserving a valid optional-crypto hash chain."""
+    previous_hash: str | None = None
+    for index, message in enumerate(transcript):
+        message.pop("signatures", None)
+        if index == 0:
+            message["timestamp"] = "2026-01-01T00:00:01Z"
+            message.pop("prev_msg_hash", None)
+        else:
+            message["prev_msg_hash"] = previous_hash
+        body = dict(message)
+        body.pop("message_hash", None)
+        body.pop("signatures", None)
+        message["message_hash"] = message_hash_from_body(body)
+        previous_hash = message["message_hash"]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", required=True, choices=MODES)
@@ -72,6 +99,7 @@ def main() -> int:
         return 0
 
     describes = 0
+    generation_counts: dict[str, int] = {}
     for raw in sys.stdin:
         request: dict[str, Any] = json.loads(raw)
         response = handle_request(request)
@@ -126,10 +154,51 @@ def main() -> int:
                         "errors": [{"code": "unsupported", "message": "ERROR messages unsupported"}],
                     }
                 )
-        elif args.mode == "missing_mandatory_case_support" and operation == "generate_scenario":
+            elif args.mode == "skipped_without_degraded" and result.get("accepted") is True:
+                result.update(
+                    {
+                        "degraded": False,
+                        "degraded_reasons": [],
+                        "skipped_checks": ["MANDATORY"],
+                    }
+                )
+            elif args.mode == "degraded_reason_without_degraded" and result.get("accepted") is True:
+                result.update(
+                    {
+                        "degraded": False,
+                        "degraded_reasons": ["contradictory degraded reason"],
+                        "skipped_checks": [],
+                    }
+                )
+            elif (
+                args.mode == "wrong_degraded_skip"
+                and input_obj.get("runtime_options", {}).get("cryptographic_verification") == "unavailable"
+            ):
+                result["skipped_checks"] = ["WRONG-MANDATORY-CHECK"]
+            elif args.mode == "missing_skipped_checks_field":
+                result.pop("skipped_checks", None)
+        elif operation == "generate_scenario":
             scenario = input_obj.get("scenario") or {}
-            if scenario.get("desired_message_types") == ["ERROR"]:
+            artifact = result.get("artifact")
+            if args.mode == "missing_mandatory_case_support" and scenario.get("desired_message_types") == ["ERROR"]:
                 result["artifact"] = []
+            elif isinstance(artifact, list):
+                if args.mode == "wrong_producer_session":
+                    for message in artifact:
+                        message["session_id"] = "wrong-session"
+                elif args.mode == "wrong_producer_contract":
+                    for message in artifact:
+                        message["contract_id"] = "wrong-contract"
+                elif args.mode == "undeclared_producer_sender" and artifact:
+                    artifact[0]["sender"] = "agent:undeclared"
+                elif args.mode == "unsigned_authenticated_producer":
+                    for message in artifact:
+                        message.pop("signatures", None)
+                elif args.mode == "nondeterministic_producer":
+                    seed = str(scenario.get("deterministic_seed"))
+                    generation_counts[seed] = generation_counts.get(seed, 0) + 1
+                    if generation_counts[seed] % 2 == 0:
+                        _make_valid_unsigned_variant(artifact)
         elif args.mode == "mismatched_projection" and operation == "project_session_state":
             result["projection"]["session_id"] = "fake-mismatch"
 

@@ -60,6 +60,7 @@ def _validate_profile(input_obj: dict[str, Any]) -> dict[str, Any]:
             "errors": [{"code": "protocol", "message": "target_profile must be an exact profile string"}],
             "degraded": False,
             "degraded_reasons": [],
+            "skipped_checks": [],
         }
     if not isinstance(messages, list) or not all(isinstance(item, dict) for item in messages):
         return {
@@ -67,6 +68,7 @@ def _validate_profile(input_obj: dict[str, Any]) -> dict[str, Any]:
             "errors": [{"code": "protocol", "message": "transcript must be an array of objects"}],
             "degraded": False,
             "degraded_reasons": [],
+            "skipped_checks": [],
         }
     config = profile_config(_catalog(), target)
     errors, degraded, degraded_reasons, skipped_checks = evaluate_transcript(messages, config["required_suites"])
@@ -98,6 +100,7 @@ def _validate_state_projection(input_obj: dict[str, Any]) -> dict[str, Any]:
             "errors": [{"code": "protocol", "message": "transcript must be an array of objects"}],
             "degraded": False,
             "degraded_reasons": [],
+            "skipped_checks": [],
         }
     profiles = {
         (entry.get("profile_id"), entry.get("profile_version"))

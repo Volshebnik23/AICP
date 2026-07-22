@@ -29,6 +29,7 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 ## Badge eligibility and degraded mode
 
 - If `degraded == true` for any required suite, compatibility marks MUST NOT be awarded for the affected suite/profile.
+- Any skipped mandatory check suppresses eligibility even if the adapter declares `degraded=false`.
 - A report can be `passed=true` but still non-badge-eligible when critical checks are unavailable.
 
 ## How to verify
@@ -61,7 +62,10 @@ Post-UAT provenance and external-IUT v1 reports additionally provide:
 Opt-in provenance repository runs label their subject `reference_corpus`. They prove the
 checked-in corpus/runner behavior, not an external product. IUT smoke reports also cannot
 support an ordinary profile claim. Only a full-profile, complete, non-degraded external-IUT
-v1 report may carry an external product-profile mark. File digests prove artifact integrity,
+v1 report with no skipped mandatory checks may carry an external product-profile mark.
+Public interop matrix marks are recomputed through the same eligibility validator; they are
+never copied from arbitrary report JSON. `self_attested` packaging alone is not eligible for
+an ordinary profile mark. File digests prove artifact integrity,
 not organizational identity, certification, or endorsement.
 
 ## Reusable CI snippet for adopters
