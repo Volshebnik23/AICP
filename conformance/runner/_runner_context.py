@@ -61,12 +61,16 @@ def _core_schema_resources() -> dict[str, Any]:
     core_schema = load_json(core_path)
     resource = Resource.from_contents(core_schema)
     resources = {alias: resource for alias in _schema_aliases(core_schema, core_path)}
-    report_path = ROOT / "conformance/conformance_report_schema.json"
-    if report_path.exists():
-        report_schema = load_json(report_path)
-        report_resource = Resource.from_contents(report_schema)
-        for alias in _schema_aliases(report_schema, report_path):
-            resources[alias] = report_resource
+    for report_ref in (
+        "conformance/conformance_report_schema.json",
+        "conformance/conformance_report_v1.schema.json",
+    ):
+        report_path = ROOT / report_ref
+        if report_path.exists():
+            report_schema = load_json(report_path)
+            report_resource = Resource.from_contents(report_schema)
+            for alias in _schema_aliases(report_schema, report_path):
+                resources[alias] = report_resource
     return resources
 
 

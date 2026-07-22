@@ -83,14 +83,17 @@ To test an implementation, expose the test-only JSONL adapter described in
 `conformance/iut/README.md`, then run:
 
 ```text
-python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-BASE@0.1 --out out/iut-base.json
-python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-AUTHENTICATED-BASE@0.1 --out out/iut-authenticated-base.json
+python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-BASE@0.1 --mode smoke --out out/iut-base-smoke.json
+python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-BASE@0.1 --mode full-profile --out out/iut-base-full.json
+python conformance/iut/aicp_iut_runner.py --cmd "<adapter command>" --profile AICP-AUTHENTICATED-BASE@0.1 --mode full-profile --out out/iut-authenticated-base-full.json
 ```
 
-The runner checks producer and consumer behavior, binds the report to implementation,
-runner, suite/profile, and input digests, and suppresses marks for reference, degraded, or
-incomplete runs. `make conformance-iut-smoke` tests only the deterministic in-repo reference
-adapter.
+Smoke is fast diagnostic evidence and never emits an ordinary product-profile mark. Full
+profile execution covers every registered mandatory case (21 for Base; 37 for authenticated
+Base), checks producer and consumer behavior, and binds report eligibility to the registered
+TCK release and all required digests. Marks are suppressed for reference-corpus, degraded,
+skipped, incomplete, or digest-inconsistent runs. `make conformance-iut-smoke` tests only the
+deterministic in-repo reference adapter.
 
 
 ## Template smoke commands (shipped onboarding)

@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "7735502acd6819f1dccaa6b8471d78ee536bb773bc1ccec94ffb31cb3ee93418",
+      "combined_sha256": "cb3b34380b6cc58d305e1e53214f902c1fe67777d2137e8d84d4972215d0baae",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -13,7 +13,11 @@
         },
         {
           "path": "conformance/conformance_report_schema.json",
-          "sha256": "bc83dbd29e540495509a56c63e3b707666ef8d1f5966a304a3afadc91d03d28b"
+          "sha256": "ecd747cd38beeef05a95002d84a4beb43a7e05ee4e048a435fb6ab789fda96be"
+        },
+        {
+          "path": "conformance/conformance_report_v1.schema.json",
+          "sha256": "9c9ede824217f15c95af3d84bb8e4aa86c33bfe5dedf9066f5b224f7cb965fdb"
         },
         {
           "path": "conformance/core/CT_CORE_0.1.json",
@@ -205,23 +209,27 @@
         },
         {
           "path": "conformance/iut/adapter_protocol.schema.json",
-          "sha256": "853a285045c3bba2b11070465bef1469e63bb9b045802b7f2619ff978fd7f44e"
+          "sha256": "f5317cc1a30c4e1d4ba5a8a6dea985bd4042c410cf4a7289a98254d6486a5d88"
         },
         {
           "path": "conformance/iut/cases.json",
-          "sha256": "d5fe94bccea6cb41b6ec7300e63dd9f9957048e081ecc9856edb4089b014ea4b"
+          "sha256": "092936a38f47a96eed58580b5c1e4e25cd321cbd1277a376249b327e1e13d140"
         },
         {
-          "path": "conformance/iut/iut_report_schema.json",
-          "sha256": "aa4e0dbf496cfe27cf1b0240484e279c74149dcd34bf7a715e49e5cd98baf8cb"
+          "path": "conformance/iut/iut_report_v1.schema.json",
+          "sha256": "fd1db38eff8ca98b58887ff332c2b6e92033013004cf08c4bf7ce71e5eda7429"
+        },
+        {
+          "path": "conformance/iut/tck_releases.json",
+          "sha256": "f65316a7ac9043991ce3b91221c873e9a3a7d1dce5352f2106ace26af938ba36"
         },
         {
           "path": "conformance/ops/OPS_HARDENING_0.1.json",
           "sha256": "8abfdad2808a125d20552bb745494ffe6f6dcc7c53f73190e0dfc120c3c84aea"
         },
         {
-          "path": "conformance/profile_report_schema.json",
-          "sha256": "95818aeb28b6a83e91f6e24d65b3fbbb9841e702a83d45de29ad10aa0a48686f"
+          "path": "conformance/profile_report_v1.schema.json",
+          "sha256": "8dc4e22de2cd2138c9ecb9f1261d0805ad20921d1f000185d379c7670a1de631"
         },
         {
           "path": "conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json",
@@ -302,7 +310,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "d6aa408159f31b73ff09920fa9f994055c0281c655f8e111a99c37c2c1267577",
+      "combined_sha256": "e5b16ddecafd817c9699ff5f0fb544f864c7c9ad0f29191487e6c09e86c5346d",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -1459,6 +1467,46 @@
         {
           "path": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl",
           "sha256": "36e8f52bfa3aa27704235cbf6304122f2bf2bb9921984371ab38ba9f0a194395"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-01.jsonl",
+          "sha256": "9e4981057f50a505c0698a2f45a1c059961bf894099662990bb5091d94f3ac0b"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-02.jsonl",
+          "sha256": "980e58d6d3d3cbf6b83344578c94ad1107aad20088fa951f05ca2f737252679a"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-04.jsonl",
+          "sha256": "fdb0fdc3c17c573d101eacd428bb77471ef389ee600969c4bb8ce42558ab1084"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-05.jsonl",
+          "sha256": "e219e0073504b7bd3eb043649aeaa2729a54f173e26108447620325a5e45178d"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-06.jsonl",
+          "sha256": "d313da93eb439a95144cccda76d0cd1920d73be1f71d27f3b34142202517289a"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-07.jsonl",
+          "sha256": "390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-08.jsonl",
+          "sha256": "8b2a7424f3c4ed419a89b56c3e3040191825eafbd778a0647d2862526ca07dee"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-09.jsonl",
+          "sha256": "a90064303bd084a604f36f8e454c2d79a0d6bfc8b4f9779406644f5743fda6a9"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-10.jsonl",
+          "sha256": "ab74ff57f3be352e0964434e26b4af634be7fd1cb059da76380cefa01eb7969f"
+        },
+        {
+          "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-11.jsonl",
+          "sha256": "6c1ca50810f7f5e2cfff561500f2e1f3bab3686a5297cacd1c2d2f3123599ed4"
         },
         {
           "path": "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl",

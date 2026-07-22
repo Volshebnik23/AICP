@@ -21,7 +21,8 @@ Use this when the implementation has evidence that it implements the named shipp
 Minimum expected evidence:
 - the exact shipped profile identifier and version (for example `AICP-BASE@0.1`) in
   `profile_refs`,
-- an eligible external-IUT report bound to the implementation ID/version/build digest,
+- an eligible full-profile external-IUT v1 report bound to the implementation
+  ID/version/build digest and a registered TCK release,
 - non-degraded report outputs where compatibility marks are being relied on,
 - implementation/version identification in the submission manifest.
 
@@ -33,8 +34,8 @@ Use this when the evidence shows compatibility with the named shipped profile ta
 
 Minimum expected evidence:
 - the exact shipped profile identifier/version,
-- a passed, non-degraded external-IUT report with the normal profile compatibility mark and
-  suite/profile/input digests,
+- a passed, non-degraded full-profile external-IUT v1 report whose complete mandatory case
+  set, suite/profile/input/generated digests, and mark are independently revalidated,
 - no skipped mandatory checks, plus explicit disclosures.
 
 This is still a **profile-scoped** claim. It is not equivalent to claiming broad compatibility with every AICP implementation.
@@ -43,13 +44,15 @@ This is still a **profile-scoped** claim. It is not equivalent to claiming broad
 
 Use this only when the evidence is specifically about interoperability between two named implementations for a named shipped profile.
 
-Minimum expected evidence:
-- the exact shipped profile identifier,
-- `peer_implementation_id` identifying the other implementation,
-- `peer_implementation_version`, one eligible external-IUT execution subject for each named
-  implementation/version on the same exact profile, and an explicit pairwise summary that
-  identifies both participants and the shared profile version,
-- disclosures that explain whether the evidence is joint, mirrored, or assembled from both sides' artifacts.
+Real publication is intentionally fail-closed in this release. The manifest vocabulary and
+fictional examples remain available, but validators return `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
+Two independent single-IUT reports, co-conformance, or a prose/JSON summary do not establish
+that the named implementations exchanged and consumed each other's artifacts.
+
+A future dedicated joint runner must bind one shared run ID, exact profile/version, both
+implementation IDs/versions/build digests, A-to-B and (where bidirectional) B-to-A artifact
+digests/results, authenticated-profile verification material, and zero degraded or skipped
+mandatory checks.
 
 This claim is narrower than general compatibility. It should not be rephrased into a blanket ecosystem-wide statement.
 
@@ -78,11 +81,12 @@ The status should stay aligned with the actual package:
 |---|---|
 | Implements profile X | Submission manifest + shipped profile ID + reproducible report references + implementation/version metadata |
 | Compatible with profile X | Submission manifest + shipped profile ID + compatible report evidence + disclosures for any limitations |
-| Pairwise interoperable with implementation Y on profile X | Submission manifest + peer implementation ID + shipped profile ID + pairwise evidence references + disclosures about evidence provenance |
+| Pairwise interoperable with implementation Y on profile X | Not currently publishable; reserved manifest vocabulary and instructional examples fail closed until a dedicated joint-execution runner exists |
 
 Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
 repository's canonical artifacts but cannot substantiate an external implementation claim.
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
+IUT smoke reports are likewise diagnostic-only and cannot substantiate a real profile claim.
 
 ## Badges, marks, and endorsement boundaries
 

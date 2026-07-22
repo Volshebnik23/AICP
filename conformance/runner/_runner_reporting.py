@@ -19,14 +19,9 @@ def build_conformance_report(
     skipped_checks: list[str],
     suite_path: Any | None = None,
     suite_catalog: dict[str, Any] | None = None,
+    report_format: str = "legacy",
 ) -> dict[str, Any]:
-    suite_catalog = suite_catalog or {
-        "suite_id": suite_id,
-        "suite_version": suite_version,
-    }
-    provenance = build_suite_provenance(suite_path, suite_catalog)
-    return {
-        **provenance,
+    report = {
         "aicp_version": aicp_version,
         "suite_id": suite_id,
         "suite_version": suite_version,
@@ -37,4 +32,16 @@ def build_conformance_report(
         "degraded": degraded,
         "degraded_reasons": degraded_reasons,
         "skipped_checks": skipped_checks,
+    }
+    if report_format == "legacy":
+        return report
+    if report_format != "v1":
+        raise ValueError("report_format must be 'legacy' or 'v1'")
+    suite_catalog = suite_catalog or {
+        "suite_id": suite_id,
+        "suite_version": suite_version,
+    }
+    return {
+        **build_suite_provenance(suite_path, suite_catalog),
+        **report,
     }

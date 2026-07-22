@@ -39,10 +39,12 @@ def _cmd(*parts: str) -> list[str]:
 def test_hardening_suites_pass(suite_ref: str) -> None:
     report = run_suite(ROOT / suite_ref)
     assert report["passed"] is True, report["failures"]
-    assert report["report_format_version"] == "1.0"
-    assert report["execution_subject"]["kind"] == "reference_corpus"
-    assert report["suite"]["suite_digest"].startswith("sha256:")
-    assert all(item["content_digest"].startswith("sha256:") for item in report["input_artifacts"])
+    assert "report_format_version" not in report
+    provenance = run_suite(ROOT / suite_ref, report_format="v1")
+    assert provenance["report_format_version"] == "1.0"
+    assert provenance["execution_subject"]["kind"] == "reference_corpus"
+    assert provenance["suite"]["suite_digest"].startswith("sha256:")
+    assert all(item["content_digest"].startswith("sha256:") for item in provenance["input_artifacts"])
 
 
 def test_authenticated_suite_degrades_without_crypto_and_suppresses_marks(monkeypatch) -> None:
@@ -121,12 +123,14 @@ def test_iut_reference_adapter_passes_without_external_marks() -> None:
     report = run_iut(
         _cmd(str(IUT_DIR / "reference_adapter.py")),
         "AICP-AUTHENTICATED-BASE@0.1",
+        mode="full-profile",
         timeout_seconds=20,
     )
     assert report["passed"] is True
     assert report["execution_subject"]["kind"] == "reference_corpus"
     assert report["compatibility_marks"] == []
-    schema_path = IUT_DIR / "iut_report_schema.json"
+    assert len(report["case_results"]) == 37
+    schema_path = IUT_DIR / "iut_report_v1.schema.json"
     validator = build_validator(load_json(schema_path), schema_path)
     assert validator is not None
     validator.validate(report)
@@ -136,8 +140,8 @@ def test_iut_reference_adapter_passes_without_external_marks() -> None:
     ("mode", "profile", "include_state", "expected_case"),
     [
         ("wrong_canonicalization", "AICP-BASE@0.1", False, "AICP-JCS-UNICODE-KEY-ORDER-01"),
-        ("accepts_invalid_chain", "AICP-BASE@0.1", False, "BASE-CONSUMER-INVALID-CHAIN"),
-        ("accepts_invalid_signature", "AICP-AUTHENTICATED-BASE@0.1", False, "AUTH-CONSUMER-"),
+        ("accepts_invalid_chain", "AICP-BASE@0.1", False, "BASE-CORE-GT-09"),
+        ("accepts_invalid_signature", "AICP-AUTHENTICATED-BASE@0.1", False, "AUTH-"),
         ("mismatched_projection", "AICP-BASE@0.1", True, "SESSION-STATE-PROJECTION-V1-PRODUCER"),
         ("lies_metadata", "AICP-BASE@0.1", False, "IUT-DESCRIBE-STABILITY-01"),
     ],
@@ -148,6 +152,7 @@ def test_iut_fake_adapters_are_rejected(
     report = run_iut(
         _cmd(str(IUT_DIR / "fakes/fake_adapter.py"), "--mode", mode),
         profile,
+        mode="full-profile",
         include_session_state_projection=include_state,
         timeout_seconds=20,
     )
@@ -161,6 +166,7 @@ def test_iut_timeout_is_bounded() -> None:
         run_iut(
             _cmd(str(IUT_DIR / "fakes/fake_adapter.py"), "--mode", "timeout"),
             "AICP-BASE@0.1",
+            mode="smoke",
             timeout_seconds=0.1,
         )
 
@@ -176,12 +182,12 @@ def test_iut_protocol_rejects_unframed_non_json_stdout() -> None:
         )
 
 
-def test_strong_interop_evidence_binds_subject_profile_and_version(tmp_path: Path) -> None:
+def test_incomplete_strong_interop_evidence_is_rejected(tmp_path: Path) -> None:
     profile_path = ROOT / "conformance/profiles/PF_AICP_BASE_0.1.json"
     profile_digest = "sha256:" + compute_file_digest(profile_path)
     iut_cases_path = ROOT / "conformance/iut/cases.json"
     iut_cases = json.loads(iut_cases_path.read_text(encoding="utf-8"))
-    vector_ref = iut_cases["canonicalization_vector"]
+    vector_ref = iut_cases["canonicalization_vectors"][0]
     report = {
         "report_format_version": "1.0",
         "execution_subject": {
@@ -215,19 +221,19 @@ def test_strong_interop_evidence_binds_subject_profile_and_version(tmp_path: Pat
         "claim_type": "implements_profile",
         "evidence_status": "reproducible",
     }
-    assert _validate_strong_report_evidence(package / "submission.json", manifest) == []
+    errors = _validate_strong_report_evidence(package / "submission.json", manifest)
+    assert any("IUT_REPORT_SCHEMA_INVALID" in error for error in errors)
     manifest["implementation_version"] = "1.2.4"
     errors = _validate_strong_report_evidence(package / "submission.json", manifest)
     assert any("no eligible external IUT report" in error for error in errors)
-    assert any("implementation_version" in error for error in errors)
 
 
-def test_pairwise_interop_rejects_peer_subject_mismatch(tmp_path: Path) -> None:
+def test_pairwise_interop_fails_closed_without_joint_execution(tmp_path: Path) -> None:
     profile_path = ROOT / "conformance/profiles/PF_AICP_BASE_0.1.json"
     digest = "sha256:" + compute_file_digest(profile_path)
     iut_cases_path = ROOT / "conformance/iut/cases.json"
     iut_cases = json.loads(iut_cases_path.read_text(encoding="utf-8"))
-    vector_ref = iut_cases["canonicalization_vector"]
+    vector_ref = iut_cases["canonicalization_vectors"][0]
 
     def report(subject: str, version: str) -> dict[str, object]:
         return {
@@ -278,4 +284,8 @@ def test_pairwise_interop_rejects_peer_subject_mismatch(tmp_path: Path) -> None:
         "claim_type": "pairwise_interop",
     }
     errors = _validate_strong_report_evidence(package / "submission.json", manifest)
-    assert any("external-b@2.0.0" in error for error in errors)
+    assert errors == [
+        "PAIRWISE_JOINT_EVIDENCE_REQUIRED: real pairwise_interop publication is disabled until "
+        "a dedicated joint-execution format binds one shared run, both named builds, and "
+        "artifacts consumed in every required direction"
+    ]

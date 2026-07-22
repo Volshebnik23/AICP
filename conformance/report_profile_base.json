@@ -1,115 +1,15 @@
 {
-  "report_format_version": "1.0",
-  "execution_subject": {
-    "kind": "reference_corpus",
-    "implementation_id": "aicp-reference-corpus",
-    "implementation_version": "0.1.0-rc.1",
-    "implementation_digest": "sha256:c8bfc5aeb63e1297ba22b68faa9c5589c6de383261864059dfe9e56123c788c8"
-  },
-  "runner": {
-    "name": "aicp-profile-runner",
-    "version": "1.0",
-    "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
-  },
-  "profile": {
-    "profile_id": "AICP-BASE",
-    "profile_version": "0.1",
-    "profile_digest": "sha256:c8bfc5aeb63e1297ba22b68faa9c5589c6de383261864059dfe9e56123c788c8"
-  },
-  "input_artifacts": [
-    {
-      "artifact_id": "AICP-BASE@0.1",
-      "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
-      "content_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
-    },
-    {
-      "artifact_id": "CT_CORE_0.1",
-      "path": "conformance/core/CT_CORE_0.1.json",
-      "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
-    }
-  ],
-  "generated_artifacts": [],
   "aicp_version": "0.1",
   "profile_id": "AICP-BASE",
   "profile_version": "0.1",
-  "timestamp": "2026-07-22T12:47:21.074458+00:00",
+  "timestamp": "2026-07-22T17:05:02.371401+00:00",
   "passed": true,
   "suite_reports": [
     {
-      "report_format_version": "1.0",
-      "execution_subject": {
-        "kind": "reference_corpus",
-        "implementation_id": "aicp-reference-corpus",
-        "implementation_version": "0.1.0-rc.1",
-        "implementation_digest": "sha256:c0a268a9cbf662c73d6be074bb48b1ea997eba9ca39a7bbab7c2e3ca3950402d"
-      },
-      "runner": {
-        "name": "aicp-conformance-runner",
-        "version": "1.0",
-        "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
-      },
-      "suite": {
-        "suite_id": "CT-CORE-0.1",
-        "suite_version": "0.1.0-dev",
-        "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
-      },
-      "input_artifacts": [
-        {
-          "artifact_id": "GT-01",
-          "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
-          "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
-        },
-        {
-          "artifact_id": "GT-02",
-          "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
-          "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
-        },
-        {
-          "artifact_id": "GT-04",
-          "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
-          "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
-        },
-        {
-          "artifact_id": "GT-05",
-          "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
-          "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
-        },
-        {
-          "artifact_id": "GT-06",
-          "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
-          "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
-        },
-        {
-          "artifact_id": "GT-07",
-          "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
-          "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
-        },
-        {
-          "artifact_id": "GT-08",
-          "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
-          "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
-        },
-        {
-          "artifact_id": "GT-09",
-          "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
-          "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
-        },
-        {
-          "artifact_id": "GT-10",
-          "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
-          "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
-        },
-        {
-          "artifact_id": "GT-11",
-          "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
-          "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
-        }
-      ],
-      "generated_artifacts": [],
       "aicp_version": "0.1",
       "suite_id": "CT-CORE-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-07-22T12:47:21.061287+00:00",
+      "timestamp": "2026-07-22T17:05:02.371401+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -126,6 +26,5 @@
     "AICP-Core-0.1"
   ],
   "degraded": false,
-  "degraded_reasons": [],
-  "skipped_checks": []
+  "degraded_reasons": []
 }

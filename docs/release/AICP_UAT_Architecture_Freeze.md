@@ -186,3 +186,12 @@ version-selected, separately tested surfaces and are explicitly excluded from th
 pilot center. Their presence does not alter the meaning of `AICP-BASE@0.1`,
 `AICP-RESUMABLE-SESSIONS@0.1`, or any other existing `@0.1` profile. A later pilot may
 adopt them only through an explicit maintainer decision and versioned baseline update.
+
+The evidence/report migration follows the same rule. Existing conformance commands retain
+their legacy report shape by default, including the frozen
+`conformance/conformance_report_schema.json` contract. Provenance-rich conformance/profile
+v1 reports are opt-in through `--report-format v1`, while IUT evidence uses the separate
+`conformance/iut/iut_report_v1.schema.json` contract. These additive artifacts do not alter
+the frozen UAT protocol or profile semantics. Changing the default report format or making
+the new experimental profile part of a pilot requires an explicit, versioned maintainer
+decision after UAT.

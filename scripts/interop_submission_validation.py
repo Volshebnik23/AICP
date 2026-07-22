@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +18,17 @@ SCHEMA_PATH = SUBMISSIONS_ROOT / "submission.schema.json"
 INTEGRITY_SCHEMA_PATH = SUBMISSIONS_ROOT / "integrity.schema.json"
 PROFILE_REGISTRY_PATH = ROOT / "registry" / "aicp_profiles.json"
 IUT_CASES_PATH = ROOT / "conformance" / "iut" / "cases.json"
+IUT_REPORT_SCHEMA_PATH = ROOT / "conformance" / "iut" / "iut_report_v1.schema.json"
+IUT_TCK_RELEASES_PATH = ROOT / "conformance" / "iut" / "tck_releases.json"
+IUT_DIR = ROOT / "conformance" / "iut"
+RUNNER_DIR = ROOT / "conformance" / "runner"
+for import_path in (IUT_DIR, RUNNER_DIR):
+    if str(import_path) not in sys.path:
+        sys.path.insert(0, str(import_path))
+
+from _runner_context import build_validator as build_local_validator  # noqa: E402
+from _runner_provenance import canonical_content_digest, sha256_file  # noqa: E402
+from aicp_iut_catalog import mandatory_case_ids  # noqa: E402
 RESERVED_DIRS = {"examples", "templates"}
 INTEGRITY_FILENAME = "bundle-integrity.json"
 INTEGRITY_MANIFEST_VERSION = "1.0"
@@ -32,6 +45,11 @@ ALLOWED_EVIDENCE_STATUSES = {
     "reproducible",
     "pairwise",
 }
+PAIRWISE_JOINT_EVIDENCE_ERROR = (
+    "PAIRWISE_JOINT_EVIDENCE_REQUIRED: real pairwise_interop publication is disabled until "
+    "a dedicated joint-execution format binds one shared run, both named builds, and "
+    "artifacts consumed in every required direction"
+)
 
 
 def load_json(path: Path) -> Any:
@@ -455,6 +473,27 @@ def _eligible_external_profile_report(
     profile_version: str,
 ) -> list[str]:
     errors: list[str] = []
+    schema = load_json(IUT_REPORT_SCHEMA_PATH)
+    validator = build_local_validator(schema, IUT_REPORT_SCHEMA_PATH)
+    if validator is None:
+        return ["IUT_REPORT_SCHEMA_VALIDATION_UNAVAILABLE"]
+    schema_errors = sorted(validator.iter_errors(report), key=lambda item: list(item.path))
+    if schema_errors:
+        return [
+            "IUT_REPORT_SCHEMA_INVALID: "
+            + ("/" + "/".join(str(part) for part in error.path) if error.path else "/")
+            + f": {error.message}"
+            for error in schema_errors
+        ]
+
+    catalog = load_json(IUT_CASES_PATH)
+    target = f"{profile_id}@{profile_version}"
+    profile_config = catalog.get("profiles", {}).get(target)
+    if not isinstance(profile_config, dict):
+        return [f"no full-profile IUT catalog exists for {target}"]
+    if report.get("execution_mode") != "full-profile":
+        errors.append("IUT_SMOKE_EVIDENCE_INELIGIBLE: execution_mode must be 'full-profile'")
+
     subject = report.get("execution_subject")
     if report.get("report_format_version") != "1.0":
         errors.append("report_format_version must be '1.0'")
@@ -471,59 +510,157 @@ def _eligible_external_profile_report(
             or subject.get("implementation_digest") == "unknown"
         ):
             errors.append("execution_subject.implementation_digest must be present")
-    runner = report.get("runner")
-    if (
-        not isinstance(runner, dict)
-        or runner.get("name") != "aicp-iut-runner"
-        or not isinstance(runner.get("source_revision"), str)
-        or not runner.get("source_revision")
-    ):
-        errors.append("report must identify the aicp-iut-runner and its source_revision")
+    release_registry = load_json(IUT_TCK_RELEASES_PATH)
+    tck = report.get("tck_release")
+    release = next(
+        (
+            item
+            for item in release_registry.get("releases", [])
+            if isinstance(item, dict)
+            and isinstance(tck, dict)
+            and item.get("release_id") == tck.get("release_id")
+        ),
+        None,
+    )
+    if not isinstance(release, dict):
+        errors.append("report does not resolve to a registered IUT TCK release")
+        release_profile: dict[str, Any] = {}
+    else:
+        release_profile = release.get("profiles", {}).get(target) or {}
+        if not release_profile:
+            errors.append(f"registered TCK release does not support {target}")
+        expected_case_digest = release.get("case_catalog", {}).get("content_digest")
+        expected_runner_digest = release.get("runner_bundle", {}).get("digest")
+        if tck.get("registry_digest") != sha256_file(IUT_TCK_RELEASES_PATH):
+            errors.append("TCK registry digest does not match the checked-in release registry")
+        if tck.get("case_catalog_digest") != expected_case_digest:
+            errors.append("TCK case-catalog digest does not match the registered release")
+        if tck.get("runner_bundle_digest") != expected_runner_digest:
+            errors.append("TCK runner-bundle digest does not match the registered release")
+        runner = report.get("runner")
+        if (
+            not isinstance(runner, dict)
+            or runner.get("name") != "aicp-iut-runner"
+            or runner.get("source_revision") != expected_runner_digest
+        ):
+            errors.append("report runner provenance does not match the registered TCK runner bundle")
+
     profile = report.get("profile")
     if not isinstance(profile, dict):
         errors.append("report must contain profile provenance")
     else:
         if profile.get("profile_id") != profile_id or profile.get("profile_version") != profile_version:
             errors.append(f"report profile must be exactly {profile_id}@{profile_version}")
-        catalog_path, catalog = _profile_catalog(profile_id, profile_version)
-        if catalog_path is None or catalog is None:
+        catalog_path, product_profile = _profile_catalog(profile_id, profile_version)
+        if catalog_path is None or product_profile is None:
             errors.append(f"no conformance profile catalog exists for {profile_id}@{profile_version}")
         else:
-            expected_digest = "sha256:" + compute_file_digest(catalog_path)
+            expected_digest = release_profile.get("profile_catalog", {}).get("content_digest")
             if profile.get("profile_digest") != expected_digest:
-                errors.append("profile provenance digest does not match the repository profile catalog")
-            expected_mark = catalog.get("compatibility_mark")
-            marks = report.get("compatibility_marks")
-            if not isinstance(marks, list) or expected_mark not in marks:
-                errors.append(f"report is missing compatibility mark '{expected_mark}'")
+                errors.append("profile provenance digest does not match the registered TCK release")
     if report.get("passed") is not True:
         errors.append("report must have passed=true")
     if report.get("degraded") is not False:
         errors.append("report must have degraded=false")
     if report.get("skipped_checks") not in ([], None):
         errors.append("report must not contain skipped checks")
+    if report.get("failures") != []:
+        errors.append("report failures must be an empty array")
+
     suite = report.get("suite")
-    iut_cases = load_json(IUT_CASES_PATH)
-    expected_suite_digest = "sha256:" + compute_file_digest(IUT_CASES_PATH)
+    expected_suite_digest = release.get("case_catalog", {}).get("content_digest") if release else None
     if (
         not isinstance(suite, dict)
-        or suite.get("suite_id") != iut_cases.get("suite_id")
-        or suite.get("suite_version") != iut_cases.get("suite_version")
+        or suite.get("suite_id") != catalog.get("suite_id")
+        or suite.get("suite_version") != catalog.get("suite_version")
         or suite.get("suite_digest") != expected_suite_digest
     ):
-        errors.append("report suite provenance does not match the checked-in IUT case catalog")
-    vector_ref = iut_cases.get("canonicalization_vector")
+        errors.append("report suite provenance does not match the registered IUT case catalog")
+
+    expected_suites = {
+        item.get("path"): item.get("content_digest")
+        for item in release_profile.get("required_suites", [])
+        if isinstance(item, dict)
+    }
+    reported_suites = report.get("required_suites")
+    actual_suite_records: dict[str, str] = {}
+    if isinstance(reported_suites, list):
+        for record in reported_suites:
+            if not isinstance(record, dict):
+                continue
+            matching_ref = next(
+                (
+                    suite_ref
+                    for suite_ref in expected_suites
+                    if load_json(ROOT / suite_ref).get("suite_id") == record.get("suite_id")
+                ),
+                None,
+            )
+            if matching_ref is not None:
+                if matching_ref in actual_suite_records:
+                    errors.append(f"duplicate required suite provenance for {matching_ref}")
+                actual_suite_records[matching_ref] = str(record.get("suite_digest"))
+    if actual_suite_records != expected_suites:
+        errors.append("required suite provenance does not exactly match the registered TCK release")
+
+    expected_inputs = {
+        item.get("path"): item.get("content_digest")
+        for item in release_profile.get("required_input_artifacts", [])
+        if isinstance(item, dict)
+    }
     inputs = report.get("input_artifacts")
-    matching_vector = [
-        item for item in inputs or []
-        if isinstance(item, dict) and item.get("path") == vector_ref
-    ] if isinstance(inputs, list) else []
-    if (
-        not isinstance(vector_ref, str)
-        or len(matching_vector) != 1
-        or matching_vector[0].get("content_digest") != "sha256:" + compute_file_digest(ROOT / vector_ref)
-    ):
-        errors.append("report input provenance does not match the checked-in canonicalization vector")
+    input_counts = Counter(
+        item.get("path") for item in inputs if isinstance(item, dict)
+    ) if isinstance(inputs, list) else Counter()
+    if any(count != 1 for count in input_counts.values()):
+        errors.append("report input_artifacts contains duplicate paths")
+    actual_inputs = {
+        item.get("path"): item.get("content_digest")
+        for item in inputs or []
+        if isinstance(item, dict) and item.get("path") in expected_inputs
+    } if isinstance(inputs, list) else {}
+    if actual_inputs != expected_inputs:
+        errors.append("report input provenance does not contain every registered fixture/vector digest")
+
+    expected_generated_ids = {
+        str(item["case_id"])
+        for item in profile_config["full_profile"]["producer_scenarios"]
+    }
+    generated = report.get("generated_artifacts")
+    generated_counts = Counter(
+        item.get("artifact_id") for item in generated if isinstance(item, dict)
+    ) if isinstance(generated, list) else Counter()
+    if set(generated_counts) != expected_generated_ids or any(count != 1 for count in generated_counts.values()):
+        errors.append("generated artifacts do not exactly cover every mandatory producer scenario")
+    for item in generated or []:
+        if not isinstance(item, dict):
+            continue
+        if item.get("content_digest") != canonical_content_digest(item.get("content")):
+            errors.append(f"generated artifact digest mismatch for {item.get('artifact_id')}")
+
+    expected_cases = mandatory_case_ids(catalog, target, "full-profile")
+    case_results = report.get("case_results")
+    case_counts = Counter(
+        item.get("case_id") for item in case_results if isinstance(item, dict)
+    ) if isinstance(case_results, list) else Counter()
+    expected_counts = Counter(expected_cases)
+    if case_counts != expected_counts:
+        missing = sorted((expected_counts - case_counts).elements())
+        duplicate_or_unknown = sorted((case_counts - expected_counts).elements())
+        errors.append(
+            "mandatory IUT case coverage mismatch"
+            + (f"; missing={missing}" if missing else "")
+            + (f"; duplicate_or_unknown={duplicate_or_unknown}" if duplicate_or_unknown else "")
+        )
+    if isinstance(case_results, list) and any(item.get("passed") is not True for item in case_results if isinstance(item, dict)):
+        errors.append("every mandatory IUT case result must have passed=true")
+
+    expected_mark = profile_config.get("expected_mark")
+    computed_marks = [expected_mark] if not errors and isinstance(expected_mark, str) else []
+    if report.get("compatibility_marks") != computed_marks:
+        errors.append(
+            "compatibility_marks do not equal independently computed full-profile eligibility marks"
+        )
     return errors
 
 
@@ -581,42 +718,7 @@ def _validate_strong_report_evidence(path: Path, manifest: dict[str, Any]) -> li
 
     if claim_type != "pairwise_interop":
         return errors
-    peer_id = manifest.get("peer_implementation_id")
-    peer_version = manifest.get("peer_implementation_version")
-    if not isinstance(peer_id, str) or not isinstance(peer_version, str):
-        return errors
-    for profile_id, profile_version in claims:
-        for party_id, party_version in (
-            (implementation_id, implementation_version),
-            (peer_id, peer_version),
-        ):
-            if not any(
-                not _eligible_external_profile_report(
-                    report,
-                    implementation_id=party_id,
-                    implementation_version=party_version,
-                    profile_id=profile_id,
-                    profile_version=profile_version,
-                )
-                for _, report in reports
-            ):
-                errors.append(
-                    f"pairwise claim lacks an eligible external IUT report for "
-                    f"{party_id}@{party_version} on {profile_id}@{profile_version}"
-                )
-        has_summary = any(
-            report.get("summary_type") == "pairwise_interop"
-            and set(report.get("participants", [])) == {implementation_id, peer_id}
-            and report.get("profile_id") == profile_id
-            and report.get("profile_version") == profile_version
-            and report.get("result") == "interoperable"
-            for _, report in reports
-        )
-        if not has_summary:
-            errors.append(
-                f"pairwise claim requires a matching pairwise_interop summary for {profile_id}@{profile_version}"
-            )
-    return errors
+    return [PAIRWISE_JOINT_EVIDENCE_ERROR]
 
 
 def validate_bundle_integrity(

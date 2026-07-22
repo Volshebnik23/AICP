@@ -11,7 +11,7 @@ It is an onboarding guide for packaging evidence that already exists. It is not 
 This playbook covers:
 - who should submit,
 - what a minimal real submission package contains,
-- how to package single-implementation and pairwise claims,
+- how to package single-implementation claims and interpret the reserved pairwise vocabulary,
 - what disclosures to include,
 - how the repo validators and matrix treat submission records and placeholder templates,
 - how examples/templates differ from real external submissions.
@@ -32,7 +32,7 @@ Submit when you have a real implementation and want to publish **profile-scoped 
 Typical submitters include:
 - implementers of an AICP-capable agent, gateway, or platform component,
 - teams that ran repo-backed conformance/profile tooling against their implementation,
-- teams that completed a pairwise interop exercise with another named implementation and can package the resulting evidence truthfully.
+- teams that completed repo-backed full-profile IUT evaluation for their own implementation.
 
 If you only need an example of the package shape, use the shipped examples/templates instead of opening a real submission.
 
@@ -56,7 +56,8 @@ Use the small controlled vocabulary in `submission.json:evidence_status`.
 - `template` — starter package only; placeholders must be replaced before any real claim.
 - `self_attested` — real submission published by one implementation with evidence scoped to the submitter's own package.
 - `reproducible` — real submission where the package includes reproducible repo-style conformance/profile report evidence for the stated profile claim.
-- `pairwise` — real submission about interoperability with a named peer implementation on a named profile; narrower than general compatibility.
+- `pairwise` — reserved vocabulary for a future joint-execution evidence format. Real
+  submissions using it currently fail closed with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
 
 This vocabulary is packaging-oriented. It does **not** imply maintainer endorsement.
 
@@ -71,26 +72,24 @@ Recommended shape:
 - `claim_scope`: `self_attested`
 - `evidence_status`: `self_attested` or `reproducible`
 - no `peer_implementation_id`
-- one or more report JSON files in `report_refs`, including an eligible
-  `external_implementation` IUT report for a real reproducible claim
+- one or more report JSON files in `report_refs`, including an eligible `full-profile`
+  external-IUT v1 report for a real reproducible claim. Smoke and legacy reports are
+  diagnostic/migration artifacts and are not eligible for this claim.
 
 Prefer `reproducible` when the package includes actual conformance/profile report outputs generated from shipped repo tooling.
 
-## How to package a pairwise claim
+## Pairwise vocabulary is currently instructional only
 
-Use this only when the evidence is specifically about interoperability with a named peer implementation.
+The manifest schema reserves `pairwise_interop`, `pairwise`, and peer identity fields so
+examples and future migration work have a stable vocabulary. They are not currently a
+publication path. The validator rejects every real pairwise submission with
+`PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
 
-Required shape:
-- `claim_type`: `pairwise_interop`
-- `claim_scope`: `pairwise`
-- `evidence_status`: `pairwise`
-- `peer_implementation_id` present
-- `peer_implementation_version` present
-- eligible external-IUT reports for both exact implementation subjects on the same exact
-  profile ID/version
-- an explicit pairwise summary naming both participants, profile ID/version, and result
-
-Do not translate a pairwise result into a broad ecosystem-wide compatibility statement.
+Two independent IUT reports, a co-conformance statement, or a human summary cannot prove
+that one shared run named both exact builds and exercised artifacts consumed in every
+required direction. A future pairwise format must bind those facts before maintainers can
+enable real pairwise publication. The shipped pairwise package is therefore a shape example
+only and must not be presented as interoperability evidence.
 
 ## Required disclosures
 
@@ -98,7 +97,7 @@ Real submissions should include disclosures that help reviewers avoid over-readi
 
 Common disclosures include:
 - whether the submission is self-published by one side,
-- whether the evidence package includes both sides' reports or only one side's package,
+- whether any peer-oriented material is an instructional example rather than publishable evidence,
 - whether any evidence files are summaries rather than raw runner output,
 - whether the claim is limited to a single shipped profile/version.
 
@@ -107,12 +106,13 @@ Common disclosures include:
 Expected evidence files are usually JSON artifacts referenced by `report_refs`, for example:
 - conformance report outputs,
 - profile report outputs,
-- pairwise summary/report JSON that explains how a joint exercise was packaged.
+- contextual summaries that are not treated as machine-verifiable compatibility evidence.
 
 Repository self-test reports identify `execution_subject.kind=reference_corpus` and cannot
 support a real external claim. Use `conformance/iut/aicp_iut_runner.py` against the external
-adapter so the report binds implementation/build metadata, runner revision, suite/profile
-digests, and input artifacts. Required checks must pass without degradation or skips.
+adapter in `full-profile` mode so the v1 report binds implementation/build metadata, the
+registered TCK release and runner digest, suite/profile digests, exact mandatory cases, and
+input/generated artifact digests. Required checks must pass without degradation or skips.
 
 The validator expects referenced files to exist for real submissions and examples. Templates may intentionally keep placeholder `report_refs` until a real submitter replaces them; the matrix renders those as instructional warnings rather than as failed real-submission evidence.
 
@@ -122,7 +122,7 @@ Keep claims:
 - profile-scoped,
 - evidence-first,
 - implementation/version-specific,
-- explicit about whether the claim is self-attested, reproducible, or pairwise.
+- explicit about whether the claim is self-attested or reproducible.
 
 Do **not** publish:
 - “supports AICP” without profile scope,
@@ -168,7 +168,7 @@ python interop/tools/build_submission.py \
   --validate
 ```
 
-### Pairwise example
+### Pairwise vocabulary example (expected to fail closed)
 
 ```bash
 python interop/tools/build_submission.py \
@@ -192,7 +192,10 @@ python interop/tools/build_submission.py \
   --validate
 ```
 
-The builder copies the supplied report files into the package's `reports/` folder, writes predictable `report_refs`, and refuses incomplete pairwise inputs instead of guessing missing peer metadata.
+The pairwise command demonstrates the reserved manifest vocabulary. Its `--validate` step is
+expected to fail with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; that failure is the current safety
+contract, not a package-authoring error. The builder still refuses incomplete peer metadata
+instead of guessing it.
 
 ## Optional bundle integrity manifest
 

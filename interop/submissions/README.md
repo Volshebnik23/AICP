@@ -29,9 +29,11 @@ interoperability claims.
 
 Real public submissions must add `profile_refs` with exact `profile_id` and
 `profile_version` values. Reproducible implementation/compatibility claims must include an
-eligible, passed, non-degraded external-IUT report whose execution subject matches the
-manifest. Pairwise claims require eligible subjects for both parties and an explicit shared
-profile/participant summary. Legacy real packages receive migration errors; examples,
+eligible, full-profile, passed, non-degraded external-IUT v1 report whose execution subject,
+complete mandatory case set, and registered TCK digests match the manifest. Smoke and legacy
+reports are migration errors for this strong claim. Real `pairwise_interop` publication is
+currently rejected with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; two independent IUT reports or a
+summary are not joint proof. Examples,
 templates, and repo-owned dry runs remain instructional and cannot substantiate an external
 claim.
 

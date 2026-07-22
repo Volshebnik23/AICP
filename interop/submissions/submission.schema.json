@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aicp.dev/interop/submissions/submission.schema.json",
   "title": "AICP Public Interop Submission Manifest",
+  "$comment": "pairwise_interop vocabulary is reserved for examples and future migration; real pairwise submissions fail closed until a dedicated joint-execution format is implemented",
   "type": "object",
   "required": [
     "submission_id",
@@ -77,6 +78,7 @@
     },
     "evidence_status": {
       "type": "string",
+      "description": "Packaging status. pairwise is reserved and is not currently publication-eligible.",
       "enum": [
         "example",
         "template",
@@ -103,6 +105,7 @@
     },
     "claim_type": {
       "type": "string",
+      "description": "Claim category. pairwise_interop is currently instructional/reserved and real submissions fail closed.",
       "enum": [
         "implements_profile",
         "compatible_with_profile",

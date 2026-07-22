@@ -1,55 +1,254 @@
 {
-  "adapter_protocol_version": "1.0",
-  "suite_id": "AICP-IUT-TCK-0.1",
-  "suite_version": "0.1.0-experimental",
-  "canonicalization_vector": "conformance/vectors/unicode_codepoint_key_order.json",
+  "adapter_protocol_version": "1.1",
+  "suite_id": "AICP-IUT-TCK",
+  "suite_version": "1.0.0-experimental",
+  "tck_release_id": "AICP-IUT-TCK-1.0.0",
+  "canonicalization_vectors": [
+    "conformance/vectors/unicode_codepoint_key_order.json"
+  ],
   "profiles": {
     "AICP-BASE@0.1": {
       "profile_catalog": "conformance/profiles/PF_AICP_BASE_0.1.json",
       "expected_mark": "AICP-Profile-BASE-0.1",
-      "producer_case": {"case_id": "AICP-BASE-VALID", "fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
-      "consumer_cases": [
-        {"case_id": "BASE-CONSUMER-VALID", "fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl", "accepted": true},
-        {"case_id": "BASE-CONSUMER-INVALID-CHAIN", "fixture": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl", "accepted": false}
-      ]
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json"
+      ],
+      "smoke": {
+        "producer_case_refs": ["BASE-PRODUCER-HAPPY"],
+        "consumer_case_refs": ["BASE-CORE-GT-01", "BASE-CORE-GT-09"]
+      },
+      "full_profile": {
+        "producer_scenarios": [
+          {
+            "case_id": "BASE-PRODUCER-HAPPY",
+            "template_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+            "scenario": {
+              "profile": "AICP-BASE@0.1",
+              "participants": ["agent:A", "agent:B"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION"],
+              "session_id": "sGT1",
+              "contract_id": "cGT1",
+              "deterministic_seed": "base-happy-v1",
+              "cryptographic_mode": "optional"
+            }
+          },
+          {
+            "case_id": "BASE-PRODUCER-CONFLICT",
+            "template_fixture": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+            "scenario": {
+              "profile": "AICP-BASE@0.1",
+              "participants": ["agent:A", "agent:B"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "RESOLVE_CONFLICT"],
+              "session_id": "sGT2",
+              "contract_id": "cGT2",
+              "deterministic_seed": "base-conflict-v1",
+              "cryptographic_mode": "optional"
+            }
+          },
+          {
+            "case_id": "BASE-PRODUCER-CONSENT-GRANT",
+            "template_fixture": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+            "scenario": {
+              "profile": "AICP-BASE@0.1",
+              "participants": ["agent:A", "agent:B"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "ATTEST_ACTION"],
+              "session_id": "sGT4",
+              "contract_id": "cGT4",
+              "deterministic_seed": "base-consent-grant-v1",
+              "cryptographic_mode": "optional"
+            }
+          },
+          {
+            "case_id": "BASE-PRODUCER-CONSENT-REVOKE",
+            "template_fixture": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+            "scenario": {
+              "profile": "AICP-BASE@0.1",
+              "participants": ["agent:A", "agent:B"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "ATTEST_ACTION"],
+              "session_id": "sGT5",
+              "contract_id": "cGT5",
+              "deterministic_seed": "base-consent-revoke-v1",
+              "cryptographic_mode": "optional"
+            }
+          },
+          {
+            "case_id": "BASE-PRODUCER-RECOVERY",
+            "template_fixture": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+            "scenario": {
+              "profile": "AICP-BASE@0.1",
+              "participants": ["agent:A", "agent:B"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "STATE_SYNC_REQUEST", "STATE_SYNC_RESPONSE", "CONTEXT_AMEND"],
+              "session_id": "sGT6",
+              "contract_id": "cGT6",
+              "deterministic_seed": "base-recovery-v1",
+              "cryptographic_mode": "optional"
+            }
+          },
+          {
+            "case_id": "BASE-PRODUCER-ERROR",
+            "template_fixture": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+            "scenario": {
+              "profile": "AICP-BASE@0.1",
+              "participants": ["agent:A"],
+              "desired_message_types": ["ERROR"],
+              "session_id": "sGT10",
+              "contract_id": "cGT10",
+              "deterministic_seed": "base-error-v1",
+              "cryptographic_mode": "optional"
+            }
+          }
+        ],
+        "consumer_cases": [
+          {"case_id": "BASE-CORE-GT-01", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-01", "fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl", "accepted": true},
+          {"case_id": "BASE-CORE-GT-02", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-02", "fixture": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl", "accepted": true},
+          {"case_id": "BASE-CORE-GT-04", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-04", "fixture": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl", "accepted": true},
+          {"case_id": "BASE-CORE-GT-05", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-05", "fixture": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl", "accepted": true},
+          {"case_id": "BASE-CORE-GT-06", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-06", "fixture": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl", "accepted": true},
+          {"case_id": "BASE-CORE-GT-07", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-07", "fixture": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl", "accepted": false},
+          {"case_id": "BASE-CORE-GT-08", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-08", "fixture": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl", "accepted": false},
+          {"case_id": "BASE-CORE-GT-09", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-09", "fixture": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl", "accepted": false},
+          {"case_id": "BASE-CORE-GT-10", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-10", "fixture": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl", "accepted": true},
+          {"case_id": "BASE-CORE-GT-11", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-11", "fixture": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl", "accepted": false}
+        ]
+      }
     },
     "AICP-AUTHENTICATED-BASE@0.1": {
       "profile_catalog": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",
       "expected_mark": "AICP-Profile-AUTHENTICATED-BASE-0.1",
-      "producer_case": {"case_id": "AUTHENTICATED-BASE-VALID", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl"},
-      "consumer_cases": [
-        {"case_id": "AUTH-CONSUMER-VALID", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true},
-        {"case_id": "AUTH-CONSUMER-MULTISIG-VALID", "fixture": "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl", "accepted": true},
-        {"case_id": "AUTH-CONSUMER-UNSIGNED", "fixture": "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-EMPTY", "fixture": "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-MISSING-HASH", "fixture": "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-STALE-HASH", "fixture": "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-OBJECT-HASH", "fixture": "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-OBJECT-TYPE", "fixture": "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-NO-SENDER", "fixture": "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-KID", "fixture": "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-UNKNOWN-KEY", "fixture": "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-INVALID-SIGNATURE", "fixture": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-COPIED-SIGNATURE", "fixture": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl", "accepted": false},
-        {"case_id": "AUTH-CONSUMER-HIDDEN-INVALID-SIGNATURE", "fixture": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl", "accepted": false}
-      ]
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
+      ],
+      "smoke": {
+        "producer_case_refs": ["AUTH-PRODUCER-HAPPY"],
+        "consumer_case_refs": ["AUTH-AB-01", "AUTH-AB-02", "AUTH-AB-03", "AUTH-AB-04", "AUTH-AB-05", "AUTH-AB-06", "AUTH-AB-07", "AUTH-AB-08", "AUTH-AB-09", "AUTH-AB-10", "AUTH-AB-11", "AUTH-AB-12", "AUTH-AB-13", "AUTH-AB-14"]
+      },
+      "full_profile": {
+        "producer_scenarios": [
+          {
+            "case_id": "AUTH-PRODUCER-HAPPY",
+            "template_fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-01.jsonl",
+            "scenario": {
+              "profile": "AICP-AUTHENTICATED-BASE@0.1",
+              "participants": ["agent:S", "agent:T"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "ATTEST_ACTION"],
+              "session_id": "sGT1",
+              "contract_id": "cGT1",
+              "deterministic_seed": "auth-happy-v1",
+              "cryptographic_mode": "required"
+            }
+          },
+          {
+            "case_id": "AUTH-PRODUCER-CONFLICT",
+            "template_fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-02.jsonl",
+            "scenario": {
+              "profile": "AICP-AUTHENTICATED-BASE@0.1",
+              "participants": ["agent:S", "agent:T"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "RESOLVE_CONFLICT"],
+              "session_id": "sGT2",
+              "contract_id": "cGT2",
+              "deterministic_seed": "auth-conflict-v1",
+              "cryptographic_mode": "required"
+            }
+          },
+          {
+            "case_id": "AUTH-PRODUCER-CONSENT-GRANT",
+            "template_fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-04.jsonl",
+            "scenario": {
+              "profile": "AICP-AUTHENTICATED-BASE@0.1",
+              "participants": ["agent:S", "agent:T"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "ATTEST_ACTION"],
+              "session_id": "sGT4",
+              "contract_id": "cGT4",
+              "deterministic_seed": "auth-consent-grant-v1",
+              "cryptographic_mode": "required"
+            }
+          },
+          {
+            "case_id": "AUTH-PRODUCER-CONSENT-REVOKE",
+            "template_fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-05.jsonl",
+            "scenario": {
+              "profile": "AICP-AUTHENTICATED-BASE@0.1",
+              "participants": ["agent:S", "agent:T"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "CONTEXT_AMEND", "CONTEXT_AMEND", "ATTEST_ACTION"],
+              "session_id": "sGT5",
+              "contract_id": "cGT5",
+              "deterministic_seed": "auth-consent-revoke-v1",
+              "cryptographic_mode": "required"
+            }
+          },
+          {
+            "case_id": "AUTH-PRODUCER-RECOVERY",
+            "template_fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-06.jsonl",
+            "scenario": {
+              "profile": "AICP-AUTHENTICATED-BASE@0.1",
+              "participants": ["agent:S", "agent:T"],
+              "desired_message_types": ["CONTRACT_PROPOSE", "CONTRACT_ACCEPT", "STATE_SYNC_REQUEST", "STATE_SYNC_RESPONSE", "CONTEXT_AMEND"],
+              "session_id": "sGT6",
+              "contract_id": "cGT6",
+              "deterministic_seed": "auth-recovery-v1",
+              "cryptographic_mode": "required"
+            }
+          },
+          {
+            "case_id": "AUTH-PRODUCER-ERROR",
+            "template_fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-10.jsonl",
+            "scenario": {
+              "profile": "AICP-AUTHENTICATED-BASE@0.1",
+              "participants": ["agent:S"],
+              "desired_message_types": ["ERROR"],
+              "session_id": "sGT10",
+              "contract_id": "cGT10",
+              "deterministic_seed": "auth-error-v1",
+              "cryptographic_mode": "required"
+            }
+          }
+        ],
+        "consumer_cases": [
+          {"case_id": "AUTH-CORE-GT-01", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-01", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-01.jsonl", "accepted": true},
+          {"case_id": "AUTH-CORE-GT-02", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-02", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-02.jsonl", "accepted": true},
+          {"case_id": "AUTH-CORE-GT-04", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-04", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-04.jsonl", "accepted": true},
+          {"case_id": "AUTH-CORE-GT-05", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-05", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-05.jsonl", "accepted": true},
+          {"case_id": "AUTH-CORE-GT-06", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-06", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-06.jsonl", "accepted": true},
+          {"case_id": "AUTH-CORE-GT-07", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-07", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-07.jsonl", "accepted": false},
+          {"case_id": "AUTH-CORE-GT-08", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-08", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-08.jsonl", "accepted": false},
+          {"case_id": "AUTH-CORE-GT-09", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-09", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-09.jsonl", "accepted": false},
+          {"case_id": "AUTH-CORE-GT-10", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-10", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-10.jsonl", "accepted": true},
+          {"case_id": "AUTH-CORE-GT-11", "suite_ref": "conformance/core/CT_CORE_0.1.json", "suite_case_id": "GT-11", "fixture": "fixtures/security/authenticated_base/core/AB-CORE-GT-11.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-01", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-01", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true},
+          {"case_id": "AUTH-AB-02", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-02", "fixture": "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl", "accepted": true},
+          {"case_id": "AUTH-AB-03", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-03", "fixture": "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-04", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-04", "fixture": "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-05", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-05", "fixture": "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-06", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-06", "fixture": "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-07", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-07", "fixture": "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-08", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-08", "fixture": "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-09", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-09", "fixture": "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-10", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-10", "fixture": "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-11", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-11", "fixture": "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-12", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-12", "fixture": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-13", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-13", "fixture": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-AB-14", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-14", "fixture": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl", "accepted": false},
+          {"case_id": "AUTH-CRYPTO-UNAVAILABLE", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-01", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true, "expected_degraded": true, "runtime_options": {"cryptographic_verification": "unavailable"}, "additional": true}
+        ]
+      }
     }
   },
   "session_state_projection": {
-    "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
-    "producer_case": {"case_id": "SESSION-STATE-PROJECTION-V1-VALID", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl"},
+    "producer_case": {"case_id": "SESSION-STATE-PROJECTION-V1-PRODUCER", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl"},
     "consumer_cases": [
-      {"case_id": "STATE-CONSUMER-VALID", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl", "accepted": true},
-      {"case_id": "STATE-CONSUMER-SESSION-MISMATCH", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-CONTRACT-MISMATCH", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-HASH-MISMATCH", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-CONTRACT-REF", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-PROFILE", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-EXTENSION", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-HEAD", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-EVIDENCE", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-CONTRADICTION", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl", "accepted": false},
-      {"case_id": "STATE-CONSUMER-AS-OF", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl", "accepted": false}
+      {"case_id": "STATE-SP-01", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl", "accepted": true},
+      {"case_id": "STATE-SP-02", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-03", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-04", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-05", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-06", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-07", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-08", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-09", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-10", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-11", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl", "accepted": false},
+      {"case_id": "STATE-SP-12", "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl", "accepted": false}
     ]
   }
 }

@@ -1,38 +1,8 @@
 {
-  "report_format_version": "1.0",
-  "execution_subject": {
-    "kind": "reference_corpus",
-    "implementation_id": "aicp-reference-corpus",
-    "implementation_version": "0.1.0-rc.1",
-    "implementation_digest": "sha256:6af38ee49db1026071751e0b976bdfb7a7a68c5f00d05602dac710302e13dd01"
-  },
-  "runner": {
-    "name": "aicp-conformance-runner",
-    "version": "1.0",
-    "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
-  },
-  "suite": {
-    "suite_id": "CT-NUMERIC-GUARDRAILS-0.1",
-    "suite_version": "0.1.0-dev",
-    "suite_digest": "sha256:6bc2838bead99a2a72ceff8d23c8cf737a157ea5106655a08f8afbbea8bcb91a"
-  },
-  "input_artifacts": [
-    {
-      "artifact_id": "NUM-01",
-      "path": "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
-      "content_digest": "sha256:43324e39e27dfec2ad804c87d903607746b3ec7d6005766e972b930dac9b2eb4"
-    },
-    {
-      "artifact_id": "NUM-02",
-      "path": "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
-      "content_digest": "sha256:edaf3a5cc13b098233b8c66796f6075ea69157b3450408c9151f0f024f9accf6"
-    }
-  ],
-  "generated_artifacts": [],
   "aicp_version": "0.1",
   "suite_id": "CT-NUMERIC-GUARDRAILS-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-07-22T12:47:15.384565+00:00",
+  "timestamp": "2026-07-22T17:04:59.612881+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [

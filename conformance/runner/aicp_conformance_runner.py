@@ -241,7 +241,12 @@ def _evaluate_transcript_expectations(
     return errors
 
 
-def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None, suite_path: Path) -> dict[str, Any]:
+def _run_binding_suite(
+    suite: dict[str, Any],
+    schema: dict[str, Any] | None,
+    suite_path: Path,
+    report_format: str,
+) -> dict[str, Any]:
     enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     case_validator = _build_validator(schema, ROOT / suite["schema_ref"]) if schema is not None else None
     core_schema_path = ROOT / "schemas/core/aicp-core-message.schema.json"
@@ -970,17 +975,18 @@ def _run_binding_suite(suite: dict[str, Any], schema: dict[str, Any] | None, sui
         skipped_checks=[],
         suite_path=suite_path,
         suite_catalog=suite,
+        report_format=report_format,
     )
 
 
-def run_suite(suite_path: Path) -> dict[str, Any]:
+def run_suite(suite_path: Path, *, report_format: str = "legacy") -> dict[str, Any]:
     suite = load_json(suite_path)
     enabled_checks = {c.get("test_id") for c in suite.get("checks", [])}
     schema_path = ROOT / suite["schema_ref"]
     schema = load_json(schema_path)
 
     if "cases" in suite:
-        return _run_binding_suite(suite, schema, suite_path)
+        return _run_binding_suite(suite, schema, suite_path, report_format)
 
     validator = _build_validator(schema, schema_path)
 
@@ -4545,6 +4551,7 @@ def run_suite(suite_path: Path) -> dict[str, Any]:
         skipped_checks=skipped_checks,
         suite_path=suite_path,
         suite_catalog=suite,
+        report_format=report_format,
     )
 
 
@@ -4552,13 +4559,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run AICP conformance suite")
     parser.add_argument("--suite", required=True, help="Path to suite catalog JSON")
     parser.add_argument("--out", required=True, help="Path to output report JSON")
+    parser.add_argument("--report-format", choices=["legacy", "v1"], default="legacy")
     args = parser.parse_args()
 
     suite_path = _resolve_repo_path(args.suite)
     out_path = _resolve_repo_path(args.out)
 
     try:
-        report = run_suite(suite_path)
+        report = run_suite(suite_path, report_format=args.report_format)
     except Exception as exc:
         print(f"[FAIL] {exc}")
         return 1
@@ -4569,7 +4577,11 @@ def main() -> int:
         print("[WARN] cryptography is not installed. Signature verification checks are limited.")
 
     if Draft202012Validator is not None:
-        report_schema_path = ROOT / "conformance/conformance_report_schema.json"
+        report_schema_path = ROOT / (
+            "conformance/conformance_report_v1.schema.json"
+            if args.report_format == "v1"
+            else "conformance/conformance_report_schema.json"
+        )
         report_schema = load_json(report_schema_path)
         _build_validator(report_schema, report_schema_path).validate(report)
     else:

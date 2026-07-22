@@ -6,6 +6,6 @@
     "example-impl-b"
   ],
   "profile_id": "AICP-MEDIATED-BLOCKING",
-  "result": "interoperable",
-  "notes": "Example-only summary artifact showing how a pairwise package can carry additional contextual evidence."
+  "result": "instructional_only",
+  "notes": "No joint execution occurred. This summary demonstrates reserved vocabulary and cannot substantiate interoperability."
 }

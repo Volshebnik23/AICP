@@ -1,43 +1,8 @@
 {
-  "report_format_version": "1.0",
-  "execution_subject": {
-    "kind": "reference_corpus",
-    "implementation_id": "aicp-reference-corpus",
-    "implementation_version": "0.1.0-rc.1",
-    "implementation_digest": "sha256:1d46083f0f783503e8e657b4bd3d4b6d4605a4515982289ac7cb0c1541696b8a"
-  },
-  "runner": {
-    "name": "aicp-conformance-runner",
-    "version": "1.0",
-    "source_revision": "sha256:4cd1869f6ae6876b0f4b5628961a097024fe02a3290408895f22ce3df3812a0a"
-  },
-  "suite": {
-    "suite_id": "OPS-HARDENING-0.1",
-    "suite_version": "0.1.0-dev",
-    "suite_digest": "sha256:8abfdad2808a125d20552bb745494ffe6f6dcc7c53f73190e0dfc120c3c84aea"
-  },
-  "input_artifacts": [
-    {
-      "artifact_id": "OPS-01",
-      "path": "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
-      "content_digest": "sha256:b198445795a88853de7287dc9117e0dc62c0b5fe0dfe316c2b45a6d102065298"
-    },
-    {
-      "artifact_id": "OPS-02",
-      "path": "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
-      "content_digest": "sha256:935d761b81ce42cc35d889a84df4fd867d7fffffde7ab458035414945ec4e652"
-    },
-    {
-      "artifact_id": "OPS-03",
-      "path": "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
-      "content_digest": "sha256:a2f3962b8c502ce956f9a77788584389a3168bd1b059704ac0f06377baeda3ca"
-    }
-  ],
-  "generated_artifacts": [],
   "aicp_version": "0.1",
   "suite_id": "OPS-HARDENING-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-07-22T12:47:31.838630+00:00",
+  "timestamp": "2026-07-22T17:05:05.625448+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [

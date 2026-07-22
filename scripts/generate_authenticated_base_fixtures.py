@@ -20,6 +20,7 @@ from aicp_ref.validate import message_body_without_hash_and_signatures  # noqa: 
 
 
 OUT = ROOT / "fixtures/security/authenticated_base"
+CORE_OUT = OUT / "core"
 CAPNEG_OUT = ROOT / "fixtures/extensions/capneg"
 
 
@@ -70,6 +71,53 @@ def _write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
         "".join(json.dumps(row, separators=(",", ":"), ensure_ascii=False) + "\n" for row in rows),
         encoding="utf-8",
     )
+
+
+def _load_jsonl(path: Path) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def _signed_core_variants(keys: dict[str, dict[str, Any]]) -> None:
+    sources = {
+        "01": "GT-01_happy_path_signed.jsonl",
+        "02": "GT-02_conflict_choose_signed.jsonl",
+        "04": "GT-04_consent_required_and_grant.jsonl",
+        "05": "GT-05_consent_revoke.jsonl",
+        "06": "GT-06_unknown_base_and_resync.jsonl",
+        "07": "GT-07_invalid_signature_reject.jsonl",
+        "08": "GT-08_replay_duplicate_message_id.jsonl",
+        "09": "GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+        "10": "GT-08_error_minimal.jsonl",
+        "11": "GT-11_empty_contract_id_expected_fail.jsonl",
+    }
+    golden = ROOT / "fixtures/golden_transcripts"
+    for case_id, filename in sources.items():
+        source_rows = _load_jsonl(golden / filename)
+        if case_id == "07":
+            # Preserve the suite's deliberately invalid signature evidence.
+            rows = source_rows
+        else:
+            for row in source_rows:
+                if row.get("sender") == "agent:A":
+                    row["sender"] = "agent:S"
+                elif row.get("sender") == "agent:B":
+                    row["sender"] = "agent:T"
+            rows = _rehash_and_sign(source_rows, keys)
+        if case_id == "09":
+            # Preserve the missing non-first prev_msg_hash while keeping every
+            # message sender-authenticated for the authenticated profile.
+            rows[1].pop("prev_msg_hash", None)
+            for index in range(1, len(rows)):
+                body = message_body_without_hash_and_signatures(rows[index])
+                if index > 1:
+                    body["prev_msg_hash"] = rows[index - 1]["message_hash"]
+                digest = message_hash_from_body(body)
+                rows[index] = {
+                    **body,
+                    "message_hash": digest,
+                    "signatures": [_sign(digest, body["sender"], keys)],
+                }
+        _write_jsonl(CORE_OUT / f"AB-CORE-GT-{case_id}.jsonl", rows)
 
 
 def _single_message(keys: dict[str, dict[str, Any]]) -> dict[str, Any]:
@@ -173,6 +221,7 @@ def _capneg_rows(include_required_crypto: bool) -> list[dict[str, Any]]:
 
 def main() -> int:
     keys = _load_keys()
+    _signed_core_variants(keys)
     golden_rows = [json.loads(line) for line in (ROOT / "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl").read_text(encoding="utf-8").splitlines() if line]
     for row in golden_rows:
         row["sender"] = "agent:S" if row["sender"] == "agent:A" else "agent:T"

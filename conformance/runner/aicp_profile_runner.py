@@ -31,7 +31,7 @@ def _resolve_repo_path(path_like: str) -> Path:
     return _io_resolve_repo_path(path_like, root=ROOT)
 
 
-def run_profile(profile_path: Path) -> dict[str, Any]:
+def run_profile(profile_path: Path, *, report_format: str = "legacy") -> dict[str, Any]:
     profile = load_json(profile_path)
     suite_reports: list[dict[str, Any]] = []
     failures: list[dict[str, Any]] = []
@@ -43,7 +43,11 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
 
     for rel_suite in profile.get("required_suites", []):
         suite_path = _resolve_repo_path(rel_suite)
-        suite_report = run_suite(suite_path)
+        suite_report = (
+            run_suite(suite_path)
+            if report_format == "legacy"
+            else run_suite(suite_path, report_format=report_format)
+        )
         suite_reports.append(suite_report)
 
         suite_protocol_version = suite_report.get("aicp_version")
@@ -90,8 +94,7 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
         else:
             raise ValueError(f"Profile suites disagree on aicp_version: {sorted(observed_protocol_versions)}")
 
-    return {
-        **build_profile_provenance(profile_path, profile),
+    report = {
         "aicp_version": protocol_version,
         "profile_id": profile.get("profile_id"),
         "profile_version": profile.get("profile_version"),
@@ -102,6 +105,14 @@ def run_profile(profile_path: Path) -> dict[str, Any]:
         "compatibility_marks": marks,
         "degraded": degraded,
         "degraded_reasons": degraded_reasons,
+    }
+    if report_format == "legacy":
+        return report
+    if report_format != "v1":
+        raise ValueError("report_format must be 'legacy' or 'v1'")
+    return {
+        **build_profile_provenance(profile_path, profile),
+        **report,
         "skipped_checks": skipped_checks,
     }
 
@@ -110,19 +121,20 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run AICP profile conformance aggregation")
     parser.add_argument("--profile", required=True, help="Path to profile catalog JSON")
     parser.add_argument("--out", required=True, help="Path to output profile report JSON")
+    parser.add_argument("--report-format", choices=["legacy", "v1"], default="legacy")
     args = parser.parse_args()
 
     profile_path = _resolve_repo_path(args.profile)
     out_path = _resolve_repo_path(args.out)
 
     try:
-        report = run_profile(profile_path)
+        report = run_profile(profile_path, report_format=args.report_format)
     except Exception as exc:
         print(f"[FAIL] {exc}")
         return 1
 
-    profile_report_schema_path = ROOT / "conformance/profile_report_schema.json"
-    if profile_report_schema_path.exists():
+    profile_report_schema_path = ROOT / "conformance/profile_report_v1.schema.json"
+    if args.report_format == "v1" and profile_report_schema_path.exists():
         schema = load_json(profile_report_schema_path)
         validator = _build_validator(schema, profile_report_schema_path)
         if validator is not None:

@@ -45,7 +45,11 @@ Common report outputs:
 - `conformance/report_security_signed_path.json` (Security evidence)
 - `conformance/report_ops_hardening.json` (Ops hardening evidence)
 
-Read marks from report JSON:
+The frozen UAT `conformance/report*.json` and ordinary profile reports retain their legacy
+report shape. Read their existing `compatibility_marks`, `passed`, `degraded`, and
+`skipped_checks` fields as before.
+
+Post-UAT provenance and external-IUT v1 reports additionally provide:
 
 - `report_format_version`
 - `execution_subject` (reference corpus versus external implementation/build)
@@ -54,10 +58,11 @@ Read marks from report JSON:
 - `passed` boolean
 - `degraded`, `degraded_reasons`, and `skipped_checks`
 
-Ordinary repository runs label their subject `reference_corpus`. They prove the checked-in
-corpus/runner behavior, not an external product. Use the JSONL IUT path in
-`conformance/iut/README.md` for a report bound to an external implementation. File digests
-prove artifact integrity, not organizational identity, certification, or endorsement.
+Opt-in provenance repository runs label their subject `reference_corpus`. They prove the
+checked-in corpus/runner behavior, not an external product. IUT smoke reports also cannot
+support an ordinary profile claim. Only a full-profile, complete, non-degraded external-IUT
+v1 report may carry an external product-profile mark. File digests prove artifact integrity,
+not organizational identity, certification, or endorsement.
 
 ## Reusable CI snippet for adopters
 

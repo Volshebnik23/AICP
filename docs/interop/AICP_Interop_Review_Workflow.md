@@ -72,9 +72,10 @@ For a repo-owned rehearsal of this same lifecycle, see `docs/interop/AICP_Intero
 4. **Verify evidence packaging.**
    - referenced files actually exist inside the package,
    - exact `profile_refs` match the claim,
-   - reports identify an external execution subject matching the manifest implementation
-     ID/version and checked-in profile digest,
-   - passed reports are non-degraded, have no mandatory skips, and carry the expected mark,
+   - reports are schema-valid full-profile external-IUT v1 artifacts matching the manifest,
+     registered TCK release, exact mandatory case set, and all required digests,
+   - passed reports are non-degraded, have no mandatory skips, and carry exactly the
+     independently recomputed mark list,
    - optional `bundle-integrity.json` validates when present.
 
 5. **Decide matrix publication readiness.**
@@ -100,14 +101,11 @@ Maintainers should verify:
 
 ### `pairwise`
 
-Maintainers should verify:
-- `peer_implementation_id` is present,
-- `peer_implementation_version` is present,
-- eligible reports identify both exact execution subjects and the same exact profile,
-- a joint summary explicitly names both participants and the interaction result,
-- the package stays specific to the named peer and profile,
-- disclosures explain whether the package includes both sides' evidence directly or only one side's package plus a shared summary,
-- the submission does not imply general ecosystem-wide compatibility.
+Real pairwise submissions are not publication-eligible in this release. The validator must
+return `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; maintainers must not waive this using two
+single-IUT reports, co-conformance, or a summary. Examples/templates remain instructional.
+A future review path requires a dedicated joint run binding both builds and exchanged
+artifacts in every required direction.
 
 ## Required maintainer checklist
 

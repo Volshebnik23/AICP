@@ -7,16 +7,28 @@ _Last updated: 2026-07-22_
 
 ## Current / Next
 
-### ✅ M57 — Post-UAT protocol hardening
-- **Shipped:** experimental strict portable session-state
-  projection within `EXT-OBJECT-RESYNC`, without changing legacy object-resync or the
-  frozen `AICP-RESUMABLE-SESSIONS@0.1` profile.
-- **Shipped:** experimental
-  `AICP-AUTHENTICATED-BASE@0.1`, Unicode code-point parity fixes, shared sandbox signature
-  validation, external-IUT test adapter/runner, and report/interop provenance binding.
-- **Verification:** focused hardening tests, validation, all 64 conformance catalog outputs,
-  133 Python tests, 16 TypeScript tests, quickstarts, template/IUT smoke, `make prepr`, and
-  compatibility/release gates plus `git diff --check` passed on 2026-07-22.
+### ✅ M57 — Post-UAT protocol hardening and evidence truthfulness
+- **Shipped:** smoke and full-profile IUT execution are distinct; smoke emits no ordinary
+  product-profile mark, while full external coverage requires 21 mandatory BASE cases or
+  37 mandatory authenticated-base cases from the registered TCK release.
+- **Shipped:** strong external evidence is schema-, coverage-, subject-, mark-, and
+  provenance-driven; incomplete, forged, degraded, skipped, reference-corpus, or
+  digest-mismatched reports are rejected.
+- **Shipped:** adapter requests use opaque challenges and neutral producer scenarios, and
+  one monotonic deadline now bounds stdin, stdout/stderr, process completion, cleanup, and
+  child reaping.
+- **Shipped:** real pairwise publication fails closed with
+  `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; examples remain instructional until a dedicated
+  joint-execution format exists.
+- **Shipped:** ordinary conformance/profile commands retain the frozen legacy report shape;
+  provenance-rich conformance/profile v1 and IUT v1 are additive post-UAT artifacts.
+- **Preserved:** experimental strict portable session-state projection,
+  `AICP-AUTHENTICATED-BASE@0.1`, Unicode code-point parity, sandbox signature validation,
+  legacy object-resync behavior, and all existing `@0.1` profile semantics.
+- **Verification:** `make prepr` (153 Python tests and 16 TypeScript tests),
+  `make compatibility-gate`, `make release-check`, planning validation, full reference IUT,
+  positive external-kind fake IUT, and required negative fake-adapter paths all passed on
+  2026-07-22.
 
 ### M49 - Verification gate taxonomy alignment
 - **Shipped:** `make prepr` is now the PR/onboarding gate and runs full conformance through `make conformance-all`, reference tests, quickstarts, template smoke, and TypeScript SDK tests.

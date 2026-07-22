@@ -53,7 +53,9 @@ python interop/tools/build_submission.py \
   --validate
 ```
 
-For a pairwise package, supply two or more `--report-path` values plus an explicit peer ID:
+The following command is an instructional example of the reserved pairwise vocabulary. It
+is expected to fail its `--validate` step with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; real
+pairwise publication is disabled until a joint-execution evidence format exists:
 
 ```bash
 python interop/tools/build_submission.py \
@@ -61,6 +63,7 @@ python interop/tools/build_submission.py \
   --submission-id fictional-pairwise \
   --implementation-id fictional-impl-a \
   --peer-implementation-id fictional-impl-b \
+  --peer-implementation-version 2.0.0 \
   --implementation-version 2.0.0 \
   --profile-id AICP-MEDIATED-BLOCKING \
   --claim-type pairwise_interop \
@@ -75,7 +78,10 @@ python interop/tools/build_submission.py \
   --validate
 ```
 
-The builder copies the supplied reports into `<out-root>/<submission-id>/reports/`, writes `submission.json`, and fails clearly instead of inventing missing pairwise metadata. Pass `--with-integrity` to also write `bundle-integrity.json` for the packaged files the builder actually emitted.
+For single-implementation claims, the builder copies supplied reports into
+`<out-root>/<submission-id>/reports/`, writes `submission.json`, and can produce
+`bundle-integrity.json`. For the pairwise example, the deterministic validation failure is
+intentional: two independent reports do not establish a shared bidirectional run.
 
 `bundle-integrity.json` helps reviewers detect accidental drift or tampering after packaging. It does **not** prove signer identity, endorsement, or certification, and validators treat it as optional-but-strict: missing is allowed, present-and-invalid fails.
 

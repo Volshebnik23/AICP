@@ -20,6 +20,7 @@ from interop_submission_validation import (  # noqa: E402
     ALLOWED_CLAIM_TYPES,
     ALLOWED_EVIDENCE_STATUSES,
     INTEGRITY_FILENAME,
+    PAIRWISE_JOINT_EVIDENCE_ERROR,
     build_integrity_manifest,
     load_json,
     load_schema_and_registry,
@@ -213,6 +214,8 @@ def _validate_package(package_dir: Path) -> list[str]:
     if manifest is None:
         return errors
     errors.extend(validate_common_rules(submission_path, manifest, known_profiles, require_existing_refs=True))
+    if manifest.get("claim_type") == "pairwise_interop" and manifest.get("evidence_status") == "pairwise":
+        errors.append(PAIRWISE_JOINT_EVIDENCE_ERROR)
     _, integrity_errors = validate_bundle_integrity(
         package_dir,
         manifest["submission_id"],

@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-iut-smoke interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -72,9 +72,17 @@ conformance-ops:
 conformance-security:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog security
 
+conformance-provenance:
+	$(PYTHON) conformance/runner/aicp_conformance_runner.py --suite conformance/core/CT_CORE_0.1.json --report-format v1 --out out/provenance/report_core_v1.json
+	$(PYTHON) conformance/runner/aicp_profile_runner.py --profile conformance/profiles/PF_AICP_BASE_0.1.json --report-format v1 --out out/provenance/report_profile_base_v1.json
+
 conformance-iut-smoke:
-	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-BASE@0.1 --include-session-state-projection --out conformance/iut/report_reference_base.json
-	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-AUTHENTICATED-BASE@0.1 --out conformance/iut/report_reference_authenticated_base.json
+	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-BASE@0.1 --mode smoke --include-session-state-projection --out conformance/iut/report_reference_base.json
+	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-AUTHENTICATED-BASE@0.1 --mode smoke --out conformance/iut/report_reference_authenticated_base.json
+
+conformance-iut-full-reference:
+	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-BASE@0.1 --mode full-profile --out conformance/iut/report_reference_base_full.json
+	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-AUTHENTICATED-BASE@0.1 --mode full-profile --out conformance/iut/report_reference_authenticated_base_full.json
 
 interop-validate:
 	$(PYTHON) scripts/validate_interop_submission_examples.py
