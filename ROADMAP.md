@@ -1,11 +1,53 @@
 # AICP Roadmap Items (repo-backed)
 
+<!-- repo-truth-role: shipped-current-next -->
+
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-07-22_
+_Last updated: 2026-07-24_
 
 ## Current / Next
+
+### 🚧 M58 — Repo-Truth Rebaseline
+- **Status:** In progress.
+- **Problem:** planning, product, interoperability, security, governance, and release
+  narratives do not consistently distinguish repository presence, internal verification,
+  external testability, independent evidence, and future work.
+- **Scope:** establish the canonical repository-truth baseline, reopen the remaining
+  milestone sequence, add a mechanically checked profile/evidence map, and reconcile
+  non-normative claims without changing protocol semantics.
+- **Non-goals:** no new message, extension, profile, binding, wire requirement, cryptographic
+  rule, or change to Core v0.1 / existing `@0.1` semantics.
+- **Principal evidence gap:** the current repository has no single machine-checked status
+  artifact covering profile IUT reachability, independent evidence, live bindings, security
+  review, governance, release limits, and registered-message fixture gaps.
+- **Dependencies:** merged M57 evidence hardening and the frozen UAT baseline.
+- **Completion criterion:** every M58 Definition of Done is green under the mandatory
+  validation set, then status changes to shipped. Canonical status:
+  `docs/process/AICP_Repo_Truth_Baseline.md`.
+
+## Planned milestones
+
+Detailed remaining-work scope, non-goals, dependencies, evidence gaps, and completion
+criteria live in `AICP_Backlog`.
+
+| ID | Status | Title | Planning record |
+|---|---|---|---|
+| M59 | Planned | Authenticated Base Evidence Reachability | `AICP_Backlog` |
+| M60 | Planned | Exact Contract Agreement Core | `AICP_Backlog` |
+| M61 | Planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
+| M62 | Planned | Generalized External Evidence Framework | `AICP_Backlog` |
+| M63 | Planned | Tier-1 External Profile TCK | `AICP_Backlog` |
+| M64 | Planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
+| M65 | Planned | Registered Message Surface Completion | `AICP_Backlog` |
+| M66 | Planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
+| M67 | Planned | Security Coverage Closure | `AICP_Backlog` |
+| M68 | Planned | Governance and Standard Maturity | `AICP_Backlog` |
+| M69 | Planned | Release Engineering and RC Repackaging | `AICP_Backlog` |
+| M70 | Planned | External Plugfest Readiness | `AICP_Backlog` |
+
+## Shipped history
 
 ### ✅ M57 — Post-UAT protocol hardening and evidence truthfulness
 - **Shipped:** smoke and full-profile IUT execution are distinct; smoke emits no ordinary
