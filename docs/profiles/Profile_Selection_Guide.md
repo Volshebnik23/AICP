@@ -56,6 +56,11 @@ When you need to publish compatibility evidence for the selected profile, packag
 
 ## 5) Common profile combinations
 
+These are deployment composition recommendations, not one negotiated multi-profile target.
+Current EXT-CAPNEG proposes one selected `aicp_profile`; it does not negotiate the
+combinations below as an atomic profile set. Versioned multi-profile composition is planned
+under M61.
+
 - **Reception + continuity:** `AICP-MEDIATED-BLOCKING@0.1` + `AICP-RESUMABLE-SESSIONS@0.1`
 - **Authenticated Core:** `AICP-AUTHENTICATED-BASE@0.1`; compose with delegated identity,
   trust/status, witness, or mediation profiles only for the distinct semantics they add.

@@ -209,6 +209,12 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 ## 3. Conformance Badge Semantics
 A **conformance badge** is a profile-level compatibility mark issued when all required suites for the profile pass.
 
+Repository-owned profile runner results are internal conformance evidence. They do not prove
+an independent implementation. An ordinary external product-profile mark additionally
+requires an eligible full-profile external-IUT report. The current external runner targets
+only Base and Authenticated Base; the authenticated target remains mark-ineligible because
+its mandatory degraded probe records a skipped crypto check.
+
 Normative rules:
 - Badge computation MUST be derived from machine-readable conformance reports.
 - Badge issuance MUST NOT be self-asserted without report evidence.
@@ -230,6 +236,9 @@ Operational guidance:
 - A platform that requires `AICP-MEDIATED-BLOCKING@0.1` SHOULD declare it in `required_aicp_profiles` and reject proposals selecting weaker profiles.
 - Product profile claims negotiated in CAPNEG are runtime claims; conformance/profile badges are separate evidence artifacts and MUST still be produced from suite/profile runners.
 - Downgrade attempts are expected to be detectable deterministically via CAPNEG conformance checks.
+- The current proposal selection contains one `selected.aicp_profile`. Pairing notes and
+  profile combinations elsewhere in the documentation are deployment guidance, not
+  implemented atomic multi-profile negotiation.
 
 
 ## Experimental profiles currently in repo

@@ -2,6 +2,11 @@
 
 AICP interoperability submissions let implementations package **profile-scoped, reviewable evidence** using a lightweight JSON manifest.
 
+Current generated status: zero real external submissions, one dry run, three instructional
+artifacts, and no eligible external/pairwise mark. The canonical evidence summary is
+`docs/process/AICP_Repo_Truth_Baseline.md`; `interop/interop_matrix.json` is the generated
+corpus view.
+
 This directory now supports two shapes:
 - the newer public interop corpus submission model based on `submission.json`, and
 - the older implementation-manifest layout (`implementation.json` + `reports/`) for backward compatibility with early plugfest-style submissions.

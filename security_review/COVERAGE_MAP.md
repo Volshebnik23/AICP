@@ -19,3 +19,15 @@ This map links threats from `security_review/THREAT_MODEL.md` and `security_revi
 - “Strong” = direct executable checks plus explicit negative/expected-fail evidence.
 - “Partial” = executable checks exist, but important threat sub-cases remain unmodeled.
 - “Doc-only” = threat is identified in review docs but not yet enforced by deterministic conformance logic.
+
+## Planned routing
+
+- Transcript truncation, additional sanction/escalation signed paths, spoofed sender
+  variants, resync amplification/existence leakage, privacy leakage, and the two current
+  partial rows are routed to M67.
+- CAPNEG rollback and profile-composition downgrade coverage is routed through M61, then
+  security closure in M67.
+- Exact-contract substitution analysis is routed through M60, then security closure in M67.
+- The current repository has no independent external security-review artifact. A future
+  “external review completed” status requires an actual report, not this map or the internal
+  self-review.

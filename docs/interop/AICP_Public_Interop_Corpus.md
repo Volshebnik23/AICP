@@ -7,9 +7,17 @@ The AICP public interop corpus is the repo-backed place for packaging **checkabl
 Its purpose is to let implementers publish narrowly-scoped, machine-readable claims such as:
 - an implementation **implements** a shipped AICP profile,
 - an implementation is **compatible with** a shipped AICP profile based on conformance evidence,
-- two implementations were **pairwise interoperable** for a specific shipped profile and evidence set.
+- reserved instructional packaging for a future claim that two implementations were
+  **pairwise interoperable** for a specific profile and bound joint evidence set.
 
 The corpus is intentionally conservative. It is for evidence packaging and transparent review, not for marketing shorthand or protocol expansion.
+
+## Current corpus status
+
+The generated matrix currently contains zero real external submissions and zero eligible
+external marks. It contains one repo-owned dry run plus examples/templates, all explicitly
+non-promotable. Real pairwise publication is unavailable and fails closed. See
+`interop/interop_matrix.json` and `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 ## Scope
 
@@ -69,6 +77,10 @@ the exact recomputed mark list. Smoke, legacy, and `reference_corpus` reports ar
 errors for strong external evidence, not proof of an external product.
 Strong `implements_profile` and `compatible_with_profile` claims also require
 `evidence_status=reproducible`; `self_attested` cannot bypass this rule.
+
+The current full-profile runner targets only `AICP-BASE@0.1` and experimental
+`AICP-AUTHENTICATED-BASE@0.1`. The authenticated target’s mandatory degraded probe suppresses
+its ordinary mark, so Base is the only currently reachable ordinary external profile mark.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 

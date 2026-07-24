@@ -68,6 +68,18 @@ never copied from arbitrary report JSON. `self_attested` packaging alone is not 
 an ordinary profile mark. File digests prove artifact integrity,
 not organizational identity, certification, or endorsement.
 
+## Current external reachability
+
+| Profile target | External full-profile target | Ordinary external mark |
+|---|---|---|
+| `AICP-BASE@0.1` | Available (21 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |
+| `AICP-AUTHENTICATED-BASE@0.1` | Available (37 mandatory cases) | Unreachable: the required unavailable-crypto probe records a skipped mandatory check |
+| Other 13 registered profiles | Not available | Unreachable through the current external-IUT runner |
+
+This table is validated against `conformance/iut/cases.json` and
+`docs/process/repo_truth_status.json`. Internal profile marks remain repository-owned
+conformance evidence, not external product proof.
+
 ## Reusable CI snippet for adopters
 
 Drop this workflow into your repository to publish compatibility evidence:

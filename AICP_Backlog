@@ -1,26 +1,208 @@
 # AICP Protocol Backlog (planning-only, repo-backed)
 
-> Scope: **protocol only** (Core + extensions + registries + schemas + fixtures + conformance + profiles + implementer guides).
-> Out of scope: platform/enforcer implementations, chat UX, agent internals, hosted trust services.
+<!-- repo-truth-role: remaining-work -->
 
-This backlog is a **planning artifact for remaining product deliverables**. It tracks what is still needed in-repo, not a historical release ledger:
-- RFC/Docs (normative)
-- Registries
-- JSON Schemas
-- Golden fixtures (JSONL transcripts)
-- Conformance suites + runner checks
-- Profiles (bundle suites)
-- Implementer tooling/quickstarts (adapter skeletons, CI templates)
-- Snapshot + release discipline
+> Scope: remaining in-repository protocol, evidence, interoperability, security, governance,
+> and release-engineering deliverables. Shipped/current/next status is canonical in
+> `ROADMAP.md`; current evidence status is canonical in
+> `docs/process/AICP_Repo_Truth_Baseline.md`.
+>
+> Out of scope: hosted platform/enforcer implementations, chat UX, agent internals, hosted
+> trust services, and historical shipped-ledger detail.
 
-> Planning context: shipped milestone history lives in `ROADMAP.md`; this backlog tracks only remaining protocol deliverables.
+Each section below is planned work. No item is shipped merely because its problem statement
+or intended completion criterion is documented here.
 
----
+## M59 — Authenticated Base Evidence Reachability
 
-# Backlog epics and milestones
+- **Status:** Planned.
+- **Problem statement:** the 37-case authenticated full-profile target intentionally includes
+  an unavailable-crypto degraded probe, so a behaviorally passing run cannot emit the
+  ordinary authenticated profile mark.
+- **Scope:** redesign external evidence accounting so negative/unavailable-backend behavior
+  can be tested without forcing an otherwise complete authenticated run to remain degraded;
+  preserve mandatory Ed25519 verification.
+- **Explicit non-goals:** no weakening of signature checks, no mark for skipped mandatory
+  verification, and no change to `AICP-AUTHENTICATED-BASE@0.1` semantics.
+- **Principal evidence gap:** no eligible path can currently emit
+  `AICP-Profile-AUTHENTICATED-BASE-0.1`.
+- **Dependencies:** M58.
+- **Completion criterion:** an external-kind full target can exercise every mandatory
+  authenticated behavior with no skipped mandatory check and the negative degraded-path
+  probe remains independently tested.
 
-AICP currently has no remaining in-repo protocol backlog milestones.
+## M60 — Exact Contract Agreement Core
 
-The previously remaining legal-readiness work item (M33) has been moved to `ROADMAP.md` because its shipped artifacts are now present in-repo.
+- **Status:** Planned.
+- **Problem statement:** Core messages carry `contract_id` and may carry `contract_ref`, but
+  the repository has no dedicated exact contract-version/hash agreement claim or conformance
+  target.
+- **Scope:** perform a versioned design review, define exact agreement only if required, and
+  add matching schemas, fixtures, conformance, migration notes, and reference behavior.
+- **Explicit non-goals:** no silent Core v0.1 reinterpretation and no opportunistic schema
+  change before the design decision.
+- **Principal evidence gap:** no executable proof that both peers accepted the same exact
+  contract artifact/version beyond the current Core fields and flows.
+- **Dependencies:** M58.
+- **Completion criterion:** either a versioned exact-agreement design ships with complete
+  executable evidence, or the repository records a reviewed decision that current semantics
+  are sufficient and narrows the claim accordingly.
 
-New backlog entries should be added here only when maintainers decide to open a new not-yet-shipped in-repo milestone.
+## M61 — Multi-Profile Composition and CAPNEG v2
+
+- **Status:** Planned.
+- **Problem statement:** product guidance recommends profile combinations while current
+  CAPNEG selection carries one `aicp_profile`.
+- **Scope:** define versioned composition, selection, downgrade, conflict-resolution, and
+  evidence semantics for multiple product profiles.
+- **Explicit non-goals:** no retroactive change to EXT-CAPNEG v0.1 or existing `@0.1`
+  profiles; documentation combinations remain deployment guidance until this milestone ships.
+- **Principal evidence gap:** no negotiated multi-profile selection artifact or composition
+  conformance suite exists.
+- **Dependencies:** M60 and the current CAPNEG suite.
+- **Completion criterion:** a versioned CAPNEG composition design, registry/schema surface,
+  fixtures, conformance, and downgrade tests ship together.
+
+## M62 — Generalized External Evidence Framework
+
+- **Status:** Planned.
+- **Problem statement:** external-IUT v1 is bound to two exact product profiles, while strict
+  session-state projection uses a separate smoke/capability path and other capabilities have
+  no equivalent strong report model.
+- **Scope:** define provenance, subject, coverage, mark, and capability evidence that can be
+  reused without weakening current full-profile eligibility.
+- **Explicit non-goals:** no claim that internal reports are external proof and no automatic
+  promotion of legacy, smoke, reference, example, or dry-run evidence.
+- **Principal evidence gap:** no strong generalized external capability/overlay report.
+- **Dependencies:** M58 and M59.
+- **Completion criterion:** at least one non-profile capability can produce schema-valid,
+  coverage-complete, independently eligible evidence while current profile claims remain
+  fail-closed.
+
+## M63 — Tier-1 External Profile TCK
+
+- **Status:** Planned.
+- **Problem statement:** mediated blocking, resumable sessions, and delegated identity have
+  internal profile suites but no external full-profile IUT targets.
+- **Scope:** add external targets for those three exact profiles using the generalized
+  evidence rules and complete producer/consumer coverage derived from required suites.
+- **Explicit non-goals:** no target for every registered profile and no multi-profile
+  composition semantics.
+- **Principal evidence gap:** no external implementation can be evaluated for the Tier-1
+  profile center through a full-profile target.
+- **Dependencies:** M62; M61 only where a future target actually requires composition.
+- **Completion criterion:** all three targets have registered TCK coverage, positive and
+  negative fake-adapter tests, reference behavior, and ordinary-mark eligibility rules.
+
+## M64 — Live Transport and Binding Interoperability
+
+- **Status:** Planned.
+- **Problem statement:** HTTP/WS/SSE and MCP binding conformance currently validates static
+  case files, not live independent endpoints.
+- **Scope:** build live client/server harnesses for the registered binding semantics,
+  including reconnect, replay, session scoping, backpressure, and failure paths.
+- **Explicit non-goals:** no redefinition of binding wire requirements and no claim of broad
+  vendor interoperability from repo-owned loopback tests alone.
+- **Principal evidence gap:** no live network execution or independent endpoint evidence.
+- **Dependencies:** M62.
+- **Completion criterion:** live harness runs are deterministic, externally usable, and
+  produce evidence that is clearly separated from static fixture conformance.
+
+## M65 — Registered Message Surface Completion
+
+- **Status:** Planned.
+- **Problem statement:** 17 experimental registered lifecycle message types have payload
+  mappings and suite ownership but no positive conformance-referenced fixture.
+- **Scope:** add the missing positive lifecycle fixtures and matching semantic checks, plus
+  negative fixtures where the normative behavior requires them.
+- **Explicit non-goals:** no removal/renaming of message types and no schema or lifecycle
+  semantics change outside a reviewed versioned decision.
+- **Principal evidence gap:** the exact 17-type list is recorded in
+  `docs/process/AICP_Repo_Truth_Baseline.md` and mechanically checked in
+  `docs/process/repo_truth_status.json`.
+- **Dependencies:** M58.
+- **Completion criterion:** every registered type maps to an owning surface, payload schema,
+  conformance suite, and positive conformance-referenced fixture; applicable negative
+  coverage is documented and executable.
+
+## M66 — Clean-Room Pairwise Interop Harness
+
+- **Status:** Planned.
+- **Problem statement:** real pairwise publication is fail-closed because two independent
+  conformance reports do not prove one bound bidirectional run.
+- **Scope:** define a joint-execution format that binds two exact builds, shared run identity,
+  cross-consumed artifacts, directionality, digests, and required verification material.
+- **Explicit non-goals:** no waiver based on human summaries or two unrelated reports and no
+  counting repository examples as independent implementations.
+- **Principal evidence gap:** no joint pairwise execution artifact or validator.
+- **Dependencies:** M62 and M64.
+- **Completion criterion:** two clean-room test implementations can complete one bound run,
+  the validator proves required cross-consumption, and incomplete/one-sided evidence fails
+  closed.
+
+## M67 — Security Coverage Closure
+
+- **Status:** Planned.
+- **Problem statement:** the repository has internal self-review and automated negative tests,
+  but coverage remains partial for resync amplification/existence leakage and evidence
+  privacy, and no independent external review artifact exists.
+- **Scope:** close or explicitly defer threat-map gaps, add missing deterministic tests where
+  protocol-observable, cover negotiation rollback/profile-composition downgrade and
+  contract-substitution risks after their owning milestones, and prepare an external review.
+- **Explicit non-goals:** no claim that platform rate limits or key custody are protocol
+  guarantees and no fabricated external review.
+- **Principal evidence gap:** partial threat rows and absent independent external report.
+- **Dependencies:** M58; M60/M61 for their new threat surfaces.
+- **Completion criterion:** every threat-map row has an accurate covered/partial/deferred
+  status with linked tests or rationale, open remediations are tracked, and any external
+  review claim points to an actual report.
+
+## M68 — Governance and Standard Maturity
+
+- **Status:** Planned.
+- **Problem statement:** the current maintainer/steward model supports repository decisions
+  but does not define the roles, voting, appeals, review cadence, or external-body structure
+  expected of a mature open standard.
+- **Scope:** document the real contributor/maintainer model, change-control process,
+  succession, conflict handling, and a standards-maturity path.
+- **Explicit non-goals:** no invented organization, maintainer, voter, committee, or external
+  affiliation.
+- **Principal evidence gap:** no complete standards-governance process beyond repository
+  stewardship and PR/release decisions.
+- **Dependencies:** M58.
+- **Completion criterion:** governance documents define verifiable current roles/processes
+  and clearly separate present authority from any future standards body.
+
+## M69 — Release Engineering and RC Repackaging
+
+- **Status:** Planned.
+- **Problem statement:** version metadata is consistent at `0.1.0-rc.1`, but post-RC work is
+  unreleased; snapshot naming remains `0.1.0-dev`; profile report outputs are inconsistently
+  tracked; and local dependency/shell bootstrap is not cross-platform.
+- **Scope:** decide generated-report policy, make local/CI dependency setup reproducible,
+  align snapshot/release identifiers, package post-RC changes, and run the full release gate.
+- **Explicit non-goals:** no version bump or final RC publication before the release decision
+  and no fail-open release gates.
+- **Principal evidence gap:** no coherent new-RC artifact set and no cross-platform clean
+  checkout proof.
+- **Dependencies:** M58, M67, and M68.
+- **Completion criterion:** a clean checkout can reproduce all release artifacts/gates on
+  supported environments, generated-file policy is enforced, and a maintainer-approved RC
+  version is consistently packaged.
+
+## M70 — External Plugfest Readiness
+
+- **Status:** Planned.
+- **Problem statement:** the public interop corpus contains no genuine independent external
+  submission and pairwise evidence is unavailable.
+- **Scope:** publish participant instructions, frozen TCK/release artifacts, intake/review
+  operations, evidence/privacy rules, and a plugfest execution plan after prerequisite
+  harnesses are ready.
+- **Explicit non-goals:** no fictional participants, fabricated submissions, certification,
+  or claim that readiness itself proves adoption.
+- **Principal evidence gap:** zero real external submissions and zero pairwise-demonstrated
+  runs.
+- **Dependencies:** M63, M64, M66, M67, M68, and M69.
+- **Completion criterion:** independent implementers can obtain the frozen artifacts, run the
+  supported targets, submit eligible evidence, and participate in the pairwise process
+  without repository-owned examples being counted as external proof.

@@ -8,6 +8,9 @@ This is a short maintainer guide for cutting a repo tag and preparing the matchi
 - Update `CHANGELOG.md` with a concise entry for the release.
 - Update `sdk/typescript/package.json` and `sdk/typescript/package-lock.json` to match `VERSION` while keeping the SDK private.
 - Run `make release-check` to fail fast on version drift before broader verification.
+- Review `docs/process/AICP_Repo_Truth_Baseline.md`, `ROADMAP.md`, and `AICP_Backlog`; a
+  release must not convert planned or internally verified work into an external-adoption
+  claim.
 
 ## 2. Run the repo-backed checks
 From repo root, run the existing validation and conformance commands already used by CI:
@@ -19,6 +22,7 @@ From repo root, run the existing validation and conformance commands already use
 - `make conformance-profiles`
 - `make template-smoke`
 - `make release-check`
+- `python scripts/validate_planning_docs.py`
 
 Also run the TypeScript SDK test command:
 - `cd sdk/typescript && npm ci && npm test`
@@ -30,6 +34,13 @@ Before tagging, verify that:
 - release notes describe only shipped repo truth,
 - compatibility claims remain grounded in conformance/profile evidence,
 - no release text implies GA unless the repo has explicitly made that decision.
+- static binding fixtures are not presented as live interoperability, and examples,
+  templates, dry runs, or reference adapters are not counted as real external evidence.
+
+The current post-`0.1.0-rc.1` repository has known M69 work: dev-named snapshot metadata,
+mixed tracked/generated profile reports, and cross-platform dependency/shell bootstrap.
+Resolve those items through the planned release-engineering milestone before final RC
+repackaging rather than treating this playbook as proof they are already complete.
 
 ## 4. Cut the tag
 Create an annotated tag that matches `VERSION`.

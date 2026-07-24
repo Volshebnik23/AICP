@@ -4,6 +4,11 @@
 
 This document defines the **truthful claim language** implementers should use when describing AICP compatibility and the minimum evidence expected for each claim shape.
 
+Current reachability is narrower than the registered catalog: only Base and Authenticated
+Base have full external-IUT targets, only Base can currently receive an ordinary external
+profile mark, and no real external or pairwise submission is present. See
+`docs/process/AICP_Repo_Truth_Baseline.md`.
+
 It complements:
 - `docs/interop/AICP_Public_Interop_Corpus.md` for packaging guidance,
 - `docs/interop/AICP_Interop_Submission_Playbook.md` for submitter onboarding,

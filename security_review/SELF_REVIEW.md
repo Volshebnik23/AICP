@@ -149,3 +149,6 @@ No concrete bug requiring a new remediation-log entry was identified in this dry
 - Add additional ENFORCEMENT/RESUME adversarial fixture scenarios (spoofing loops/probing loops).
 - Add an explicit “coverage limits” section or artifact mapping test IDs to non-goals.
 - Continue tightening alert/verdict privacy guidance with examples of code-first messaging.
+
+These remaining items are planning inputs to M67 Security Coverage Closure. This document
+remains an internal dry run and is not evidence that an independent external review occurred.

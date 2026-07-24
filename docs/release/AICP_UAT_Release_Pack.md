@@ -37,7 +37,8 @@ The UAT scope is limited to **already-shipped repo truth**:
 - Core transcript integrity requirements in `docs/core/AICP_Core_v0.1_Normative.md`, `schemas/core/`, and `conformance/core/`.
 - Adoption framing in `docs/architecture/AICP_Adoption_Core_and_Tiers.md`.
 - Shipped profile definitions in `docs/profiles/AICP_Profiles.md`.
-- Shipped binding guidance and conformance for practical networked interoperability.
+- Shipped binding guidance and static binding-case conformance; live independent transport
+  interoperability is not part of the current evidence.
 - Public interop evidence packaging, review, and dry-run tooling under `docs/interop/` and `interop/`.
 - Repo-backed validation, conformance, quickstart, template-smoke, and SDK checks in the Makefile/CI.
 
@@ -70,12 +71,15 @@ For pilot adoption, start with the smallest shipped profile that matches the dep
 
 This follows the existing Adoption Core / Tier 0–1 framing. It does **not** make every other shipped profile part of the default pilot baseline.
 
-### 4.3 Practical transport/binding floor
+### 4.3 Static transport/binding case floor
 
-AICP remains transport-independent, but the practical networked floor for pilot interoperability is the shipped HTTP/WS binding surface:
+AICP remains transport-independent. The current HTTP/WS/SSE binding surface is a static
+case-validation floor for pilot implementation:
 - binding guidance: `docs/bindings/RFC_BIND_HTTP_WS.md`
 - binding suite: `conformance/bindings/TB_HTTP_WS_0.1.json`
 - binding identifier: `BIND-HTTP-0.1`
+
+Passing these fixtures does not prove that two independent live endpoints exchanged traffic.
 
 ### 4.4 Interop/review entrypoint
 
@@ -149,6 +153,10 @@ For interop evidence packaging/review:
 - `python scripts/review_interop_submission.py interop/submissions/<submission_id>`
 - `make interop-dryrun` for repo-owned rehearsal
 
+Internal profile runs cover all 15 registered profiles. External product claims require an
+eligible full-profile IUT target, which currently exists only for Base and experimental
+Authenticated Base; only Base can currently reach an ordinary external mark.
+
 ## 8) Trial entrypoints for pilot adopters
 
 Use one of these small truthful entrypoints:
@@ -195,10 +203,11 @@ Keep public-facing language aligned with:
 If you need a one-screen answer for a pilot:
 - start with `AICP-BASE@0.1`,
 - use the Core transcript integrity stack,
-- use `BIND-HTTP-0.1` as the practical networked floor,
+- use the static `BIND-HTTP-0.1` cases as the current binding-validation floor,
 - add mediated blocking / resumable sessions / delegated identity only when needed,
 - run the shipped validation + conformance + quickstart checks,
 - package any compatibility claim through the shipped interop evidence path,
+- do not describe static binding cases as live transport interoperability,
 - do not over-claim UAT as certification or universal production readiness.
 
 ## 12) Companion checklist

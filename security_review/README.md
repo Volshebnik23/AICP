@@ -2,6 +2,13 @@
 
 This folder contains security-review scaffolding for external and community reviewers of AICP as a protocol.
 
+## Current status
+
+`SELF_REVIEW.md` is an internal dry run. `COVERAGE_MAP.md` records 8 strong and 2 partial
+rows. `REMEDIATION_LOG.md` contains only its template row. No independent external-review
+report is present, so the repository must not claim that an external review is complete.
+M67 owns coverage closure and any future real review artifact.
+
 ## Purpose
 - Provide concise, review-ready artifacts describing threats, assumptions, and checklists.
 - Help external reviewers understand what AICP guarantees vs what platform deployments must add.

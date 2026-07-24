@@ -1,6 +1,6 @@
 # Start Here for Implementers (AICP in < 1 hour)
 
-AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, chains, schemas, conformance). It is **not** a hosted chat/enforcer platform. For the public packaging model of what to adopt first, see `docs/architecture/AICP_Adoption_Core_and_Tiers.md`. For the pilot-facing package of what is in scope for UAT, see `docs/release/AICP_UAT_Release_Pack.md`, `docs/release/AICP_UAT_Architecture_Freeze.md`, and `docs/release/AICP_UAT_Checklist.md`.
+AICP is a **protocol** for verifiable agent-to-agent content exchange (hashes, chains, schemas, conformance). It is **not** a hosted chat/enforcer platform. For the current evidence-backed status of internal suites, external-IUT targets, marks, bindings, and interop submissions, start with `docs/process/AICP_Repo_Truth_Baseline.md`. For the public packaging model of what to adopt first, see `docs/architecture/AICP_Adoption_Core_and_Tiers.md`. For the pilot-facing package of what is in scope for UAT, see `docs/release/AICP_UAT_Release_Pack.md`, `docs/release/AICP_UAT_Architecture_Freeze.md`, and `docs/release/AICP_UAT_Checklist.md`.
 
 Choose `AICP-BASE@0.1` for the stable Core-only baseline, where signatures are optional.
 Choose experimental `AICP-AUTHENTICATED-BASE@0.1` only when every message must carry a
@@ -76,6 +76,10 @@ Recommended CI baseline: `make prepr` (includes validation, full conformance via
 For compatibility or badge evidence, run `make compatibility-gate` so validation, `make conformance-all`, and snapshot generation stay aligned.
 
 ## External implementation conformance
+
+The registry contains 15 profiles, but the external runner currently accepts only
+`AICP-BASE@0.1` and `AICP-AUTHENTICATED-BASE@0.1`. Internal profile reports for the other
+profiles are not external implementation evidence.
 
 Repository suites exercise the checked-in reference corpus and label it
 `execution_subject.kind=reference_corpus`; that is not evidence for an external product.

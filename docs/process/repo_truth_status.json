@@ -1,0 +1,473 @@
+{
+  "schema_version": 1,
+  "canonical_document": "docs/process/AICP_Repo_Truth_Baseline.md",
+  "current_version": "0.1.0-rc.1",
+  "release_phase": "release-candidate-with-unreleased-post-rc-changes",
+  "status_taxonomy": [
+    "shipped",
+    "stable",
+    "experimental",
+    "internally_verified",
+    "externally_testable",
+    "externally_demonstrated",
+    "pairwise_demonstrated",
+    "known_gap",
+    "deferred"
+  ],
+  "planning_roles": {
+    "roadmap": "shipped_current_next",
+    "backlog": "remaining_work"
+  },
+  "uat_baseline": {
+    "frozen": true,
+    "core_version": "0.1",
+    "baseline_profiles": [
+      "AICP-BASE@0.1",
+      "AICP-MEDIATED-BLOCKING@0.1",
+      "AICP-RESUMABLE-SESSIONS@0.1",
+      "AICP-DELEGATED-IDENTITY@0.1"
+    ],
+    "post_uat_experiments": [
+      "AICP-AUTHENTICATED-BASE@0.1",
+      "aicp.session_state_projection.v1"
+    ]
+  },
+  "profile_summary": {
+    "registered": 15,
+    "stable": 4,
+    "experimental": 11,
+    "external_iut_targets": 2,
+    "ordinary_external_mark_reachable_targets": 1,
+    "externally_demonstrated": 0
+  },
+  "profiles": [
+    {
+      "id": "AICP-AGENT-MEDIA@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CH_CHANNELS_0.1.json",
+        "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json",
+        "conformance/extensions/PB_PUBLICATIONS_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_agent_media.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-AUTHENTICATED-BASE@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_authenticated_base.json",
+      "tracked_report_present": true,
+      "external_iut_target": true,
+      "external_mark_status": "blocked_by_mandatory_degraded_probe",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-BASE@0.1",
+      "registry_status": "stable",
+      "profile_catalog": "conformance/profiles/PF_AICP_BASE_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_base.json",
+      "tracked_report_present": true,
+      "external_iut_target": true,
+      "external_mark_status": "reachable_for_eligible_external_implementation",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-BAZAAR-RECEPTION@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_BAZAAR_RECEPTION_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+        "conformance/extensions/AD_ADMISSION_0.1.json",
+        "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_bazaar_reception.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-COMMERCE-ACP@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_COMMERCE_ACP_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+        "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+        "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+        "conformance/extensions/RD_REDACTION_0.1.json",
+        "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_commerce_acp.json",
+      "tracked_report_present": false,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-DELEGATED-IDENTITY@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+        "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_delegated_identity.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-EXECUTION-INTEROP@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_EXECUTION_INTEROP_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+        "conformance/extensions/RS_RESUME_0.1.json",
+        "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_execution_interop.json",
+      "tracked_report_present": false,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-MEDIATED-BLOCKING-OPS@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_OPS_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+        "conformance/extensions/AL_ALERTS_0.1.json",
+        "conformance/extensions/RS_RESUME_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_mediated_blocking_ops.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-MEDIATED-BLOCKING@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_mediated_blocking.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-POLICY-ABAC-RBAC@0.1",
+      "registry_status": "stable",
+      "profile_catalog": "conformance/profiles/PF_AICP_POLICY_ABAC_RBAC_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_policy_abac_rbac.json",
+      "tracked_report_present": false,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-POLICY-LLM-SAFETY@0.1",
+      "registry_status": "stable",
+      "profile_catalog": "conformance/profiles/PF_AICP_POLICY_LLM_SAFETY_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_policy_llm_safety.json",
+      "tracked_report_present": false,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-POLICY-OPA-REGO@0.1",
+      "registry_status": "stable",
+      "profile_catalog": "conformance/profiles/PF_AICP_POLICY_OPA_REGO_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/PE_PROFILE_OPA_REGO_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_policy_opa_rego.json",
+      "tracked_report_present": false,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-RECEPTION-CHAT@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_RECEPTION_CHAT_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+        "conformance/extensions/SA_SECURITY_ALERT_0.1.json",
+        "conformance/extensions/DS_DISPUTES_0.1.json",
+        "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_reception_chat.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-RESUMABLE-SESSIONS@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/RS_RESUME_0.1.json",
+        "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_resumable_sessions.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    },
+    {
+      "id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1",
+      "registry_status": "experimental",
+      "profile_catalog": "conformance/profiles/PF_AICP_WORKFLOW_ORCHESTRATION_DELEGATION_0.1.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/TG_TOOL_GATING_0.1.json",
+        "conformance/extensions/DL_DELEGATION_0.1.json",
+        "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json",
+        "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+        "conformance/extensions/RS_RESUME_0.1.json",
+        "conformance/extensions/AL_ALERTS_0.1.json",
+        "conformance/extensions/SA_SECURITY_ALERT_0.1.json"
+      ],
+      "internal_report_output": "conformance/report_profile_workflow_orchestration_delegation.json",
+      "tracked_report_present": true,
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "live_binding_tested": false,
+      "independent_external_evidence": false
+    }
+  ],
+  "capability_evidence": {
+    "aicp.session_state_projection.v1": {
+      "status": [
+        "shipped",
+        "experimental",
+        "internally_verified",
+        "externally_testable"
+      ],
+      "external_test_path": "separate_smoke_capability_run",
+      "ordinary_compatibility_mark": false,
+      "independent_external_evidence": false
+    }
+  },
+  "binding_evidence": [
+    {
+      "id": "BIND-HTTP-0.1",
+      "suite": "conformance/bindings/TB_HTTP_WS_0.1.json",
+      "static_case_count": 21,
+      "live_test_paths": [],
+      "independent_external_evidence": false
+    },
+    {
+      "id": "BIND-MCP-0.1",
+      "suite": "conformance/bindings/TB_MCP_0.1.json",
+      "static_case_count": 3,
+      "live_test_paths": [],
+      "independent_external_evidence": false
+    }
+  ],
+  "interop_evidence": {
+    "real_external_submission_count": 0,
+    "externally_demonstrated_profiles": [],
+    "pairwise_publication_available": false,
+    "pairwise_demonstrated": false,
+    "dry_run_count": 1,
+    "instructional_artifact_count": 3
+  },
+  "security_review": {
+    "internal_self_review_completed": true,
+    "external_independent_review_completed": false,
+    "external_review_artifacts": [],
+    "coverage_map_rows": 10,
+    "partial_coverage_rows": 2
+  },
+  "governance": {
+    "current_model": "maintainer_steward",
+    "standard_maturity": "known_gap",
+    "named_external_standards_body": false
+  },
+  "message_surface": {
+    "registered_count": 132,
+    "payload_schema_mapped_count": 132,
+    "suite_referenced_count": 132,
+    "positive_fixture_referenced_count": 115,
+    "negative_fixture_referenced_count": 82,
+    "missing_positive_fixture_types": [
+      "AGENDA_DECLARE",
+      "AGENDA_UPDATE",
+      "AGENT_MIGRATION",
+      "ARBITRATION_REQUEST",
+      "ARBITRATION_RESULT",
+      "AWARD_DECLINE",
+      "BID_UPDATE",
+      "BID_WITHDRAW",
+      "CLAIM_BREACH",
+      "DELEGATION_REVOKE",
+      "KEY_REVOKE",
+      "PARTICIPANT_LEAVE",
+      "POLICY_DECISION_ATTEST",
+      "RESPONSIBILITY_REVOKE",
+      "RUN_CANCEL",
+      "SUBJECT_BINDING_REVOKE",
+      "TURN_REVOKE"
+    ],
+    "gap_milestone": "M65"
+  },
+  "release_engineering": {
+    "snapshot_id": "AICP-SNAPSHOT-0.1.0-dev",
+    "profile_report_outputs": 15,
+    "tracked_profile_reports": 10,
+    "root_validation_dependency_manifest": false,
+    "cross_platform_make_shell_declared": false,
+    "gap_milestone": "M69"
+  },
+  "milestones": [
+    {
+      "id": "M58",
+      "title": "Repo-Truth Rebaseline",
+      "status": "shipped",
+      "document": "ROADMAP.md"
+    },
+    {
+      "id": "M59",
+      "title": "Authenticated Base Evidence Reachability",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M60",
+      "title": "Exact Contract Agreement Core",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M61",
+      "title": "Multi-Profile Composition and CAPNEG v2",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M62",
+      "title": "Generalized External Evidence Framework",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M63",
+      "title": "Tier-1 External Profile TCK",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M64",
+      "title": "Live Transport and Binding Interoperability",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M65",
+      "title": "Registered Message Surface Completion",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M66",
+      "title": "Clean-Room Pairwise Interop Harness",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M67",
+      "title": "Security Coverage Closure",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M68",
+      "title": "Governance and Standard Maturity",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M69",
+      "title": "Release Engineering and RC Repackaging",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    },
+    {
+      "id": "M70",
+      "title": "External Plugfest Readiness",
+      "status": "planned",
+      "document": "AICP_Backlog"
+    }
+  ]
+}
