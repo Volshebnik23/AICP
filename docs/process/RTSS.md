@@ -59,6 +59,11 @@ RTSS is complete only when all are true:
 - PR/branch state is remotely provable, or blocker is explicitly documented;
 - no milestone is falsely advanced.
 
+The canonical current-status output is
+[`docs/process/AICP_Repo_Truth_Baseline.md`](AICP_Repo_Truth_Baseline.md), backed by the
+mechanically validated `repo_truth_status.json`. RTSS defines the recovery workflow; the
+baseline records the current result, so they are complementary rather than competing sources.
+
 ## 7) Standard verification gate
 
 Run before opening an RTSS PR:

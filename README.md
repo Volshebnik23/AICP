@@ -6,6 +6,8 @@ AICP is a practical, implementable standard for governed multi-agent conversatio
 
 ➡️ **Docs front door:** [docs/INDEX.md](docs/INDEX.md)  
 
+➡️ **Current repository truth:** [docs/process/AICP_Repo_Truth_Baseline.md](docs/process/AICP_Repo_Truth_Baseline.md)
+
 ➡️ **Start here:** [START_HERE_IMPLEMENTERS.md](START_HERE_IMPLEMENTERS.md)  
 
 ➡️ **Adoption core + tiers:** [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md)
@@ -59,6 +61,13 @@ See: [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_
 ## Practical adoption patterns
 
 Start with the packaged adoption model in [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md), then choose the smallest shipped profile that satisfies your need.
+
+“Shipped” here means present in the repository. Of 15 registered product profiles, all have
+internal profile suites, but only `AICP-BASE@0.1` and experimental
+`AICP-AUTHENTICATED-BASE@0.1` have external full-profile IUT targets. The authenticated
+target cannot currently emit an ordinary profile mark, and the public corpus contains no
+real independent external submission. See the
+[repository-truth baseline](docs/process/AICP_Repo_Truth_Baseline.md) for the evidence map.
 
 1. **Embed AICP directly in an agent/app**
    - Use drop-ins/templates, then validate against conformance/profile suites.
@@ -139,6 +148,7 @@ See: [docs/guides/Protocol_Adapter_Gateway.md](docs/guides/Protocol_Adapter_Gate
 - [docs/release/AICP_UAT_Release_Pack.md](docs/release/AICP_UAT_Release_Pack.md)
 - [docs/release/AICP_UAT_Architecture_Freeze.md](docs/release/AICP_UAT_Architecture_Freeze.md)
 - [docs/release/AICP_UAT_Checklist.md](docs/release/AICP_UAT_Checklist.md)
+- [docs/process/AICP_Repo_Truth_Baseline.md](docs/process/AICP_Repo_Truth_Baseline.md)
 - [docs/profiles/AICP_Profiles.md](docs/profiles/AICP_Profiles.md)
 - [docs/profiles/Profile_Selection_Guide.md](docs/profiles/Profile_Selection_Guide.md)
 - [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_Ecosystem.md)
