@@ -1,5 +1,38 @@
 # Release Notes
 
+## Unreleased — post-0.1.0-rc.1 repository work
+
+This section records material repository work after the current RC metadata. It is not a new
+tag, package publication, GA declaration, or final RC repackaging.
+
+### Repository changes already present after the documented RC
+
+- Verification gates, conformance cataloging, runner modularization, provenance-rich report
+  formats, the experimental external-IUT TCK, authenticated-base profile, and strict
+  session-state projection are present in the repository.
+- The canonical repository-truth baseline now distinguishes shipped artifacts, registry
+  stability, internal verification, external testability, independent evidence, live
+  binding evidence, and remaining milestones.
+- Roadmap and backlog roles are separated, with M58–M70 recording the current rebaseline and
+  the remaining evidence, interop, security, governance, and release work.
+
+### Current evidence limits
+
+- The registry contains 15 product profiles; all have internal profile suites, but only Base
+  and Authenticated Base have full external-IUT targets.
+- The authenticated 37-case target is behavioral evidence but cannot emit its ordinary mark
+  while the mandatory degraded crypto probe remains in the same eligibility set.
+- The interop matrix has no real independent external submission and pairwise publication
+  is fail-closed.
+- HTTP/WS/SSE and MCP evidence is based on static case fixtures, not live independent
+  endpoint interoperability.
+- The security package contains internal self-review and partial coverage, not a completed
+  independent external review.
+- Governance remains maintainer/steward based. Snapshot naming, generated report tracking,
+  cross-platform bootstrap, and final RC repackaging remain M69 work.
+
+See `docs/process/AICP_Repo_Truth_Baseline.md` for the mechanically checked evidence table.
+
 ## 0.1.0-rc.1 — Release candidate
 
 AICP is moving from a pure development posture to a conservative first release candidate posture. This is **not** a GA release. The goal of `0.1.0-rc.1` is to package the repo's already-shipped executable Core/profile/conformance work with clearer release metadata, lightweight maintainer guidance, and a small TypeScript SDK regression guardrail set.

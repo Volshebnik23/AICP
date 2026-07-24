@@ -9,6 +9,7 @@ Use this checklist when starting or reviewing a pilot adoption.
 - [ ] Read `docs/release/AICP_UAT_Architecture_Freeze.md`.
 - [ ] Read `docs/architecture/AICP_Adoption_Core_and_Tiers.md`.
 - [ ] Read `docs/profiles/Profile_Selection_Guide.md`.
+- [ ] Read `docs/process/AICP_Repo_Truth_Baseline.md`.
 - [ ] Read the relevant interop docs in `docs/interop/` before publishing compatibility claims.
 
 ## 2) Pick the smallest truthful baseline
@@ -37,6 +38,9 @@ Use this checklist when starting or reviewing a pilot adoption.
 - [ ] The targeted profile ID is already shipped in repo truth.
 - [ ] Required suites for that profile pass.
 - [ ] Any relied-on report evidence is non-degraded for the claim being made.
+- [ ] An external full-profile IUT target exists for an external product claim; internal
+      profile reports alone do not qualify.
+- [ ] Static binding fixtures are not described as live endpoint interoperability.
 - [ ] Public wording stays profile-scoped (not vague “supports AICP”).
 - [ ] Adjacent layers such as discovery, IAM internals, and payment rails are not misrepresented as standardized by AICP.
 

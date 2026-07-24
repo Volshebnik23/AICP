@@ -44,8 +44,11 @@ The frozen UAT baseline includes the already-shipped adoption and interop packag
 The pilot baseline continues to anchor on the shipped Adoption Core:
 - Core transcript integrity baseline,
 - conservative baseline profile center,
-- practical HTTP/WS binding floor,
-- profile-scoped compatibility claims backed by shipped evidence.
+- static HTTP/WS/SSE binding-case floor,
+- profile-scoped internal conformance and, where a full external-IUT target exists,
+  externally eligible evidence.
+
+This frozen support envelope does not claim live independent binding interoperability.
 
 Canonical references:
 - `docs/architecture/AICP_Adoption_Core_and_Tiers.md`

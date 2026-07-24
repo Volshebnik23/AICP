@@ -16,6 +16,8 @@ Quick pre-flight checklist:
 - Re-read `ROADMAP.md` and `AGENTS.md`.
 - Confirm current verification targets in `Makefile` and `.github/workflows/ci.yml`.
 - If working on an extension milestone, confirm discoverability/IDs in `registry/` and related extension docs.
+- Read `docs/process/AICP_Repo_Truth_Baseline.md` when the work depends on current evidence,
+  external-IUT coverage, interop, security-review, governance, or release status.
 
 ## When to do a Repo-Truth Sync Sprint (RTSS)
 

@@ -1,5 +1,10 @@
 # AICP Security Best Practices (Implementer-Focused)
 
+Repository review status is narrower than this guidance surface: an internal self-review and
+automated negative tests exist, but no completed independent external security review is
+present. See `security_review/README.md`, `security_review/COVERAGE_MAP.md`, and
+`docs/process/AICP_Repo_Truth_Baseline.md`.
+
 This guide provides practical deployment guidance for teams shipping AICP systems today.
 It does not introduce new protocol semantics; it maps existing AICP artifacts to safer implementation defaults.
 

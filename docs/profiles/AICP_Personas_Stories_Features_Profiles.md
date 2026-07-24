@@ -1,7 +1,9 @@
 # AICP Personas → Stories → Features → Profiles Mapping
 
 ## Purpose
-This document defines the source-of-truth justification layer for AICP profile design. Profiles are derived from concrete persona needs, user stories, and feature sets, not invented ad hoc.
+This document records the justification layer for AICP profile design. Current status is
+owned by `docs/process/AICP_Repo_Truth_Baseline.md` and registry/catalog artifacts; this
+persona map must not override them.
 
 ## Personas
 
@@ -14,7 +16,7 @@ User stories:
 Feature sets:
 - Blocking gate flow (`CONTENT_MESSAGE` → `ENFORCEMENT_VERDICT` → `CONTENT_DELIVER`).
 - Standardized policy-evaluation/enforcement payload semantics and registry-backed reason/sanction codes.
-- Alert/recovery semantics for mediated operations (planned ops profile).
+- Alert/recovery semantics for mediated operations (available in the registered ops profile).
 
 ### P1 — Agent Developer
 User stories:
@@ -34,8 +36,8 @@ User stories:
 - As an orchestrator, I need profile badges to gate deployment based on objective conformance evidence.
 
 Feature sets:
-- Workflow orchestration primitives (planned).
-- Session resumption/resync semantics (planned).
+- Workflow orchestration primitives (available in the registered workflow/delegation profile).
+- Session resumption/resync semantics (available in the registered resumable-sessions profile).
 - Profile-level conformance badges computed from required suite results.
 
 ### P3 — Auth/Identity Provider
@@ -53,7 +55,7 @@ User stories:
 - As a builder, I need clear profile progression so I can start with baseline and incrementally add mediation/orchestration.
 
 Feature sets:
-- Reception/chat usability profile for quick-start integration (planned).
+- Reception/chat usability profile for quick-start integration (available in the registry).
 - Incremental profile ladder from base interoperability to advanced mediated/orchestrated behavior.
 
 ## Initial Profile Set and Persona/Story Mapping
@@ -62,11 +64,11 @@ Feature sets:
 |---|---|---|---|
 | `AICP-BASE` | Available now | Core-only baseline interoperability profile. | P1 baseline interoperability and canonical flow stories; P4 incremental adoption starting point. |
 | `AICP-MEDIATED-BLOCKING` | Available now | Core + mediated blocking enforcement flow for deterministic gate-before-deliver behavior. | P0 blocking and standardized sanctions stories; P2 deployment gating via conformance evidence. |
-| `AICP-MEDIATED-BLOCKING-OPS` | Planned | Operations add-on for alerts/recovery around mediated blocking environments. | P0 operational alerting/recovery story. |
-| `AICP-RECEPTION-CHAT` | Planned | Reception/chat-oriented profile for rapid builder onboarding and common interaction flows. | P4 quick-start reception/chat story. |
-| `AICP-DELEGATED-IDENTITY` | Planned | Delegated identity/claims container profile aligned to external identity providers. | P3 delegated identity and trust portability stories. |
-| `AICP-WORKFLOW-ORCHESTRATION` | Planned | Multi-agent workflow orchestration semantics and guardrails for enterprise coordination. | P2 orchestration governance story. |
-| `AICP-RESUMABLE-SESSIONS` | Planned | Session continuity/resumption semantics for interruption-tolerant operations. | P2 long-running workflow resumption story. |
+| `AICP-MEDIATED-BLOCKING-OPS` | Available now (experimental) | Operations add-on for alerts/recovery around mediated blocking environments. | P0 operational alerting/recovery story. |
+| `AICP-RECEPTION-CHAT` | Available now (experimental) | Reception/chat-oriented profile for rapid builder onboarding and common interaction flows. | P4 quick-start reception/chat story. |
+| `AICP-DELEGATED-IDENTITY` | Available now (experimental) | Delegated identity/claims container profile aligned to external identity providers. | P3 delegated identity and trust portability stories. |
+| `AICP-WORKFLOW-ORCHESTRATION-DELEGATION` | Available now (experimental) | Multi-agent workflow orchestration semantics and guardrails for enterprise coordination. | P2 orchestration governance story. |
+| `AICP-RESUMABLE-SESSIONS` | Available now (experimental) | Session continuity/resumption semantics for interruption-tolerant operations. | P2 long-running workflow resumption story. |
 
 ## Rationale
 This mapping anchors profile evolution in user needs and implementable feature bundles. Any new profile SHOULD identify:
@@ -76,7 +78,7 @@ This mapping anchors profile evolution in user needs and implementable feature b
 4. objective conformance evidence path.
 
 
-## New personas and stories (v88)
+## Additional personas and stories
 - **Brand Reception Operator**: uses ADMISSION + QUEUE-LEASES + INBOX to control spikes.
 - **Bazaar Enforcer Operator**: uses FACILITATION and overload signaling to reduce storm traffic.
 - **Agent Media Publisher/Editor**: uses CHANNELS/SUBSCRIPTIONS/PUBLICATIONS for corrections and targeted distribution.

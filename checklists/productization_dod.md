@@ -21,7 +21,12 @@ Use this checklist before calling a release candidate "ready enough to tag."
 
 ## Truthfulness and scope control
 - [ ] Release text describes only repo-backed artifacts.
+- [ ] `docs/process/AICP_Repo_Truth_Baseline.md` and its machine-readable companion match the
+      target checkout.
 - [ ] Compatibility claims are grounded in conformance/profile evidence.
+- [ ] Internal profile runs are not described as independent external interoperability.
+- [ ] Static binding cases are not described as live transport interoperability.
+- [ ] Examples, templates, reference adapters, and dry runs are not counted as real external submissions.
 - [ ] Any shipped helper/template claims are consistent with current tests/docs.
 - [ ] No release text implies package publication or production adapter runtime support that the repo does not ship.
 

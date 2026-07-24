@@ -69,12 +69,15 @@ may compose them only as separate, explicit targets.
 
 ### 3.3 Transport/binding floor
 
-AICP is transport-independent, but networked interoperable deployments still need an executable floor. The repo-backed transport/binding baseline is the shipped HTTP/WS binding surface:
+AICP is transport-independent. The repo-backed HTTP/WS/SSE binding surface currently
+provides static, executable case validation:
 - binding spec: `docs/bindings/RFC_BIND_HTTP_WS.md`
 - conformance suite: `conformance/bindings/TB_HTTP_WS_0.1.json`
 - canonical binding identifier: `BIND-HTTP-0.1`
 
-This does **not** redefine AICP as a transport protocol. It provides the practical floor for implementations that need cross-vendor, session-carrying interoperability over a concrete transport binding.
+This does **not** redefine AICP as a transport protocol, and the static case suite does not
+demonstrate live independent HTTP, WebSocket, or SSE interoperability. A live binding harness
+is planned under M64.
 
 ### 3.4 Compatibility story
 
@@ -83,10 +86,12 @@ AICP compatibility claims should be grounded in **profile conformance evidence**
 The truthful compatibility story is:
 1. implement the Core transcript integrity baseline,
 2. implement the smallest shipped profile that matches your need,
-3. pass the required suite/profile conformance runs for that profile,
-4. publish non-degraded report evidence for the exact profile claim.
+3. pass the required repository-owned suite/profile conformance runs for that profile,
+4. use a full external-IUT target when one exists before making an external product claim.
 
-That is the center of AICP adoption.
+Only Base and experimental Authenticated Base currently have full external-IUT targets, and
+only Base can reach an ordinary external profile mark. See
+`docs/process/AICP_Repo_Truth_Baseline.md`.
 
 ## 4) Optional governance stack (important, but not prerequisite to all adoption)
 
@@ -216,7 +221,7 @@ Implementers should avoid blanket claims such as “supports AICP” without nar
 Prefer claims in this form:
 - **Implements `AICP-BASE@0.1`**
 - **Compatible with `AICP-MEDIATED-BLOCKING@0.1`**
-- **Implements `BIND-HTTP-0.1` transport binding for AICP envelopes**
+- **Passes the static `BIND-HTTP-0.1` binding case suite**
 
 Those claims should map to:
 - shipped profile and binding identifiers,
@@ -224,6 +229,10 @@ Those claims should map to:
 - reproducible, non-degraded external-IUT report evidence bound to the implementation,
   runner revision, suite/profile digest, and input artifacts. Repository corpus self-tests
   remain `reference_corpus` evidence and do not prove an unnamed external product.
+
+The stronger external-IUT requirement is currently implementable only for the two registered
+IUT targets. Other profile suites support internal verification, not an ordinary external
+product-profile claim.
 
 For compatibility-mark and badge policy, see:
 - `docs/adoption/COMPATIBILITY_AND_BADGES.md`

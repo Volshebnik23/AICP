@@ -34,7 +34,7 @@ Resync flows can amplify payload size and mediator work if clients trigger large
 - Prefer `ALERT` with `RESYNC_REQUIRED` over dumping full state when authorization or context is insufficient.
 
 Related references:
-- `docs/extensions/RFC_EXT_OBJECT_RESYNC_v0.1.md`
+- `docs/extensions/RFC_EXT_OBJECT_RESYNC.md`
 - `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
 
 ## 3) ALERT verbosity leakage
