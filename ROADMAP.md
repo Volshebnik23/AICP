@@ -9,8 +9,8 @@ _Last updated: 2026-07-24_
 
 ## Current / Next
 
-### 🚧 M58 — Repo-Truth Rebaseline
-- **Status:** In progress.
+### ✅ M58 — Repo-Truth Rebaseline
+- **Status:** Shipped.
 - **Problem:** planning, product, interoperability, security, governance, and release
   narratives do not consistently distinguish repository presence, internal verification,
   external testability, independent evidence, and future work.
@@ -23,8 +23,8 @@ _Last updated: 2026-07-24_
   artifact covering profile IUT reachability, independent evidence, live bindings, security
   review, governance, release limits, and registered-message fixture gaps.
 - **Dependencies:** merged M57 evidence hardening and the frozen UAT baseline.
-- **Completion criterion:** every M58 Definition of Done is green under the mandatory
-  validation set, then status changes to shipped. Canonical status:
+- **Completion evidence:** every M58 Definition of Done passed under the mandatory
+  validation set before the status changed to shipped. Canonical status:
   `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 ## Planned milestones
