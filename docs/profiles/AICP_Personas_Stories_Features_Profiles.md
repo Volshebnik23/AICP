@@ -10,7 +10,8 @@ persona map must not override them.
 ### P0 — Platform/Mediator Developer
 User stories:
 - As a platform/mediator developer, I need deterministic blocking gates so policy decisions are applied before content delivery.
-- As a platform/mediator developer, I need standardized sanction and reason semantics so enforcement behavior is interoperable.
+- As a platform/mediator developer, I need standardized sanction and reason semantics so
+  enforcement behavior has a shared protocol conformance target.
 - As a platform/mediator developer, I need operational alerting and recovery hooks to handle enforcement outages safely.
 
 Feature sets:
@@ -25,7 +26,8 @@ User stories:
 - As an agent developer, I need predictable, testable canonical flows for core session lifecycle behavior.
 
 Feature sets:
-- Core-only interoperable baseline (contract lifecycle, invariants, signatures/hash-chain checks).
+- Core-only protocol conformance baseline (contract lifecycle, invariants,
+  signatures/hash-chain checks).
 - Negotiation-aligned profile selection.
 - Canonical conformance suites that can be run locally and in CI.
 
@@ -46,8 +48,13 @@ User stories:
 - As an identity provider, I need explicit dependencies between identity semantics and policy/evidence artifacts.
 
 Feature sets:
-- Delegated identity claims container and references to issuer artifacts (planned).
-- Binding between identity assertions and policy/evidence verification paths (planned).
+- Delegated identity claims container and issuer-artifact references are shipped as
+  experimental protocol semantics with repository-owned internal suites.
+- Identity assertion bindings to scope, expiry, revocation, and evidence paths are shipped
+  and internally verified; an external-IUT target and independent external evidence are
+  absent.
+- Real external adoption and any broader identity-provider integration remain future
+  deployment/evidence work, not missing delegated-identity protocol semantics.
 
 ### P4 — Vibe-coder / Multi-agent Builder
 User stories:
@@ -60,15 +67,20 @@ Feature sets:
 
 ## Initial Profile Set and Persona/Story Mapping
 
-| Profile ID | Status | Description | Personas/Stories served |
-|---|---|---|---|
-| `AICP-BASE` | Available now | Core-only baseline interoperability profile. | P1 baseline interoperability and canonical flow stories; P4 incremental adoption starting point. |
-| `AICP-MEDIATED-BLOCKING` | Available now | Core + mediated blocking enforcement flow for deterministic gate-before-deliver behavior. | P0 blocking and standardized sanctions stories; P2 deployment gating via conformance evidence. |
-| `AICP-MEDIATED-BLOCKING-OPS` | Available now (experimental) | Operations add-on for alerts/recovery around mediated blocking environments. | P0 operational alerting/recovery story. |
-| `AICP-RECEPTION-CHAT` | Available now (experimental) | Reception/chat-oriented profile for rapid builder onboarding and common interaction flows. | P4 quick-start reception/chat story. |
-| `AICP-DELEGATED-IDENTITY` | Available now (experimental) | Delegated identity/claims container profile aligned to external identity providers. | P3 delegated identity and trust portability stories. |
-| `AICP-WORKFLOW-ORCHESTRATION-DELEGATION` | Available now (experimental) | Multi-agent workflow orchestration semantics and guardrails for enterprise coordination. | P2 orchestration governance story. |
-| `AICP-RESUMABLE-SESSIONS` | Available now (experimental) | Session continuity/resumption semantics for interruption-tolerant operations. | P2 long-running workflow resumption story. |
+This justification table intentionally does not duplicate current registry maturity. Exact
+repository availability, stable/experimental maturity, internal evidence, external-IUT
+reachability, and independent evidence are generated in
+[`AICP_Profiles.md`](AICP_Profiles.md#2-profile-catalog-and-status).
+
+| Profile ID | Protocol role | Personas/Stories served |
+|---|---|---|
+| `AICP-BASE` | Core-only protocol conformance target. | P1 baseline conformance and canonical flow stories; P4 incremental adoption starting point. |
+| `AICP-MEDIATED-BLOCKING` | Core + mediated blocking enforcement flow for deterministic gate-before-deliver behavior. | P0 blocking and standardized sanctions stories; P2 deployment gating via conformance evidence. |
+| `AICP-MEDIATED-BLOCKING-OPS` | Operations add-on for alerts/recovery around mediated blocking environments. | P0 operational alerting/recovery story. |
+| `AICP-RECEPTION-CHAT` | Reception/chat-oriented profile for rapid builder onboarding and common interaction flows. | P4 quick-start reception/chat story. |
+| `AICP-DELEGATED-IDENTITY` | Delegated identity/claims container profile aligned to external identity providers. | P3 delegated identity and trust portability stories. |
+| `AICP-WORKFLOW-ORCHESTRATION-DELEGATION` | Multi-agent workflow orchestration semantics and guardrails for enterprise coordination. | P2 orchestration governance story. |
+| `AICP-RESUMABLE-SESSIONS` | Session continuity/resumption semantics for interruption-tolerant operations. | P2 long-running workflow resumption story. |
 
 ## Rationale
 This mapping anchors profile evolution in user needs and implementable feature bundles. Any new profile SHOULD identify:

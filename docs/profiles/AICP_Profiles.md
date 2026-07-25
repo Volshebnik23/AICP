@@ -9,10 +9,43 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 
 ## 2. Profile Catalog and Status
 
-### 2.1 Available now
+The generated table below is the canonical human-readable profile-status view. Repository
+availability, registry maturity, internal evidence, external-IUT reachability, and independent
+evidence are separate facts. The table and the structured status block in each profile section
+are checked against `registry/aicp_profiles.json` and
+`docs/process/repo_truth_status.json`.
+
+<!-- BEGIN GENERATED PROFILE STATUS -->
+| Profile | Repository availability | Registry maturity | Internal evidence | External-IUT target | Ordinary external mark | Independent external evidence |
+|---|---|---|---|---|---|---|
+| `AICP-AGENT-MEDIA@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-AUTHENTICATED-BASE@0.1` | Shipped | Experimental | Available | Yes | Blocked by the mandatory degraded probe | Absent |
+| `AICP-BASE@0.1` | Shipped | Stable | Available | Yes | Reachable for an eligible external implementation | Absent |
+| `AICP-BAZAAR-RECEPTION@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-COMMERCE-ACP@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-DELEGATED-IDENTITY@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-EXECUTION-INTEROP@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-MEDIATED-BLOCKING-OPS@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-MEDIATED-BLOCKING@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-POLICY-ABAC-RBAC@0.1` | Shipped | Stable | Available | No | No external-IUT target | Absent |
+| `AICP-POLICY-LLM-SAFETY@0.1` | Shipped | Stable | Available | No | No external-IUT target | Absent |
+| `AICP-POLICY-OPA-REGO@0.1` | Shipped | Stable | Available | No | No external-IUT target | Absent |
+| `AICP-RECEPTION-CHAT@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-RESUMABLE-SESSIONS@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+<!-- END GENERATED PROFILE STATUS -->
+
+### 2.1 Primary catalog entries
 
 #### `AICP-BASE`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-BASE@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Stable.
+- **Internal evidence:** Available.
+- **External-IUT target:** Available.
+- **Ordinary external mark:** Reachable for an eligible external implementation.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-BASE@0.1 -->
 - **Required suites/extensions:** Core only.
 - **Registry alignment note:** `registry/aicp_profiles.json` sets `required_extensions=[]` for this profile.
   - `conformance/core/CT_CORE_0.1.json`
@@ -22,7 +55,15 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 ### AICP-AUTHENTICATED-BASE
 
 - **Identifier:** `AICP-AUTHENTICATED-BASE@0.1`.
-- **Status:** Experimental, post-UAT; it is not part of the frozen pilot center.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-AUTHENTICATED-BASE@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Available.
+- **Ordinary external mark:** Blocked by the mandatory degraded probe.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-AUTHENTICATED-BASE@0.1 -->
+- **Adoption note:** Post-UAT; it is not part of the frozen pilot center.
 - **Required extensions:** none.
 - **Required crypto profile:** `aicp.crypto.ed25519.v1`.
 - **Required suites:** `CT_CORE_0.1.json` and
@@ -59,7 +100,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 | `AICP-MEDIATED-BLOCKING@0.1` | Policy-evaluation and delivery-gating semantics | Sender authentication |
 
 #### `AICP-MEDIATED-BLOCKING`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-MEDIATED-BLOCKING@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-MEDIATED-BLOCKING@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-POLICY-EVAL`, and `EXT-ENFORCEMENT` only.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -72,7 +120,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
   - Operational alerts (optional in current profile): `docs/flows/AICP_Canonical_Flows.md#25-operational-alerts-ext-alerts`
 
 #### `AICP-MEDIATED-BLOCKING-OPS`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-MEDIATED-BLOCKING-OPS@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-MEDIATED-BLOCKING-OPS@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-POLICY-EVAL`, `EXT-ENFORCEMENT`, `EXT-ALERTS`, and `EXT-RESUME`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -87,7 +142,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
   - Resume: `docs/flows/AICP_Canonical_Flows.md#26-session-resume-ext-resume`
 
 #### `AICP-RESUMABLE-SESSIONS`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-RESUMABLE-SESSIONS@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-RESUMABLE-SESSIONS@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-RESUME` and `EXT-OBJECT-RESYNC`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -99,7 +161,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
   - Object resync: `docs/flows/AICP_Canonical_Flows.md#23-object-resync-ext-object_resync`
 
 #### `AICP-RECEPTION-CHAT`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-RECEPTION-CHAT@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-RECEPTION-CHAT@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-PARTICIPANTS`, `EXT-POLICY-EVAL`, `EXT-ENFORCEMENT`, `EXT-SECURITY-ALERT`, and `EXT-DISPUTES`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -118,7 +187,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 
 
 #### `AICP-DELEGATED-IDENTITY`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-DELEGATED-IDENTITY@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-DELEGATED-IDENTITY@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-IDENTITY-LC`, and `EXT-DELEGATED-IDENTITY`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -128,10 +204,43 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Intent:** Bind agent senders to issuer-attested account identities with explicit scope/expiry/revocation checks for acting-on-behalf-of semantics.
 - **Canonical refs:** `docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md`, `docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md`
 
-### 2.2 Additional available profiles
+### 2.2 Additional catalog entries
+
+#### `AICP-AGENT-MEDIA`
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-AGENT-MEDIA@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-AGENT-MEDIA@0.1 -->
+- **Canonical executable catalog:** `conformance/profiles/PF_AICP_AGENT_MEDIA_0.1.json`.
+- **Scope pointer:** channels, subscriptions, and publications requirements are defined by
+  the registry-backed profile catalog and their existing extension suites.
+
+#### `AICP-BAZAAR-RECEPTION`
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-BAZAAR-RECEPTION@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-BAZAAR-RECEPTION@0.1 -->
+- **Canonical executable catalog:** `conformance/profiles/PF_AICP_BAZAAR_RECEPTION_0.1.json`.
+- **Scope pointer:** reception, admission, queue-lease, policy, and enforcement requirements
+  are defined by the registry-backed profile catalog and existing extension suites.
 
 #### `AICP-WORKFLOW-ORCHESTRATION-DELEGATION`
-- **Status:** Available now.
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-POLICY-EVAL`, `EXT-TOOL-GATING`, `EXT-DELEGATION`, `EXT-WORKFLOW-SYNC`, `EXT-OBJECT-RESYNC`, `EXT-RESUME`, `EXT-ALERTS`, and `EXT-SECURITY-ALERT`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -152,7 +261,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 
 
 #### `AICP-POLICY-OPA-REGO`
-- **Status:** Available now (optional, stable).
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-POLICY-OPA-REGO@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Stable.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-POLICY-OPA-REGO@0.1 -->
 - **Required suites/extensions:**
   - Core: `conformance/core/CT_CORE_0.1.json`
   - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
@@ -161,7 +277,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Canonical spec:** `docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-opa-rego-01`
 
 #### `AICP-POLICY-ABAC-RBAC`
-- **Status:** Available now (optional, stable).
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-POLICY-ABAC-RBAC@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Stable.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-POLICY-ABAC-RBAC@0.1 -->
 - **Required suites/extensions:**
   - Core: `conformance/core/CT_CORE_0.1.json`
   - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
@@ -170,7 +293,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Canonical spec:** `docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-abac-rbac-01`
 
 #### `AICP-POLICY-LLM-SAFETY`
-- **Status:** Available now (optional, stable).
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-POLICY-LLM-SAFETY@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Stable.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-POLICY-LLM-SAFETY@0.1 -->
 - **Required suites/extensions:**
   - Core: `conformance/core/CT_CORE_0.1.json`
   - EXT-POLICY-EVAL: `conformance/extensions/PE_POLICY_EVAL_0.1.json`
@@ -179,7 +309,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Canonical spec:** `docs/profiles/AICP_Policy_Semantic_Profiles.md#aicp-policy-llm-safety-01`
 
 #### `AICP-EXECUTION-INTEROP`
-- **Status:** Available now (optional).
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-EXECUTION-INTEROP@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-EXECUTION-INTEROP@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-EXECUTION-LIFECYCLE`, `EXT-RESUME`, and `EXT-OBJECT-RESYNC`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -192,7 +329,14 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 
 
 #### `AICP-COMMERCE-ACP`
-- **Status:** Available now (optional).
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-COMMERCE-ACP@0.1 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-COMMERCE-ACP@0.1 -->
 - **Required suites/extensions:**
 - **Registry alignment note:** `registry/aicp_profiles.json` requires `EXT-CAPNEG`, `EXT-ENFORCEMENT`, `EXT-POLICY-EVAL`, `EXT-EXTERNAL-TRANSACTION`, `EXT-HUMAN-APPROVAL`, and `EXT-REDACTION`.
   - Core: `conformance/core/CT_CORE_0.1.json`
@@ -240,13 +384,6 @@ Operational guidance:
   profile combinations elsewhere in the documentation are deployment guidance, not
   implemented atomic multi-profile negotiation.
 
-
-## Experimental profiles currently in repo
-- **AICP-AUTHENTICATED-BASE@0.1**: Core plus mandatory Ed25519 envelope-sender signatures; experimental and post-UAT.
-- **AICP-BAZAAR-RECEPTION@0.1**: participants+policy+enforcement+admission+queue-leases profile.
-- **AICP-AGENT-MEDIA@0.1**: channels+subscriptions+publications profile with optional economics.
-- **AICP-EXECUTION-INTEROP@0.1**: optional run/thread/store metadata profile with resume+object-resync continuity.
-- **AICP-COMMERCE-ACP@0.1**: optional commerce-ready ACP-bridged orchestration profile with policy/approval/external-step/redaction coherence checks.
 
 ## See also
 

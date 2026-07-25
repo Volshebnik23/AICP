@@ -70,6 +70,10 @@ For pilot adoption, start with the smallest shipped profile that matches the dep
 - **add when acting-on-behalf-of identity binding matters:** `AICP-DELEGATED-IDENTITY@0.1`
 
 This follows the existing Adoption Core / Tier 0–1 framing. It does **not** make every other shipped profile part of the default pilot baseline.
+This list is a support envelope, not a maturity table. The generated
+[`AICP_Profiles.md`](../profiles/AICP_Profiles.md#2-profile-catalog-and-status) table is
+canonical for the separate shipped, stable/experimental, internal-evidence, external-IUT,
+and independent-evidence facts.
 
 ### 4.3 Static transport/binding case floor
 

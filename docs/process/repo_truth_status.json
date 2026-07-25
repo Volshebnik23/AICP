@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "canonical_document": "docs/process/AICP_Repo_Truth_Baseline.md",
   "current_version": "0.1.0-rc.1",
   "release_phase": "release-candidate-with-unreleased-post-rc-changes",
@@ -56,7 +56,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-AGENT-MEDIA-0.1"
     },
     {
       "id": "AICP-AUTHENTICATED-BASE@0.1",
@@ -71,7 +74,10 @@
       "external_iut_target": true,
       "external_mark_status": "blocked_by_mandatory_degraded_probe",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-AUTHENTICATED-BASE-0.1"
     },
     {
       "id": "AICP-BASE@0.1",
@@ -85,7 +91,10 @@
       "external_iut_target": true,
       "external_mark_status": "reachable_for_eligible_external_implementation",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-BASE-0.1"
     },
     {
       "id": "AICP-BAZAAR-RECEPTION@0.1",
@@ -104,7 +113,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-BAZAAR-RECEPTION-0.1"
     },
     {
       "id": "AICP-COMMERCE-ACP@0.1",
@@ -125,7 +137,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-COMMERCE-ACP-0.1"
     },
     {
       "id": "AICP-DELEGATED-IDENTITY@0.1",
@@ -142,7 +157,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-DELEGATED-IDENTITY-0.1"
     },
     {
       "id": "AICP-EXECUTION-INTEROP@0.1",
@@ -159,7 +177,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-EXECUTION-INTEROP-0.1"
     },
     {
       "id": "AICP-MEDIATED-BLOCKING-OPS@0.1",
@@ -178,7 +199,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1"
     },
     {
       "id": "AICP-MEDIATED-BLOCKING@0.1",
@@ -195,7 +219,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-0.1"
     },
     {
       "id": "AICP-POLICY-ABAC-RBAC@0.1",
@@ -211,7 +238,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-POLICY-ABAC-RBAC-0.1"
     },
     {
       "id": "AICP-POLICY-LLM-SAFETY@0.1",
@@ -227,7 +257,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-POLICY-LLM-SAFETY-0.1"
     },
     {
       "id": "AICP-POLICY-OPA-REGO@0.1",
@@ -243,7 +276,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-POLICY-OPA-REGO-0.1"
     },
     {
       "id": "AICP-RECEPTION-CHAT@0.1",
@@ -264,7 +300,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-RECEPTION-CHAT-0.1"
     },
     {
       "id": "AICP-RESUMABLE-SESSIONS@0.1",
@@ -280,7 +319,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1"
     },
     {
       "id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1",
@@ -303,7 +345,10 @@
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
       "live_binding_tested": false,
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-WORKFLOW-ORCHESTRATION-DELEGATION-0.1"
     }
   ],
   "capability_evidence": {
@@ -336,7 +381,9 @@
     }
   ],
   "interop_evidence": {
-    "real_external_submission_count": 0,
+    "real_submission_package_count": 0,
+    "eligible_external_submission_count": 0,
+    "rejected_real_submission_count": 0,
     "externally_demonstrated_profiles": [],
     "pairwise_publication_available": false,
     "pairwise_demonstrated": false,
@@ -348,7 +395,9 @@
     "external_independent_review_completed": false,
     "external_review_artifacts": [],
     "coverage_map_rows": 10,
-    "partial_coverage_rows": 2
+    "partial_coverage_rows": 2,
+    "artifact_contract": "security_review/external_reviews/README.md",
+    "artifact_location": "security_review/external_reviews/completed/"
   },
   "governance": {
     "current_model": "maintainer_steward",
@@ -356,31 +405,3298 @@
     "named_external_standards_body": false
   },
   "message_surface": {
-    "registered_count": 132,
-    "payload_schema_mapped_count": 132,
-    "suite_referenced_count": 132,
-    "positive_fixture_referenced_count": 115,
-    "negative_fixture_referenced_count": 82,
-    "missing_positive_fixture_types": [
-      "AGENDA_DECLARE",
-      "AGENDA_UPDATE",
-      "AGENT_MIGRATION",
-      "ARBITRATION_REQUEST",
-      "ARBITRATION_RESULT",
-      "AWARD_DECLINE",
-      "BID_UPDATE",
-      "BID_WITHDRAW",
-      "CLAIM_BREACH",
-      "DELEGATION_REVOKE",
-      "KEY_REVOKE",
-      "PARTICIPANT_LEAVE",
-      "POLICY_DECISION_ATTEST",
-      "RESPONSIBILITY_REVOKE",
-      "RUN_CANCEL",
-      "SUBJECT_BINDING_REVOKE",
-      "TURN_REVOKE"
-    ],
-    "gap_milestone": "M65"
+    "summary": {
+      "registered_count": 132,
+      "payload_schema_mapped_count": 132,
+      "suite_referenced_count": 132,
+      "positive_fixture_referenced_count": 115,
+      "negative_fixture_referenced_count": 82,
+      "missing_positive_fixture_types": [
+        "AGENDA_DECLARE",
+        "AGENDA_UPDATE",
+        "AGENT_MIGRATION",
+        "ARBITRATION_REQUEST",
+        "ARBITRATION_RESULT",
+        "AWARD_DECLINE",
+        "BID_UPDATE",
+        "BID_WITHDRAW",
+        "CLAIM_BREACH",
+        "DELEGATION_REVOKE",
+        "KEY_REVOKE",
+        "PARTICIPANT_LEAVE",
+        "POLICY_DECISION_ATTEST",
+        "RESPONSIBILITY_REVOKE",
+        "RUN_CANCEL",
+        "SUBJECT_BINDING_REVOKE",
+        "TURN_REVOKE"
+      ],
+      "gap_milestone": "M65"
+    },
+    "entries": [
+      {
+        "id": "ACTION_APPROVE",
+        "owner": "EXT-ACTION-ESCROW",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-action-escrow-payloads.schema.json",
+          "pointer": "#/$defs/ACTION_APPROVE"
+        },
+        "suites": [
+          "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/action_escrow/ES-01_prepare_approve_commit_pass.jsonl",
+          "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/action_escrow/ES-04_commit_binding_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ACTION_COMMIT",
+        "owner": "EXT-ACTION-ESCROW",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-action-escrow-payloads.schema.json",
+          "pointer": "#/$defs/ACTION_COMMIT"
+        },
+        "suites": [
+          "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/action_escrow/ES-01_prepare_approve_commit_pass.jsonl",
+          "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/action_escrow/ES-02_commit_without_prepare_expected_fail.jsonl",
+          "fixtures/extensions/action_escrow/ES-03_commit_without_approve_expected_fail.jsonl",
+          "fixtures/extensions/action_escrow/ES-04_commit_binding_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ACTION_PREPARE",
+        "owner": "EXT-ACTION-ESCROW",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-action-escrow-payloads.schema.json",
+          "pointer": "#/$defs/ACTION_PREPARE"
+        },
+        "suites": [
+          "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/action_escrow/ES-01_prepare_approve_commit_pass.jsonl",
+          "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/action_escrow/ES-03_commit_without_approve_expected_fail.jsonl",
+          "fixtures/extensions/action_escrow/ES-04_commit_binding_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ADMISSION_ACCEPT",
+        "owner": "EXT-ADMISSION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-admission-payloads.schema.json",
+          "pointer": "#/$defs/ADMISSION_ACCEPT"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-01_request_offer_accept_pass.jsonl",
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+          "fixtures/extensions/admission/AD-07_revoke_with_reason_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ADMISSION_OFFER",
+        "owner": "EXT-ADMISSION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-admission-payloads.schema.json",
+          "pointer": "#/$defs/ADMISSION_OFFER"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-01_request_offer_accept_pass.jsonl",
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+          "fixtures/extensions/admission/AD-07_revoke_with_reason_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/admission/AD-05_offer_scope_violation_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ADMISSION_REJECT",
+        "owner": "EXT-ADMISSION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-admission-payloads.schema.json",
+          "pointer": "#/$defs/ADMISSION_REJECT"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-02_request_reject_with_reason_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/admission/AD-04_reject_without_reason_expected_fail.jsonl",
+          "fixtures/extensions/admission/AD-05_offer_scope_violation_expected_fail.jsonl",
+          "fixtures/extensions/admission/AD-06_invalid_attestation_ref_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ADMISSION_RENEW",
+        "owner": "EXT-ADMISSION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-admission-payloads.schema.json",
+          "pointer": "#/$defs/ADMISSION_RENEW"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ADMISSION_REQUEST",
+        "owner": "EXT-ADMISSION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-admission-payloads.schema.json",
+          "pointer": "#/$defs/ADMISSION_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-01_request_offer_accept_pass.jsonl",
+          "fixtures/extensions/admission/AD-02_request_reject_with_reason_pass.jsonl",
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+          "fixtures/extensions/admission/AD-07_revoke_with_reason_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/admission/AD-04_reject_without_reason_expected_fail.jsonl",
+          "fixtures/extensions/admission/AD-05_offer_scope_violation_expected_fail.jsonl",
+          "fixtures/extensions/admission/AD-06_invalid_attestation_ref_expected_fail.jsonl",
+          "fixtures/extensions/admission/AD-08_missing_terminal_outcome_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ADMISSION_REVOKE",
+        "owner": "EXT-ADMISSION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-admission-payloads.schema.json",
+          "pointer": "#/$defs/ADMISSION_REVOKE"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-07_revoke_with_reason_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "AGENDA_DECLARE",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/AGENDA_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "AGENDA_UPDATE",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/AGENDA_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "AGENT_MIGRATION",
+        "owner": "EXT-IDENTITY-LC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+          "pointer": "#/$defs/AGENT_MIGRATION"
+        },
+        "suites": [
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "ALERT",
+        "owner": "EXT-ALERTS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-alerts-payloads.schema.json",
+          "pointer": "#/$defs/ALERT"
+        },
+        "suites": [
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/AL_ALERTS_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "APPROVAL_CHALLENGE",
+        "owner": "EXT-HUMAN-APPROVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-human-approval-payloads.schema.json",
+          "pointer": "#/$defs/APPROVAL_CHALLENGE"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/human_approval/HA-04_missing_target_binding_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "APPROVAL_DENY",
+        "owner": "EXT-HUMAN-APPROVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-human-approval-payloads.schema.json",
+          "pointer": "#/$defs/APPROVAL_DENY"
+        },
+        "suites": [
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "APPROVAL_GRANT",
+        "owner": "EXT-HUMAN-APPROVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-human-approval-payloads.schema.json",
+          "pointer": "#/$defs/APPROVAL_GRANT"
+        },
+        "suites": [
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/human_approval/HA-04_missing_target_binding_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ARBITRATION_REQUEST",
+        "owner": "EXT-DISPUTES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-disputes-payloads.schema.json",
+          "pointer": "#/$defs/ARBITRATION_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/DS_DISPUTES_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "ARBITRATION_RESULT",
+        "owner": "EXT-DISPUTES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-disputes-payloads.schema.json",
+          "pointer": "#/$defs/ARBITRATION_RESULT"
+        },
+        "suites": [
+          "conformance/extensions/DS_DISPUTES_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "ATTEST_ACTION",
+        "owner": "Core",
+        "payload_schema": {
+          "file": "schemas/core/aicp-core-payloads.schema.json",
+          "pointer": "#/$defs/ATTEST_ACTION"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+          "conformance/extensions/DS_DISPUTES_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json",
+          "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl",
+          "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+          "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+          "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+          "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+          "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+          "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl",
+          "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-04_missing_required_scope_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-05_wrong_issuer_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-06_missing_required_role_or_group_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-07_required_acr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-08_required_amr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+          "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "AUCTION_CLOSE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/AUCTION_CLOSE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "AUCTION_OPEN",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/AUCTION_OPEN"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-08_invalid_auction_mode_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "AWARD_ACCEPT",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/AWARD_ACCEPT"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "AWARD_DECLINE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/AWARD_DECLINE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "AWARD_ISSUE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/AWARD_ISSUE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "BID_SUBMIT",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BID_SUBMIT"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "BID_UPDATE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BID_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "BID_WITHDRAW",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BID_WITHDRAW"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "BLACKBOARD_DECLARE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BLACKBOARD_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-03_blackboard_coordination_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "BLACKBOARD_POST",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BLACKBOARD_POST"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-03_blackboard_coordination_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "BLACKBOARD_REMOVE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BLACKBOARD_REMOVE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-03_blackboard_coordination_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "BLACKBOARD_UPDATE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/BLACKBOARD_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-03_blackboard_coordination_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CAPABILITIES_ACCEPT",
+        "owner": "EXT-CAPNEG",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-capneg-payloads.schema.json",
+          "pointer": "/$defs/CAPABILITIES_ACCEPT"
+        },
+        "suites": [
+          "conformance/extensions/CF_CONFIDENTIALITY_0.1.json",
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
+          "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+          "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+          "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-02_redacted_mode_with_artifacts_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-06_metadata_only_missing_projection_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-07_classification_only_missing_labels_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-08_capneg_contract_mode_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CAPABILITIES_DECLARE",
+        "owner": "EXT-CAPNEG",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-capneg-payloads.schema.json",
+          "pointer": "/$defs/CAPABILITIES_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/CF_CONFIDENTIALITY_0.1.json",
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
+          "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
+          "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+          "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+          "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-02_redacted_mode_with_artifacts_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-06_metadata_only_missing_projection_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-07_classification_only_missing_labels_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-08_capneg_contract_mode_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CAPABILITIES_PROPOSE",
+        "owner": "EXT-CAPNEG",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-capneg-payloads.schema.json",
+          "pointer": "/$defs/CAPABILITIES_PROPOSE"
+        },
+        "suites": [
+          "conformance/extensions/CF_CONFIDENTIALITY_0.1.json",
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
+          "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
+          "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+          "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+          "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-02_redacted_mode_with_artifacts_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-06_metadata_only_missing_projection_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-07_classification_only_missing_labels_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-08_capneg_contract_mode_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CAPABILITIES_REJECT",
+        "owner": "EXT-CAPNEG",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-capneg-payloads.schema.json",
+          "pointer": "/$defs/CAPABILITIES_REJECT"
+        },
+        "suites": [
+          "conformance/extensions/CN_CAPNEG_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CHAIN_FAILURE_ATTEST",
+        "owner": "EXT-RESPONSIBILITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-responsibility-payloads.schema.json",
+          "pointer": "#/$defs/CHAIN_FAILURE_ATTEST"
+        },
+        "suites": [
+          "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/responsibility/RP-04_transient_failure_without_retry_expected_fail.jsonl",
+          "fixtures/extensions/responsibility/RP-05_failure_with_missing_provenance_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CHALLENGE_ASSERTION",
+        "owner": "EXT-DISPUTES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-disputes-payloads.schema.json",
+          "pointer": "#/$defs/CHALLENGE_ASSERTION"
+        },
+        "suites": [
+          "conformance/extensions/DS_DISPUTES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CHANNEL_DECLARE",
+        "owner": "EXT-CHANNELS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-channels-payloads.schema.json",
+          "pointer": "#/$defs/CHANNEL_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/CH_CHANNELS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/channels/CH-02_missing_parent_expected_fail.jsonl",
+          "fixtures/extensions/channels/CH-03_visibility_escalation_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CHANNEL_DEPRECATE",
+        "owner": "EXT-CHANNELS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-channels-payloads.schema.json",
+          "pointer": "#/$defs/CHANNEL_DEPRECATE"
+        },
+        "suites": [
+          "conformance/extensions/CH_CHANNELS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CHANNEL_UPDATE",
+        "owner": "EXT-CHANNELS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-channels-payloads.schema.json",
+          "pointer": "#/$defs/CHANNEL_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/CH_CHANNELS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CLAIM_BREACH",
+        "owner": "EXT-DISPUTES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-disputes-payloads.schema.json",
+          "pointer": "#/$defs/CLAIM_BREACH"
+        },
+        "suites": [
+          "conformance/extensions/DS_DISPUTES_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "CONTENT_DELIVER",
+        "owner": "EXT-ENFORCEMENT",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-enforcement-payloads.schema.json",
+          "pointer": "#/$defs/CONTENT_DELIVER"
+        },
+        "suites": [
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+          "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CONTENT_MESSAGE",
+        "owner": "EXT-ENFORCEMENT",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-enforcement-payloads.schema.json",
+          "pointer": "#/$defs/CONTENT_MESSAGE"
+        },
+        "suites": [
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/FA_FACILITATION_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "conformance/extensions/RD_REDACTION_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+          "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/extensions/redaction/RD-01_basic_redaction_pass.jsonl",
+          "fixtures/extensions/redaction/RD-02_redaction_with_pii_refs_pass.jsonl",
+          "fixtures/extensions/redaction/RD-03_contract_retention_policy_pass.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-06_invalid_pii_ref_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-07_missing_retention_field_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
+          "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CONTENT_REDACTED",
+        "owner": "EXT-REDACTION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-redaction-payloads.schema.json",
+          "pointer": "#/$defs/CONTENT_REDACTED"
+        },
+        "suites": [
+          "conformance/extensions/RD_REDACTION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/redaction/RD-01_basic_redaction_pass.jsonl",
+          "fixtures/extensions/redaction/RD-02_redaction_with_pii_refs_pass.jsonl",
+          "fixtures/extensions/redaction/RD-03_contract_retention_policy_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-06_invalid_pii_ref_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-07_missing_retention_field_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CONTEXT_AMEND",
+        "owner": "Core",
+        "payload_schema": {
+          "file": "schemas/core/aicp-core-payloads.schema.json",
+          "pointer": "#/$defs/CONTEXT_AMEND"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl",
+          "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+          "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+          "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+          "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CONTRACT_ACCEPT",
+        "owner": "Core",
+        "payload_schema": {
+          "file": "schemas/core/aicp-core-payloads.schema.json",
+          "pointer": "#/$defs/CONTRACT_ACCEPT"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/AL_ALERTS_0.1.json",
+          "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "conformance/extensions/CF_CONFIDENTIALITY_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+          "conformance/extensions/DL_DELEGATION_0.1.json",
+          "conformance/extensions/DS_DISPUTES_0.1.json",
+          "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "conformance/extensions/EC_ECONOMICS_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+          "conformance/extensions/FA_FACILITATION_0.1.json",
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+          "conformance/extensions/MP_MARKETPLACE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json",
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "conformance/extensions/RD_REDACTION_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json",
+          "conformance/extensions/SA_SECURITY_ALERT_0.1.json",
+          "conformance/extensions/TG_TOOL_GATING_0.1.json",
+          "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+          "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl",
+          "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-02_redacted_mode_with_artifacts_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl",
+          "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl",
+          "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-02_odata_retrieval_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-03_policy_xref_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-02_thread_lifecycle_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-01_basic_declare_result_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
+          "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
+          "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+          "fixtures/extensions/observability/OB-03_sla_throttle_signal_pass.jsonl",
+          "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-03_overload_signal_degraded_mode_pass.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/extensions/redaction/RD-01_basic_redaction_pass.jsonl",
+          "fixtures/extensions/redaction/RD-02_redaction_with_pii_refs_pass.jsonl",
+          "fixtures/extensions/redaction/RD-03_contract_retention_policy_pass.jsonl",
+          "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+          "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+          "fixtures/extensions/security_alerts/SA-01_security_alert_pass.jsonl",
+          "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
+          "fixtures/extensions/tool_gating/TG-02_audit_result_attest.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-01_valid_pinned_baseline_pass.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl",
+          "fixtures/extensions/workflow_sync/WF-01_declare_and_step_attest_pass.jsonl",
+          "fixtures/extensions/workflow_sync/WF-02_update_and_monotonic_steps_pass.jsonl",
+          "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+          "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+          "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+          "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+          "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl",
+          "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
+          "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-06_metadata_only_missing_projection_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-07_classification_only_missing_labels_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-08_capneg_contract_mode_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-03_depth_exceeded_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-04_scope_not_subset_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-05_result_without_declare_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-06_irreversible_missing_approval_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-07_policy_link_missing_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-08_receipt_digest_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-09_inline_sensitive_receipt_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-10_external_tx_id_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-04_missing_target_binding_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-08_missing_intervention_handle_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-04_missing_required_scope_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-05_wrong_issuer_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-06_missing_required_role_or_group_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-07_required_acr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-08_required_amr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-09_missing_required_approval_evidence_expected_fail.jsonl",
+          "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-06_missing_correlation_ref_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-07_invalid_trace_shape_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-08_invalid_signal_type_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-09_unregistered_reason_code_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl",
+          "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-04_interaction_without_lease_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-05_lease_overrun_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-06_invalid_overload_severity_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-06_invalid_pii_ref_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-07_missing_retention_field_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+          "fixtures/extensions/security_alerts/SA-02_unknown_category_expected_fail.jsonl",
+          "fixtures/extensions/security_alerts/SA-03_evidence_unresolvable_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-03_blocking_result_without_allow_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-04_audit_missing_attest_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-02_rug_pull_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-03_shadowing_expected_fail.jsonl",
+          "fixtures/extensions/workflow_sync/WF-03_step_without_declare_expected_fail.jsonl",
+          "fixtures/extensions/workflow_sync/WF-04_non_monotonic_step_index_expected_fail.jsonl",
+          "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+          "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+          "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+          "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
+          "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
+          "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "CONTRACT_PROPOSE",
+        "owner": "Core",
+        "payload_schema": {
+          "file": "schemas/core/aicp-core-payloads.schema.json",
+          "pointer": "#/$defs/CONTRACT_PROPOSE"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/AL_ALERTS_0.1.json",
+          "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "conformance/extensions/CF_CONFIDENTIALITY_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+          "conformance/extensions/DL_DELEGATION_0.1.json",
+          "conformance/extensions/DS_DISPUTES_0.1.json",
+          "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "conformance/extensions/EC_ECONOMICS_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+          "conformance/extensions/FA_FACILITATION_0.1.json",
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/IB_INBOX_0.1.json",
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+          "conformance/extensions/MP_MARKETPLACE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json",
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json",
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "conformance/extensions/RD_REDACTION_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json",
+          "conformance/extensions/SA_SECURITY_ALERT_0.1.json",
+          "conformance/extensions/TG_TOOL_GATING_0.1.json",
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json",
+          "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+          "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl",
+          "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-01_full_mode_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-02_redacted_mode_with_artifacts_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
+          "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl",
+          "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl",
+          "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-02_odata_retrieval_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-03_policy_xref_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-02_thread_lifecycle_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-01_basic_declare_result_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
+          "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl",
+          "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
+          "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+          "fixtures/extensions/observability/OB-03_sla_throttle_signal_pass.jsonl",
+          "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-03_overload_signal_degraded_mode_pass.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/extensions/redaction/RD-01_basic_redaction_pass.jsonl",
+          "fixtures/extensions/redaction/RD-02_redaction_with_pii_refs_pass.jsonl",
+          "fixtures/extensions/redaction/RD-03_contract_retention_policy_pass.jsonl",
+          "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+          "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+          "fixtures/extensions/security_alerts/SA-01_security_alert_pass.jsonl",
+          "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
+          "fixtures/extensions/tool_gating/TG-02_audit_result_attest.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-01_valid_pinned_baseline_pass.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl",
+          "fixtures/extensions/workflow_sync/WF-01_declare_and_step_attest_pass.jsonl",
+          "fixtures/extensions/workflow_sync/WF-02_update_and_monotonic_steps_pass.jsonl",
+          "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+          "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+          "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+          "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+          "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl",
+          "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
+          "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-06_metadata_only_missing_projection_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-07_classification_only_missing_labels_expected_fail.jsonl",
+          "fixtures/extensions/confidentiality/CF-08_capneg_contract_mode_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-03_depth_exceeded_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-04_scope_not_subset_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
+          "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-05_result_without_declare_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-06_irreversible_missing_approval_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-07_policy_link_missing_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-08_receipt_digest_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-09_inline_sensitive_receipt_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-10_external_tx_id_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-04_missing_target_binding_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-08_missing_intervention_handle_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-04_missing_required_scope_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-05_wrong_issuer_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-06_missing_required_role_or_group_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-07_required_acr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-08_required_amr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-09_missing_required_approval_evidence_expected_fail.jsonl",
+          "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl",
+          "fixtures/extensions/inbox/IB-03_missing_queue_lease_context_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-07_subchat_without_required_admission_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-06_missing_correlation_ref_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-07_invalid_trace_shape_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-08_invalid_signal_type_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-09_unregistered_reason_code_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl",
+          "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl",
+          "fixtures/extensions/publications/PB-05_must_reach_without_delivery_proof_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-04_interaction_without_lease_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-05_lease_overrun_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-06_invalid_overload_severity_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-06_invalid_pii_ref_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-07_missing_retention_field_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
+          "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+          "fixtures/extensions/security_alerts/SA-02_unknown_category_expected_fail.jsonl",
+          "fixtures/extensions/security_alerts/SA-03_evidence_unresolvable_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-03_blocking_result_without_allow_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-04_audit_missing_attest_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-02_rug_pull_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-03_shadowing_expected_fail.jsonl",
+          "fixtures/extensions/transcript_witness/TW-04_unknown_inclusion_target_expected_fail.jsonl",
+          "fixtures/extensions/transcript_witness/TW-05_split_history_expected_fail.jsonl",
+          "fixtures/extensions/transcript_witness/TW-06_nonrep_required_missing_sigref_expected_fail.jsonl",
+          "fixtures/extensions/workflow_sync/WF-03_step_without_declare_expected_fail.jsonl",
+          "fixtures/extensions/workflow_sync/WF-04_non_monotonic_step_index_expected_fail.jsonl",
+          "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+          "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+          "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+          "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
+          "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
+          "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl",
+          "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "DELEGATION_ACCEPT",
+        "owner": "EXT-DELEGATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-delegation-payloads.schema.json",
+          "pointer": "#/$defs/DELEGATION_ACCEPT"
+        },
+        "suites": [
+          "conformance/extensions/DL_DELEGATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "DELEGATION_GRANT",
+        "owner": "EXT-DELEGATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-delegation-payloads.schema.json",
+          "pointer": "#/$defs/DELEGATION_GRANT"
+        },
+        "suites": [
+          "conformance/extensions/DL_DELEGATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-03_depth_exceeded_expected_fail.jsonl",
+          "fixtures/extensions/delegation/DL-04_scope_not_subset_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "DELEGATION_RESULT_ATTEST",
+        "owner": "EXT-DELEGATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-delegation-payloads.schema.json",
+          "pointer": "#/$defs/DELEGATION_RESULT_ATTEST"
+        },
+        "suites": [
+          "conformance/extensions/DL_DELEGATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "DELEGATION_REVOKE",
+        "owner": "EXT-DELEGATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-delegation-payloads.schema.json",
+          "pointer": "#/$defs/DELEGATION_REVOKE"
+        },
+        "suites": [
+          "conformance/extensions/DL_DELEGATION_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "DIGEST_DELIVER",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/DIGEST_DELIVER"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "DIGEST_REQUEST",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/DIGEST_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ECONOMICS_VERDICT",
+        "owner": "EXT-ECONOMICS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-economics-payloads.schema.json",
+          "pointer": "#/$defs/ECONOMICS_VERDICT"
+        },
+        "suites": [
+          "conformance/extensions/EC_ECONOMICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ENFORCEMENT_VERDICT",
+        "owner": "EXT-ENFORCEMENT",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-enforcement-payloads.schema.json",
+          "pointer": "#/$defs/ENFORCEMENT_VERDICT"
+        },
+        "suites": [
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
+          "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/04_inconclusive_escalate.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
+          "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
+          "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ERROR",
+        "owner": "Core",
+        "payload_schema": {
+          "file": "schemas/core/aicp-core-payloads.schema.json",
+          "pointer": "#/$defs/ERROR"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/golden_transcripts/GT-08_error_minimal.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "EXTERNAL_TX_DECLARE",
+        "owner": "EXT-EXTERNAL-TRANSACTION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-external-transaction-payloads.schema.json",
+          "pointer": "#/$defs/EXTERNAL_TX_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/external_transaction/ET-01_basic_declare_result_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/external_transaction/ET-06_irreversible_missing_approval_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-07_policy_link_missing_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-08_receipt_digest_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-09_inline_sensitive_receipt_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-10_external_tx_id_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "EXTERNAL_TX_RESULT",
+        "owner": "EXT-EXTERNAL-TRANSACTION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-external-transaction-payloads.schema.json",
+          "pointer": "#/$defs/EXTERNAL_TX_RESULT"
+        },
+        "suites": [
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/external_transaction/ET-01_basic_declare_result_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-02_irreversible_with_approval_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/external_transaction/ET-05_result_without_declare_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-06_irreversible_missing_approval_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-07_policy_link_missing_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-08_receipt_digest_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-09_inline_sensitive_receipt_expected_fail.jsonl",
+          "fixtures/extensions/external_transaction/ET-10_external_tx_id_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "HEAD_EXCHANGE",
+        "owner": "EXT-TRANSCRIPT-WITNESS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+          "pointer": "#/$defs/HEAD_EXCHANGE"
+        },
+        "suites": [
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-05_split_history_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "IDENTITY_ANNOUNCE",
+        "owner": "EXT-IDENTITY-LC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+          "pointer": "#/$defs/IDENTITY_ANNOUNCE"
+        },
+        "suites": [
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+          "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INBOX_ACK",
+        "owner": "EXT-INBOX",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-inbox-payloads.schema.json",
+          "pointer": "#/$defs/INBOX_ACK"
+        },
+        "suites": [
+          "conformance/extensions/IB_INBOX_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/inbox/IB-02_ack_without_enqueue_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INBOX_ENQUEUE",
+        "owner": "EXT-INBOX",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-inbox-payloads.schema.json",
+          "pointer": "#/$defs/INBOX_ENQUEUE"
+        },
+        "suites": [
+          "conformance/extensions/IB_INBOX_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/inbox/IB-03_missing_queue_lease_context_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INBOX_LEASE_GRANT",
+        "owner": "EXT-INBOX",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-inbox-payloads.schema.json",
+          "pointer": "#/$defs/INBOX_LEASE_GRANT"
+        },
+        "suites": [
+          "conformance/extensions/IB_INBOX_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/inbox/IB-03_missing_queue_lease_context_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INBOX_ROUTE",
+        "owner": "EXT-INBOX",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-inbox-payloads.schema.json",
+          "pointer": "#/$defs/INBOX_ROUTE"
+        },
+        "suites": [
+          "conformance/extensions/IB_INBOX_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/inbox/IB-03_missing_queue_lease_context_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INCLUSION_PROOF_DECLARE",
+        "owner": "EXT-TRANSCRIPT-WITNESS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+          "pointer": "#/$defs/INCLUSION_PROOF_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-04_unknown_inclusion_target_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INTERVENTION_COMPLETE",
+        "owner": "EXT-HUMAN-APPROVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-human-approval-payloads.schema.json",
+          "pointer": "#/$defs/INTERVENTION_COMPLETE"
+        },
+        "suites": [
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/human_approval/HA-08_missing_intervention_handle_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "INTERVENTION_REQUIRED",
+        "owner": "EXT-HUMAN-APPROVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-human-approval-payloads.schema.json",
+          "pointer": "#/$defs/INTERVENTION_REQUIRED"
+        },
+        "suites": [
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/human_approval/HA-08_missing_intervention_handle_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "KEY_REVOKE",
+        "owner": "EXT-IDENTITY-LC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+          "pointer": "#/$defs/KEY_REVOKE"
+        },
+        "suites": [
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
+        ],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "KEY_ROTATION",
+        "owner": "EXT-IDENTITY-LC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+          "pointer": "#/$defs/KEY_ROTATION"
+        },
+        "suites": [
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "MODERATOR_DIRECTIVE",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/MODERATOR_DIRECTIVE"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "OBJECT_REQUEST",
+        "owner": "EXT-OBJECT-RESYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-object-resync-payloads.schema.json",
+          "pointer": "#/$defs/OBJECT_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl",
+          "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "OBJECT_RESPONSE",
+        "owner": "EXT-OBJECT-RESYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-object-resync-payloads.schema.json",
+          "pointer": "#/$defs/OBJECT_RESPONSE"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl",
+          "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "OBS_SIGNAL",
+        "owner": "EXT-OBSERVABILITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-observability-payloads.schema.json",
+          "pointer": "#/$defs/OBS_SIGNAL"
+        },
+        "suites": [
+          "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "conformance/extensions/IB_INBOX_0.1.json",
+          "conformance/extensions/MP_MARKETPLACE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json",
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json",
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
+          "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
+          "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+          "fixtures/extensions/observability/OB-03_sla_throttle_signal_pass.jsonl",
+          "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-06_missing_correlation_ref_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-07_invalid_trace_shape_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-08_invalid_signal_type_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-09_unregistered_reason_code_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "OVERLOAD_SIGNAL",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/OVERLOAD_SIGNAL"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-03_overload_signal_degraded_mode_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/queue_leases/QL-06_invalid_overload_severity_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PAID_MESSAGE_DELIVER",
+        "owner": "EXT-ECONOMICS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-economics-payloads.schema.json",
+          "pointer": "#/$defs/PAID_MESSAGE_DELIVER"
+        },
+        "suites": [
+          "conformance/extensions/EC_ECONOMICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PAID_MESSAGE_SUBMIT",
+        "owner": "EXT-ECONOMICS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-economics-payloads.schema.json",
+          "pointer": "#/$defs/PAID_MESSAGE_SUBMIT"
+        },
+        "suites": [
+          "conformance/extensions/EC_ECONOMICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PARTICIPANT_ACCEPT",
+        "owner": "EXT-PARTICIPANTS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-participants-payloads.schema.json",
+          "pointer": "#/$defs/PARTICIPANT_ACCEPT"
+        },
+        "suites": [
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PARTICIPANT_JOIN",
+        "owner": "EXT-PARTICIPANTS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-participants-payloads.schema.json",
+          "pointer": "#/$defs/PARTICIPANT_JOIN"
+        },
+        "suites": [
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/RC_RECEPTION_CHAT_SEMANTICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl",
+          "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PARTICIPANT_LEAVE",
+        "owner": "EXT-PARTICIPANTS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-participants-payloads.schema.json",
+          "pointer": "#/$defs/PARTICIPANT_LEAVE"
+        },
+        "suites": [
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "PAYMENT_PROOF_SUBMIT",
+        "owner": "EXT-ECONOMICS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-economics-payloads.schema.json",
+          "pointer": "#/$defs/PAYMENT_PROOF_SUBMIT"
+        },
+        "suites": [
+          "conformance/extensions/EC_ECONOMICS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "POLICY_DECISION_ATTEST",
+        "owner": "EXT-POLICY-EVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+          "pointer": "#/$defs/POLICY_DECISION_ATTEST"
+        },
+        "suites": [
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "POLICY_EVAL_REQUEST",
+        "owner": "EXT-POLICY-EVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+          "pointer": "#/$defs/POLICY_EVAL_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json",
+          "conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json",
+          "conformance/extensions/PE_PROFILE_OPA_REGO_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-ABAC-01_dimensions_deterministic_pass.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-LLM-01_evidence_boundary_pass.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-OPA-01_deterministic_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/policy_eval/PE-02_unknown_reason_code_expected_fail.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-ABAC-02_semantic_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-LLM-02_missing_evidence_expected_fail.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-OPA-02_unregistered_language_binding_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "POLICY_EVAL_RESULT",
+        "owner": "EXT-POLICY-EVAL",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+          "pointer": "#/$defs/POLICY_EVAL_RESULT"
+        },
+        "suites": [
+          "conformance/extensions/CM_COMMERCE_ACP_PROFILE_0.1.json",
+          "conformance/extensions/ET_EXTERNAL_TRANSACTION_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json",
+          "conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json",
+          "conformance/extensions/PE_PROFILE_OPA_REGO_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
+          "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-ABAC-01_dimensions_deterministic_pass.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-LLM-01_evidence_boundary_pass.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-OPA-01_deterministic_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-01_basic_commerce_profile_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-02_intervention_flow_pass.jsonl",
+          "fixtures/profiles/commerce_acp/CM-03_pii_ref_safe_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/policy_eval/PE-02_unknown_reason_code_expected_fail.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-ABAC-02_semantic_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-LLM-02_missing_evidence_expected_fail.jsonl",
+          "fixtures/extensions/policy_profiles/PPS-OPA-02_unregistered_language_binding_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-04_profile_downgrade_or_missing_profile_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-05_missing_approval_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-07_inline_pii_receipt_expected_fail.jsonl",
+          "fixtures/profiles/commerce_acp/CM-08_external_tx_linkage_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PROVENANCE_APPEND",
+        "owner": "EXT-PROVENANCE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-provenance-payloads.schema.json",
+          "pointer": "#/$defs/PROVENANCE_APPEND"
+        },
+        "suites": [
+          "conformance/extensions/PR_PROVENANCE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/provenance/PR-01_dag_multi_agent_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/provenance/PR-02_append_missing_parent_expected_fail.jsonl",
+          "fixtures/extensions/provenance/PR-03_append_duplicate_node_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PROVENANCE_DECLARE",
+        "owner": "EXT-PROVENANCE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-provenance-payloads.schema.json",
+          "pointer": "#/$defs/PROVENANCE_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/PR_PROVENANCE_0.1.json",
+          "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/provenance/PR-01_dag_multi_agent_pass.jsonl",
+          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/provenance/PR-02_append_missing_parent_expected_fail.jsonl",
+          "fixtures/extensions/provenance/PR-03_append_duplicate_node_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PUBLICATION_PUBLISH",
+        "owner": "EXT-PUBLICATIONS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-publications-payloads.schema.json",
+          "pointer": "#/$defs/PUBLICATION_PUBLISH"
+        },
+        "suites": [
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json",
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
+          "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/publications/PB-03_update_without_version_progression_expected_fail.jsonl",
+          "fixtures/extensions/publications/PB-04_retract_with_unknown_reason_expected_fail.jsonl",
+          "fixtures/extensions/publications/PB-05_must_reach_without_delivery_proof_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PUBLICATION_RETRACT",
+        "owner": "EXT-PUBLICATIONS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-publications-payloads.schema.json",
+          "pointer": "#/$defs/PUBLICATION_RETRACT"
+        },
+        "suites": [
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/publications/PB-04_retract_with_unknown_reason_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "PUBLICATION_UPDATE",
+        "owner": "EXT-PUBLICATIONS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-publications-payloads.schema.json",
+          "pointer": "#/$defs/PUBLICATION_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/publications/PB-02_update_without_publish_expected_fail.jsonl",
+          "fixtures/extensions/publications/PB-03_update_without_version_progression_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "QUEUE_ACK",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/QUEUE_ACK"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "QUEUE_ENQUEUE",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/QUEUE_ENQUEUE"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "QUEUE_LEASE_GRANT",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/QUEUE_LEASE_GRANT"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/queue_leases/QL-05_lease_overrun_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "QUEUE_NACK",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/QUEUE_NACK"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "QUEUE_RELEASE",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/QUEUE_RELEASE"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RESOLVE_CONFLICT",
+        "owner": "Core",
+        "payload_schema": {
+          "file": "schemas/core/aicp-core-payloads.schema.json",
+          "pointer": "#/$defs/RESOLVE_CONFLICT"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RESPONSIBILITY_ACCEPT",
+        "owner": "EXT-RESPONSIBILITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-responsibility-payloads.schema.json",
+          "pointer": "#/$defs/RESPONSIBILITY_ACCEPT"
+        },
+        "suites": [
+          "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/responsibility/RP-02_accept_without_assign_expected_fail.jsonl",
+          "fixtures/extensions/responsibility/RP-04_transient_failure_without_retry_expected_fail.jsonl",
+          "fixtures/extensions/responsibility/RP-05_failure_with_missing_provenance_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RESPONSIBILITY_ASSIGN",
+        "owner": "EXT-RESPONSIBILITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-responsibility-payloads.schema.json",
+          "pointer": "#/$defs/RESPONSIBILITY_ASSIGN"
+        },
+        "suites": [
+          "conformance/extensions/IB_INBOX_0.1.json",
+          "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl",
+          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/responsibility/RP-03_missing_terminal_transfer_expected_fail.jsonl",
+          "fixtures/extensions/responsibility/RP-04_transient_failure_without_retry_expected_fail.jsonl",
+          "fixtures/extensions/responsibility/RP-05_failure_with_missing_provenance_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RESPONSIBILITY_REVOKE",
+        "owner": "EXT-RESPONSIBILITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-responsibility-payloads.schema.json",
+          "pointer": "#/$defs/RESPONSIBILITY_REVOKE"
+        },
+        "suites": [
+          "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "RESUME_REQUEST",
+        "owner": "EXT-RESUME",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-resume-payloads.schema.json",
+          "pointer": "#/$defs/RESUME_REQUEST"
+        },
+        "suites": [
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+          "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
+          "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+          "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RESUME_RESPONSE",
+        "owner": "EXT-RESUME",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-resume-payloads.schema.json",
+          "pointer": "#/$defs/RESUME_RESPONSE"
+        },
+        "suites": [
+          "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json",
+          "conformance/ops/OPS_HARDENING_0.1.json",
+          "conformance/security/SIG_SIGNED_PATHS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
+          "fixtures/demos/enforcement_behavioral/05_resume_needs_resync.jsonl",
+          "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+          "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+          "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+          "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RFW_POST",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/RFW_POST"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-08_invalid_auction_mode_expected_fail.jsonl",
+          "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "ROUTING_DECISION_ATTEST",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/ROUTING_DECISION_ATTEST"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RUN_CANCEL",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/RUN_CANCEL"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl"
+        ],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "RUN_COMPLETE",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/RUN_COMPLETE"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RUN_CREATE",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/RUN_CREATE"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-07_dangling_store_ref_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "RUN_UPDATE",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/RUN_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-04_run_update_before_create_expected_fail.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SECURITY_ALERT",
+        "owner": "EXT-SECURITY-ALERT",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-security-alerts-payloads.schema.json",
+          "pointer": "#/$defs/SECURITY_ALERT"
+        },
+        "suites": [
+          "conformance/extensions/SA_SECURITY_ALERT_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/security_alerts/SA-01_security_alert_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/security_alerts/SA-02_unknown_category_expected_fail.jsonl",
+          "fixtures/extensions/security_alerts/SA-03_evidence_unresolvable_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "STATE_SYNC_REQUEST",
+        "owner": "EXT-OBJECT-RESYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-object-resync-payloads.schema.json",
+          "pointer": "#/$defs/STATE_SYNC_REQUEST"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+          "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+          "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "STATE_SYNC_RESPONSE",
+        "owner": "EXT-OBJECT-RESYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-object-resync-payloads.schema.json",
+          "pointer": "#/$defs/STATE_SYNC_RESPONSE"
+        },
+        "suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+          "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+          "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+          "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SUBCHAT_CREATE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/SUBCHAT_CREATE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-07_subchat_without_required_admission_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SUBCHAT_INVITE",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/SUBCHAT_INVITE"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SUBCHAT_JOIN",
+        "owner": "EXT-MARKETPLACE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-marketplace-payloads.schema.json",
+          "pointer": "#/$defs/SUBCHAT_JOIN"
+        },
+        "suites": [
+          "conformance/extensions/MP_MARKETPLACE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/marketplace/MP-07_subchat_without_required_admission_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SUBJECT_BINDING_ISSUE",
+        "owner": "EXT-DELEGATED-IDENTITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+          "pointer": "#/$defs/SUBJECT_BINDING_ISSUE"
+        },
+        "suites": [
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+          "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-04_missing_required_scope_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-05_wrong_issuer_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-06_missing_required_role_or_group_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-07_required_acr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-08_required_amr_not_met_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-09_missing_required_approval_evidence_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SUBJECT_BINDING_REVOKE",
+        "owner": "EXT-DELEGATED-IDENTITY",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+          "pointer": "#/$defs/SUBJECT_BINDING_REVOKE"
+        },
+        "suites": [
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl"
+        ],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "SUBSCRIBE",
+        "owner": "EXT-SUBSCRIPTIONS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-subscriptions-payloads.schema.json",
+          "pointer": "#/$defs/SUBSCRIBE"
+        },
+        "suites": [
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json",
+          "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
+          "fixtures/extensions/subscriptions/SB-01_subscription_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/subscriptions/SB-02_state_for_unknown_subscription_expected_fail.jsonl",
+          "fixtures/extensions/subscriptions/SB-03_bad_cursor_progression_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "SUBSCRIPTION_STATE",
+        "owner": "EXT-SUBSCRIPTIONS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-subscriptions-payloads.schema.json",
+          "pointer": "#/$defs/SUBSCRIPTION_STATE"
+        },
+        "suites": [
+          "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/subscriptions/SB-01_subscription_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/subscriptions/SB-02_state_for_unknown_subscription_expected_fail.jsonl",
+          "fixtures/extensions/subscriptions/SB-03_bad_cursor_progression_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "THREAD_APPEND",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/THREAD_APPEND"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-02_thread_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-06_thread_append_after_close_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "THREAD_CLOSE",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/THREAD_CLOSE"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-02_thread_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-06_thread_append_after_close_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "THREAD_CREATE",
+        "owner": "EXT-EXECUTION-LIFECYCLE",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-execution-lifecycle-payloads.schema.json",
+          "pointer": "#/$defs/THREAD_CREATE"
+        },
+        "suites": [
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-02_thread_lifecycle_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-06_thread_append_after_close_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "THROTTLE_UPDATE",
+        "owner": "EXT-QUEUE-LEASES",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-queue-leases-payloads.schema.json",
+          "pointer": "#/$defs/THROTTLE_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-03_overload_signal_degraded_mode_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TOOL_CALL_ATTEST",
+        "owner": "EXT-TOOL-GATING",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-tool-gating-payloads.schema.json",
+          "pointer": "#/$defs/TOOL_CALL_ATTEST"
+        },
+        "suites": [
+          "conformance/extensions/TG_TOOL_GATING_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/tool_gating/TG-02_audit_result_attest.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TOOL_CALL_REQUEST",
+        "owner": "EXT-TOOL-GATING",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-tool-gating-payloads.schema.json",
+          "pointer": "#/$defs/TOOL_CALL_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
+          "conformance/extensions/HA_HUMAN_APPROVAL_0.1.json",
+          "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
+          "conformance/extensions/OB_OBSERVABILITY_0.1.json",
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
+          "conformance/extensions/TG_TOOL_GATING_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-02_odata_retrieval_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-03_policy_xref_binding_pass.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-04_enterprise_flow_with_iam_and_approval_pass.jsonl",
+          "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
+          "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
+          "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
+          "fixtures/extensions/observability/OB-04_metering_usage_pass.jsonl",
+          "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
+          "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
+          "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
+          "fixtures/extensions/tool_gating/TG-02_audit_result_attest.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-01_valid_pinned_baseline_pass.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl",
+          "fixtures/extensions/enterprise_bindings/EB-08_binding_without_required_correlation_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-05_expired_approval_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-06_wrong_signer_expected_fail.jsonl",
+          "fixtures/extensions/human_approval/HA-07_approval_reuse_across_targets_expected_fail.jsonl",
+          "fixtures/extensions/iam_bridge/IB-09_missing_required_approval_evidence_expected_fail.jsonl",
+          "fixtures/extensions/observability/OB-10_negative_meter_quantity_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-04_interaction_without_lease_expected_fail.jsonl",
+          "fixtures/extensions/queue_leases/QL-05_lease_overrun_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-03_blocking_result_without_allow_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-04_audit_missing_attest_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-02_rug_pull_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-03_shadowing_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TOOL_CALL_RESULT",
+        "owner": "EXT-TOOL-GATING",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-tool-gating-payloads.schema.json",
+          "pointer": "#/$defs/TOOL_CALL_RESULT"
+        },
+        "suites": [
+          "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "conformance/extensions/TG_TOOL_GATING_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
+          "fixtures/extensions/tool_gating/TG-02_audit_result_attest.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-01_valid_pinned_baseline_pass.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/tool_gating/TG-03_blocking_result_without_allow_expected_fail.jsonl",
+          "fixtures/extensions/tool_gating/TG-04_audit_missing_attest_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-02_rug_pull_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-03_shadowing_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TOOL_CALL_VERDICT",
+        "owner": "EXT-TOOL-GATING",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-tool-gating-payloads.schema.json",
+          "pointer": "#/$defs/TOOL_CALL_VERDICT"
+        },
+        "suites": [
+          "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
+          "conformance/extensions/TG_TOOL_GATING_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/tool_gating/TG-01_blocking_allow.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-01_valid_pinned_baseline_pass.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/tool_supply_chain/M30-02_rug_pull_expected_fail.jsonl",
+          "fixtures/extensions/tool_supply_chain/M30-03_shadowing_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TURN_GRANT",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/TURN_GRANT"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TURN_REQUEST",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/TURN_REQUEST"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "TURN_REVOKE",
+        "owner": "EXT-FACILITATION",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-facilitation-payloads.schema.json",
+          "pointer": "#/$defs/TURN_REVOKE"
+        },
+        "suites": [
+          "conformance/extensions/FA_FACILITATION_0.1.json"
+        ],
+        "positive_fixtures": [],
+        "negative_fixtures": [],
+        "coverage_status": "missing_positive_fixture",
+        "gap_milestone": "M65"
+      },
+      {
+        "id": "UNSUBSCRIBE",
+        "owner": "EXT-SUBSCRIPTIONS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-subscriptions-payloads.schema.json",
+          "pointer": "#/$defs/UNSUBSCRIBE"
+        },
+        "suites": [
+          "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/subscriptions/SB-01_subscription_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "WITNESS_RECEIPT",
+        "owner": "EXT-TRANSCRIPT-WITNESS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+          "pointer": "#/$defs/WITNESS_RECEIPT"
+        },
+        "suites": [
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-03_receipt_without_submit_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "WITNESS_SUBMIT",
+        "owner": "EXT-TRANSCRIPT-WITNESS",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-transcript-witness-payloads.schema.json",
+          "pointer": "#/$defs/WITNESS_SUBMIT"
+        },
+        "suites": [
+          "conformance/extensions/TW_TRANSCRIPT_WITNESS_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-01_submit_receipt_pass.jsonl",
+          "fixtures/extensions/transcript_witness/TW-02_head_exchange_inclusion_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/transcript_witness/TW-04_unknown_inclusion_target_expected_fail.jsonl",
+          "fixtures/extensions/transcript_witness/TW-05_split_history_expected_fail.jsonl",
+          "fixtures/extensions/transcript_witness/TW-06_nonrep_required_missing_sigref_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "WORKFLOW_DECLARE",
+        "owner": "EXT-WORKFLOW-SYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-workflow-sync-payloads.schema.json",
+          "pointer": "#/$defs/WORKFLOW_DECLARE"
+        },
+        "suites": [
+          "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/workflow_sync/WF-01_declare_and_step_attest_pass.jsonl",
+          "fixtures/extensions/workflow_sync/WF-02_update_and_monotonic_steps_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/workflow_sync/WF-04_non_monotonic_step_index_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "WORKFLOW_STEP_ATTEST",
+        "owner": "EXT-WORKFLOW-SYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-workflow-sync-payloads.schema.json",
+          "pointer": "#/$defs/WORKFLOW_STEP_ATTEST"
+        },
+        "suites": [
+          "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/workflow_sync/WF-01_declare_and_step_attest_pass.jsonl",
+          "fixtures/extensions/workflow_sync/WF-02_update_and_monotonic_steps_pass.jsonl"
+        ],
+        "negative_fixtures": [
+          "fixtures/extensions/workflow_sync/WF-03_step_without_declare_expected_fail.jsonl",
+          "fixtures/extensions/workflow_sync/WF-04_non_monotonic_step_index_expected_fail.jsonl"
+        ],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      },
+      {
+        "id": "WORKFLOW_UPDATE",
+        "owner": "EXT-WORKFLOW-SYNC",
+        "payload_schema": {
+          "file": "schemas/extensions/ext-workflow-sync-payloads.schema.json",
+          "pointer": "#/$defs/WORKFLOW_UPDATE"
+        },
+        "suites": [
+          "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json"
+        ],
+        "positive_fixtures": [
+          "fixtures/extensions/workflow_sync/WF-02_update_and_monotonic_steps_pass.jsonl"
+        ],
+        "negative_fixtures": [],
+        "coverage_status": "complete",
+        "gap_milestone": null
+      }
+    ]
   },
   "release_engineering": {
     "snapshot_id": "AICP-SNAPSHOT-0.1.0-dev",

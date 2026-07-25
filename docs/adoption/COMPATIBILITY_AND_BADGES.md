@@ -70,6 +70,10 @@ not organizational identity, certification, or endorsement.
 
 ## Current external reachability
 
+This table describes external-IUT target availability, not repository availability or
+registry maturity. Those separate facts are generated from the registry in
+[`AICP_Profiles.md`](../profiles/AICP_Profiles.md#2-profile-catalog-and-status).
+
 | Profile target | External full-profile target | Ordinary external mark |
 |---|---|---|
 | `AICP-BASE@0.1` | Available (21 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |

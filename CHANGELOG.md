@@ -7,14 +7,18 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Planned M58–M70 milestone sequence for the work that remains after protocol hardening.
+- Completed M58 Repo-Truth Rebaseline and recorded M59–M70 as the remaining planned
+  milestone sequence after protocol hardening.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
   wording so repository presence/internal conformance is not presented as independent
   external or live-transport evidence.
-- Extended planning validation with structured consistency checks and focused regression
-  tests.
+- Bound profile maturity, external-evidence eligibility, generated human truth, visible
+  milestone status, the complete 132-entry message surface, and independent security-review
+  claims to structured repository evidence.
+- Extended planning validation with deterministic generation plus focused negative
+  regression tests.
 
 ### Known limitations
 - No real external or pairwise interop submission is present.
