@@ -49,7 +49,7 @@ If this baseline is absent, higher-layer AICP claims are not meaningful.
 ### 3.2 Baseline profile center (small, conservative, already shipped)
 
 For public adoption framing, the conservative baseline profile center is:
-- `AICP-BASE@0.1` — minimum interoperable Core profile,
+- `AICP-BASE@0.1` — minimum Core protocol conformance target,
 - `AICP-MEDIATED-BLOCKING@0.1` — baseline governed mediation / policy / enforcement profile,
 - `AICP-RESUMABLE-SESSIONS@0.1` — continuity profile for reconnect/resume/resync needs,
 - `AICP-DELEGATED-IDENTITY@0.1` — identity-sensitive acting-on-behalf-of profile when external identity authority matters.
@@ -204,7 +204,7 @@ The tier model below is **adoption framing only**. It introduces no new protocol
 |---|---|---|
 | Core transcript integrity | **Yes** | Core narrative + schemas + `CT_CORE_0.1` |
 | Baseline profile claim | **Yes** | `AICP-BASE@0.1` |
-| Authenticated Core variant | Optional, experimental/post-UAT | `AICP-AUTHENTICATED-BASE@0.1` |
+| Authenticated Core variant | Optional, post-UAT | `AICP-AUTHENTICATED-BASE@0.1` |
 | Baseline mediated adoption | Usually yes for hosted/governed deployments | `AICP-MEDIATED-BLOCKING@0.1` |
 | Continuity | Optional unless reconnect/resume matters | `AICP-RESUMABLE-SESSIONS@0.1` |
 | Delegated identity | Optional unless acting-on-behalf-of matters | `AICP-DELEGATED-IDENTITY@0.1` |
@@ -213,6 +213,10 @@ The tier model below is **adoption framing only**. It introduces no new protocol
 | Privacy/redaction | Optional overlay | confidentiality + redaction surfaces |
 | Trust / status / enterprise / observability | Optional overlay | trust/status, enterprise bindings, observability |
 | Execution / commerce / marketplace / media | Optional specialized bundle | execution interop, commerce ACP, bazaar reception, agent media |
+
+This is an adoption-packaging table, not a profile-maturity table. Current shipped and
+stable/experimental status is deliberately not duplicated here; use the generated
+[profile-status table](../profiles/AICP_Profiles.md#2-profile-catalog-and-status).
 
 ## 7) Compatibility claims: how to be truthful
 
