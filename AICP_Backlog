@@ -15,6 +15,7 @@ or intended completion criterion is documented here.
 
 ## M59 — Authenticated Base Evidence Reachability
 
+<!-- milestone-status: M59 planned -->
 - **Status:** Planned.
 - **Problem statement:** the 37-case authenticated full-profile target intentionally includes
   an unavailable-crypto degraded probe, so a behaviorally passing run cannot emit the
@@ -33,6 +34,7 @@ or intended completion criterion is documented here.
 
 ## M60 — Exact Contract Agreement Core
 
+<!-- milestone-status: M60 planned -->
 - **Status:** Planned.
 - **Problem statement:** Core messages carry `contract_id` and may carry `contract_ref`, but
   the repository has no dedicated exact contract-version/hash agreement claim or conformance
@@ -50,6 +52,7 @@ or intended completion criterion is documented here.
 
 ## M61 — Multi-Profile Composition and CAPNEG v2
 
+<!-- milestone-status: M61 planned -->
 - **Status:** Planned.
 - **Problem statement:** product guidance recommends profile combinations while current
   CAPNEG selection carries one `aicp_profile`.
@@ -65,6 +68,7 @@ or intended completion criterion is documented here.
 
 ## M62 — Generalized External Evidence Framework
 
+<!-- milestone-status: M62 planned -->
 - **Status:** Planned.
 - **Problem statement:** external-IUT v1 is bound to two exact product profiles, while strict
   session-state projection uses a separate smoke/capability path and other capabilities have
@@ -81,6 +85,7 @@ or intended completion criterion is documented here.
 
 ## M63 — Tier-1 External Profile TCK
 
+<!-- milestone-status: M63 planned -->
 - **Status:** Planned.
 - **Problem statement:** mediated blocking, resumable sessions, and delegated identity have
   internal profile suites but no external full-profile IUT targets.
@@ -96,6 +101,7 @@ or intended completion criterion is documented here.
 
 ## M64 — Live Transport and Binding Interoperability
 
+<!-- milestone-status: M64 planned -->
 - **Status:** Planned.
 - **Problem statement:** HTTP/WS/SSE and MCP binding conformance currently validates static
   case files, not live independent endpoints.
@@ -110,6 +116,7 @@ or intended completion criterion is documented here.
 
 ## M65 — Registered Message Surface Completion
 
+<!-- milestone-status: M65 planned -->
 - **Status:** Planned.
 - **Problem statement:** 17 experimental registered lifecycle message types have payload
   mappings and suite ownership but no positive conformance-referenced fixture.
@@ -127,6 +134,7 @@ or intended completion criterion is documented here.
 
 ## M66 — Clean-Room Pairwise Interop Harness
 
+<!-- milestone-status: M66 planned -->
 - **Status:** Planned.
 - **Problem statement:** real pairwise publication is fail-closed because two independent
   conformance reports do not prove one bound bidirectional run.
@@ -142,6 +150,7 @@ or intended completion criterion is documented here.
 
 ## M67 — Security Coverage Closure
 
+<!-- milestone-status: M67 planned -->
 - **Status:** Planned.
 - **Problem statement:** the repository has internal self-review and automated negative tests,
   but coverage remains partial for resync amplification/existence leakage and evidence
@@ -159,6 +168,7 @@ or intended completion criterion is documented here.
 
 ## M68 — Governance and Standard Maturity
 
+<!-- milestone-status: M68 planned -->
 - **Status:** Planned.
 - **Problem statement:** the current maintainer/steward model supports repository decisions
   but does not define the roles, voting, appeals, review cadence, or external-body structure
@@ -175,6 +185,7 @@ or intended completion criterion is documented here.
 
 ## M69 — Release Engineering and RC Repackaging
 
+<!-- milestone-status: M69 planned -->
 - **Status:** Planned.
 - **Problem statement:** version metadata is consistent at `0.1.0-rc.1`, but post-RC work is
   unreleased; snapshot naming remains `0.1.0-dev`; profile report outputs are inconsistently
@@ -192,6 +203,7 @@ or intended completion criterion is documented here.
 
 ## M70 — External Plugfest Readiness
 
+<!-- milestone-status: M70 planned -->
 - **Status:** Planned.
 - **Problem statement:** the public interop corpus contains no genuine independent external
   submission and pairwise evidence is unavailable.

@@ -5,11 +5,12 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-07-24_
+_Last updated: 2026-07-25_
 
 ## Current / Next
 
 ### ✅ M58 — Repo-Truth Rebaseline
+<!-- milestone-status: M58 shipped -->
 - **Status:** Shipped.
 - **Problem:** planning, product, interoperability, security, governance, and release
   narratives do not consistently distinguish repository presence, internal verification,
@@ -26,12 +27,18 @@ _Last updated: 2026-07-24_
 - **Completion evidence:** every M58 Definition of Done passed under the mandatory
   validation set before the status changed to shipped. Canonical status:
   `docs/process/AICP_Repo_Truth_Baseline.md`.
+- **Correction evidence:** profile maturity and external eligibility are now registry/mark
+  derived; generated Markdown is byte-checked against JSON; visible milestone states are
+  marker-bound; the message surface has 132 validated entries; and external security review
+  completion requires a structured artifact contract. This remains M58 correction work and
+  does not start M59.
 
 ## Planned milestones
 
 Detailed remaining-work scope, non-goals, dependencies, evidence gaps, and completion
 criteria live in `AICP_Backlog`.
 
+<!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
 | M59 | Planned | Authenticated Base Evidence Reachability | `AICP_Backlog` |
@@ -46,6 +53,7 @@ criteria live in `AICP_Backlog`.
 | M68 | Planned | Governance and Standard Maturity | `AICP_Backlog` |
 | M69 | Planned | Release Engineering and RC Repackaging | `AICP_Backlog` |
 | M70 | Planned | External Plugfest Readiness | `AICP_Backlog` |
+<!-- END GENERATED PLANNED MILESTONES -->
 
 ## Shipped history
 

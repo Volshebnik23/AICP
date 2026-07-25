@@ -9,6 +9,10 @@ rows. `REMEDIATION_LOG.md` contains only its template row. No independent extern
 report is present, so the repository must not claim that an external review is complete.
 M67 owns coverage closure and any future real review artifact.
 
+Future completed independent-review evidence must satisfy the machine-checked
+[`external_reviews/README.md`](external_reviews/README.md) artifact contract. The current
+completed-artifact list remains empty.
+
 ## Purpose
 - Provide concise, review-ready artifacts describing threats, assumptions, and checklists.
 - Help external reviewers understand what AICP guarantees vs what platform deployments must add.
@@ -21,6 +25,7 @@ M67 owns coverage closure and any future real review artifact.
 - `SELF_REVIEW.md` (internal dry-run against the review checklist)
 - `COVERAGE_MAP.md` (threat-to-tests coverage matrix with evidence and gaps)
 - `OPS_HARDENING_GUIDE.md` (operator-safe defaults and deterministic abuse checks)
+- `external_reviews/README.md` (contract and location for future completed independent reviews)
 
 ## How external reviewers should use this package
 1. Read threat model and assumptions.
