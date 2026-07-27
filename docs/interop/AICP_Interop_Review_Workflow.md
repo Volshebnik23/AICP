@@ -74,8 +74,10 @@ For a repo-owned rehearsal of this same lifecycle, see `docs/interop/AICP_Intero
    - exact `profile_refs` match the claim,
    - reports are schema-valid full-profile external-IUT v1 artifacts matching the manifest,
      registered TCK release, exact mandatory case set, and all required digests,
-   - passed reports are non-degraded, have no mandatory skips, and carry exactly the
-     independently recomputed mark list,
+    - passed reports are non-degraded, have no mandatory skips, and carry exactly the
+      independently recomputed mark list,
+    - every consumer execution observation exactly matches its registered TCK accounting
+      scope and expected values,
    - optional `bundle-integrity.json` validates when present.
 
 5. **Decide matrix publication readiness.**

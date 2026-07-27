@@ -20,6 +20,7 @@ EXTENSION_REGISTRY_PATH = "registry/extension_ids.json"
 INTEROP_MATRIX_PATH = "interop/interop_matrix.json"
 PAIRWISE_VALIDATOR_PATH = "scripts/interop_submission_validation.py"
 CORE_SUITE_PATH = "conformance/core/CT_CORE_0.1.json"
+IUT_CASES_PATH = "conformance/iut/cases.json"
 
 BASELINE_BEGIN = "<!-- BEGIN GENERATED REPO-TRUTH FACTS -->"
 BASELINE_END = "<!-- END GENERATED REPO-TRUTH FACTS -->"
@@ -320,6 +321,65 @@ def _mark_status_text(value: str) -> str:
     }.get(value, value)
 
 
+def derive_external_mark_status(iut_profile: dict[str, Any] | None) -> str:
+    """Derive reachability from explicit IUT case-accounting semantics."""
+
+    if iut_profile is None:
+        return "no_external_iut_target"
+    for case in iut_profile.get("full_profile", {}).get("consumer_cases", []):
+        if not isinstance(case, dict):
+            return "blocked_by_mandatory_degraded_probe"
+        if any(
+            field in case
+            for field in (
+                "expected_degraded",
+                "expected_degraded_reasons",
+                "expected_skipped_checks",
+            )
+        ):
+            return "blocked_by_mandatory_degraded_probe"
+        configured = case.get("expected_execution_observation")
+        runtime_options = case.get("runtime_options")
+        explicitly_unavailable = (
+            isinstance(runtime_options, dict)
+            and runtime_options.get("cryptographic_verification") == "unavailable"
+        )
+        if configured is None:
+            if explicitly_unavailable:
+                return "blocked_by_mandatory_degraded_probe"
+            continue
+        reasons = (
+            configured.get("degraded_reasons")
+            if isinstance(configured, dict)
+            else None
+        )
+        skips = (
+            configured.get("skipped_checks")
+            if isinstance(configured, dict)
+            else None
+        )
+        if (
+            not isinstance(configured, dict)
+            or set(configured)
+            != {
+                "scope",
+                "degraded",
+                "degraded_reasons",
+                "skipped_checks",
+            }
+            or configured.get("scope") != "case_local_expected"
+            or configured.get("degraded") is not True
+            or not isinstance(reasons, list)
+            or not all(isinstance(value, str) and value for value in reasons or [])
+            or len(reasons or []) != len(set(reasons or []))
+            or not isinstance(skips, list)
+            or not all(isinstance(value, str) and value for value in skips or [])
+            or len(skips or []) != len(set(skips or []))
+        ):
+            return "blocked_by_mandatory_degraded_probe"
+    return "reachable_for_eligible_external_implementation"
+
+
 def render_profile_status_table(status: dict[str, Any]) -> str:
     lines = [
         "| Profile | Repository availability | Registry maturity | Internal evidence | External-IUT target | Ordinary external mark | Independent external evidence |",
@@ -445,7 +505,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             "",
             "| Surface | Repository truth | Independent-evidence boundary | Planned gap |",
             "|---|---|---|---|",
-            f"| Profiles | {summary['registered']} shipped catalogs; maturity is {summary['stable']} stable / {summary['experimental']} experimental | {summary['externally_demonstrated']} externally demonstrated profiles | M59, M62, M63, M70 |",
+            f"| Profiles | {summary['registered']} shipped catalogs; maturity is {summary['stable']} stable / {summary['experimental']} experimental | {summary['externally_demonstrated']} externally demonstrated profiles | M62, M63, M70 |",
             f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and expected profile `computed_marks` count | M70 |",
             f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, demonstrated={str(interop['pairwise_demonstrated']).lower()} | A valid eligible joint-execution result is required | M66 |",
             f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {len(live_bindings)} live paths | Static cases do not prove live independent interoperability | M64 |",
@@ -463,6 +523,7 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         item["id"]: item for item in load_json(root, PROFILE_REGISTRY_PATH)
     }
     profiles = sorted(status["profiles"], key=lambda item: item["id"])
+    iut_profiles = load_json(root, IUT_CASES_PATH)["profiles"]
     for profile in profiles:
         profile_id = profile["id"]
         profile["registry_status"] = registry[profile_id]["status"]
@@ -470,6 +531,9 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         profile["internal_evidence"] = "available"
         profile_catalog = load_json(root, profile["profile_catalog"])
         profile["compatibility_mark"] = profile_catalog["compatibility_mark"]
+        iut_profile = iut_profiles.get(profile_id)
+        profile["external_iut_target"] = iut_profile is not None
+        profile["external_mark_status"] = derive_external_mark_status(iut_profile)
 
     pairwise_source = (root / PAIRWISE_VALIDATOR_PATH).read_text(encoding="utf-8")
     pairwise_fail_closed = "PAIRWISE_JOINT_EVIDENCE_REQUIRED" in pairwise_source

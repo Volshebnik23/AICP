@@ -90,7 +90,7 @@ The truthful compatibility story is:
 4. use a full external-IUT target when one exists before making an external product claim.
 
 Only Base and experimental Authenticated Base currently have full external-IUT targets, and
-only Base can reach an ordinary external profile mark. See
+both can reach an ordinary external profile mark for complete eligible implementations. See
 `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 ## 4) Optional governance stack (important, but not prerequisite to all adoption)

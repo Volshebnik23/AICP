@@ -5,7 +5,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-07-25_
+_Last updated: 2026-07-27_
 
 ## Current / Next
 
@@ -30,8 +30,27 @@ _Last updated: 2026-07-25_
 - **Correction evidence:** profile maturity and external eligibility are now registry/mark
   derived; generated Markdown is byte-checked against JSON; visible milestone states are
   marker-bound; the message surface has 132 validated entries; and external security review
-  completion requires a structured artifact contract. This remains M58 correction work and
-  does not start M59.
+  completion requires a structured artifact contract. That correction did not itself start
+  M59.
+
+### ✅ M59 — Authenticated Base Evidence Reachability
+<!-- milestone-status: M59 shipped -->
+- **Status:** Shipped.
+- **Problem:** the mandatory unavailable-crypto behavior probe passed only by copying its
+  expected case-local degradation and skip into the top-level report, making the ordinary
+  Authenticated Base mark structurally unreachable.
+- **Scope:** introduce explicit case-local execution accounting, record schema-bound consumer
+  observations, independently validate them as strong evidence, and register the changed TCK
+  bytes under `AICP-IUT-TCK-1.1.0`.
+- **Non-goals:** no change to authenticated wire requirements, Ed25519, message hashing,
+  signing domains, profile required suites, adapter wire protocol, or identity/trust claims.
+- **Dependencies:** M58 and the historical experimental `AICP-IUT-TCK-1.0.0` record.
+- **Completion evidence:** all 37 mandatory Authenticated Base cases pass for a complete
+  external-kind implementation; the expected `AUTH-CRYPTO-UNAVAILABLE` observation remains
+  case-local; top-level degradation/skips remain empty; the exact ordinary mark is emitted;
+  malformed, unexpected, forged, or genuinely degraded evidence fails closed.
+- **Independent-evidence boundary:** the repository records no real eligible external
+  submission; reachability is executable TCK capability, not external adoption evidence.
 
 ## Planned milestones
 
@@ -41,7 +60,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M59 | Planned | Authenticated Base Evidence Reachability | `AICP_Backlog` |
 | M60 | Planned | Exact Contract Agreement Core | `AICP_Backlog` |
 | M61 | Planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
 | M62 | Planned | Generalized External Evidence Framework | `AICP_Backlog` |

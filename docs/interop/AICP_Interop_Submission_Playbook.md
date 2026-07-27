@@ -117,7 +117,9 @@ Repository self-test reports identify `execution_subject.kind=reference_corpus` 
 support a real external claim. Use `conformance/iut/aicp_iut_runner.py` against the external
 adapter in `full-profile` mode so the v1 report binds implementation/build metadata, the
 registered TCK release and runner digest, suite/profile digests, exact mandatory cases, and
-input/generated artifact digests. Required checks must pass without degradation or skips.
+input/generated artifact digests. Current consumer cases must also carry structured
+execution observations that exactly match registered accounting expectations. Required
+checks must pass without run-level degradation or skips.
 Full-profile producer output is bound to the requested session, contract, participants,
 exact profile, crypto mode, and deterministic seed. Capability overlays are not part of a
 product-profile report: strict state-projection evidence must be emitted separately.

@@ -99,9 +99,12 @@ TCK release and all required digests. Marks are suppressed for reference-corpus,
 skipped, incomplete, or digest-inconsistent runs. `make conformance-iut-smoke` tests only the
 deterministic in-repo reference adapter.
 
-The authenticated catalog includes the required unavailable-crypto behavior probe. Its
-expected `AUTH-SIGNATURE-VERIFY-01` skip is recorded at report level, so the current
-37-case authenticated report is behavioral evidence and emits no ordinary profile mark.
+The authenticated catalog includes a mandatory unavailable-crypto behavior probe. It asks
+the adapter to simulate that environment and records the exact degraded reason and
+`AUTH-SIGNATURE-VERIFY-01` skip inside that case's structured observation. A matching
+case-local observation does not degrade the TCK run; a complete external-kind 37-case run
+can therefore emit `AICP-Profile-AUTHENTICATED-BASE-0.1`. Any real degradation or skipped
+verification in a normal authenticated case still suppresses eligibility.
 
 Full-profile producer scenarios are executed twice and must be bound to the requested
 session, contract, participants, exact profile, crypto mode, and deterministic seed. Do not

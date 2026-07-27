@@ -141,6 +141,24 @@ def test_profile_status_block_rejects_unqualified_available_now() -> None:
     assert any("ambiguous Available now" in error for error in errors)
 
 
+def test_authenticated_mark_reachability_requires_explicit_case_local_scope() -> None:
+    catalog = json.loads((ROOT / VALIDATOR.IUT_CASES).read_text(encoding="utf-8"))
+    auth = catalog["profiles"]["AICP-AUTHENTICATED-BASE@0.1"]
+    assert VALIDATOR.derive_external_mark_status(auth) == (
+        "reachable_for_eligible_external_implementation"
+    )
+    mutated = copy.deepcopy(auth)
+    probe = next(
+        item
+        for item in mutated["full_profile"]["consumer_cases"]
+        if item["case_id"] == "AUTH-CRYPTO-UNAVAILABLE"
+    )
+    probe["expected_execution_observation"]["scope"] = "run_level"
+    assert VALIDATOR.derive_external_mark_status(mutated) == (
+        "blocked_by_mandatory_degraded_probe"
+    )
+
+
 def test_invalid_real_submission_row_is_not_eligible() -> None:
     evidence, flags = _derive(_row(valid=False))
     assert evidence["real_submission_package_count"] == 1
@@ -278,7 +296,7 @@ def test_baseline_rejects_false_external_review_completion() -> None:
 
 def test_baseline_rejects_changed_milestone_status() -> None:
     baseline = _baseline().replace(
-        "| M59 | planned |", "| M59 | shipped |", 1
+        "| M60 | planned |", "| M60 | shipped |", 1
     )
     assert VALIDATOR._baseline_generated_errors(_status(), baseline)
 
@@ -294,7 +312,7 @@ def test_baseline_rejects_stale_message_gap_count() -> None:
 
 def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
     roadmap = _roadmap().replace(
-        "| M59 | Planned |", "| M59 | Shipped |", 1
+        "| M60 | Planned |", "| M60 | Shipped |", 1
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), roadmap, _backlog()
@@ -304,14 +322,14 @@ def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
 
 def test_backlog_visible_status_must_match_marker_and_json() -> None:
     backlog = _backlog().replace(
-        "<!-- milestone-status: M59 planned -->\n- **Status:** Planned.",
-        "<!-- milestone-status: M59 planned -->\n- **Status:** Shipped.",
+        "<!-- milestone-status: M60 planned -->\n- **Status:** Planned.",
+        "<!-- milestone-status: M60 planned -->\n- **Status:** Shipped.",
         1,
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), _roadmap(), backlog
     )
-    assert any("M59: visible status" in error for error in errors)
+    assert any("M60: visible status" in error for error in errors)
 
 
 def test_future_milestone_document_must_resolve() -> None:

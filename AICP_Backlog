@@ -13,25 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M59 — Authenticated Base Evidence Reachability
-
-<!-- milestone-status: M59 planned -->
-- **Status:** Planned.
-- **Problem statement:** the 37-case authenticated full-profile target intentionally includes
-  an unavailable-crypto degraded probe, so a behaviorally passing run cannot emit the
-  ordinary authenticated profile mark.
-- **Scope:** redesign external evidence accounting so negative/unavailable-backend behavior
-  can be tested without forcing an otherwise complete authenticated run to remain degraded;
-  preserve mandatory Ed25519 verification.
-- **Explicit non-goals:** no weakening of signature checks, no mark for skipped mandatory
-  verification, and no change to `AICP-AUTHENTICATED-BASE@0.1` semantics.
-- **Principal evidence gap:** no eligible path can currently emit
-  `AICP-Profile-AUTHENTICATED-BASE-0.1`.
-- **Dependencies:** M58.
-- **Completion criterion:** an external-kind full target can exercise every mandatory
-  authenticated behavior with no skipped mandatory check and the negative degraded-path
-  probe remains independently tested.
-
 ## M60 — Exact Contract Agreement Core
 
 <!-- milestone-status: M60 planned -->

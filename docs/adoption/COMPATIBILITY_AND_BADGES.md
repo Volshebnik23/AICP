@@ -58,6 +58,8 @@ Post-UAT provenance and external-IUT v1 reports additionally provide:
 - `compatibility_marks` list
 - `passed` boolean
 - `degraded`, `degraded_reasons`, and `skipped_checks`
+- structured per-consumer `execution_observation` evidence checked against the registered
+  IUT case catalog
 
 Opt-in provenance repository runs label their subject `reference_corpus`. They prove the
 checked-in corpus/runner behavior, not an external product. IUT smoke reports also cannot
@@ -77,7 +79,7 @@ registry maturity. Those separate facts are generated from the registry in
 | Profile target | External full-profile target | Ordinary external mark |
 |---|---|---|
 | `AICP-BASE@0.1` | Available (21 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |
-| `AICP-AUTHENTICATED-BASE@0.1` | Available (37 mandatory cases) | Unreachable: the required unavailable-crypto probe records a skipped mandatory check |
+| `AICP-AUTHENTICATED-BASE@0.1` | Available (37 mandatory cases) | Reachable for a complete eligible external implementation; the unavailable-crypto probe remains mandatory and case-local |
 | Other 13 registered profiles | Not available | Unreachable through the current external-IUT runner |
 
 This table is validated against `conformance/iut/cases.json` and

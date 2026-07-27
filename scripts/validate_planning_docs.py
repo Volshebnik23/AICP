@@ -23,6 +23,7 @@ from repo_truth import (  # noqa: E402
     PLANNED_TABLE_END,
     PROFILE_TABLE_BEGIN,
     PROFILE_TABLE_END,
+    derive_external_mark_status,
     derive_interop_evidence,
     derive_message_surface,
     extract_generated_section,
@@ -544,19 +545,9 @@ def _profile_errors(root: Path, status: dict[str, Any]) -> list[str]:
                 errors.append(
                     f"{profile_id}: IUT profile catalog does not match profile map"
                 )
-            mandatory_degraded = any(
-                case.get("expected_degraded") is True
-                or case.get("expected_skipped_checks")
-                for case in iut.get("full_profile", {}).get("consumer_cases", [])
-                if isinstance(case, dict)
-            )
-            expected_mark_status = (
-                "blocked_by_mandatory_degraded_probe"
-                if mandatory_degraded
-                else "reachable_for_eligible_external_implementation"
-            )
-        else:
-            expected_mark_status = "no_external_iut_target"
+        expected_mark_status = derive_external_mark_status(
+            iut_profiles.get(profile_id)
+        )
         if item.get("external_mark_status") != expected_mark_status:
             errors.append(
                 f"{profile_id}: external mark reachability is inconsistent with "

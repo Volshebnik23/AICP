@@ -159,7 +159,9 @@ For interop evidence packaging/review:
 
 Internal profile runs cover all 15 registered profiles. External product claims require an
 eligible full-profile IUT target, which currently exists only for Base and experimental
-Authenticated Base; only Base can currently reach an ordinary external mark.
+Authenticated Base; both marks are reachable for complete eligible external implementations.
+Authenticated Base remains a post-UAT opt-in experiment and is not added to the frozen UAT
+baseline.
 
 ## 8) Trial entrypoints for pilot adopters
 
