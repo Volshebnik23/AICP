@@ -27,10 +27,13 @@ from _runner_context import build_validator, load_json  # noqa: E402
 from _runner_io import write_json_report  # noqa: E402
 from _runner_provenance import canonical_content_digest, sha256_file  # noqa: E402
 from aicp_iut_catalog import (  # noqa: E402
+    CASE_LOCAL_EXPECTED_SCOPE,
     CASES_PATH,
+    NORMAL_EXECUTION_SCOPE,
     PUBLIC_KEYS_REF,
     TCK_RELEASES_PATH,
     bundle_digest,
+    expected_execution_observation,
     load_tck_release,
     mandatory_case_ids,
     normalized_file_digest,
@@ -381,8 +384,21 @@ def run_iut(
     producer_results: dict[str, dict[str, Any]] = {}
     producer_artifacts: dict[str, dict[str, Any]] = {}
 
-    def record(case_id: str, passed: bool, message: str) -> None:
-        case_results.append({"case_id": case_id, "passed": passed, "message": message})
+    def record(
+        case_id: str,
+        passed: bool,
+        message: str,
+        *,
+        execution_observation: dict[str, Any] | None = None,
+    ) -> None:
+        case_result: dict[str, Any] = {
+            "case_id": case_id,
+            "passed": passed,
+            "message": message,
+        }
+        if execution_observation is not None:
+            case_result["execution_observation"] = execution_observation
+        case_results.append(case_result)
         if not passed:
             failures.append({"test_id": case_id, "message": message})
 
@@ -510,7 +526,6 @@ def run_iut(
             response_degraded = result.get("degraded")
             response_reasons = result.get("degraded_reasons")
             response_skips = result.get("skipped_checks")
-            expected_degraded = check.get("expected_degraded") is True
             shape_errors: list[str] = []
             if missing:
                 shape_errors.append("missing required result fields: " + ", ".join(missing))
@@ -531,18 +546,32 @@ def run_iut(
 
             reasons = response_reasons if isinstance(response_reasons, list) else []
             skips = response_skips if isinstance(response_skips, list) else []
+            try:
+                expected_observation = expected_execution_observation(check)
+            except ValueError as exc:
+                expected_observation = {
+                    "scope": None,
+                    "accepted": check.get("accepted"),
+                    "degraded": None,
+                    "degraded_reasons": None,
+                    "skipped_checks": None,
+                }
+                shape_errors.append(f"invalid catalog execution accounting: {exc}")
+            observation = {
+                "scope": expected_observation["scope"],
+                "accepted": accepted,
+                "degraded": response_degraded,
+                "degraded_reasons": response_reasons,
+                "skipped_checks": response_skips,
+            }
             passed = not shape_errors and accepted is check["accepted"]
             passed = passed and isinstance(errors, list)
             passed = passed and (not errors if check["accepted"] else bool(errors))
-            if expected_degraded:
-                expected_reasons = check.get("expected_degraded_reasons")
-                expected_skips = check.get("expected_skipped_checks")
-                passed = (
-                    passed
-                    and response_degraded is True
-                    and reasons == expected_reasons
-                    and skips == expected_skips
-                )
+            scope = expected_observation["scope"]
+            if scope == CASE_LOCAL_EXPECTED_SCOPE:
+                passed = passed and observation == expected_observation
+            elif scope == NORMAL_EXECUTION_SCOPE:
+                passed = passed and observation == expected_observation
                 if response_degraded is True:
                     degraded = True
                 for reason in reasons:
@@ -552,24 +581,17 @@ def run_iut(
                     if isinstance(check_id, str) and check_id not in skipped_checks:
                         skipped_checks.append(check_id)
             else:
-                if response_degraded is not False or reasons or skips:
-                    passed = False
-                if response_degraded is True:
-                    degraded = True
-                for reason in reasons:
-                    if isinstance(reason, str) and reason not in degraded_reasons:
-                        degraded_reasons.append(reason)
-                for check_id in skips:
-                    if isinstance(check_id, str) and check_id not in skipped_checks:
-                        skipped_checks.append(check_id)
+                passed = False
+                shape_errors.append(f"unsupported catalog execution accounting scope: {scope!r}")
             detail = "; ".join(shape_errors)
             record(
                 check["case_id"],
                 passed,
                 f"consumer accepted={accepted}; expected={check['accepted']}; "
-                f"degraded={response_degraded}; expected_degraded={expected_degraded}; "
+                f"scope={scope}; degraded={response_degraded}; "
                 f"degraded_reasons={reasons}; skipped_checks={skips}"
                 + (f"; {detail}" if detail else ""),
+                execution_observation=observation,
             )
 
     if first_metadata is None or final_metadata is None or first_metadata != final_metadata:
@@ -654,6 +676,7 @@ def run_iut(
         mode == "full-profile"
         and passed
         and not degraded
+        and not degraded_reasons
         and not skipped_checks
         and coverage_ok
         and subject_kind == "external_implementation"
@@ -674,7 +697,7 @@ def run_iut(
         },
         "runner": {
             "name": "aicp-iut-runner",
-            "version": "1.0",
+            "version": "1.1",
             "source_revision": expected_bundle_digest,
         },
         "tck_release": {

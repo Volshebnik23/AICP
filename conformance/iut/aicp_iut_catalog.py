@@ -10,6 +10,13 @@ ROOT = Path(__file__).resolve().parents[2]
 CASES_PATH = ROOT / "conformance/iut/cases.json"
 TCK_RELEASES_PATH = ROOT / "conformance/iut/tck_releases.json"
 PUBLIC_KEYS_REF = "fixtures/keys/GT_public_keys.json"
+CASE_LOCAL_EXPECTED_SCOPE = "case_local_expected"
+NORMAL_EXECUTION_SCOPE = "normal"
+LEGACY_EXECUTION_EXPECTATION_FIELDS = {
+    "expected_degraded",
+    "expected_degraded_reasons",
+    "expected_skipped_checks",
+}
 
 
 def load_json(path: Path) -> Any:
@@ -57,6 +64,94 @@ def profile_config(catalog: dict[str, Any], profile: str) -> dict[str, Any]:
     if not isinstance(config, dict):
         raise ValueError(f"unsupported IUT target profile: {profile}")
     return config
+
+
+def expected_execution_observation(case: dict[str, Any]) -> dict[str, Any]:
+    """Return the exact runner-owned observation expected for a consumer case."""
+
+    configured = case.get("expected_execution_observation")
+    if configured is None:
+        return {
+            "scope": NORMAL_EXECUTION_SCOPE,
+            "accepted": case.get("accepted"),
+            "degraded": False,
+            "degraded_reasons": [],
+            "skipped_checks": [],
+        }
+    if not isinstance(configured, dict):
+        raise ValueError("expected_execution_observation must be an object")
+    return {
+        "scope": configured.get("scope"),
+        "accepted": case.get("accepted"),
+        "degraded": configured.get("degraded"),
+        "degraded_reasons": configured.get("degraded_reasons"),
+        "skipped_checks": configured.get("skipped_checks"),
+    }
+
+
+def validate_execution_accounting(case: dict[str, Any]) -> list[str]:
+    """Validate explicit case-local accounting without interpreting loose flags."""
+
+    errors: list[str] = []
+    case_id = str(case.get("case_id", "<unknown>"))
+    legacy = sorted(LEGACY_EXECUTION_EXPECTATION_FIELDS.intersection(case))
+    if legacy:
+        errors.append(
+            f"{case_id}: legacy execution expectation fields are unsupported: {legacy}"
+        )
+
+    if type(case.get("accepted")) is not bool:
+        errors.append(f"{case_id}: accepted must be boolean")
+
+    configured = case.get("expected_execution_observation")
+    runtime_options = case.get("runtime_options")
+    explicitly_unavailable = (
+        isinstance(runtime_options, dict)
+        and runtime_options.get("cryptographic_verification") == "unavailable"
+    )
+    if configured is None:
+        if explicitly_unavailable:
+            errors.append(
+                f"{case_id}: unavailable-crypto behavior requires an explicit "
+                "expected_execution_observation scope"
+            )
+        return errors
+    if not isinstance(configured, dict):
+        errors.append(f"{case_id}: expected_execution_observation must be an object")
+        return errors
+
+    expected_fields = {
+        "scope",
+        "degraded",
+        "degraded_reasons",
+        "skipped_checks",
+    }
+    actual_fields = set(configured)
+    if actual_fields != expected_fields:
+        errors.append(
+            f"{case_id}: expected_execution_observation fields must be exactly "
+            f"{sorted(expected_fields)}"
+        )
+    if configured.get("scope") != CASE_LOCAL_EXPECTED_SCOPE:
+        errors.append(
+            f"{case_id}: unsupported execution accounting scope "
+            f"{configured.get('scope')!r}"
+        )
+    if configured.get("degraded") is not True:
+        errors.append(
+            f"{case_id}: case-local expected observation must declare degraded=true"
+        )
+    for field in ("degraded_reasons", "skipped_checks"):
+        values = configured.get(field)
+        if (
+            not isinstance(values, list)
+            or not all(isinstance(value, str) and value for value in values)
+            or len(values) != len(set(values))
+        ):
+            errors.append(
+                f"{case_id}: {field} must be a unique array of non-empty strings"
+            )
+    return errors
 
 
 def _by_id(items: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -202,6 +297,7 @@ def validate_catalog_coverage(catalog: dict[str, Any], profile: str) -> list[str
     for item in consumers:
         if not (ROOT / str(item.get("fixture", ""))).is_file():
             errors.append(f"consumer fixture is missing for {item.get('case_id')}")
+        errors.extend(validate_execution_accounting(item))
 
     # Resolving smoke refs is itself part of catalog validation.
     try:

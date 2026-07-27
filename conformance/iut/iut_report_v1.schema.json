@@ -86,7 +86,33 @@
         "properties": {
           "case_id": {"type": "string", "minLength": 1},
           "passed": {"type": "boolean"},
-          "message": {"type": "string"}
+          "message": {"type": "string"},
+          "execution_observation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope",
+              "accepted",
+              "degraded",
+              "degraded_reasons",
+              "skipped_checks"
+            ],
+            "properties": {
+              "scope": {"enum": ["normal", "case_local_expected"]},
+              "accepted": {"type": "boolean"},
+              "degraded": {"type": "boolean"},
+              "degraded_reasons": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "skipped_checks": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              }
+            }
+          }
         }
       }
     },
