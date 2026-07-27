@@ -19,6 +19,14 @@ from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 
 MODES = [
     "external_good",
+    "crypto_probe_good",
+    "crypto_probe_not_degraded",
+    "crypto_probe_missing_reason",
+    "crypto_probe_wrong_reason",
+    "crypto_probe_missing_skip",
+    "crypto_probe_extra_skip",
+    "normal_auth_crypto_unavailable",
+    "authenticated_producer_crypto_unavailable",
     "wrong_canonicalization",
     "accepts_invalid_chain",
     "accepts_invalid_signature",
@@ -121,7 +129,47 @@ def main() -> int:
             transcript = input_obj.get("transcript") or []
             message_types = [message.get("message_type") for message in transcript if isinstance(message, dict)]
             target = input_obj.get("target_profile")
-            if args.mode == "accepts_invalid_chain" and _errors_contain(
+            unavailable_probe = (
+                target == "AICP-AUTHENTICATED-BASE@0.1"
+                and input_obj.get("runtime_options", {}).get(
+                    "cryptographic_verification"
+                )
+                == "unavailable"
+            )
+            if unavailable_probe and args.mode == "crypto_probe_not_degraded":
+                result.update(
+                    {
+                        "degraded": False,
+                        "degraded_reasons": [],
+                        "skipped_checks": [],
+                    }
+                )
+            elif unavailable_probe and args.mode == "crypto_probe_missing_reason":
+                result["degraded_reasons"] = []
+            elif unavailable_probe and args.mode == "crypto_probe_wrong_reason":
+                result["degraded_reasons"] = ["wrong unavailable-crypto reason"]
+            elif unavailable_probe and args.mode == "crypto_probe_missing_skip":
+                result["skipped_checks"] = []
+            elif unavailable_probe and args.mode == "crypto_probe_extra_skip":
+                result["skipped_checks"] = [
+                    "AUTH-SIGNATURE-VERIFY-01",
+                    "AUTH-UNEXPECTED-SKIP",
+                ]
+            elif (
+                target == "AICP-AUTHENTICATED-BASE@0.1"
+                and not unavailable_probe
+                and args.mode == "normal_auth_crypto_unavailable"
+            ):
+                result.update(
+                    {
+                        "degraded": True,
+                        "degraded_reasons": [
+                            "Ed25519 verification backend unexpectedly unavailable"
+                        ],
+                        "skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"],
+                    }
+                )
+            elif args.mode == "accepts_invalid_chain" and _errors_contain(
                 result, ("chain", "prev-msg", "prev_msg")
             ):
                 result.update({"accepted": True, "errors": []})
@@ -191,7 +239,10 @@ def main() -> int:
                         message["contract_id"] = "wrong-contract"
                 elif args.mode == "undeclared_producer_sender" and artifact:
                     artifact[0]["sender"] = "agent:undeclared"
-                elif args.mode == "unsigned_authenticated_producer":
+                elif args.mode in {
+                    "unsigned_authenticated_producer",
+                    "authenticated_producer_crypto_unavailable",
+                }:
                     for message in artifact:
                         message.pop("signatures", None)
                 elif args.mode == "nondeterministic_producer":
