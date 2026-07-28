@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import sys
+import runpy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,6 +35,25 @@ def main() -> int:
 
                 if not out_ref.startswith("conformance/report_") and out_ref != "conformance/report.json":
                     errors.append(f"{catalog}:{kind} output must be a conformance report path: {out_ref}")
+
+    versioned = runpy.run_path(
+        str(ROOT / "conformance/core_v02_runner/catalog.py")
+    )
+    for kind, key in (("suite", "SUITE_CATALOGS"), ("profile", "PROFILE_CATALOGS")):
+        for input_ref, out_ref in versioned[key]:
+            input_path = ROOT / input_ref
+            if not input_path.exists():
+                errors.append(f"core-v02:{kind} input does not exist: {input_ref}")
+            if input_ref in input_paths:
+                errors.append(f"duplicate conformance catalog input: {input_ref}")
+            input_paths.add(input_ref)
+            if out_ref in report_paths:
+                errors.append(f"duplicate conformance report output: {out_ref}")
+            report_paths.add(out_ref)
+            if not out_ref.startswith("conformance/report_"):
+                errors.append(
+                    f"core-v02:{kind} output must be a conformance report path: {out_ref}"
+                )
 
     if errors:
         print("[FAIL] conformance catalog validation failed")

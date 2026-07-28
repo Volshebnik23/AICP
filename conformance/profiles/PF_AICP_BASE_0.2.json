@@ -1,0 +1,11 @@
+{
+  "profile_id": "AICP-BASE",
+  "profile_version": "0.2",
+  "aicp_version": "0.2",
+  "status": "experimental",
+  "description": "Experimental post-UAT Core v0.2 profile requiring exact contract artifact and active-head agreement.",
+  "required_suites": [
+    "conformance/core/CT_CORE_0.2.json"
+  ],
+  "compatibility_mark": "AICP-Profile-BASE-0.2"
+}

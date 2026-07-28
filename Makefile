@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -20,6 +20,7 @@ validate:
 	$(PYTHON) scripts/validate_planning_docs.py
 	$(PYTHON) scripts/validate_verification_gate_alignment.py
 	$(PYTHON) scripts/validate_shipped_extension_coverage.py
+	$(PYTHON) scripts/generate_core_v02_fixtures.py --check
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \
@@ -44,6 +45,7 @@ conformance:
 
 conformance-core:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog core
+	$(PYTHON) conformance/core_v02_runner/aicp_core_v02_runner.py
 
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog extensions
@@ -62,6 +64,7 @@ conformance-all:
 
 conformance-profiles:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog profiles
+	$(PYTHON) conformance/core_v02_runner/aicp_core_v02_profile_runner.py
 
 conformance-demos:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog demos
@@ -132,6 +135,14 @@ quickstart-py:
 	$(PYTHON) dropins/aicp-core/python/generate_minimal_core_transcript.py --out out/quickstart/py/minimal_core.jsonl
 	$(PYTHON) sandbox/run.py out/quickstart/py/minimal_core.jsonl --no-signature-verify
 
+quickstart-core-v02-py:
+	$(PYTHON) dropins/aicp-core-v0.2/python/generate_exact_contract_transcript.py --out out/quickstart/core-v02-py/exact_contract.jsonl
+	$(PYTHON) scripts/validate_core_v02_transcript.py out/quickstart/core-v02-py/exact_contract.jsonl
+
+quickstart-core-v02-ts:
+	node dropins/aicp-core-v0.2/typescript/scripts/generate_exact_contract_transcript.mjs --out out/quickstart/core-v02-ts/exact_contract.jsonl
+	$(PYTHON) scripts/validate_core_v02_transcript.py out/quickstart/core-v02-ts/exact_contract.jsonl
+
 template-smoke:
 	$(PYTHON) -c "from pathlib import Path; Path('out/template-ts-agent').mkdir(parents=True, exist_ok=True); Path('out/template-protocol-adapter').mkdir(parents=True, exist_ok=True)"
 	node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
@@ -153,6 +164,8 @@ prepr:
 	$(MAKE) test
 	$(MAKE) quickstart-py
 	$(MAKE) quickstart-ts
+	$(MAKE) quickstart-core-v02-py
+	$(MAKE) quickstart-core-v02-ts
 	$(MAKE) template-smoke
 	$(MAKE) conformance-iut-smoke
 	cd sdk/typescript && npm ci && npm test
