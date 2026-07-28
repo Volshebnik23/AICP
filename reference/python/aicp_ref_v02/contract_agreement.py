@@ -228,9 +228,15 @@ def _tuple_key(
 
 
 class ExactAgreementMachine:
-    def __init__(self, messages: Sequence[dict[str, Any]]):
+    def __init__(
+        self,
+        messages: Sequence[dict[str, Any]],
+        invalid_indices: Iterable[int] = (),
+    ):
         self.messages = messages
+        self.invalid_indices = frozenset(invalid_indices)
         self.state = AgreementState()
+        self._identity_initialized = False
         self._message_index = {
             message.get("message_id"): index
             for index, message in enumerate(messages)
@@ -250,17 +256,22 @@ class ExactAgreementMachine:
             return
         self.state.issues.append(AgreementIssue(code, message, index))
 
-    def _check_transcript_identity(self, message: dict[str, Any], index: int) -> None:
+    def _check_transcript_identity(self, message: dict[str, Any], index: int) -> bool:
         session_id = message.get("session_id")
         contract_id = message.get("contract_id")
-        if index == 0:
+        if not self._identity_initialized:
             self.state.session_id = session_id if isinstance(session_id, str) else None
             self.state.contract_id = contract_id if isinstance(contract_id, str) else None
-            return
+            self._identity_initialized = True
+            return True
+        valid = True
         if session_id != self.state.session_id:
             self._issue(AGREEMENT_STATE, "session_id changed within Core v0.2 transcript", index)
+            valid = False
         if contract_id != self.state.contract_id:
             self._issue(CONTRACT_ID, "contract_id changed within Core v0.2 transcript", index)
+            valid = False
+        return valid
 
     def _valid_reference(self, reference: Any, index: int, code: str = CONTRACT_REF) -> bool:
         errors = validate_contract_reference(reference)
@@ -651,7 +662,11 @@ class ExactAgreementMachine:
             "ERROR": self._process_error,
         }
         for index, message in enumerate(self.messages):
-            self._check_transcript_identity(message, index)
+            if index in self.invalid_indices and not self._identity_initialized:
+                continue
+            identity_valid = self._check_transcript_identity(message, index)
+            if not identity_valid or index in self.invalid_indices:
+                continue
             handler = handlers.get(message.get("message_type"))
             if handler is not None:
                 handler(message, index)
@@ -660,13 +675,22 @@ class ExactAgreementMachine:
 
 def reduce_transcript(
     messages: Sequence[dict[str, Any]] | Iterable[dict[str, Any]],
+    invalid_indices: Iterable[int] = (),
 ) -> AgreementState:
     rows = list(messages)
-    return ExactAgreementMachine(rows).process()
+    return ExactAgreementMachine(rows, invalid_indices).process()
 
 
-def semantic_issue_ids(messages: Sequence[dict[str, Any]]) -> list[str]:
-    return sorted({issue.code for issue in reduce_transcript(messages).issues})
+def semantic_issue_ids(
+    messages: Sequence[dict[str, Any]],
+    invalid_indices: Iterable[int] = (),
+) -> list[str]:
+    return sorted(
+        {
+            issue.code
+            for issue in reduce_transcript(messages, invalid_indices).issues
+        }
+    )
 
 
 def load_jsonl(text: str) -> list[dict[str, Any]]:

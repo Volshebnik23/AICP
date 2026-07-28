@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "137bb601c185ab11d37458ed2418ef443b05f8e5a67c508c87d2413e53d1ae7e",
+      "combined_sha256": "9f5f2f535544d358ba86321869c60d19f30c590a48e36cfe600e13fa1fa0cda5",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -25,7 +25,7 @@
         },
         {
           "path": "conformance/core/CT_CORE_0.2.json",
-          "sha256": "499c24d2c081dc0d0964d7e1637d1e021f1bf90d2234c94f595f1143493cb95f"
+          "sha256": "2b25627a57612c846bac09cdaa1c178cfacc3e99b88484b074390df5dea2a3f0"
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
@@ -318,7 +318,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "557714c3d05798eff8c0b72879a02efcf3eccb33e1bc04ad11389611fe9ef831",
+      "combined_sha256": "183741d2a7c2400d8f9949aedf746cff6e23fecd59c4cb6152bee47a97c4d6f9",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -430,7 +430,7 @@
         },
         {
           "path": "fixtures/core_v0_2/exact_contract_agreement/cross_language_vectors.json",
-          "sha256": "f55e44a38822846fd52c0ea36e467a9277b699b70ac8530e0d71d75433141847"
+          "sha256": "84f2e536a8fa37bae7e83bc57951972241d6a34e8e3f35275604235ae3e2b489"
         },
         {
           "path": "fixtures/core_v0_2/exact_contract_agreement/negative/01_missing_contract_ref_expected_fail.jsonl",
@@ -553,6 +553,50 @@
           "sha256": "8a01b47ccabdc98142ac1c051a6b81a969b6f9a7f2ac8c82ba1040eb817a3ba4"
         },
         {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/31_acceptance_changed_session_expected_fail.jsonl",
+          "sha256": "7d0f8b0033ee2b1bb4879806db27a410bc324d55c7d1259be56ca9ce6143f215"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/32_acceptance_invalid_message_hash_expected_fail.jsonl",
+          "sha256": "c305d6b07f39f0e683fd102949eaf2402e22193d459a5f5aed4258bd5e3ab27e"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/33_acceptance_broken_prev_hash_expected_fail.jsonl",
+          "sha256": "5159f7790a166827a8cdc432523b244bdbd442b52b7b93fc475cd92c889a4744"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/34_revision_acceptance_invalid_signature_expected_fail.jsonl",
+          "sha256": "df9acc8c91b0e4af64a86f83b67699daa46efefc289234ccdbb32511a807b4e8"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/35_revision_proposal_message_schema_expected_fail.jsonl",
+          "sha256": "38efe4f7c3e878ed02db92e6cff48f8506d4a0c569ae51a71cb9b51c9f6598f2"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/36_conflict_resolution_invalid_message_hash_expected_fail.jsonl",
+          "sha256": "c15fda02c662142bcc69a86cc16e2e1255412d521947947c341111adcc8be6a5"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/37_signature_unknown_signer_expected_fail.jsonl",
+          "sha256": "98e2e596b5ae38e0dcaa5b40b2dbf8f5ac3952d59079d40ae6e0001b4d9ed5f8"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/38_signature_kid_mismatch_expected_fail.jsonl",
+          "sha256": "880f2dc46c9be5fa12760b3a275c11806dd4d9f90ad03249056a4173ec7f57ab"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/39_signature_object_hash_mismatch_expected_fail.jsonl",
+          "sha256": "8f5ac3e523497976ad1dfcd3990dc3e1f10695d9328c440523f8799e13e58b4b"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/40_copied_stale_signature_expected_fail.jsonl",
+          "sha256": "c346786a30dcf951aba7d09e06de3275a0bea20f66196675cb4d6cd465c44c97"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/negative/41_one_invalid_signature_entry_expected_fail.jsonl",
+          "sha256": "2236b33fbd4cd8764ffd53327d37341131e83d57d957830036e57fd7ab3fc482"
+        },
+        {
           "path": "fixtures/core_v0_2/exact_contract_agreement/positive/01_initial_accept_action.jsonl",
           "sha256": "247b2c351386e2d72d5eb7c9df82b0746bac592de4f8c1b08571568826cfd712"
         },
@@ -583,6 +627,10 @@
         {
           "path": "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
           "sha256": "83ba3d2d2ff97df6cbb272cfd3b1d5f9b0b439efd54deedda46656454ccb7c6b"
+        },
+        {
+          "path": "fixtures/core_v0_2/exact_contract_agreement/positive/09_valid_optional_signature.jsonl",
+          "sha256": "185a1ceb1b225734e0f00f3ca63a596e345db7f255be51df003eea0c261bf546"
         },
         {
           "path": "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",

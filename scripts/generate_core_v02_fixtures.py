@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
+
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,6 +35,7 @@ from aicp_ref_v02.contract_agreement import (  # noqa: E402
     compute_contract_hash,
     current_head_reference,
     proposal_candidate,
+    reduce_transcript,
 )
 from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 from aicp_ref.jcs import canonicalize_json  # noqa: E402
@@ -43,6 +47,58 @@ FAKE_HASH = "sha256:" + ("A" * 43)
 OTHER_HASH = "sha256:" + ("B" * 43)
 SESSION_ID = "session-core-v02-exact-agreement"
 CONTRACT_ID_VALUE = "contract-exact-agreement"
+PRIVATE_KEYS = json.loads(
+    (ROOT / "fixtures/keys/TEST_private_keys.json").read_text(encoding="utf-8")
+)
+
+
+def _b64url_decode(value: str) -> bytes:
+    return base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+
+
+def _b64url_encode(value: bytes) -> str:
+    return base64.urlsafe_b64encode(value).decode("ascii").rstrip("=")
+
+
+def signature(
+    object_hash: str,
+    *,
+    signer: str = "agent:S",
+    signing_key: str | None = None,
+    kid: str | None = None,
+) -> dict[str, str]:
+    key_name = signing_key or signer
+    meta = PRIVATE_KEYS[key_name]
+    private_key = Ed25519PrivateKey.from_private_bytes(
+        _b64url_decode(meta["private_key_b64url"])
+    )
+    signature_bytes = private_key.sign(
+        f"AICP1\0SIG\0{object_hash}".encode("utf-8")
+    )
+    return {
+        "signer": signer,
+        "kid": kid or meta["kid"],
+        "object_type": "message",
+        "object_hash": object_hash,
+        "sig_b64url": _b64url_encode(signature_bytes),
+    }
+
+
+def sign_message(
+    message: dict[str, Any],
+    *,
+    signer: str = "agent:S",
+    signing_key: str | None = None,
+    kid: str | None = None,
+) -> dict[str, str]:
+    item = signature(
+        message["message_hash"],
+        signer=signer,
+        signing_key=signing_key,
+        kid=kid,
+    )
+    message.setdefault("signatures", []).append(item)
+    return item
 
 
 def contract(version: str, goal: str | None = None, contract_id: str = CONTRACT_ID_VALUE) -> dict[str, Any]:
@@ -223,6 +279,31 @@ class Fixture:
     expected_failures: list[str]
     expected_state: str | None = None
     expected_active_head: dict[str, Any] | None = None
+    expected_proposal_ids: list[str] | None = None
+    expected_selected_conflict_result: dict[str, Any] | None = None
+    expected_accepted_tuple_count: int = 0
+    expected_rejected_tuple_count: int = 0
+    invalid_indices: list[int] | None = None
+    expected_semantic_issue_ids: list[str] | None = None
+
+
+def _attach_state_expectations(fixture: Fixture) -> Fixture:
+    invalid_indices = fixture.invalid_indices or []
+    state = reduce_transcript(fixture.messages, invalid_indices)
+    if fixture.expected_state is not None:
+        assert state.state == fixture.expected_state, fixture.fixture_id
+    if fixture.expected_active_head is not None:
+        assert state.active_head == fixture.expected_active_head, fixture.fixture_id
+    fixture.expected_state = state.state
+    fixture.expected_active_head = state.active_head
+    fixture.expected_proposal_ids = sorted(state.proposals)
+    fixture.expected_selected_conflict_result = state.selected_conflict_result
+    fixture.expected_accepted_tuple_count = len(state.acceptance_tuples)
+    fixture.expected_rejected_tuple_count = len(state.rejected_tuples)
+    fixture.expected_semantic_issue_ids = sorted(
+        {issue.code for issue in state.issues}
+    )
+    return fixture
 
 
 def _positive(
@@ -232,7 +313,7 @@ def _positive(
     state: str,
     active_head: dict[str, Any] | None,
 ) -> Fixture:
-    return Fixture(
+    return _attach_state_expectations(Fixture(
         fixture_id,
         f"fixtures/core_v0_2/exact_contract_agreement/positive/{slug}.jsonl",
         builder.messages,
@@ -240,7 +321,7 @@ def _positive(
         [],
         state,
         active_head,
-    )
+    ))
 
 
 def _negative(
@@ -248,15 +329,20 @@ def _negative(
     slug: str,
     messages: list[dict[str, Any]],
     failures: list[str],
+    *,
+    invalid_indices: list[int] | None = None,
+    rehash_messages: bool = True,
 ) -> Fixture:
-    rehash(messages)
-    return Fixture(
+    if rehash_messages:
+        rehash(messages)
+    return _attach_state_expectations(Fixture(
         fixture_id,
         f"fixtures/core_v0_2/exact_contract_agreement/negative/{slug}_expected_fail.jsonl",
         messages,
         False,
         failures,
-    )
+        invalid_indices=invalid_indices or [],
+    ))
 
 
 def positive_fixtures() -> list[Fixture]:
@@ -313,6 +399,24 @@ def positive_fixtures() -> list[Fixture]:
     active = current_head_reference(p1["contract_ref"])
     b.error(message_id="p08-error-after", reference=active)
     fixtures.append(_positive("CT2-POS-08", "08_error_after_agreement", b, "ACTIVE_HEAD", active))
+
+    b = Builder()
+    p1 = b.propose(contract("v1"), message_id="p09-propose-v1")
+    b.accept(p1, accepted=True, message_id="p09-accept-v1")
+    active = current_head_reference(p1["contract_ref"])
+    signed_action = b.action(active, message_id="p09-signed-action")
+    signed_action["sender"] = "agent:S"
+    rehash(b.messages)
+    sign_message(signed_action)
+    fixtures.append(
+        _positive(
+            "CT2-POS-09",
+            "09_valid_optional_signature",
+            b,
+            "ACTIVE_HEAD",
+            active,
+        )
+    )
     return fixtures
 
 
@@ -529,7 +633,7 @@ def negative_fixtures() -> list[Fixture]:
 
     b, p = _base_initial("n29")
     b.accept(p, accepted=True, message_id="n29-cross-contract-accept", contract_id="other-contract")
-    out.append(_negative("CT2-NEG-29", "29_cross_contract_acceptance", b.messages, [CONTRACT_ID, ACCEPT_BINDING]))
+    out.append(_negative("CT2-NEG-29", "29_cross_contract_acceptance", b.messages, [CONTRACT_ID]))
 
     b, _, active = _accepted_initial("n30")
     wrong_base = {
@@ -538,6 +642,189 @@ def negative_fixtures() -> list[Fixture]:
     }
     b.propose(contract("v2"), message_id="n30-propose-v2", base=wrong_base)
     out.append(_negative("CT2-NEG-30", "30_revision_wrong_base", b.messages, [PROPOSAL_BINDING]))
+
+    b, p = _base_initial("n31")
+    acceptance = b.accept(p, accepted=True, message_id="n31-changed-session")
+    acceptance["session_id"] = "session-core-v02-substituted"
+    out.append(
+        _negative(
+            "CT2-NEG-31",
+            "31_acceptance_changed_session",
+            b.messages,
+            ["CT-INVARIANTS-01", AGREEMENT_STATE],
+            invalid_indices=[1],
+        )
+    )
+
+    b, p = _base_initial("n32")
+    acceptance = b.accept(p, accepted=True, message_id="n32-invalid-message-hash")
+    rehash(b.messages)
+    acceptance["message_hash"] = OTHER_HASH
+    out.append(
+        _negative(
+            "CT2-NEG-32",
+            "32_acceptance_invalid_message_hash",
+            b.messages,
+            ["CT-MESSAGE-HASH-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
+
+    b, p = _base_initial("n33")
+    acceptance = b.accept(p, accepted=True, message_id="n33-broken-prev")
+    acceptance["prev_msg_hash"] = OTHER_HASH
+    acceptance["message_hash"] = message_hash_from_body(
+        _body_without_hash(acceptance)
+    )
+    out.append(
+        _negative(
+            "CT2-NEG-33",
+            "33_acceptance_broken_prev_hash",
+            b.messages,
+            ["CT-HASH-CHAIN-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
+
+    b, _, active = _accepted_initial("n34")
+    p2 = b.propose(contract("v2"), message_id="n34-propose-v2", base=active)
+    acceptance = b.accept(
+        p2, accepted=True, message_id="n34-invalid-signed-accept"
+    )
+    acceptance["sender"] = "agent:S"
+    rehash(b.messages)
+    sign_message(acceptance, signer="agent:S", signing_key="agent:T", kid="S1")
+    out.append(
+        _negative(
+            "CT2-NEG-34",
+            "34_revision_acceptance_invalid_signature",
+            b.messages,
+            ["CT-SIGNATURE-VERIFY-01"],
+            invalid_indices=[3],
+            rehash_messages=False,
+        )
+    )
+
+    b, _, active = _accepted_initial("n35")
+    proposal = b.propose(
+        contract("v2"), message_id="n35-schema-invalid-proposal", base=active
+    )
+    proposal["unexpected_envelope_field"] = True
+    out.append(
+        _negative(
+            "CT2-NEG-35",
+            "35_revision_proposal_message_schema",
+            b.messages,
+            [CONTRACT_REF],
+            invalid_indices=[2],
+        )
+    )
+
+    b, _, active = _accepted_initial("n36")
+    p2a = b.propose(contract("v2-a"), message_id="n36-propose-v2a", base=active)
+    p2b = b.propose(contract("v2-b"), message_id="n36-propose-v2b", base=active)
+    resolution = b.resolve(
+        [p2a, p2b], p2a, message_id="n36-invalid-hash-resolution"
+    )
+    rehash(b.messages)
+    resolution["message_hash"] = OTHER_HASH
+    out.append(
+        _negative(
+            "CT2-NEG-36",
+            "36_conflict_resolution_invalid_message_hash",
+            b.messages,
+            ["CT-MESSAGE-HASH-01"],
+            invalid_indices=[4],
+            rehash_messages=False,
+        )
+    )
+
+    b, p = _base_initial("n37")
+    acceptance = b.accept(p, accepted=True, message_id="n37-unknown-signer")
+    rehash(b.messages)
+    acceptance["signatures"] = [
+        signature(acceptance["message_hash"], signer="agent:unknown", signing_key="agent:S")
+    ]
+    out.append(
+        _negative(
+            "CT2-NEG-37",
+            "37_signature_unknown_signer",
+            b.messages,
+            ["CT-SIGNATURE-VERIFY-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
+
+    b, p = _base_initial("n38")
+    acceptance = b.accept(p, accepted=True, message_id="n38-kid-mismatch")
+    rehash(b.messages)
+    sign_message(acceptance, kid="WRONG-KID")
+    out.append(
+        _negative(
+            "CT2-NEG-38",
+            "38_signature_kid_mismatch",
+            b.messages,
+            ["CT-SIGNATURE-VERIFY-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
+
+    b, p = _base_initial("n39")
+    acceptance = b.accept(p, accepted=True, message_id="n39-object-hash-mismatch")
+    rehash(b.messages)
+    acceptance["signatures"] = [signature(OTHER_HASH)]
+    out.append(
+        _negative(
+            "CT2-NEG-39",
+            "39_signature_object_hash_mismatch",
+            b.messages,
+            ["CT-SIGNATURE-HASH-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
+
+    b, p = _base_initial("n40")
+    acceptance = b.accept(p, accepted=True, message_id="n40-copied-signature")
+    rehash(b.messages)
+    stale_signature = signature(p["message_hash"])
+    stale_signature["object_hash"] = acceptance["message_hash"]
+    acceptance["signatures"] = [stale_signature]
+    out.append(
+        _negative(
+            "CT2-NEG-40",
+            "40_copied_stale_signature",
+            b.messages,
+            ["CT-SIGNATURE-VERIFY-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
+
+    b, p = _base_initial("n41")
+    acceptance = b.accept(p, accepted=True, message_id="n41-invalid-cosignature")
+    rehash(b.messages)
+    sign_message(acceptance)
+    sign_message(
+        acceptance,
+        signer="agent:T",
+        signing_key="agent:S",
+        kid="T1",
+    )
+    out.append(
+        _negative(
+            "CT2-NEG-41",
+            "41_one_invalid_signature_entry",
+            b.messages,
+            ["CT-SIGNATURE-VERIFY-01"],
+            invalid_indices=[1],
+            rehash_messages=False,
+        )
+    )
     return out
 
 
@@ -555,11 +842,17 @@ def _suite_entry(fixture: Fixture) -> dict[str, Any]:
         "expected_message_types": [
             message["message_type"] for message in fixture.messages
         ],
+        "expected_agreement_state": fixture.expected_state,
+        "expected_active_head": fixture.expected_active_head,
+        "expected_proposal_ids": fixture.expected_proposal_ids,
+        "expected_selected_conflict_result": (
+            fixture.expected_selected_conflict_result
+        ),
+        "expected_accepted_tuple_count": fixture.expected_accepted_tuple_count,
+        "expected_rejected_tuple_count": fixture.expected_rejected_tuple_count,
+        "invalid_message_indices": fixture.invalid_indices or [],
     }
-    if fixture.expect_pass:
-        entry["expected_agreement_state"] = fixture.expected_state
-        entry["expected_active_head"] = fixture.expected_active_head
-    else:
+    if not fixture.expect_pass:
         entry["expect_pass"] = False
         entry["expected_failures"] = [
             {"test_id": test_id, "min_count": 1}
@@ -583,6 +876,7 @@ def build_suite(fixtures: list[Fixture]) -> dict[str, Any]:
         _check("CT-SEQUENCE-01", "Match the declared deterministic fixture sequence"),
         _check("CT-SIGNATURE-HASH-01", "Bind optional signatures to the exact message hash"),
         _check("CT-SIGNATURE-STRUCTURE-01", "Retain optional Core signature structure validation"),
+        _check("CT-SIGNATURE-VERIFY-01", "Cryptographically verify every present Ed25519 signature"),
         _check("CT-MESSAGE-HASH-01", "Recompute every message hash"),
     ]
     descriptions = {
@@ -644,6 +938,17 @@ def build_cross_language_vectors(fixtures: list[Fixture]) -> dict[str, Any]:
                 "path": fixture.path,
                 "expected_state": fixture.expected_state,
                 "expected_active_head": fixture.expected_active_head,
+                "expected_proposal_ids": fixture.expected_proposal_ids,
+                "expected_selected_conflict_result": (
+                    fixture.expected_selected_conflict_result
+                ),
+                "expected_accepted_tuple_count": (
+                    fixture.expected_accepted_tuple_count
+                ),
+                "expected_rejected_tuple_count": (
+                    fixture.expected_rejected_tuple_count
+                ),
+                "invalid_message_indices": fixture.invalid_indices or [],
             }
             for fixture in fixtures
             if fixture.expect_pass
@@ -652,10 +957,24 @@ def build_cross_language_vectors(fixtures: list[Fixture]) -> dict[str, Any]:
             {
                 "path": fixture.path,
                 "expected_semantic_issue_ids": sorted(
-                    test_id
-                    for test_id in fixture.expected_failures
-                    if test_id.startswith("CT2-")
+                    fixture.expected_semantic_issue_ids or []
                 ),
+                "expected_runner_failure_ids": sorted(
+                    fixture.expected_failures
+                ),
+                "expected_state": fixture.expected_state,
+                "expected_active_head": fixture.expected_active_head,
+                "expected_proposal_ids": fixture.expected_proposal_ids,
+                "expected_selected_conflict_result": (
+                    fixture.expected_selected_conflict_result
+                ),
+                "expected_accepted_tuple_count": (
+                    fixture.expected_accepted_tuple_count
+                ),
+                "expected_rejected_tuple_count": (
+                    fixture.expected_rejected_tuple_count
+                ),
+                "invalid_message_indices": fixture.invalid_indices or [],
             }
             for fixture in fixtures
             if not fixture.expect_pass
@@ -694,7 +1013,13 @@ def main() -> int:
             for relative in stale:
                 print(f" - {relative}")
             return 1
-        print("OK: Core v0.2 suite, 8 positive fixtures, 30 negative fixtures, and vectors are current.")
+        positive_count = sum(item.expect_pass for item in fixtures)
+        negative_count = sum(not item.expect_pass for item in fixtures)
+        print(
+            "OK: Core v0.2 suite, "
+            f"{positive_count} positive fixtures, {negative_count} negative "
+            "fixtures, and vectors are current."
+        )
         return 0
 
     for path, text in outputs.items():
