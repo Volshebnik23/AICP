@@ -1,0 +1,282 @@
+{
+  "vector_version": 1,
+  "contract": {
+    "contract_id": "contract-exact-agreement",
+    "contract_version": "v-vector",
+    "goal": "Exact agreement for v-vector",
+    "roles": [
+      "proposer",
+      "acceptor"
+    ]
+  },
+  "canonical_json": "{\"contract_id\":\"contract-exact-agreement\",\"contract_version\":\"v-vector\",\"goal\":\"Exact agreement for v-vector\",\"roles\":[\"proposer\",\"acceptor\"]}",
+  "contract_hash": "sha256:uC5CqJ6duzCnTtI2pj9AfWwQ3o4jSXuN5kifDHJ66ns",
+  "contract_ref": {
+    "branch_id": "main",
+    "head": {
+      "version": "v-vector",
+      "contract_hash": "sha256:uC5CqJ6duzCnTtI2pj9AfWwQ3o4jSXuN5kifDHJ66ns"
+    }
+  },
+  "positive": [
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/01_initial_accept_action.jsonl",
+      "expected_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      }
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/02_initial_reject.jsonl",
+      "expected_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/03_revision_accept.jsonl",
+      "expected_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v2",
+          "contract_hash": "sha256:T2yWAApl9xvc_XYsF7HA-9vunNUONQ8lFLnlF_C3ISA"
+        }
+      }
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/04_context_only_then_action.jsonl",
+      "expected_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      }
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/05_competing_choose.jsonl",
+      "expected_state": "CONFLICT_RESOLVED",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v2-b",
+          "contract_hash": "sha256:3jeq1xzPtmHYmicS0OO_NwXtaIAh3DsjwjLvLHP2ZAI"
+        }
+      }
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/06_exact_accept_replay.jsonl",
+      "expected_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      }
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/07_error_before_agreement.jsonl",
+      "expected_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
+      "expected_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      }
+    }
+  ],
+  "negative": [
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/01_missing_contract_ref_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTRACT-REF-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/02_malformed_contract_ref_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTRACT-REF-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/03_incorrect_contract_hash_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTRACT-HASH-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/04_head_hash_mismatch_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-PROPOSAL-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/05_head_version_mismatch_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-PROPOSAL-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/06_envelope_contract_id_mismatch_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTRACT-ID-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/07_contract_id_changes_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTRACT-ID-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/08_accept_unknown_proposal_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/09_accept_future_proposal_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/10_accept_wrong_message_hash_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/11_accept_wrong_contract_hash_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/12_accept_substituted_ref_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/13_accept_stale_proposal_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/14_rejection_does_not_activate_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACTIVE-HEAD-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/15_replay_retargets_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/16_context_before_agreement_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTEXT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/17_context_stale_head_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTEXT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/18_context_contract_effect_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONTEXT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/19_action_before_agreement_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACTIVE-HEAD-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/20_action_stale_head_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACTIVE-HEAD-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/21_candidate_non_proposal_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/22_candidate_wrong_message_hash_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/23_candidate_wrong_contract_hash_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/24_candidates_different_base_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/25_duplicate_candidate_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/26_selected_not_candidate_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/27_selected_fields_mismatch_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-CONFLICT-BINDING-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/29_cross_contract_acceptance_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-ACCEPT-BINDING-01",
+        "CT2-CONTRACT-ID-01"
+      ]
+    },
+    {
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/30_revision_wrong_base_expected_fail.jsonl",
+      "expected_semantic_issue_ids": [
+        "CT2-PROPOSAL-BINDING-01"
+      ]
+    }
+  ]
+}
