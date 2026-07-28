@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/core/aicp-core-message-v0.2.schema.json",
+  "title": "AICP Core v0.2 Message Envelope",
+  "type": "object",
+  "required": [
+    "session_id",
+    "message_id",
+    "timestamp",
+    "sender",
+    "message_type",
+    "contract_id",
+    "payload"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "message_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sender": {
+      "type": "string",
+      "minLength": 1
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTEXT_AMEND",
+        "ATTEST_ACTION",
+        "RESOLVE_CONFLICT",
+        "ERROR"
+      ]
+    },
+    "contract_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract_ref": {
+      "$ref": "#/$defs/ExactContractReference"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "prev_msg_hash": {
+      "$ref": "#/$defs/Sha256Hash"
+    },
+    "message_hash": {
+      "$ref": "#/$defs/Sha256Hash"
+    },
+    "signatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "signer",
+          "kid",
+          "object_type",
+          "object_hash",
+          "sig_b64url"
+        ],
+        "properties": {
+          "signer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object_type": {
+            "type": "string",
+            "const": "message"
+          },
+          "object_hash": {
+            "$ref": "#/$defs/Sha256Hash"
+          },
+          "sig_b64url": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "extensions": {
+      "type": "object"
+    },
+    "ext": {
+      "type": "object"
+    },
+    "in_reply_to": {
+      "type": "string",
+      "minLength": 1
+    },
+    "related_to": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "message_type": {
+            "enum": [
+              "CONTRACT_PROPOSE",
+              "CONTRACT_ACCEPT",
+              "CONTEXT_AMEND",
+              "ATTEST_ACTION",
+              "RESOLVE_CONFLICT"
+            ]
+          }
+        },
+        "required": [
+          "message_type"
+        ]
+      },
+      "then": {
+        "required": [
+          "contract_ref"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "Sha256Hash": {
+      "type": "string",
+      "pattern": "^sha256:[A-Za-z0-9_-]{43}$"
+    },
+    "VersionHash": {
+      "type": "object",
+      "required": [
+        "version",
+        "contract_hash"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExactContractReference": {
+      "type": "object",
+      "required": [
+        "branch_id",
+        "head"
+      ],
+      "properties": {
+        "branch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base": {
+          "$ref": "#/$defs/VersionHash"
+        },
+        "head": {
+          "$ref": "#/$defs/VersionHash"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "description": "Separate experimental Core v0.2 envelope schema. Existing message type IDs are reused under explicit version selection; Core v0.1 is not reinterpreted."
+}
