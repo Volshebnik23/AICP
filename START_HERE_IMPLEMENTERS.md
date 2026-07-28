@@ -10,9 +10,12 @@ policy correctness, or transport security.
 
 Choose experimental post-UAT `AICP-BASE@0.2` only when both peers must prove agreement on
 one exact contract artifact and active head. Select it explicitly; it is not the default
-pilot target, does not authenticate senders, has no external-IUT target, and cannot be
-combined with state-projection v1 as if that extension already understood the v0.2
-reference shape.
+pilot target, does not require signatures or authenticate senders, has no external-IUT
+target, and cannot be combined with state-projection v1 as if that extension already
+understood the v0.2 reference shape. If a Base 0.2 signature is present it must verify.
+Validate each message before reduction: schema-, identity-, chain-, hash-, signature-, or
+binding-invalid messages must not change exact-agreement state. A degraded or skipped
+suite/profile run may report behavioral success but emits no compatibility mark.
 
 ## Choose your role
 

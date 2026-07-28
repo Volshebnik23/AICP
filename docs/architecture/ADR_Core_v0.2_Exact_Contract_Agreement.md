@@ -31,6 +31,11 @@ optional metadata.
 
 Implementations must select the exact profile version and use the matching schemas. A 0.1
 report cannot substantiate 0.2. Gateways translating between versions create new artifacts,
-message hashes, and any required signatures. Base 0.2 has internal conformance evidence but
-no external-IUT target in M60. Authenticated Base 0.2, projection-v1 composition, merge/patch
-semantics, and generalized external evidence are deferred.
+message hashes, and any required signatures. The same six registered Core IDs therefore
+have explicit version-selected schema mappings while v0.1 remains the default canonical
+mapping. Base 0.2 permits unsigned messages, verifies every signature that is present, and
+blocks all state effects from messages rejected by mandatory message-local validation.
+Degraded or skipped execution can remain a behavioral pass but emits no Core or profile
+mark. Base 0.2 has internal conformance evidence but no external-IUT target in M60.
+Authenticated Base 0.2, projection-v1 composition, merge/patch semantics, and generalized
+external evidence are deferred.

@@ -11,8 +11,8 @@ All notable repo-backed release metadata changes should be recorded here.
   M60 Exact Contract Agreement Core; M61–M70 remain planned.
 - Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
   `AICP-IUT-TCK-1.0.0` metadata.
-- Added separate experimental Core v0.2 schemas, exact-agreement conformance, 8 positive
-  and 30 expected-fail lifecycle fixtures, `AICP-BASE@0.2`, Python/TypeScript parity
+- Added separate experimental Core v0.2 schemas, exact-agreement conformance, 9 positive
+  and 41 expected-fail lifecycle fixtures, `AICP-BASE@0.2`, Python/TypeScript parity
   helpers, and versioned quickstarts.
 
 ### Changed
@@ -30,6 +30,10 @@ All notable repo-backed release metadata changes should be recorded here.
   comparison against the registered TCK catalog.
 - Added exact proposal/acceptance/active-head/conflict binding without changing Core v0.1,
   existing external-IUT targets, state projection v1, or the UAT baseline.
+- Corrected M60 so degraded/skipped v0.2 runs emit no marks, present optional signatures
+  are cryptographically verified, invalid messages cannot advance agreement state, every
+  negative fixture verifies post-rejection state, and six reused Core IDs expose explicit
+  v0.1/v0.2 payload-schema variants.
 
 ### Known limitations
 - No real external or pairwise interop submission is present.

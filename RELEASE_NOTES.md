@@ -19,6 +19,9 @@ tag, package publication, GA declaration, or final RC repackaging.
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
 - Experimental post-UAT Core v0.2 adds exact contract artifact and active-head agreement
   under `AICP-BASE@0.2`, with separate schemas, suite, fixtures, helpers, and quickstarts.
+  Its M60 correction makes marks fail closed under degraded/skipped execution, verifies
+  every present optional signature, blocks state changes from invalid messages, and
+  publishes version-selected v0.1/v0.2 schema mappings for the six reused Core IDs.
   Core/Base 0.1 and the UAT target remain unchanged.
 
 ### Current evidence limits

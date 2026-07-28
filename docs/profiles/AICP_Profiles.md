@@ -70,6 +70,10 @@ are checked against `registry/aicp_profiles.json` and
   `AICP-BASE@0.1`.
 - **Evidence boundary:** Internal conformance only in M60; no external-IUT target and no
   independent external evidence.
+- **Signature/badge boundary:** Unsigned messages remain valid; every present signature
+  must verify. Degraded or skipped suite/profile execution emits no compatibility mark.
+- **State boundary:** Mandatory validation rejects a message before it can change proposal
+  indexes, active head, agreement tuples, or conflict selection.
 - **Security boundary:** Exact agreement does not authenticate senders or establish
   proposal/acceptance authority, quorum legitimacy, policy correctness, hidden-transcript
   non-equivocation, transport security, or legal enforceability.

@@ -65,9 +65,13 @@ _Last updated: 2026-07-28_
   transport-security claim.
 - **Dependencies:** M58/M59 repository-truth and evidence boundaries; existing AICP
   object-hash algorithm.
-- **Completion evidence:** `CT_CORE_0.2` passes 8 positive and 30 exact expected-fail
-  transcripts, emits `AICP-Core-0.2`, and `PF_AICP_BASE_0.2` emits the internal
-  `AICP-Profile-BASE-0.2` mark. Frozen v0.1 artifacts are digest-guarded.
+- **Completion evidence:** `CT_CORE_0.2` passes 9 positive and 41 exact expected-fail
+  transcripts. Every negative verifies failure classification plus post-rejection
+  state/head/proposal/selection; Python and TypeScript consume shared vectors. Present
+  optional signatures are verified, and invalid messages cannot advance state.
+  Non-degraded complete execution emits `AICP-Core-0.2`, while
+  `PF_AICP_BASE_0.2` also emits the internal `AICP-Profile-BASE-0.2` mark; degraded or
+  skipped execution emits neither. Frozen v0.1 artifacts remain digest-guarded.
 - **Independent-evidence boundary:** Base 0.2 has no external-IUT target or independent
   external evidence in M60.
 

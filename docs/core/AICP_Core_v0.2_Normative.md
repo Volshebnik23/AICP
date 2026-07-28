@@ -13,7 +13,9 @@ The normative machine-readable artifacts are:
 
 Core v0.2 reuses the registered message type IDs `CONTRACT_PROPOSE`, `CONTRACT_ACCEPT`,
 `CONTEXT_AMEND`, `ATTEST_ACTION`, `RESOLVE_CONFLICT`, and `ERROR`. Their v0.2 meaning is
-selected only by the explicit Core/profile version.
+selected only by the explicit Core/profile version. Repository truth therefore preserves
+the Core v0.1 payload schema as the default mapping and publishes v0.1/v0.2 schema
+variants for these six IDs.
 
 ## 2. Hash and version model
 
@@ -96,6 +98,12 @@ Message-chain integrity proves transcript ordering and bytes; it does not prove 
 accepted the same contract. Exact agreement is created only by a valid positive acceptance
 or a valid conflict resolution.
 
+Signatures remain optional in `AICP-BASE@0.2`, so an unsigned message can be valid. Every
+signature that is present MUST pass structure, message-hash binding, key resolution,
+`kid` matching, and Ed25519 verification in the existing AICP signing domain. One invalid
+entry invalidates that message. This rule does not require every message to be signed and
+does not turn Base 0.2 into an authenticated-sender profile.
+
 ## 6. `CONTRACT_PROPOSE`
 
 The payload MUST contain:
@@ -143,8 +151,9 @@ for initial agreement. The proposal head then becomes active. For `accepted=fals
 state is unchanged. A replay MUST repeat an exact previously observed tuple and MUST NOT
 retarget another proposal, hash, reference, or accepted value.
 
-Agreement binding is independent of optional signatures. Base 0.2 proves exact artifact
-agreement, not sender authentication.
+Agreement does not depend on signatures being present. When signatures are present they
+must verify, but Base 0.2 still proves exact artifact agreement rather than mandatory
+sender authentication.
 
 ## 8. `CONTEXT_AMEND`
 
@@ -238,6 +247,15 @@ result. Observable concepts are `NO_ACTIVE_CONTRACT`, `CANDIDATE_PROPOSED`, `ACT
 
 Only exact `CONTRACT_ACCEPT(accepted=true)` and exact `RESOLVE_CONFLICT` activate a head.
 Invalid messages MUST NOT advance state.
+
+Before invoking a lifecycle handler, an implementation MUST reject transition effects from
+a message that fails mandatory message-local validation, including envelope/payload/contract
+schema, registered type, session or contract identity, required previous hash, chain
+linkage, message-hash recomputation, signature validation, or exact lifecycle binding.
+Such a message may produce conformance issues, but it MUST NOT change proposal indexes,
+active head, accepted/rejected tuples, conflict selection, or agreement state. A
+transcript-level declared-sequence mismatch may fail conformance without by itself assigning
+message-local invalidity to every record.
 
 ## 13. Security boundary
 
