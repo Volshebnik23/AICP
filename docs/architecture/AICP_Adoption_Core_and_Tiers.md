@@ -16,6 +16,10 @@ AICP already ships a large amount of executable protocol surface: Core narrative
 
 The profile catalog, registries, schemas, and conformance suites remain the canonical executable truth. This document is the packaging/framing layer for that shipped truth.
 
+`AICP-BASE@0.2` is a separate experimental post-UAT target for exact contract artifact and
+active-head agreement. It is not added to the conservative Adoption Core or UAT baseline,
+and it is not the recommended default pilot target.
+
 ## 2) Explicit non-goals
 
 This document is **not**:
@@ -66,6 +70,11 @@ variant. It adds mandatory Ed25519 binding from every envelope sender to the mes
 without changing the frozen baseline or adding identity, trust, witnessing, policy, or
 transport-security claims. Existing profiles are not silently strengthened; deployments
 may compose them only as separate, explicit targets.
+
+`AICP-BASE@0.2` is another explicit post-UAT variant, but it addresses a different concern:
+exact contract artifact/head agreement rather than sender authentication. It uses separate
+Core v0.2 schemas and suite, has internal evidence only, and does not imply an
+`AICP-AUTHENTICATED-BASE@0.2` profile.
 
 ### 3.3 Transport/binding floor
 

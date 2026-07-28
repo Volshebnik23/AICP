@@ -91,6 +91,39 @@ def test_current_planning_and_repo_truth_status_pass() -> None:
     assert VALIDATOR.validate(ROOT) == []
 
 
+def test_current_m60_profile_and_milestone_truth() -> None:
+    status = _status()
+    assert status["profile_summary"] == {
+        "registered": 16,
+        "stable": 4,
+        "experimental": 12,
+        "external_iut_targets": 2,
+        "ordinary_external_mark_reachable_targets": 2,
+        "externally_demonstrated": 0,
+    }
+    milestones = {item["id"]: item for item in status["milestones"]}
+    assert milestones["M60"]["status"] == "shipped"
+    assert milestones["M60"]["document"] == "ROADMAP.md"
+    assert all(
+        milestones[f"M{number}"]["status"] == "planned"
+        for number in range(61, 71)
+    )
+
+
+def test_repo_truth_discovers_base_v02_from_conformance_catalog() -> None:
+    discovered = VALIDATOR.discover_profile_entries(ROOT, _status()["profiles"])
+    base_v02 = next(item for item in discovered if item["id"] == "AICP-BASE@0.2")
+    assert base_v02["profile_catalog"] == (
+        "conformance/profiles/PF_AICP_BASE_0.2.json"
+    )
+    assert base_v02["internal_report_output"] == (
+        "conformance/report_profile_base_v02.json"
+    )
+    assert base_v02["required_suites"] == [
+        "conformance/core/CT_CORE_0.2.json"
+    ]
+
+
 def test_duplicate_milestone_status_is_rejected() -> None:
     status = _status()
     duplicate = copy.deepcopy(status["milestones"][1])
@@ -260,8 +293,8 @@ def test_current_pairwise_fail_closed_status_is_enforced() -> None:
 
 def test_baseline_rejects_changed_profile_count() -> None:
     baseline = _baseline().replace(
+        "16 (4 stable, 12 experimental)",
         "15 (4 stable, 11 experimental)",
-        "14 (4 stable, 10 experimental)",
         1,
     )
     assert VALIDATOR._baseline_generated_errors(_status(), baseline)
@@ -296,7 +329,7 @@ def test_baseline_rejects_false_external_review_completion() -> None:
 
 def test_baseline_rejects_changed_milestone_status() -> None:
     baseline = _baseline().replace(
-        "| M60 | planned |", "| M60 | shipped |", 1
+        "| M60 | shipped |", "| M60 | planned |", 1
     )
     assert VALIDATOR._baseline_generated_errors(_status(), baseline)
 
@@ -312,7 +345,7 @@ def test_baseline_rejects_stale_message_gap_count() -> None:
 
 def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
     roadmap = _roadmap().replace(
-        "| M60 | Planned |", "| M60 | Shipped |", 1
+        "| M61 | Planned |", "| M61 | Shipped |", 1
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), roadmap, _backlog()
@@ -322,14 +355,14 @@ def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
 
 def test_backlog_visible_status_must_match_marker_and_json() -> None:
     backlog = _backlog().replace(
-        "<!-- milestone-status: M60 planned -->\n- **Status:** Planned.",
-        "<!-- milestone-status: M60 planned -->\n- **Status:** Shipped.",
+        "<!-- milestone-status: M61 planned -->\n- **Status:** Planned.",
+        "<!-- milestone-status: M61 planned -->\n- **Status:** Shipped.",
         1,
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), _roadmap(), backlog
     )
-    assert any("M60: visible status" in error for error in errors)
+    assert any("M61: visible status" in error for error in errors)
 
 
 def test_future_milestone_document_must_resolve() -> None:

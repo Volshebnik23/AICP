@@ -5,7 +5,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-07-27_
+_Last updated: 2026-07-28_
 
 ## Current / Next
 
@@ -52,6 +52,25 @@ _Last updated: 2026-07-27_
 - **Independent-evidence boundary:** the repository records no real eligible external
   submission; reachability is executable TCK capability, not external adoption evidence.
 
+### ✅ M60 — Exact Contract Agreement Core
+<!-- milestone-status: M60 shipped -->
+- **Status:** Shipped.
+- **Problem:** Core v0.1 can preserve a valid message chain while acceptance remains
+  ambiguous about the exact proposal, contract bytes, and resulting active head.
+- **Scope:** add a separate experimental post-UAT Core v0.2 surface, exact contract
+  references, proposal/acceptance/conflict state reduction, `AICP-BASE@0.2`, deterministic
+  fixtures, Python/TypeScript helpers, and versioned quickstarts.
+- **Non-goals:** no Core v0.1/UAT reinterpretation, Authenticated Base 0.2, projection-v1
+  composition, external-IUT target, merge/patch dialect, identity/authority/quorum, or
+  transport-security claim.
+- **Dependencies:** M58/M59 repository-truth and evidence boundaries; existing AICP
+  object-hash algorithm.
+- **Completion evidence:** `CT_CORE_0.2` passes 8 positive and 30 exact expected-fail
+  transcripts, emits `AICP-Core-0.2`, and `PF_AICP_BASE_0.2` emits the internal
+  `AICP-Profile-BASE-0.2` mark. Frozen v0.1 artifacts are digest-guarded.
+- **Independent-evidence boundary:** Base 0.2 has no external-IUT target or independent
+  external evidence in M60.
+
 ## Planned milestones
 
 Detailed remaining-work scope, non-goals, dependencies, evidence gaps, and completion
@@ -60,7 +79,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M60 | Planned | Exact Contract Agreement Core | `AICP_Backlog` |
 | M61 | Planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
 | M62 | Planned | Generalized External Evidence Framework | `AICP_Backlog` |
 | M63 | Planned | Tier-1 External Profile TCK | `AICP_Backlog` |

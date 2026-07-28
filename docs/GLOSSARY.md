@@ -16,16 +16,26 @@ A passive or independent participant that verifies transcript integrity, signatu
 A protocol interaction context identified by `session_id`.
 
 ## Contract
-The machine-readable context contract (`contract_id`) defining goal, roles, and policies.
+The machine-readable context contract defining goal, roles, and policies. Core v0.2 also
+places an opaque `contract_version` inside the exact contract object hash.
 
 ## Contract Ref
 A message-level reference (`contract_ref`) that binds processing to branch/version state.
+Core v0.2 uses exact branch/base/head version-hash pairs; Core v0.1 retains its frozen
+version-only shape.
+
+## Active Contract Head
+The exact `{branch_id, head:{version, contract_hash}}` selected by a valid Core v0.2
+acceptance or `CHOOSE` conflict resolution. A proposal alone is not an active head.
 
 ## Amendment
-A contract state change represented by `CONTEXT_AMEND` and resolved via branch/version semantics.
+In Core v0.1, an amendment follows its frozen branch/version semantics. In Core v0.2,
+`CONTEXT_AMEND` is context-only with `contract_effect="none"`; contract transitions require
+proposal plus exact acceptance or conflict resolution.
 
 ## Conflict / Resolve
-Conflict is divergent contract head state; `RESOLVE_CONFLICT` selects/merges heads to restore a canonical head.
+Conflict is divergent contract-head state. Core v0.2 standardizes exact `CHOOSE` only;
+deterministic contract merge/patch semantics remain deferred.
 
 ## Policy (structured object)
 A contract policy entry with `policy_id`, `category`, and `parameters`, plus optional metadata (version/status/uri/notes).

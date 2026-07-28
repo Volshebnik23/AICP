@@ -21,6 +21,7 @@ are checked against `registry/aicp_profiles.json` and
 | `AICP-AGENT-MEDIA@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
 | `AICP-AUTHENTICATED-BASE@0.1` | Shipped | Experimental | Available | Yes | Reachable for an eligible external implementation | Absent |
 | `AICP-BASE@0.1` | Shipped | Stable | Available | Yes | Reachable for an eligible external implementation | Absent |
+| `AICP-BASE@0.2` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
 | `AICP-BAZAAR-RECEPTION@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
 | `AICP-COMMERCE-ACP@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
 | `AICP-DELEGATED-IDENTITY@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
@@ -51,6 +52,27 @@ are checked against `registry/aicp_profiles.json` and
   - `conformance/core/CT_CORE_0.1.json`
 - **Intent:** Minimal interoperable profile for AICP Core v0.1 behavior.
 - **Canonical flow:** `docs/flows/AICP_Canonical_Flows.md#21-core-happy-path-signed-transcript`
+
+#### `AICP-BASE@0.2`
+<!-- BEGIN GENERATED PROFILE TRUTH: AICP-BASE@0.2 -->
+- **Repository availability:** Shipped.
+- **Registry maturity:** Experimental.
+- **Internal evidence:** Available.
+- **External-IUT target:** Not available.
+- **Ordinary external mark:** No external-IUT target.
+- **Independent external evidence:** Absent.
+<!-- END GENERATED PROFILE TRUTH: AICP-BASE@0.2 -->
+- **Required suite:** `conformance/core/CT_CORE_0.2.json`.
+- **Compatibility marks:** `AICP-Core-0.2` and `AICP-Profile-BASE-0.2`.
+- **Intent:** Experimental post-UAT exact agreement on one contract artifact and active
+  contract head.
+- **Version boundary:** This profile is selected explicitly and does not reinterpret
+  `AICP-BASE@0.1`.
+- **Evidence boundary:** Internal conformance only in M60; no external-IUT target and no
+  independent external evidence.
+- **Security boundary:** Exact agreement does not authenticate senders or establish
+  proposal/acceptance authority, quorum legitimacy, policy correctness, hidden-transcript
+  non-equivocation, transport security, or legal enforceability.
 
 ### AICP-AUTHENTICATED-BASE
 

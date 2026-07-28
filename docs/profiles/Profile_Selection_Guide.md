@@ -19,6 +19,11 @@ For adjacent-layer placement (discovery/calling vs content governance), see [doc
    optional governance overlays; repository availability does not imply stable maturity.
 7. Add extensions only where your use case requires them.
 
+If the requirement is exact contract-byte and active-head agreement, select experimental
+post-UAT `AICP-BASE@0.2` explicitly. Do not treat it as an automatic upgrade of Base 0.1:
+its lifecycle schemas differ, it has no external-IUT target, and it does not authenticate
+senders.
+
 ## 3) When to upgrade to stricter profiles
 
 Upgrade profile strictness when you need:
@@ -40,6 +45,7 @@ Adoption framing reminder:
 | Scenario / environment | Recommended profile(s) | Required suites/extensions (see profile defs) | Optional extensions | Adjacent infrastructure assumptions |
 |---|---|---|---|---|
 | Basic governed bilateral exchange | `AICP-BASE@0.1` | Base profile-required set | CAPNEG, RESUME | Existing transport + simple identity |
+| Bilateral exact contract artifact/head agreement (post-UAT experiment) | `AICP-BASE@0.2` | `CT_CORE_0.2` | None standardized in M60 | Explicit version selection; no projection-v1 or external-IUT claim |
 | Bilateral exchange requiring authenticated senders | `AICP-AUTHENTICATED-BASE@0.1` | Core + authenticated-message security suite | CAPNEG, identity/trust/witness profiles as separately needed | Supplied Ed25519 verification material; key discovery/custody remains external |
 | Hosted moderated reception | `AICP-MEDIATED-BLOCKING@0.1` | Blocking-oriented profile set | ALERTS, SECURITY-ALERT | Mediator/host + enforcement operator |
 | Hosted moderated ops-heavy environment | `AICP-MEDIATED-BLOCKING-OPS@0.1` | Blocking+ops profile set | DISPUTES, POLICY-EVAL | Monitoring/ops pipelines |

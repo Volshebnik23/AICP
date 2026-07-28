@@ -85,6 +85,10 @@ external implementations. The authenticated unavailable-crypto probe remains man
 but its exact simulated result is case-local; any actual degradation elsewhere suppresses
 eligibility. No real eligible external submission is currently present.
 
+Experimental `AICP-BASE@0.2` has internal Core/profile conformance only in M60. It is not a
+third external-IUT target and cannot support strong external evidence until a later
+versioned evidence/TCK milestone explicitly adds that path.
+
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
 ## Optional bundle integrity manifest

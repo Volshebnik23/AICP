@@ -33,9 +33,9 @@
     ]
   },
   "profile_summary": {
-    "registered": 15,
+    "registered": 16,
     "stable": 4,
-    "experimental": 11,
+    "experimental": 12,
     "external_iut_targets": 2,
     "ordinary_external_mark_reachable_targets": 2,
     "externally_demonstrated": 0
@@ -95,6 +95,23 @@
       "repository_availability": "shipped",
       "internal_evidence": "available",
       "compatibility_mark": "AICP-Profile-BASE-0.1"
+    },
+    {
+      "id": "AICP-BASE@0.2",
+      "profile_catalog": "conformance/profiles/PF_AICP_BASE_0.2.json",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.2.json"
+      ],
+      "internal_report_output": "conformance/report_profile_base_v02.json",
+      "tracked_report_present": false,
+      "live_binding_tested": false,
+      "registry_status": "experimental",
+      "repository_availability": "shipped",
+      "internal_evidence": "available",
+      "compatibility_mark": "AICP-Profile-BASE-0.2",
+      "external_iut_target": false,
+      "external_mark_status": "no_external_iut_target",
+      "independent_external_evidence": false
     },
     {
       "id": "AICP-BAZAAR-RECEPTION@0.1",
@@ -410,7 +427,7 @@
       "payload_schema_mapped_count": 132,
       "suite_referenced_count": 132,
       "positive_fixture_referenced_count": 115,
-      "negative_fixture_referenced_count": 82,
+      "negative_fixture_referenced_count": 84,
       "missing_positive_fixture_types": [
         "AGENDA_DECLARE",
         "AGENDA_UPDATE",
@@ -830,6 +847,7 @@
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json",
           "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
           "conformance/extensions/AD_ADMISSION_0.1.json",
           "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -842,6 +860,8 @@
         ],
         "positive_fixtures": [
           "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/01_initial_accept_action.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/04_context_only_then_action.jsonl",
           "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
           "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
@@ -860,6 +880,9 @@
           "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl"
         ],
         "negative_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/negative/14_rejection_does_not_activate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/19_action_before_agreement_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/20_action_stale_head_expected_fail.jsonl",
           "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
           "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
           "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
@@ -1473,10 +1496,12 @@
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json",
           "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
           "conformance/extensions/ID_IDENTITY_LC_0.1.json"
         ],
         "positive_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/positive/04_context_only_then_action.jsonl",
           "fixtures/extensions/tool_supply_chain/M30-04_valid_upgrade_via_context_amend_pass.jsonl",
           "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
           "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
@@ -1484,6 +1509,10 @@
           "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl"
         ],
         "negative_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/negative/16_context_before_agreement_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/17_context_stale_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/18_context_contract_effect_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/21_candidate_non_proposal_expected_fail.jsonl",
           "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
@@ -1498,6 +1527,7 @@
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json",
           "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
           "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
           "conformance/extensions/AL_ALERTS_0.1.json",
@@ -1532,6 +1562,13 @@
         ],
         "positive_fixtures": [
           "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/01_initial_accept_action.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/02_initial_reject.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/03_revision_accept.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/04_context_only_then_action.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/05_competing_choose.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/06_exact_accept_replay.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
           "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
           "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
           "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
@@ -1601,6 +1638,27 @@
           "fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"
         ],
         "negative_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/negative/08_accept_unknown_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/09_accept_future_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/10_accept_wrong_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/11_accept_wrong_contract_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/12_accept_substituted_ref_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/13_accept_stale_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/14_rejection_does_not_activate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/15_replay_retargets_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/17_context_stale_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/18_context_contract_effect_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/20_action_stale_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/21_candidate_non_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/22_candidate_wrong_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/23_candidate_wrong_contract_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/24_candidates_different_base_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/25_duplicate_candidate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/26_selected_not_candidate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/27_selected_fields_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/29_cross_contract_acceptance_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/30_revision_wrong_base_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
@@ -1687,6 +1745,7 @@
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json",
           "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
           "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
           "conformance/extensions/AL_ALERTS_0.1.json",
@@ -1724,6 +1783,13 @@
         ],
         "positive_fixtures": [
           "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/01_initial_accept_action.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/02_initial_reject.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/03_revision_accept.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/04_context_only_then_action.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/05_competing_choose.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/06_exact_accept_replay.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
           "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
           "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
           "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
@@ -1796,6 +1862,35 @@
         ],
         "negative_fixtures": [
           "fixtures/core/numeric/NUM-02_unsafe_integer_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/01_missing_contract_ref_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/02_malformed_contract_ref_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/03_incorrect_contract_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/04_head_hash_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/05_head_version_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/06_envelope_contract_id_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/07_contract_id_changes_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/09_accept_future_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/10_accept_wrong_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/11_accept_wrong_contract_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/12_accept_substituted_ref_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/13_accept_stale_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/14_rejection_does_not_activate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/15_replay_retargets_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/16_context_before_agreement_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/17_context_stale_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/18_context_contract_effect_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/19_action_before_agreement_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/20_action_stale_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/21_candidate_non_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/22_candidate_wrong_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/23_candidate_wrong_contract_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/24_candidates_different_base_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/25_duplicate_candidate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/26_selected_not_candidate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/27_selected_fields_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/29_cross_contract_acceptance_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/30_revision_wrong_base_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
@@ -2061,12 +2156,17 @@
           "pointer": "#/$defs/ERROR"
         },
         "suites": [
-          "conformance/core/CT_CORE_0.1.json"
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json"
         ],
         "positive_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/positive/07_error_before_agreement.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
           "fixtures/golden_transcripts/GT-08_error_minimal.jsonl"
         ],
-        "negative_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/negative/07_contract_id_changes_expected_fail.jsonl"
+        ],
         "coverage_status": "complete",
         "gap_milestone": null
       },
@@ -2865,12 +2965,23 @@
           "pointer": "#/$defs/RESOLVE_CONFLICT"
         },
         "suites": [
-          "conformance/core/CT_CORE_0.1.json"
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json"
         ],
         "positive_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/positive/05_competing_choose.jsonl",
           "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl"
         ],
-        "negative_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/core_v0_2/exact_contract_agreement/negative/21_candidate_non_proposal_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/22_candidate_wrong_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/23_candidate_wrong_contract_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/24_candidates_different_base_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/25_duplicate_candidate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/26_selected_not_candidate_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/27_selected_fields_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl"
+        ],
         "coverage_status": "complete",
         "gap_milestone": null
       },
@@ -3700,7 +3811,7 @@
   },
   "release_engineering": {
     "snapshot_id": "AICP-SNAPSHOT-0.1.0-dev",
-    "profile_report_outputs": 15,
+    "profile_report_outputs": 16,
     "tracked_profile_reports": 10,
     "root_validation_dependency_manifest": false,
     "cross_platform_make_shell_declared": false,
@@ -3722,8 +3833,8 @@
     {
       "id": "M60",
       "title": "Exact Contract Agreement Core",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M61",

@@ -13,15 +13,20 @@ tag, package publication, GA declaration, or final RC repackaging.
 - The canonical repository-truth baseline now distinguishes shipped artifacts, registry
   stability, internal verification, external testability, independent evidence, live
   binding evidence, and remaining milestones.
-- Roadmap and backlog roles are separated: M58 and M59 are shipped, while M60–M70 retain
+- Roadmap and backlog roles are separated: M58–M60 are shipped, while M61–M70 retain
   the remaining evidence, interop, security, governance, and release work.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
+- Experimental post-UAT Core v0.2 adds exact contract artifact and active-head agreement
+  under `AICP-BASE@0.2`, with separate schemas, suite, fixtures, helpers, and quickstarts.
+  Core/Base 0.1 and the UAT target remain unchanged.
 
 ### Current evidence limits
 
-- The registry contains 15 product profiles; all have internal profile suites, but only Base
+- The registry contains 16 product profiles; all have internal profile suites, but only Base
   and Authenticated Base have full external-IUT targets.
+- Base 0.2 has internal conformance evidence only. It does not authenticate senders, cannot
+  use projection v1 as an exact-head overlay, and has no external-IUT target in M60.
 - The authenticated 37-case target can emit its ordinary external mark for a complete
   eligible implementation. Its mandatory unavailable-crypto probe remains exact and
   case-local; real degradation or skipped normal verification remains ineligible.

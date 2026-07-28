@@ -13,24 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M60 — Exact Contract Agreement Core
-
-<!-- milestone-status: M60 planned -->
-- **Status:** Planned.
-- **Problem statement:** Core messages carry `contract_id` and may carry `contract_ref`, but
-  the repository has no dedicated exact contract-version/hash agreement claim or conformance
-  target.
-- **Scope:** perform a versioned design review, define exact agreement only if required, and
-  add matching schemas, fixtures, conformance, migration notes, and reference behavior.
-- **Explicit non-goals:** no silent Core v0.1 reinterpretation and no opportunistic schema
-  change before the design decision.
-- **Principal evidence gap:** no executable proof that both peers accepted the same exact
-  contract artifact/version beyond the current Core fields and flows.
-- **Dependencies:** M58.
-- **Completion criterion:** either a versioned exact-agreement design ships with complete
-  executable evidence, or the repository records a reviewed decision that current semantics
-  are sufficient and narrows the claim accordingly.
-
 ## M61 — Multi-Profile Composition and CAPNEG v2
 
 <!-- milestone-status: M61 planned -->
