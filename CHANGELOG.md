@@ -7,8 +7,10 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Completed M58 Repo-Truth Rebaseline and recorded M59–M70 as the remaining planned
-  milestone sequence after protocol hardening.
+- Completed M58 Repo-Truth Rebaseline and M59 Authenticated Base Evidence Reachability;
+  M60–M70 remain planned.
+- Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
+  `AICP-IUT-TCK-1.0.0` metadata.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
@@ -19,11 +21,15 @@ All notable repo-backed release metadata changes should be recorded here.
   claims to structured repository evidence.
 - Extended planning validation with deterministic generation plus focused negative
   regression tests.
+- Separated expected case-local unavailable-crypto observations from actual run-level IUT
+  degradation without weakening normal Authenticated Base Ed25519 verification.
+- Added schema-bound consumer execution observations and independent strong-evidence
+  comparison against the registered TCK catalog.
 
 ### Known limitations
 - No real external or pairwise interop submission is present.
-- Only Base and Authenticated Base have external full-profile IUT targets; only Base can
-  currently reach an ordinary external profile mark.
+- Only Base and Authenticated Base have external full-profile IUT targets; both ordinary
+  marks are reachable, but neither has real independent external evidence in this repository.
 - Binding suites are static fixtures, the security review is internal, and release
   repackaging remains planned under M69.
 

@@ -19,7 +19,7 @@ are checked against `registry/aicp_profiles.json` and
 | Profile | Repository availability | Registry maturity | Internal evidence | External-IUT target | Ordinary external mark | Independent external evidence |
 |---|---|---|---|---|---|---|
 | `AICP-AGENT-MEDIA@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-AUTHENTICATED-BASE@0.1` | Shipped | Experimental | Available | Yes | Blocked by the mandatory degraded probe | Absent |
+| `AICP-AUTHENTICATED-BASE@0.1` | Shipped | Experimental | Available | Yes | Reachable for an eligible external implementation | Absent |
 | `AICP-BASE@0.1` | Shipped | Stable | Available | Yes | Reachable for an eligible external implementation | Absent |
 | `AICP-BAZAAR-RECEPTION@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
 | `AICP-COMMERCE-ACP@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
@@ -60,7 +60,7 @@ are checked against `registry/aicp_profiles.json` and
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
 - **External-IUT target:** Available.
-- **Ordinary external mark:** Blocked by the mandatory degraded probe.
+- **Ordinary external mark:** Reachable for an eligible external implementation.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-AUTHENTICATED-BASE@0.1 -->
 - **Adoption note:** Post-UAT; it is not part of the frozen pilot center.
@@ -80,7 +80,9 @@ co-signatures are allowed, but one invalid entry invalidates the claim.
 
 Missing key material is failure, not compatibility evidence. If the crypto backend is
 unavailable, structural checks may pass in degraded mode, but the compatibility mark MUST
-be suppressed. Key discovery, custody, rotation, revocation, transport security, and
+be suppressed outside the TCK's explicit case-local unavailable-backend probe. That probe
+tests truthful unavailable behavior and does not weaken normal authenticated verification.
+Key discovery, custody, rotation, revocation, transport security, and
 identity issuance are outside this profile. When CAPNEG is used, its selected AICP profile
 and crypto profile must satisfy these exact requirements; CAPNEG is not itself a static
 dependency of this profile.
@@ -356,8 +358,9 @@ A **conformance badge** is a profile-level compatibility mark issued when all re
 Repository-owned profile runner results are internal conformance evidence. They do not prove
 an independent implementation. An ordinary external product-profile mark additionally
 requires an eligible full-profile external-IUT report. The current external runner targets
-only Base and Authenticated Base; the authenticated target remains mark-ineligible because
-its mandatory degraded probe records a skipped crypto check.
+only Base and Authenticated Base. Both marks are reachable for complete eligible external
+implementations; the repository currently contains no independent external evidence for
+either profile.
 
 Normative rules:
 - Badge computation MUST be derived from machine-readable conformance reports.

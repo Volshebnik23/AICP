@@ -14,7 +14,7 @@ Refresh the structured status and all generated sections with
 `python scripts/repo_truth.py --write`; `scripts/validate_planning_docs.py` compares tracked
 generated content byte-for-byte with the machine companion.
 
-Recomputed on 2026-07-25 from repository catalogs and the commands listed in
+Recomputed on 2026-07-27 from repository catalogs and the commands listed in
 [Verification basis](#verification-basis). “Shipped” below means present in the repository;
 it does not mean externally adopted, independently interoperable, certified, or production
 mature.
@@ -43,7 +43,7 @@ mature.
 | Version / release phase | `0.1.0-rc.1` / `release-candidate-with-unreleased-post-rc-changes` | `VERSION`, `repo_truth_status.json` |
 | Registered profiles | 15 (4 stable, 11 experimental) | `registry/aicp_profiles.json` |
 | External-IUT targets | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | `conformance/iut/cases.json` |
-| Ordinary external marks currently reachable | 1: `AICP-BASE@0.1` | profile catalogs and IUT cases |
+| Ordinary external marks currently reachable | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | profile catalogs and IUT cases |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
 | Eligible external submissions | 0 | public interop eligibility result plus profile computed marks |
 | Rejected/ineligible real packages | 0 | `interop/interop_matrix.json` |
@@ -59,7 +59,7 @@ mature.
 | ID | Status | Title | Owning document |
 |---|---|---|---|
 | M58 | shipped | Repo-Truth Rebaseline | `ROADMAP.md` |
-| M59 | planned | Authenticated Base Evidence Reachability | `AICP_Backlog` |
+| M59 | shipped | Authenticated Base Evidence Reachability | `ROADMAP.md` |
 | M60 | planned | Exact Contract Agreement Core | `AICP_Backlog` |
 | M61 | planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
 | M62 | planned | Generalized External Evidence Framework | `AICP_Backlog` |
@@ -76,7 +76,7 @@ mature.
 
 | Surface | Repository truth | Independent-evidence boundary | Planned gap |
 |---|---|---|---|
-| Profiles | 15 shipped catalogs; maturity is 4 stable / 11 experimental | 0 externally demonstrated profiles | M59, M62, M63, M70 |
+| Profiles | 15 shipped catalogs; maturity is 4 stable / 11 experimental | 0 externally demonstrated profiles | M62, M63, M70 |
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and expected profile `computed_marks` count | M70 |
 | Pairwise | publication=false, demonstrated=false | A valid eligible joint-execution result is required | M66 |
 | Bindings | 24 static cases; 0 live paths | Static cases do not prove live independent interoperability | M64 |
@@ -88,8 +88,9 @@ mature.
 
 ## Known discrepancies and routed work
 
-1. **Authenticated evidence reachability:** the required degraded probe suppresses the
-   authenticated ordinary mark. Routed to M59.
+1. **Authenticated evidence boundary:** M59 makes the ordinary Authenticated Base mark
+   reachable through explicit case-local accounting. No real eligible external submission
+   currently demonstrates that profile.
 2. **Exact contract agreement:** Core allows optional `contract_ref`, but the repository has
    no dedicated exact contract-version/hash agreement claim or suite. Any semantic design is
    deferred to M60.

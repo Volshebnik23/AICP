@@ -29,7 +29,10 @@ for import_path in (IUT_DIR, RUNNER_DIR):
 
 from _runner_context import build_validator as build_local_validator  # noqa: E402
 from _runner_provenance import canonical_content_digest, sha256_file  # noqa: E402
-from aicp_iut_catalog import mandatory_case_ids  # noqa: E402
+from aicp_iut_catalog import (  # noqa: E402
+    expected_execution_observation,
+    mandatory_case_ids,
+)
 RESERVED_DIRS = {"examples", "templates"}
 INTEGRITY_FILENAME = "bundle-integrity.json"
 INTEGRITY_MANIFEST_VERSION = "1.0"
@@ -575,6 +578,8 @@ def _eligible_external_profile_report(
         errors.append("report must have passed=true")
     if report.get("degraded") is not False:
         errors.append("report must have degraded=false")
+    if report.get("degraded_reasons") != []:
+        errors.append("report must not contain degraded reasons")
     if report.get("skipped_checks") not in ([], None):
         errors.append("report must not contain skipped checks")
     if report.get("failures") != []:
@@ -671,6 +676,37 @@ def _eligible_external_profile_report(
         )
     if isinstance(case_results, list) and any(item.get("passed") is not True for item in case_results if isinstance(item, dict)):
         errors.append("every mandatory IUT case result must have passed=true")
+
+    consumer_cases = {
+        str(item["case_id"]): item
+        for item in profile_config["full_profile"]["consumer_cases"]
+        if isinstance(item, dict) and isinstance(item.get("case_id"), str)
+    }
+    if isinstance(case_results, list):
+        for result in case_results:
+            if not isinstance(result, dict):
+                continue
+            case_id = result.get("case_id")
+            observation = result.get("execution_observation")
+            if case_id not in consumer_cases:
+                if "execution_observation" in result:
+                    errors.append(
+                        f"execution observation is attached to non-consumer case {case_id}"
+                    )
+                continue
+            if not isinstance(observation, dict):
+                errors.append(
+                    f"consumer case {case_id} is missing its execution observation"
+                )
+                continue
+            expected_observation = expected_execution_observation(
+                consumer_cases[str(case_id)]
+            )
+            if observation != expected_observation:
+                errors.append(
+                    f"consumer case {case_id} execution observation does not exactly "
+                    "match the registered TCK expectation"
+                )
 
     expected_mark = profile_config.get("expected_mark")
     computed_marks = [expected_mark] if not errors and isinstance(expected_mark, str) else []

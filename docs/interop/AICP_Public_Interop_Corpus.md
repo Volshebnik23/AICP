@@ -73,14 +73,17 @@ For real `reproducible` implementation/compatibility claims, at least one report
 schema-valid `full-profile` external-IUT v1 report. The validator independently checks the
 manifest subject, registered TCK release, complete mandatory case set, suite/profile and
 every required fixture/vector digest, generated artifacts, non-degraded/no-skip state, and
-the exact recomputed mark list. Smoke, legacy, and `reference_corpus` reports are migration
+the exact registered per-consumer execution observations and recomputed mark list. Smoke,
+legacy, and `reference_corpus` reports are migration
 errors for strong external evidence, not proof of an external product.
 Strong `implements_profile` and `compatible_with_profile` claims also require
 `evidence_status=reproducible`; `self_attested` cannot bypass this rule.
 
 The current full-profile runner targets only `AICP-BASE@0.1` and experimental
-`AICP-AUTHENTICATED-BASE@0.1`. The authenticated target’s mandatory degraded probe suppresses
-its ordinary mark, so Base is the only currently reachable ordinary external profile mark.
+`AICP-AUTHENTICATED-BASE@0.1`. Both ordinary marks are reachable for complete eligible
+external implementations. The authenticated unavailable-crypto probe remains mandatory,
+but its exact simulated result is case-local; any actual degradation elsewhere suppresses
+eligibility. No real eligible external submission is currently present.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 

@@ -37,7 +37,7 @@
     "stable": 4,
     "experimental": 11,
     "external_iut_targets": 2,
-    "ordinary_external_mark_reachable_targets": 1,
+    "ordinary_external_mark_reachable_targets": 2,
     "externally_demonstrated": 0
   },
   "profiles": [
@@ -72,7 +72,7 @@
       "internal_report_output": "conformance/report_profile_authenticated_base.json",
       "tracked_report_present": true,
       "external_iut_target": true,
-      "external_mark_status": "blocked_by_mandatory_degraded_probe",
+      "external_mark_status": "reachable_for_eligible_external_implementation",
       "live_binding_tested": false,
       "independent_external_evidence": false,
       "repository_availability": "shipped",
@@ -3716,8 +3716,8 @@
     {
       "id": "M59",
       "title": "Authenticated Base Evidence Reachability",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M60",

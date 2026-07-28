@@ -20,7 +20,13 @@ for path in (IUT_DIR, RUNNER_DIR, SCRIPTS_DIR, INTEROP_TOOLS_DIR):
 
 from _runner_context import build_validator, load_json  # noqa: E402
 from aicp_conformance_runner import run_suite  # noqa: E402
-from aicp_iut_catalog import CASES_PATH, mandatory_case_ids, validate_catalog_coverage  # noqa: E402
+from aicp_iut_catalog import (  # noqa: E402
+    CASES_PATH,
+    expected_execution_observation,
+    mandatory_case_ids,
+    validate_catalog_coverage,
+    validate_execution_accounting,
+)
 from aicp_iut_runner import (  # noqa: E402
     IUTProtocolError,
     build_execution_plan,
@@ -33,7 +39,11 @@ from interop_submission_validation import (  # noqa: E402
     STRONG_PROFILE_CLAIM_EVIDENCE_ERROR,
     _validate_strong_report_evidence,
 )
-from generate_iut_tck_release_registry import build_registry  # noqa: E402
+from generate_iut_tck_release_registry import (  # noqa: E402
+    FROZEN_RELEASE_DIGESTS,
+    _release_digest,
+    build_registry,
+)
 
 
 def _cmd(*parts: str) -> list[str]:
@@ -69,6 +79,62 @@ def test_full_profile_catalog_counts_are_derived_and_complete() -> None:
     assert validate_catalog_coverage(catalog, "AICP-AUTHENTICATED-BASE@0.1") == []
     assert len(mandatory_case_ids(catalog, "AICP-BASE@0.1", "full-profile")) == 21
     assert len(mandatory_case_ids(catalog, "AICP-AUTHENTICATED-BASE@0.1", "full-profile")) == 37
+    assert catalog["tck_release_id"] == "AICP-IUT-TCK-1.1.0"
+    probe = next(
+        item
+        for item in catalog["profiles"]["AICP-AUTHENTICATED-BASE@0.1"][
+            "full_profile"
+        ]["consumer_cases"]
+        if item["case_id"] == "AUTH-CRYPTO-UNAVAILABLE"
+    )
+    assert expected_execution_observation(probe) == {
+        "scope": "case_local_expected",
+        "accepted": True,
+        "degraded": True,
+        "degraded_reasons": [
+            "Ed25519 verification backend unavailable for requested test mode"
+        ],
+        "skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"],
+    }
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_error"),
+    [
+        (
+            lambda case: case["expected_execution_observation"].pop("scope"),
+            "fields must be exactly",
+        ),
+        (
+            lambda case: case["expected_execution_observation"].update(
+                {"scope": "run_level"}
+            ),
+            "unsupported execution accounting scope",
+        ),
+        (
+            lambda case: case.update({"expected_degraded": True}),
+            "legacy execution expectation fields",
+        ),
+        (
+            lambda case: case.pop("expected_execution_observation"),
+            "requires an explicit expected_execution_observation scope",
+        ),
+    ],
+)
+def test_catalog_rejects_ambiguous_case_accounting(
+    mutation, expected_error: str
+) -> None:
+    catalog = json.loads(CASES_PATH.read_text(encoding="utf-8"))
+    probe = next(
+        item
+        for item in catalog["profiles"]["AICP-AUTHENTICATED-BASE@0.1"][
+            "full_profile"
+        ]["consumer_cases"]
+        if item["case_id"] == "AUTH-CRYPTO-UNAVAILABLE"
+    )
+    mutation(probe)
+    errors = validate_execution_accounting(probe)
+    assert any(expected_error in error for error in errors)
 
 
 @pytest.mark.parametrize("profile", ["AICP-BASE@0.1", "AICP-AUTHENTICATED-BASE@0.1"])
@@ -87,9 +153,26 @@ def test_full_profile_marks_require_external_complete_coverage(
     assert len(external_base_report["case_results"]) == 21
     assert external_base_report["compatibility_marks"] == ["AICP-Profile-BASE-0.1"]
     assert len(external_auth_report["case_results"]) == 37
-    assert external_auth_report["degraded"] is True
-    assert external_auth_report["skipped_checks"] == ["AUTH-SIGNATURE-VERIFY-01"]
-    assert external_auth_report["compatibility_marks"] == []
+    assert external_auth_report["degraded"] is False
+    assert external_auth_report["degraded_reasons"] == []
+    assert external_auth_report["skipped_checks"] == []
+    assert external_auth_report["compatibility_marks"] == [
+        "AICP-Profile-AUTHENTICATED-BASE-0.1"
+    ]
+    probe = next(
+        item
+        for item in external_auth_report["case_results"]
+        if item["case_id"] == "AUTH-CRYPTO-UNAVAILABLE"
+    )
+    assert probe["execution_observation"] == {
+        "scope": "case_local_expected",
+        "accepted": True,
+        "degraded": True,
+        "degraded_reasons": [
+            "Ed25519 verification backend unavailable for requested test mode"
+        ],
+        "skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"],
+    }
     reference = run_iut(
         _cmd(str(IUT_DIR / "reference_adapter.py")),
         "AICP-BASE@0.1",
@@ -98,6 +181,112 @@ def test_full_profile_marks_require_external_complete_coverage(
     assert reference["passed"] is True
     assert reference["execution_subject"]["kind"] == "reference_corpus"
     assert reference["compatibility_marks"] == []
+
+
+@pytest.mark.parametrize(
+    "fixture_name", ["external_base_report", "external_auth_report"]
+)
+def test_every_consumer_case_has_one_structured_observation(
+    fixture_name: str, request: pytest.FixtureRequest
+) -> None:
+    report = request.getfixturevalue(fixture_name)
+    catalog = json.loads(CASES_PATH.read_text(encoding="utf-8"))
+    target = (
+        f"{report['profile']['profile_id']}@{report['profile']['profile_version']}"
+    )
+    consumer_ids = {
+        item["case_id"]
+        for item in catalog["profiles"][target]["full_profile"]["consumer_cases"]
+    }
+    observed_ids = {
+        item["case_id"]
+        for item in report["case_results"]
+        if "execution_observation" in item
+    }
+    assert observed_ids == consumer_ids
+    for result in report["case_results"]:
+        if result["case_id"] in consumer_ids:
+            assert set(result["execution_observation"]) == {
+                "scope",
+                "accepted",
+                "degraded",
+                "degraded_reasons",
+                "skipped_checks",
+            }
+        else:
+            assert "execution_observation" not in result
+
+
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "crypto_probe_not_degraded",
+        "crypto_probe_missing_reason",
+        "crypto_probe_wrong_reason",
+        "crypto_probe_missing_skip",
+        "crypto_probe_extra_skip",
+        "normal_auth_crypto_unavailable",
+        "authenticated_producer_crypto_unavailable",
+    ],
+)
+def test_authenticated_accounting_fakes_fail_without_marks(mode: str) -> None:
+    report = run_iut(
+        _fake(mode),
+        "AICP-AUTHENTICATED-BASE@0.1",
+        mode="full-profile",
+        timeout_seconds=60,
+    )
+    assert report["passed"] is False
+    assert report["compatibility_marks"] == []
+    if mode.startswith("crypto_probe_"):
+        probe = next(
+            item
+            for item in report["case_results"]
+            if item["case_id"] == "AUTH-CRYPTO-UNAVAILABLE"
+        )
+        assert probe["passed"] is False
+        assert report["degraded"] is False
+        assert report["degraded_reasons"] == []
+        assert report["skipped_checks"] == []
+    if mode == "normal_auth_crypto_unavailable":
+        assert report["degraded"] is True
+        assert report["skipped_checks"] == ["AUTH-SIGNATURE-VERIFY-01"]
+
+
+def test_explicit_good_probe_fake_mode_is_mark_eligible() -> None:
+    report = run_iut(
+        _fake("crypto_probe_good"),
+        "AICP-AUTHENTICATED-BASE@0.1",
+        mode="full-profile",
+        timeout_seconds=60,
+    )
+    assert report["passed"] is True
+    assert report["degraded"] is False
+    assert report["skipped_checks"] == []
+    assert report["compatibility_marks"] == [
+        "AICP-Profile-AUTHENTICATED-BASE-0.1"
+    ]
+
+
+def test_actual_runner_crypto_unavailability_fails_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from aicp_ref import signatures
+
+    monkeypatch.setattr(signatures, "Ed25519PublicKey", None)
+    report = run_iut(
+        _fake("external_good"),
+        "AICP-AUTHENTICATED-BASE@0.1",
+        mode="full-profile",
+        timeout_seconds=60,
+    )
+    assert report["passed"] is False
+    assert report["compatibility_marks"] == []
+    assert any(
+        "validation was degraded" in failure["message"]
+        or "verification unavailable" in failure["message"]
+        for failure in report["failures"]
+    )
 
 
 @pytest.mark.parametrize(
@@ -232,6 +421,137 @@ def test_complete_external_report_is_schema_and_eligibility_valid(
     assert _validate_report(tmp_path, external_base_report) == []
 
 
+def test_complete_authenticated_external_report_is_strong_evidence_eligible(
+    tmp_path: Path, external_auth_report: dict
+) -> None:
+    schema_path = IUT_DIR / "iut_report_v1.schema.json"
+    validator = build_validator(load_json(schema_path), schema_path)
+    assert validator is not None
+    validator.validate(external_auth_report)
+    assert _validate_report(tmp_path, external_auth_report) == []
+
+
+@pytest.mark.parametrize(
+    ("name", "mutate"),
+    [
+        (
+            "missing_probe_observation",
+            lambda report, probe: probe.pop("execution_observation"),
+        ),
+        (
+            "wrong_observation_scope",
+            lambda report, probe: probe["execution_observation"].update(
+                {"scope": "normal"}
+            ),
+        ),
+        (
+            "wrong_probe_degraded",
+            lambda report, probe: probe["execution_observation"].update(
+                {"degraded": False}
+            ),
+        ),
+        (
+            "wrong_probe_accepted",
+            lambda report, probe: probe["execution_observation"].update(
+                {"accepted": False}
+            ),
+        ),
+        (
+            "wrong_probe_reason",
+            lambda report, probe: probe["execution_observation"].update(
+                {"degraded_reasons": ["wrong reason"]}
+            ),
+        ),
+        (
+            "missing_probe_skip",
+            lambda report, probe: probe["execution_observation"].update(
+                {"skipped_checks": []}
+            ),
+        ),
+        (
+            "additional_probe_skip",
+            lambda report, probe: probe["execution_observation"].update(
+                {
+                    "skipped_checks": [
+                        "AUTH-SIGNATURE-VERIFY-01",
+                        "AUTH-UNEXPECTED-SKIP",
+                    ]
+                }
+            ),
+        ),
+        (
+            "observation_on_wrong_case",
+            lambda report, probe: report["case_results"][0].update(
+                {
+                    "execution_observation": {
+                        "scope": "normal",
+                        "accepted": True,
+                        "degraded": False,
+                        "degraded_reasons": [],
+                        "skipped_checks": [],
+                    }
+                }
+            ),
+        ),
+        (
+            "probe_copied_to_top_level",
+            lambda report, probe: report.update(
+                {
+                    "degraded": True,
+                    "degraded_reasons": list(
+                        probe["execution_observation"]["degraded_reasons"]
+                    ),
+                    "skipped_checks": list(
+                        probe["execution_observation"]["skipped_checks"]
+                    ),
+                }
+            ),
+        ),
+        (
+            "malformed_probe_skip_type",
+            lambda report, probe: probe["execution_observation"].update(
+                {"skipped_checks": "AUTH-SIGNATURE-VERIFY-01"}
+            ),
+        ),
+        (
+            "unexpected_probe_field",
+            lambda report, probe: probe["execution_observation"].update(
+                {"unregistered": True}
+            ),
+        ),
+        (
+            "modified_normal_observation",
+            lambda report, probe: next(
+                item
+                for item in report["case_results"]
+                if item.get("execution_observation", {}).get("scope") == "normal"
+            )["execution_observation"].update(
+                {
+                    "degraded": True,
+                    "degraded_reasons": ["forged"],
+                    "skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"],
+                }
+            ),
+        ),
+    ],
+)
+def test_strong_evidence_rejects_forged_authenticated_observations(
+    tmp_path: Path,
+    external_auth_report: dict,
+    name: str,
+    mutate,
+) -> None:
+    candidate = copy.deepcopy(external_auth_report)
+    probe = next(
+        item
+        for item in candidate["case_results"]
+        if item["case_id"] == "AUTH-CRYPTO-UNAVAILABLE"
+    )
+    mutate(candidate, probe)
+    errors = _validate_report(tmp_path, candidate)
+    assert errors, name
+
+
 def test_strong_evidence_rejects_incomplete_coverage_and_forged_provenance(
     tmp_path: Path, external_base_report: dict
 ) -> None:
@@ -342,10 +662,18 @@ def test_matrix_computes_only_independently_eligible_marks(
         assert any(item["error_code"] == "STRONG_EVIDENCE_INELIGIBLE" for item in entries[name]["errors"])
 
 
-def test_generated_tck_registry_is_exact_and_all_artifacts_recompute() -> None:
+def test_generated_tck_registry_preserves_1_0_and_recomputes_current_release() -> None:
     committed = json.loads((IUT_DIR / "tck_releases.json").read_text(encoding="utf-8"))
     assert committed == build_registry()
-    release = committed["releases"][0]
+    assert [release["release_id"] for release in committed["releases"]] == [
+        "AICP-IUT-TCK-1.0.0",
+        "AICP-IUT-TCK-1.1.0",
+    ]
+    historical = committed["releases"][0]
+    assert _release_digest(historical) == FROZEN_RELEASE_DIGESTS[
+        "AICP-IUT-TCK-1.0.0"
+    ]
+    release = committed["releases"][1]
     for record in [release["case_catalog"]]:
         assert (ROOT / record["path"]).is_file()
     for path in release["runner_bundle"]["paths"]:

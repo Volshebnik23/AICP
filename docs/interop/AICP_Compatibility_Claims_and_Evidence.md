@@ -94,6 +94,13 @@ repository's canonical artifacts but cannot substantiate an external implementat
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
 IUT smoke reports are likewise diagnostic-only and cannot substantiate a real profile claim.
 
+For current TCK reports, every consumer case carries a schema-bound execution observation.
+The validator independently compares its accounting scope, accepted result, degraded
+state, exact reasons, and exact skipped checks with the registered case catalog. The
+Authenticated Base unavailable-crypto probe is the sole current
+`case_local_expected` degraded observation; actual run-level degradation remains
+ineligible.
+
 ## Badges, marks, and endorsement boundaries
 
 AICP compatibility evidence is evidence-first, not slogan-first.

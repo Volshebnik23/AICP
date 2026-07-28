@@ -1,8 +1,8 @@
 {
   "adapter_protocol_version": "1.1",
   "suite_id": "AICP-IUT-TCK",
-  "suite_version": "1.0.0-experimental",
-  "tck_release_id": "AICP-IUT-TCK-1.0.0",
+  "suite_version": "1.1.0-experimental",
+  "tck_release_id": "AICP-IUT-TCK-1.1.0",
   "canonicalization_vectors": [
     "conformance/vectors/unicode_codepoint_key_order.json"
   ],
@@ -241,7 +241,7 @@
           {"case_id": "AUTH-AB-12", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-12", "fixture": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl", "accepted": false},
           {"case_id": "AUTH-AB-13", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-13", "fixture": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl", "accepted": false},
           {"case_id": "AUTH-AB-14", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-14", "fixture": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl", "accepted": false},
-          {"case_id": "AUTH-CRYPTO-UNAVAILABLE", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-01", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true, "expected_degraded": true, "expected_degraded_reasons": ["Ed25519 verification backend unavailable for requested test mode"], "expected_skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"], "runtime_options": {"cryptographic_verification": "unavailable"}, "additional": true}
+          {"case_id": "AUTH-CRYPTO-UNAVAILABLE", "suite_ref": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json", "suite_case_id": "AB-01", "fixture": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl", "accepted": true, "expected_execution_observation": {"scope": "case_local_expected", "degraded": true, "degraded_reasons": ["Ed25519 verification backend unavailable for requested test mode"], "skipped_checks": ["AUTH-SIGNATURE-VERIFY-01"]}, "runtime_options": {"cryptographic_verification": "unavailable"}, "additional": true}
         ]
       }
     }

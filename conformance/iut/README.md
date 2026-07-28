@@ -42,7 +42,7 @@ The registered TCK release currently requires:
   six neutral producer scenarios covering every positive Core message family.
 - `AICP-AUTHENTICATED-BASE@0.1`: **37 mandatory cases**, comprising full Core coverage,
   every authenticated-message fixture, six authenticated producer scenarios, and the
-  unavailable-crypto degraded-behavior probe.
+  unavailable-crypto behavior probe.
 
 A full product-profile mark is emitted only for a complete, passed, non-degraded
 `external_implementation` execution with no skipped checks and exact registered TCK,
@@ -50,16 +50,25 @@ profile, suite, fixture/vector, runner-bundle, and generated-artifact digests. T
 adapter always reports `execution_subject.kind=reference_corpus` and therefore receives no
 external implementation profile mark, even when every functional case passes.
 
-The authenticated catalog's required unavailable-crypto probe intentionally reports the
-expected `AUTH-SIGNATURE-VERIFY-01` skip. The runner records that skip and therefore the
-current 37-case authenticated full-profile report is behavioral evidence but does not emit
-an ordinary product-profile mark. This is fail-closed until the catalog can model such a
-probe without claiming that its mandatory crypto check actually ran.
+The authenticated catalog's required `AUTH-CRYPTO-UNAVAILABLE` case deliberately asks the
+adapter to simulate an unavailable backend. Its exact degraded reason and
+`AUTH-SIGNATURE-VERIFY-01` skip are a `case_local_expected` observation: matching them makes
+that case pass but does not mark the TCK run degraded and does not claim that the simulated
+check ran. Every normal authenticated case still requires complete Ed25519 verification.
+Any unavailable backend, degraded response, or skipped check outside that explicit probe
+fails the case and suppresses the profile mark.
 
 Every consumer result must explicitly contain boolean `accepted`/`degraded` fields and
 array `errors`, `degraded_reasons`, and `skipped_checks` fields. Missing or contradictory
 fields fail closed. Any adapter-reported mandatory skip is recorded and suppresses eligibility,
-including when an adapter incorrectly declares `degraded=false`.
+including when an adapter incorrectly declares `degraded=false`, unless it exactly matches
+the registered case-local probe expectation described above.
+
+Runner-generated reports record each consumer response under
+`case_results[].execution_observation` with an explicit `scope`, `accepted`, `degraded`,
+`degraded_reasons`, and `skipped_checks`. The strong-evidence validator independently
+compares those values to the registered case catalog; a passed string or raw mark is not
+sufficient.
 
 `full-profile` cannot be combined with `--include-session-state-projection`. A product
 profile report covers one exact profile target; strict projection evidence must currently
@@ -80,8 +89,17 @@ python conformance/iut/aicp_iut_runner.py \
   --profile AICP-BASE@0.1 \
   --mode full-profile \
   --out out/iut-base-full.json
+
+python conformance/iut/aicp_iut_runner.py \
+  --cmd-json '["/path/to/external-adapter","--tck"]' \
+  --profile AICP-AUTHENTICATED-BASE@0.1 \
+  --mode full-profile \
+  --out out/iut-authenticated-base-full.json
 ```
 
+The current experimental release is `AICP-IUT-TCK-1.1.0`.
+`AICP-IUT-TCK-1.0.0` remains frozen as historical metadata; no real external submission in
+the repository depended on its superseded authenticated eligibility accounting.
 `tck_releases.json` is a repository-owned release registry, not a certification authority.
 An internally consistent report remains self-attested unless separately signed,
 independently reproduced, and reviewed. Digests establish artifact consistency; they do not
