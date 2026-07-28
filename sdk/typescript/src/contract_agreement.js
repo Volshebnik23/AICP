@@ -136,8 +136,10 @@ function tupleKey(accepted, proposal, reference) {
 }
 
 class Machine {
-  constructor(messages) {
+  constructor(messages, invalidIndices = []) {
     this.messages = messages;
+    this.invalidIndices = new Set(invalidIndices);
+    this.identityInitialized = false;
     this.state = {
       state: "NO_ACTIVE_CONTRACT",
       session_id: null,
@@ -167,17 +169,22 @@ class Machine {
   }
 
   identity(message, index) {
-    if (index === 0) {
+    if (!this.identityInitialized) {
       this.state.session_id = typeof message.session_id === "string" ? message.session_id : null;
       this.state.contract_id = typeof message.contract_id === "string" ? message.contract_id : null;
-      return;
+      this.identityInitialized = true;
+      return true;
     }
+    let valid = true;
     if (message.session_id !== this.state.session_id) {
       this.issue(AGREEMENT_STATE, "session_id changed within Core v0.2 transcript", index);
+      valid = false;
     }
     if (message.contract_id !== this.state.contract_id) {
       this.issue(CONTRACT_ID, "contract_id changed within Core v0.2 transcript", index);
+      valid = false;
     }
+    return valid;
   }
 
   validReference(reference, index, code = CONTRACT_REF) {
@@ -456,17 +463,23 @@ class Machine {
       ERROR: (message, index) => this.error(message, index),
     };
     this.messages.forEach((message, index) => {
-      this.identity(message, index);
+      if (this.invalidIndices.has(index) && !this.identityInitialized) return;
+      const identityValid = this.identity(message, index);
+      if (!identityValid || this.invalidIndices.has(index)) return;
       handlers[message.message_type]?.(message, index);
     });
     return this.state;
   }
 }
 
-export function reduceTranscript(messages) {
-  return new Machine(messages).process();
+/**
+ * @param {Array<Record<string, unknown>>} messages
+ * @param {{invalidIndices?: Iterable<number>}} [options]
+ */
+export function reduceTranscript(messages, { invalidIndices = [] } = {}) {
+  return new Machine(messages, invalidIndices).process();
 }
 
-export function semanticIssueIds(messages) {
-  return [...new Set(reduceTranscript(messages).issues.map((issue) => issue.code))].sort();
+export function semanticIssueIds(messages, options = {}) {
+  return [...new Set(reduceTranscript(messages, options).issues.map((issue) => issue.code))].sort();
 }

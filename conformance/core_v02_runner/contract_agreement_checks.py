@@ -31,13 +31,16 @@ def run_contract_agreement_checks(
     rel_file: str,
     failures: list[dict[str, Any]],
     contract_validator: Any | None,
+    invalid_indices: set[int] | None = None,
 ) -> AgreementState:
+    transition_blocked = set(invalid_indices or ())
     if CONTRACT_SCHEMA in enabled_checks:
-        for line_no, message in rows:
+        for index, (line_no, message) in enumerate(rows):
             if message.get("message_type") != "CONTRACT_PROPOSE":
                 continue
             contract = (message.get("payload") or {}).get("contract")
             if not isinstance(contract, dict):
+                transition_blocked.add(index)
                 _add_failure(
                     failures,
                     CONTRACT_SCHEMA,
@@ -47,10 +50,13 @@ def run_contract_agreement_checks(
                 )
                 continue
             if contract_validator is not None:
-                for error in sorted(
+                errors = sorted(
                     contract_validator.iter_errors(contract),
                     key=lambda issue: list(issue.path),
-                ):
+                )
+                if errors:
+                    transition_blocked.add(index)
+                for error in errors:
                     _add_failure(
                         failures,
                         CONTRACT_SCHEMA,
@@ -60,7 +66,7 @@ def run_contract_agreement_checks(
                     )
 
     messages = [message for _, message in rows]
-    state = reduce_transcript(messages)
+    state = reduce_transcript(messages, transition_blocked)
     for issue in state.issues:
         if issue.code not in enabled_checks:
             continue
@@ -93,6 +99,61 @@ def run_contract_agreement_checks(
                     rel_file,
                     None,
                 )
+        expected_proposal_ids = transcript.get("expected_proposal_ids")
+        if (
+            isinstance(expected_proposal_ids, list)
+            and sorted(state.proposals) != expected_proposal_ids
+        ):
+            _add_failure(
+                failures,
+                AGREEMENT_STATE,
+                (
+                    "final proposal IDs mismatch "
+                    f"(expected {expected_proposal_ids}, got {sorted(state.proposals)})"
+                ),
+                rel_file,
+                None,
+            )
+        if "expected_selected_conflict_result" in transcript:
+            expected_selection = transcript.get("expected_selected_conflict_result")
+            if state.selected_conflict_result != expected_selection:
+                _add_failure(
+                    failures,
+                    AGREEMENT_STATE,
+                    "final selected conflict result does not match expectation",
+                    rel_file,
+                    None,
+                )
+        expected_accepted = transcript.get("expected_accepted_tuple_count")
+        if (
+            isinstance(expected_accepted, int)
+            and len(state.acceptance_tuples) != expected_accepted
+        ):
+            _add_failure(
+                failures,
+                AGREEMENT_STATE,
+                (
+                    "accepted tuple count mismatch "
+                    f"(expected {expected_accepted}, got {len(state.acceptance_tuples)})"
+                ),
+                rel_file,
+                None,
+            )
+        expected_rejected = transcript.get("expected_rejected_tuple_count")
+        if (
+            isinstance(expected_rejected, int)
+            and len(state.rejected_tuples) != expected_rejected
+        ):
+            _add_failure(
+                failures,
+                AGREEMENT_STATE,
+                (
+                    "rejected tuple count mismatch "
+                    f"(expected {expected_rejected}, got {len(state.rejected_tuples)})"
+                ),
+                rel_file,
+                None,
+            )
 
     return state
 

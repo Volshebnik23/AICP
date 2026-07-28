@@ -78,13 +78,15 @@ def test_core_v02_suite_has_exact_fixture_totals_and_marks() -> None:
     suite = _load_json("conformance/core/CT_CORE_0.2.json")
     positives = [item for item in suite["transcripts"] if item.get("expect_pass", True)]
     negatives = [item for item in suite["transcripts"] if not item.get("expect_pass", True)]
-    assert len(positives) == 8
-    assert len(negatives) == 30
+    assert len(positives) == 9
+    assert len(negatives) == 41
 
     report = run_v02_suite(suite_path)
     assert report["passed"] is True
     assert report["failures"] == []
     assert report["degraded"] is False
+    assert report["degraded_reasons"] == []
+    assert report["skipped_checks"] == []
     assert report["compatibility_marks"] == ["AICP-Core-0.2"]
 
 
@@ -92,10 +94,47 @@ def test_base_v02_profile_has_only_internal_core_and_profile_marks() -> None:
     report = run_v02_profile(ROOT / "conformance/profiles/PF_AICP_BASE_0.2.json")
     assert report["aicp_version"] == "0.2"
     assert report["passed"] is True
+    assert report["degraded"] is False
+    assert report["degraded_reasons"] == []
+    assert report["skipped_checks"] == []
     assert report["compatibility_marks"] == [
         "AICP-Profile-BASE-0.2",
         "AICP-Core-0.2",
     ]
+
+
+def test_core_v02_suite_and_profile_report_shapes_expose_eligibility_truth() -> None:
+    suite_report = run_v02_suite(
+        ROOT / "conformance/core/CT_CORE_0.2.json"
+    )
+    assert set(suite_report) == {
+        "aicp_version",
+        "suite_id",
+        "suite_version",
+        "timestamp",
+        "passed",
+        "failures",
+        "compatibility_marks",
+        "degraded",
+        "degraded_reasons",
+        "skipped_checks",
+    }
+    profile_report = run_v02_profile(
+        ROOT / "conformance/profiles/PF_AICP_BASE_0.2.json"
+    )
+    assert set(profile_report) == {
+        "aicp_version",
+        "profile_id",
+        "profile_version",
+        "timestamp",
+        "passed",
+        "suite_reports",
+        "failures",
+        "compatibility_marks",
+        "degraded",
+        "degraded_reasons",
+        "skipped_checks",
+    }
 
 
 def test_cross_language_vectors_cover_all_state_transitions_and_failures() -> None:
@@ -107,14 +146,44 @@ def test_cross_language_vectors_cover_all_state_transitions_and_failures() -> No
     assert validate_contract_reference(vectors["contract_ref"]) == []
 
     for vector in vectors["positive"]:
-        state = reduce_transcript(_load_jsonl(vector["path"]))
+        state = reduce_transcript(
+            _load_jsonl(vector["path"]),
+            vector["invalid_message_indices"],
+        )
         assert state.issues == [], vector["path"]
         assert state.state == vector["expected_state"], vector["path"]
         assert state.active_head == vector["expected_active_head"], vector["path"]
+        assert sorted(state.proposals) == vector["expected_proposal_ids"], vector["path"]
+        assert (
+            state.selected_conflict_result
+            == vector["expected_selected_conflict_result"]
+        ), vector["path"]
+        assert len(state.acceptance_tuples) == vector[
+            "expected_accepted_tuple_count"
+        ], vector["path"]
+        assert len(state.rejected_tuples) == vector[
+            "expected_rejected_tuple_count"
+        ], vector["path"]
 
     for vector in vectors["negative"]:
-        assert semantic_issue_ids(_load_jsonl(vector["path"])) == vector[
+        messages = _load_jsonl(vector["path"])
+        invalid_indices = vector["invalid_message_indices"]
+        assert semantic_issue_ids(messages, invalid_indices) == vector[
             "expected_semantic_issue_ids"
+        ], vector["path"]
+        state = reduce_transcript(messages, invalid_indices)
+        assert state.state == vector["expected_state"], vector["path"]
+        assert state.active_head == vector["expected_active_head"], vector["path"]
+        assert sorted(state.proposals) == vector["expected_proposal_ids"], vector["path"]
+        assert (
+            state.selected_conflict_result
+            == vector["expected_selected_conflict_result"]
+        ), vector["path"]
+        assert len(state.acceptance_tuples) == vector[
+            "expected_accepted_tuple_count"
+        ], vector["path"]
+        assert len(state.rejected_tuples) == vector[
+            "expected_rejected_tuple_count"
         ], vector["path"]
 
 
@@ -160,6 +229,26 @@ def test_invalid_conflict_does_not_advance_the_active_head() -> None:
         "head": initial_proposal["contract_ref"]["head"],
     }
     assert state.selected_conflict_result is None
+
+
+def test_runner_invalid_acceptance_index_cannot_activate_a_head() -> None:
+    vectors = _load_json(
+        "fixtures/core_v0_2/exact_contract_agreement/cross_language_vectors.json"
+    )
+    vector = next(
+        item
+        for item in vectors["negative"]
+        if item["path"].endswith(
+            "32_acceptance_invalid_message_hash_expected_fail.jsonl"
+        )
+    )
+    state = reduce_transcript(
+        _load_jsonl(vector["path"]),
+        vector["invalid_message_indices"],
+    )
+    assert state.state == "CANDIDATE_PROPOSED"
+    assert state.active_head is None
+    assert len(state.acceptance_tuples) == 0
 
 
 def test_core_v01_frozen_bytes_and_golden_transcripts_are_unchanged() -> None:

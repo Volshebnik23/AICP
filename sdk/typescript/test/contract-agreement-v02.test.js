@@ -40,19 +40,42 @@ test("Core v0.2 contract canonicalization, hash, and reference match shared vect
 
 test("Core v0.2 positive agreement transitions match Python vectors", () => {
   for (const vector of vectors.positive) {
-    const state = reduceTranscript(loadJsonl(vector.path));
+    const state = reduceTranscript(loadJsonl(vector.path), {
+      invalidIndices: vector.invalid_message_indices,
+    });
     assert.deepEqual(state.issues, [], vector.path);
     assert.equal(state.state, vector.expected_state, vector.path);
     assert.deepEqual(state.active_head, vector.expected_active_head, vector.path);
+    assert.deepEqual([...state.proposals.keys()].sort(), vector.expected_proposal_ids, vector.path);
+    assert.deepEqual(
+      state.selected_conflict_result,
+      vector.expected_selected_conflict_result,
+      vector.path,
+    );
+    assert.equal(state.acceptance_tuples.size, vector.expected_accepted_tuple_count, vector.path);
+    assert.equal(state.rejected_tuples.size, vector.expected_rejected_tuple_count, vector.path);
   }
 });
 
 test("Core v0.2 negative classifications match Python vectors", () => {
   for (const vector of vectors.negative) {
+    const messages = loadJsonl(vector.path);
+    const options = { invalidIndices: vector.invalid_message_indices };
     assert.deepEqual(
-      semanticIssueIds(loadJsonl(vector.path)),
+      semanticIssueIds(messages, options),
       vector.expected_semantic_issue_ids,
       vector.path,
     );
+    const state = reduceTranscript(messages, options);
+    assert.equal(state.state, vector.expected_state, vector.path);
+    assert.deepEqual(state.active_head, vector.expected_active_head, vector.path);
+    assert.deepEqual([...state.proposals.keys()].sort(), vector.expected_proposal_ids, vector.path);
+    assert.deepEqual(
+      state.selected_conflict_result,
+      vector.expected_selected_conflict_result,
+      vector.path,
+    );
+    assert.equal(state.acceptance_tuples.size, vector.expected_accepted_tuple_count, vector.path);
+    assert.equal(state.rejected_tuples.size, vector.expected_rejected_tuple_count, vector.path);
   }
 });

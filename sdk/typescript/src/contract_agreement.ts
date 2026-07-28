@@ -15,6 +15,10 @@ export type AgreementIssue = {
   index: number;
 };
 
+export type AgreementReductionOptions = {
+  invalidIndices?: Iterable<number>;
+};
+
 export {
   ACCEPT_BINDING,
   ACTIVE_HEAD,

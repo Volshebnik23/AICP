@@ -34,6 +34,12 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 - If `degraded == true` for any required suite, compatibility marks MUST NOT be awarded for the affected suite/profile.
 - Any skipped mandatory check suppresses eligibility even if the adapter declares `degraded=false`.
 - A report can be `passed=true` but still non-badge-eligible when critical checks are unavailable.
+- The Core v0.2 mark is eligible only when `passed=true`, `degraded=false`,
+  `degraded_reasons=[]`, and `skipped_checks=[]`. The Base 0.2 profile applies the same
+  rule to every required child suite, aggregates and deduplicates degradation/skipped
+  truth, and never synthesizes a missing child mark.
+- Missing JSON Schema or Ed25519 verification support makes the affected v0.2 run
+  non-badge-eligible. CLI output identifies a behavioral success as `PASSED (DEGRADED)`.
 
 ## How to verify
 

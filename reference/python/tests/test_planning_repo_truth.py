@@ -336,8 +336,10 @@ def test_baseline_rejects_changed_milestone_status() -> None:
 
 def test_baseline_rejects_stale_message_gap_count() -> None:
     baseline = _baseline().replace(
-        "132 entries; 17 missing positive fixtures",
-        "132 entries; 16 missing positive fixtures",
+        "6 Core IDs use version-selected payload schemas; "
+        "17 missing positive fixtures",
+        "6 Core IDs use version-selected payload schemas; "
+        "16 missing positive fixtures",
         1,
     )
     assert VALIDATOR._baseline_generated_errors(_status(), baseline)
@@ -380,6 +382,91 @@ def test_message_surface_has_all_132_entries() -> None:
     surface = _status()["message_surface"]
     assert len(surface["entries"]) == 132
     assert surface == VALIDATOR.derive_message_surface(ROOT)
+
+
+def test_six_core_messages_expose_version_selected_payload_schemas() -> None:
+    entries = _status()["message_surface"]["entries"]
+    versioned = [
+        entry for entry in entries if "payload_schema_variants" in entry
+    ]
+    assert {entry["id"] for entry in versioned} == {
+        "ATTEST_ACTION",
+        "CONTEXT_AMEND",
+        "CONTRACT_ACCEPT",
+        "CONTRACT_PROPOSE",
+        "ERROR",
+        "RESOLVE_CONFLICT",
+    }
+    for entry in versioned:
+        assert entry["owner"] == "Core"
+        assert entry["payload_schema"]["aicp_version"] == "0.1"
+        assert [
+            variant["aicp_version"]
+            for variant in entry["payload_schema_variants"]
+        ] == ["0.1", "0.2"]
+        canonical = entry["payload_schema_variants"][0]
+        assert entry["payload_schema"]["file"] == canonical["file"]
+        assert entry["payload_schema"]["pointer"] == canonical["pointer"]
+    assert all(
+        "payload_schema_variants" not in entry
+        for entry in entries
+        if entry["owner"] != "Core"
+    )
+
+
+def _versioned_core_entry(surface: dict) -> dict:
+    return next(
+        entry
+        for entry in surface["entries"]
+        if entry["id"] == "CONTRACT_ACCEPT"
+    )
+
+
+def test_message_surface_rejects_missing_schema_variant() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    _versioned_core_entry(surface)["payload_schema_variants"].pop()
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("variants are missing" in error for error in errors)
+
+
+def test_message_surface_rejects_duplicate_schema_variant() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    entry = _versioned_core_entry(surface)
+    entry["payload_schema_variants"].append(
+        copy.deepcopy(entry["payload_schema_variants"][0])
+    )
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("duplicate payload schema variant" in error for error in errors)
+
+
+def test_message_surface_rejects_unknown_schema_variant() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    entry = _versioned_core_entry(surface)
+    unknown = copy.deepcopy(entry["payload_schema_variants"][0])
+    unknown["aicp_version"] = "9.9"
+    entry["payload_schema_variants"].append(unknown)
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("unknown payload schema variant" in error for error in errors)
+
+
+def test_message_surface_rejects_conflicting_canonical_variant() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    entry = _versioned_core_entry(surface)
+    entry["payload_schema_variants"][0]["pointer"] = (
+        "#/$defs/CONTRACT_PROPOSE"
+    )
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("canonical schema conflicts" in error for error in errors)
+
+
+def test_message_surface_rejects_unresolved_variant_pointer_and_suite() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    variant = _versioned_core_entry(surface)["payload_schema_variants"][1]
+    variant["pointer"] = "#/$defs/DOES_NOT_EXIST"
+    variant["suite"] = "conformance/DOES_NOT_EXIST.json"
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("variant schema file/pointer does not resolve" in error for error in errors)
+    assert any("variant suite does not resolve" in error for error in errors)
 
 
 def test_message_surface_rejects_missing_entry() -> None:

@@ -151,6 +151,9 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
     positive = {message_id: set() for message_id in registered}
     negative = {message_id: set() for message_id in registered}
     canonical_schema_candidates = {message_id: set() for message_id in registered}
+    core_schema_variants: dict[
+        str, list[tuple[str, str, str, str]]
+    ] = {message_id: [] for message_id in registered}
     for suite_path in sorted((root / "conformance").glob("**/*.json")):
         try:
             suite = json.loads(suite_path.read_text(encoding="utf-8"))
@@ -174,13 +177,30 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
             if (
                 len(mapped_owners) == 1
                 and isinstance(payload_schema_ref, str)
-                and suite.get("canonical_payload_schema", True) is not False
             ):
                 only_owner = next(iter(mapped_owners))
                 for message_id, pointer in payload_map.items():
-                    if message_id in registered and owners[message_id] == only_owner:
+                    if (
+                        message_id in registered
+                        and owners[message_id] == only_owner
+                        and suite.get("canonical_payload_schema", True) is not False
+                    ):
                         canonical_schema_candidates[message_id].add(
                             (payload_schema_ref, str(pointer))
+                        )
+                    if (
+                        message_id in registered
+                        and owners[message_id] == "Core"
+                        and only_owner == "Core"
+                        and isinstance(suite.get("aicp_version"), str)
+                    ):
+                        core_schema_variants[message_id].append(
+                            (
+                                suite["aicp_version"],
+                                payload_schema_ref,
+                                str(pointer),
+                                suite_ref,
+                            )
                         )
 
         transcripts = suite.get("transcripts")
@@ -212,23 +232,55 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
             )
         schema_file, pointer = next(iter(candidates))
         has_positive = bool(positive[message_id])
-        entries.append(
-            {
-                "id": message_id,
-                "owner": owners[message_id],
-                "payload_schema": {
-                    "file": schema_file,
-                    "pointer": pointer,
-                },
-                "suites": sorted(suites[message_id]),
-                "positive_fixtures": sorted(positive[message_id]),
-                "negative_fixtures": sorted(negative[message_id]),
-                "coverage_status": (
-                    "complete" if has_positive else "missing_positive_fixture"
-                ),
-                "gap_milestone": None if has_positive else "M65",
+        payload_schema: dict[str, str] = {
+            "file": schema_file,
+            "pointer": pointer,
+        }
+        entry: dict[str, Any] = {
+            "id": message_id,
+            "owner": owners[message_id],
+            "payload_schema": payload_schema,
+            "suites": sorted(suites[message_id]),
+            "positive_fixtures": sorted(positive[message_id]),
+            "negative_fixtures": sorted(negative[message_id]),
+            "coverage_status": (
+                "complete" if has_positive else "missing_positive_fixture"
+            ),
+            "gap_milestone": None if has_positive else "M65",
+        }
+        variants = sorted(core_schema_variants[message_id])
+        if owners[message_id] == "Core":
+            by_version: dict[str, list[tuple[str, str, str]]] = {}
+            for version, variant_file, variant_pointer, suite_ref in variants:
+                by_version.setdefault(version, []).append(
+                    (variant_file, variant_pointer, suite_ref)
+                )
+            if set(by_version) != {"0.1", "0.2"}:
+                raise ValueError(
+                    f"{message_id}: Core payload schema variants must be exactly "
+                    f"0.1 and 0.2, found {sorted(by_version)}"
+                )
+            conflicts = {
+                version: values
+                for version, values in by_version.items()
+                if len(values) != 1
             }
-        )
+            if conflicts:
+                raise ValueError(
+                    f"{message_id}: duplicate or conflicting Core payload schema "
+                    f"variants: {conflicts}"
+                )
+            payload_schema["aicp_version"] = "0.1"
+            entry["payload_schema_variants"] = [
+                {
+                    "aicp_version": version,
+                    "file": variant_file,
+                    "pointer": variant_pointer,
+                    "suite": suite_ref,
+                }
+                for version, variant_file, variant_pointer, suite_ref in variants
+            ]
+        entries.append(entry)
 
     return {
         "summary": summarize_message_entries(entries),
@@ -460,6 +512,10 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
     security = status["security_review"]
     governance = status["governance"]
     message_summary = status["message_surface"]["summary"]
+    version_selected_messages = sum(
+        bool(entry.get("payload_schema_variants"))
+        for entry in status["message_surface"]["entries"]
+    )
     targets = sorted(item["id"] for item in profiles if item["external_iut_target"])
     reachable = sorted(
         item["id"]
@@ -490,7 +546,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Live binding paths | {len(live_bindings)}: {_code_list(live_bindings)} | binding evidence map |",
         f"| Independent external security review | {_human_bool(security['external_independent_review_completed'])} | `{security['artifact_contract']}` |",
         f"| Governance model / maturity | `{governance['current_model']}` / `{governance['standard_maturity']}` | `GOVERNANCE.md` |",
-        f"| Registered message surface | {message_summary['registered_count']} entries; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
+        f"| Registered message surface | {message_summary['registered_count']} entries; {version_selected_messages} Core IDs use version-selected payload schemas; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
         "",
         "### Milestone summary",
         "",

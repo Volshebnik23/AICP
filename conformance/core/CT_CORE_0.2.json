@@ -40,7 +40,14 @@
           "version": "v1",
           "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
         }
-      }
+      },
+      "expected_proposal_ids": [
+        "p01-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-02",
@@ -50,7 +57,14 @@
         "CONTRACT_ACCEPT"
       ],
       "expected_agreement_state": "NO_ACTIVE_CONTRACT",
-      "expected_active_head": null
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "p02-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 1,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-03",
@@ -68,7 +82,15 @@
           "version": "v2",
           "contract_hash": "sha256:T2yWAApl9xvc_XYsF7HA-9vunNUONQ8lFLnlF_C3ISA"
         }
-      }
+      },
+      "expected_proposal_ids": [
+        "p03-propose-v1",
+        "p03-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 2,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-04",
@@ -86,7 +108,14 @@
           "version": "v1",
           "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
         }
-      }
+      },
+      "expected_proposal_ids": [
+        "p04-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-05",
@@ -105,7 +134,32 @@
           "version": "v2-b",
           "contract_hash": "sha256:3jeq1xzPtmHYmicS0OO_NwXtaIAh3DsjwjLvLHP2ZAI"
         }
-      }
+      },
+      "expected_proposal_ids": [
+        "p05-propose-v1",
+        "p05-propose-v2a",
+        "p05-propose-v2b"
+      ],
+      "expected_selected_conflict_result": {
+        "type": "CHOOSE",
+        "selected_proposal_message_id": "p05-propose-v2b",
+        "selected_proposal_message_hash": "sha256:AUSCtF12gTNMHu1P-PSHOnvHW4yK71dV6fqblgxVdMA",
+        "selected_contract_hash": "sha256:3jeq1xzPtmHYmicS0OO_NwXtaIAh3DsjwjLvLHP2ZAI",
+        "selected_contract_ref": {
+          "branch_id": "main",
+          "head": {
+            "version": "v2-b",
+            "contract_hash": "sha256:3jeq1xzPtmHYmicS0OO_NwXtaIAh3DsjwjLvLHP2ZAI"
+          },
+          "base": {
+            "version": "v1",
+            "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+          }
+        }
+      },
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-06",
@@ -122,7 +176,14 @@
           "version": "v1",
           "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
         }
-      }
+      },
+      "expected_proposal_ids": [
+        "p06-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-07",
@@ -131,7 +192,12 @@
         "ERROR"
       ],
       "expected_agreement_state": "NO_ACTIVE_CONTRACT",
-      "expected_active_head": null
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-POS-08",
@@ -148,7 +214,38 @@
           "version": "v1",
           "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
         }
-      }
+      },
+      "expected_proposal_ids": [
+        "p08-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
+    },
+    {
+      "id": "CT2-POS-09",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/positive/09_valid_optional_signature.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION"
+      ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "p09-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": []
     },
     {
       "id": "CT2-NEG-01",
@@ -156,6 +253,13 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -170,6 +274,13 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -184,6 +295,13 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -198,6 +316,13 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -212,6 +337,13 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -226,6 +358,13 @@
       "expected_message_types": [
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -241,6 +380,15 @@
         "CONTRACT_PROPOSE",
         "ERROR"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n07-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -255,6 +403,13 @@
       "expected_message_types": [
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -270,6 +425,15 @@
         "CONTRACT_ACCEPT",
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n09-future-proposal"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -285,6 +449,15 @@
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n10-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -300,6 +473,15 @@
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n11-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -315,6 +497,15 @@
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n12-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -334,6 +525,23 @@
         "CONTRACT_ACCEPT",
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v2-a",
+          "contract_hash": "sha256:jIqcyKXsDVHpjnN3nrKd9ej_EB7Wc2uNstUykVRkhgs"
+        }
+      },
+      "expected_proposal_ids": [
+        "n13-propose-v1",
+        "n13-propose-v2a",
+        "n13-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 2,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -350,6 +558,15 @@
         "CONTRACT_ACCEPT",
         "ATTEST_ACTION"
       ],
+      "expected_agreement_state": "NO_ACTIVE_CONTRACT",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n14-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 1,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -369,6 +586,23 @@
         "CONTRACT_ACCEPT",
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v2-a",
+          "contract_hash": "sha256:jIqcyKXsDVHpjnN3nrKd9ej_EB7Wc2uNstUykVRkhgs"
+        }
+      },
+      "expected_proposal_ids": [
+        "n15-propose-v1",
+        "n15-propose-v2a",
+        "n15-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 2,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -384,6 +618,15 @@
         "CONTRACT_PROPOSE",
         "CONTEXT_AMEND"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n16-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -402,6 +645,22 @@
         "CONTRACT_ACCEPT",
         "CONTEXT_AMEND"
       ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v2",
+          "contract_hash": "sha256:T2yWAApl9xvc_XYsF7HA-9vunNUONQ8lFLnlF_C3ISA"
+        }
+      },
+      "expected_proposal_ids": [
+        "n17-propose-v1",
+        "n17-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 2,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -418,6 +677,21 @@
         "CONTRACT_ACCEPT",
         "CONTEXT_AMEND"
       ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n18-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -433,6 +707,15 @@
         "CONTRACT_PROPOSE",
         "ATTEST_ACTION"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n19-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -451,6 +734,22 @@
         "CONTRACT_ACCEPT",
         "ATTEST_ACTION"
       ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v2",
+          "contract_hash": "sha256:T2yWAApl9xvc_XYsF7HA-9vunNUONQ8lFLnlF_C3ISA"
+        }
+      },
+      "expected_proposal_ids": [
+        "n20-propose-v1",
+        "n20-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 2,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -469,6 +768,22 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n21-propose-v1",
+        "n21-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -487,6 +802,23 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "COMPETING_CANDIDATES",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n22-propose-v1",
+        "n22-propose-v2a",
+        "n22-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -505,6 +837,23 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "COMPETING_CANDIDATES",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n23-propose-v1",
+        "n23-propose-v2a",
+        "n23-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -523,6 +872,23 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n24-propose-stale",
+        "n24-propose-v1",
+        "n24-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -540,6 +906,22 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n25-propose-v1",
+        "n25-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -559,6 +941,24 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "COMPETING_CANDIDATES",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n26-propose-v1",
+        "n26-propose-v2a",
+        "n26-propose-v2b",
+        "n26-propose-v2c"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -577,6 +977,23 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "COMPETING_CANDIDATES",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n27-propose-v1",
+        "n27-propose-v2a",
+        "n27-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -595,6 +1012,23 @@
         "CONTRACT_PROPOSE",
         "RESOLVE_CONFLICT"
       ],
+      "expected_agreement_state": "COMPETING_CANDIDATES",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n28-propose-v1",
+        "n28-propose-v2a",
+        "n28-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
@@ -610,14 +1044,19 @@
         "CONTRACT_PROPOSE",
         "CONTRACT_ACCEPT"
       ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n29-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
           "test_id": "CT2-CONTRACT-ID-01",
-          "min_count": 1
-        },
-        {
-          "test_id": "CT2-ACCEPT-BINDING-01",
           "min_count": 1
         }
       ]
@@ -630,10 +1069,342 @@
         "CONTRACT_ACCEPT",
         "CONTRACT_PROPOSE"
       ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n30-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [],
       "expect_pass": false,
       "expected_failures": [
         {
           "test_id": "CT2-PROPOSAL-BINDING-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-31",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/31_acceptance_changed_session_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n31-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-INVARIANTS-01",
+          "min_count": 1
+        },
+        {
+          "test_id": "CT2-AGREEMENT-STATE-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-32",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/32_acceptance_invalid_message_hash_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n32-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-MESSAGE-HASH-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-33",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/33_acceptance_broken_prev_hash_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n33-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-HASH-CHAIN-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-34",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/34_revision_acceptance_invalid_signature_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n34-propose-v1",
+        "n34-propose-v2"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        3
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-35",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/35_revision_proposal_message_schema_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTRACT_PROPOSE"
+      ],
+      "expected_agreement_state": "ACTIVE_HEAD",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n35-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        2
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SCHEMA-JSONL-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-36",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/36_conflict_resolution_invalid_message_hash_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTRACT_PROPOSE",
+        "CONTRACT_PROPOSE",
+        "RESOLVE_CONFLICT"
+      ],
+      "expected_agreement_state": "COMPETING_CANDIDATES",
+      "expected_active_head": {
+        "branch_id": "main",
+        "head": {
+          "version": "v1",
+          "contract_hash": "sha256:Smg24TB5O5vczEJaW02AGlaXnf_ykC6REuYC-XKVNiU"
+        }
+      },
+      "expected_proposal_ids": [
+        "n36-propose-v1",
+        "n36-propose-v2a",
+        "n36-propose-v2b"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 1,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        4
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-MESSAGE-HASH-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-37",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/37_signature_unknown_signer_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n37-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-38",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/38_signature_kid_mismatch_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n38-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-39",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/39_signature_object_hash_mismatch_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n39-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-HASH-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-40",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/40_copied_stale_signature_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n40-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CT2-NEG-41",
+      "path": "fixtures/core_v0_2/exact_contract_agreement/negative/41_one_invalid_signature_entry_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT"
+      ],
+      "expected_agreement_state": "CANDIDATE_PROPOSED",
+      "expected_active_head": null,
+      "expected_proposal_ids": [
+        "n41-propose-v1"
+      ],
+      "expected_selected_conflict_result": null,
+      "expected_accepted_tuple_count": 0,
+      "expected_rejected_tuple_count": 0,
+      "invalid_message_indices": [
+        1
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
           "min_count": 1
         }
       ]
@@ -675,6 +1446,10 @@
     {
       "test_id": "CT-SIGNATURE-STRUCTURE-01",
       "description": "Retain optional Core signature structure validation"
+    },
+    {
+      "test_id": "CT-SIGNATURE-VERIFY-01",
+      "description": "Cryptographically verify every present Ed25519 signature"
     },
     {
       "test_id": "CT-MESSAGE-HASH-01",

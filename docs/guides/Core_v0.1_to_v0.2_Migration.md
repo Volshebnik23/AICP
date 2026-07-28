@@ -27,6 +27,13 @@ experimental post-UAT target and is not a silent compatible reinterpretation.
 13. Strict session-state projection v1 retains its Core v0.1 reference shape. Base 0.2
     cannot be combined with projection v1 as though exact-head projection support existed.
 14. External-IUT support for Base 0.2 is deferred to later generalized evidence/TCK work.
+15. Unsigned Base 0.2 messages remain valid, but every signature that is present must pass
+    Ed25519 verification, key resolution, `kid` matching, and message-hash binding.
+16. Apply mandatory message-local validation before state reduction. A rejected message
+    must not index a proposal, activate a head, record an acceptance/rejection tuple, or
+    select a conflict result.
+17. Select payload schemas by Core version. The repository truth map keeps v0.1 as the
+    default and lists v0.1/v0.2 variants for all six reused Core message IDs.
 
 ## Validation
 
@@ -44,4 +51,5 @@ python conformance/core_v02_runner/aicp_core_v02_profile_runner.py \
 ```
 
 The expected internal marks are `AICP-Core-0.2` and, through the profile runner,
-`AICP-Profile-BASE-0.2`. These are not external implementation evidence.
+`AICP-Profile-BASE-0.2`. They are emitted only by complete, non-degraded runs with no
+degraded reasons or skipped checks. These are not external implementation evidence.

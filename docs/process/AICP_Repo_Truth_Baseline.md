@@ -52,7 +52,7 @@ mature.
 | Live binding paths | 0: None | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
-| Registered message surface | 132 entries; 17 missing positive fixtures | `message_surface.entries` |
+| Registered message surface | 132 entries; 6 Core IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
 
 ### Milestone summary
 
