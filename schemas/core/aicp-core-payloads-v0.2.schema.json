@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/core/aicp-core-payloads-v0.2.schema.json",
+  "title": "AICP Core v0.2 Payload Schemas",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "Sha256Hash": {
+      "type": "string",
+      "pattern": "^sha256:[A-Za-z0-9_-]{43}$"
+    },
+    "VersionHash": {
+      "type": "object",
+      "required": [
+        "version",
+        "contract_hash"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExactContractReference": {
+      "type": "object",
+      "required": [
+        "branch_id",
+        "head"
+      ],
+      "properties": {
+        "branch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base": {
+          "$ref": "#/$defs/VersionHash"
+        },
+        "head": {
+          "$ref": "#/$defs/VersionHash"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProposalBinding": {
+      "type": "object",
+      "required": [
+        "proposal_message_id",
+        "proposal_message_hash",
+        "contract_hash",
+        "contract_ref"
+      ],
+      "properties": {
+        "proposal_message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_message_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        },
+        "contract_ref": {
+          "$ref": "#/$defs/ExactContractReference"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CONTRACT_PROPOSE": {
+      "type": "object",
+      "required": [
+        "contract",
+        "contract_hash"
+      ],
+      "properties": {
+        "contract": {
+          "type": "object"
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "CONTRACT_ACCEPT": {
+      "type": "object",
+      "required": [
+        "accepted",
+        "proposal_message_id",
+        "proposal_message_hash",
+        "contract_hash"
+      ],
+      "properties": {
+        "accepted": {
+          "type": "boolean"
+        },
+        "proposal_message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_message_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/Sha256Hash"
+        },
+        "replay": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CONTEXT_AMEND": {
+      "type": "object",
+      "required": [
+        "amendment",
+        "contract_effect"
+      ],
+      "properties": {
+        "amendment": {
+          "type": "object"
+        },
+        "contract_effect": {
+          "type": "string",
+          "const": "none"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ATTEST_ACTION": {
+      "type": "object",
+      "required": [
+        "action_id",
+        "action_type"
+      ],
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authority_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consent_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "result_hash"
+          ]
+        },
+        {
+          "required": [
+            "consent_ref"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "RESOLVE_CONFLICT": {
+      "type": "object",
+      "required": [
+        "conflict_id",
+        "conflict_class",
+        "candidates",
+        "resolution"
+      ],
+      "properties": {
+        "conflict_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conflict_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidates": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/ProposalBinding"
+          }
+        },
+        "resolution": {
+          "type": "object",
+          "required": [
+            "type",
+            "selected_proposal_message_id",
+            "selected_proposal_message_hash",
+            "selected_contract_hash",
+            "selected_contract_ref"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "CHOOSE"
+            },
+            "selected_proposal_message_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "selected_proposal_message_hash": {
+              "$ref": "#/$defs/Sha256Hash"
+            },
+            "selected_contract_hash": {
+              "$ref": "#/$defs/Sha256Hash"
+            },
+            "selected_contract_ref": {
+              "$ref": "#/$defs/ExactContractReference"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "ERROR": {
+      "type": "object",
+      "required": [
+        "error_code",
+        "error_class",
+        "severity",
+        "applies_to",
+        "disposition"
+      ],
+      "properties": {
+        "error_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error_class": {
+          "type": "string",
+          "enum": [
+            "VALIDATION",
+            "CRYPTO",
+            "STATE",
+            "POLICY",
+            "RATE",
+            "INTERNAL"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "applies_to": {
+          "type": "object",
+          "properties": {
+            "message_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "object_hash": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "message_id"
+              ]
+            },
+            {
+              "required": [
+                "object_hash"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "IGNORED",
+            "BUFFERED",
+            "REJECTED"
+          ]
+        },
+        "recover_action": {
+          "type": "string",
+          "enum": [
+            "RETRY_LATER",
+            "RESEND_MESSAGE",
+            "FETCH_OBJECT",
+            "SYNC_STATE",
+            "REQUEST_CONSENT",
+            "ROTATE_KEY",
+            "CLOSE_SESSION"
+          ]
+        },
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "details": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "description": "Strict Core v0.2 lifecycle payloads. Exact artifact agreement is version-selected and does not alter Core v0.1 payloads."
+}

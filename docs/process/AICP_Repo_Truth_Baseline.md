@@ -41,7 +41,7 @@ mature.
 | Fact | Current value | Machine evidence |
 |---|---|---|
 | Version / release phase | `0.1.0-rc.1` / `release-candidate-with-unreleased-post-rc-changes` | `VERSION`, `repo_truth_status.json` |
-| Registered profiles | 15 (4 stable, 11 experimental) | `registry/aicp_profiles.json` |
+| Registered profiles | 16 (4 stable, 12 experimental) | `registry/aicp_profiles.json` |
 | External-IUT targets | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | `conformance/iut/cases.json` |
 | Ordinary external marks currently reachable | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | profile catalogs and IUT cases |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
@@ -60,7 +60,7 @@ mature.
 |---|---|---|---|
 | M58 | shipped | Repo-Truth Rebaseline | `ROADMAP.md` |
 | M59 | shipped | Authenticated Base Evidence Reachability | `ROADMAP.md` |
-| M60 | planned | Exact Contract Agreement Core | `AICP_Backlog` |
+| M60 | shipped | Exact Contract Agreement Core | `ROADMAP.md` |
 | M61 | planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
 | M62 | planned | Generalized External Evidence Framework | `AICP_Backlog` |
 | M63 | planned | Tier-1 External Profile TCK | `AICP_Backlog` |
@@ -76,7 +76,7 @@ mature.
 
 | Surface | Repository truth | Independent-evidence boundary | Planned gap |
 |---|---|---|---|
-| Profiles | 15 shipped catalogs; maturity is 4 stable / 11 experimental | 0 externally demonstrated profiles | M62, M63, M70 |
+| Profiles | 16 shipped catalogs; maturity is 4 stable / 12 experimental | 0 externally demonstrated profiles | M62, M63, M70 |
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and expected profile `computed_marks` count | M70 |
 | Pairwise | publication=false, demonstrated=false | A valid eligible joint-execution result is required | M66 |
 | Bindings | 24 static cases; 0 live paths | Static cases do not prove live independent interoperability | M64 |
@@ -91,13 +91,13 @@ mature.
 1. **Authenticated evidence boundary:** M59 makes the ordinary Authenticated Base mark
    reachable through explicit case-local accounting. No real eligible external submission
    currently demonstrates that profile.
-2. **Exact contract agreement:** Core allows optional `contract_ref`, but the repository has
-   no dedicated exact contract-version/hash agreement claim or suite. Any semantic design is
-   deferred to M60.
+2. **Exact contract agreement boundary:** M60 ships separate experimental Core v0.2 exact
+   artifact/head agreement. It does not reinterpret Core v0.1, authenticate senders, add an
+   external-IUT target, or join projection v1 to the new reference shape.
 3. **Profile composition:** CAPNEG selects one product profile while product guidance
    recommends combinations. Combination guidance is deployment composition, not implemented
    multi-profile negotiation. Routed to M61.
-4. **External evidence breadth:** only two of 15 registered profiles have full external-IUT
+4. **External evidence breadth:** only two of 16 registered profiles have full external-IUT
    targets; strict projection uses a separate weaker capability path. Routed to M62/M63.
 5. **Transport evidence:** binding suites validate static case artifacts, not live endpoints.
    Routed to M64.

@@ -9,6 +9,8 @@ from pathlib import Path
 
 SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__"}
 CANONICAL_SCHEMA = Path("schemas/core/aicp-core-message.schema.json")
+CORE_V02_SCHEMA = Path("schemas/core/aicp-core-message-v0.2.schema.json")
+CORE_V02_FIXTURES = ("fixtures", "core_v0_2", "exact_contract_agreement")
 
 
 def should_skip(path: Path) -> bool:
@@ -63,12 +65,35 @@ def main() -> int:
 
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     validator = Draft202012Validator(schema)
+    v02_schema_path = root / CORE_V02_SCHEMA
+    v02_validator = (
+        Draft202012Validator(
+            json.loads(v02_schema_path.read_text(encoding="utf-8"))
+        )
+        if v02_schema_path.exists()
+        else None
+    )
 
     errors = 0
+    v02_positive_records = 0
+    v02_negative_records = 0
     records = load_records(root)
 
     for file_path, line_no, record in records:
-        for err in sorted(validator.iter_errors(record), key=lambda issue: list(issue.path)):
+        relative_parts = file_path.relative_to(root).parts
+        is_v02 = relative_parts[:3] == CORE_V02_FIXTURES
+        is_v02_negative = is_v02 and "negative" in relative_parts
+        if is_v02_negative:
+            v02_negative_records += 1
+            continue
+        selected_validator = validator
+        if is_v02:
+            if v02_validator is None:
+                print(f"[FAIL] Missing Core v0.2 schema: {CORE_V02_SCHEMA}")
+                return 1
+            selected_validator = v02_validator
+            v02_positive_records += 1
+        for err in sorted(selected_validator.iter_errors(record), key=lambda issue: list(issue.path)):
             rel = file_path.relative_to(root)
             print(f"[FAIL] Schema violation: {rel}:{line_no}: {err.message}")
             errors += 1
@@ -78,7 +103,11 @@ def main() -> int:
         print(f"Schema validation failed with {errors} error(s) using {schema_rel}.")
         return 1
 
-    print(f"OK: {len(records)} fixture JSONL record(s) validated against {schema_rel}.")
+    print(
+        f"OK: {len(records) - v02_negative_records} fixture JSONL record(s) validated "
+        f"({v02_positive_records} against {CORE_V02_SCHEMA}, remaining against {schema_rel}); "
+        f"{v02_negative_records} Core v0.2 expected-fail record(s) are validated by CT_CORE_0.2."
+    )
     return 0
 
 

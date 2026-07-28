@@ -8,6 +8,12 @@ verified Ed25519 signature from its declared envelope sender. That profile authe
 message binding, not real-world identity, delegation, trust, revocation, witnessing,
 policy correctness, or transport security.
 
+Choose experimental post-UAT `AICP-BASE@0.2` only when both peers must prove agreement on
+one exact contract artifact and active head. Select it explicitly; it is not the default
+pilot target, does not authenticate senders, has no external-IUT target, and cannot be
+combined with state-projection v1 as if that extension already understood the v0.2
+reference shape.
+
 ## Choose your role
 
 | Role | What you build | Smoke-check finish line |
@@ -33,6 +39,15 @@ policy correctness, or transport security.
 5. Optional PR/onboarding gate: `make prepr`.
 
 ## Role-specific first steps
+
+## Experimental Core v0.2 exact-agreement path
+
+- Python: `make quickstart-core-v02-py`
+- TypeScript/JavaScript: `make quickstart-core-v02-ts`
+- Conformance: `python conformance/core_v02_runner/aicp_core_v02_runner.py --suite conformance/core/CT_CORE_0.2.json --out out/report_core_v02.json`
+
+Read `docs/guides/Core_v0.1_to_v0.2_Migration.md` before changing a deployment target.
+The existing `make quickstart-py` and `make quickstart-ts` remain Core v0.1.
 
 ### Agent developer
 1. Start from `dropins/aicp-core/python/` or `dropins/aicp-core/typescript/`.
@@ -77,7 +92,7 @@ For compatibility or badge evidence, run `make compatibility-gate` so validation
 
 ## External implementation conformance
 
-The registry contains 15 profiles, but the external runner currently accepts only
+The registry contains 16 profiles, but the external runner currently accepts only
 `AICP-BASE@0.1` and `AICP-AUTHENTICATED-BASE@0.1`. Internal profile reports for the other
 profiles are not external implementation evidence.
 

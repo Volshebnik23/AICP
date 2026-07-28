@@ -264,3 +264,30 @@ Conformance reference: `conformance/extensions/RS_RESUME_0.1.json`; fixtures: `f
 
 Use this file for canonical flow semantics. Use `docs/playbooks/Session_Topologies.md` for architecture pattern selection and context-portability trade-offs.
 
+---
+
+## 2.9 Experimental Core v0.2 Exact Agreement
+
+```mermaid
+sequenceDiagram
+    participant P as Proposer
+    participant A as Acceptor
+    P->>A: CONTRACT_PROPOSE(contract, contract_hash, exact head/base ref)
+    A->>P: CONTRACT_ACCEPT(proposal ID/hash, contract_hash, accepted=true)
+    Note over P,A: Exact proposed head becomes active
+    P->>A: ATTEST_ACTION(current exact head binding)
+```
+
+Normative notes:
+
+- The proposal contract hash is recomputed with `object_hash("contract", contract)`.
+- The proposal alone does not activate agreement.
+- Acceptance binds the exact prior proposal message ID/hash, contract hash, and reference.
+- Context and action messages bind the exact active head.
+- Conflict resolution standardizes exact `CHOOSE`; merge/patch behavior is deferred.
+- This flow is post-UAT `AICP-BASE@0.2`, not the default Core v0.1 pilot flow and not sender
+  authentication.
+
+Conformance reference: `conformance/core/CT_CORE_0.2.json`; fixtures:
+`fixtures/core_v0_2/exact_contract_agreement/`.
+

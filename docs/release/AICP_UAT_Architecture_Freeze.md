@@ -184,11 +184,16 @@ That means:
 ### Post-UAT experimental additions
 
 `AICP-AUTHENTICATED-BASE@0.1` and strict
-`aicp.session_state_projection.v1` support are experimental post-UAT additions. They are
+`aicp.session_state_projection.v1` support are experimental post-UAT additions.
+`AICP-BASE@0.2` is also a separately versioned post-UAT experiment for exact contract
+artifact/head agreement. These surfaces are
 version-selected, separately tested surfaces and are explicitly excluded from this frozen
 pilot center. Their presence does not alter the meaning of `AICP-BASE@0.1`,
 `AICP-RESUMABLE-SESSIONS@0.1`, or any other existing `@0.1` profile. A later pilot may
 adopt them only through an explicit maintainer decision and versioned baseline update.
+
+Core v0.2 does not alter any frozen Core v0.1 schema, golden fixture, suite, report shape,
+or UAT mark. A Base 0.1 report cannot substantiate Base 0.2.
 
 The evidence/report migration follows the same rule. Existing conformance commands retain
 their legacy report shape by default, including the frozen

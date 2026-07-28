@@ -55,6 +55,22 @@
   },
   {
     "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "AICP-BASE@0.2",
+    "type": "aicp_profiles",
+    "spec_ref": "docs/core/AICP_Core_v0.2_Normative.md",
+    "security_considerations": "Exact artifact and active-head agreement does not authenticate senders or establish proposal/acceptance authority, quorum legitimacy, policy correctness, hidden-transcript non-equivocation, transport security, or legal enforceability.",
+    "profile_id": "AICP-BASE",
+    "profile_version": "0.2",
+    "required_extensions": [],
+    "required_policy_categories": [],
+    "required_crypto_profiles": [],
+    "description": "Experimental post-UAT Core v0.2 profile for exact contract artifact and active contract-head agreement.",
+    "compatibility_notes": "Version-selecting and intentionally distinct from AICP-BASE@0.1; no external-IUT target is registered in M60."
+  },
+  {
+    "status": "experimental",
     "introduced_in": "0.1.0-dev",
     "maintainer": "AICP Working Group",
     "id": "AICP-BAZAAR-RECEPTION@0.1",

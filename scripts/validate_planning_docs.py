@@ -26,6 +26,7 @@ from repo_truth import (  # noqa: E402
     derive_external_mark_status,
     derive_interop_evidence,
     derive_message_surface,
+    discover_profile_entries,
     extract_generated_section,
     profile_block_markers,
     render_baseline_facts,
@@ -455,7 +456,16 @@ def _evidence_claim_errors(root: Path, status: dict[str, Any]) -> list[str]:
 def _load_profile_outputs(root: Path) -> dict[str, str]:
     namespace = runpy.run_path(str(root / SUITE_CATALOG))
     profile_catalogs = namespace["PROFILE_CATALOGS"]["profiles"]
-    return {catalog: output for catalog, output in profile_catalogs}
+    versioned_namespace = runpy.run_path(
+        str(root / "conformance/core_v02_runner/catalog.py")
+    )
+    return {
+        **{catalog: output for catalog, output in profile_catalogs},
+        **{
+            catalog: output
+            for catalog, output in versioned_namespace["PROFILE_CATALOGS"]
+        },
+    }
 
 
 def _is_tracked(root: Path, relative: str) -> bool | None:

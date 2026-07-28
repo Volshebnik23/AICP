@@ -5,9 +5,13 @@
 This document defines the **truthful claim language** implementers should use when describing AICP compatibility and the minimum evidence expected for each claim shape.
 
 Current reachability is narrower than the registered catalog: only Base and Authenticated
-Base have full external-IUT targets, only Base can currently receive an ordinary external
-profile mark, and no real external or pairwise submission is present. See
+Base have full external-IUT targets, both ordinary marks are reachable for complete eligible
+implementations, and no real external or pairwise submission is present. See
 `docs/process/AICP_Repo_Truth_Baseline.md`.
+
+Experimental `AICP-BASE@0.2` has internal conformance only in M60. It has no external-IUT
+target, so its repository-owned Core/profile marks are not independent external product
+evidence.
 
 It complements:
 - `docs/interop/AICP_Public_Interop_Corpus.md` for packaging guidance,

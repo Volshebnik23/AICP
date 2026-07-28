@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import runpy
 from pathlib import Path
 from typing import Any
 
@@ -170,7 +171,11 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
                 for message_id in payload_map
                 if message_id in owners
             }
-            if len(mapped_owners) == 1 and isinstance(payload_schema_ref, str):
+            if (
+                len(mapped_owners) == 1
+                and isinstance(payload_schema_ref, str)
+                and suite.get("canonical_payload_schema", True) is not False
+            ):
                 only_owner = next(iter(mapped_owners))
                 for message_id, pointer in payload_map.items():
                     if message_id in registered and owners[message_id] == only_owner:
@@ -518,11 +523,74 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def discover_profile_entries(
+    root: Path, existing_profiles: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    existing = {
+        item["id"]: item
+        for item in existing_profiles
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    namespace = runpy.run_path(str(root / "conformance/runner/_suite_catalog.py"))
+    versioned_namespace = runpy.run_path(
+        str(root / "conformance/core_v02_runner/catalog.py")
+    )
+    catalog_outputs = dict(namespace["PROFILE_CATALOGS"]["profiles"])
+    catalog_outputs.update(dict(versioned_namespace["PROFILE_CATALOGS"]))
+    discovered: list[dict[str, Any]] = []
+    for catalog_ref, report_ref in catalog_outputs.items():
+        catalog = load_json(root, catalog_ref)
+        profile_id = f"{catalog['profile_id']}@{catalog['profile_version']}"
+        prior = existing.get(profile_id, {})
+        discovered.append(
+            {
+                **prior,
+                "id": profile_id,
+                "profile_catalog": catalog_ref,
+                "required_suites": catalog.get("required_suites", []),
+                "internal_report_output": report_ref,
+                "tracked_report_present": bool(
+                    prior.get("tracked_report_present", False)
+                ),
+                "live_binding_tested": bool(
+                    prior.get("live_binding_tested", False)
+                ),
+            }
+        )
+    return sorted(discovered, key=lambda item: item["id"])
+
+
+def derive_milestone_ownership(
+    root: Path, milestones: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    roadmap = (root / ROADMAP_PATH).read_text(encoding="utf-8")
+    backlog = (root / "AICP_Backlog").read_text(encoding="utf-8")
+    derived: list[dict[str, Any]] = []
+    for milestone in milestones:
+        milestone_id = milestone["id"]
+        shipped_marker = f"<!-- milestone-status: {milestone_id} shipped -->"
+        planned_marker = f"<!-- milestone-status: {milestone_id} planned -->"
+        shipped = shipped_marker in roadmap
+        planned = planned_marker in backlog
+        if shipped == planned:
+            raise ValueError(
+                f"{milestone_id}: milestone must have exactly one Roadmap/Backlog owner"
+            )
+        derived.append(
+            {
+                **milestone,
+                "status": "shipped" if shipped else "planned",
+                "document": ROADMAP_PATH if shipped else "AICP_Backlog",
+            }
+        )
+    return derived
+
+
 def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
     registry = {
         item["id"]: item for item in load_json(root, PROFILE_REGISTRY_PATH)
     }
-    profiles = sorted(status["profiles"], key=lambda item: item["id"])
+    profiles = discover_profile_entries(root, status.get("profiles", []))
     iut_profiles = load_json(root, IUT_CASES_PATH)["profiles"]
     for profile in profiles:
         profile_id = profile["id"]
@@ -551,6 +619,9 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         profile["independent_external_evidence"] = flags[profile["id"]]
 
     status["schema_version"] = 2
+    status["milestones"] = derive_milestone_ownership(
+        root, status.get("milestones", [])
+    )
     status["profiles"] = profiles
     status["interop_evidence"] = interop
     status["message_surface"] = derive_message_surface(root)
@@ -570,6 +641,11 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         ),
         "externally_demonstrated": sum(flags.values()),
     }
+    release_engineering = status["release_engineering"]
+    release_engineering["profile_report_outputs"] = len(profiles)
+    release_engineering["tracked_profile_reports"] = sum(
+        bool(item.get("tracked_report_present")) for item in profiles
+    )
     security = status["security_review"]
     security["artifact_contract"] = (
         "security_review/external_reviews/README.md"

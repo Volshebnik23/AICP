@@ -157,11 +157,14 @@ For interop evidence packaging/review:
 - `python scripts/review_interop_submission.py interop/submissions/<submission_id>`
 - `make interop-dryrun` for repo-owned rehearsal
 
-Internal profile runs cover all 15 registered profiles. External product claims require an
+Internal profile runs cover all 16 registered profiles. External product claims require an
 eligible full-profile IUT target, which currently exists only for Base and experimental
 Authenticated Base; both marks are reachable for complete eligible external implementations.
 Authenticated Base remains a post-UAT opt-in experiment and is not added to the frozen UAT
 baseline.
+
+Experimental `AICP-BASE@0.2` also remains outside this UAT pack. Its internal exact-agreement
+suite is not an external product claim and does not change the `AICP-BASE@0.1` pilot target.
 
 ## 8) Trial entrypoints for pilot adopters
 

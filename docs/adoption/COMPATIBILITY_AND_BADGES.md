@@ -7,6 +7,9 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 ### 1) Core compatibility
 - Mark: `AICP-Core-0.1`
 - Meaning: Core suite checks pass with non-degraded execution.
+- Experimental post-UAT mark: `AICP-Core-0.2`
+- Meaning: the separate Core v0.2 exact-agreement suite passes; it does not substantiate
+  Core/Base 0.1, sender authentication, or external implementation evidence.
 
 ### 2) Extension compatibility
 - Marks: `AICP-EXT-*`
@@ -80,6 +83,7 @@ registry maturity. Those separate facts are generated from the registry in
 |---|---|---|
 | `AICP-BASE@0.1` | Available (21 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |
 | `AICP-AUTHENTICATED-BASE@0.1` | Available (37 mandatory cases) | Reachable for a complete eligible external implementation; the unavailable-crypto probe remains mandatory and case-local |
+| `AICP-BASE@0.2` | Not available | Internal experimental conformance only in M60 |
 | Other 13 registered profiles | Not available | Unreachable through the current external-IUT runner |
 
 This table is validated against `conformance/iut/cases.json` and
