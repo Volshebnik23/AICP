@@ -30,30 +30,30 @@ from aicp_core_v02_profile_runner import run_profile as run_v02_profile  # noqa:
 
 
 FROZEN_V01_SHA256 = {
-    "docs/core/AICP_Core_v0.1_Normative.md": "40fb99cf5960c53879833e6b4b1299c5c195dcb2e06e2f63921fe2c498a8ab2e",
-    "schemas/core/aicp-core-message.schema.json": "96c2ed0ed86a89d1d3517b21f4bf2cf9db4d5e2caf0b1647169526a863830f9d",
-    "schemas/core/aicp-core-payloads.schema.json": "596add0a32fae283a1cd5322ed5ed5604f99a633bf4b2196854f19441e327f3c",
-    "schemas/core/aicp-core-contract.schema.json": "3643765f7412fa237255a83ed3581a82c1a1862272267ce090acb727dfd518d6",
-    "conformance/core/CT_CORE_0.1.json": "439ba0cc2f077a36d4fd866568bc727a066435b0bd711640a0bb572fb0393264",
-    "conformance/profiles/PF_AICP_BASE_0.1.json": "1a641ccc0eb2dfde04aeee0db83331659e5173e15107b5db0ab61754b77bd7a5",
-    "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json": "d4c0645d76e850c13aa6c382ee32c9f2f1d0fde29c409f460e90414cb40a2b63",
-    "conformance/iut/tck_releases.json": "f41e319667a6f9a537eeed993a950621bd7d45ac37bcd8a1aac76044e9bf7b2e",
-    "conformance/runner/_runner_state_projection_checks.py": "aaa60e7e28af33de11651f17cc86a129ca766c44ae042b06d929523413bccf54",
-    "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json": "42f6dd6b525ea54a183377e9b4393b85f1a455c88740f0bf23cda4d94d4de691",
-    "conformance/extensions/CN_CAPNEG_0.1.json": "4023cefe55342461c4f36b5298adf375512f85e8db3bf771ea571a5628f23d00",
-    "schemas/extensions/ext-capneg-payloads.schema.json": "ef31d4bf02fece06e062bf0f52db49c70d9a38ed1e6133ef45c2da2f9659d58e",
-    "dropins/aicp-core/python/generate_minimal_core_transcript.py": "25c20ec2a9f3cf89996ad754a315c6b5ecfaaf8f5a7b1388f766496ffed16d02",
-    "dropins/aicp-core/typescript/scripts/generate_minimal_core_transcript.mjs": "87e240d6df908e1b0f93de3947a1d813d39f710abd902e24dfff0933c7304d2d",
-    "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl": "7e4761bf4253f56f826b41120c178c28e4a2abc0f90bd1d6b2dfd78cfa607a59",
-    "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl": "f58f028beb7ee6ce12383ba84154cc580b125aec8779cf04d85f74118c2f2e64",
-    "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl": "01d01dadc96a8bc07f0bf189a7d62168e6eec3c52381dadb434cc46161d44e3a",
-    "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl": "1f9a4095b64685be1dd2f4a3213cd645f63635d819e7f91bf092c0e424ae0462",
-    "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl": "33050d08659218875a04ad5fbf7e96a1f6270ec994e84a52f89d79bccc978cb0",
-    "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl": "04f198913e971293d53b9e20360c596ec100ff72541640af330369b80ff1d0dd",
-    "fixtures/golden_transcripts/GT-08_error_minimal.jsonl": "ea09ff71c0bc688870bbb8ba12d7fb27e3cc6d6248b42cc79b69c8e6b4547eed",
-    "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl": "485b0e5b562bce529a4b41668f0706361646b29f3b0e0bd9fe9545b1e2c357d2",
-    "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl": "50b3db2d9489d799e0cdd2a9e9fa9e247c1fd5d79c5808957b9506aec4bae27d",
-    "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl": "502689d124465a11dd20d7e42ef41b33ca438ba11e0ff47655c9b40b773127cb",
+    "docs/core/AICP_Core_v0.1_Normative.md": "42d0bdd138e53c83d6a39679f38ab5bcf8fc7e89225b082a83eff20ec4fb90ab",
+    "schemas/core/aicp-core-message.schema.json": "55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c",
+    "schemas/core/aicp-core-payloads.schema.json": "55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5",
+    "schemas/core/aicp-core-contract.schema.json": "68cdae7d538706b8297634b48ec50c7f20edb9b2296f8c013eb4cdd950accbc7",
+    "conformance/core/CT_CORE_0.1.json": "51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a",
+    "conformance/profiles/PF_AICP_BASE_0.1.json": "3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938",
+    "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json": "1bb2ed7493f7cd2bc5356a27ed7222e9747af119d1f8c7df569bf3e54f909152",
+    "conformance/iut/tck_releases.json": "f89c7dc476041f79558157bb6d0178d7b43158913a2dbe5ee0191d017903a25e",
+    "conformance/runner/_runner_state_projection_checks.py": "8f8baa773766e590d5f9491d880a6b15f662ae911d8a2a306185a7e36b178c8b",
+    "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json": "9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8",
+    "conformance/extensions/CN_CAPNEG_0.1.json": "ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a",
+    "schemas/extensions/ext-capneg-payloads.schema.json": "a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598",
+    "dropins/aicp-core/python/generate_minimal_core_transcript.py": "73edf9101cc7288d698152acb16a166e08ef831084684fbccd47e60101cc24c2",
+    "dropins/aicp-core/typescript/scripts/generate_minimal_core_transcript.mjs": "704ced502aa9a36ba094a425dd3dd8af8e4480e572d28d1e67b4d55e19abc42b",
+    "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl": "fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d",
+    "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl": "5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30",
+    "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl": "c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47",
+    "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl": "b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333",
+    "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl": "6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b",
+    "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl": "390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff",
+    "fixtures/golden_transcripts/GT-08_error_minimal.jsonl": "a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7",
+    "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl": "1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612",
+    "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl": "22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4",
+    "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl": "08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71",
 }
 
 
@@ -67,6 +67,10 @@ def _load_jsonl(path: str) -> list[dict]:
         for line in (ROOT / path).read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+
+
+def _normalized_text_bytes(path: Path) -> bytes:
+    return path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
 def test_core_v02_suite_has_exact_fixture_totals_and_marks() -> None:
@@ -160,25 +164,28 @@ def test_invalid_conflict_does_not_advance_the_active_head() -> None:
 
 def test_core_v01_frozen_bytes_and_golden_transcripts_are_unchanged() -> None:
     for relative, expected in FROZEN_V01_SHA256.items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+        assert hashlib.sha256(_normalized_text_bytes(ROOT / relative)).hexdigest() == expected
 
 
 def test_external_iut_surface_and_tck_releases_are_unchanged() -> None:
     files = sorted(
-        path
-        for path in (ROOT / "conformance/iut").rglob("*")
-        if path.is_file()
-        and not path.name.startswith("report_")
-        and "__pycache__" not in path.parts
+        (
+            path
+            for path in (ROOT / "conformance/iut").rglob("*")
+            if path.is_file()
+            and not path.name.startswith("report_")
+            and "__pycache__" not in path.parts
+        ),
+        key=lambda path: path.relative_to(ROOT).as_posix(),
     )
     digest = hashlib.sha256()
     for path in files:
         digest.update(f"{path.relative_to(ROOT).as_posix()}\0".encode())
-        digest.update(path.read_bytes())
+        digest.update(_normalized_text_bytes(path))
     assert len(files) == 10
     assert (
         digest.hexdigest()
-        == "bfc516081cd17fa7e4f77b748585409467588c98fb72d45d4a22c4bd1cbf6e33"
+        == "ae23ec3fa2069ee4535060e382b57250ec079a017e766e46dd70a01a60a6aa10"
     )
 
     registry = _load_json("conformance/iut/tck_releases.json")
