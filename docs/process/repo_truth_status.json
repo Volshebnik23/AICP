@@ -843,7 +843,8 @@
         "owner": "Core",
         "payload_schema": {
           "file": "schemas/core/aicp-core-payloads.schema.json",
-          "pointer": "#/$defs/ATTEST_ACTION"
+          "pointer": "#/$defs/ATTEST_ACTION",
+          "aicp_version": "0.1"
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
@@ -862,6 +863,7 @@
           "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/positive/01_initial_accept_action.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/positive/04_context_only_then_action.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/09_valid_optional_signature.jsonl",
           "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
           "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
@@ -899,7 +901,21 @@
           "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
-        "gap_milestone": null
+        "gap_milestone": null,
+        "payload_schema_variants": [
+          {
+            "aicp_version": "0.1",
+            "file": "schemas/core/aicp-core-payloads.schema.json",
+            "pointer": "#/$defs/ATTEST_ACTION",
+            "suite": "conformance/core/CT_CORE_0.1.json"
+          },
+          {
+            "aicp_version": "0.2",
+            "file": "schemas/core/aicp-core-payloads-v0.2.schema.json",
+            "pointer": "#/$defs/ATTEST_ACTION",
+            "suite": "conformance/core/CT_CORE_0.2.json"
+          }
+        ]
       },
       {
         "id": "AUCTION_CLOSE",
@@ -1492,7 +1508,8 @@
         "owner": "Core",
         "payload_schema": {
           "file": "schemas/core/aicp-core-payloads.schema.json",
-          "pointer": "#/$defs/CONTEXT_AMEND"
+          "pointer": "#/$defs/CONTEXT_AMEND",
+          "aicp_version": "0.1"
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
@@ -1516,14 +1533,29 @@
           "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
-        "gap_milestone": null
+        "gap_milestone": null,
+        "payload_schema_variants": [
+          {
+            "aicp_version": "0.1",
+            "file": "schemas/core/aicp-core-payloads.schema.json",
+            "pointer": "#/$defs/CONTEXT_AMEND",
+            "suite": "conformance/core/CT_CORE_0.1.json"
+          },
+          {
+            "aicp_version": "0.2",
+            "file": "schemas/core/aicp-core-payloads-v0.2.schema.json",
+            "pointer": "#/$defs/CONTEXT_AMEND",
+            "suite": "conformance/core/CT_CORE_0.2.json"
+          }
+        ]
       },
       {
         "id": "CONTRACT_ACCEPT",
         "owner": "Core",
         "payload_schema": {
           "file": "schemas/core/aicp-core-payloads.schema.json",
-          "pointer": "#/$defs/CONTRACT_ACCEPT"
+          "pointer": "#/$defs/CONTRACT_ACCEPT",
+          "aicp_version": "0.1"
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
@@ -1569,6 +1601,7 @@
           "fixtures/core_v0_2/exact_contract_agreement/positive/05_competing_choose.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/positive/06_exact_accept_replay.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/09_valid_optional_signature.jsonl",
           "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
           "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
           "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
@@ -1659,6 +1692,17 @@
           "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/negative/29_cross_contract_acceptance_expected_fail.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/negative/30_revision_wrong_base_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/31_acceptance_changed_session_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/32_acceptance_invalid_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/33_acceptance_broken_prev_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/34_revision_acceptance_invalid_signature_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/35_revision_proposal_message_schema_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/36_conflict_resolution_invalid_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/37_signature_unknown_signer_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/38_signature_kid_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/39_signature_object_hash_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/40_copied_stale_signature_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/41_one_invalid_signature_entry_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
@@ -1734,14 +1778,29 @@
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
-        "gap_milestone": null
+        "gap_milestone": null,
+        "payload_schema_variants": [
+          {
+            "aicp_version": "0.1",
+            "file": "schemas/core/aicp-core-payloads.schema.json",
+            "pointer": "#/$defs/CONTRACT_ACCEPT",
+            "suite": "conformance/core/CT_CORE_0.1.json"
+          },
+          {
+            "aicp_version": "0.2",
+            "file": "schemas/core/aicp-core-payloads-v0.2.schema.json",
+            "pointer": "#/$defs/CONTRACT_ACCEPT",
+            "suite": "conformance/core/CT_CORE_0.2.json"
+          }
+        ]
       },
       {
         "id": "CONTRACT_PROPOSE",
         "owner": "Core",
         "payload_schema": {
           "file": "schemas/core/aicp-core-payloads.schema.json",
-          "pointer": "#/$defs/CONTRACT_PROPOSE"
+          "pointer": "#/$defs/CONTRACT_PROPOSE",
+          "aicp_version": "0.1"
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
@@ -1790,6 +1849,7 @@
           "fixtures/core_v0_2/exact_contract_agreement/positive/05_competing_choose.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/positive/06_exact_accept_replay.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/positive/08_error_after_agreement.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/positive/09_valid_optional_signature.jsonl",
           "fixtures/demos/enforcement_behavioral/01_happy_path.jsonl",
           "fixtures/demos/enforcement_behavioral/02_policy_violation_matrix.jsonl",
           "fixtures/demos/enforcement_behavioral/03_escalation_kick_and_resume.jsonl",
@@ -1891,6 +1951,17 @@
           "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/negative/29_cross_contract_acceptance_expected_fail.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/negative/30_revision_wrong_base_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/31_acceptance_changed_session_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/32_acceptance_invalid_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/33_acceptance_broken_prev_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/34_revision_acceptance_invalid_signature_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/35_revision_proposal_message_schema_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/36_conflict_resolution_invalid_message_hash_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/37_signature_unknown_signer_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/38_signature_kid_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/39_signature_object_hash_mismatch_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/40_copied_stale_signature_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/41_one_invalid_signature_entry_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
@@ -1985,7 +2056,21 @@
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
-        "gap_milestone": null
+        "gap_milestone": null,
+        "payload_schema_variants": [
+          {
+            "aicp_version": "0.1",
+            "file": "schemas/core/aicp-core-payloads.schema.json",
+            "pointer": "#/$defs/CONTRACT_PROPOSE",
+            "suite": "conformance/core/CT_CORE_0.1.json"
+          },
+          {
+            "aicp_version": "0.2",
+            "file": "schemas/core/aicp-core-payloads-v0.2.schema.json",
+            "pointer": "#/$defs/CONTRACT_PROPOSE",
+            "suite": "conformance/core/CT_CORE_0.2.json"
+          }
+        ]
       },
       {
         "id": "DELEGATION_ACCEPT",
@@ -2153,7 +2238,8 @@
         "owner": "Core",
         "payload_schema": {
           "file": "schemas/core/aicp-core-payloads.schema.json",
-          "pointer": "#/$defs/ERROR"
+          "pointer": "#/$defs/ERROR",
+          "aicp_version": "0.1"
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
@@ -2168,7 +2254,21 @@
           "fixtures/core_v0_2/exact_contract_agreement/negative/07_contract_id_changes_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
-        "gap_milestone": null
+        "gap_milestone": null,
+        "payload_schema_variants": [
+          {
+            "aicp_version": "0.1",
+            "file": "schemas/core/aicp-core-payloads.schema.json",
+            "pointer": "#/$defs/ERROR",
+            "suite": "conformance/core/CT_CORE_0.1.json"
+          },
+          {
+            "aicp_version": "0.2",
+            "file": "schemas/core/aicp-core-payloads-v0.2.schema.json",
+            "pointer": "#/$defs/ERROR",
+            "suite": "conformance/core/CT_CORE_0.2.json"
+          }
+        ]
       },
       {
         "id": "EXTERNAL_TX_DECLARE",
@@ -2962,7 +3062,8 @@
         "owner": "Core",
         "payload_schema": {
           "file": "schemas/core/aicp-core-payloads.schema.json",
-          "pointer": "#/$defs/RESOLVE_CONFLICT"
+          "pointer": "#/$defs/RESOLVE_CONFLICT",
+          "aicp_version": "0.1"
         },
         "suites": [
           "conformance/core/CT_CORE_0.1.json",
@@ -2980,10 +3081,25 @@
           "fixtures/core_v0_2/exact_contract_agreement/negative/25_duplicate_candidate_expected_fail.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/negative/26_selected_not_candidate_expected_fail.jsonl",
           "fixtures/core_v0_2/exact_contract_agreement/negative/27_selected_fields_mismatch_expected_fail.jsonl",
-          "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl"
+          "fixtures/core_v0_2/exact_contract_agreement/negative/28_resolution_substitutes_head_expected_fail.jsonl",
+          "fixtures/core_v0_2/exact_contract_agreement/negative/36_conflict_resolution_invalid_message_hash_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
-        "gap_milestone": null
+        "gap_milestone": null,
+        "payload_schema_variants": [
+          {
+            "aicp_version": "0.1",
+            "file": "schemas/core/aicp-core-payloads.schema.json",
+            "pointer": "#/$defs/RESOLVE_CONFLICT",
+            "suite": "conformance/core/CT_CORE_0.1.json"
+          },
+          {
+            "aicp_version": "0.2",
+            "file": "schemas/core/aicp-core-payloads-v0.2.schema.json",
+            "pointer": "#/$defs/RESOLVE_CONFLICT",
+            "suite": "conformance/core/CT_CORE_0.2.json"
+          }
+        ]
       },
       {
         "id": "RESPONSIBILITY_ACCEPT",

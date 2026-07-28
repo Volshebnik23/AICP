@@ -685,6 +685,81 @@ def _message_surface_errors(
             errors.append(
                 f"{message_id}: payload schema mapping is not the canonical owner mapping"
             )
+        expected_variants = expected_entry.get("payload_schema_variants")
+        variants = entry.get("payload_schema_variants")
+        if expected_variants is None:
+            if variants is not None:
+                errors.append(
+                    f"{message_id}: unknown payload schema variants are forbidden"
+                )
+        elif not isinstance(variants, list):
+            errors.append(
+                f"{message_id}: payload schema variants are missing"
+            )
+        else:
+            versions = [
+                variant.get("aicp_version")
+                for variant in variants
+                if isinstance(variant, dict)
+            ]
+            if len(versions) != len(variants):
+                errors.append(
+                    f"{message_id}: payload schema variants must be objects"
+                )
+            if len(set(versions)) != len(versions):
+                errors.append(
+                    f"{message_id}: duplicate payload schema variant version"
+                )
+            expected_versions = {
+                variant["aicp_version"] for variant in expected_variants
+            }
+            if set(versions) - expected_versions:
+                errors.append(
+                    f"{message_id}: unknown payload schema variant version"
+                )
+            for variant in variants:
+                if not isinstance(variant, dict):
+                    continue
+                if not _json_pointer_exists(root, variant):
+                    errors.append(
+                        f"{message_id}: variant schema file/pointer does not resolve"
+                    )
+                suite_ref = variant.get("suite")
+                if (
+                    not isinstance(suite_ref, str)
+                    or not (root / suite_ref).is_file()
+                ):
+                    errors.append(
+                        f"{message_id}: variant suite does not resolve"
+                    )
+            canonical_variant = next(
+                (
+                    variant
+                    for variant in variants
+                    if isinstance(variant, dict)
+                    and variant.get("aicp_version")
+                    == (
+                        schema.get("aicp_version")
+                        if isinstance(schema, dict)
+                        else None
+                    )
+                ),
+                None,
+            )
+            if (
+                canonical_variant is None
+                or not isinstance(schema, dict)
+                or canonical_variant.get("file") != schema.get("file")
+                or canonical_variant.get("pointer") != schema.get("pointer")
+            ):
+                errors.append(
+                    f"{message_id}: canonical schema conflicts with its versioned variant"
+                )
+            if variants != expected_variants:
+                errors.append(
+                    f"{message_id}: payload schema variants are missing, duplicate, "
+                    "unknown, conflicting, or stale"
+                )
         suites = entry.get("suites")
         if not isinstance(suites, list) or any(
             not isinstance(ref, str) or not (root / ref).is_file()
