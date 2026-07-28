@@ -717,7 +717,7 @@ def negative_fixtures() -> list[Fixture]:
             "CT2-NEG-35",
             "35_revision_proposal_message_schema",
             b.messages,
-            [CONTRACT_REF],
+            ["CT-SCHEMA-JSONL-01"],
             invalid_indices=[2],
         )
     )

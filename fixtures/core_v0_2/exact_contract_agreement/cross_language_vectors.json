@@ -905,7 +905,7 @@
       "path": "fixtures/core_v0_2/exact_contract_agreement/negative/35_revision_proposal_message_schema_expected_fail.jsonl",
       "expected_semantic_issue_ids": [],
       "expected_runner_failure_ids": [
-        "CT2-CONTRACT-REF-01"
+        "CT-SCHEMA-JSONL-01"
       ],
       "expected_state": "ACTIVE_HEAD",
       "expected_active_head": {

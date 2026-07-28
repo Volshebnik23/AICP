@@ -1237,7 +1237,7 @@
       "expect_pass": false,
       "expected_failures": [
         {
-          "test_id": "CT2-CONTRACT-REF-01",
+          "test_id": "CT-SCHEMA-JSONL-01",
           "min_count": 1
         }
       ]

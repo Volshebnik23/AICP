@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "9f5f2f535544d358ba86321869c60d19f30c590a48e36cfe600e13fa1fa0cda5",
+      "combined_sha256": "0911b49236d24ef531e85eeeb2b6e41b0c899d70d31681685735ef67ddbd8025",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -25,7 +25,7 @@
         },
         {
           "path": "conformance/core/CT_CORE_0.2.json",
-          "sha256": "2b25627a57612c846bac09cdaa1c178cfacc3e99b88484b074390df5dea2a3f0"
+          "sha256": "d0422c7e1b4082abc638cb33fe15ce1d089911af2d7a030898d8ccbb99a6576c"
         },
         {
           "path": "conformance/core/CT_NUMERIC_GUARDRAILS_0.1.json",
@@ -318,7 +318,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "183741d2a7c2400d8f9949aedf746cff6e23fecd59c4cb6152bee47a97c4d6f9",
+      "combined_sha256": "609bf7422f32539ed376084be4a3647105b6f22596ac76c3c22bcec37fecece7",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -430,7 +430,7 @@
         },
         {
           "path": "fixtures/core_v0_2/exact_contract_agreement/cross_language_vectors.json",
-          "sha256": "84f2e536a8fa37bae7e83bc57951972241d6a34e8e3f35275604235ae3e2b489"
+          "sha256": "e379396a3ad17f7365e1a15f1206035d70e8d269d77faeb9666cf3e9123c9a95"
         },
         {
           "path": "fixtures/core_v0_2/exact_contract_agreement/negative/01_missing_contract_ref_expected_fail.jsonl",

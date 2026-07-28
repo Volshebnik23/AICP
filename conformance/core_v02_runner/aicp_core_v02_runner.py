@@ -72,12 +72,26 @@ def _payload_validator(payload_schema: dict[str, Any], message_type: str) -> Any
     return _validator(wrapper)
 
 
-def _schema_failure_id(message: dict[str, Any], *, payload: bool) -> str:
+def _schema_failure_id(
+    message: dict[str, Any],
+    *,
+    payload: bool,
+    issue: Any | None = None,
+) -> str:
     message_type = message.get("message_type")
     if payload and message_type == "CONTEXT_AMEND":
         return "CT2-CONTEXT-BINDING-01"
     if not payload and message_type == "CONTRACT_PROPOSE":
-        return "CT2-CONTRACT-REF-01"
+        issue_path = list(getattr(issue, "absolute_path", ()))
+        issue_message = str(getattr(issue, "message", ""))
+        if (
+            issue_path
+            and issue_path[0] == "contract_ref"
+        ) or (
+            not issue_path
+            and "'contract_ref' is a required property" in issue_message
+        ):
+            return "CT2-CONTRACT-REF-01"
     return "CT-PAYLOAD-SCHEMA-01" if payload else "CT-SCHEMA-JSONL-01"
 
 
@@ -108,7 +122,9 @@ def _check_common(
             for issue in issues:
                 failures.append(
                     _failure(
-                        _schema_failure_id(message, payload=False),
+                        _schema_failure_id(
+                            message, payload=False, issue=issue
+                        ),
                         issue.message,
                         rel_file,
                         line_no,
@@ -132,7 +148,9 @@ def _check_common(
             for issue in issues:
                 failures.append(
                     _failure(
-                        _schema_failure_id(message, payload=True),
+                        _schema_failure_id(
+                            message, payload=True, issue=issue
+                        ),
                         issue.message,
                         rel_file,
                         line_no,
