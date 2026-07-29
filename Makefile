@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -21,6 +21,8 @@ validate:
 	$(PYTHON) scripts/validate_verification_gate_alignment.py
 	$(PYTHON) scripts/validate_shipped_extension_coverage.py
 	$(PYTHON) scripts/generate_core_v02_fixtures.py --check
+	$(PYTHON) scripts/generate_profile_composition_registry.py --check
+	$(PYTHON) scripts/generate_capneg_v02_fixtures.py --check
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \
@@ -49,6 +51,14 @@ conformance-core:
 
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog extensions
+	$(MAKE) conformance-capneg-v02
+	$(MAKE) conformance-session-state-projection-v2
+
+conformance-capneg-v02:
+	$(PYTHON) conformance/capneg_v02_runner/aicp_capneg_v02_runner.py
+
+conformance-session-state-projection-v2:
+	$(PYTHON) conformance/capneg_v02_runner/aicp_capneg_v02_runner.py --suite conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json --out conformance/report_ext_session_state_projection_v2.json
 
 conformance-bindings:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog bindings
@@ -143,6 +153,14 @@ quickstart-core-v02-ts:
 	node dropins/aicp-core-v0.2/typescript/scripts/generate_exact_contract_transcript.mjs --out out/quickstart/core-v02-ts/exact_contract.jsonl
 	$(PYTHON) scripts/validate_core_v02_transcript.py out/quickstart/core-v02-ts/exact_contract.jsonl
 
+quickstart-capneg-v02-py:
+	$(PYTHON) reference/python/aicp_ref_capneg_v02/quickstart.py --out out/quickstart/capneg-v02-py/profile-composition.jsonl
+	$(PYTHON) scripts/validate_capneg_v02_transcript.py out/quickstart/capneg-v02-py/profile-composition.jsonl
+
+quickstart-capneg-v02-ts:
+	node sdk/typescript/scripts/generate_capneg_v02_quickstart.mjs --out out/quickstart/capneg-v02-ts/profile-composition.jsonl
+	$(PYTHON) scripts/validate_capneg_v02_transcript.py out/quickstart/capneg-v02-ts/profile-composition.jsonl
+
 template-smoke:
 	$(PYTHON) -c "from pathlib import Path; Path('out/template-ts-agent').mkdir(parents=True, exist_ok=True); Path('out/template-protocol-adapter').mkdir(parents=True, exist_ok=True)"
 	node templates/ts-agent/agent.js > out/template-ts-agent/thread.jsonl
@@ -166,6 +184,8 @@ prepr:
 	$(MAKE) quickstart-ts
 	$(MAKE) quickstart-core-v02-py
 	$(MAKE) quickstart-core-v02-ts
+	$(MAKE) quickstart-capneg-v02-py
+	$(MAKE) quickstart-capneg-v02-ts
 	$(MAKE) template-smoke
 	$(MAKE) conformance-iut-smoke
 	cd sdk/typescript && npm ci && npm test
