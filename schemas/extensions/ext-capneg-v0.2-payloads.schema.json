@@ -183,6 +183,43 @@
       },
       "additionalProperties": false
     },
+    "AlternativeConstraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "constraints_version"
+      ],
+      "properties": {
+        "constraints_version": {
+          "const": "aicp.capneg.alternative_constraints.v1"
+        },
+        "required_crypto_profiles": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "required_aicp_profiles": {
+          "$ref": "#/$defs/ProfileRefArray"
+        },
+        "required_privacy_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_extensions": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "required_policy_categories": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "maximum_limits": {
+          "$ref": "#/$defs/Limits"
+        },
+        "acceptable_bindings": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "acceptable_channel_properties": {
+          "$ref": "#/$defs/SupportedChannelProperties"
+        }
+      }
+    },
     "DeclarationBinding": {
       "type": "object",
       "additionalProperties": false,
@@ -513,7 +550,7 @@
           }
         },
         "alternative_constraints": {
-          "type": "object"
+          "$ref": "#/$defs/AlternativeConstraints"
         }
       }
     }

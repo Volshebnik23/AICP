@@ -64,10 +64,48 @@ test("CAPNEG v0.2 reducer, contract binding, and projection match shared vectors
         registeredExtensions,
       }),
       {
-        error_ids: vector.expected.error_ids,
-        final_state: vector.expected.final_state,
+        error_observations: vector.expected_error_observations,
+        final_state: vector.expected_final_state,
       },
       vector.id,
     );
+  }
+});
+
+test("CAPNEG v0.2 load-bearing rules have direct hand-authored assertions", () => {
+  const catalog = readJson(
+    "fixtures/extensions/capneg_v0_2/negative_cases.json",
+  );
+  const cases = new Map(catalog.cases.map((entry) => [entry.id, entry]));
+  const expected = {
+    N52: { codes: ["CAPNEG_TRANSCRIPT_SESSION_MISMATCH", "DECISION_SESSION_MISMATCH"], state: "PARTIALLY_ACCEPTED" },
+    N53: { codes: ["CAPNEG_TRANSCRIPT_CONTRACT_MISMATCH", "DECISION_CONTRACT_MISMATCH"], state: "PARTIALLY_ACCEPTED" },
+    N56: { codes: ["AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED"], state: "PARTIALLY_ACCEPTED" },
+    N58: { codes: ["ACCEPTANCE_SIGNATURE_INVALID", "AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED"], state: "ACCEPTED" },
+    N59: { codes: ["CAPNEG_SIGNATURE_INVALID", "MISSING_DECLARATION_BINDING", "PROFILE_SET_UNSUPPORTED", "SELECTION_OUTSIDE_DECLARATION"], state: "COLLECTING_DECLARATIONS" },
+    N60: { codes: ["CAPNEG_SIGNATURE_INVALID"], state: "COLLECTING_DECLARATIONS" },
+    N61: { codes: ["CAPNEG_SIGNATURE_INVALID"], state: "PROPOSED" },
+    N69: { codes: ["STALE_CAPABILITIES_DECLARATION"], state: "PROPOSED" },
+    N73: { codes: ["REVISION_REJECTED"], state: "REJECTED" },
+    N76: { codes: ["PARTICIPANT_REQUIRED_CRYPTO_MISSING"], state: "COLLECTING_DECLARATIONS" },
+    N77: { codes: ["SELECTION_OUTSIDE_DECLARATION"], state: "COLLECTING_DECLARATIONS" },
+    N78: { codes: ["SELECTION_OUTSIDE_DECLARATION"], state: "COLLECTING_DECLARATIONS" },
+    N79: { codes: ["NEGOTIATION_SESSION_MISMATCH", "NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH"], state: "ACCEPTED" },
+    N83: { codes: ["PROJECTION_ACCEPTANCE_NOT_ESTABLISHED", "PROJECTION_ACCEPTED_RESULT_HASH_MISMATCH", "PROJECTION_PROFILE_SET_MISMATCH"], state: "ACCEPTED" },
+    N88: { codes: ["CONTRACT_ID_MISMATCH", "CORE_CONTRACT_SCHEMA_INVALID"], state: "ACCEPTED" },
+  };
+  for (const [caseId, assertion] of Object.entries(expected)) {
+    const actual = evaluateCapnegVector(cases.get(caseId), {
+      rules,
+      reasonCodes,
+      keyMap,
+      registeredExtensions,
+    });
+    assert.deepEqual(
+      [...new Set(actual.error_observations.map((item) => item.code))].sort(),
+      [...assertion.codes].sort(),
+      `${caseId} codes`,
+    );
+    assert.equal(actual.final_state.state, assertion.state, `${caseId} state`);
   }
 });

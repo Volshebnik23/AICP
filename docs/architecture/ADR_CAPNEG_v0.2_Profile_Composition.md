@@ -26,7 +26,19 @@ Every proposal binds the latest declaration of every exact participant and one e
 proposal revision. Every participant, including the proposer, must explicitly accept
 that revision. A full acceptance is immutable under its negotiation ID. A changed
 accepted composition requires a new negotiation ID with an explicit supersession
-link.
+link. Supersession is same-session, same-contract, exact-participant-set only and takes
+effect after full successor acceptance.
+
+Decision envelopes are bound to the result's exact session and contract. Decisions
+revalidate the proposal's declaration bindings against the latest valid declarations;
+a rejection is terminal for its revision. Every participant-required crypto identifier
+is an independent minimum on the selected crypto set.
+
+M61 conformance separates deterministic message construction from a reviewed explicit
+oracle catalog. Expected errors preserve message index, message ID, and multiplicity,
+and expected state is never populated by the production reducer. Projection v2 likewise
+reduces the exact transcript prefix named by `as_of_message_hash`, rather than comparing
+with future final state.
 
 ## Rejected alternatives
 

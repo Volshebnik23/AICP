@@ -20,6 +20,12 @@ is closed to additional properties, attempted composition claims fail validation
 translate an internal `AICP-EXT-CAPNEG-0.2` report into external component-profile proof or
 an aggregate badge; a future M62 format must add that evidence path explicitly.
 
+M61's internal suite uses a reviewed expectation catalog that is independent of the
+production reducer and compares exact message origin, multiplicity, and final state.
+That removes a self-confirming test-oracle defect, but the resulting report is still
+repository-owned internal evidence rather than an independent external implementation
+observation.
+
 It complements:
 - `docs/interop/AICP_Public_Interop_Corpus.md` for packaging guidance,
 - `docs/interop/AICP_Interop_Submission_Playbook.md` for submitter onboarding,

@@ -26,8 +26,17 @@ active extensions differ from the fully accepted negotiation state. The accepted
 hash provides the link to the participant/revision-bound CAPNEG result. A stale or
 substituted result is not portable state evidence.
 
-`conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json` executes one positive and four
-negative cases from `fixtures/extensions/object_resync/state_projection_v2/`. A complete,
+`as_of_message_hash` MUST identify exactly one message earlier in the observed transcript.
+The verifier locates that index, applies the same message-validity barrier to the prefix,
+reduces only `transcript[0 : as_of_index + 1]`, and compares the projection with the fully
+accepted CAPNEG state at that point. Acceptance or supersession that occurs later in the
+transcript cannot leak backward. Unknown/future hashes and hashes supplied only as an
+unproved `branch_heads` entry fail; v2 defines no separate branch-head proof mechanism.
+
+`conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json` executes four positive and nine
+negative cases from `fixtures/extensions/object_resync/state_projection_v2/`, including
+declaration, proposal, partial-acceptance, exact-final-acceptance, and supersession
+boundaries. A complete,
 non-degraded internal run emits
 `AICP-Evidence-SESSION-STATE-PROJECTION-v2`. The mark is internal capability evidence, not
 an ordinary product-profile mark or independent external proof. Generalized external

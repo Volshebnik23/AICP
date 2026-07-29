@@ -55,8 +55,8 @@ def _profile_key(value: dict[str, Any]) -> tuple[str, str]:
     return str(value["profile_id"]), str(value["profile_version"])
 
 
-def _suite_metadata(path: str) -> dict[str, str]:
-    suite = _load_json(ROOT / path)
+def _suite_metadata(path: str, *, root: Path) -> dict[str, str]:
+    suite = _load_json(root / path)
     suite_id = suite.get("suite_id")
     suite_version = suite.get("suite_version")
     if not isinstance(suite_id, str) or not isinstance(suite_version, str):
@@ -137,7 +137,7 @@ def build_registry(root: Path = ROOT) -> dict[str, Any]:
         record: dict[str, Any] = {
             "profile": _profile_ref(*key),
             "profile_catalog": catalog_path,
-            "core_suite": _suite_metadata(core_paths[0]),
+            "core_suite": _suite_metadata(core_paths[0], root=root),
             "required_suites": sorted(required_suites),
             "required_extensions": sorted(registry_entry.get("required_extensions", [])),
             "required_crypto_profiles": sorted(
@@ -198,7 +198,9 @@ def build_registry(root: Path = ROOT) -> dict[str, Any]:
         "composition_hash_domain": "capneg.profile_composition",
         "capneg_version": "0.2",
         "maximum_profiles": MAX_PROFILES,
-        "supported_core_suites": [_suite_metadata(SUPPORTED_CORE_SUITE)],
+        "supported_core_suites": [
+            _suite_metadata(SUPPORTED_CORE_SUITE, root=root)
+        ],
         "rules": {
             "exact_profile_match": True,
             "canonical_order": ["profile_id", "profile_version"],

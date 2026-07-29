@@ -1,6 +1,6 @@
 import { createPublicKey, verify } from "node:crypto";
 
-import { objectHash } from "./hashing.js";
+import { messageHashFromBody, objectHash } from "./hashing.js";
 import {
   COMPOSITION_HASH_DOMAIN,
   COMPOSITION_VERSION,
@@ -64,8 +64,11 @@ function messageBinding(message) {
 
 function verifyMessageSignatures(message, keyMap) {
   const signatures = message.signatures;
-  if (!Array.isArray(signatures) || signatures.length === 0) return false;
+  if (!Array.isArray(signatures) || signatures.length === 0) {
+    return { allValid: false, senderValid: false };
+  }
   let senderSignature = false;
+  let allValid = true;
   for (const signature of signatures) {
     if (
       signature === null ||
@@ -73,7 +76,8 @@ function verifyMessageSignatures(message, keyMap) {
       signature.object_type !== "message" ||
       signature.object_hash !== message.message_hash
     ) {
-      return false;
+      allValid = false;
+      continue;
     }
     const keyMetadata = keyMap[signature.signer];
     if (
@@ -81,7 +85,8 @@ function verifyMessageSignatures(message, keyMap) {
       signature.kid !== keyMetadata.kid ||
       typeof signature.sig_b64url !== "string"
     ) {
-      return false;
+      allValid = false;
+      continue;
     }
     const rawKey = Buffer.from(keyMetadata.public_key_b64url, "base64url");
     const spki = Buffer.concat([
@@ -91,10 +96,18 @@ function verifyMessageSignatures(message, keyMap) {
     const publicKey = createPublicKey({ key: spki, format: "der", type: "spki" });
     const signatureBytes = Buffer.from(signature.sig_b64url, "base64url");
     const input = Buffer.from(`AICP1\0SIG\0${signature.object_hash}`, "utf8");
-    if (!verify(null, input, publicKey, signatureBytes)) return false;
+    try {
+      if (!verify(null, input, publicKey, signatureBytes)) {
+        allValid = false;
+        continue;
+      }
+    } catch {
+      allValid = false;
+      continue;
+    }
     if (signature.signer === message.sender) senderSignature = true;
   }
-  return senderSignature;
+  return { allValid, senderValid: senderSignature };
 }
 
 function selectionErrors(result, declarations, resolved) {
@@ -126,6 +139,14 @@ function selectionErrors(result, declarations, resolved) {
     }
     if (
       !setSubset(
+        new Set(declaration.required_crypto_profiles ?? []),
+        selectedCrypto,
+      )
+    ) {
+      errors.push("PARTICIPANT_REQUIRED_CRYPTO_MISSING");
+    }
+    if (
+      !setSubset(
         selectedExtensions,
         new Set(declaration.supported_extensions ?? []),
       )
@@ -149,6 +170,30 @@ function selectionErrors(result, declarations, resolved) {
     ) {
       errors.push("SELECTION_OUTSIDE_DECLARATION");
     }
+    for (const [propertyId, selectedValue] of Object.entries(
+      selected.channel_properties ?? {},
+    )) {
+      const supportedValue =
+        declaration.supported_channel_properties?.[propertyId];
+      const supported = Array.isArray(supportedValue)
+        ? supportedValue.includes(selectedValue)
+        : supportedValue !== null &&
+            typeof supportedValue === "object" &&
+            Number.isInteger(selectedValue) &&
+            Number(supportedValue.min) <= selectedValue &&
+            selectedValue <= Number(supportedValue.max);
+      if (!supported) errors.push("SELECTION_OUTSIDE_DECLARATION");
+    }
+    for (const [limitId, selectedValue] of Object.entries(selected.limits ?? {})) {
+      const declaredValue = declaration.limits?.[limitId];
+      if (
+        !Number.isInteger(selectedValue) ||
+        !Number.isInteger(declaredValue) ||
+        selectedValue > declaredValue
+      ) {
+        errors.push("SELECTION_OUTSIDE_DECLARATION");
+      }
+    }
   }
   return errors;
 }
@@ -163,6 +208,7 @@ class Reducer {
     this.negotiations = new Map();
     this.activeNegotiationId = null;
     this.errors = [];
+    this.issues = [];
     this.boundContracts = [];
   }
 
@@ -298,6 +344,18 @@ class Reducer {
         const prior = this.negotiations.get(result.supersedes_negotiation_id);
         if (prior === undefined || prior.state !== "ACCEPTED") {
           issues.push("NEGOTIATION_SUPERSESSION_INVALID");
+        } else {
+          if (
+            prior.result.session_id !== result.session_id ||
+            prior.result.contract_id !== result.contract_id ||
+            JSON.stringify(prior.result.participants) !==
+              JSON.stringify(result.participants)
+          ) {
+            issues.push("NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH");
+          }
+          if (prior.superseded_by !== null && prior.superseded_by !== undefined) {
+            issues.push("NEGOTIATION_SUPERSESSION_FORK");
+          }
         }
       }
     } else {
@@ -329,6 +387,7 @@ class Reducer {
       rejections: new Map(),
       accepted_composition: existing?.accepted_composition ?? null,
       accepted_result_hash: existing?.accepted_result_hash ?? null,
+      superseded_by: existing?.superseded_by ?? null,
     });
     this.activeNegotiationId = negotiationId;
   }
@@ -359,6 +418,35 @@ class Reducer {
     if (!(negotiation.result.participants ?? []).includes(message.sender)) {
       issues.push("ACCEPTOR_NOT_PARTICIPANT");
     }
+    if (message.session_id !== negotiation.result.session_id) {
+      issues.push("DECISION_SESSION_MISMATCH");
+    }
+    if (message.contract_id !== negotiation.result.contract_id) {
+      issues.push("DECISION_CONTRACT_MISMATCH");
+    }
+    const bindings = new Map(
+      (negotiation.result.declaration_bindings ?? []).map((binding) => [
+        binding.party_id,
+        binding,
+      ]),
+    );
+    for (const party of negotiation.result.participants ?? []) {
+      const declaration = this.latestDeclarations.get(party);
+      if (
+        declaration === undefined ||
+        JSON.stringify(bindings.get(party)) !==
+          JSON.stringify(messageBinding(declaration))
+      ) {
+        issues.push("STALE_CAPABILITIES_DECLARATION");
+      }
+    }
+    const supersedes = negotiation.result.supersedes_negotiation_id;
+    if (supersedes !== undefined) {
+      const prior = this.negotiations.get(supersedes);
+      if (prior === undefined || prior.state !== "ACCEPTED") {
+        issues.push("NEGOTIATION_SUPERSESSION_INVALID");
+      }
+    }
     return [negotiation, issues];
   }
 
@@ -375,23 +463,34 @@ class Reducer {
     if (selectedProfiles.has(AUTHENTICATED_PROFILE_KEY)) {
       if (!Array.isArray(signatures) || signatures.length === 0) {
         issues.push("AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED");
-      } else if (!verifyMessageSignatures(message, this.keyMap)) {
+      } else {
+        const verified = verifyMessageSignatures(message, this.keyMap);
+        if (!verified.allValid) {
+          issues.push("ACCEPTANCE_SIGNATURE_INVALID");
+        } else if (!verified.senderValid) {
+          issues.push("AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED");
+        }
+      }
+    } else if (Array.isArray(signatures) && signatures.length > 0) {
+      if (!verifyMessageSignatures(message, this.keyMap).allValid) {
         issues.push("ACCEPTANCE_SIGNATURE_INVALID");
       }
-    } else if (
-      Array.isArray(signatures) &&
-      signatures.length > 0 &&
-      !verifyMessageSignatures(message, this.keyMap)
-    ) {
-      issues.push("ACCEPTANCE_SIGNATURE_INVALID");
     }
+    if (negotiation.state === "REJECTED") issues.push("REVISION_REJECTED");
     if (negotiation.rejections.has(message.sender)) {
       issues.push("PARTICIPANT_DECISION_CONFLICT");
     }
     const prior = negotiation.acceptances.get(message.sender);
     if (prior !== undefined) {
-      if (JSON.stringify(prior.payload) === JSON.stringify(message.payload)) return;
-      issues.push("ACCEPTANCE_REPLAY_RETARGETED");
+      if (
+        JSON.stringify(prior.payload) === JSON.stringify(message.payload) &&
+        issues.length === 0
+      ) {
+        return;
+      }
+      if (JSON.stringify(prior.payload) !== JSON.stringify(message.payload)) {
+        issues.push("ACCEPTANCE_REPLAY_RETARGETED");
+      }
     }
     if (issues.length > 0) {
       this.errors.push(...issues);
@@ -408,6 +507,8 @@ class Reducer {
       const supersedes = negotiation.result.supersedes_negotiation_id;
       if (supersedes !== undefined && this.negotiations.has(supersedes)) {
         this.negotiations.get(supersedes).state = "SUPERSEDED";
+        this.negotiations.get(supersedes).superseded_by =
+          negotiation.result.negotiation_id;
       }
     } else {
       negotiation.state = "PARTIALLY_ACCEPTED";
@@ -429,6 +530,63 @@ class Reducer {
     }
     if (negotiation.acceptances.has(message.sender)) {
       issues.push("PARTICIPANT_DECISION_CONFLICT");
+    }
+    const constraints = message.payload.alternative_constraints;
+    if (constraints !== null && typeof constraints === "object") {
+      for (const field of [
+        "required_crypto_profiles",
+        "required_extensions",
+        "required_policy_categories",
+        "acceptable_bindings",
+      ]) {
+        if (field in constraints && !sortedUniqueStrings(constraints[field])) {
+          issues.push("REJECTION_ALTERNATIVE_CONSTRAINTS_INVALID");
+        }
+      }
+      if (
+        "required_aicp_profiles" in constraints &&
+        !sortedUniqueProfiles(constraints.required_aicp_profiles)
+      ) {
+        issues.push("REJECTION_ALTERNATIVE_CONSTRAINTS_INVALID");
+      }
+    }
+    const prior = negotiation.rejections.get(message.sender);
+    if (prior !== undefined) {
+      if (JSON.stringify(prior.payload) === JSON.stringify(message.payload)) {
+        if (issues.length > 0) this.errors.push(...issues);
+        return;
+      }
+      issues.push("REJECTION_REPLAY_RETARGETED");
+    }
+    const declaration = this.latestDeclarations.get(message.sender)?.payload ?? {};
+    for (const alternative of message.payload.alternative_profile_compositions ?? []) {
+      const resolved = resolveProfileComposition(alternative, this.rules);
+      if (resolved.errors.length > 0) {
+        issues.push("REJECTION_ALTERNATIVE_INVALID");
+      }
+      const alternativeProfiles = profileKeys(alternative.profiles);
+      if (!setSubset(alternativeProfiles, profileKeys(declaration.supported_aicp_profiles))) {
+        issues.push("REJECTION_ALTERNATIVE_UNSUPPORTED");
+      }
+      const constraintCrypto = new Set(
+        message.payload.alternative_constraints?.required_crypto_profiles ?? [],
+      );
+      const availableCrypto = new Set([
+        ...resolved.required_crypto_profiles,
+        ...constraintCrypto,
+      ]);
+      if (
+        !setSubset(
+          profileKeys(declaration.required_aicp_profiles),
+          alternativeProfiles,
+        ) ||
+        !setSubset(
+          new Set(declaration.required_crypto_profiles ?? []),
+          availableCrypto,
+        )
+      ) {
+        issues.push("REJECTION_ALTERNATIVE_REQUIREMENTS_UNMET");
+      }
     }
     if (issues.length > 0) {
       this.errors.push(...issues);
@@ -454,21 +612,37 @@ class Reducer {
       return;
     }
     const expectedComposition = negotiation.accepted_composition;
-    let substituted =
+    let substitutions = 0;
+    if (
       binding.capneg_version !== "0.2" ||
-      binding.negotiation_result_hash !== negotiation.accepted_result_hash ||
-      JSON.stringify(binding.profile_composition) !== JSON.stringify(expectedComposition);
+      binding.negotiation_result_hash !== negotiation.accepted_result_hash
+    ) {
+      substitutions += 1;
+    }
+    if (
+      JSON.stringify(binding.profile_composition) !==
+      JSON.stringify(expectedComposition)
+    ) {
+      substitutions += 1;
+    }
     const expectedHash = objectHash(
       COMPOSITION_HASH_DOMAIN,
       binding.profile_composition,
     );
-    substituted =
-      substituted ||
+    if (
       binding.profile_composition_hash !== expectedHash ||
       binding.profile_composition_hash !==
-        negotiation.result.selected.profile_composition_hash;
-    if (substituted) {
-      this.errors.push("CONTRACT_BINDING_SUBSTITUTION");
+        negotiation.result.selected.profile_composition_hash
+    ) {
+      substitutions += 1;
+    }
+    if (substitutions > 0) {
+      this.errors.push(
+        ...Array.from(
+          { length: substitutions },
+          () => "CONTRACT_BINDING_SUBSTITUTION",
+        ),
+      );
       return;
     }
     if (
@@ -481,31 +655,43 @@ class Reducer {
     this.boundContracts.push(String(message.contract_id));
   }
 
-  apply(message, valid = true, invalidReason = "MESSAGE_VALIDITY_BARRIER") {
-    if (!valid) {
-      this.errors.push(invalidReason);
-      return;
+  apply(message, valid = true, invalidReasons = ["MESSAGE_VALIDITY_BARRIER"], index = null) {
+    const before = this.errors.length;
+    try {
+      if (!valid) {
+        this.errors.push(...invalidReasons);
+        return;
+      }
+      if (message.message_type === "CONTRACT_PROPOSE") {
+        this.contract(message);
+        return;
+      }
+      if (![
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT",
+        "CAPABILITIES_REJECT",
+      ].includes(message.message_type)) {
+        return;
+      }
+      if (message.payload?.capneg_version !== "0.2") {
+        this.errors.push("CAPNEG_VERSION_MISMATCH");
+        return;
+      }
+      if (message.message_type === "CAPABILITIES_DECLARE") this.declaration(message);
+      else if (message.message_type === "CAPABILITIES_PROPOSE") this.proposal(message);
+      else if (message.message_type === "CAPABILITIES_ACCEPT") this.accept(message);
+      else this.reject(message);
+    } finally {
+      for (const code of this.errors.slice(before)) {
+        this.issues.push({
+          code,
+          message_index: index,
+          message_id: typeof message.message_id === "string" ? message.message_id : null,
+          detail: code,
+        });
+      }
     }
-    if (message.message_type === "CONTRACT_PROPOSE") {
-      this.contract(message);
-      return;
-    }
-    if (![
-      "CAPABILITIES_DECLARE",
-      "CAPABILITIES_PROPOSE",
-      "CAPABILITIES_ACCEPT",
-      "CAPABILITIES_REJECT",
-    ].includes(message.message_type)) {
-      return;
-    }
-    if (message.payload?.capneg_version !== "0.2") {
-      this.errors.push("CAPNEG_VERSION_MISMATCH");
-      return;
-    }
-    if (message.message_type === "CAPABILITIES_DECLARE") this.declaration(message);
-    else if (message.message_type === "CAPABILITIES_PROPOSE") this.proposal(message);
-    else if (message.message_type === "CAPABILITIES_ACCEPT") this.accept(message);
-    else this.reject(message);
   }
 
   snapshot() {
@@ -532,6 +718,22 @@ class Reducer {
         .map(([negotiationId]) => negotiationId)
         .sort(),
       bound_contracts: [...new Set(this.boundContracts)].sort(),
+      negotiations: [...this.negotiations.entries()]
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([negotiationId, negotiation]) => ({
+          negotiation_id: negotiationId,
+          state: negotiation.state,
+          current_revision: negotiation.current_revision,
+          proposal_message_id: negotiation.proposal_message_id,
+          acceptances: [...negotiation.acceptances.keys()].sort(),
+          rejections: [...negotiation.rejections.keys()].sort(),
+          accepted_profile_composition: negotiation.accepted_composition
+            ? clone(negotiation.accepted_composition)
+            : null,
+          accepted_result_hash: negotiation.accepted_result_hash ?? null,
+          superseded_by: negotiation.superseded_by ?? null,
+        })),
+      issues: clone(this.issues),
       errors: [...this.errors],
     };
   }
@@ -547,7 +749,8 @@ export function reduceCapnegV02(
     reducer.apply(
       message,
       !invalid.has(index),
-      invalidReasons[index] ?? "MESSAGE_VALIDITY_BARRIER",
+      invalidReasons[index] ?? ["MESSAGE_VALIDITY_BARRIER"],
+      index,
     );
   });
   return reducer.snapshot();
@@ -557,7 +760,14 @@ export function validateProjectionV2(
   message,
   messages,
   messageIndex,
-  { capnegState, rules, registeredExtensions },
+  {
+    rules,
+    reasonCodes,
+    keyMap,
+    registeredExtensions,
+    invalidIndices = [],
+    invalidReasons = {},
+  },
 ) {
   const projection = message.payload?.session_state;
   if (
@@ -599,15 +809,45 @@ export function validateProjectionV2(
   } else if (projection.profile_composition_hash !== resolved.composition_hash) {
     issues.push("PROJECTION_COMPOSITION_HASH_MISMATCH");
   }
+  const matchingIndices = messages
+    .slice(0, messageIndex)
+    .map((entry, index) => [entry.message_hash, index])
+    .filter(([hash]) => hash === projection.as_of_message_hash)
+    .map(([, index]) => index);
+  let prefixState = null;
+  if (matchingIndices.length !== 1) {
+    issues.push("PROJECTION_AS_OF_STALE");
+  } else {
+    const asOfIndex = matchingIndices[0];
+    const prefixInvalid = invalidIndices.filter((index) => index <= asOfIndex);
+    prefixState = reduceCapnegV02(messages.slice(0, asOfIndex + 1), {
+      rules,
+      reasonCodes,
+      keyMap,
+      invalidIndices: prefixInvalid,
+      invalidReasons,
+    });
+  }
+  const acceptedCandidates =
+    prefixState?.negotiations?.filter(
+      (negotiation) =>
+        negotiation.state === "ACCEPTED",
+    ) ?? [];
+  const acceptedNegotiation =
+    acceptedCandidates.length === 1 ? acceptedCandidates[0] : null;
+  if (prefixState !== null && acceptedNegotiation === null) {
+    issues.push("PROJECTION_ACCEPTANCE_NOT_ESTABLISHED");
+  }
   if (
-    capnegState.accepted_profile_composition === null ||
-    JSON.stringify(capnegState.accepted_profile_composition.profiles) !==
+    acceptedNegotiation?.accepted_profile_composition == null ||
+    JSON.stringify(acceptedNegotiation.accepted_profile_composition.profiles) !==
       JSON.stringify(profiles)
   ) {
     issues.push("PROJECTION_PROFILE_SET_MISMATCH");
   }
   if (
-    projection.accepted_negotiation_result_hash !== capnegState.accepted_result_hash
+    projection.accepted_negotiation_result_hash !==
+    acceptedNegotiation?.accepted_result_hash
   ) {
     issues.push("PROJECTION_ACCEPTED_RESULT_HASH_MISMATCH");
   }
@@ -619,69 +859,212 @@ export function validateProjectionV2(
   ) {
     issues.push("PROJECTION_ACTIVE_EXTENSION_INCONSISTENT");
   }
-  const knownHashes = new Set(
-    messages
-      .slice(0, messageIndex + 1)
-      .map((entry) => entry.message_hash)
-      .filter((value) => typeof value === "string"),
-  );
-  for (const head of message.payload.branch_heads ?? []) {
-    if (head && typeof head === "object" && typeof head.message_hash === "string") {
-      knownHashes.add(head.message_hash);
-    }
-  }
-  if (!knownHashes.has(projection.as_of_message_hash)) {
-    issues.push("PROJECTION_AS_OF_STALE");
-  }
-  return [...new Set(issues)];
+  return issues;
 }
 
 export function evaluateCapnegVector(
   vector,
   { rules, reasonCodes, keyMap, registeredExtensions },
 ) {
+  const messages = vector.messages;
   const invalidReasons = {};
-  for (const index of vector.invalid_message_indices ?? []) {
-    const expectedBarrier = (vector.expected?.error_ids ?? []).find((errorId) =>
-      [
-        "PROFILE_COMPOSITION_EMPTY",
-        "PROFILE_DUPLICATE",
-        "MISSING_DECLARATION_BINDING",
-        "CAPNEG_PAYLOAD_SCHEMA_INVALID",
-        "CAPNEG_CHAIN_INVALID",
-        "CAPNEG_MESSAGE_HASH_INVALID",
-      ].includes(errorId),
+  const addInvalid = (index, code) => {
+    invalidReasons[index] ??= [];
+    invalidReasons[index].push(code);
+  };
+  const firstSession = messages[0]?.session_id;
+  const firstContract = messages[0]?.contract_id;
+  const seenIds = new Set();
+  messages.forEach((message, index) => {
+    if (typeof message.message_id !== "string" || message.message_id.length === 0) {
+      addInvalid(index, "CAPNEG_MESSAGE_ID_INVALID");
+    } else if (seenIds.has(message.message_id)) {
+      addInvalid(index, "CAPNEG_MESSAGE_ID_DUPLICATE");
+    } else {
+      seenIds.add(message.message_id);
+    }
+    if (message.session_id !== firstSession) {
+      addInvalid(index, "CAPNEG_TRANSCRIPT_SESSION_MISMATCH");
+    }
+    if (message.contract_id !== firstContract) {
+      addInvalid(index, "CAPNEG_TRANSCRIPT_CONTRACT_MISMATCH");
+    }
+    if (
+      messageHashFromBody(
+        Object.fromEntries(
+          Object.entries(message).filter(
+            ([key]) => key !== "message_hash" && key !== "signatures",
+          ),
+        ),
+      ) !== message.message_hash
+    ) {
+      addInvalid(index, "CAPNEG_MESSAGE_HASH_INVALID");
+    }
+    if (
+      (index === 0 && "prev_msg_hash" in message) ||
+      (index > 0 && message.prev_msg_hash !== messages[index - 1].message_hash)
+    ) {
+      addInvalid(index, "CAPNEG_CHAIN_INVALID");
+    }
+
+    let proposal = null;
+    if (["CAPABILITIES_ACCEPT", "CAPABILITIES_REJECT"].includes(message.message_type)) {
+      proposal = [...messages.slice(0, index)].reverse().find((candidate) => {
+        const payload = candidate.payload ?? {};
+        const decision = message.payload ?? {};
+        return (
+          candidate.message_type === "CAPABILITIES_PROPOSE" &&
+          payload.negotiation_result?.negotiation_id === decision.negotiation_id &&
+          payload.proposal_revision === decision.proposal_revision &&
+          candidate.message_id === decision.proposal_message_id &&
+          candidate.message_hash === decision.proposal_message_hash &&
+          payload.negotiation_result_hash === decision.negotiation_result_hash
+        );
+      });
+      if (proposal !== undefined && proposal !== null) {
+        if (message.session_id !== proposal.payload.negotiation_result.session_id) {
+          addInvalid(index, "DECISION_SESSION_MISMATCH");
+        }
+        if (message.contract_id !== proposal.payload.negotiation_result.contract_id) {
+          addInvalid(index, "DECISION_CONTRACT_MISMATCH");
+        }
+      }
+    }
+    const selectedProfiles = new Set(
+      proposal?.payload?.negotiation_result?.selected?.profile_composition?.profiles?.map(
+        profileKey,
+      ) ?? [],
     );
-    invalidReasons[index] = expectedBarrier ?? "MESSAGE_VALIDITY_BARRIER";
-  }
+    const requireSender =
+      message.message_type === "CAPABILITIES_ACCEPT" &&
+      selectedProfiles.has(AUTHENTICATED_PROFILE_KEY);
+    if (message.signatures !== undefined || requireSender) {
+      if (!Array.isArray(message.signatures) || message.signatures.length === 0) {
+        if (requireSender) {
+          addInvalid(index, "AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED");
+        } else {
+          addInvalid(
+            index,
+            message.message_type === "CAPABILITIES_ACCEPT"
+              ? "ACCEPTANCE_SIGNATURE_INVALID"
+              : "CAPNEG_SIGNATURE_INVALID",
+          );
+        }
+      } else {
+        const verified = verifyMessageSignatures(message, keyMap);
+        if (!verified.allValid) {
+          addInvalid(
+            index,
+            message.message_type === "CAPABILITIES_ACCEPT"
+              ? "ACCEPTANCE_SIGNATURE_INVALID"
+              : "CAPNEG_SIGNATURE_INVALID",
+          );
+        }
+        if (requireSender && !verified.senderValid) {
+          addInvalid(index, "AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED");
+        }
+      }
+    }
+    if (message.message_type === "CONTRACT_PROPOSE") {
+      const contract = message.payload?.contract;
+      if (
+        contract === null ||
+        typeof contract !== "object" ||
+        typeof contract.contract_id !== "string" ||
+        contract.contract_id.length === 0 ||
+        typeof contract.goal !== "string" ||
+        contract.goal.length === 0 ||
+        !Array.isArray(contract.roles) ||
+        contract.roles.length === 0 ||
+        (contract.policies ?? []).some(
+          (policy) =>
+            policy === null ||
+            typeof policy !== "object" ||
+            typeof policy.policy_id !== "string" ||
+            typeof policy.category !== "string" ||
+            policy.parameters === null ||
+            typeof policy.parameters !== "object",
+        )
+      ) {
+        addInvalid(index, "CORE_CONTRACT_SCHEMA_INVALID");
+      }
+      if (contract?.contract_id !== message.contract_id) {
+        addInvalid(index, "CONTRACT_ID_MISMATCH");
+      }
+    }
+  });
+  const invalidIndices = Object.keys(invalidReasons).map(Number);
   const state = reduceCapnegV02(vector.messages, {
     rules,
     reasonCodes,
     keyMap,
-    invalidIndices: vector.invalid_message_indices,
+    invalidIndices,
     invalidReasons,
   });
-  const errors = [...state.errors];
+  const issues = [...state.issues];
   vector.messages.forEach((message, index) => {
-    if (message.message_type === "STATE_SYNC_RESPONSE") {
-      errors.push(
+    if (
+      message.message_type === "STATE_SYNC_RESPONSE" &&
+      !invalidIndices.includes(index)
+    ) {
+      issues.push(
         ...validateProjectionV2(message, vector.messages, index, {
-          capnegState: state,
           rules,
+          reasonCodes,
+          keyMap,
           registeredExtensions,
-        }),
+          invalidIndices,
+          invalidReasons,
+        }).map((code) => ({
+          code,
+          message_index: index,
+          message_id:
+            typeof message.message_id === "string" ? message.message_id : null,
+          detail: code,
+        })),
       );
     }
   });
   if (vector.require_accepted && state.state !== "ACCEPTED") {
-    errors.push("PARTICIPANT_ACCEPTANCE_INCOMPLETE");
+    issues.push({
+      code: "PARTICIPANT_ACCEPTANCE_INCOMPLETE",
+      message_index: null,
+      message_id: null,
+      detail: "PARTICIPANT_ACCEPTANCE_INCOMPLETE",
+    });
   }
   const finalState = {};
-  for (const field of Object.keys(vector.expected.final_state)) {
+  for (const field of Object.keys(vector.expected_final_state)) {
     finalState[field] = state[field];
   }
+  const grouped = new Map();
+  for (const issue of issues) {
+    const key = JSON.stringify([
+      issue.code,
+      issue.message_index,
+      issue.message_id,
+    ]);
+    grouped.set(key, (grouped.get(key) ?? 0) + 1);
+  }
+  const observations = [...grouped.entries()]
+    .map(([key, exactCount]) => {
+      const [code, messageIndex, messageId] = JSON.parse(key);
+      return {
+        code,
+        message_index: messageIndex,
+        message_id: messageId,
+        exact_count: exactCount,
+      };
+    })
+    .sort(
+      (left, right) =>
+        Number(left.message_index === null) - Number(right.message_index === null) ||
+        (left.message_index ?? -1) - (right.message_index ?? -1) ||
+        left.code.localeCompare(right.code) ||
+        (left.message_id ?? "").localeCompare(right.message_id ?? ""),
+    );
   return {
-    error_ids: [...new Set(errors)].sort(),
+    error_observations: observations,
     final_state: finalState,
   };
 }
