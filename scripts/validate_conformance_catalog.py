@@ -55,6 +55,25 @@ def main() -> int:
                     f"core-v02:{kind} output must be a conformance report path: {out_ref}"
                 )
 
+    capneg_versioned = runpy.run_path(
+        str(ROOT / "conformance/capneg_v02_runner/catalog.py")
+    )
+    for input_ref, out_ref in capneg_versioned["SUITE_CATALOGS"]:
+        input_path = ROOT / input_ref
+        if not input_path.exists():
+            errors.append(f"capneg-v02:suite input does not exist: {input_ref}")
+        if input_ref in input_paths:
+            errors.append(f"duplicate conformance catalog input: {input_ref}")
+        input_paths.add(input_ref)
+        if out_ref in report_paths:
+            errors.append(f"duplicate conformance report output: {out_ref}")
+        report_paths.add(out_ref)
+        if not out_ref.startswith("conformance/report_"):
+            errors.append(
+                "capneg-v02:suite output must be a conformance report path: "
+                f"{out_ref}"
+            )
+
     if errors:
         print("[FAIL] conformance catalog validation failed")
         for error in errors:

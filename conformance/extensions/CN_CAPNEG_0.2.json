@@ -1,0 +1,99 @@
+{
+  "suite_id": "CN-CAPNEG-0.2",
+  "suite_version": "0.2.0-experimental",
+  "aicp_version": "0.1",
+  "capneg_version": "0.2",
+  "description": "Isolated EXT-CAPNEG v0.2 canonical profile-composition and negotiation checks.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
+  "composition_schema_ref": "schemas/composition/aicp-profile-composition-v1.schema.json",
+  "composition_rules_ref": "registry/aicp_profile_composition_rules.json",
+  "payload_surface": {
+    "surface_kind": "extension",
+    "surface_id": "EXT-CAPNEG",
+    "surface_version": "0.2"
+  },
+  "canonical_payload_schema": false,
+  "payload_schema_map": {
+    "CAPABILITIES_DECLARE": "#/$defs/CAPABILITIES_DECLARE",
+    "CAPABILITIES_PROPOSE": "#/$defs/CAPABILITIES_PROPOSE",
+    "CAPABILITIES_ACCEPT": "#/$defs/CAPABILITIES_ACCEPT",
+    "CAPABILITIES_REJECT": "#/$defs/CAPABILITIES_REJECT"
+  },
+  "case_catalogs": [
+    "fixtures/extensions/capneg_v0_2/positive_cases.json",
+    "fixtures/extensions/capneg_v0_2/negative_cases.json"
+  ],
+  "transcripts": [
+    {
+      "id": "CN2-POSITIVE",
+      "path": "fixtures/extensions/capneg_v0_2/positive_cases.json",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT",
+        "CAPABILITIES_REJECT",
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "STATE_SYNC_RESPONSE"
+      ]
+    },
+    {
+      "id": "CN2-NEGATIVE",
+      "path": "fixtures/extensions/capneg_v0_2/negative_cases.json",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT",
+        "CAPABILITIES_REJECT",
+        "CONTRACT_PROPOSE",
+        "STATE_SYNC_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CN2-EXPECTED-FAILURE-01"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01"
+    },
+    {
+      "test_id": "CN2-PAYLOAD-SCHEMA-01"
+    },
+    {
+      "test_id": "CT-MESSAGE-TYPE-REGISTRY-01"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01"
+    },
+    {
+      "test_id": "CT-SIGNATURE-VERIFY-01"
+    },
+    {
+      "test_id": "CN2-COMPOSITION-01"
+    },
+    {
+      "test_id": "CN2-DECLARATION-01"
+    },
+    {
+      "test_id": "CN2-PROPOSAL-REVISION-01"
+    },
+    {
+      "test_id": "CN2-FULL-ACCEPTANCE-01"
+    },
+    {
+      "test_id": "CN2-CONTRACT-BINDING-01"
+    },
+    {
+      "test_id": "CN2-PROJECTION-V2-01"
+    }
+  ],
+  "compatibility_mark": "AICP-EXT-CAPNEG-0.2"
+}

@@ -1,0 +1,75 @@
+{
+  "suite_id": "OR-SESSION-STATE-PROJECTION-V2",
+  "suite_version": "2.0.0-experimental",
+  "aicp_version": "0.1",
+  "description": "Internal portable session-state projection v2 checks bound to an accepted CAPNEG v0.2 composition.",
+  "schema_ref": "schemas/core/aicp-core-message.schema.json",
+  "payload_schema_ref": "schemas/extensions/session-state-projection-v2.schema.json",
+  "capneg_payload_schema_ref": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
+  "composition_rules_ref": "registry/aicp_profile_composition_rules.json",
+  "payload_surface": {
+    "surface_kind": "capability",
+    "surface_id": "aicp.session_state_projection",
+    "surface_version": "v2"
+  },
+  "canonical_payload_schema": false,
+  "payload_schema_map": {
+    "STATE_SYNC_RESPONSE": "#/$defs/STATE_SYNC_RESPONSE"
+  },
+  "case_catalogs": [
+    "fixtures/extensions/object_resync/state_projection_v2/positive_cases.json",
+    "fixtures/extensions/object_resync/state_projection_v2/negative_cases.json"
+  ],
+  "transcripts": [
+    {
+      "id": "SP2-POSITIVE",
+      "path": "fixtures/extensions/object_resync/state_projection_v2/positive_cases.json",
+      "expected_message_types": [
+        "STATE_SYNC_RESPONSE"
+      ]
+    },
+    {
+      "id": "SP2-NEGATIVE",
+      "path": "fixtures/extensions/object_resync/state_projection_v2/negative_cases.json",
+      "expected_message_types": [
+        "STATE_SYNC_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "OR-SP2-EXPECTED-FAILURE-01"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "test_id": "CT-SCHEMA-JSONL-01"
+    },
+    {
+      "test_id": "OR-SP2-PAYLOAD-SCHEMA-01"
+    },
+    {
+      "test_id": "CT-HASH-CHAIN-01"
+    },
+    {
+      "test_id": "CT-MESSAGE-HASH-01"
+    },
+    {
+      "test_id": "OR-SP2-PROFILE-SET-01"
+    },
+    {
+      "test_id": "OR-SP2-COMPOSITION-HASH-01"
+    },
+    {
+      "test_id": "OR-SP2-RESULT-HASH-01"
+    },
+    {
+      "test_id": "OR-SP2-EXTENSIONS-01"
+    },
+    {
+      "test_id": "OR-SP2-AS-OF-01"
+    }
+  ],
+  "compatibility_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v2"
+}
