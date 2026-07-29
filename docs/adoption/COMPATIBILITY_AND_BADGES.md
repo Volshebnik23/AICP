@@ -29,6 +29,11 @@ composition profile ID, aggregate product mark, or external composition badge. A
 composition claim requires CAPNEG v0.2 evidence plus separate evidence for every component;
 the generalized external composition-evidence format remains M62 work.
 
+The internal CAPNEG v0.2 mark is eligible only when the reducer-independent reviewed
+oracle matches exact error origin/multiplicity and final state, all mandatory message and
+signature checks execute, and the run is non-degraded. This strengthens repository-owned
+behavioral evidence; it does not make that evidence external or award component marks.
+
 ### 4) Security evidence marks
 - Mark: `AICP-SECURITY-SIGNED-PATH-0.1`
 - Meaning: signed-path evidence suite passed (including signature verification checks when available).

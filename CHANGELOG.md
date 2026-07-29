@@ -18,8 +18,8 @@ All notable repo-backed release metadata changes should be recorded here.
 - Added separately selected experimental EXT-CAPNEG v0.2 with a generated 16-profile
   composition-rules registry, canonical set/result hashing, declaration/revision/full-
   acceptance state reduction, contract binding, Authenticated Base Ed25519 enforcement,
-  11 positive and 51 exact expected-fail cases, and Python/TypeScript shared-vector parity.
-- Added composition-aware session-state projection v2 with one positive and four negative
+  17 positive and 98 exact expected-fail cases, and Python/TypeScript shared/direct parity.
+- Added composition-aware session-state projection v2 with four positive and nine negative
   cases and an internal-only evidence mark.
 
 ### Changed
@@ -46,6 +46,14 @@ All notable repo-backed release metadata changes should be recorded here.
   are cryptographically verified, invalid messages cannot advance agreement state, every
   negative fixture verifies post-rejection state, and six reused Core IDs expose explicit
   v0.1/v0.2 payload-schema variants.
+- Corrected M61 with a reviewed reducer-independent expectation catalog, exact
+  `{code,message_index,message_id,exact_count}` observations, a complete per-message
+  validity barrier, all-present-signature validation, sender-signature enforcement,
+  replay-before-idempotence validation, decision context/latest-declaration binding,
+  terminal rejection, participant-required crypto, same-context supersession,
+  Python/TypeScript channel/limit parity, prefix-exact projection v2, and frozen Core
+  v0.1 contract validation. CAPNEG v0.1, Core, projection v1, UAT, and IUT surfaces were
+  not changed.
 
 ### Known limitations
 - No real external or pairwise interop submission is present.

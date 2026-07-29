@@ -90,11 +90,13 @@ _Last updated: 2026-07-29_
   authority, policy, transport, or external-conformance claim.
 - **Dependencies:** shipped M60 result, stable CAPNEG v0.1, the 16 registered product
   profiles, and existing Core v0.1 hashing/envelope semantics.
-- **Completion evidence:** `CN_CAPNEG_0.2` passes 11 positive and 51 exact expected-fail
-  cases; projection v2 passes one positive and four negatives; shared Python/TypeScript
-  vectors match compositions, hashes, requirements, errors, and final states. Non-degraded
-  execution emits only `AICP-EXT-CAPNEG-0.2`; missing schema/crypto dependencies suppress
-  the mark.
+- **Completion evidence:** `CN_CAPNEG_0.2` passes 17 positive and 98 exact expected-fail
+  cases from a reducer-independent reviewed oracle; projection v2 passes four positive
+  and nine negative temporal cases. Python/TypeScript vectors and direct tests match
+  exact error origin/multiplicity, selection rules, replay/rejection/supersession behavior,
+  contract binding, temporal projection, and final multi-negotiation state. Non-degraded
+  execution emits only `AICP-EXT-CAPNEG-0.2`; missing schema/crypto dependencies skip
+  content-derived cases, suppress the mark, and report degradation explicitly.
 - **Independent-evidence boundary:** CAPNEG v0.2 and projection v2 are shipped experimental
   internal surfaces. Component profile evidence remains separate, the public submission
   schema rejects unsupported composition claims, and generalized external composition

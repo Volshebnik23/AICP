@@ -29,6 +29,14 @@ tag, package publication, GA declaration, or final RC repackaging.
   contract binding, and internal composition-aware session-state projection v2. Stable
   CAPNEG v0.1, projection v1, profile catalogs/marks, Core, UAT, and IUT surfaces remain
   unchanged.
+- The M61 correction separates generated transcripts from a reviewed semantic oracle,
+  preserves exact error origin and multiplicity, validates every message and every present
+  signature before reduction, binds decisions/replays to exact context and latest
+  declarations, makes rejection revision-terminal, enforces participant crypto minimums
+  and same-context supersession, aligns Python/TypeScript selection semantics, validates
+  bound Core v0.1 contracts, and evaluates projection v2 at its exact transcript prefix.
+  The strengthened corpus contains 17 positive and 98 negative CAPNEG cases plus four
+  positive and nine negative projection-v2 cases.
 
 ### Current evidence limits
 

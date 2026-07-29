@@ -326,7 +326,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "9da08996911e081f4bd7a78dfbc3546e105c9e6aed7b2a9252a7ef5443f1ff1b",
+      "combined_sha256": "2ad16e46124fc8632573b877b8889326acc630d09e2e79502c76774d15194cd2",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -774,15 +774,19 @@
         },
         {
           "path": "fixtures/extensions/capneg_v0_2/cross_language_vectors.json",
-          "sha256": "cdc6fe3e3ee635c2b4ffa35fe1aa7e94b6cb3f580444571a76923f6ca1177b38"
+          "sha256": "955ec5609b0748c282115b41146db5d76b1959d6d2d944f5f8d8bcd73fce2417"
         },
         {
           "path": "fixtures/extensions/capneg_v0_2/negative_cases.json",
-          "sha256": "4ec74a48093d4ae34005c1b6099581a41f6041542417fb5d1f8436e7e6ce35ae"
+          "sha256": "60c32b62e832e5a436dda6e8f1b5c46185ebc4eb432c45bf49936a37c98e992f"
+        },
+        {
+          "path": "fixtures/extensions/capneg_v0_2/oracle_expectations.json",
+          "sha256": "e6c8addf2e0d429de2192488ed2664444150eea39bd35e7fcf668b433a8e3043"
         },
         {
           "path": "fixtures/extensions/capneg_v0_2/positive_cases.json",
-          "sha256": "1e1af908f6d0f35ffa0e88544eed3fe9c9c4872304d8c68a1cb3121ad76c0a03"
+          "sha256": "d3358215a54b40e906cb1c753ca39d20cc0df1cc6db14decf0562818d7ca5966"
         },
         {
           "path": "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl",
@@ -1206,11 +1210,11 @@
         },
         {
           "path": "fixtures/extensions/object_resync/state_projection_v2/negative_cases.json",
-          "sha256": "d55f0d0fdecee27f7f6b76bae95e807933a3b8ced19f6b84eef94e95843b0873"
+          "sha256": "a0b6a7cfc39001dc39ae4e90eefd2524067dfaeede2ddc60667a86a8668328f5"
         },
         {
           "path": "fixtures/extensions/object_resync/state_projection_v2/positive_cases.json",
-          "sha256": "42f4c15ecb00caeea4b0c8d622f499d9da8e19bc91cc98f1ef0c98ea96be1c81"
+          "sha256": "8467c72767e8f60a419ae785d916b2ffa942d9e875a8e7ea5703b67919a5dbdb"
         },
         {
           "path": "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
@@ -1876,7 +1880,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "86b3a437757dd394baf2a725d8ee61298511384998d8dd17f0176ce2b8a6e711",
+      "combined_sha256": "055ad0156a8f7aca8b99657b5be0e2a0875597e2188f9601a0f24edcf7ac9833",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1944,7 +1948,7 @@
         },
         {
           "path": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
-          "sha256": "24fa021aa0fb5c9f31990729251460361e1e52453ff146779f31f013470f6784"
+          "sha256": "0e54e17d0096b2f375b3b897cc5193d7a5c2644720b7f15a622d245fa7b8775c"
         },
         {
           "path": "schemas/extensions/ext-channels-payloads.schema.json",
