@@ -11,8 +11,7 @@ The exact projection object is validated by
 
 - `projection_version`: exactly `aicp.session_state_projection.v2`;
 - the Core v0.1 `session_id` and `contract_id`;
-- `negotiation_id`, accepted `proposal_revision`, and participant IDs;
-- canonical `profile_composition`;
+- canonical `selected_aicp_profiles`;
 - exact `profile_composition_hash`;
 - exact `accepted_negotiation_result_hash`;
 - the derived active-extension set;
@@ -22,9 +21,10 @@ The `STATE_SYNC_RESPONSE` envelope selects this schema through the capability se
 `aicp.session_state_projection` / `v2`. The canonical message-registry mapping remains the
 stable v1 variant.
 
-A verifier must reject a projection whose set, composition hash, accepted-result hash,
-participant/revision binding, or active extensions differ from the fully accepted
-negotiation state. A stale or substituted result is not portable state evidence.
+A verifier must reject a projection whose set, composition hash, accepted-result hash, or
+active extensions differ from the fully accepted negotiation state. The accepted-result
+hash provides the link to the participant/revision-bound CAPNEG result. A stale or
+substituted result is not portable state evidence.
 
 `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json` executes one positive and four
 negative cases from `fixtures/extensions/object_resync/state_projection_v2/`. A complete,
