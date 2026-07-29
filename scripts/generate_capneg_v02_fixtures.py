@@ -21,21 +21,11 @@ if str(REF_PY) not in sys.path:
 
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.validate import message_body_without_hash_and_signatures  # noqa: E402
-from aicp_ref_capneg_v02.profile_composition import (  # noqa: E402
+from capneg_v02_fixture_model import (  # noqa: E402
     COMPOSITION_HASH_DOMAIN,
     COMPOSITION_VERSION,
     canonical_profile_ref_key,
-    load_composition_rules,
-    resolve_profile_composition,
-)
-from aicp_ref_capneg_v02.session_state_v2 import (  # noqa: E402
-    PROJECTION_OBJECT_TYPE,
-    PROJECTION_VERSION,
-    validate_session_state_projection_v2,
-)
-from aicp_ref_capneg_v02.state_machine import (  # noqa: E402
-    NEGOTIATION_HASH_DOMAIN,
-    reduce_capneg_v02,
+    resolve_fixture_composition,
 )
 
 
@@ -51,6 +41,10 @@ PROJECTION_NEGATIVE_OUT = PROJECTION_OUT / "negative_cases.json"
 PRIVATE_KEYS = ROOT / "fixtures/keys/TEST_private_keys.json"
 PUBLIC_KEYS = ROOT / "fixtures/keys/GT_public_keys.json"
 REASON_CODES = ROOT / "registry/capneg_reason_codes.json"
+ORACLE_EXPECTATIONS = OUT / "oracle_expectations.json"
+NEGOTIATION_HASH_DOMAIN = "capneg.negotiation_result"
+PROJECTION_OBJECT_TYPE = "session_state_projection"
+PROJECTION_VERSION = "aicp.session_state_projection.v2"
 
 
 def ref(profile_id: str, version: str = "0.1") -> dict[str, str]:
@@ -79,11 +73,34 @@ def _load(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-RULES = load_composition_rules()
+def configure_root(root: Path) -> None:
+    """Point every fixture input/output at one explicit repository tree."""
+
+    global ROOT, OUT, POSITIVE_OUT, NEGATIVE_OUT, VECTORS_OUT
+    global PROJECTION_OUT, PROJECTION_POSITIVE_OUT, PROJECTION_NEGATIVE_OUT
+    global PRIVATE_KEYS, PUBLIC_KEYS, REASON_CODES, ORACLE_EXPECTATIONS
+    global RULES, PRIVATE_KEY_MAP, PUBLIC_KEY_MAP
+
+    ROOT = root.resolve()
+    OUT = ROOT / "fixtures/extensions/capneg_v0_2"
+    POSITIVE_OUT = OUT / "positive_cases.json"
+    NEGATIVE_OUT = OUT / "negative_cases.json"
+    VECTORS_OUT = OUT / "cross_language_vectors.json"
+    PROJECTION_OUT = ROOT / "fixtures/extensions/object_resync/state_projection_v2"
+    PROJECTION_POSITIVE_OUT = PROJECTION_OUT / "positive_cases.json"
+    PROJECTION_NEGATIVE_OUT = PROJECTION_OUT / "negative_cases.json"
+    PRIVATE_KEYS = ROOT / "fixtures/keys/TEST_private_keys.json"
+    PUBLIC_KEYS = ROOT / "fixtures/keys/GT_public_keys.json"
+    REASON_CODES = ROOT / "registry/capneg_reason_codes.json"
+    ORACLE_EXPECTATIONS = OUT / "oracle_expectations.json"
+    RULES = _load(ROOT / "registry/aicp_profile_composition_rules.json")
+    PRIVATE_KEY_MAP = _load(PRIVATE_KEYS)
+    PUBLIC_KEY_MAP = _load(PUBLIC_KEYS)
+
+
+RULES = _load(ROOT / "registry/aicp_profile_composition_rules.json")
 PRIVATE_KEY_MAP = _load(PRIVATE_KEYS)
 PUBLIC_KEY_MAP = _load(PUBLIC_KEYS)
-REGISTERED_REASONS = {entry["id"] for entry in _load(REASON_CODES)}
-REGISTERED_EXTENSIONS = {entry["id"] for entry in _load(ROOT / "registry/extension_ids.json")}
 
 
 def _b64decode(value: str) -> bytes:
@@ -228,7 +245,7 @@ def build_negotiation(
     session_id = f"session-{case_id.lower()}"
     contract_id = f"contract-{case_id.lower()}"
     composition = _canonical_composition(profiles)
-    resolved = resolve_profile_composition(composition, RULES)
+    resolved = resolve_fixture_composition(composition, RULES)
     if resolved["errors"]:
         raise ValueError(f"{case_id}: invalid base composition {resolved['errors']}")
     signed_acceptances = (
@@ -593,23 +610,128 @@ def append_superseding_negotiation(
     return messages
 
 
-def _snapshot_expectation(snapshot: dict[str, Any]) -> dict[str, Any]:
-    return {
-        field: copy.deepcopy(snapshot[field])
-        for field in (
-            "state",
-            "latest_declarations",
-            "negotiation_id",
-            "current_revision",
-            "proposal_message_id",
-            "acceptances",
-            "rejections",
-            "accepted_profile_composition",
-            "accepted_result_hash",
-            "superseded_negotiations",
-            "bound_contracts",
-        )
+def _rehash_preserving_signatures(messages: list[dict[str, Any]]) -> None:
+    signed_ids = {
+        message["message_id"]
+        for message in messages
+        if isinstance(message.get("signatures"), list) and message["signatures"]
     }
+    _rehash(messages, signed_message_ids=signed_ids)
+
+
+def append_decision(
+    messages: list[dict[str, Any]],
+    *,
+    sender: str,
+    message_type: str = "CAPABILITIES_ACCEPT",
+    proposal: dict[str, Any] | None = None,
+    payload_updates: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    proposal = proposal or next(
+        message
+        for message in reversed(messages)
+        if message["message_type"] == "CAPABILITIES_PROPOSE"
+    )
+    result = proposal["payload"]["negotiation_result"]
+    payload: dict[str, Any] = {
+        "capneg_version": "0.2",
+        "negotiation_id": result["negotiation_id"],
+        "proposal_revision": proposal["payload"]["proposal_revision"],
+        "proposal_message_id": proposal["message_id"],
+        "proposal_message_hash": proposal["message_hash"],
+        "negotiation_result_hash": proposal["payload"]["negotiation_result_hash"],
+    }
+    if message_type == "CAPABILITIES_ACCEPT":
+        payload["accepted"] = True
+    else:
+        payload["reason_code"] = "PROFILE_SET_UNSUPPORTED"
+    payload.update(payload_updates or {})
+    message = _new_message(
+        session_id=proposal["session_id"],
+        contract_id=proposal["contract_id"],
+        index=len(messages) + 1,
+        sender=sender,
+        message_type=message_type,
+        payload=payload,
+    )
+    messages.append(message)
+    _rehash_preserving_signatures(messages)
+    return messages[-1]
+
+
+def append_declaration_supersession(
+    messages: list[dict[str, Any]], party: str
+) -> dict[str, Any]:
+    latest = next(
+        message
+        for message in reversed(messages)
+        if message.get("message_type") == "CAPABILITIES_DECLARE"
+        and message.get("payload", {}).get("party_id") == party
+    )
+    declaration = copy.deepcopy(latest)
+    declaration["message_id"] = f"m{len(messages) + 1}"
+    declaration["timestamp"] = f"2026-07-01T00:00:{len(messages) + 1:02d}Z"
+    declaration["payload"]["capabilities_id"] = (
+        latest["payload"]["capabilities_id"] + "-next"
+    )
+    declaration["payload"]["supersedes_capabilities_id"] = latest["payload"][
+        "capabilities_id"
+    ]
+    messages.append(declaration)
+    _rehash_preserving_signatures(messages)
+    return messages[-1]
+
+
+def append_projection(
+    messages: list[dict[str, Any]],
+    *,
+    as_of_message_hash: str,
+    result: dict[str, Any],
+    case_id: str,
+    branch_head_hash: str | None = None,
+) -> dict[str, Any]:
+    selected = result["selected"]
+    state = {
+        "projection_version": PROJECTION_VERSION,
+        "session_id": messages[0]["session_id"],
+        "contract_id": messages[0]["contract_id"],
+        "as_of_message_hash": as_of_message_hash,
+        "session_status": "OPEN",
+        "selected_aicp_profiles": copy.deepcopy(
+            selected["profile_composition"]["profiles"]
+        ),
+        "profile_composition_hash": selected["profile_composition_hash"],
+        "accepted_negotiation_result_hash": object_hash(
+            NEGOTIATION_HASH_DOMAIN, result
+        ),
+        "active_extensions": sorted(
+            set(selected["required_extensions"]) | {"EXT-OBJECT-RESYNC"}
+        ),
+        "participant_refs": copy.deepcopy(result["participants"]),
+    }
+    message = _new_message(
+        session_id=messages[0]["session_id"],
+        contract_id=messages[0]["contract_id"],
+        index=len(messages) + 1,
+        sender=PARTY_B,
+        message_type="STATE_SYNC_RESPONSE",
+        payload={
+            "request_id": f"sync-{case_id.lower()}",
+            "session_state": state,
+            "session_state_hash": object_hash(PROJECTION_OBJECT_TYPE, state),
+            "branch_heads": [
+                {
+                    "branch_id": "main",
+                    "head_version": "v1",
+                    "message_hash": branch_head_hash or as_of_message_hash,
+                }
+            ],
+            "active_head_version": "v1",
+        },
+    )
+    messages.append(message)
+    _rehash_preserving_signatures(messages)
+    return messages[-1]
 
 
 def finalize_case(
@@ -623,39 +745,23 @@ def finalize_case(
     require_accepted: bool = False,
 ) -> dict[str, Any]:
     invalid_messages = invalid_messages or {}
-    snapshot = reduce_capneg_v02(
-        messages,
-        rules=RULES,
-        registered_reason_codes=REGISTERED_REASONS,
-        key_map=PUBLIC_KEY_MAP,
-        crypto_available=True,
-        invalid_messages=invalid_messages,
-    )
-    errors = list(snapshot["errors"])
-    for index, message in enumerate(messages):
-        if index in invalid_messages:
-            continue
-        if message.get("message_type") == "STATE_SYNC_RESPONSE":
-            errors.extend(
-                issue["code"]
-                for issue in validate_session_state_projection_v2(
-                    message,
-                    messages,
-                    index,
-                    capneg_state=snapshot,
-                    registered_extensions=REGISTERED_EXTENSIONS,
-                )
-            )
-    if require_accepted and snapshot["state"] != "ACCEPTED":
-        errors.append("PARTICIPANT_ACCEPTANCE_INCOMPLETE")
-    error_ids = sorted(set(errors))
-    if expect_pass and error_ids:
-        raise ValueError(f"{case_id}: positive case produced errors {error_ids}")
-    if not expect_pass and not error_ids:
-        raise ValueError(f"{case_id}: negative case produced no errors")
-    if required_error is not None and required_error not in error_ids:
+    oracle = _load(ORACLE_EXPECTATIONS)
+    expectation = oracle.get("cases", {}).get(case_id)
+    if not isinstance(expectation, dict):
         raise ValueError(
-            f"{case_id}: required error {required_error} absent from {error_ids}"
+            f"{case_id}: missing reviewed expectation in "
+            f"{ORACLE_EXPECTATIONS.relative_to(ROOT)}"
+        )
+    observations = copy.deepcopy(expectation["expected_error_observations"])
+    final_state = copy.deepcopy(expectation["expected_final_state"])
+    observed_codes = {item["code"] for item in observations}
+    if expect_pass and observations:
+        raise ValueError(f"{case_id}: positive case has oracle errors {observations}")
+    if not expect_pass and not observations:
+        raise ValueError(f"{case_id}: negative case has no oracle error")
+    if required_error is not None and required_error not in observed_codes:
+        raise ValueError(
+            f"{case_id}: required error {required_error} absent from reviewed oracle"
         )
     return {
         "id": case_id,
@@ -663,11 +769,10 @@ def finalize_case(
         "expect_pass": expect_pass,
         "messages": messages,
         "invalid_message_indices": sorted(invalid_messages),
+        "requires_jsonschema": bool(expectation.get("requires_jsonschema", False)),
         "require_accepted": require_accepted,
-        "expected": {
-            "error_ids": error_ids,
-            "final_state": _snapshot_expectation(snapshot),
-        },
+        "expected_error_observations": observations,
+        "expected_final_state": final_state,
     }
 
 
@@ -789,6 +894,143 @@ def positive_cases() -> list[dict[str, Any]]:
             "P11",
             "new negotiation explicitly supersedes accepted negotiation",
             superseding,
+            expect_pass=True,
+        )
+    )
+
+    participant_crypto = build_negotiation(
+        [BASE], case_id="P12", include_acceptances=False
+    )
+    for index, declaration in enumerate(participant_crypto[:2]):
+        declaration["payload"]["supported_crypto_profiles"] = [
+            "aicp.crypto.ed25519.v1"
+        ]
+        declaration["payload"]["required_crypto_profiles"] = (
+            ["aicp.crypto.ed25519.v1"] if index == 0 else []
+        )
+    participant_crypto[2]["payload"]["negotiation_result"]["selected"][
+        "crypto_profiles"
+    ] = ["aicp.crypto.ed25519.v1"]
+    _refresh_proposal_after_declarations(participant_crypto, 2)
+    append_decision(participant_crypto, sender=PARTY_A)
+    append_decision(participant_crypto, sender=PARTY_B)
+    cases.append(
+        finalize_case(
+            "P12",
+            "participant-required crypto is selected without product-profile requirement",
+            participant_crypto,
+            expect_pass=True,
+        )
+    )
+
+    unrelated = build_negotiation(
+        [BASE], case_id="P13", include_acceptances=False
+    )
+    unrelated.append(
+        _new_message(
+            session_id=unrelated[0]["session_id"],
+            contract_id=unrelated[0]["contract_id"],
+            index=4,
+            sender=PARTY_C,
+            message_type="CAPABILITIES_DECLARE",
+            payload={
+                **copy.deepcopy(unrelated[0]["payload"]),
+                "capabilities_id": "cap-p13-u-1",
+                "party_id": PARTY_C,
+            },
+        )
+    )
+    _rehash(unrelated)
+    append_decision(unrelated, sender=PARTY_A, proposal=unrelated[2])
+    append_decision(unrelated, sender=PARTY_B, proposal=unrelated[2])
+    cases.append(
+        finalize_case(
+            "P13",
+            "unrelated participant declaration does not stale a proposal",
+            unrelated,
+            expect_pass=True,
+        )
+    )
+
+    duplicate_reject = build_negotiation(
+        [BASE], case_id="P14", include_acceptances=False
+    )
+    append_decision(
+        duplicate_reject,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    append_decision(
+        duplicate_reject,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    cases.append(
+        finalize_case(
+            "P14",
+            "exact duplicate rejection replay is idempotent",
+            duplicate_reject,
+            expect_pass=True,
+        )
+    )
+
+    projection_at_accept = build_negotiation(
+        [MEDIATED, RESUMABLE],
+        case_id="P15",
+        include_projection=True,
+    )
+    cases.append(
+        finalize_case(
+            "P15",
+            "projection binds the exact final acceptance",
+            projection_at_accept,
+            expect_pass=True,
+        )
+    )
+
+    projection_before_supersession = build_negotiation(
+        [MEDIATED, RESUMABLE], case_id="P16"
+    )
+    old_proposal = projection_before_supersession[_proposal_index(
+        projection_before_supersession
+    )]
+    old_as_of = projection_before_supersession[-1]["message_hash"]
+    append_superseding_negotiation(projection_before_supersession)
+    append_projection(
+        projection_before_supersession,
+        as_of_message_hash=old_as_of,
+        result=old_proposal["payload"]["negotiation_result"],
+        case_id="P16",
+    )
+    cases.append(
+        finalize_case(
+            "P16",
+            "projection before later supersession uses the old accepted prefix",
+            projection_before_supersession,
+            expect_pass=True,
+        )
+    )
+
+    projection_after_supersession = build_negotiation(
+        [MEDIATED, RESUMABLE], case_id="P17"
+    )
+    append_superseding_negotiation(projection_after_supersession)
+    new_proposal = next(
+        message
+        for message in reversed(projection_after_supersession)
+        if message["message_type"] == "CAPABILITIES_PROPOSE"
+    )
+    append_projection(
+        projection_after_supersession,
+        as_of_message_hash=projection_after_supersession[-1]["message_hash"],
+        result=new_proposal["payload"]["negotiation_result"],
+        case_id="P17",
+    )
+    cases.append(
+        finalize_case(
+            "P17",
+            "projection after accepted supersession uses the successor prefix",
+            projection_after_supersession,
             expect_pass=True,
         )
     )
@@ -1687,8 +1929,787 @@ def negative_cases() -> list[dict[str, Any]]:
             required_error="ACCEPTANCE_SIGNATURE_INVALID",
         )
     )
-    if len(cases) != 51:
-        raise ValueError(f"expected 51 negative families, generated {len(cases)}")
+
+    def context_mismatch(
+        case_id: str,
+        *,
+        message_type: str,
+        field: str,
+    ) -> None:
+        messages = build_negotiation(
+            [BASE],
+            case_id=case_id,
+            include_acceptances=message_type == "CAPABILITIES_ACCEPT",
+        )
+        if message_type == "CAPABILITIES_ACCEPT":
+            target = messages[-1]
+        else:
+            target = append_decision(
+                messages,
+                sender=PARTY_B,
+                message_type="CAPABILITIES_REJECT",
+            )
+        target[field] = f"other-{field}-{case_id.lower()}"
+        _rehash_preserving_signatures(messages)
+        error = (
+            "DECISION_SESSION_MISMATCH"
+            if field == "session_id"
+            else "DECISION_CONTRACT_MISMATCH"
+        )
+        cases.append(
+            finalize_case(
+                case_id,
+                f"{message_type.lower()} envelope {field} mismatch",
+                messages,
+                expect_pass=False,
+                required_error=error,
+            )
+        )
+
+    context_mismatch("N52", message_type="CAPABILITIES_ACCEPT", field="session_id")
+    context_mismatch("N53", message_type="CAPABILITIES_ACCEPT", field="contract_id")
+    context_mismatch("N54", message_type="CAPABILITIES_REJECT", field="session_id")
+    context_mismatch("N55", message_type="CAPABILITIES_REJECT", field="contract_id")
+
+    wrong_signer = build_negotiation([AUTH], case_id="N56")
+    wrong_signer[-1]["signatures"] = [
+        _signature(wrong_signer[-1]["message_hash"], PARTY_A)
+    ]
+    cases.append(
+        finalize_case(
+            "N56",
+            "valid other-party signature does not satisfy sender signature",
+            wrong_signer,
+            expect_pass=False,
+            required_error="AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED",
+        )
+    )
+
+    replay_missing_signature = build_negotiation(
+        [AUTH], case_id="N57", duplicate_acceptance=True
+    )
+    replay_missing_signature[4].pop("signatures", None)
+    cases.append(
+        finalize_case(
+            "N57",
+            "duplicate Authenticated Base acceptance has no signature",
+            replay_missing_signature,
+            expect_pass=False,
+            required_error="AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED",
+        )
+    )
+    replay_invalid_signature = build_negotiation(
+        [AUTH], case_id="N58", duplicate_acceptance=True
+    )
+    replay_invalid_signature[4]["signatures"][0]["sig_b64url"] = "A" * 86
+    cases.append(
+        finalize_case(
+            "N58",
+            "duplicate acceptance has an invalid current signature",
+            replay_invalid_signature,
+            expect_pass=False,
+            required_error="ACCEPTANCE_SIGNATURE_INVALID",
+        )
+    )
+
+    for case_id, message_offset, description in (
+        ("N59", 0, "invalid signed declaration"),
+        ("N60", 2, "invalid signed proposal"),
+    ):
+        messages = build_negotiation(
+            [BASE], case_id=case_id, include_acceptances=False
+        )
+        target = messages[message_offset]
+        target["signatures"] = [
+            {
+                **_signature(target["message_hash"], target["sender"]),
+                "sig_b64url": "A" * 86,
+            }
+        ]
+        cases.append(
+            finalize_case(
+                case_id,
+                description,
+                messages,
+                expect_pass=False,
+                required_error="CAPNEG_SIGNATURE_INVALID",
+            )
+        )
+
+    invalid_signed_reject = build_negotiation(
+        [BASE], case_id="N61", include_acceptances=False
+    )
+    invalid_reject = append_decision(
+        invalid_signed_reject,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    invalid_reject["signatures"] = [
+        {
+            **_signature(invalid_reject["message_hash"], PARTY_B),
+            "sig_b64url": "A" * 86,
+        }
+    ]
+    cases.append(
+        finalize_case(
+            "N61",
+            "invalid signed rejection",
+            invalid_signed_reject,
+            expect_pass=False,
+            required_error="CAPNEG_SIGNATURE_INVALID",
+        )
+    )
+
+    unknown_signer = build_negotiation([AUTH], case_id="N62")
+    unknown_signer[-1]["signatures"][0].update(
+        signer="agent:unknown", kid="unknown-key"
+    )
+    cases.append(
+        finalize_case(
+            "N62",
+            "Authenticated Base acceptance signature has unknown signer",
+            unknown_signer,
+            expect_pass=False,
+            required_error="ACCEPTANCE_SIGNATURE_INVALID",
+        )
+    )
+    kid_mismatch = build_negotiation([AUTH], case_id="N63")
+    kid_mismatch[-1]["signatures"][0]["kid"] = "wrong-kid"
+    cases.append(
+        finalize_case(
+            "N63",
+            "Authenticated Base acceptance signature has mismatched kid",
+            kid_mismatch,
+            expect_pass=False,
+            required_error="ACCEPTANCE_SIGNATURE_INVALID",
+        )
+    )
+    copied_signature = build_negotiation([AUTH], case_id="N64")
+    copied_signature[-1]["signatures"] = copy.deepcopy(
+        copied_signature[-2]["signatures"]
+    )
+    cases.append(
+        finalize_case(
+            "N64",
+            "Authenticated Base acceptance reuses a stale copied signature",
+            copied_signature,
+            expect_pass=False,
+            required_error="ACCEPTANCE_SIGNATURE_INVALID",
+        )
+    )
+    mixed_signatures = build_negotiation([AUTH], case_id="N65")
+    mixed_signatures[-1]["signatures"].append(
+        {
+            **_signature(mixed_signatures[-1]["message_hash"], PARTY_A),
+            "sig_b64url": "A" * 86,
+        }
+    )
+    cases.append(
+        finalize_case(
+            "N65",
+            "valid sender signature plus another invalid entry",
+            mixed_signatures,
+            expect_pass=False,
+            required_error="ACCEPTANCE_SIGNATURE_INVALID",
+        )
+    )
+
+    for case_id, field in (("N66", "session_id"), ("N67", "contract_id")):
+        messages = build_negotiation(
+            [AUTH], case_id=case_id, duplicate_acceptance=True
+        )
+        replay = messages[4]
+        replay[field] = f"replay-other-{field}"
+        _rehash_preserving_signatures(messages)
+        cases.append(
+            finalize_case(
+                case_id,
+                f"exact acceptance replay moved to another {field}",
+                messages,
+                expect_pass=False,
+                required_error=(
+                    "DECISION_SESSION_MISMATCH"
+                    if field == "session_id"
+                    else "DECISION_CONTRACT_MISMATCH"
+                ),
+            )
+        )
+
+    changed_sender = build_negotiation(
+        [BASE], case_id="N68", duplicate_acceptance=True
+    )
+    changed_sender[4]["sender"] = PARTY_C
+    _rehash(changed_sender)
+    cases.append(
+        finalize_case(
+            "N68",
+            "duplicate acceptance replay changes to a nonparticipant sender",
+            changed_sender,
+            expect_pass=False,
+            required_error="ACCEPTOR_NOT_PARTICIPANT",
+        )
+    )
+
+    stale_accept = build_negotiation(
+        [BASE], case_id="N69", include_acceptances=False
+    )
+    append_declaration_supersession(stale_accept, PARTY_A)
+    append_decision(stale_accept, sender=PARTY_B, proposal=stale_accept[2])
+    cases.append(
+        finalize_case(
+            "N69",
+            "declaration superseded after proposal then old proposal accepted",
+            stale_accept,
+            expect_pass=False,
+            required_error="STALE_CAPABILITIES_DECLARATION",
+        )
+    )
+    stale_reject = build_negotiation(
+        [BASE], case_id="N70", include_acceptances=False
+    )
+    append_declaration_supersession(stale_reject, PARTY_A)
+    append_decision(
+        stale_reject,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+        proposal=stale_reject[2],
+    )
+    cases.append(
+        finalize_case(
+            "N70",
+            "declaration superseded after proposal then old proposal rejected",
+            stale_reject,
+            expect_pass=False,
+            required_error="STALE_CAPABILITIES_DECLARATION",
+        )
+    )
+
+    revised_after_stale = build_negotiation(
+        [BASE], case_id="N71", include_acceptances=False
+    )
+    first_proposal = revised_after_stale[2]
+    append_declaration_supersession(revised_after_stale, PARTY_A)
+    append_decision(
+        revised_after_stale, sender=PARTY_B, proposal=first_proposal
+    )
+    revised_result = copy.deepcopy(
+        first_proposal["payload"]["negotiation_result"]
+    )
+    revised_result["proposal_revision"] = 2
+    revised_result["declaration_bindings"] = [
+        {
+            "party_id": party,
+            "capabilities_id": declaration["payload"]["capabilities_id"],
+            "declaration_message_id": declaration["message_id"],
+            "declaration_message_hash": declaration["message_hash"],
+        }
+        for party in (PARTY_A, PARTY_B)
+        for declaration in [
+            next(
+                message
+                for message in reversed(revised_after_stale)
+                if message.get("message_type") == "CAPABILITIES_DECLARE"
+                and message["payload"]["party_id"] == party
+            )
+        ]
+    ]
+    revised_after_stale.append(
+        _new_message(
+            session_id=first_proposal["session_id"],
+            contract_id=first_proposal["contract_id"],
+            index=len(revised_after_stale) + 1,
+            sender=PARTY_A,
+            message_type="CAPABILITIES_PROPOSE",
+            payload={
+                "capneg_version": "0.2",
+                "proposal_revision": 2,
+                "negotiation_result": revised_result,
+                "negotiation_result_hash": object_hash(
+                    NEGOTIATION_HASH_DOMAIN, revised_result
+                ),
+                "supersedes_proposal_message_id": first_proposal["message_id"],
+                "supersedes_proposal_message_hash": first_proposal["message_hash"],
+            },
+        )
+    )
+    _rehash(revised_after_stale)
+    cases.append(
+        finalize_case(
+            "N71",
+            "stale decision fails but correct revised proposal binds latest declarations",
+            revised_after_stale,
+            expect_pass=False,
+            required_error="STALE_CAPABILITIES_DECLARATION",
+        )
+    )
+
+    declaration_fork = build_negotiation(
+        [BASE], case_id="N72", include_acceptances=False
+    )
+    original = declaration_fork[0]
+    append_declaration_supersession(declaration_fork, PARTY_A)
+    fork = copy.deepcopy(original)
+    fork["message_id"] = "m5"
+    fork["timestamp"] = "2026-07-01T00:00:05Z"
+    fork["payload"]["capabilities_id"] = "cap-n72-s-fork"
+    fork["payload"]["supersedes_capabilities_id"] = original["payload"][
+        "capabilities_id"
+    ]
+    declaration_fork.append(fork)
+    _rehash(declaration_fork)
+    cases.append(
+        finalize_case(
+            "N72",
+            "declaration supersession fork after proposal",
+            declaration_fork,
+            expect_pass=False,
+            required_error="INVALID_DECLARATION_SUPERSESSION",
+        )
+    )
+
+    rejected_then_accept = build_negotiation(
+        [BASE], case_id="N73", include_acceptances=False
+    )
+    append_decision(
+        rejected_then_accept,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    append_decision(rejected_then_accept, sender=PARTY_A)
+    cases.append(
+        finalize_case(
+            "N73",
+            "acceptance after another participant rejected the revision",
+            rejected_then_accept,
+            expect_pass=False,
+            required_error="REVISION_REJECTED",
+        )
+    )
+    accepted_then_rejected = build_negotiation(
+        [BASE], case_id="N74", include_acceptances=False
+    )
+    append_decision(accepted_then_rejected, sender=PARTY_A)
+    append_decision(
+        accepted_then_rejected,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    append_decision(accepted_then_rejected, sender=PARTY_A)
+    cases.append(
+        finalize_case(
+            "N74",
+            "previous accepter cannot advance a rejected revision",
+            accepted_then_rejected,
+            expect_pass=False,
+            required_error="REVISION_REJECTED",
+        )
+    )
+    retargeted_reject = build_negotiation(
+        [BASE], case_id="N75", include_acceptances=False
+    )
+    append_decision(
+        retargeted_reject,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    append_decision(
+        retargeted_reject,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+        payload_updates={"reason_code": "PROFILE_REQUIREMENTS_MISMATCH"},
+    )
+    cases.append(
+        finalize_case(
+            "N75",
+            "duplicate rejection changes reason code",
+            retargeted_reject,
+            expect_pass=False,
+            required_error="REJECTION_REPLAY_RETARGETED",
+        )
+    )
+
+    participant_crypto_missing = build_negotiation(
+        [BASE], case_id="N76", include_acceptances=False
+    )
+    participant_crypto_missing[0]["payload"]["supported_crypto_profiles"] = [
+        "aicp.crypto.ed25519.v1"
+    ]
+    participant_crypto_missing[0]["payload"]["required_crypto_profiles"] = [
+        "aicp.crypto.ed25519.v1"
+    ]
+    _refresh_proposal_after_declarations(participant_crypto_missing, 2)
+    cases.append(
+        finalize_case(
+            "N76",
+            "participant-required crypto omitted by selected result",
+            participant_crypto_missing,
+            expect_pass=False,
+            required_error="PARTICIPANT_REQUIRED_CRYPTO_MISSING",
+        )
+    )
+
+    channel_mismatch = build_negotiation(
+        [BASE], case_id="N77", include_acceptances=False
+    )
+    channel_mismatch[0]["payload"]["supported_channel_properties"] = {
+        "CP-ORDERING-0.1": ["ordered"]
+    }
+    channel_mismatch[1]["payload"]["supported_channel_properties"] = {
+        "CP-ORDERING-0.1": ["unordered"]
+    }
+    channel_mismatch[2]["payload"]["negotiation_result"]["selected"][
+        "channel_properties"
+    ] = {"CP-ORDERING-0.1": "ordered"}
+    _refresh_proposal_after_declarations(channel_mismatch, 2)
+    cases.append(
+        finalize_case(
+            "N77",
+            "selected channel property is outside one declaration",
+            channel_mismatch,
+            expect_pass=False,
+            required_error="SELECTION_OUTSIDE_DECLARATION",
+        )
+    )
+    limit_mismatch = build_negotiation(
+        [BASE], case_id="N78", include_acceptances=False
+    )
+    limit_mismatch[2]["payload"]["negotiation_result"]["selected"]["limits"] = {
+        "max_message_bytes": 1048577
+    }
+    _refresh_proposal_after_declarations(limit_mismatch, 2)
+    cases.append(
+        finalize_case(
+            "N78",
+            "selected limit exceeds a participant declaration",
+            limit_mismatch,
+            expect_pass=False,
+            required_error="SELECTION_OUTSIDE_DECLARATION",
+        )
+    )
+
+    def supersession_mutation(
+        case_id: str,
+        mutate: Callable[[dict[str, Any]], None],
+        required_error: str,
+    ) -> None:
+        messages = build_negotiation([BASE], case_id=case_id)
+        append_superseding_negotiation(messages)
+        new_proposal = next(
+            message
+            for message in reversed(messages)
+            if message["message_type"] == "CAPABILITIES_PROPOSE"
+        )
+        mutate(new_proposal["payload"]["negotiation_result"])
+        new_proposal["payload"]["negotiation_result_hash"] = object_hash(
+            NEGOTIATION_HASH_DOMAIN,
+            new_proposal["payload"]["negotiation_result"],
+        )
+        del messages[messages.index(new_proposal) + 1 :]
+        _rehash(messages)
+        cases.append(
+            finalize_case(
+                case_id,
+                "invalid same-context negotiation supersession",
+                messages,
+                expect_pass=False,
+                required_error=required_error,
+            )
+        )
+
+    supersession_mutation(
+        "N79",
+        lambda result: result.update(session_id="other-supersession-session"),
+        "NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH",
+    )
+    supersession_mutation(
+        "N80",
+        lambda result: result.update(contract_id="other-supersession-contract"),
+        "NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH",
+    )
+    supersession_mutation(
+        "N81",
+        lambda result: result.update(participants=[PARTY_A, PARTY_C]),
+        "NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH",
+    )
+
+    double_fork = build_negotiation([BASE], case_id="N82")
+    old_negotiation_id = double_fork[2]["payload"]["negotiation_result"][
+        "negotiation_id"
+    ]
+    append_superseding_negotiation(double_fork)
+    accepted_successor = next(
+        message
+        for message in reversed(double_fork)
+        if message["message_type"] == "CAPABILITIES_PROPOSE"
+    )
+    fork_result = copy.deepcopy(accepted_successor["payload"]["negotiation_result"])
+    fork_result["negotiation_id"] += "-fork"
+    fork_result["supersedes_negotiation_id"] = old_negotiation_id
+    double_fork.append(
+        _new_message(
+            session_id=double_fork[0]["session_id"],
+            contract_id=double_fork[0]["contract_id"],
+            index=len(double_fork) + 1,
+            sender=PARTY_A,
+            message_type="CAPABILITIES_PROPOSE",
+            payload={
+                "capneg_version": "0.2",
+                "proposal_revision": 1,
+                "negotiation_result": fork_result,
+                "negotiation_result_hash": object_hash(
+                    NEGOTIATION_HASH_DOMAIN, fork_result
+                ),
+            },
+        )
+    )
+    _rehash(double_fork)
+    cases.append(
+        finalize_case(
+            "N82",
+            "double supersession fork from an already superseded negotiation",
+            double_fork,
+            expect_pass=False,
+            required_error="NEGOTIATION_SUPERSESSION_INVALID",
+        )
+    )
+
+    def temporal_projection_case(
+        case_id: str,
+        as_of_index: int | None,
+        *,
+        branch_only: bool = False,
+    ) -> None:
+        messages = build_negotiation([BASE], case_id=case_id)
+        proposal_message = messages[2]
+        if as_of_index is None:
+            as_of = "sha256:" + "Z" * 43
+        else:
+            as_of = messages[as_of_index]["message_hash"]
+        known_head = messages[-1]["message_hash"]
+        append_projection(
+            messages,
+            as_of_message_hash=as_of,
+            result=proposal_message["payload"]["negotiation_result"],
+            case_id=case_id,
+            branch_head_hash=as_of if branch_only else known_head,
+        )
+        cases.append(
+            finalize_case(
+                case_id,
+                "projection uses a non-accepted or unproved as-of point",
+                messages,
+                expect_pass=False,
+                required_error=(
+                    "PROJECTION_AS_OF_STALE"
+                    if as_of_index is None
+                    else "PROJECTION_ACCEPTANCE_NOT_ESTABLISHED"
+                ),
+            )
+        )
+
+    temporal_projection_case("N83", 0)
+    temporal_projection_case("N84", 2)
+    temporal_projection_case("N85", 3)
+    temporal_projection_case("N86", None)
+    temporal_projection_case("N87", None, branch_only=True)
+
+    def invalid_contract_case(
+        case_id: str,
+        mutate: Callable[[dict[str, Any], dict[str, Any]], None],
+        error: str,
+    ) -> None:
+        messages = build_negotiation(
+            [BASE], case_id=case_id, include_contract=True
+        )
+        contract_message = next(
+            message
+            for message in messages
+            if message["message_type"] == "CONTRACT_PROPOSE"
+        )
+        mutate(contract_message, contract_message["payload"]["contract"])
+        _rehash(messages)
+        cases.append(
+            finalize_case(
+                case_id,
+                "structurally invalid Core contract with valid CAPNEG binding",
+                messages,
+                expect_pass=False,
+                required_error=error,
+            )
+        )
+
+    invalid_contract_case(
+        "N88",
+        lambda _message, contract: contract.pop("contract_id"),
+        "CORE_CONTRACT_SCHEMA_INVALID",
+    )
+    invalid_contract_case(
+        "N89",
+        lambda _message, contract: contract.update(contract_id="other-contract"),
+        "CONTRACT_ID_MISMATCH",
+    )
+    invalid_contract_case(
+        "N90",
+        lambda _message, contract: contract.pop("goal"),
+        "CORE_CONTRACT_SCHEMA_INVALID",
+    )
+    invalid_contract_case(
+        "N91",
+        lambda _message, contract: contract.update(
+            policies=[{"policy_id": "p1", "category": "privacy"}]
+        ),
+        "CORE_CONTRACT_SCHEMA_INVALID",
+    )
+
+    strict_constraints = build_negotiation(
+        [BASE], case_id="N92", include_acceptances=False
+    )
+    strict_reject = append_decision(
+        strict_constraints,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+        payload_updates={
+            "alternative_constraints": {
+                "constraints_version": "aicp.capneg.alternative_constraints.v1",
+                "unknown_constraint": True,
+            }
+        },
+    )
+    cases.append(
+        finalize_case(
+            "N92",
+            "alternative constraints reject undocumented fields",
+            strict_constraints,
+            expect_pass=False,
+            required_error="CAPNEG_PAYLOAD_SCHEMA_INVALID",
+            invalid_messages={
+                strict_constraints.index(strict_reject): "CAPNEG_PAYLOAD_SCHEMA_INVALID"
+            },
+        )
+    )
+
+    alternative_requirements = build_negotiation(
+        [MEDIATED, RESUMABLE],
+        case_id="N93",
+        include_acceptances=False,
+        required_by_party={PARTY_B: [RESUMABLE]},
+    )
+    append_decision(
+        alternative_requirements,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+        payload_updates={
+            "alternative_profile_compositions": [
+                _canonical_composition([MEDIATED])
+            ]
+        },
+    )
+    cases.append(
+        finalize_case(
+            "N93",
+            "rejection alternative omits participant profile minimum",
+            alternative_requirements,
+            expect_pass=False,
+            required_error="REJECTION_ALTERNATIVE_REQUIREMENTS_UNMET",
+        )
+    )
+
+    retargeted_alternative = build_negotiation(
+        [BASE], case_id="N94", include_acceptances=False
+    )
+    append_decision(
+        retargeted_alternative,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+    )
+    append_decision(
+        retargeted_alternative,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+        payload_updates={
+            "alternative_profile_compositions": [_canonical_composition([BASE])]
+        },
+    )
+    cases.append(
+        finalize_case(
+            "N94",
+            "duplicate rejection changes alternatives",
+            retargeted_alternative,
+            expect_pass=False,
+            required_error="REJECTION_REPLAY_RETARGETED",
+        )
+    )
+
+    duplicate_message_id = build_negotiation([BASE], case_id="N95")[:4]
+    duplicate_message_id[-1]["message_id"] = duplicate_message_id[0]["message_id"]
+    _rehash(duplicate_message_id)
+    cases.append(
+        finalize_case(
+            "N95",
+            "duplicate raw message ID is blocked before reduction",
+            duplicate_message_id,
+            expect_pass=False,
+            required_error="CAPNEG_MESSAGE_ID_DUPLICATE",
+        )
+    )
+    invalid_message_id = build_negotiation([BASE], case_id="N96")[:1]
+    invalid_message_id[0]["message_id"] = 7
+    _rehash(invalid_message_id)
+    cases.append(
+        finalize_case(
+            "N96",
+            "non-string raw message ID is blocked before reduction",
+            invalid_message_id,
+            expect_pass=False,
+            required_error="CAPNEG_MESSAGE_ID_INVALID",
+        )
+    )
+
+    invalid_projection_signature = build_negotiation(
+        [BASE], case_id="N97", include_projection=True
+    )
+    projection_message = invalid_projection_signature[-1]
+    projection_message["signatures"] = [
+        {
+            **_signature(projection_message["message_hash"], PARTY_B),
+            "sig_b64url": "A" * 86,
+        }
+    ]
+    cases.append(
+        finalize_case(
+            "N97",
+            "invalid present signature on projection message",
+            invalid_projection_signature,
+            expect_pass=False,
+            required_error="CAPNEG_SIGNATURE_INVALID",
+        )
+    )
+    invalid_contract_signature = build_negotiation(
+        [BASE], case_id="N98", include_contract=True
+    )
+    signed_contract = next(
+        message
+        for message in invalid_contract_signature
+        if message["message_type"] == "CONTRACT_PROPOSE"
+    )
+    signed_contract["signatures"] = [
+        {
+            **_signature(signed_contract["message_hash"], PARTY_A),
+            "sig_b64url": "A" * 86,
+        }
+    ]
+    cases.append(
+        finalize_case(
+            "N98",
+            "invalid present signature on CAPNEG-bound contract",
+            invalid_contract_signature,
+            expect_pass=False,
+            required_error="CAPNEG_SIGNATURE_INVALID",
+        )
+    )
+
+    if len(cases) != 98:
+        raise ValueError(f"expected 98 negative families, generated {len(cases)}")
     return sorted(cases, key=lambda case: case["id"])
 
 
@@ -1713,7 +2734,7 @@ def composition_vectors() -> list[dict[str, Any]]:
             {
                 "id": vector_id,
                 "input": composition,
-                "expected": resolve_profile_composition(composition, RULES),
+                "expected": resolve_fixture_composition(composition, RULES),
             }
         )
     return vectors
@@ -1724,7 +2745,7 @@ def render_payload(
     negative: list[dict[str, Any]],
 ) -> tuple[str, str, str, str, str]:
     metadata = {
-        "fixture_version": "aicp.capneg_v0_2.fixtures.v1",
+        "fixture_version": "aicp.capneg_v0_2.fixtures.v2",
         "generator": "scripts/generate_capneg_v02_fixtures.py",
     }
     positive_payload = {
@@ -1740,7 +2761,7 @@ def render_payload(
         "cases": negative,
     }
     vectors_payload = {
-        "vector_version": "aicp.capneg_v0_2.cross_language.v1",
+        "vector_version": "aicp.capneg_v0_2.cross_language.v2",
         "generator": "scripts/generate_capneg_v02_fixtures.py",
         "composition_vectors": composition_vectors(),
         "negotiation_vectors": [
@@ -1748,8 +2769,12 @@ def render_payload(
                 "id": case["id"],
                 "messages": case["messages"],
                 "invalid_message_indices": case["invalid_message_indices"],
+                "requires_jsonschema": case["requires_jsonschema"],
                 "require_accepted": case["require_accepted"],
-                "expected": case["expected"],
+                "expected_error_observations": case[
+                    "expected_error_observations"
+                ],
+                "expected_final_state": case["expected_final_state"],
             }
             for case in positive + negative
             if case["id"]
@@ -1761,6 +2786,11 @@ def render_payload(
                 "P08",
                 "P09",
                 "P11",
+                "P12",
+                "P14",
+                "P15",
+                "P16",
+                "P17",
                 "N06",
                 "N11",
                 "N25",
@@ -1770,6 +2800,50 @@ def render_payload(
                 "N43",
                 "N44",
                 "N51",
+                "N52",
+                "N53",
+                "N54",
+                "N55",
+                "N56",
+                "N57",
+                "N58",
+                "N59",
+                "N60",
+                "N61",
+                "N62",
+                "N63",
+                "N64",
+                "N65",
+                "N66",
+                "N67",
+                "N68",
+                "N69",
+                "N70",
+                "N71",
+                "N72",
+                "N73",
+                "N74",
+                "N75",
+                "N76",
+                "N77",
+                "N78",
+                "N79",
+                "N80",
+                "N81",
+                "N82",
+                "N83",
+                "N84",
+                "N85",
+                "N86",
+                "N87",
+                "N88",
+                "N89",
+                "N90",
+                "N91",
+                "N93",
+                "N94",
+                "N97",
+                "N98",
             }
         ],
     }
@@ -1777,15 +2851,18 @@ def render_payload(
         **metadata,
         "capability": PROJECTION_VERSION,
         "expectation": "pass",
-        "case_count": 1,
+        "case_count": 4,
         "cases": [
-            case for case in positive if case["id"] == "P09"
+            case
+            for case in positive
+            if case["id"] in {"P09", "P15", "P16", "P17"}
         ],
     }
     projection_negative_cases = [
         case
         for case in negative
-        if case["id"] in {"N44", "N45", "N46", "N47"}
+        if case["id"]
+        in {"N44", "N45", "N46", "N47", "N83", "N84", "N85", "N86", "N87"}
     ]
     projection_negative = {
         **metadata,
@@ -1809,7 +2886,9 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
+    parser.add_argument("--root", type=Path, default=ROOT)
     args = parser.parse_args()
+    configure_root(args.root)
 
     positive = positive_cases()
     negative = negative_cases()

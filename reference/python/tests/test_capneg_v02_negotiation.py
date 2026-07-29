@@ -22,17 +22,25 @@ def _load(relative: str) -> dict:
 def test_capneg_v02_has_exact_generated_fixture_totals() -> None:
     positive = _load("fixtures/extensions/capneg_v0_2/positive_cases.json")
     negative = _load("fixtures/extensions/capneg_v0_2/negative_cases.json")
-    assert positive["case_count"] == len(positive["cases"]) == 11
-    assert negative["case_count"] == len(negative["cases"]) == 51
+    assert positive["case_count"] == len(positive["cases"]) == 17
+    assert negative["case_count"] == len(negative["cases"]) == 98
     assert [case["id"] for case in positive["cases"]] == [
-        f"P{index:02d}" for index in range(1, 12)
+        f"P{index:02d}" for index in range(1, 18)
     ]
     assert [case["id"] for case in negative["cases"]] == [
-        f"N{index:02d}" for index in range(1, 52)
+        f"N{index:02d}" for index in range(1, 99)
     ]
     for case in negative["cases"]:
-        assert case["expected"]["error_ids"]
-        final_state = case["expected"]["final_state"]
+        assert case["expected_error_observations"]
+        for observation in case["expected_error_observations"]:
+            assert set(observation) == {
+                "code",
+                "message_index",
+                "message_id",
+                "exact_count",
+            }
+            assert observation["exact_count"] >= 1
+        final_state = case["expected_final_state"]
         assert "state" in final_state
         assert "current_revision" in final_state
         assert "acceptances" in final_state
@@ -84,8 +92,8 @@ def test_capneg_v02_full_suite_emits_only_its_direct_mark() -> None:
     )
     assert report["passed"] is True
     assert report["degraded"] is False
-    assert report["positive_cases"] == 11
-    assert report["negative_cases"] == 51
+    assert report["positive_cases"] == 17
+    assert report["negative_cases"] == 98
     assert report["compatibility_marks"] == ["AICP-EXT-CAPNEG-0.2"]
 
 
@@ -118,8 +126,8 @@ def test_projection_v2_is_internal_and_has_a_separate_evidence_mark() -> None:
     )
     assert report["passed"] is True
     assert report["degraded"] is False
-    assert report["positive_cases"] == 1
-    assert report["negative_cases"] == 4
+    assert report["positive_cases"] == 4
+    assert report["negative_cases"] == 9
     assert report["compatibility_marks"] == [
         "AICP-Evidence-SESSION-STATE-PROJECTION-v2"
     ]

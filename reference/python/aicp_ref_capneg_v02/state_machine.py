@@ -138,6 +138,13 @@ def _check_selection_support(
                     f"{party} does not support the complete selected crypto set",
                 )
             )
+        if not set(declaration.get("required_crypto_profiles", [])) <= selected_crypto:
+            issues.append(
+                _issue(
+                    "PARTICIPANT_REQUIRED_CRYPTO_MISSING",
+                    f"selected.crypto_profiles omits a crypto profile required by {party}",
+                )
+            )
         if not selected_extensions <= set(
             declaration.get("supported_extensions", [])
         ):
@@ -234,6 +241,7 @@ class CapnegV02Reducer:
         self.active_negotiation_id: str | None = None
         self.issues: list[dict[str, Any]] = []
         self.bound_contracts: list[str] = []
+        self.current_message_index: int | None = None
 
     def add_issue(
         self, code: str, detail: str, message: dict[str, Any] | None = None
@@ -543,6 +551,28 @@ class CapnegV02Reducer:
                             message,
                         )
                     )
+                else:
+                    prior_result = prior_negotiation.get("result", {})
+                    if (
+                        prior_result.get("session_id") != result.get("session_id")
+                        or prior_result.get("contract_id") != result.get("contract_id")
+                        or prior_result.get("participants") != result.get("participants")
+                    ):
+                        issues.append(
+                            _issue(
+                                "NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH",
+                                "superseding negotiation must preserve session, contract, and exact participants",
+                                message,
+                            )
+                        )
+                    if prior_negotiation.get("superseded_by") is not None:
+                        issues.append(
+                            _issue(
+                                "NEGOTIATION_SUPERSESSION_FORK",
+                                "an accepted negotiation may be superseded by only one accepted successor",
+                                message,
+                            )
+                        )
         else:
             if existing.get("state") == "ACCEPTED":
                 issues.append(
@@ -606,6 +636,7 @@ class CapnegV02Reducer:
             "rejections": {},
             "accepted_composition": existing.get("accepted_composition"),
             "accepted_result_hash": existing.get("accepted_result_hash"),
+            "superseded_by": existing.get("superseded_by"),
         }
         self.active_negotiation_id = negotiation_id
 
@@ -671,6 +702,49 @@ class CapnegV02Reducer:
                     message,
                 )
             )
+        result = negotiation.get("result", {})
+        if message.get("session_id") != result.get("session_id"):
+            issues.append(
+                _issue(
+                    "DECISION_SESSION_MISMATCH",
+                    "decision envelope session_id must equal the negotiated session_id",
+                    message,
+                )
+            )
+        if message.get("contract_id") != result.get("contract_id"):
+            issues.append(
+                _issue(
+                    "DECISION_CONTRACT_MISMATCH",
+                    "decision envelope contract_id must equal the negotiated contract_id",
+                    message,
+                )
+            )
+        bindings = {
+            binding.get("party_id"): binding
+            for binding in result.get("declaration_bindings", [])
+            if isinstance(binding, dict)
+        }
+        for party in result.get("participants", []):
+            declaration = self.latest_declarations.get(str(party))
+            if declaration is None or bindings.get(party) != _message_binding(declaration):
+                issues.append(
+                    _issue(
+                        "STALE_CAPABILITIES_DECLARATION",
+                        f"decision binding for {party} is not the latest valid declaration",
+                        message,
+                    )
+                )
+        supersedes = result.get("supersedes_negotiation_id")
+        if supersedes is not None:
+            prior = self.negotiations.get(str(supersedes))
+            if prior is None or prior.get("state") != "ACCEPTED":
+                issues.append(
+                    _issue(
+                        "NEGOTIATION_SUPERSESSION_INVALID",
+                        "superseded negotiation must remain accepted until the successor is fully accepted",
+                        message,
+                    )
+                )
         return negotiation, issues
 
     def _signature_issues(
@@ -680,17 +754,9 @@ class CapnegV02Reducer:
         required: bool,
     ) -> list[dict[str, Any]]:
         signatures = message.get("signatures")
-        if required and (not isinstance(signatures, list) or not signatures):
-            return [
-                _issue(
-                    "AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED",
-                    "Authenticated Base requires a signed acceptance from every sender",
-                    message,
-                )
-            ]
-        if not isinstance(signatures, list) or not signatures:
-            return []
         if not self.crypto_available:
+            if not isinstance(signatures, list) or not signatures:
+                return []
             return [
                 _issue(
                     "CRYPTO_VERIFICATION_UNAVAILABLE",
@@ -700,11 +766,21 @@ class CapnegV02Reducer:
             ]
         issues: list[dict[str, Any]] = []
         for signature_issue in validate_message_signatures(
-            message, self.key_map, verify_crypto=True
+            message,
+            self.key_map,
+            verify_crypto=True,
+            require_signatures=required,
+            require_sender_signature=required,
         ):
+            code = (
+                "AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED"
+                if signature_issue["code"]
+                in {"signatures_required", "sender_signature_required"}
+                else "ACCEPTANCE_SIGNATURE_INVALID"
+            )
             issues.append(
                 _issue(
-                    "ACCEPTANCE_SIGNATURE_INVALID",
+                    code,
                     signature_issue["message"],
                     message,
                 )
@@ -725,6 +801,14 @@ class CapnegV02Reducer:
             )
         )
         sender = str(message.get("sender"))
+        if negotiation.get("state") == "REJECTED":
+            issues.append(
+                _issue(
+                    "REVISION_REJECTED",
+                    "a rejected proposal revision cannot accept further decisions",
+                    message,
+                )
+            )
         if sender in negotiation.get("rejections", {}):
             issues.append(
                 _issue(
@@ -736,15 +820,16 @@ class CapnegV02Reducer:
         prior = negotiation.get("acceptances", {}).get(sender)
         if prior is not None:
             current_payload = message.get("payload", {})
-            if prior.get("payload") == current_payload:
+            if prior.get("payload") == current_payload and not issues:
                 return
-            issues.append(
-                _issue(
-                    "ACCEPTANCE_REPLAY_RETARGETED",
-                    "participant acceptance replay changed its exact proposal binding",
-                    message,
+            if prior.get("payload") != current_payload:
+                issues.append(
+                    _issue(
+                        "ACCEPTANCE_REPLAY_RETARGETED",
+                        "participant acceptance replay changed its exact proposal binding",
+                        message,
+                    )
                 )
-            )
         if issues:
             self.issues.extend(issues)
             return
@@ -761,6 +846,9 @@ class CapnegV02Reducer:
             supersedes = negotiation["result"].get("supersedes_negotiation_id")
             if supersedes is not None and supersedes in self.negotiations:
                 self.negotiations[supersedes]["state"] = "SUPERSEDED"
+                self.negotiations[supersedes]["superseded_by"] = negotiation[
+                    "result"
+                ]["negotiation_id"]
         else:
             negotiation["state"] = "PARTIALLY_ACCEPTED"
 
@@ -797,6 +885,52 @@ class CapnegV02Reducer:
                     message,
                 )
             )
+        constraints = message.get("payload", {}).get(
+            "alternative_constraints"
+        )
+        if isinstance(constraints, dict):
+            for field in (
+                "required_crypto_profiles",
+                "required_extensions",
+                "required_policy_categories",
+                "acceptable_bindings",
+            ):
+                if field in constraints and not _is_sorted_unique_strings(
+                    constraints[field]
+                ):
+                    issues.append(
+                        _issue(
+                            "REJECTION_ALTERNATIVE_CONSTRAINTS_INVALID",
+                            f"{field} must be unique and canonically sorted",
+                            message,
+                        )
+                    )
+            if (
+                "required_aicp_profiles" in constraints
+                and not _is_sorted_unique_profiles(
+                    constraints["required_aicp_profiles"]
+                )
+            ):
+                issues.append(
+                    _issue(
+                        "REJECTION_ALTERNATIVE_CONSTRAINTS_INVALID",
+                        "required_aicp_profiles must be unique and canonically sorted",
+                        message,
+                    )
+                )
+        prior = negotiation.get("rejections", {}).get(sender)
+        if prior is not None:
+            if prior.get("payload") == message.get("payload"):
+                if issues:
+                    self.issues.extend(issues)
+                return
+            issues.append(
+                _issue(
+                    "REJECTION_REPLAY_RETARGETED",
+                    "duplicate rejection changed its exact decision identity",
+                    message,
+                )
+            )
         for alternative in message.get("payload", {}).get(
             "alternative_profile_compositions", []
         ):
@@ -814,11 +948,40 @@ class CapnegV02Reducer:
                 .get("payload", {})
                 .get("supported_aicp_profiles", [])
             )
+            declaration = (
+                self.latest_declarations.get(sender, {}).get("payload", {})
+            )
             if not _profile_keys(alternative.get("profiles", [])) <= supported:
                 issues.append(
                     _issue(
                         "REJECTION_ALTERNATIVE_UNSUPPORTED",
                         "rejecting participant does not support its alternative composition",
+                        message,
+                    )
+                )
+            required_profiles = _profile_keys(
+                declaration.get("required_aicp_profiles", [])
+            )
+            constraints = message.get("payload", {}).get(
+                "alternative_constraints", {}
+            )
+            constraint_crypto = (
+                set(constraints.get("required_crypto_profiles", []))
+                if isinstance(constraints, dict)
+                else set()
+            )
+            available_crypto = set(resolved.get("required_crypto_profiles", []))
+            available_crypto.update(constraint_crypto)
+            if (
+                not required_profiles
+                <= _profile_keys(alternative.get("profiles", []))
+                or not set(declaration.get("required_crypto_profiles", []))
+                <= available_crypto
+            ):
+                issues.append(
+                    _issue(
+                        "REJECTION_ALTERNATIVE_REQUIREMENTS_UNMET",
+                        "alternative must preserve the rejecting participant's profile and crypto minimums",
                         message,
                     )
                 )
@@ -832,23 +995,35 @@ class CapnegV02Reducer:
         self,
         message: dict[str, Any],
         *,
+        message_index: int | None = None,
         message_valid: bool = True,
-        invalid_reason: str | None = None,
+        invalid_issues: list[dict[str, Any]] | None = None,
     ) -> None:
+        before = len(self.issues)
+        self.current_message_index = message_index
         if not message_valid:
-            self.add_issue(
-                invalid_reason or "MESSAGE_VALIDITY_BARRIER",
-                "invalid message did not mutate CAPNEG v0.2 state",
-                message,
-            )
+            if invalid_issues:
+                self.issues.extend(copy.deepcopy(invalid_issues))
+            else:
+                self.add_issue(
+                    "MESSAGE_VALIDITY_BARRIER",
+                    "invalid message did not mutate CAPNEG v0.2 state",
+                    message,
+                )
+            self._annotate_new_issues(before, message, message_index)
             return
         message_type = message.get("message_type")
+        if message_type == "CONTRACT_PROPOSE":
+            self.issues.extend(self.validate_contract_binding(message))
+            self._annotate_new_issues(before, message, message_index)
+            return
         if message_type not in {
             "CAPABILITIES_DECLARE",
             "CAPABILITIES_PROPOSE",
             "CAPABILITIES_ACCEPT",
             "CAPABILITIES_REJECT",
         }:
+            self._annotate_new_issues(before, message, message_index)
             return
         if message.get("payload", {}).get("capneg_version") != "0.2":
             self.add_issue(
@@ -856,6 +1031,7 @@ class CapnegV02Reducer:
                 "CAPNEG v0.2 reducer accepts only capneg_version 0.2",
                 message,
             )
+            self._annotate_new_issues(before, message, message_index)
             return
         if message_type == "CAPABILITIES_DECLARE":
             self._apply_declaration(message)
@@ -865,6 +1041,22 @@ class CapnegV02Reducer:
             self._apply_accept(message)
         else:
             self._apply_reject(message)
+        self._annotate_new_issues(before, message, message_index)
+
+    def _annotate_new_issues(
+        self,
+        start: int,
+        message: dict[str, Any],
+        message_index: int | None,
+    ) -> None:
+        for item in self.issues[start:]:
+            item.setdefault("message_index", message_index)
+            item.setdefault(
+                "message_id",
+                message.get("message_id")
+                if isinstance(message.get("message_id"), str)
+                else None,
+            )
 
     def validate_contract_binding(
         self, message: dict[str, Any]
@@ -992,6 +1184,23 @@ class CapnegV02Reducer:
                 if negotiation.get("state") == "SUPERSEDED"
             ),
             "bound_contracts": sorted(set(self.bound_contracts)),
+            "negotiations": [
+                {
+                    "negotiation_id": negotiation_id,
+                    "state": negotiation.get("state"),
+                    "current_revision": negotiation.get("current_revision"),
+                    "proposal_message_id": negotiation.get("proposal_message_id"),
+                    "acceptances": sorted(negotiation.get("acceptances", {})),
+                    "rejections": sorted(negotiation.get("rejections", {})),
+                    "accepted_profile_composition": copy.deepcopy(
+                        negotiation.get("accepted_composition")
+                    ),
+                    "accepted_result_hash": negotiation.get("accepted_result_hash"),
+                    "superseded_by": negotiation.get("superseded_by"),
+                }
+                for negotiation_id, negotiation in sorted(self.negotiations.items())
+            ],
+            "issues": copy.deepcopy(self.issues),
             "errors": [issue["code"] for issue in self.issues],
         }
 
@@ -1003,7 +1212,7 @@ def reduce_capneg_v02(
     registered_reason_codes: set[str] | None = None,
     key_map: dict[str, Any] | None = None,
     crypto_available: bool = True,
-    invalid_messages: dict[int, str] | None = None,
+    invalid_messages: dict[int, list[dict[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     reducer = CapnegV02Reducer(
         rules=rules,
@@ -1015,9 +1224,8 @@ def reduce_capneg_v02(
     for index, message in enumerate(messages):
         reducer.apply(
             message,
+            message_index=index,
             message_valid=index not in invalid_messages,
-            invalid_reason=invalid_messages.get(index),
+            invalid_issues=invalid_messages.get(index),
         )
-        if message.get("message_type") == "CONTRACT_PROPOSE" and index not in invalid_messages:
-            reducer.issues.extend(reducer.validate_contract_binding(message))
     return reducer.snapshot()

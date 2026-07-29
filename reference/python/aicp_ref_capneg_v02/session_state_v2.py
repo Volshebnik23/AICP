@@ -48,9 +48,13 @@ def validate_session_state_projection_v2(
     transcript: list[dict[str, Any]],
     message_index: int,
     *,
-    capneg_state: dict[str, Any],
     registered_extensions: set[str],
-) -> list[dict[str, str]]:
+    rules: dict[str, Any] | None = None,
+    registered_reason_codes: set[str] | None = None,
+    key_map: dict[str, Any] | None = None,
+    crypto_available: bool = True,
+    invalid_messages: dict[int, list[dict[str, Any]]] | None = None,
+) -> list[dict[str, Any]]:
     payload = message.get("payload", {})
     projection = payload.get("session_state")
     if (
@@ -59,10 +63,21 @@ def validate_session_state_projection_v2(
     ):
         return []
 
-    issues: list[dict[str, str]] = []
+    issues: list[dict[str, Any]] = []
 
     def issue(code: str, detail: str) -> None:
-        issues.append({"code": code, "detail": detail})
+        issues.append(
+            {
+                "code": code,
+                "message_index": message_index,
+                "message_id": (
+                    message.get("message_id")
+                    if isinstance(message.get("message_id"), str)
+                    else None
+                ),
+                "detail": detail,
+            }
+        )
 
     if projection.get("session_id") != message.get("session_id"):
         issue("PROJECTION_SESSION_MISMATCH", "projection session_id must equal envelope session_id")
@@ -104,7 +119,58 @@ def validate_session_state_projection_v2(
             "projection composition hash does not match selected_aicp_profiles",
         )
 
-    accepted_composition = capneg_state.get("accepted_profile_composition")
+    as_of = projection.get("as_of_message_hash")
+    matching_indices = [
+        index
+        for index, prior in enumerate(transcript[:message_index])
+        if prior.get("message_hash") == as_of
+    ]
+    prefix_state: dict[str, Any] | None = None
+    if len(matching_indices) != 1:
+        issue(
+            "PROJECTION_AS_OF_STALE",
+            "as_of_message_hash must identify exactly one prior transcript message",
+        )
+    else:
+        from .state_machine import reduce_capneg_v02
+
+        as_of_index = matching_indices[0]
+        prefix_invalid = {
+            index: observations
+            for index, observations in (invalid_messages or {}).items()
+            if index <= as_of_index
+        }
+        prefix_state = reduce_capneg_v02(
+            transcript[: as_of_index + 1],
+            rules=rules,
+            registered_reason_codes=registered_reason_codes,
+            key_map=key_map,
+            crypto_available=crypto_available,
+            invalid_messages=prefix_invalid,
+        )
+
+    accepted_candidates = (
+        [
+            negotiation
+            for negotiation in prefix_state.get("negotiations", [])
+            if negotiation.get("state") == "ACCEPTED"
+        ]
+        if prefix_state is not None
+        else []
+    )
+    accepted_negotiation = (
+        accepted_candidates[0] if len(accepted_candidates) == 1 else None
+    )
+    accepted_composition = (
+        accepted_negotiation.get("accepted_profile_composition")
+        if accepted_negotiation is not None
+        else None
+    )
+    if prefix_state is not None and accepted_negotiation is None:
+        issue(
+            "PROJECTION_ACCEPTANCE_NOT_ESTABLISHED",
+            "the projected CAPNEG result is not current and fully accepted at as_of_message_hash",
+        )
     if (
         not isinstance(accepted_composition, dict)
         or accepted_composition.get("profiles") != profiles
@@ -113,8 +179,10 @@ def validate_session_state_projection_v2(
             "PROJECTION_PROFILE_SET_MISMATCH",
             "projection profile set must equal the fully accepted composition",
         )
-    if projection.get("accepted_negotiation_result_hash") != capneg_state.get(
-        "accepted_result_hash"
+    if projection.get("accepted_negotiation_result_hash") != (
+        accepted_negotiation.get("accepted_result_hash")
+        if accepted_negotiation is not None
+        else None
     ):
         issue(
             "PROJECTION_ACCEPTED_RESULT_HASH_MISMATCH",
@@ -135,23 +203,6 @@ def validate_session_state_projection_v2(
         issue(
             "PROJECTION_ACTIVE_EXTENSION_INCONSISTENT",
             "active_extensions omits a composition-required extension",
-        )
-
-    as_of = projection.get("as_of_message_hash")
-    known_hashes = {
-        prior.get("message_hash")
-        for prior in transcript[: message_index + 1]
-        if isinstance(prior.get("message_hash"), str)
-    }
-    declared_hashes = {
-        head.get("message_hash")
-        for head in payload.get("branch_heads", [])
-        if isinstance(head, dict) and isinstance(head.get("message_hash"), str)
-    }
-    if as_of not in known_hashes | declared_hashes:
-        issue(
-            "PROJECTION_AS_OF_STALE",
-            "as_of_message_hash must bind a known transcript message or declared head",
         )
 
     return issues
