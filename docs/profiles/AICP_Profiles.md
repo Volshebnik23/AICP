@@ -401,17 +401,33 @@ Profile runners MAY include child suite compatibility marks in profile reports f
 
 Platforms MAY require explicit AICP product profiles during capability negotiation.
 
+Stable CAPNEG v0.1 is the single-profile surface:
+
 - Declaration path: `CAPABILITIES_DECLARE.payload.required_aicp_profiles`
 - Selection path: `CAPABILITIES_PROPOSE.payload.negotiation_result.selected.aicp_profile`
 - Rejection path: `CAPABILITIES_REJECT` with registered `reason_code` (for example, `DOWNGRADE_NOT_ALLOWED`, `PROFILE_NOT_ACCEPTABLE`).
+
+Experimental CAPNEG v0.2 is selected by exact payload field
+`"capneg_version": "0.2"` on every CAPNEG message. It negotiates
+`negotiation_result.profile_composition`, a canonical set of exact registered profile
+pairs. Composition validity and derived Core/extensions/suites/marks are defined by
+`registry/aicp_profile_composition_rules.json`; the resolver does not award the listed
+component marks.
 
 Operational guidance:
 - A platform that requires `AICP-MEDIATED-BLOCKING@0.1` SHOULD declare it in `required_aicp_profiles` and reject proposals selecting weaker profiles.
 - Product profile claims negotiated in CAPNEG are runtime claims; conformance/profile badges are separate evidence artifacts and MUST still be produced from suite/profile runners.
 - Downgrade attempts are expected to be detectable deterministically via CAPNEG conformance checks.
-- The current proposal selection contains one `selected.aicp_profile`. Pairing notes and
-  profile combinations elsewhere in the documentation are deployment guidance, not
-  implemented atomic multi-profile negotiation.
+- CAPNEG v0.1 remains stable and selects one `selected.aicp_profile`; it is not implicitly
+  upgraded by a v0.2-capable peer.
+- CAPNEG v0.2 composition is available only for profiles in the Core v0.1 family.
+  `AICP-BASE@0.2` remains a separate Core v0.2 experiment and is explicitly
+  non-negotiable in M61.
+- Profile combinations elsewhere in the documentation are deployment guidance unless they
+  appear in one fully accepted CAPNEG v0.2 composition.
+- CAPNEG v0.2 internal evidence and all component profile reports are distinct artifacts.
+  No dynamic aggregate profile compatibility mark or public external composition claim is
+  defined.
 
 
 ## See also

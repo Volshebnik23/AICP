@@ -7,13 +7,20 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Completed M58 Repo-Truth Rebaseline, M59 Authenticated Base Evidence Reachability, and
-  M60 Exact Contract Agreement Core; M61–M70 remain planned.
+- Completed M58 Repo-Truth Rebaseline, M59 Authenticated Base Evidence Reachability, M60
+  Exact Contract Agreement Core, and M61 Multi-Profile Composition and CAPNEG v0.2;
+  M62–M70 remain planned.
 - Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
   `AICP-IUT-TCK-1.0.0` metadata.
 - Added separate experimental Core v0.2 schemas, exact-agreement conformance, 9 positive
   and 41 expected-fail lifecycle fixtures, `AICP-BASE@0.2`, Python/TypeScript parity
   helpers, and versioned quickstarts.
+- Added separately selected experimental EXT-CAPNEG v0.2 with a generated 16-profile
+  composition-rules registry, canonical set/result hashing, declaration/revision/full-
+  acceptance state reduction, contract binding, Authenticated Base Ed25519 enforcement,
+  11 positive and 51 exact expected-fail cases, and Python/TypeScript shared-vector parity.
+- Added composition-aware session-state projection v2 with one positive and four negative
+  cases and an internal-only evidence mark.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
@@ -30,6 +37,11 @@ All notable repo-backed release metadata changes should be recorded here.
   comparison against the registered TCK catalog.
 - Added exact proposal/acceptance/active-head/conflict binding without changing Core v0.1,
   existing external-IUT targets, state projection v1, or the UAT baseline.
+- Preserved stable CAPNEG v0.1 as the canonical default for its four message IDs while
+  adding machine-checked v0.1/v0.2 selectors; added v1/v2 selection for
+  `STATE_SYNC_RESPONSE` without changing the v1 schema, suite, or evidence boundary.
+- Kept external composition claims fail-closed: no aggregate profile ID/mark was added, and
+  the public submission schema remains closed to unsupported composition fields.
 - Corrected M60 so degraded/skipped v0.2 runs emit no marks, present optional signatures
   are cryptographically verified, invalid messages cannot advance agreement state, every
   negative fixture verifies post-rejection state, and six reused Core IDs expose explicit

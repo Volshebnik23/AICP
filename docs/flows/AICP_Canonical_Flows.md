@@ -69,6 +69,40 @@ Normative notes:
 
 Conformance reference: `conformance/extensions/CN_CAPNEG_0.1.json`; fixtures: `fixtures/extensions/capneg/`.
 
+### Experimental CAPNEG v0.2 multi-profile flow
+
+```mermaid
+sequenceDiagram
+    participant A as Initiator
+    participant B as Responder
+
+    A->>B: CAPABILITIES_DECLARE v0.2 (latest declaration)
+    B->>A: CAPABILITIES_DECLARE v0.2 (latest declaration)
+    A->>B: CAPABILITIES_PROPOSE v0.2 (revision + exact result hashes)
+    A->>B: CAPABILITIES_ACCEPT v0.2
+    B->>A: CAPABILITIES_ACCEPT v0.2
+    Note over A,B: Accepted only after every bound participant accepts
+    A->>B: CONTRACT_PROPOSE (contract.ext.capneg_v2)
+    B->>A: CONTRACT_ACCEPT
+    A->>B: STATE_SYNC_RESPONSE (projection v2)
+```
+
+Every CAPNEG message selects this surface with `capneg_version="0.2"`. A proposal binds
+the latest declaration ID and hash for every participant, one canonical profile set, its
+`capneg.profile_composition` hash, and the `capneg.negotiation_result` hash. Revisions are
+monotonic and bind their predecessor; an accepted result is immutable. Changing it requires
+a new negotiation ID with explicit supersession. Partial acceptance is not full acceptance,
+and an invalid message does not mutate negotiation state.
+
+When the set contains `AICP-AUTHENTICATED-BASE@0.1`, Ed25519 must be selected and supported
+by every participant, and each acceptance must carry a valid sender signature. This proves
+the signed message binding, not real-world identity or declaration authority.
+
+Conformance references: `conformance/extensions/CN_CAPNEG_0.2.json` and
+`conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`; fixtures:
+`fixtures/extensions/capneg_v0_2/` and
+`fixtures/extensions/object_resync/state_projection_v2/`.
+
 ---
 
 ## 2.3 Policy Evaluation (EXT-POLICY-EVAL)

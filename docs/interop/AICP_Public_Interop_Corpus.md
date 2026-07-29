@@ -89,6 +89,11 @@ Experimental `AICP-BASE@0.2` has internal Core/profile conformance only in M60. 
 third external-IUT target and cannot support strong external evidence until a later
 versioned evidence/TCK milestone explicitly adds that path.
 
+Experimental CAPNEG v0.2 composition reports are also internal-only in M61. The current
+submission schema deliberately has no composition claim/evidence fields and rejects
+unknown properties. Component profile claims continue to require their own eligible
+external-IUT evidence; generalized external composition evidence is unavailable until M62.
+
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
 ## Optional bundle integrity manifest

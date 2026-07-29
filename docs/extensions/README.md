@@ -11,6 +11,10 @@ Extension RFCs live in this folder (`docs/extensions/`).
 
 ## Current phase summary
 
+- M61 (`RFC_EXT_CAPNEG_v0.2.md`) is shipped as a separate experimental CAPNEG surface for
+  canonical Core v0.1-family profile-set negotiation. Stable CAPNEG v0.1 remains unchanged;
+  v0.2 internal evidence does not award component profile marks or external composition
+  evidence.
 - Core transport/binding executable baseline remains centered on the shipped M22 conformance/CI surface.
 - M23 (`RFC_EXT_CONFIDENTIALITY.md`) is shipped with executable extension conformance coverage.
 - M24 (`RFC_EXT_REDACTION.md`) is shipped with executable schema/fixture/conformance coverage for redaction declarations, retention/deletion policy, `pii_ref` handling, and deterministic fail vectors.
@@ -33,3 +37,6 @@ Extension RFCs live in this folder (`docs/extensions/`).
 - Extension IDs: `registry/extension_ids.json`
 - Extension suites: `conformance/extensions/`
 - Roadmap status: `ROADMAP.md`
+- CAPNEG v0.1 single-profile RFC: `docs/extensions/RFC_EXT_CAPNEG.md`
+- CAPNEG v0.2 multi-profile RFC: `docs/extensions/RFC_EXT_CAPNEG_v0.2.md`
+- Session-state projection v2: `docs/extensions/SESSION_STATE_PROJECTION_v2.md`

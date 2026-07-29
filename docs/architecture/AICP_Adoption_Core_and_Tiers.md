@@ -206,6 +206,12 @@ The tier model below is **adoption framing only**. It introduces no new protocol
 - these are optional adoption targets,
 - they do not replace the Tier 0 Core baseline,
 - they do not redefine AICP as discovery, calling, tool runtime, IAM, payment, or trust infrastructure.
+- stable CAPNEG v0.1 selects one profile, while experimental CAPNEG v0.2 can bind a
+  canonical set of registered Core v0.1-family profiles into one accepted result,
+- deployment combinations are not atomic negotiated sets unless every participant accepts
+  the exact CAPNEG v0.2 result,
+- every selected component still requires its own conformance evidence; a composition has
+  no aggregate product-profile badge.
 
 ## 6) Core vs optional, in one table
 
@@ -222,6 +228,7 @@ The tier model below is **adoption framing only**. It introduces no new protocol
 | Privacy/redaction | Optional overlay | confidentiality + redaction surfaces |
 | Trust / status / enterprise / observability | Optional overlay | trust/status, enterprise bindings, observability |
 | Execution / commerce / marketplace / media | Optional specialized bundle | execution interop, commerce ACP, bazaar reception, agent media |
+| Atomic multi-profile selection | Optional, experimental post-UAT | `EXT-CAPNEG` v0.2 over Core v0.1-family profiles |
 
 This is an adoption-packaging table, not a profile-maturity table. Current shipped and
 stable/experimental status is deliberately not duplicated here; use the generated

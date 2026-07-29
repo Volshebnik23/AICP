@@ -13,22 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M61 — Multi-Profile Composition and CAPNEG v2
-
-<!-- milestone-status: M61 planned -->
-- **Status:** Planned.
-- **Problem statement:** product guidance recommends profile combinations while current
-  CAPNEG selection carries one `aicp_profile`.
-- **Scope:** define versioned composition, selection, downgrade, conflict-resolution, and
-  evidence semantics for multiple product profiles.
-- **Explicit non-goals:** no retroactive change to EXT-CAPNEG v0.1 or existing `@0.1`
-  profiles; documentation combinations remain deployment guidance until this milestone ships.
-- **Principal evidence gap:** no negotiated multi-profile selection artifact or composition
-  conformance suite exists.
-- **Dependencies:** M60 and the current CAPNEG suite.
-- **Completion criterion:** a versioned CAPNEG composition design, registry/schema surface,
-  fixtures, conformance, and downgrade tests ship together.
-
 ## M62 — Generalized External Evidence Framework
 
 <!-- milestone-status: M62 planned -->

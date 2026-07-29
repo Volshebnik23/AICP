@@ -1,0 +1,3206 @@
+{
+  "fixture_version": "aicp.capneg_v0_2.fixtures.v1",
+  "generator": "scripts/generate_capneg_v02_fixtures.py",
+  "expectation": "pass",
+  "case_count": 11,
+  "cases": [
+    {
+      "id": "P01",
+      "description": "singleton AICP-BASE@0.1",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p01",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p01",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p01-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-BASE",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:miTRmYLWjAVmU0TueHPSzayAGJt5X0nU0dgCi4JOBJw"
+        },
+        {
+          "session_id": "session-p01",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p01",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p01-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-BASE",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:miTRmYLWjAVmU0TueHPSzayAGJt5X0nU0dgCi4JOBJw",
+          "message_hash": "sha256:lDGhCPykqEr5are6QoIWjMcI48w84MAgoe5mJUqpPew"
+        },
+        {
+          "session_id": "session-p01",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p01",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p01-1",
+              "proposal_revision": 1,
+              "session_id": "session-p01",
+              "contract_id": "contract-p01",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p01-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:miTRmYLWjAVmU0TueHPSzayAGJt5X0nU0dgCi4JOBJw"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p01-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:lDGhCPykqEr5are6QoIWjMcI48w84MAgoe5mJUqpPew"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-BASE",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:aQvYbMTnkMx0fctlMoPlKG-XAYAOiKqj_98c-DriYzc",
+                "required_extensions": [],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:UOJP9P9otrXWGJiI4tHidshe95YQXoNAOumpLnipydk"
+          },
+          "prev_msg_hash": "sha256:lDGhCPykqEr5are6QoIWjMcI48w84MAgoe5mJUqpPew",
+          "message_hash": "sha256:j4XVIu3UL0SCAQDa9jvlXqqtUbshR2RU0v9HMqoXeDA"
+        },
+        {
+          "session_id": "session-p01",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p01",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p01-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:j4XVIu3UL0SCAQDa9jvlXqqtUbshR2RU0v9HMqoXeDA",
+            "negotiation_result_hash": "sha256:UOJP9P9otrXWGJiI4tHidshe95YQXoNAOumpLnipydk",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:j4XVIu3UL0SCAQDa9jvlXqqtUbshR2RU0v9HMqoXeDA",
+          "message_hash": "sha256:3fEWRe_G7vPUctFYjjDrNv020z7-ozmvrCioMoqanpM"
+        },
+        {
+          "session_id": "session-p01",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p01",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p01-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:j4XVIu3UL0SCAQDa9jvlXqqtUbshR2RU0v9HMqoXeDA",
+            "negotiation_result_hash": "sha256:UOJP9P9otrXWGJiI4tHidshe95YQXoNAOumpLnipydk",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:3fEWRe_G7vPUctFYjjDrNv020z7-ozmvrCioMoqanpM",
+          "message_hash": "sha256:nPUlvoNw7Vb5E_571gCswepcLux-lvROUy-9GmZ8y_c"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p01-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:miTRmYLWjAVmU0TueHPSzayAGJt5X0nU0dgCi4JOBJw"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p01-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:lDGhCPykqEr5are6QoIWjMcI48w84MAgoe5mJUqpPew"
+            }
+          ],
+          "negotiation_id": "neg-p01-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-BASE",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:UOJP9P9otrXWGJiI4tHidshe95YQXoNAOumpLnipydk",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P02",
+      "description": "Mediated Blocking plus Resumable Sessions",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p02",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p02",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p02-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:btN0FO7OLHlTq__7xqGHNKqk7KiOCn5Jy7DHo25CrTc"
+        },
+        {
+          "session_id": "session-p02",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p02",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p02-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:btN0FO7OLHlTq__7xqGHNKqk7KiOCn5Jy7DHo25CrTc",
+          "message_hash": "sha256:3lElT64Wz6SDkngisX-bbLb5elML2BC7Xf2AS2t5pZc"
+        },
+        {
+          "session_id": "session-p02",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p02",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p02-1",
+              "proposal_revision": 1,
+              "session_id": "session-p02",
+              "contract_id": "contract-p02",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p02-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:btN0FO7OLHlTq__7xqGHNKqk7KiOCn5Jy7DHo25CrTc"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p02-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:3lElT64Wz6SDkngisX-bbLb5elML2BC7Xf2AS2t5pZc"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:h95ITeKMcwHnG1s1gaIbqneqPxuq_QHbxHxOmvKB47Y"
+          },
+          "prev_msg_hash": "sha256:3lElT64Wz6SDkngisX-bbLb5elML2BC7Xf2AS2t5pZc",
+          "message_hash": "sha256:5Se2UIAMKEsTTYOD1XoeEezdZJRKl2q9YnusoJOnpX4"
+        },
+        {
+          "session_id": "session-p02",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p02",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p02-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:5Se2UIAMKEsTTYOD1XoeEezdZJRKl2q9YnusoJOnpX4",
+            "negotiation_result_hash": "sha256:h95ITeKMcwHnG1s1gaIbqneqPxuq_QHbxHxOmvKB47Y",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:5Se2UIAMKEsTTYOD1XoeEezdZJRKl2q9YnusoJOnpX4",
+          "message_hash": "sha256:Uzhg0aCYavEYDjfFqiDRQURXi6QjKYUlUxEScnlQtN0"
+        },
+        {
+          "session_id": "session-p02",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p02",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p02-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:5Se2UIAMKEsTTYOD1XoeEezdZJRKl2q9YnusoJOnpX4",
+            "negotiation_result_hash": "sha256:h95ITeKMcwHnG1s1gaIbqneqPxuq_QHbxHxOmvKB47Y",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:Uzhg0aCYavEYDjfFqiDRQURXi6QjKYUlUxEScnlQtN0",
+          "message_hash": "sha256:6jLsks0CFmhIYGY4vPPvXvZDm0Y0cx206bvdCHG1b2k"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p02-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:btN0FO7OLHlTq__7xqGHNKqk7KiOCn5Jy7DHo25CrTc"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p02-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:3lElT64Wz6SDkngisX-bbLb5elML2BC7Xf2AS2t5pZc"
+            }
+          ],
+          "negotiation_id": "neg-p02-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:h95ITeKMcwHnG1s1gaIbqneqPxuq_QHbxHxOmvKB47Y",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P03",
+      "description": "Authenticated Base plus Mediated Blocking with signed accepts",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p03",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p03",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p03-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [
+              "aicp.crypto.ed25519.v1"
+            ],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-AUTHENTICATED-BASE",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [
+              "aicp.crypto.ed25519.v1"
+            ],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-POLICY-EVAL"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:vW1VAvuO5Ja6wSfLKfzf9G1GxIxsxos_QuPTSISe7mY"
+        },
+        {
+          "session_id": "session-p03",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p03",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p03-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [
+              "aicp.crypto.ed25519.v1"
+            ],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-AUTHENTICATED-BASE",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [
+              "aicp.crypto.ed25519.v1"
+            ],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-POLICY-EVAL"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:vW1VAvuO5Ja6wSfLKfzf9G1GxIxsxos_QuPTSISe7mY",
+          "message_hash": "sha256:xrjcT0l_1e8QaHh2iwXpphdEPKyUL267AyZktnrtp5I"
+        },
+        {
+          "session_id": "session-p03",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p03",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p03-1",
+              "proposal_revision": 1,
+              "session_id": "session-p03",
+              "contract_id": "contract-p03",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p03-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:vW1VAvuO5Ja6wSfLKfzf9G1GxIxsxos_QuPTSISe7mY"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p03-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:xrjcT0l_1e8QaHh2iwXpphdEPKyUL267AyZktnrtp5I"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [
+                  "aicp.crypto.ed25519.v1"
+                ],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-AUTHENTICATED-BASE",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:TXyF7nnrW3HE0sArh3StOwUC-JmW2ZRry0W6PEiVDMo",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-POLICY-EVAL"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:HCzJVzL0r3JPc2dty_oQ7sXzo8HrUEOHhR1-xHSAbYw"
+          },
+          "prev_msg_hash": "sha256:xrjcT0l_1e8QaHh2iwXpphdEPKyUL267AyZktnrtp5I",
+          "message_hash": "sha256:VzfdabOjYSCD3-qq3h2XG8RNVe79aE2K6t0moRM5G-0"
+        },
+        {
+          "session_id": "session-p03",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p03",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p03-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:VzfdabOjYSCD3-qq3h2XG8RNVe79aE2K6t0moRM5G-0",
+            "negotiation_result_hash": "sha256:HCzJVzL0r3JPc2dty_oQ7sXzo8HrUEOHhR1-xHSAbYw",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:VzfdabOjYSCD3-qq3h2XG8RNVe79aE2K6t0moRM5G-0",
+          "message_hash": "sha256:d_JwxXJv-XxtCPAIvYZaYUrsaVQyiH13qz8eHwx-uwk",
+          "signatures": [
+            {
+              "signer": "agent:S",
+              "kid": "S1",
+              "object_type": "message",
+              "object_hash": "sha256:d_JwxXJv-XxtCPAIvYZaYUrsaVQyiH13qz8eHwx-uwk",
+              "sig_b64url": "8sO4Wa_S3dXq_YWPsGYWGpozyPRbJBm2kONgSH9nPUi9oQU8kr86qmXcXSEiZ2pwvdqP3fkG_zH0eWBf1A9rCg"
+            }
+          ]
+        },
+        {
+          "session_id": "session-p03",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p03",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p03-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:VzfdabOjYSCD3-qq3h2XG8RNVe79aE2K6t0moRM5G-0",
+            "negotiation_result_hash": "sha256:HCzJVzL0r3JPc2dty_oQ7sXzo8HrUEOHhR1-xHSAbYw",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:d_JwxXJv-XxtCPAIvYZaYUrsaVQyiH13qz8eHwx-uwk",
+          "message_hash": "sha256:Ji7vVgd9XnwXC-8SIduwPuawHm-MwjezAJ8Wiqi1Skk",
+          "signatures": [
+            {
+              "signer": "agent:T",
+              "kid": "T1",
+              "object_type": "message",
+              "object_hash": "sha256:Ji7vVgd9XnwXC-8SIduwPuawHm-MwjezAJ8Wiqi1Skk",
+              "sig_b64url": "f4keCMxzL5MJTbtKbj9At6gvvcthoQppmIzGrJ_3EiPCN2qaQrs3IVfB7jNa64u72GIaHkpR9PhVlGy0a75GDw"
+            }
+          ]
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p03-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:vW1VAvuO5Ja6wSfLKfzf9G1GxIxsxos_QuPTSISe7mY"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p03-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:xrjcT0l_1e8QaHh2iwXpphdEPKyUL267AyZktnrtp5I"
+            }
+          ],
+          "negotiation_id": "neg-p03-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-AUTHENTICATED-BASE",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:HCzJVzL0r3JPc2dty_oQ7sXzo8HrUEOHhR1-xHSAbYw",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P04",
+      "description": "Delegated Identity plus Workflow Orchestration Delegation",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p04",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p04",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p04-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-DELEGATED-IDENTITY",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-ALERTS",
+              "EXT-CAPNEG",
+              "EXT-DELEGATED-IDENTITY",
+              "EXT-DELEGATION",
+              "EXT-IDENTITY-LC",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME",
+              "EXT-SECURITY-ALERT",
+              "EXT-TOOL-GATING",
+              "EXT-WORKFLOW-SYNC"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:LfIbyJBWoS8hWfGiYwvW95OdxEEGiqsn-OmgTMONAUE"
+        },
+        {
+          "session_id": "session-p04",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p04",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p04-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-DELEGATED-IDENTITY",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-ALERTS",
+              "EXT-CAPNEG",
+              "EXT-DELEGATED-IDENTITY",
+              "EXT-DELEGATION",
+              "EXT-IDENTITY-LC",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME",
+              "EXT-SECURITY-ALERT",
+              "EXT-TOOL-GATING",
+              "EXT-WORKFLOW-SYNC"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:LfIbyJBWoS8hWfGiYwvW95OdxEEGiqsn-OmgTMONAUE",
+          "message_hash": "sha256:jjaQDceqPZCzaLLJBUEcotk5ihkMWaHL7N_OQ6h-tMk"
+        },
+        {
+          "session_id": "session-p04",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p04",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p04-1",
+              "proposal_revision": 1,
+              "session_id": "session-p04",
+              "contract_id": "contract-p04",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p04-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:LfIbyJBWoS8hWfGiYwvW95OdxEEGiqsn-OmgTMONAUE"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p04-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:jjaQDceqPZCzaLLJBUEcotk5ihkMWaHL7N_OQ6h-tMk"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-DELEGATED-IDENTITY",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:SNfy9yVApXqSI77Di99kfFE0eJv0TIxLnops0W_mrDo",
+                "required_extensions": [
+                  "EXT-ALERTS",
+                  "EXT-CAPNEG",
+                  "EXT-DELEGATED-IDENTITY",
+                  "EXT-DELEGATION",
+                  "EXT-IDENTITY-LC",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME",
+                  "EXT-SECURITY-ALERT",
+                  "EXT-TOOL-GATING",
+                  "EXT-WORKFLOW-SYNC"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:NhOnqFyEqx5H3-pNF0v8f7RhRJH4kBF8fMz_t69-TOw"
+          },
+          "prev_msg_hash": "sha256:jjaQDceqPZCzaLLJBUEcotk5ihkMWaHL7N_OQ6h-tMk",
+          "message_hash": "sha256:IUik-oWNwKaEhkyoyb7-HEeF5yy02vGvbqKlxmYRlzo"
+        },
+        {
+          "session_id": "session-p04",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p04",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p04-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:IUik-oWNwKaEhkyoyb7-HEeF5yy02vGvbqKlxmYRlzo",
+            "negotiation_result_hash": "sha256:NhOnqFyEqx5H3-pNF0v8f7RhRJH4kBF8fMz_t69-TOw",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:IUik-oWNwKaEhkyoyb7-HEeF5yy02vGvbqKlxmYRlzo",
+          "message_hash": "sha256:3SBA6XcF8GlKanAOffPjqR27A77mGcviovJNlSJwYCY"
+        },
+        {
+          "session_id": "session-p04",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p04",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p04-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:IUik-oWNwKaEhkyoyb7-HEeF5yy02vGvbqKlxmYRlzo",
+            "negotiation_result_hash": "sha256:NhOnqFyEqx5H3-pNF0v8f7RhRJH4kBF8fMz_t69-TOw",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:3SBA6XcF8GlKanAOffPjqR27A77mGcviovJNlSJwYCY",
+          "message_hash": "sha256:Ih3UncO1FSr4y0Q69W_oMkwjOYa2DC6mulK6Q0pWhFY"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p04-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:LfIbyJBWoS8hWfGiYwvW95OdxEEGiqsn-OmgTMONAUE"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p04-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:jjaQDceqPZCzaLLJBUEcotk5ihkMWaHL7N_OQ6h-tMk"
+            }
+          ],
+          "negotiation_id": "neg-p04-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-DELEGATED-IDENTITY",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:NhOnqFyEqx5H3-pNF0v8f7RhRJH4kBF8fMz_t69-TOw",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P05",
+      "description": "Agent Media plus Bazaar Reception",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p05",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p05",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p05-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-AGENT-MEDIA",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-BAZAAR-RECEPTION",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-ADMISSION",
+              "EXT-CHANNELS",
+              "EXT-ENFORCEMENT",
+              "EXT-PARTICIPANTS",
+              "EXT-POLICY-EVAL",
+              "EXT-PUBLICATIONS",
+              "EXT-QUEUE-LEASES",
+              "EXT-SUBSCRIPTIONS"
+            ],
+            "supported_policy_categories": [
+              "artifact_constraints",
+              "content_budgets",
+              "distribution",
+              "facilitation",
+              "traffic_shaping"
+            ],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:d4ef64bs9bKpI52XM6pVTp2M25vWdZgemUUe0ZwBnss"
+        },
+        {
+          "session_id": "session-p05",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p05",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p05-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-AGENT-MEDIA",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-BAZAAR-RECEPTION",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-ADMISSION",
+              "EXT-CHANNELS",
+              "EXT-ENFORCEMENT",
+              "EXT-PARTICIPANTS",
+              "EXT-POLICY-EVAL",
+              "EXT-PUBLICATIONS",
+              "EXT-QUEUE-LEASES",
+              "EXT-SUBSCRIPTIONS"
+            ],
+            "supported_policy_categories": [
+              "artifact_constraints",
+              "content_budgets",
+              "distribution",
+              "facilitation",
+              "traffic_shaping"
+            ],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:d4ef64bs9bKpI52XM6pVTp2M25vWdZgemUUe0ZwBnss",
+          "message_hash": "sha256:RNEnRQAbg3Oqm6ZIEnYQnheE_olSSQlWsPbsjVKSfKE"
+        },
+        {
+          "session_id": "session-p05",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p05",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p05-1",
+              "proposal_revision": 1,
+              "session_id": "session-p05",
+              "contract_id": "contract-p05",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p05-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:d4ef64bs9bKpI52XM6pVTp2M25vWdZgemUUe0ZwBnss"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p05-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:RNEnRQAbg3Oqm6ZIEnYQnheE_olSSQlWsPbsjVKSfKE"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-AGENT-MEDIA",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-BAZAAR-RECEPTION",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:zjtKTu5oJA-jSzeQ_LBqNWB69TXHO7X4mRlCrWxCwv0",
+                "required_extensions": [
+                  "EXT-ADMISSION",
+                  "EXT-CHANNELS",
+                  "EXT-ENFORCEMENT",
+                  "EXT-PARTICIPANTS",
+                  "EXT-POLICY-EVAL",
+                  "EXT-PUBLICATIONS",
+                  "EXT-QUEUE-LEASES",
+                  "EXT-SUBSCRIPTIONS"
+                ],
+                "required_policy_categories": [
+                  "artifact_constraints",
+                  "content_budgets",
+                  "distribution",
+                  "facilitation",
+                  "traffic_shaping"
+                ],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:TkyM4af8xL1l_gJUQz-lH3Kxo8cASJ5jN1L0jND6lrQ"
+          },
+          "prev_msg_hash": "sha256:RNEnRQAbg3Oqm6ZIEnYQnheE_olSSQlWsPbsjVKSfKE",
+          "message_hash": "sha256:9C5L-wR-ZxM8_K8MiIbsX2iBB9ALZqpIIWlzvJMBPm8"
+        },
+        {
+          "session_id": "session-p05",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p05",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p05-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:9C5L-wR-ZxM8_K8MiIbsX2iBB9ALZqpIIWlzvJMBPm8",
+            "negotiation_result_hash": "sha256:TkyM4af8xL1l_gJUQz-lH3Kxo8cASJ5jN1L0jND6lrQ",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:9C5L-wR-ZxM8_K8MiIbsX2iBB9ALZqpIIWlzvJMBPm8",
+          "message_hash": "sha256:4pTom_z2F7Rn9cxdWQ0x8zfbn8aUHrv5t7aF8VIJ5F4"
+        },
+        {
+          "session_id": "session-p05",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p05",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p05-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:9C5L-wR-ZxM8_K8MiIbsX2iBB9ALZqpIIWlzvJMBPm8",
+            "negotiation_result_hash": "sha256:TkyM4af8xL1l_gJUQz-lH3Kxo8cASJ5jN1L0jND6lrQ",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:4pTom_z2F7Rn9cxdWQ0x8zfbn8aUHrv5t7aF8VIJ5F4",
+          "message_hash": "sha256:NhJQRMnLQxkDxs8_KmaXkfZAoxTFz0_huo_QFwpKYbU"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p05-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:d4ef64bs9bKpI52XM6pVTp2M25vWdZgemUUe0ZwBnss"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p05-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:RNEnRQAbg3Oqm6ZIEnYQnheE_olSSQlWsPbsjVKSfKE"
+            }
+          ],
+          "negotiation_id": "neg-p05-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-AGENT-MEDIA",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-BAZAAR-RECEPTION",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:TkyM4af8xL1l_gJUQz-lH3Kxo8cASJ5jN1L0jND6lrQ",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P06",
+      "description": "reject first proposal then accept exact revision",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p06",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p06-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:TEfK95X0c9RlbgTV7nxo0Ze247UNBVNj65eMVRC6I3o"
+        },
+        {
+          "session_id": "session-p06",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p06-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:TEfK95X0c9RlbgTV7nxo0Ze247UNBVNj65eMVRC6I3o",
+          "message_hash": "sha256:0scTJ86Ah-IV2__Cmb5LluHwjyzzy8ub0BXj6-CVSBw"
+        },
+        {
+          "session_id": "session-p06",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p06-1",
+              "proposal_revision": 1,
+              "session_id": "session-p06",
+              "contract_id": "contract-p06",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p06-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:TEfK95X0c9RlbgTV7nxo0Ze247UNBVNj65eMVRC6I3o"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p06-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:0scTJ86Ah-IV2__Cmb5LluHwjyzzy8ub0BXj6-CVSBw"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:5wzrqGQCYFf3aNS7UriGP_XrUhuq5z8lO5DiQYg4vaA"
+          },
+          "prev_msg_hash": "sha256:0scTJ86Ah-IV2__Cmb5LluHwjyzzy8ub0BXj6-CVSBw",
+          "message_hash": "sha256:8inp5Ti_eWH_zByyqyUAYPdaNyZbXwpBGKD9vSvbEWQ"
+        },
+        {
+          "session_id": "session-p06",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_REJECT",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p06-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:8inp5Ti_eWH_zByyqyUAYPdaNyZbXwpBGKD9vSvbEWQ",
+            "negotiation_result_hash": "sha256:5wzrqGQCYFf3aNS7UriGP_XrUhuq5z8lO5DiQYg4vaA",
+            "reason_code": "PROFILE_SET_UNSUPPORTED"
+          },
+          "prev_msg_hash": "sha256:8inp5Ti_eWH_zByyqyUAYPdaNyZbXwpBGKD9vSvbEWQ",
+          "message_hash": "sha256:9F05fub-MR3ISjhPxvP_st76LeiZ2mOSuSSMCESnTcA"
+        },
+        {
+          "session_id": "session-p06",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 2,
+            "negotiation_result": {
+              "negotiation_id": "neg-p06-1",
+              "proposal_revision": 2,
+              "session_id": "session-p06",
+              "contract_id": "contract-p06",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p06-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:TEfK95X0c9RlbgTV7nxo0Ze247UNBVNj65eMVRC6I3o"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p06-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:0scTJ86Ah-IV2__Cmb5LluHwjyzzy8ub0BXj6-CVSBw"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:JibfxsiDqDDW3S5DObrnWunGi--YXGn9aBNZyItu-Ng",
+            "supersedes_proposal_message_id": "m3",
+            "supersedes_proposal_message_hash": "sha256:8inp5Ti_eWH_zByyqyUAYPdaNyZbXwpBGKD9vSvbEWQ"
+          },
+          "prev_msg_hash": "sha256:9F05fub-MR3ISjhPxvP_st76LeiZ2mOSuSSMCESnTcA",
+          "message_hash": "sha256:IJMPXTAkkXezf5QyhGbkzwGOUJij1ir8nFx5oZhCMbM"
+        },
+        {
+          "session_id": "session-p06",
+          "message_id": "m6",
+          "timestamp": "2026-07-01T00:00:06Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p06-1",
+            "proposal_revision": 2,
+            "proposal_message_id": "m5",
+            "proposal_message_hash": "sha256:IJMPXTAkkXezf5QyhGbkzwGOUJij1ir8nFx5oZhCMbM",
+            "negotiation_result_hash": "sha256:JibfxsiDqDDW3S5DObrnWunGi--YXGn9aBNZyItu-Ng",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:IJMPXTAkkXezf5QyhGbkzwGOUJij1ir8nFx5oZhCMbM",
+          "message_hash": "sha256:gvQ7t1ueqoIlXy6s15AUopD1SKzUzbtZ2-tL6dAKTo0"
+        },
+        {
+          "session_id": "session-p06",
+          "message_id": "m7",
+          "timestamp": "2026-07-01T00:00:07Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p06",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p06-1",
+            "proposal_revision": 2,
+            "proposal_message_id": "m5",
+            "proposal_message_hash": "sha256:IJMPXTAkkXezf5QyhGbkzwGOUJij1ir8nFx5oZhCMbM",
+            "negotiation_result_hash": "sha256:JibfxsiDqDDW3S5DObrnWunGi--YXGn9aBNZyItu-Ng",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:gvQ7t1ueqoIlXy6s15AUopD1SKzUzbtZ2-tL6dAKTo0",
+          "message_hash": "sha256:3cPlPe97ssrCSuiqZWmwz8K_8Uy_8n2mC4EWZJTglB4"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p06-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:TEfK95X0c9RlbgTV7nxo0Ze247UNBVNj65eMVRC6I3o"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p06-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:0scTJ86Ah-IV2__Cmb5LluHwjyzzy8ub0BXj6-CVSBw"
+            }
+          ],
+          "negotiation_id": "neg-p06-1",
+          "current_revision": 2,
+          "proposal_message_id": "m5",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:JibfxsiDqDDW3S5DObrnWunGi--YXGn9aBNZyItu-Ng",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P07",
+      "description": "exact duplicate acceptance replay",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p07",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p07",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p07-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:z6eGShl-W2Bpjs4CJ6AXslVyy1Hpc5ZtBD5yDmESHHc"
+        },
+        {
+          "session_id": "session-p07",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p07",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p07-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:z6eGShl-W2Bpjs4CJ6AXslVyy1Hpc5ZtBD5yDmESHHc",
+          "message_hash": "sha256:TPGRuqSS_da3X7jWj_-RKEgcY4vAnjQoIvak9tOR7UY"
+        },
+        {
+          "session_id": "session-p07",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p07",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p07-1",
+              "proposal_revision": 1,
+              "session_id": "session-p07",
+              "contract_id": "contract-p07",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p07-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:z6eGShl-W2Bpjs4CJ6AXslVyy1Hpc5ZtBD5yDmESHHc"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p07-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:TPGRuqSS_da3X7jWj_-RKEgcY4vAnjQoIvak9tOR7UY"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:ehMV1o_b4RWTCHLwNjb5tAI3gWWyw4IYNYM-4guVa6w"
+          },
+          "prev_msg_hash": "sha256:TPGRuqSS_da3X7jWj_-RKEgcY4vAnjQoIvak9tOR7UY",
+          "message_hash": "sha256:hfUvrIZBfywngZz-mt6NI2O3vIHIW9SLSl6Ar8q1Lh0"
+        },
+        {
+          "session_id": "session-p07",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p07",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p07-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:hfUvrIZBfywngZz-mt6NI2O3vIHIW9SLSl6Ar8q1Lh0",
+            "negotiation_result_hash": "sha256:ehMV1o_b4RWTCHLwNjb5tAI3gWWyw4IYNYM-4guVa6w",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:hfUvrIZBfywngZz-mt6NI2O3vIHIW9SLSl6Ar8q1Lh0",
+          "message_hash": "sha256:RZUV76oGj65xpan-jSNtJcXlI0nthkdPkM80Kuz9Sa0"
+        },
+        {
+          "session_id": "session-p07",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p07",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p07-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:hfUvrIZBfywngZz-mt6NI2O3vIHIW9SLSl6Ar8q1Lh0",
+            "negotiation_result_hash": "sha256:ehMV1o_b4RWTCHLwNjb5tAI3gWWyw4IYNYM-4guVa6w",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:RZUV76oGj65xpan-jSNtJcXlI0nthkdPkM80Kuz9Sa0",
+          "message_hash": "sha256:zgdipILrp5C5BrxboZi2GxVNwKFPsvkuJV0zpwm19WA"
+        },
+        {
+          "session_id": "session-p07",
+          "message_id": "m6",
+          "timestamp": "2026-07-01T00:00:06Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p07",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p07-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:hfUvrIZBfywngZz-mt6NI2O3vIHIW9SLSl6Ar8q1Lh0",
+            "negotiation_result_hash": "sha256:ehMV1o_b4RWTCHLwNjb5tAI3gWWyw4IYNYM-4guVa6w",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:zgdipILrp5C5BrxboZi2GxVNwKFPsvkuJV0zpwm19WA",
+          "message_hash": "sha256:QFB2t4Vo9YHp3iGOjira3s1WcwaSbFOms1w-cmoKhno"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p07-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:z6eGShl-W2Bpjs4CJ6AXslVyy1Hpc5ZtBD5yDmESHHc"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p07-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:TPGRuqSS_da3X7jWj_-RKEgcY4vAnjQoIvak9tOR7UY"
+            }
+          ],
+          "negotiation_id": "neg-p07-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:ehMV1o_b4RWTCHLwNjb5tAI3gWWyw4IYNYM-4guVa6w",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P08",
+      "description": "contract binding to accepted composition",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p08",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p08",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p08-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:BOtOpIMhpm9LYsDjsuAv3jeFL2JfDp5qWEdxEVu8TvU"
+        },
+        {
+          "session_id": "session-p08",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p08",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p08-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:BOtOpIMhpm9LYsDjsuAv3jeFL2JfDp5qWEdxEVu8TvU",
+          "message_hash": "sha256:usVfIXyn6KkKBBYtkr5ITZL5DzJeo1QjpsCxNlTV_Ls"
+        },
+        {
+          "session_id": "session-p08",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p08",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p08-1",
+              "proposal_revision": 1,
+              "session_id": "session-p08",
+              "contract_id": "contract-p08",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p08-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:BOtOpIMhpm9LYsDjsuAv3jeFL2JfDp5qWEdxEVu8TvU"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p08-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:usVfIXyn6KkKBBYtkr5ITZL5DzJeo1QjpsCxNlTV_Ls"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:BEl8ZbFLswHhGeqk05mt2zqPJ9W3Bhzg2MT9epGy-Nk"
+          },
+          "prev_msg_hash": "sha256:usVfIXyn6KkKBBYtkr5ITZL5DzJeo1QjpsCxNlTV_Ls",
+          "message_hash": "sha256:IPULLwt8MJ7vyOwVGiEU4tvE9nB-4KApEm9fMSdFOoM"
+        },
+        {
+          "session_id": "session-p08",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p08",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p08-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:IPULLwt8MJ7vyOwVGiEU4tvE9nB-4KApEm9fMSdFOoM",
+            "negotiation_result_hash": "sha256:BEl8ZbFLswHhGeqk05mt2zqPJ9W3Bhzg2MT9epGy-Nk",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:IPULLwt8MJ7vyOwVGiEU4tvE9nB-4KApEm9fMSdFOoM",
+          "message_hash": "sha256:VnksshBGtN7Zz4qNnP4KdAKouLGOC6rq-vsVXmWIoRc"
+        },
+        {
+          "session_id": "session-p08",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p08",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p08-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:IPULLwt8MJ7vyOwVGiEU4tvE9nB-4KApEm9fMSdFOoM",
+            "negotiation_result_hash": "sha256:BEl8ZbFLswHhGeqk05mt2zqPJ9W3Bhzg2MT9epGy-Nk",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:VnksshBGtN7Zz4qNnP4KdAKouLGOC6rq-vsVXmWIoRc",
+          "message_hash": "sha256:kLfz53PUigNPx48aLuOlCSTvFz3mHzJlLzkkfDxxi5c"
+        },
+        {
+          "session_id": "session-p08",
+          "message_id": "m6",
+          "timestamp": "2026-07-01T00:00:06Z",
+          "sender": "agent:S",
+          "message_type": "CONTRACT_PROPOSE",
+          "contract_id": "contract-p08",
+          "payload": {
+            "contract": {
+              "contract_id": "contract-p08",
+              "goal": "activate accepted CAPNEG v0.2 composition",
+              "roles": [
+                "agent:S",
+                "agent:T"
+              ],
+              "ext": {
+                "capneg_v2": {
+                  "capneg_version": "0.2",
+                  "negotiation_id": "neg-p08-1",
+                  "negotiation_result_hash": "sha256:BEl8ZbFLswHhGeqk05mt2zqPJ9W3Bhzg2MT9epGy-Nk",
+                  "profile_composition": {
+                    "composition_version": "aicp.profile_composition.v1",
+                    "profiles": [
+                      {
+                        "profile_id": "AICP-MEDIATED-BLOCKING",
+                        "profile_version": "0.1"
+                      },
+                      {
+                        "profile_id": "AICP-RESUMABLE-SESSIONS",
+                        "profile_version": "0.1"
+                      }
+                    ]
+                  },
+                  "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg"
+                }
+              }
+            }
+          },
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:kLfz53PUigNPx48aLuOlCSTvFz3mHzJlLzkkfDxxi5c",
+          "message_hash": "sha256:CG6f0Cl5c8wRZnwQtonOzazGSAoWwiZzYJ8SJSkomyI"
+        },
+        {
+          "session_id": "session-p08",
+          "message_id": "m7",
+          "timestamp": "2026-07-01T00:00:07Z",
+          "sender": "agent:T",
+          "message_type": "CONTRACT_ACCEPT",
+          "contract_id": "contract-p08",
+          "payload": {
+            "accepted": true
+          },
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:CG6f0Cl5c8wRZnwQtonOzazGSAoWwiZzYJ8SJSkomyI",
+          "message_hash": "sha256:a15BNhZ_GCqn9jjSqWFwOmpKdVhwmspoGzt2qQ9ephw"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p08-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:BOtOpIMhpm9LYsDjsuAv3jeFL2JfDp5qWEdxEVu8TvU"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p08-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:usVfIXyn6KkKBBYtkr5ITZL5DzJeo1QjpsCxNlTV_Ls"
+            }
+          ],
+          "negotiation_id": "neg-p08-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:BEl8ZbFLswHhGeqk05mt2zqPJ9W3Bhzg2MT9epGy-Nk",
+          "superseded_negotiations": [],
+          "bound_contracts": [
+            "contract-p08"
+          ]
+        }
+      }
+    },
+    {
+      "id": "P09",
+      "description": "session-state projection v2",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p09",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p09",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p09-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:AiAwN22t9SXzDkf2otMA4euJqVaTPa3pNAWGU5DpXZg"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p09",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p09-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:AiAwN22t9SXzDkf2otMA4euJqVaTPa3pNAWGU5DpXZg",
+          "message_hash": "sha256:jJUrY_yFvf-YTx-GHoDryW4LEo-HOZUMWXnxfmvEVe8"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p09",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p09-1",
+              "proposal_revision": 1,
+              "session_id": "session-p09",
+              "contract_id": "contract-p09",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p09-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:AiAwN22t9SXzDkf2otMA4euJqVaTPa3pNAWGU5DpXZg"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p09-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:jJUrY_yFvf-YTx-GHoDryW4LEo-HOZUMWXnxfmvEVe8"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:8Bi1HzKG-7E_R3EpQIHU1DySmHFY4K-ytEA52LRkIsY"
+          },
+          "prev_msg_hash": "sha256:jJUrY_yFvf-YTx-GHoDryW4LEo-HOZUMWXnxfmvEVe8",
+          "message_hash": "sha256:R9hUUOYOgVb8MUpuDHHyS7KB_An9-vv8ZGaEZAB5Jvs"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p09",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p09-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:R9hUUOYOgVb8MUpuDHHyS7KB_An9-vv8ZGaEZAB5Jvs",
+            "negotiation_result_hash": "sha256:8Bi1HzKG-7E_R3EpQIHU1DySmHFY4K-ytEA52LRkIsY",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:R9hUUOYOgVb8MUpuDHHyS7KB_An9-vv8ZGaEZAB5Jvs",
+          "message_hash": "sha256:YBjiveuMDvRVQel04SQ-sZw0Ai8opRJgiK5K0ieteBk"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p09",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p09-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:R9hUUOYOgVb8MUpuDHHyS7KB_An9-vv8ZGaEZAB5Jvs",
+            "negotiation_result_hash": "sha256:8Bi1HzKG-7E_R3EpQIHU1DySmHFY4K-ytEA52LRkIsY",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:YBjiveuMDvRVQel04SQ-sZw0Ai8opRJgiK5K0ieteBk",
+          "message_hash": "sha256:5ghp8Jxjv7fYXWYF-EY8Lb1Iii1LqhQOcYe1OHw8faM"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m6",
+          "timestamp": "2026-07-01T00:00:06Z",
+          "sender": "agent:S",
+          "message_type": "CONTRACT_PROPOSE",
+          "contract_id": "contract-p09",
+          "payload": {
+            "contract": {
+              "contract_id": "contract-p09",
+              "goal": "activate accepted CAPNEG v0.2 composition",
+              "roles": [
+                "agent:S",
+                "agent:T"
+              ],
+              "ext": {
+                "capneg_v2": {
+                  "capneg_version": "0.2",
+                  "negotiation_id": "neg-p09-1",
+                  "negotiation_result_hash": "sha256:8Bi1HzKG-7E_R3EpQIHU1DySmHFY4K-ytEA52LRkIsY",
+                  "profile_composition": {
+                    "composition_version": "aicp.profile_composition.v1",
+                    "profiles": [
+                      {
+                        "profile_id": "AICP-MEDIATED-BLOCKING",
+                        "profile_version": "0.1"
+                      },
+                      {
+                        "profile_id": "AICP-RESUMABLE-SESSIONS",
+                        "profile_version": "0.1"
+                      }
+                    ]
+                  },
+                  "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg"
+                }
+              }
+            }
+          },
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:5ghp8Jxjv7fYXWYF-EY8Lb1Iii1LqhQOcYe1OHw8faM",
+          "message_hash": "sha256:GuH82hrB4nLpwHXsua3WH9sQTggmUZBX6WqugJ2pnhQ"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m7",
+          "timestamp": "2026-07-01T00:00:07Z",
+          "sender": "agent:T",
+          "message_type": "CONTRACT_ACCEPT",
+          "contract_id": "contract-p09",
+          "payload": {
+            "accepted": true
+          },
+          "contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:GuH82hrB4nLpwHXsua3WH9sQTggmUZBX6WqugJ2pnhQ",
+          "message_hash": "sha256:SArrf_Rhnv7o0Bf0nyoPJD_wWVgNTBzru3Shj0tjg5o"
+        },
+        {
+          "session_id": "session-p09",
+          "message_id": "m8",
+          "timestamp": "2026-07-01T00:00:08Z",
+          "sender": "agent:T",
+          "message_type": "STATE_SYNC_RESPONSE",
+          "contract_id": "contract-p09",
+          "payload": {
+            "request_id": "sync-p09",
+            "session_state": {
+              "projection_version": "aicp.session_state_projection.v2",
+              "session_id": "session-p09",
+              "contract_id": "contract-p09",
+              "as_of_message_hash": "sha256:SArrf_Rhnv7o0Bf0nyoPJD_wWVgNTBzru3Shj0tjg5o",
+              "session_status": "OPEN",
+              "selected_aicp_profiles": [
+                {
+                  "profile_id": "AICP-MEDIATED-BLOCKING",
+                  "profile_version": "0.1"
+                },
+                {
+                  "profile_id": "AICP-RESUMABLE-SESSIONS",
+                  "profile_version": "0.1"
+                }
+              ],
+              "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+              "accepted_negotiation_result_hash": "sha256:8Bi1HzKG-7E_R3EpQIHU1DySmHFY4K-ytEA52LRkIsY",
+              "active_contract_ref": {
+                "branch_id": "main",
+                "base_version": "v1",
+                "head_version": "v1"
+              },
+              "active_extensions": [
+                "EXT-CAPNEG",
+                "EXT-ENFORCEMENT",
+                "EXT-OBJECT-RESYNC",
+                "EXT-POLICY-EVAL",
+                "EXT-RESUME"
+              ],
+              "participant_refs": [
+                "agent:S",
+                "agent:T"
+              ]
+            },
+            "session_state_hash": "sha256:zeikg84H8w1VzWLCTQdlUE6_zfjOtly6ZWcMcswuQ8c",
+            "branch_heads": [
+              {
+                "branch_id": "main",
+                "head_version": "v1",
+                "message_hash": "sha256:SArrf_Rhnv7o0Bf0nyoPJD_wWVgNTBzru3Shj0tjg5o"
+              }
+            ],
+            "active_head_version": "v1"
+          },
+          "prev_msg_hash": "sha256:SArrf_Rhnv7o0Bf0nyoPJD_wWVgNTBzru3Shj0tjg5o",
+          "message_hash": "sha256:eAlCXmZmCfMalm3W4_nwMAGJf82HPZ7DiKljVmteU0w"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p09-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:AiAwN22t9SXzDkf2otMA4euJqVaTPa3pNAWGU5DpXZg"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p09-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:jJUrY_yFvf-YTx-GHoDryW4LEo-HOZUMWXnxfmvEVe8"
+            }
+          ],
+          "negotiation_id": "neg-p09-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:8Bi1HzKG-7E_R3EpQIHU1DySmHFY4K-ytEA52LRkIsY",
+          "superseded_negotiations": [],
+          "bound_contracts": [
+            "contract-p09"
+          ]
+        }
+      }
+    },
+    {
+      "id": "P10",
+      "description": "optional valid signatures for non-authenticated composition",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p10",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p10",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p10-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:0oXoLvuD2Yz84ZTi7WsuCVfW5V3cWZRSj9r1MW30IDU"
+        },
+        {
+          "session_id": "session-p10",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p10",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p10-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:0oXoLvuD2Yz84ZTi7WsuCVfW5V3cWZRSj9r1MW30IDU",
+          "message_hash": "sha256:iSltchaSFx1ivhIqRl5lxYsnNMYWuzzvhAzKMymReBY"
+        },
+        {
+          "session_id": "session-p10",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p10",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p10-1",
+              "proposal_revision": 1,
+              "session_id": "session-p10",
+              "contract_id": "contract-p10",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p10-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:0oXoLvuD2Yz84ZTi7WsuCVfW5V3cWZRSj9r1MW30IDU"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p10-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:iSltchaSFx1ivhIqRl5lxYsnNMYWuzzvhAzKMymReBY"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:ohFaDXkjjYAW_wHJ24BX_YdZOZL1bWIrcbNw0e20jpc"
+          },
+          "prev_msg_hash": "sha256:iSltchaSFx1ivhIqRl5lxYsnNMYWuzzvhAzKMymReBY",
+          "message_hash": "sha256:pV6LW-CT4prNaMyBn46GS40h16UGiGbYD3BKmJu5Q4U"
+        },
+        {
+          "session_id": "session-p10",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p10",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p10-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:pV6LW-CT4prNaMyBn46GS40h16UGiGbYD3BKmJu5Q4U",
+            "negotiation_result_hash": "sha256:ohFaDXkjjYAW_wHJ24BX_YdZOZL1bWIrcbNw0e20jpc",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:pV6LW-CT4prNaMyBn46GS40h16UGiGbYD3BKmJu5Q4U",
+          "message_hash": "sha256:OH1w2ucA96SKG_AV4sfSR-plK2R6SAy2a2FUTP5a9EE",
+          "signatures": [
+            {
+              "signer": "agent:S",
+              "kid": "S1",
+              "object_type": "message",
+              "object_hash": "sha256:OH1w2ucA96SKG_AV4sfSR-plK2R6SAy2a2FUTP5a9EE",
+              "sig_b64url": "ShcAbSqSvqxDlICPPrg3LVHPvkEGyLskRlmkLytTmjvHt9MCDVPPjNe6YdMU62lc7bc0Foq9wPLFT7smQcqpAw"
+            }
+          ]
+        },
+        {
+          "session_id": "session-p10",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p10",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p10-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:pV6LW-CT4prNaMyBn46GS40h16UGiGbYD3BKmJu5Q4U",
+            "negotiation_result_hash": "sha256:ohFaDXkjjYAW_wHJ24BX_YdZOZL1bWIrcbNw0e20jpc",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:OH1w2ucA96SKG_AV4sfSR-plK2R6SAy2a2FUTP5a9EE",
+          "message_hash": "sha256:S46lVJFaaT9loq5mkdLjeYSNU5qXQ-ZTCtW-os6AR6M",
+          "signatures": [
+            {
+              "signer": "agent:T",
+              "kid": "T1",
+              "object_type": "message",
+              "object_hash": "sha256:S46lVJFaaT9loq5mkdLjeYSNU5qXQ-ZTCtW-os6AR6M",
+              "sig_b64url": "qYUTVhz6C5XjZrm4NoR3dEQy03nslT620Fk-icJL5LAT3BQytHKYSRExilEw2WYMgmd2Qob_rJejUIpTzc5rCA"
+            }
+          ]
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p10-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:0oXoLvuD2Yz84ZTi7WsuCVfW5V3cWZRSj9r1MW30IDU"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p10-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:iSltchaSFx1ivhIqRl5lxYsnNMYWuzzvhAzKMymReBY"
+            }
+          ],
+          "negotiation_id": "neg-p10-1",
+          "current_revision": 1,
+          "proposal_message_id": "m3",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:ohFaDXkjjYAW_wHJ24BX_YdZOZL1bWIrcbNw0e20jpc",
+          "superseded_negotiations": [],
+          "bound_contracts": []
+        }
+      }
+    },
+    {
+      "id": "P11",
+      "description": "new negotiation explicitly supersedes accepted negotiation",
+      "expect_pass": true,
+      "messages": [
+        {
+          "session_id": "session-p11",
+          "message_id": "m1",
+          "timestamp": "2026-07-01T00:00:01Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p11-s-1",
+            "party_id": "agent:S",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "message_hash": "sha256:yWnT9wTGecxmi7KwHE-MnlnZKKkOVvalwh8ONkk4mOs"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m2",
+          "timestamp": "2026-07-01T00:00:02Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_DECLARE",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "capabilities_id": "cap-p11-t-1",
+            "party_id": "agent:T",
+            "supported_crypto_profiles": [],
+            "supported_privacy_modes": [
+              "standard"
+            ],
+            "supported_aicp_profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ],
+            "required_crypto_profiles": [],
+            "required_aicp_profiles": [],
+            "supported_extensions": [
+              "EXT-CAPNEG",
+              "EXT-ENFORCEMENT",
+              "EXT-OBJECT-RESYNC",
+              "EXT-POLICY-EVAL",
+              "EXT-RESUME"
+            ],
+            "supported_policy_categories": [],
+            "bindings": [
+              "BIND-HTTP-0.1"
+            ],
+            "limits": {
+              "max_message_bytes": 1048576
+            }
+          },
+          "prev_msg_hash": "sha256:yWnT9wTGecxmi7KwHE-MnlnZKKkOVvalwh8ONkk4mOs",
+          "message_hash": "sha256:wvxsq8d2QljyuKVG2rF19XttFgxbM-c9mFgVY0BnD6g"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m3",
+          "timestamp": "2026-07-01T00:00:03Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p11-1",
+              "proposal_revision": 1,
+              "session_id": "session-p11",
+              "contract_id": "contract-p11",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p11-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:yWnT9wTGecxmi7KwHE-MnlnZKKkOVvalwh8ONkk4mOs"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p11-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:wvxsq8d2QljyuKVG2rF19XttFgxbM-c9mFgVY0BnD6g"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              }
+            },
+            "negotiation_result_hash": "sha256:Ab_FQDuyYMshBAdQr0ACZ-TgTmOkmvDD4oMWCms9uC0"
+          },
+          "prev_msg_hash": "sha256:wvxsq8d2QljyuKVG2rF19XttFgxbM-c9mFgVY0BnD6g",
+          "message_hash": "sha256:YprPnucaypkBPqshfemqolM-WeFwgeGlI9OTUvZAcNs"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m4",
+          "timestamp": "2026-07-01T00:00:04Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p11-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:YprPnucaypkBPqshfemqolM-WeFwgeGlI9OTUvZAcNs",
+            "negotiation_result_hash": "sha256:Ab_FQDuyYMshBAdQr0ACZ-TgTmOkmvDD4oMWCms9uC0",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:YprPnucaypkBPqshfemqolM-WeFwgeGlI9OTUvZAcNs",
+          "message_hash": "sha256:kiHo0SSSwfBFnYcHqeqNEQkJgIKQbWDTm2USUxYl72k"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m5",
+          "timestamp": "2026-07-01T00:00:05Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p11-1",
+            "proposal_revision": 1,
+            "proposal_message_id": "m3",
+            "proposal_message_hash": "sha256:YprPnucaypkBPqshfemqolM-WeFwgeGlI9OTUvZAcNs",
+            "negotiation_result_hash": "sha256:Ab_FQDuyYMshBAdQr0ACZ-TgTmOkmvDD4oMWCms9uC0",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:kiHo0SSSwfBFnYcHqeqNEQkJgIKQbWDTm2USUxYl72k",
+          "message_hash": "sha256:bdhJkG6rm50BitftmPPUwQHm9Ch1CORxeRq2bkgUsvg"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m6",
+          "timestamp": "2026-07-01T00:00:06Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_PROPOSE",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": {
+              "negotiation_id": "neg-p11-1-next",
+              "proposal_revision": 1,
+              "session_id": "session-p11",
+              "contract_id": "contract-p11",
+              "participants": [
+                "agent:S",
+                "agent:T"
+              ],
+              "declaration_bindings": [
+                {
+                  "party_id": "agent:S",
+                  "capabilities_id": "cap-p11-s-1",
+                  "declaration_message_id": "m1",
+                  "declaration_message_hash": "sha256:yWnT9wTGecxmi7KwHE-MnlnZKKkOVvalwh8ONkk4mOs"
+                },
+                {
+                  "party_id": "agent:T",
+                  "capabilities_id": "cap-p11-t-1",
+                  "declaration_message_id": "m2",
+                  "declaration_message_hash": "sha256:wvxsq8d2QljyuKVG2rF19XttFgxbM-c9mFgVY0BnD6g"
+                }
+              ],
+              "selected": {
+                "crypto_profiles": [],
+                "privacy_mode": "standard",
+                "profile_composition": {
+                  "composition_version": "aicp.profile_composition.v1",
+                  "profiles": [
+                    {
+                      "profile_id": "AICP-MEDIATED-BLOCKING",
+                      "profile_version": "0.1"
+                    },
+                    {
+                      "profile_id": "AICP-RESUMABLE-SESSIONS",
+                      "profile_version": "0.1"
+                    }
+                  ]
+                },
+                "profile_composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+                "required_extensions": [
+                  "EXT-CAPNEG",
+                  "EXT-ENFORCEMENT",
+                  "EXT-OBJECT-RESYNC",
+                  "EXT-POLICY-EVAL",
+                  "EXT-RESUME"
+                ],
+                "required_policy_categories": [],
+                "binding": "BIND-HTTP-0.1",
+                "limits": {
+                  "max_message_bytes": 1048576
+                }
+              },
+              "supersedes_negotiation_id": "neg-p11-1"
+            },
+            "negotiation_result_hash": "sha256:HgusXVYTHFk36DHuVYMLCRbzNWc73KQ-LjCNV0K_8sY"
+          },
+          "prev_msg_hash": "sha256:bdhJkG6rm50BitftmPPUwQHm9Ch1CORxeRq2bkgUsvg",
+          "message_hash": "sha256:9PgCfqsgolq9p-qqWcITxlIyEfagwdl_GWPZVB3BoIw"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m7",
+          "timestamp": "2026-07-01T00:00:07Z",
+          "sender": "agent:S",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p11-1-next",
+            "proposal_revision": 1,
+            "proposal_message_id": "m6",
+            "proposal_message_hash": "sha256:9PgCfqsgolq9p-qqWcITxlIyEfagwdl_GWPZVB3BoIw",
+            "negotiation_result_hash": "sha256:HgusXVYTHFk36DHuVYMLCRbzNWc73KQ-LjCNV0K_8sY",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:9PgCfqsgolq9p-qqWcITxlIyEfagwdl_GWPZVB3BoIw",
+          "message_hash": "sha256:5dQdTzDyADJiENcgbaR7ngfl-jheEIKmNqmHKg2xXIc"
+        },
+        {
+          "session_id": "session-p11",
+          "message_id": "m8",
+          "timestamp": "2026-07-01T00:00:08Z",
+          "sender": "agent:T",
+          "message_type": "CAPABILITIES_ACCEPT",
+          "contract_id": "contract-p11",
+          "payload": {
+            "capneg_version": "0.2",
+            "negotiation_id": "neg-p11-1-next",
+            "proposal_revision": 1,
+            "proposal_message_id": "m6",
+            "proposal_message_hash": "sha256:9PgCfqsgolq9p-qqWcITxlIyEfagwdl_GWPZVB3BoIw",
+            "negotiation_result_hash": "sha256:HgusXVYTHFk36DHuVYMLCRbzNWc73KQ-LjCNV0K_8sY",
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:5dQdTzDyADJiENcgbaR7ngfl-jheEIKmNqmHKg2xXIc",
+          "message_hash": "sha256:THbIkw354Qj1bsCDfu5D3Mjaw2jD9KgaT5cdmYueY3k"
+        }
+      ],
+      "invalid_message_indices": [],
+      "require_accepted": false,
+      "expected": {
+        "error_ids": [],
+        "final_state": {
+          "state": "ACCEPTED",
+          "latest_declarations": [
+            {
+              "party_id": "agent:S",
+              "capabilities_id": "cap-p11-s-1",
+              "declaration_message_id": "m1",
+              "declaration_message_hash": "sha256:yWnT9wTGecxmi7KwHE-MnlnZKKkOVvalwh8ONkk4mOs"
+            },
+            {
+              "party_id": "agent:T",
+              "capabilities_id": "cap-p11-t-1",
+              "declaration_message_id": "m2",
+              "declaration_message_hash": "sha256:wvxsq8d2QljyuKVG2rF19XttFgxbM-c9mFgVY0BnD6g"
+            }
+          ],
+          "negotiation_id": "neg-p11-1-next",
+          "current_revision": 1,
+          "proposal_message_id": "m6",
+          "acceptances": [
+            "agent:S",
+            "agent:T"
+          ],
+          "rejections": [],
+          "accepted_profile_composition": {
+            "composition_version": "aicp.profile_composition.v1",
+            "profiles": [
+              {
+                "profile_id": "AICP-MEDIATED-BLOCKING",
+                "profile_version": "0.1"
+              },
+              {
+                "profile_id": "AICP-RESUMABLE-SESSIONS",
+                "profile_version": "0.1"
+              }
+            ]
+          },
+          "accepted_result_hash": "sha256:HgusXVYTHFk36DHuVYMLCRbzNWc73KQ-LjCNV0K_8sY",
+          "superseded_negotiations": [
+            "neg-p11-1"
+          ],
+          "bound_contracts": []
+        }
+      }
+    }
+  ]
+}

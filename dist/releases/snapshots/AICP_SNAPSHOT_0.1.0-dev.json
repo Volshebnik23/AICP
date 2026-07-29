@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "0911b49236d24ef531e85eeeb2b6e41b0c899d70d31681685735ef67ddbd8025",
+      "combined_sha256": "57ca5d21ae186bdb1ee63cea09cb5d0a2ddfe6f2e7079f9c2dcfde6fc8851511",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -62,6 +62,10 @@
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
           "sha256": "ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+        },
+        {
+          "path": "conformance/extensions/CN_CAPNEG_0.2.json",
+          "sha256": "665d2bcae780aadc68de422f828917fce098bf0fb57a5f3fd95bd1ee8a9e0774"
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -134,6 +138,10 @@
         {
           "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
           "sha256": "9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+        },
+        {
+          "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json",
+          "sha256": "94eaae9dd86acaea5f75626faf7ad652d3e0b4514c5e51561b56dc951bcf966e"
         },
         {
           "path": "conformance/extensions/PA_PARTICIPANTS_0.1.json",
@@ -318,7 +326,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "609bf7422f32539ed376084be4a3647105b6f22596ac76c3c22bcec37fecece7",
+      "combined_sha256": "9da08996911e081f4bd7a78dfbc3546e105c9e6aed7b2a9252a7ef5443f1ff1b",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -765,6 +773,18 @@
           "sha256": "6e81f3e1c6151784016ff415efe74bf0599ef0e28ecd8a366b5802c49493ec21"
         },
         {
+          "path": "fixtures/extensions/capneg_v0_2/cross_language_vectors.json",
+          "sha256": "cdc6fe3e3ee635c2b4ffa35fe1aa7e94b6cb3f580444571a76923f6ca1177b38"
+        },
+        {
+          "path": "fixtures/extensions/capneg_v0_2/negative_cases.json",
+          "sha256": "4ec74a48093d4ae34005c1b6099581a41f6041542417fb5d1f8436e7e6ce35ae"
+        },
+        {
+          "path": "fixtures/extensions/capneg_v0_2/positive_cases.json",
+          "sha256": "1e1af908f6d0f35ffa0e88544eed3fe9c9c4872304d8c68a1cb3121ad76c0a03"
+        },
+        {
           "path": "fixtures/extensions/channels/CH-01_channel_lifecycle_pass.jsonl",
           "sha256": "dcf49e7b681efbfd53c226fbb744281b1aa7ba72f27f5c1163941270fb22af02"
         },
@@ -1183,6 +1203,14 @@
         {
           "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
           "sha256": "4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v2/negative_cases.json",
+          "sha256": "d55f0d0fdecee27f7f6b76bae95e807933a3b8ced19f6b84eef94e95843b0873"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/state_projection_v2/positive_cases.json",
+          "sha256": "42f4c15ecb00caeea4b0c8d622f499d9da8e19bc91cc98f1ef0c98ea96be1c81"
         },
         {
           "path": "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
@@ -1739,8 +1767,12 @@
       ]
     },
     "registries": {
-      "combined_sha256": "ab2aa0c309d2d18e40cef43104dfd9d9d6eaa82f37dfcf844c996d9c5f21d1de",
+      "combined_sha256": "8158f4a989256debc959ad0b1d0c9785e6d572f1ac9df36d562be1128adbc1cc",
       "files": [
+        {
+          "path": "registry/aicp_profile_composition_rules.json",
+          "sha256": "d1aef3c7de2ac8b4d5b75f4b5d38c0e3d25c64ead3d787749e4e34fc9fc6ab6e"
+        },
         {
           "path": "registry/aicp_profiles.json",
           "sha256": "b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
@@ -1767,7 +1799,7 @@
         },
         {
           "path": "registry/capneg_reason_codes.json",
-          "sha256": "5107fe8f3bd3c1f4d648cadb8a0ebc6b6a0b66dd37ee228043bc060b27f7ee89"
+          "sha256": "109f84950970ae1269a31481d57115a6a34e1f26a32843f98261816912c65d56"
         },
         {
           "path": "registry/channel_properties.json",
@@ -1787,11 +1819,11 @@
         },
         {
           "path": "registry/extension_ids.json",
-          "sha256": "e4ed4bc988d3e9a76b4daa69277a35465140254c4b731b4aa2db2883c401b7c6"
+          "sha256": "665f107066bb9a4c47e493cc0b3d9d07747d15e7cdab76a3b8b9177b0256f10a"
         },
         {
           "path": "registry/hash_domains.json",
-          "sha256": "6195f561c89ac455387aee87d4095657b6ea2e834c5a032d113da2409f187475"
+          "sha256": "d70aef0005908a5a2de6c7a7dcc67f65fa2989de555cbc9945d42cedc43d221a"
         },
         {
           "path": "registry/message_types.json",
@@ -1844,7 +1876,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "cdaf6a86d2020fc57c4111574bb2721715028768c28cde841ca6c6dc51c4cc06",
+      "combined_sha256": "86b3a437757dd394baf2a725d8ee61298511384998d8dd17f0176ce2b8a6e711",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -1857,6 +1889,10 @@
         {
           "path": "schemas/bindings/channel-properties.schema.json",
           "sha256": "ceaceb92e12eb6c078ea227ecae58098a868675203faef5415d065d256566746"
+        },
+        {
+          "path": "schemas/composition/aicp-profile-composition-v1.schema.json",
+          "sha256": "680881cc4c47c541e1b5d13907b3b1fc5a292cb101d4a0e0aed801edacb6091d"
         },
         {
           "path": "schemas/core/aicp-core-contract-v0.2.schema.json",
@@ -1905,6 +1941,10 @@
         {
           "path": "schemas/extensions/ext-capneg-payloads.schema.json",
           "sha256": "a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
+        },
+        {
+          "path": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
+          "sha256": "24fa021aa0fb5c9f31990729251460361e1e52453ff146779f31f013470f6784"
         },
         {
           "path": "schemas/extensions/ext-channels-payloads.schema.json",
@@ -2037,6 +2077,10 @@
         {
           "path": "schemas/extensions/ext-workflow-sync-payloads.schema.json",
           "sha256": "f8f9f9b45b1324e93defd377f2b0eb7fbb7be19186fbf6e15e0c520bc1f1640e"
+        },
+        {
+          "path": "schemas/extensions/session-state-projection-v2.schema.json",
+          "sha256": "fcb37aa9a1b0f7e4b272060c63bd5f0be6f88e5de5a56f7f72242ccfc4918a8e"
         }
       ]
     }
@@ -2162,6 +2206,10 @@
         "path": "conformance/extensions/CN_CAPNEG_0.1.json"
       },
       {
+        "mark": "AICP-EXT-CAPNEG-0.2",
+        "path": "conformance/extensions/CN_CAPNEG_0.2.json"
+      },
+      {
         "mark": "AICP-EXT-DELEGATED-IDENTITY-0.1",
         "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json"
       },
@@ -2232,6 +2280,10 @@
       {
         "mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
         "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
+      },
+      {
+        "mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v2",
+        "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json"
       },
       {
         "mark": "AICP-EXT-PARTICIPANTS-0.1",

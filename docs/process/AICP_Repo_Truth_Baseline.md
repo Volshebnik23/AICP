@@ -52,7 +52,9 @@ mature.
 | Live binding paths | 0: None | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
-| Registered message surface | 132 entries; 6 Core IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
+| Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
+| CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
+| Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
 
@@ -61,7 +63,7 @@ mature.
 | M58 | shipped | Repo-Truth Rebaseline | `ROADMAP.md` |
 | M59 | shipped | Authenticated Base Evidence Reachability | `ROADMAP.md` |
 | M60 | shipped | Exact Contract Agreement Core | `ROADMAP.md` |
-| M61 | planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
+| M61 | shipped | Multi-Profile Composition and CAPNEG v2 | `ROADMAP.md` |
 | M62 | planned | Generalized External Evidence Framework | `AICP_Backlog` |
 | M63 | planned | Tier-1 External Profile TCK | `AICP_Backlog` |
 | M64 | planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
@@ -83,6 +85,7 @@ mature.
 | Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
 | Message surface | 132 machine-mapped entries; 17 positive-fixture gaps | Aggregates are derived from entries | M65 |
+| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | M62 |
 | Release | `release-candidate-with-unreleased-post-rc-changes` | Repository metadata is not external adoption or GA evidence | M69 |
 <!-- END GENERATED REPO-TRUTH FACTS -->
 

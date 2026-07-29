@@ -25,3 +25,10 @@ map with both strong and partial rows. It does not contain a completed independe
 security review. Do not describe the review scaffolding or `SELF_REVIEW.md` as external
 assurance. Remaining coverage and external-review work is planned under M67; see
 `docs/process/AICP_Repo_Truth_Baseline.md`.
+
+The experimental CAPNEG v0.2 surface has an explicit threat/negative-vector map in
+`docs/security/CAPNEG_v0.2_Threat_Model.md` and executable coverage in
+`conformance/extensions/CN_CAPNEG_0.2.json`. That internal coverage does not establish
+participant identity or authority, truthful capability declarations, external component
+conformance, off-transcript consensus, policy correctness, transport security, or an
+independent security review.

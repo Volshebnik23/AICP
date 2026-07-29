@@ -67,10 +67,19 @@ When you need to publish compatibility evidence for the selected profile, packag
 
 ## 5) Common profile combinations
 
-These are deployment composition recommendations, not one negotiated multi-profile target.
-Current EXT-CAPNEG proposes one selected `aicp_profile`; it does not negotiate the
-combinations below as an atomic profile set. Versioned multi-profile composition is planned
-under M61.
+These combinations remain deployment recommendations until a deployment represents them in
+one accepted negotiation result. Stable EXT-CAPNEG v0.1 selects one
+`selected.aicp_profile`. Experimental EXT-CAPNEG v0.2 can instead negotiate one canonical,
+non-empty `aicp.profile_composition.v1` set of exact registered `{profile_id,
+profile_version}` pairs.
+
+CAPNEG v0.2 currently bootstraps on Core v0.1 and rejects `AICP-BASE@0.2` with
+`CAPNEG_CORE_FAMILY_UNSUPPORTED`. The rules registry also rejects redundant strict-subset
+profiles and more than one policy-semantic dialect profile. A negotiated set is runtime
+evidence only: retain the conformance evidence and compatibility mark for every component;
+do not invent an aggregate profile ID or badge. See
+[`RFC_EXT_CAPNEG_v0.2.md`](../extensions/RFC_EXT_CAPNEG_v0.2.md) and
+[`ADR_CAPNEG_v0.2_Profile_Composition.md`](../architecture/ADR_CAPNEG_v0.2_Profile_Composition.md).
 
 - **Reception + continuity:** `AICP-MEDIATED-BLOCKING@0.1` + `AICP-RESUMABLE-SESSIONS@0.1`
 - **Authenticated Core:** `AICP-AUTHENTICATED-BASE@0.1`; compose with delegated identity,
@@ -80,6 +89,11 @@ under M61.
 - **Enterprise delegation:** `AICP-DELEGATED-IDENTITY@0.1` + `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1`
 - **Media with moderated intake:** `AICP-AGENT-MEDIA@0.1` + `AICP-BAZAAR-RECEPTION@0.1`
 - **Commerce-assisted purchase orchestration:** `AICP-COMMERCE-ACP@0.1` (checkout/payment rails remain external)
+
+To make one of these combinations atomic, both parties declare the exact supported profile
+pairs through CAPNEG v0.2, accept the same proposal revision and result hash, and bind the
+fully accepted result into `contract.ext.capneg_v2`. Merely deploying the listed components
+together does not create an accepted composition.
 
 ## 6) If you are building X, start with Y
 

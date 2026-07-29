@@ -13,6 +13,13 @@ Experimental `AICP-BASE@0.2` has internal conformance only in M60. It has no ext
 target, so its repository-owned Core/profile marks are not independent external product
 evidence.
 
+Experimental CAPNEG v0.2 has internal composition conformance only in M61. The public
+submission schema accepts exact named profile claims, but has no composition claim type,
+composition hash, accepted-result hash, or composition evidence object. Because the schema
+is closed to additional properties, attempted composition claims fail validation. Do not
+translate an internal `AICP-EXT-CAPNEG-0.2` report into external component-profile proof or
+an aggregate badge; a future M62 format must add that evidence path explicitly.
+
 It complements:
 - `docs/interop/AICP_Public_Interop_Corpus.md` for packaging guidance,
 - `docs/interop/AICP_Interop_Submission_Playbook.md` for submitter onboarding,
@@ -73,6 +80,8 @@ The following are not acceptable public claim forms:
 - unsupported marks or logos not backed by shipped repo evidence,
 - claims that imply interoperability with unnamed third parties,
 - examples/templates presented as if they were real external market evidence.
+- a dynamic composition ID, aggregate composition badge, or external composition claim
+  inferred from CAPNEG v0.2 internal evidence.
 
 ## Claim / evidence status vocabulary
 

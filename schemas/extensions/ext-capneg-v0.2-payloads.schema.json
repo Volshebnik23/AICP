@@ -1,0 +1,521 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
+  "title": "AICP EXT-CAPNEG v0.2 payloads",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "Hash": {
+      "type": "string",
+      "pattern": "^sha256:[A-Za-z0-9_-]{43}$"
+    },
+    "StringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ProfileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version"
+      ],
+      "properties": {
+        "profile_id": {
+          "type": "string",
+          "pattern": "^AICP-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+        },
+        "profile_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+$"
+        }
+      }
+    },
+    "ProfileRefArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/ProfileRef"
+      }
+    },
+    "ProfileComposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "composition_version",
+        "profiles"
+      ],
+      "properties": {
+        "composition_version": {
+          "const": "aicp.profile_composition.v1"
+        },
+        "profiles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ProfileRef"
+          }
+        }
+      }
+    },
+    "Limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_message_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_object_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_objects_per_request": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_clock_skew_s": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ChannelProperties": {
+      "type": "object",
+      "properties": {
+        "CP-RELIABILITY-0.1": {
+          "type": "string",
+          "enum": [
+            "at_least_once",
+            "at_most_once"
+          ]
+        },
+        "CP-ORDERING-0.1": {
+          "type": "string",
+          "enum": [
+            "ordered",
+            "unordered"
+          ]
+        },
+        "CP-ACK-0.1": {
+          "type": "string",
+          "enum": [
+            "none",
+            "explicit"
+          ]
+        },
+        "CP-REPLAY-WINDOW-0.1": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "patternProperties": {
+        "^vendor:/.+": true
+      },
+      "additionalProperties": false
+    },
+    "ReplayWindowRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "SupportedChannelProperties": {
+      "type": "object",
+      "properties": {
+        "CP-RELIABILITY-0.1": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "at_least_once",
+              "at_most_once"
+            ]
+          }
+        },
+        "CP-ORDERING-0.1": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ordered",
+              "unordered"
+            ]
+          }
+        },
+        "CP-ACK-0.1": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "none",
+              "explicit"
+            ]
+          }
+        },
+        "CP-REPLAY-WINDOW-0.1": {
+          "$ref": "#/$defs/ReplayWindowRange"
+        }
+      },
+      "patternProperties": {
+        "^vendor:/.+": true
+      },
+      "additionalProperties": false
+    },
+    "DeclarationBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "party_id",
+        "capabilities_id",
+        "declaration_message_id",
+        "declaration_message_hash"
+      ],
+      "properties": {
+        "party_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capabilities_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "declaration_message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "declaration_message_hash": {
+          "$ref": "#/$defs/Hash"
+        }
+      }
+    },
+    "Selected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "crypto_profiles",
+        "privacy_mode",
+        "profile_composition",
+        "profile_composition_hash",
+        "required_extensions",
+        "required_policy_categories"
+      ],
+      "properties": {
+        "crypto_profiles": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile_composition": {
+          "$ref": "#/$defs/ProfileComposition"
+        },
+        "profile_composition_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "required_extensions": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "required_policy_categories": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "binding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channel_properties": {
+          "$ref": "#/$defs/ChannelProperties"
+        },
+        "limits": {
+          "$ref": "#/$defs/Limits"
+        }
+      }
+    },
+    "NegotiationResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "negotiation_id",
+        "proposal_revision",
+        "session_id",
+        "contract_id",
+        "participants",
+        "declaration_bindings",
+        "selected"
+      ],
+      "properties": {
+        "negotiation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "participants": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "declaration_bindings": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/DeclarationBinding"
+          }
+        },
+        "selected": {
+          "$ref": "#/$defs/Selected"
+        },
+        "supersedes_negotiation_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "CAPABILITIES_DECLARE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capneg_version",
+        "capabilities_id",
+        "party_id",
+        "supported_crypto_profiles",
+        "supported_privacy_modes",
+        "supported_aicp_profiles"
+      ],
+      "properties": {
+        "capneg_version": {
+          "const": "0.2"
+        },
+        "capabilities_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "party_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supported_crypto_profiles": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "supported_privacy_modes": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "supported_aicp_profiles": {
+          "$ref": "#/$defs/ProfileRefArray"
+        },
+        "required_crypto_profiles": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "required_aicp_profiles": {
+          "$ref": "#/$defs/ProfileRefArray"
+        },
+        "supported_extensions": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "supported_policy_categories": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "limits": {
+          "$ref": "#/$defs/Limits"
+        },
+        "bindings": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "languages": {
+          "$ref": "#/$defs/StringArray"
+        },
+        "supported_channel_properties": {
+          "$ref": "#/$defs/SupportedChannelProperties"
+        },
+        "supersedes_capabilities_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "CAPABILITIES_PROPOSE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capneg_version",
+        "proposal_revision",
+        "negotiation_result",
+        "negotiation_result_hash"
+      ],
+      "properties": {
+        "capneg_version": {
+          "const": "0.2"
+        },
+        "proposal_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "negotiation_result": {
+          "$ref": "#/$defs/NegotiationResult"
+        },
+        "negotiation_result_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "supersedes_proposal_message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supersedes_proposal_message_hash": {
+          "$ref": "#/$defs/Hash"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "proposal_revision": {
+                "minimum": 2
+              }
+            },
+            "required": [
+              "proposal_revision"
+            ]
+          },
+          "then": {
+            "required": [
+              "supersedes_proposal_message_id",
+              "supersedes_proposal_message_hash"
+            ]
+          }
+        }
+      ]
+    },
+    "CAPABILITIES_ACCEPT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capneg_version",
+        "negotiation_id",
+        "proposal_revision",
+        "proposal_message_id",
+        "proposal_message_hash",
+        "negotiation_result_hash",
+        "accepted"
+      ],
+      "properties": {
+        "capneg_version": {
+          "const": "0.2"
+        },
+        "negotiation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "proposal_message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_message_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "negotiation_result_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "accepted": {
+          "const": true
+        }
+      }
+    },
+    "CAPABILITIES_REJECT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capneg_version",
+        "negotiation_id",
+        "proposal_revision",
+        "proposal_message_id",
+        "proposal_message_hash",
+        "negotiation_result_hash",
+        "reason_code"
+      ],
+      "properties": {
+        "capneg_version": {
+          "const": "0.2"
+        },
+        "negotiation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "proposal_message_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposal_message_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "negotiation_result_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason_detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alternative_profile_compositions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ProfileComposition"
+          }
+        },
+        "alternative_constraints": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}
