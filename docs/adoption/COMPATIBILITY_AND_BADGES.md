@@ -14,11 +14,20 @@ AICP compatibility claims are only credible when backed by reproducible conforma
 ### 2) Extension compatibility
 - Marks: `AICP-EXT-*`
 - Meaning: extension suite-specific requirements pass (for example CAPNEG, ENFORCEMENT, ALERTS, RESUME).
+- Stable CAPNEG v0.1 and experimental CAPNEG v0.2 are separate surfaces and emit
+  `AICP-EXT-CAPNEG-0.1` and `AICP-EXT-CAPNEG-0.2`, respectively. A degraded v0.2 run emits
+  neither its extension mark nor any component mark.
 
 ### 3) Profile compatibility
 - Marks are defined by the exact catalogs under `conformance/profiles/`; do not maintain a
   duplicate hard-coded list here.
 - Meaning: all required suites for that named profile pass.
+
+CAPNEG v0.2 composition is not another profile tier. The resolver exposes expected
+component mark identities for auditing but does not award them. There is no dynamic
+composition profile ID, aggregate product mark, or external composition badge. A truthful
+composition claim requires CAPNEG v0.2 evidence plus separate evidence for every component;
+the generalized external composition-evidence format remains M62 work.
 
 ### 4) Security evidence marks
 - Mark: `AICP-SECURITY-SIGNED-PATH-0.1`
@@ -40,6 +49,9 @@ AICP compatibility claims are only credible when backed by reproducible conforma
   truth, and never synthesizes a missing child mark.
 - Missing JSON Schema or Ed25519 verification support makes the affected v0.2 run
   non-badge-eligible. CLI output identifies a behavioral success as `PASSED (DEGRADED)`.
+- For `CN_CAPNEG_0.2`, missing JSON Schema support degrades all schema-dependent coverage;
+  missing cryptographic support degrades authenticated-composition coverage. In both cases
+  `AICP-EXT-CAPNEG-0.2` is suppressed.
 
 ## How to verify
 

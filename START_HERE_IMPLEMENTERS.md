@@ -17,6 +17,12 @@ Validate each message before reduction: schema-, identity-, chain-, hash-, signa
 binding-invalid messages must not change exact-agreement state. A degraded or skipped
 suite/profile run may report behavioral success but emits no compatibility mark.
 
+Use stable EXT-CAPNEG v0.1 when one product profile is enough. Use experimental v0.2 only
+when every participant must accept one exact canonical set of registered Core v0.1-family
+profiles. Run `make quickstart-capneg-v02-py` or `make quickstart-capneg-v02-ts`, then
+`make conformance-capneg-v02`. CAPNEG v0.2 does not negotiate `AICP-BASE@0.2`, issue an
+aggregate profile badge, or prove external component conformance.
+
 ## Choose your role
 
 | Role | What you build | Smoke-check finish line |
@@ -51,6 +57,19 @@ suite/profile run may report behavioral success but emits no compatibility mark.
 
 Read `docs/guides/Core_v0.1_to_v0.2_Migration.md` before changing a deployment target.
 The existing `make quickstart-py` and `make quickstart-ts` remain Core v0.1.
+
+## Experimental CAPNEG v0.2 composition path
+
+- Python: `make quickstart-capneg-v02-py`
+- TypeScript/JavaScript: `make quickstart-capneg-v02-ts`
+- Conformance: `make conformance-capneg-v02`
+- Projection v2: `make conformance-session-state-projection-v2`
+
+Read `docs/extensions/RFC_EXT_CAPNEG_v0.2.md`. Each declaration supersedes only the prior
+declaration from the same party; proposals bind every latest declaration. All bound
+participants must explicitly accept the same revision/result hash before contract binding.
+Authenticated Base compositions additionally require Ed25519 support/selection and valid
+sender-signed acceptances.
 
 ### Agent developer
 1. Start from `dropins/aicp-core/python/` or `dropins/aicp-core/typescript/`.

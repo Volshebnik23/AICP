@@ -697,25 +697,60 @@ def _message_surface_errors(
                 f"{message_id}: payload schema variants are missing"
             )
         else:
-            versions = [
-                variant.get("aicp_version")
-                for variant in variants
-                if isinstance(variant, dict)
+            def variant_selector(
+                variant: Any,
+            ) -> tuple[str, str, str] | None:
+                if not isinstance(variant, dict):
+                    return None
+                if isinstance(variant.get("aicp_version"), str):
+                    return (
+                        "core",
+                        "AICP-Core",
+                        variant["aicp_version"],
+                    )
+                selector = variant.get("surface_selector")
+                if (
+                    isinstance(selector, dict)
+                    and set(selector)
+                    == {
+                        "surface_kind",
+                        "surface_id",
+                        "surface_version",
+                    }
+                    and all(
+                        isinstance(selector.get(field), str)
+                        and selector[field]
+                        for field in selector
+                    )
+                ):
+                    return (
+                        selector["surface_kind"],
+                        selector["surface_id"],
+                        selector["surface_version"],
+                    )
+                return None
+
+            selectors = [
+                variant_selector(variant) for variant in variants
             ]
-            if len(versions) != len(variants):
+            if any(selector is None for selector in selectors):
                 errors.append(
-                    f"{message_id}: payload schema variants must be objects"
+                    f"{message_id}: payload schema variants must have one exact selector"
                 )
-            if len(set(versions)) != len(versions):
+            concrete_selectors = [
+                selector for selector in selectors if selector is not None
+            ]
+            if len(set(concrete_selectors)) != len(concrete_selectors):
                 errors.append(
-                    f"{message_id}: duplicate payload schema variant version"
+                    f"{message_id}: duplicate payload schema variant selector"
                 )
-            expected_versions = {
-                variant["aicp_version"] for variant in expected_variants
+            expected_selectors = {
+                variant_selector(variant)
+                for variant in expected_variants
             }
-            if set(versions) - expected_versions:
+            if set(concrete_selectors) - expected_selectors:
                 errors.append(
-                    f"{message_id}: unknown payload schema variant version"
+                    f"{message_id}: unknown payload schema variant selector"
                 )
             for variant in variants:
                 if not isinstance(variant, dict):
@@ -732,17 +767,30 @@ def _message_surface_errors(
                     errors.append(
                         f"{message_id}: variant suite does not resolve"
                     )
+            if isinstance(schema, dict) and isinstance(
+                schema.get("aicp_version"), str
+            ):
+                canonical_selector = (
+                    "core",
+                    "AICP-Core",
+                    schema["aicp_version"],
+                )
+            elif isinstance(schema, dict) and isinstance(
+                schema.get("surface_selector"), dict
+            ):
+                raw_selector = schema["surface_selector"]
+                canonical_selector = (
+                    raw_selector.get("surface_kind"),
+                    raw_selector.get("surface_id"),
+                    raw_selector.get("surface_version"),
+                )
+            else:
+                canonical_selector = None
             canonical_variant = next(
                 (
                     variant
                     for variant in variants
-                    if isinstance(variant, dict)
-                    and variant.get("aicp_version")
-                    == (
-                        schema.get("aicp_version")
-                        if isinstance(schema, dict)
-                        else None
-                    )
+                    if variant_selector(variant) == canonical_selector
                 ),
                 None,
             )
@@ -832,15 +880,18 @@ def _binding_errors(root: Path, status: dict[str, Any]) -> list[str]:
 
 def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-    capability = status.get("capability_evidence", {}).get(
+    capability_v1 = status.get("capability_evidence", {}).get(
         "aicp.session_state_projection.v1"
+    )
+    capability_v2 = status.get("capability_evidence", {}).get(
+        "aicp.session_state_projection.v2"
     )
     iut_cases = _json(root, IUT_CASES)
     iut_runner = _text(root, "conformance/iut/aicp_iut_runner.py")
     suite_exists = (
         root / "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
     ).is_file()
-    expected = {
+    expected_v1 = {
         "status": [
             "shipped",
             "experimental",
@@ -851,12 +902,46 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
         "ordinary_compatibility_mark": False,
         "independent_external_evidence": False,
     }
-    if capability != expected:
+    expected_v2 = {
+        "status": [
+            "shipped",
+            "experimental",
+            "internally_verified",
+        ],
+        "external_test_path": None,
+        "ordinary_compatibility_mark": False,
+        "independent_external_evidence": False,
+        "external_evidence_gap_milestone": "M62",
+    }
+    expected_capneg = {
+        "status": [
+            "shipped",
+            "experimental",
+            "internally_verified",
+        ],
+        "suite": "conformance/extensions/CN_CAPNEG_0.2.json",
+        "compatibility_mark": "AICP-EXT-CAPNEG-0.2",
+        "composition_external_evidence": False,
+        "external_evidence_gap_milestone": "M62",
+    }
+    if capability_v1 != expected_v1:
         errors.append(
             "strict session-state projection status does not match canonical model"
         )
+    if capability_v2 != expected_v2:
+        errors.append(
+            "session-state projection v2 status does not match canonical model"
+        )
+    if status.get("capneg_v0_2") != expected_capneg:
+        errors.append("CAPNEG v0.2 status does not match canonical model")
     if "session_state_projection" not in iut_cases or not suite_exists:
         errors.append("strict session-state projection evidence paths do not resolve")
+    if not (
+        root / "conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json"
+    ).is_file():
+        errors.append("session-state projection v2 evidence path does not resolve")
+    if not (root / expected_capneg["suite"]).is_file():
+        errors.append("CAPNEG v0.2 evidence path does not resolve")
     if "FULL_PROFILE_OVERLAYS_NOT_SUPPORTED" not in iut_runner:
         errors.append(
             "strict session-state projection status expects a fail-closed "

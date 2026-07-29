@@ -33,7 +33,8 @@ AICP is a **transport-independent, content-layer protocol** for governed agent-t
 - **I want to validate compatibility with a profile** → [docs/architecture/AICP_Adoption_Core_and_Tiers.md](architecture/AICP_Adoption_Core_and_Tiers.md), [docs/profiles/AICP_Profiles.md](profiles/AICP_Profiles.md), [docs/profiles/Profile_Selection_Guide.md](profiles/Profile_Selection_Guide.md).
 - **I want to publish or review interop evidence** → [docs/interop/AICP_Public_Interop_Corpus.md](interop/AICP_Public_Interop_Corpus.md), [docs/interop/AICP_Compatibility_Claims_and_Evidence.md](interop/AICP_Compatibility_Claims_and_Evidence.md), [docs/interop/AICP_Interop_Submission_Playbook.md](interop/AICP_Interop_Submission_Playbook.md), [interop/README.md](../interop/README.md), then run `make interop-validate` / `make interop-matrix`.
 - **I want to test an external implementation** → [conformance/iut/README.md](../conformance/iut/README.md) and `make conformance-iut-smoke` for the reference adapter.
-- **I want portable session-state evidence** → [RFC_EXT_OBJECT_RESYNC.md](extensions/RFC_EXT_OBJECT_RESYNC.md#strict-portable-session-state-projection-v1) and `OR_SESSION_STATE_PROJECTION_V1.json`.
+- **I want portable session-state evidence** → stable-shape [projection v1](extensions/RFC_EXT_OBJECT_RESYNC.md#strict-portable-session-state-projection-v1) or internal composition-aware [projection v2](extensions/SESSION_STATE_PROJECTION_v2.md).
+- **I want to negotiate an exact profile set** → [EXT-CAPNEG v0.2](extensions/RFC_EXT_CAPNEG_v0.2.md), [composition ADR](architecture/ADR_CAPNEG_v0.2_Profile_Composition.md), and `make quickstart-capneg-v02-py`.
 - **I want to understand architecture boundaries** → [docs/architecture/AICP_in_the_Ecosystem.md](architecture/AICP_in_the_Ecosystem.md).
 - **I want to design a real product around AICP** → [docs/playbooks/](playbooks/) + [docs/playbooks/Session_Topologies.md](playbooks/Session_Topologies.md).
 

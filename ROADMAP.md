@@ -5,7 +5,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-07-28_
+_Last updated: 2026-07-29_
 
 ## Current / Next
 
@@ -75,6 +75,31 @@ _Last updated: 2026-07-28_
 - **Independent-evidence boundary:** Base 0.2 has no external-IUT target or independent
   external evidence in M60.
 
+### ✅ M61 — Multi-Profile Composition and CAPNEG v2
+<!-- milestone-status: M61 shipped -->
+- **Status:** Shipped.
+- **Problem:** deployment guidance recommends combinations of registered product profiles,
+  while stable CAPNEG v0.1 can select only one product profile.
+- **Scope:** add a separately selected experimental CAPNEG v0.2 surface for canonical
+  Core v0.1-family profile sets, deterministic registry-derived requirement union,
+  declarations/supersession, proposal revisions, full-participant acceptance, independent
+  composition/result hashes, Authenticated Base Ed25519 acceptance, contract binding,
+  session-state projection v2, and Python/TypeScript parity.
+- **Non-goals:** no CAPNEG v0.1, Core, product-profile catalog/mark, UAT, or IUT semantic
+  change; no Core v0.2 composition; no dynamic profile/aggregate badge; no identity,
+  authority, policy, transport, or external-conformance claim.
+- **Dependencies:** shipped M60 result, stable CAPNEG v0.1, the 16 registered product
+  profiles, and existing Core v0.1 hashing/envelope semantics.
+- **Completion evidence:** `CN_CAPNEG_0.2` passes 11 positive and 51 exact expected-fail
+  cases; projection v2 passes one positive and four negatives; shared Python/TypeScript
+  vectors match compositions, hashes, requirements, errors, and final states. Non-degraded
+  execution emits only `AICP-EXT-CAPNEG-0.2`; missing schema/crypto dependencies suppress
+  the mark.
+- **Independent-evidence boundary:** CAPNEG v0.2 and projection v2 are shipped experimental
+  internal surfaces. Component profile evidence remains separate, the public submission
+  schema rejects unsupported composition claims, and generalized external composition
+  evidence remains M62 work.
+
 ## Planned milestones
 
 Detailed remaining-work scope, non-goals, dependencies, evidence gaps, and completion
@@ -83,7 +108,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M61 | Planned | Multi-Profile Composition and CAPNEG v2 | `AICP_Backlog` |
 | M62 | Planned | Generalized External Evidence Framework | `AICP_Backlog` |
 | M63 | Planned | Tier-1 External Profile TCK | `AICP_Backlog` |
 | M64 | Planned | Live Transport and Binding Interoperability | `AICP_Backlog` |

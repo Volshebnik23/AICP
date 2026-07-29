@@ -91,7 +91,7 @@ def test_current_planning_and_repo_truth_status_pass() -> None:
     assert VALIDATOR.validate(ROOT) == []
 
 
-def test_current_m60_profile_and_milestone_truth() -> None:
+def test_current_m61_profile_and_milestone_truth() -> None:
     status = _status()
     assert status["profile_summary"] == {
         "registered": 16,
@@ -102,11 +102,12 @@ def test_current_m60_profile_and_milestone_truth() -> None:
         "externally_demonstrated": 0,
     }
     milestones = {item["id"]: item for item in status["milestones"]}
-    assert milestones["M60"]["status"] == "shipped"
-    assert milestones["M60"]["document"] == "ROADMAP.md"
+    for number in range(58, 62):
+        assert milestones[f"M{number}"]["status"] == "shipped"
+        assert milestones[f"M{number}"]["document"] == "ROADMAP.md"
     assert all(
         milestones[f"M{number}"]["status"] == "planned"
-        for number in range(61, 71)
+        for number in range(62, 71)
     )
 
 
@@ -336,9 +337,9 @@ def test_baseline_rejects_changed_milestone_status() -> None:
 
 def test_baseline_rejects_stale_message_gap_count() -> None:
     baseline = _baseline().replace(
-        "6 Core IDs use version-selected payload schemas; "
+        "11 IDs use version-selected payload schemas; "
         "17 missing positive fixtures",
-        "6 Core IDs use version-selected payload schemas; "
+        "11 IDs use version-selected payload schemas; "
         "16 missing positive fixtures",
         1,
     )
@@ -347,7 +348,7 @@ def test_baseline_rejects_stale_message_gap_count() -> None:
 
 def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
     roadmap = _roadmap().replace(
-        "| M61 | Planned |", "| M61 | Shipped |", 1
+        "| M62 | Planned |", "| M62 | Shipped |", 1
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), roadmap, _backlog()
@@ -357,14 +358,14 @@ def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
 
 def test_backlog_visible_status_must_match_marker_and_json() -> None:
     backlog = _backlog().replace(
-        "<!-- milestone-status: M61 planned -->\n- **Status:** Planned.",
-        "<!-- milestone-status: M61 planned -->\n- **Status:** Shipped.",
+        "<!-- milestone-status: M62 planned -->\n- **Status:** Planned.",
+        "<!-- milestone-status: M62 planned -->\n- **Status:** Shipped.",
         1,
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), _roadmap(), backlog
     )
-    assert any("M61: visible status" in error for error in errors)
+    assert any("M62: visible status" in error for error in errors)
 
 
 def test_future_milestone_document_must_resolve() -> None:
@@ -384,12 +385,12 @@ def test_message_surface_has_all_132_entries() -> None:
     assert surface == VALIDATOR.derive_message_surface(ROOT)
 
 
-def test_six_core_messages_expose_version_selected_payload_schemas() -> None:
+def test_eleven_messages_expose_version_selected_payload_schemas() -> None:
     entries = _status()["message_surface"]["entries"]
     versioned = [
         entry for entry in entries if "payload_schema_variants" in entry
     ]
-    assert {entry["id"] for entry in versioned} == {
+    core_ids = {
         "ATTEST_ACTION",
         "CONTEXT_AMEND",
         "CONTRACT_ACCEPT",
@@ -397,7 +398,18 @@ def test_six_core_messages_expose_version_selected_payload_schemas() -> None:
         "ERROR",
         "RESOLVE_CONFLICT",
     }
+    capneg_ids = {
+        "CAPABILITIES_ACCEPT",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_REJECT",
+    }
+    assert {entry["id"] for entry in versioned} == (
+        core_ids | capneg_ids | {"STATE_SYNC_RESPONSE"}
+    )
     for entry in versioned:
+        if entry["id"] not in core_ids:
+            continue
         assert entry["owner"] == "Core"
         assert entry["payload_schema"]["aicp_version"] == "0.1"
         assert [
@@ -407,10 +419,35 @@ def test_six_core_messages_expose_version_selected_payload_schemas() -> None:
         canonical = entry["payload_schema_variants"][0]
         assert entry["payload_schema"]["file"] == canonical["file"]
         assert entry["payload_schema"]["pointer"] == canonical["pointer"]
+    for entry in versioned:
+        if entry["id"] not in capneg_ids:
+            continue
+        assert entry["owner"] == "EXT-CAPNEG"
+        assert entry["payload_schema"]["surface_selector"] == {
+            "surface_kind": "extension",
+            "surface_id": "EXT-CAPNEG",
+            "surface_version": "0.1",
+        }
+        assert [
+            variant["surface_selector"]["surface_version"]
+            for variant in entry["payload_schema_variants"]
+        ] == ["0.1", "0.2"]
+    projection = next(
+        entry for entry in versioned if entry["id"] == "STATE_SYNC_RESPONSE"
+    )
+    assert projection["payload_schema"]["surface_selector"] == {
+        "surface_kind": "capability",
+        "surface_id": "aicp.session_state_projection",
+        "surface_version": "v1",
+    }
+    assert [
+        variant["surface_selector"]["surface_version"]
+        for variant in projection["payload_schema_variants"]
+    ] == ["v1", "v2"]
     assert all(
         "payload_schema_variants" not in entry
         for entry in entries
-        if entry["owner"] != "Core"
+        if entry["id"] not in core_ids | capneg_ids | {"STATE_SYNC_RESPONSE"}
     )
 
 
@@ -419,6 +456,14 @@ def _versioned_core_entry(surface: dict) -> dict:
         entry
         for entry in surface["entries"]
         if entry["id"] == "CONTRACT_ACCEPT"
+    )
+
+
+def _versioned_capneg_entry(surface: dict) -> dict:
+    return next(
+        entry
+        for entry in surface["entries"]
+        if entry["id"] == "CAPABILITIES_PROPOSE"
     )
 
 
@@ -467,6 +512,32 @@ def test_message_surface_rejects_unresolved_variant_pointer_and_suite() -> None:
     errors = VALIDATOR._message_surface_errors(ROOT, surface)
     assert any("variant schema file/pointer does not resolve" in error for error in errors)
     assert any("variant suite does not resolve" in error for error in errors)
+
+
+def test_message_surface_rejects_missing_noncore_selector() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    variant = _versioned_capneg_entry(surface)["payload_schema_variants"][1]
+    variant.pop("surface_selector")
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("must have one exact selector" in error for error in errors)
+
+
+def test_message_surface_rejects_duplicate_noncore_selector() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    entry = _versioned_capneg_entry(surface)
+    entry["payload_schema_variants"].append(
+        copy.deepcopy(entry["payload_schema_variants"][1])
+    )
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("duplicate payload schema variant" in error for error in errors)
+
+
+def test_message_surface_rejects_conflicting_noncore_selector() -> None:
+    surface = copy.deepcopy(_status()["message_surface"])
+    variant = _versioned_capneg_entry(surface)["payload_schema_variants"][1]
+    variant["surface_selector"]["surface_id"] = "EXT-NOT-CAPNEG"
+    errors = VALIDATOR._message_surface_errors(ROOT, surface)
+    assert any("unknown payload schema variant" in error for error in errors)
 
 
 def test_message_surface_rejects_missing_entry() -> None:

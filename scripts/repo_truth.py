@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import runpy
 from pathlib import Path
 from typing import Any
@@ -151,8 +152,8 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
     positive = {message_id: set() for message_id in registered}
     negative = {message_id: set() for message_id in registered}
     canonical_schema_candidates = {message_id: set() for message_id in registered}
-    core_schema_variants: dict[
-        str, list[tuple[str, str, str, str]]
+    schema_variants: dict[
+        str, list[tuple[str, str, str, str, str, str]]
     ] = {message_id: [] for message_id in registered}
     for suite_path in sorted((root / "conformance").glob("**/*.json")):
         try:
@@ -179,6 +180,52 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
                 and isinstance(payload_schema_ref, str)
             ):
                 only_owner = next(iter(mapped_owners))
+                raw_surface = suite.get("payload_surface")
+                surface: tuple[str, str, str] | None = None
+                if isinstance(raw_surface, dict):
+                    required_surface_fields = {
+                        "surface_kind",
+                        "surface_id",
+                        "surface_version",
+                    }
+                    if set(raw_surface) != required_surface_fields or not all(
+                        isinstance(raw_surface.get(field), str)
+                        and raw_surface[field]
+                        for field in required_surface_fields
+                    ):
+                        raise ValueError(
+                            f"{suite_ref}: payload_surface must contain exact "
+                            "non-empty kind/id/version fields"
+                        )
+                    surface = (
+                        raw_surface["surface_kind"],
+                        raw_surface["surface_id"],
+                        raw_surface["surface_version"],
+                    )
+                elif (
+                    only_owner == "Core"
+                    and isinstance(suite.get("aicp_version"), str)
+                ):
+                    surface = (
+                        "core",
+                        "AICP-Core",
+                        suite["aicp_version"],
+                    )
+                elif (
+                    only_owner == "EXT-CAPNEG"
+                    and suite_ref
+                    == "conformance/extensions/CN_CAPNEG_0.1.json"
+                ):
+                    surface = ("extension", "EXT-CAPNEG", "0.1")
+                elif (
+                    suite_ref
+                    == "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
+                ):
+                    surface = (
+                        "capability",
+                        "aicp.session_state_projection",
+                        "v1",
+                    )
                 for message_id, pointer in payload_map.items():
                     if (
                         message_id in registered
@@ -189,14 +236,19 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
                             (payload_schema_ref, str(pointer))
                         )
                     if (
-                        message_id in registered
-                        and owners[message_id] == "Core"
-                        and only_owner == "Core"
-                        and isinstance(suite.get("aicp_version"), str)
+                        surface
+                        == (
+                            "capability",
+                            "aicp.session_state_projection",
+                            "v1",
+                        )
+                        and message_id != "STATE_SYNC_RESPONSE"
                     ):
-                        core_schema_variants[message_id].append(
+                        continue
+                    if message_id in registered and surface is not None:
+                        schema_variants[message_id].append(
                             (
-                                suite["aicp_version"],
+                                *surface,
                                 payload_schema_ref,
                                 str(pointer),
                                 suite_ref,
@@ -232,7 +284,7 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
             )
         schema_file, pointer = next(iter(candidates))
         has_positive = bool(positive[message_id])
-        payload_schema: dict[str, str] = {
+        payload_schema: dict[str, Any] = {
             "file": schema_file,
             "pointer": pointer,
         }
@@ -248,10 +300,21 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
             ),
             "gap_milestone": None if has_positive else "M65",
         }
-        variants = sorted(core_schema_variants[message_id])
+        variants = sorted(schema_variants[message_id])
         if owners[message_id] == "Core":
             by_version: dict[str, list[tuple[str, str, str]]] = {}
-            for version, variant_file, variant_pointer, suite_ref in variants:
+            for (
+                surface_kind,
+                surface_id,
+                version,
+                variant_file,
+                variant_pointer,
+                suite_ref,
+            ) in variants:
+                if surface_kind != "core" or surface_id != "AICP-Core":
+                    raise ValueError(
+                        f"{message_id}: conflicting Core payload surface selector"
+                    )
                 by_version.setdefault(version, []).append(
                     (variant_file, variant_pointer, suite_ref)
                 )
@@ -278,7 +341,95 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
                     "pointer": variant_pointer,
                     "suite": suite_ref,
                 }
-                for version, variant_file, variant_pointer, suite_ref in variants
+                for version in sorted(by_version)
+                for variant_file, variant_pointer, suite_ref in by_version[version]
+            ]
+        elif variants:
+            by_selector: dict[
+                tuple[str, str, str], list[tuple[str, str, str]]
+            ] = {}
+            for (
+                surface_kind,
+                surface_id,
+                surface_version,
+                variant_file,
+                variant_pointer,
+                suite_ref,
+            ) in variants:
+                by_selector.setdefault(
+                    (surface_kind, surface_id, surface_version), []
+                ).append((variant_file, variant_pointer, suite_ref))
+            conflicts = {
+                selector: values
+                for selector, values in by_selector.items()
+                if len(values) != 1
+            }
+            if conflicts:
+                raise ValueError(
+                    f"{message_id}: duplicate or conflicting payload surface "
+                    f"selectors: {conflicts}"
+                )
+            surface_identities = {
+                (selector[0], selector[1]) for selector in by_selector
+            }
+            if len(surface_identities) != 1:
+                raise ValueError(
+                    f"{message_id}: conflicting payload surface identities: "
+                    f"{sorted(surface_identities)}"
+                )
+            surface_kind, surface_id = next(iter(surface_identities))
+            expected_versions = (
+                {"0.1", "0.2"}
+                if (surface_kind, surface_id)
+                == ("extension", "EXT-CAPNEG")
+                else {"v1", "v2"}
+                if (surface_kind, surface_id)
+                == ("capability", "aicp.session_state_projection")
+                else set()
+            )
+            actual_versions = {
+                selector[2] for selector in by_selector
+            }
+            if actual_versions != expected_versions:
+                raise ValueError(
+                    f"{message_id}: payload surface variants must be exactly "
+                    f"{sorted(expected_versions)}, found {sorted(actual_versions)}"
+                )
+            stable_version = (
+                "0.1" if surface_kind == "extension" else "v1"
+            )
+            stable_selector = (
+                surface_kind,
+                surface_id,
+                stable_version,
+            )
+            stable_values = by_selector[stable_selector]
+            stable_file, stable_pointer, _stable_suite = stable_values[0]
+            if (
+                stable_file != payload_schema["file"]
+                or stable_pointer != payload_schema["pointer"]
+            ):
+                raise ValueError(
+                    f"{message_id}: canonical payload mapping does not equal "
+                    f"the stable {stable_version} variant"
+                )
+            payload_schema["surface_selector"] = {
+                "surface_kind": surface_kind,
+                "surface_id": surface_id,
+                "surface_version": stable_version,
+            }
+            entry["payload_schema_variants"] = [
+                {
+                    "surface_selector": {
+                        "surface_kind": selector[0],
+                        "surface_id": selector[1],
+                        "surface_version": selector[2],
+                    },
+                    "file": values[0][0],
+                    "pointer": values[0][1],
+                    "suite": values[0][2],
+                }
+                for selector, values in sorted(by_selector.items())
             ]
         entries.append(entry)
 
@@ -546,7 +697,9 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Live binding paths | {len(live_bindings)}: {_code_list(live_bindings)} | binding evidence map |",
         f"| Independent external security review | {_human_bool(security['external_independent_review_completed'])} | `{security['artifact_contract']}` |",
         f"| Governance model / maturity | `{governance['current_model']}` / `{governance['standard_maturity']}` | `GOVERNANCE.md` |",
-        f"| Registered message surface | {message_summary['registered_count']} entries; {version_selected_messages} Core IDs use version-selected payload schemas; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
+        f"| Registered message surface | {message_summary['registered_count']} entries; {version_selected_messages} IDs use version-selected payload schemas; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
+        f"| CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence={str(status['capneg_v0_2']['composition_external_evidence']).lower()} | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |",
+        f"| Session-state projection v2 | shipped / experimental / internally verified; ordinary mark={str(status['capability_evidence']['aicp.session_state_projection.v2']['ordinary_compatibility_mark']).lower()} | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |",
         "",
         "### Milestone summary",
         "",
@@ -573,6 +726,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             f"| Security review | internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support completion | M67 |",
             f"| Governance | `{governance['current_model']}` | No external standards body is recorded | M68 |",
             f"| Message surface | {message_summary['registered_count']} machine-mapped entries; {len(message_summary['missing_positive_fixture_types'])} positive-fixture gaps | Aggregates are derived from entries | M65 |",
+            "| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | M62 |",
             f"| Release | `{status['release_phase']}` | Repository metadata is not external adoption or GA evidence | M69 |",
         ]
     )
@@ -675,6 +829,48 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         profile["independent_external_evidence"] = flags[profile["id"]]
 
     status["schema_version"] = 2
+    status["uat_baseline"]["post_uat_experiments"] = [
+        "AICP-AUTHENTICATED-BASE@0.1",
+        "AICP-BASE@0.2",
+        "EXT-CAPNEG@0.2",
+        "aicp.session_state_projection.v1",
+        "aicp.session_state_projection.v2",
+    ]
+    status["capneg_v0_2"] = {
+        "status": [
+            "shipped",
+            "experimental",
+            "internally_verified",
+        ],
+        "suite": "conformance/extensions/CN_CAPNEG_0.2.json",
+        "compatibility_mark": "AICP-EXT-CAPNEG-0.2",
+        "composition_external_evidence": False,
+        "external_evidence_gap_milestone": "M62",
+    }
+    status["capability_evidence"] = {
+        "aicp.session_state_projection.v1": {
+            "status": [
+                "shipped",
+                "experimental",
+                "internally_verified",
+                "externally_testable",
+            ],
+            "external_test_path": "separate_smoke_capability_run",
+            "ordinary_compatibility_mark": False,
+            "independent_external_evidence": False,
+        },
+        "aicp.session_state_projection.v2": {
+            "status": [
+                "shipped",
+                "experimental",
+                "internally_verified",
+            ],
+            "external_test_path": None,
+            "ordinary_compatibility_mark": False,
+            "independent_external_evidence": False,
+            "external_evidence_gap_milestone": "M62",
+        },
+    }
     status["milestones"] = derive_milestone_ownership(
         root, status.get("milestones", [])
     )
@@ -708,6 +904,20 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
     )
     security["artifact_location"] = (
         "security_review/external_reviews/completed/"
+    )
+    coverage_text = (
+        root / "security_review/COVERAGE_MAP.md"
+    ).read_text(encoding="utf-8")
+    coverage_rows = [
+        line
+        for line in coverage_text.splitlines()
+        if line.startswith("|")
+        and re.search(r"\|\s*(?:Strong|Partial|Doc-only)\s*\|", line)
+    ]
+    security["coverage_map_rows"] = len(coverage_rows)
+    security["partial_coverage_rows"] = sum(
+        bool(re.search(r"\|\s*Partial\s*\|", line))
+        for line in coverage_rows
     )
     return status
 

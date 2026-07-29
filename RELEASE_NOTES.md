@@ -13,7 +13,7 @@ tag, package publication, GA declaration, or final RC repackaging.
 - The canonical repository-truth baseline now distinguishes shipped artifacts, registry
   stability, internal verification, external testability, independent evidence, live
   binding evidence, and remaining milestones.
-- Roadmap and backlog roles are separated: M58–M60 are shipped, while M61–M70 retain
+- Roadmap and backlog roles are separated: M58–M61 are shipped, while M62–M70 retain
   the remaining evidence, interop, security, governance, and release work.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
@@ -23,6 +23,12 @@ tag, package publication, GA declaration, or final RC repackaging.
   every present optional signature, blocks state changes from invalid messages, and
   publishes version-selected v0.1/v0.2 schema mappings for the six reused Core IDs.
   Core/Base 0.1 and the UAT target remain unchanged.
+- Experimental EXT-CAPNEG v0.2 adds canonical negotiation of exact registered Core
+  v0.1-family profile sets, separate composition/result hashes, declaration supersession,
+  proposal revisioning, full-participant acceptance, Authenticated Base Ed25519 acceptance,
+  contract binding, and internal composition-aware session-state projection v2. Stable
+  CAPNEG v0.1, projection v1, profile catalogs/marks, Core, UAT, and IUT surfaces remain
+  unchanged.
 
 ### Current evidence limits
 
@@ -30,6 +36,9 @@ tag, package publication, GA declaration, or final RC repackaging.
   and Authenticated Base have full external-IUT targets.
 - Base 0.2 has internal conformance evidence only. It does not authenticate senders, cannot
   use projection v1 as an exact-head overlay, and has no external-IUT target in M60.
+- CAPNEG v0.2 and projection v2 have internal evidence only. They do not create an
+  aggregate profile badge, award component marks, or enable external composition claims;
+  generalized external evidence remains M62 work.
 - The authenticated 37-case target can emit its ordinary external mark for a complete
   eligible implementation. Its mandatory unavailable-crypto probe remains exact and
   case-local; real degradation or skipped normal verification remains ineligible.

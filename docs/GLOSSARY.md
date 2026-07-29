@@ -94,7 +94,25 @@ Condition where required checks both pass and are fully enforceable (non-degrade
 
 
 ## AICP product profile
-A named interoperability bundle (for example `AICP-BASE`, `AICP-MEDIATED-BLOCKING`) negotiated as `{profile_id, profile_version}` in EXT-CAPNEG and validated by profile-level conformance evidence.
+A named interoperability bundle (for example `AICP-BASE`,
+`AICP-MEDIATED-BLOCKING`) represented as `{profile_id, profile_version}` and validated by
+its profile-level conformance evidence. CAPNEG v0.1 selects one product profile; CAPNEG
+v0.2 may select a canonical set of exact product profiles.
+
+## Profile composition
+A canonical, non-empty `aicp.profile_composition.v1` set of exact registered
+`{profile_id, profile_version}` pairs negotiated by experimental CAPNEG v0.2. The set has
+an independent `capneg.profile_composition` hash and does not create a dynamic profile ID
+or aggregate compatibility mark.
+
+## Component profile evidence
+The separate suite/profile report and compatibility-mark identity for a selected profile.
+Successful composition negotiation does not award or replace component profile evidence.
+
+## Internal composition evidence
+A non-degraded `CN_CAPNEG_0.2` repository run showing that the checked-in
+resolver, fixtures, hashes, and negotiation reducer agree. It is not independent external
+implementation evidence; generalized external composition evidence is reserved for M62.
 
 ## Crypto profile
 A negotiated cryptographic/canonicalization capability set represented in CAPNEG `supported_profiles` and `selected.crypto_profile`; distinct from AICP product profiles.
