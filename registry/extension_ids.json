@@ -43,7 +43,25 @@
     "type": "extension_ids",
     "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#registry-entry",
     "security_considerations": "Negotiation must prevent downgrade and spoofing.",
-    "compatibility_notes": "Stable baseline extension for capability negotiation; incompatible changes require migration notes and conformance updates."
+    "compatibility_notes": "Stable baseline extension for capability negotiation; incompatible changes require migration notes and conformance updates.",
+    "versions": [
+      {
+        "version": "0.1",
+        "status": "stable",
+        "normative_spec": "docs/extensions/RFC_EXT_CAPNEG.md",
+        "payload_schema": "schemas/extensions/ext-capneg-payloads.schema.json",
+        "conformance_suite": "conformance/extensions/CN_CAPNEG_0.1.json",
+        "compatibility_mark": "AICP-EXT-CAPNEG-0.1"
+      },
+      {
+        "version": "0.2",
+        "status": "experimental",
+        "normative_spec": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md",
+        "payload_schema": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
+        "conformance_suite": "conformance/extensions/CN_CAPNEG_0.2.json",
+        "compatibility_mark": "AICP-EXT-CAPNEG-0.2"
+      }
+    ]
   },
   {
     "status": "experimental",

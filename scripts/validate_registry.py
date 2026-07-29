@@ -56,6 +56,7 @@ def fail(msg: str) -> None:
 
 def main() -> int:
     errors = 0
+    version_marks: dict[str, str] = {}
 
     for name in REQUIRED_FILES:
         path = REGISTRY_DIR / name
@@ -137,6 +138,121 @@ def main() -> int:
                 if isinstance(spec_ref, str) and "#" not in spec_ref:
                     fail(f"{ctx}.spec_ref must include an anchor (#...) for deprecated entries")
                     errors += 1
+
+            versions = entry.get("versions")
+            if versions is not None:
+                if name != "extension_ids.json":
+                    fail(f"{ctx}.versions is only valid for extension registry entries")
+                    errors += 1
+                elif not isinstance(versions, list) or not versions:
+                    fail(f"{ctx}.versions must be a non-empty list")
+                    errors += 1
+                else:
+                    seen_versions: set[str] = set()
+                    for version_index, version in enumerate(versions, start=1):
+                        version_ctx = f"{ctx}.versions[{version_index}]"
+                        if not isinstance(version, dict):
+                            fail(f"{version_ctx} must be an object")
+                            errors += 1
+                            continue
+                        required_version_fields = {
+                            "version",
+                            "status",
+                            "normative_spec",
+                            "payload_schema",
+                            "conformance_suite",
+                            "compatibility_mark",
+                        }
+                        missing_version_fields = sorted(
+                            required_version_fields - set(version)
+                        )
+                        if missing_version_fields:
+                            fail(
+                                f"{version_ctx} missing required fields: "
+                                + ", ".join(missing_version_fields)
+                            )
+                            errors += 1
+                        exact_version = version.get("version")
+                        if (
+                            not isinstance(exact_version, str)
+                            or not exact_version.strip()
+                        ):
+                            fail(f"{version_ctx}.version must be a non-empty string")
+                            errors += 1
+                        elif exact_version in seen_versions:
+                            fail(
+                                f"{version_ctx}.version duplicates prior version "
+                                f"'{exact_version}'"
+                            )
+                            errors += 1
+                        else:
+                            seen_versions.add(exact_version)
+                        if version.get("status") not in ALLOWED_STATUS:
+                            fail(
+                                f"{version_ctx}.status must be one of: "
+                                + ", ".join(sorted(ALLOWED_STATUS))
+                            )
+                            errors += 1
+                        for field in (
+                            "normative_spec",
+                            "payload_schema",
+                            "conformance_suite",
+                        ):
+                            relative = version.get(field)
+                            if (
+                                not isinstance(relative, str)
+                                or not relative
+                                or not (ROOT / relative).is_file()
+                            ):
+                                fail(
+                                    f"{version_ctx}.{field} must resolve to a file"
+                                )
+                                errors += 1
+                        mark = version.get("compatibility_mark")
+                        if not isinstance(mark, str) or not mark:
+                            fail(
+                                f"{version_ctx}.compatibility_mark must be non-empty"
+                            )
+                            errors += 1
+                        elif mark in version_marks:
+                            fail(
+                                f"{version_ctx}.compatibility_mark duplicates "
+                                f"{version_marks[mark]}"
+                            )
+                            errors += 1
+                        else:
+                            version_marks[mark] = version_ctx
+
+                    if entry.get("id") == "EXT-CAPNEG":
+                        expected_capneg_versions = [
+                            {
+                                "version": "0.1",
+                                "status": "stable",
+                                "normative_spec": "docs/extensions/RFC_EXT_CAPNEG.md",
+                                "payload_schema": "schemas/extensions/ext-capneg-payloads.schema.json",
+                                "conformance_suite": "conformance/extensions/CN_CAPNEG_0.1.json",
+                                "compatibility_mark": "AICP-EXT-CAPNEG-0.1",
+                            },
+                            {
+                                "version": "0.2",
+                                "status": "experimental",
+                                "normative_spec": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md",
+                                "payload_schema": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
+                                "conformance_suite": "conformance/extensions/CN_CAPNEG_0.2.json",
+                                "compatibility_mark": "AICP-EXT-CAPNEG-0.2",
+                            },
+                        ]
+                        if status != "stable":
+                            fail(
+                                f"{ctx}: EXT-CAPNEG top-level status must remain stable"
+                            )
+                            errors += 1
+                        if versions != expected_capneg_versions:
+                            fail(
+                                f"{ctx}.versions must exactly pin stable v0.1 and "
+                                "experimental v0.2 artifacts"
+                            )
+                            errors += 1
 
     if errors:
         print(f"\nRegistry validation failed with {errors} error(s).")

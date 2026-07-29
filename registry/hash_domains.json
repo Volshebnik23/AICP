@@ -16,5 +16,23 @@
     "type": "hash_domains",
     "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#strict-portable-session-state-projection-v1",
     "security_considerations": "The hash binds the externally portable projection only; it does not authenticate the producer or expose internal platform state."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "capneg.negotiation_result",
+    "type": "hash_domains",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#hash-binding",
+    "security_considerations": "The domain binds the complete selected result and prevents cross-object substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "capneg.profile_composition",
+    "type": "hash_domains",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#profile-composition",
+    "security_considerations": "The domain binds the exact canonical profile set and prevents profile-set substitution."
   }
 ]

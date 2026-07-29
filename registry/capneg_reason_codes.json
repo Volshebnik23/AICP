@@ -52,5 +52,131 @@
     "type": "capneg_reason_codes",
     "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md",
     "security_considerations": "Rejects malformed or inconsistent selected capability/profile set."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_SET_UNSUPPORTED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#accept-and-reject",
+    "security_considerations": "Rejects a composition not fully supported by every participant."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "REQUIRED_PROFILE_MISSING",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#accept-and-reject",
+    "security_considerations": "Prevents omission of a participant-required exact product profile."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_CORE_VERSION_CONFLICT",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#profile-composition",
+    "security_considerations": "Rejects profile sets resolving to different exact Core suites."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_COMPOSITION_REDUNDANT",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#profile-composition",
+    "security_considerations": "Rejects strict required-suite subset selections without silently rewriting proposer intent."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_COMPOSITION_EXCLUSIVE_CONFLICT",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#profile-composition",
+    "security_considerations": "Rejects simultaneous selection of explicitly alternative profile semantics."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_COMPOSITION_HASH_MISMATCH",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#hash-binding",
+    "security_considerations": "Detects substitution of the selected canonical profile set."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_REQUIREMENTS_MISMATCH",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#negotiation-result-and-proposal",
+    "security_considerations": "Rejects incomplete or substituted extension, crypto, or policy requirement unions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PROFILE_DOWNGRADE_NOT_ALLOWED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#security-and-evidence-boundary",
+    "security_considerations": "Prevents silent removal or weakening of an accepted composition."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "STALE_CAPABILITIES_DECLARATION",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#capability-declaration",
+    "security_considerations": "Rejects proposals bound to stale or forked declaration state."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "SUPERSEDED_PROPOSAL",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#accept-and-reject",
+    "security_considerations": "Rejects acceptance or rejection replay against an inactive proposal revision."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "NEGOTIATION_RESULT_HASH_MISMATCH",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#hash-binding",
+    "security_considerations": "Detects substitution of any complete negotiation-result field."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_ACCEPTANCE_INCOMPLETE",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#accept-and-reject",
+    "security_considerations": "Prevents partial acceptance from being represented as full agreement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "AUTHENTICATED_PROFILE_CRYPTO_REQUIRED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#authenticated-base-rule",
+    "security_considerations": "Requires the exact Ed25519 selection and participant support for Authenticated Base."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-rc.1-post-uat",
+    "maintainer": "AICP Working Group",
+    "id": "CAPNEG_CORE_FAMILY_UNSUPPORTED",
+    "type": "capneg_reason_codes",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG_v0.2.md#version-selection",
+    "security_considerations": "Prevents a Core v0.2 profile from being bootstrapped through the Core v0.1 CAPNEG v0.2 surface."
   }
 ]
