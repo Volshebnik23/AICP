@@ -27,7 +27,8 @@ CAPNEG v0.2 composition is not another profile tier. The resolver exposes expect
 component mark identities for auditing but does not award them. There is no dynamic
 composition profile ID, aggregate product mark, or external composition badge. A truthful
 composition claim requires CAPNEG v0.2 evidence plus separate evidence for every component;
-the generalized external composition-evidence format remains M62 work.
+M62's generalized framework registers only projection-v1 capability evidence and does not
+add external composition evidence.
 
 The internal CAPNEG v0.2 mark is eligible only when the reducer-independent reviewed
 oracle matches exact error origin/multiplicity and final state, all mandatory message and
@@ -95,6 +96,15 @@ Public interop matrix marks are recomputed through the same eligibility validato
 never copied from arbitrary report JSON. `self_attested` packaging alone is not eligible for
 an ordinary profile mark. File digests prove artifact integrity,
 not organizational identity, certification, or endorsement.
+
+Generalized external report v2 is a separate target-oriented family. M62 registers only
+`aicp.session_state_projection@v1` in `full-capability` mode under
+`AICP-EVIDENCE-TCK-1.0.0`. A complete external implementation may be eligible for
+`AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference, smoke, degraded, skipped, incomplete,
+or provenance-mismatched reports emit no capability mark. This evidence mark is not an
+ordinary product-profile mark and cannot prove profile conformance, certification,
+composition, organizational identity, or pairwise interoperability. Projection v2 remains
+internal-only.
 
 ## Current external reachability
 

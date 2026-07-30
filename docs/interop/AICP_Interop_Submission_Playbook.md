@@ -27,7 +27,8 @@ This playbook is **not**:
 
 ## Who should submit
 
-Submit when you have a real implementation and want to publish **profile-scoped evidence** that another reviewer can inspect.
+Submit when you have a real implementation and want to publish exact profile- or
+capability-scoped evidence that another reviewer can inspect.
 
 Typical submitters include:
 - implementers of an AICP-capable agent, gateway, or platform component,
@@ -47,6 +48,9 @@ It should contain:
 3. At least one disclosure explaining any limitations, assumptions, or scope boundaries.
 4. Exact shipped `profile_ids` from `registry/aicp_profiles.json`.
 5. Exact `profile_refs` containing each claimed `profile_id` and `profile_version`.
+
+For a capability claim, replace items 4 and 5 with exact `capability_refs`. M62 supports
+only `aicp.session_state_projection@v1`, and one manifest must use only one claim family.
 
 ## Claim / evidence status model
 
@@ -82,6 +86,26 @@ Prefer `reproducible` when the package includes actual conformance/profile repor
 The validator rejects `implements_profile` or `compatible_with_profile` paired with
 `self_attested` using `STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_IUT`. Retaining that enum
 does not create a weaker certification tier.
+
+### Capability claim
+
+For strict session-state projection v1 use:
+
+- `claim_type`: `implements_capability`
+- `claim_scope`: `self_attested`
+- `evidence_status`: exactly `reproducible`
+- `capability_refs`: `[{"capability_id":"aicp.session_state_projection",
+  "capability_version":"v1"}]`
+- `evidence_types`: include `capability_report`
+- `report_refs`: include an eligible target-oriented report v2 produced in
+  `full-capability` mode
+
+The validator independently evaluates the current target registry and
+`AICP-EVIDENCE-TCK-1.0.0` bindings. It does not trust `passed` or
+`compatibility_marks` alone. Smoke, `reference_corpus`, self-attested, degraded, skipped,
+incomplete, wrong-version, or subject-mismatched reports cannot support the strong claim.
+The capability mark does not prove any product profile or pairwise run. Projection v2
+remains internal-only.
 
 ## Pairwise vocabulary is currently instructional only
 
@@ -122,7 +146,9 @@ execution observations that exactly match registered accounting expectations. Re
 checks must pass without run-level degradation or skips.
 Full-profile producer output is bound to the requested session, contract, participants,
 exact profile, crypto mode, and deterministic seed. Capability overlays are not part of a
-product-profile report: strict state-projection evidence must be emitted separately.
+product-profile report: strict state-projection evidence must be emitted separately through
+`conformance/evidence/aicp_external_evidence_runner.py`. Report v1 remains the profile
+family; report v2 is target-oriented.
 
 The validator expects referenced files to exist for real submissions and examples. Templates may intentionally keep placeholder `report_refs` until a real submitter replaces them; the matrix renders those as instructional warnings rather than as failed real-submission evidence.
 
@@ -177,6 +203,29 @@ python interop/tools/build_submission.py \
   --with-integrity \
   --validate
 ```
+
+### Capability example
+
+```bash
+python interop/tools/build_submission.py \
+  --out-root out/interop-submissions \
+  --submission-id projection-v1-claim \
+  --implementation-id replace-implementation-id \
+  --implementation-version replace-version \
+  --capability-ref aicp.session_state_projection@v1 \
+  --claim-type implements_capability \
+  --claim-scope self_attested \
+  --evidence-status reproducible \
+  --report-path out/projection-v1-evidence.json \
+  --suite-ref OR-SESSION-STATE-PROJECTION-V1 \
+  --disclosure "Capability evidence does not imply product-profile conformance." \
+  --with-integrity \
+  --validate
+```
+
+No real capability submission is checked into this repository. The package under
+`interop/submissions/examples/capability_claim/` is fictional and the package under
+`interop/submissions/templates/capability_submission/` contains placeholders.
 
 ### Pairwise vocabulary example (expected to fail closed)
 

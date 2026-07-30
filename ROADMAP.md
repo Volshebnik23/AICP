@@ -102,8 +102,31 @@ _Last updated: 2026-07-29_
   content-derived cases, suppress the mark, and report degradation explicitly.
 - **Independent-evidence boundary:** CAPNEG v0.2 and projection v2 are shipped experimental
   internal surfaces. Component profile evidence remains separate, the public submission
-  schema rejects unsupported composition claims, and generalized external composition
-  evidence remains M62 work.
+  schema rejects unsupported composition claims, and M62 does not register generalized
+  external composition evidence.
+
+### ✅ M62 — Generalized External Evidence Framework
+<!-- milestone-status: M62 shipped -->
+- **Status:** Shipped.
+- **Problem:** external-IUT report v1 is bound to two product profiles, while non-profile
+  capabilities had no complete target-oriented external evidence and public claim path.
+- **Scope:** add a separate generalized report v2, deterministic target/TCK registries,
+  independent report evaluation, typed public capability claims, and one complete
+  `full-capability` target for `aicp.session_state_projection@v1`.
+- **Non-goals:** no reinterpretation of profile IUT v1, Core, CAPNEG, product profiles,
+  UAT, or the adapter wrapper; no projection-v2, Tier-1 profile, live binding, aggregate
+  composition, real external submission, certification, or pairwise target.
+- **Completion evidence:** `AICP-EVIDENCE-TCK-1.0.0` binds report v2, the exact capability
+  target/catalog, runner/evaluator bundle, owning suite, canonicalization vector, one
+  deterministic producer, and all 12 projection-v1 consumers. A complete non-degraded
+  external-kind test implementation reaches
+  `AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference, smoke, incomplete, forged,
+  degraded, skipped, wrong-subject, and provenance-mismatched evidence does not.
+- **Public evidence boundary:** capability manifests require exact `capability_refs`,
+  `implements_capability`, `capability_report`, and reproducible evidence. Capability and
+  profile marks are independently computed and cannot cross-prove. The repository contains
+  no real external capability submission, and pairwise publication remains fail-closed.
+- **Next concrete step:** M63 remains planned and has not started.
 
 ## Planned milestones
 
@@ -113,7 +136,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M62 | Planned | Generalized External Evidence Framework | `AICP_Backlog` |
 | M63 | Planned | Tier-1 External Profile TCK | `AICP_Backlog` |
 | M64 | Planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
 | M65 | Planned | Registered Message Surface Completion | `AICP_Backlog` |

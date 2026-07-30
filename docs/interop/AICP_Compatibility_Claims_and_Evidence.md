@@ -6,7 +6,9 @@ This document defines the **truthful claim language** implementers should use wh
 
 Current reachability is narrower than the registered catalog: only Base and Authenticated
 Base have full external-IUT targets, both ordinary marks are reachable for complete eligible
-implementations, and no real external or pairwise submission is present. See
+implementations. Separately, strict session-state projection v1 has one generalized
+`full-capability` external target and one reachable capability evidence mark. No real
+external capability, profile, or pairwise submission is present. See
 `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 Experimental `AICP-BASE@0.2` has internal conformance only in M60. It has no external-IUT
@@ -14,11 +16,12 @@ target, so its repository-owned Core/profile marks are not independent external 
 evidence.
 
 Experimental CAPNEG v0.2 has internal composition conformance only in M61. The public
-submission schema accepts exact named profile claims, but has no composition claim type,
+submission schema accepts exact named profile and capability claims, but has no composition claim type,
 composition hash, accepted-result hash, or composition evidence object. Because the schema
 is closed to additional properties, attempted composition claims fail validation. Do not
 translate an internal `AICP-EXT-CAPNEG-0.2` report into external component-profile proof or
-an aggregate badge; a future M62 format must add that evidence path explicitly.
+an aggregate badge. M62 registers only projection-v1 capability evidence; it does not add
+external composition evidence.
 
 M61's internal suite uses a reviewed expectation catalog that is independent of the
 production reducer and compares exact message origin, multiplicity, and final state.
@@ -62,7 +65,26 @@ Minimum expected evidence:
 
 This is still a **profile-scoped** claim. It is not equivalent to claiming broad compatibility with every AICP implementation.
 
-### 3) “Pairwise interoperable with implementation Y on profile X”
+### 3) “Implements AICP capability X”
+
+Use this only for an exact capability ID/version registered by the external evidence
+framework. M62's only executable target is
+`aicp.session_state_projection@v1`.
+
+Minimum expected evidence:
+- `claim_type=implements_capability`,
+- exact `capability_refs` with capability ID and version,
+- `evidence_status=reproducible`,
+- a schema-valid report v2 in `full-capability` mode for the exact implementation subject,
+- independently validated target, TCK, suite/input, producer/determinism, consumer, and
+  no-degradation/no-skip provenance.
+
+The exact eligible mark is `AICP-Evidence-SESSION-STATE-PROJECTION-v1`. It is a capability
+evidence mark, not a product-profile mark, certification, composition mark, or pairwise
+result. An internal suite report, reference report, smoke report, self-attested package, or
+raw mark string cannot substantiate this claim.
+
+### 4) “Pairwise interoperable with implementation Y on profile X”
 
 Use this only when the evidence is specifically about interoperability between two named implementations for a named shipped profile.
 
@@ -106,12 +128,15 @@ The status should stay aligned with the actual package:
 |---|---|
 | Implements profile X | `evidence_status=reproducible` + exact profile/version + eligible full-profile external-IUT v1 evidence bound to the implementation/build |
 | Compatible with profile X | `evidence_status=reproducible` + exact profile/version + eligible full-profile external-IUT v1 evidence + truthful disclosures |
+| Implements capability X | `evidence_status=reproducible` + exact capability ID/version + eligible target-oriented full-capability report v2 bound to the implementation/build |
 | Pairwise interoperable with implementation Y on profile X | Not currently publishable; reserved manifest vocabulary and instructional examples fail closed until a dedicated joint-execution runner exists |
 
 Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
 repository's canonical artifacts but cannot substantiate an external implementation claim.
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
 IUT smoke reports are likewise diagnostic-only and cannot substantiate a real profile claim.
+Capability smoke and `reference_corpus` reports are likewise ineligible. Projection v2
+remains internal-only and has no external target.
 
 For current TCK reports, every consumer case carries a schema-bound execution observation.
 The validator independently compares its accounting scope, accepted result, degraded

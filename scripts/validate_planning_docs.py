@@ -46,6 +46,7 @@ PROFILE_DOC = "docs/profiles/AICP_Profiles.md"
 PROFILE_REGISTRY = "registry/aicp_profiles.json"
 TRANSPORT_REGISTRY = "registry/transport_bindings.json"
 IUT_CASES = "conformance/iut/cases.json"
+EVIDENCE_TARGETS = "conformance/evidence/targets.json"
 INTEROP_MATRIX = "interop/interop_matrix.json"
 PAIRWISE_VALIDATOR = "scripts/interop_submission_validation.py"
 SUITE_CATALOG = "conformance/runner/_suite_catalog.py"
@@ -898,7 +899,12 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
             "internally_verified",
             "externally_testable",
         ],
-        "external_test_path": "separate_smoke_capability_run",
+        "external_test_path": "full-capability",
+        "external_evidence_target": True,
+        "external_evidence_mark": (
+            "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+        ),
+        "external_evidence_mark_reachable": True,
         "ordinary_compatibility_mark": False,
         "independent_external_evidence": False,
     }
@@ -909,9 +915,12 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
             "internally_verified",
         ],
         "external_test_path": None,
+        "external_evidence_target": False,
+        "external_evidence_mark": None,
+        "external_evidence_mark_reachable": False,
         "ordinary_compatibility_mark": False,
         "independent_external_evidence": False,
-        "external_evidence_gap_milestone": "M62",
+        "external_evidence_status": "deferred",
     }
     expected_capneg = {
         "status": [
@@ -922,7 +931,7 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
         "suite": "conformance/extensions/CN_CAPNEG_0.2.json",
         "compatibility_mark": "AICP-EXT-CAPNEG-0.2",
         "composition_external_evidence": False,
-        "external_evidence_gap_milestone": "M62",
+        "external_evidence_status": "deferred",
     }
     if capability_v1 != expected_v1:
         errors.append(
@@ -936,6 +945,33 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
         errors.append("CAPNEG v0.2 status does not match canonical model")
     if "session_state_projection" not in iut_cases or not suite_exists:
         errors.append("strict session-state projection evidence paths do not resolve")
+    target_registry = _json(root, EVIDENCE_TARGETS)
+    capability_targets = [
+        item
+        for item in target_registry.get("targets", [])
+        if isinstance(item, dict)
+        and item.get("target_kind") == "capability"
+    ]
+    if [
+        item.get("target_key") for item in capability_targets
+    ] != ["aicp.session_state_projection@v1"]:
+        errors.append(
+            "external capability target registry must contain exactly projection v1"
+        )
+    expected_capability_summary = {
+        "external_capability_targets": 1,
+        "reachable_external_capability_marks": 1,
+        "externally_demonstrated_capabilities": len(
+            status.get("interop_evidence", {}).get(
+                "externally_demonstrated_capabilities",
+                [],
+            )
+        ),
+    }
+    if status.get("capability_summary") != expected_capability_summary:
+        errors.append(
+            "capability_summary does not match the evidence target registry and matrix"
+        )
     if not (
         root / "conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json"
     ).is_file():

@@ -7,6 +7,7 @@ The AICP public interop corpus is the repo-backed place for packaging **checkabl
 Its purpose is to let implementers publish narrowly-scoped, machine-readable claims such as:
 - an implementation **implements** a shipped AICP profile,
 - an implementation is **compatible with** a shipped AICP profile based on conformance evidence,
+- an implementation **implements** an exact registered external capability target,
 - reserved instructional packaging for a future claim that two implementations were
   **pairwise interoperable** for a specific profile and bound joint evidence set.
 
@@ -14,8 +15,9 @@ The corpus is intentionally conservative. It is for evidence packaging and trans
 
 ## Current corpus status
 
-The generated matrix currently contains zero real external submissions and zero eligible
-external marks. It contains one repo-owned dry run plus examples/templates, all explicitly
+The generated matrix currently contains zero real external submissions and therefore zero
+externally demonstrated profiles or capabilities. It contains one repo-owned dry run plus
+examples/templates, all explicitly
 non-promotable. Real pairwise publication is unavailable and fails closed. See
 `interop/interop_matrix.json` and `docs/process/AICP_Repo_Truth_Baseline.md`.
 
@@ -50,7 +52,7 @@ An interoperability submission is a directory-scoped package whose primary manif
 At minimum, a submission should identify:
 - the submitting implementation,
 - the implementation version,
-- the shipped `profile_id` values the claim is about,
+- the exact product-profile or capability references the claim is about,
 - the type of claim being made,
 - the evidence types included,
 - the report references and suite references that support the claim,
@@ -65,8 +67,10 @@ A valid submission package should include:
 1. `submission.json` manifest.
 2. Referenced report files under paths listed in `report_refs` when the package is an example or a real submission.
 3. `suite_refs` that identify the suite/profile evidence set the claim depends on.
-4. `profile_ids` that match profile identifiers already shipped in `registry/aicp_profiles.json`.
-5. For a real claim, exact `profile_refs` carrying both `profile_id` and `profile_version`.
+4. For a profile claim, `profile_ids` and exact `profile_refs` carrying both `profile_id`
+   and `profile_version`.
+5. For a capability claim, exact `capability_refs` carrying both `capability_id` and
+   `capability_version`.
 6. Notes/disclosures when the evidence is limited, synthetic, or example-only.
 
 For real `reproducible` implementation/compatibility claims, at least one report must be a
@@ -92,7 +96,17 @@ versioned evidence/TCK milestone explicitly adds that path.
 Experimental CAPNEG v0.2 composition reports are also internal-only in M61. The current
 submission schema deliberately has no composition claim/evidence fields and rejects
 unknown properties. Component profile claims continue to require their own eligible
-external-IUT evidence; generalized external composition evidence is unavailable until M62.
+external-IUT evidence; M62 does not add external composition evidence.
+
+M62 adds one separate target-oriented capability path:
+`aicp.session_state_projection@v1`, report format `2.0`, `full-capability` execution, and
+`AICP-EVIDENCE-TCK-1.0.0`. A strong `implements_capability` package requires exact
+`capability_refs`, `evidence_status=reproducible`, `capability_report`, and an independently
+eligible external-implementation report whose computed mark is
+`AICP-Evidence-SESSION-STATE-PROJECTION-v1`. Capability and profile fields cannot be mixed
+in one M62 manifest. Capability evidence cannot prove a product profile. Smoke, reference,
+internal, self-attested, incomplete, degraded, skipped, and raw-mark-only evidence is
+ineligible. Projection v2 is not registered as an external target.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 
@@ -141,6 +155,11 @@ Typical shape:
 - one or more profile/conformance reports in `report_refs`,
 - `claim_scope` of `self_attested`.
 
+For a capability package use `claim_type=implements_capability`, exact
+`capability_refs`, and one or more `capability_report` files instead of profile fields.
+The shipped fictional capability example and template demonstrate only the package shape;
+they are not real external evidence.
+
 ### Pairwise interoperability claim package (instructional only)
 
 Use this when the claim is specifically about two implementations interoperating for a named profile.
@@ -173,8 +192,10 @@ Submission packages use a small controlled vocabulary in `evidence_status`:
 This vocabulary is about package strength/scope only. It is not a certification level and it does not imply maintainer endorsement. Template packages may retain placeholder `report_refs`; those placeholders are treated as instructional warnings in the matrix, not as real-submission failures or compatibility proof.
 
 The matrix preserves raw legacy/instructional report contents for audit visibility but
-computes ordinary profile marks only by reusing the strong-evidence validator. It never
-promotes a hand-shaped or legacy `compatibility_marks` string.
+computes typed `computed_profile_marks`, `computed_capability_marks`, and
+`eligible_targets` through the strong-evidence validators. Compatibility `computed_marks`
+is their derived union. The matrix never promotes a hand-shaped or legacy
+`compatibility_marks` string.
 
 ## Review and publication workflow
 

@@ -23,6 +23,7 @@ INTEROP_MATRIX_PATH = "interop/interop_matrix.json"
 PAIRWISE_VALIDATOR_PATH = "scripts/interop_submission_validation.py"
 CORE_SUITE_PATH = "conformance/core/CT_CORE_0.1.json"
 IUT_CASES_PATH = "conformance/iut/cases.json"
+EVIDENCE_TARGETS_PATH = "conformance/evidence/targets.json"
 
 BASELINE_BEGIN = "<!-- BEGIN GENERATED REPO-TRUTH FACTS -->"
 BASELINE_END = "<!-- END GENERATED REPO-TRUTH FACTS -->"
@@ -448,13 +449,41 @@ def _eligible_profile_marks(
         or row.get("evidence_validation_status") != "eligible"
     ):
         return set()
-    computed_marks = row.get("computed_marks")
+    computed_marks = row.get("computed_profile_marks")
+    if computed_marks is None:
+        computed_marks = row.get("computed_marks")
     if not isinstance(computed_marks, list):
         return set()
     return {
         mark
         for mark in computed_marks
         if isinstance(mark, str) and mark in expected_marks
+    }
+
+
+def _eligible_capability_targets(
+    row: dict[str, Any],
+    expected_targets: set[tuple[str, str]],
+) -> set[tuple[str, str]]:
+    if (
+        row.get("artifact_kind") != "submission"
+        or row.get("valid") is not True
+        or row.get("evidence_validation_status") != "eligible"
+    ):
+        return set()
+    targets = row.get("eligible_targets")
+    if not isinstance(targets, list):
+        return set()
+    return {
+        (str(item["target_id"]), str(item["target_version"]))
+        for item in targets
+        if isinstance(item, dict)
+        and item.get("kind") == "capability"
+        and (
+            str(item.get("target_id")),
+            str(item.get("target_version")),
+        )
+        in expected_targets
     }
 
 
@@ -474,23 +503,38 @@ def derive_interop_evidence(
         if isinstance(item.get("compatibility_mark"), str)
     }
     expected_marks = set(mark_to_profile)
-    eligible_rows: list[tuple[dict[str, Any], set[str]]] = []
+    target_registry = load_json(ROOT, EVIDENCE_TARGETS_PATH)
+    expected_capabilities = {
+        (str(item["target_id"]), str(item["target_version"]))
+        for item in target_registry.get("targets", [])
+        if isinstance(item, dict)
+        and item.get("target_kind") == "capability"
+    }
+    eligible_rows: list[
+        tuple[dict[str, Any], set[str], set[tuple[str, str]]]
+    ] = []
     demonstrated: set[str] = set()
+    demonstrated_capabilities: set[tuple[str, str]] = set()
     for row in real_rows:
         if not isinstance(row, dict):
             continue
         marks = _eligible_profile_marks(row, expected_marks)
-        if not marks:
+        capabilities = _eligible_capability_targets(
+            row,
+            expected_capabilities,
+        )
+        if not marks and not capabilities:
             continue
-        eligible_rows.append((row, marks))
+        eligible_rows.append((row, marks, capabilities))
         demonstrated.update(mark_to_profile[mark] for mark in marks)
+        demonstrated_capabilities.update(capabilities)
 
     pairwise_demonstrated = (
         pairwise_publication_available
         and any(
             row.get("claim_type") == "pairwise_interop"
             and row.get("joint_evidence_validation_status") == "eligible"
-            for row, _marks in eligible_rows
+            for row, _marks, _capabilities in eligible_rows
         )
     )
     flags = {item["id"]: item["id"] in demonstrated for item in profiles}
@@ -499,6 +543,15 @@ def derive_interop_evidence(
         "eligible_external_submission_count": len(eligible_rows),
         "rejected_real_submission_count": len(real_rows) - len(eligible_rows),
         "externally_demonstrated_profiles": sorted(demonstrated),
+        "externally_demonstrated_capabilities": [
+            {
+                "capability_id": capability_id,
+                "capability_version": capability_version,
+            }
+            for capability_id, capability_version in sorted(
+                demonstrated_capabilities
+            )
+        ],
         "pairwise_publication_available": pairwise_publication_available,
         "pairwise_demonstrated": pairwise_demonstrated,
         "dry_run_count": len(matrix.get("dry_run_artifacts", [])),
@@ -658,6 +711,7 @@ def render_planned_milestones(status: dict[str, Any]) -> str:
 
 def render_baseline_facts(status: dict[str, Any]) -> str:
     summary = status["profile_summary"]
+    capability_summary = status["capability_summary"]
     profiles = status["profiles"]
     interop = status["interop_evidence"]
     security = status["security_review"]
@@ -689,16 +743,20 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Registered profiles | {summary['registered']} ({summary['stable']} stable, {summary['experimental']} experimental) | `registry/aicp_profiles.json` |",
         f"| External-IUT targets | {summary['external_iut_targets']}: {_code_list(targets)} | `conformance/iut/cases.json` |",
         f"| Ordinary external marks currently reachable | {summary['ordinary_external_mark_reachable_targets']}: {_code_list(reachable)} | profile catalogs and IUT cases |",
+        f"| External capability targets | {capability_summary['external_capability_targets']} | `conformance/evidence/targets.json` |",
+        f"| Reachable external capability marks | {capability_summary['reachable_external_capability_marks']} | evidence target registry and TCK provenance |",
+        f"| Externally demonstrated capabilities | {capability_summary['externally_demonstrated_capabilities']} | eligible capability-specific `eligible_targets` only |",
         f"| Real submission packages | {interop['real_submission_package_count']} | `interop/interop_matrix.json` |",
-        f"| Eligible external submissions | {interop['eligible_external_submission_count']} | public interop eligibility result plus profile computed marks |",
+        f"| Eligible external submissions | {interop['eligible_external_submission_count']} | public interop eligibility plus typed computed profile/capability evidence |",
         f"| Rejected/ineligible real packages | {interop['rejected_real_submission_count']} | `interop/interop_matrix.json` |",
-        f"| Externally demonstrated profiles | {len(demonstrated)}: {_code_list(demonstrated)} | eligible profile-specific `computed_marks` only |",
+        f"| Externally demonstrated profiles | {len(demonstrated)}: {_code_list(demonstrated)} | eligible profile-specific `computed_profile_marks` only |",
         f"| Pairwise publication / demonstration | {_human_bool(interop['pairwise_publication_available'])} / {_human_bool(interop['pairwise_demonstrated'])} | joint-evidence validator status |",
         f"| Live binding paths | {len(live_bindings)}: {_code_list(live_bindings)} | binding evidence map |",
         f"| Independent external security review | {_human_bool(security['external_independent_review_completed'])} | `{security['artifact_contract']}` |",
         f"| Governance model / maturity | `{governance['current_model']}` / `{governance['standard_maturity']}` | `GOVERNANCE.md` |",
         f"| Registered message surface | {message_summary['registered_count']} entries; {version_selected_messages} IDs use version-selected payload schemas; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
         f"| CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence={str(status['capneg_v0_2']['composition_external_evidence']).lower()} | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |",
+        f"| Session-state projection v1 | shipped / experimental / internally verified / externally testable; evidence target={str(status['capability_evidence']['aicp.session_state_projection.v1']['external_evidence_target']).lower()}; reachable mark={str(status['capability_evidence']['aicp.session_state_projection.v1']['external_evidence_mark_reachable']).lower()} | `conformance/evidence/targets.json`, `capability_evidence` |",
         f"| Session-state projection v2 | shipped / experimental / internally verified; ordinary mark={str(status['capability_evidence']['aicp.session_state_projection.v2']['ordinary_compatibility_mark']).lower()} | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |",
         "",
         "### Milestone summary",
@@ -719,14 +777,15 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             "",
             "| Surface | Repository truth | Independent-evidence boundary | Planned gap |",
             "|---|---|---|---|",
-            f"| Profiles | {summary['registered']} shipped catalogs; maturity is {summary['stable']} stable / {summary['experimental']} experimental | {summary['externally_demonstrated']} externally demonstrated profiles | M62, M63, M70 |",
-            f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and expected profile `computed_marks` count | M70 |",
+            f"| Profiles | {summary['registered']} shipped catalogs; maturity is {summary['stable']} stable / {summary['experimental']} experimental | {summary['externally_demonstrated']} externally demonstrated profiles | M63, M70 |",
+            f"| Capability evidence | {capability_summary['external_capability_targets']} external targets; {capability_summary['reachable_external_capability_marks']} reachable marks | {capability_summary['externally_demonstrated_capabilities']} externally demonstrated capabilities | M64, M70 |",
+            f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |",
             f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, demonstrated={str(interop['pairwise_demonstrated']).lower()} | A valid eligible joint-execution result is required | M66 |",
             f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {len(live_bindings)} live paths | Static cases do not prove live independent interoperability | M64 |",
             f"| Security review | internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support completion | M67 |",
             f"| Governance | `{governance['current_model']}` | No external standards body is recorded | M68 |",
             f"| Message surface | {message_summary['registered_count']} machine-mapped entries; {len(message_summary['missing_positive_fixture_types'])} positive-fixture gaps | Aggregates are derived from entries | M65 |",
-            "| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | M62 |",
+            "| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | Deferred |",
             f"| Release | `{status['release_phase']}` | Repository metadata is not external adoption or GA evidence | M69 |",
         ]
     )
@@ -845,7 +904,7 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         "suite": "conformance/extensions/CN_CAPNEG_0.2.json",
         "compatibility_mark": "AICP-EXT-CAPNEG-0.2",
         "composition_external_evidence": False,
-        "external_evidence_gap_milestone": "M62",
+        "external_evidence_status": "deferred",
     }
     status["capability_evidence"] = {
         "aicp.session_state_projection.v1": {
@@ -855,7 +914,12 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
                 "internally_verified",
                 "externally_testable",
             ],
-            "external_test_path": "separate_smoke_capability_run",
+            "external_test_path": "full-capability",
+            "external_evidence_target": True,
+            "external_evidence_mark": (
+                "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+            ),
+            "external_evidence_mark_reachable": True,
             "ordinary_compatibility_mark": False,
             "independent_external_evidence": False,
         },
@@ -866,9 +930,12 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
                 "internally_verified",
             ],
             "external_test_path": None,
+            "external_evidence_target": False,
+            "external_evidence_mark": None,
+            "external_evidence_mark_reachable": False,
             "ordinary_compatibility_mark": False,
             "independent_external_evidence": False,
-            "external_evidence_gap_milestone": "M62",
+            "external_evidence_status": "deferred",
         },
     }
     status["milestones"] = derive_milestone_ownership(
@@ -892,6 +959,25 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
             for item in profiles
         ),
         "externally_demonstrated": sum(flags.values()),
+    }
+    capability_targets = [
+        item
+        for item in load_json(root, EVIDENCE_TARGETS_PATH).get("targets", [])
+        if isinstance(item, dict)
+        and item.get("target_kind") == "capability"
+    ]
+    demonstrated_capabilities = interop.get(
+        "externally_demonstrated_capabilities",
+        [],
+    )
+    status["capability_summary"] = {
+        "external_capability_targets": len(capability_targets),
+        "reachable_external_capability_marks": sum(
+            bool(item.get("expected_mark")) for item in capability_targets
+        ),
+        "externally_demonstrated_capabilities": len(
+            demonstrated_capabilities
+        ),
     }
     release_engineering = status["release_engineering"]
     release_engineering["profile_report_outputs"] = len(profiles)

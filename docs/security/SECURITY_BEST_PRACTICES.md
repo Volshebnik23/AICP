@@ -124,3 +124,23 @@ Relevant docs:
 - Adapter integration pattern: `docs/guides/Protocol_Adapter_Gateway.md`
 - Security hardening ops guide: `security_review/OPS_HARDENING_GUIDE.md`
 - Mediated blocking production playbook: `docs/playbooks/Mediated_Blocking_in_Production.md`
+
+## 10) External evidence privacy and identity boundary
+
+External evidence reports intentionally record implementation ID, version, build digest,
+adapter stderr, case observations, generated projection artifacts, and digests of required
+inputs. Treat reports as potentially sensitive before publication:
+
+- use non-secret stable implementation identifiers;
+- keep credentials, private keys, bearer tokens, private endpoint data, and unneeded
+  internal state out of adapter stderr and projection `extension_data`;
+- inspect generated artifacts and disclosures before adding a report to a submission;
+- publish only the minimum report and bundle files needed for the scoped claim;
+- retain private raw logs outside the public corpus when they are not required evidence.
+
+SHA-256 digests bind the evaluated bytes and detect drift; they do not authenticate an
+organization, establish authority over a session, certify an implementation, or prove
+that a named vendor produced the report. `execution_subject`, review, and publication
+process supply separate identity context. The checked-in reference adapter and fictional
+external-kind test adapter are not independent implementations, and no real external
+capability submission is currently present.

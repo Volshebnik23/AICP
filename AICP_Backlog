@@ -13,23 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M62 — Generalized External Evidence Framework
-
-<!-- milestone-status: M62 planned -->
-- **Status:** Planned.
-- **Problem statement:** external-IUT v1 is bound to two exact product profiles, while strict
-  session-state projection uses a separate smoke/capability path and other capabilities have
-  no equivalent strong report model.
-- **Scope:** define provenance, subject, coverage, mark, and capability evidence that can be
-  reused without weakening current full-profile eligibility.
-- **Explicit non-goals:** no claim that internal reports are external proof and no automatic
-  promotion of legacy, smoke, reference, example, or dry-run evidence.
-- **Principal evidence gap:** no strong generalized external capability/overlay report.
-- **Dependencies:** M58 and M59.
-- **Completion criterion:** at least one non-profile capability can produce schema-valid,
-  coverage-complete, independently eligible evidence while current profile claims remain
-  fail-closed.
-
 ## M63 — Tier-1 External Profile TCK
 
 <!-- milestone-status: M63 planned -->

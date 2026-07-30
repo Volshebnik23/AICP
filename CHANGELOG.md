@@ -8,8 +8,8 @@ All notable repo-backed release metadata changes should be recorded here.
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
 - Completed M58 Repo-Truth Rebaseline, M59 Authenticated Base Evidence Reachability, M60
-  Exact Contract Agreement Core, and M61 Multi-Profile Composition and CAPNEG v0.2;
-  M62–M70 remain planned.
+  Exact Contract Agreement Core, M61 Multi-Profile Composition and CAPNEG v0.2, and M62
+  Generalized External Evidence Framework; M63–M70 remain planned.
 - Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
   `AICP-IUT-TCK-1.0.0` metadata.
 - Added separate experimental Core v0.2 schemas, exact-agreement conformance, 9 positive
@@ -21,6 +21,16 @@ All notable repo-backed release metadata changes should be recorded here.
   20 positive and 104 exact expected-fail cases, and Python/TypeScript shared/direct parity.
 - Added composition-aware session-state projection v2 with four positive and nine negative
   cases and an internal-only evidence mark.
+- Added target-oriented external evidence report v2, the deterministic
+  `AICP-EVIDENCE-TCK-1.0.0` release, and the exact
+  `aicp.session_state_projection@v1` full-capability target with one producer and all 12
+  owning-suite consumer transcripts.
+- Added independent capability report evaluation, protocol-1.1 reference/test adapters,
+  20 negative adapter modes, report-forgery and mutation controls, and truthful
+  missing-dependency handling.
+- Added typed public `implements_capability` submissions, a fictional example and template,
+  independently computed capability marks/targets in the interop matrix, and separate
+  profile/capability repo-truth counts.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
@@ -59,15 +69,22 @@ All notable repo-backed release metadata changes should be recorded here.
   supersession, direct fail-closed no-crypto reducers, reviewed composition expectations,
   and reference-only cross-language/projection manifests. Generated messages and expected
   semantics now each have one canonical representation.
+- Preserved external-IUT report v1 and its two profile targets while adding report v2 as a
+  separate target-oriented family. Capability evidence cannot prove a profile, and neither
+  examples nor raw marks are promoted to external evidence.
 
 ### Known limitations
 - No real external or pairwise interop submission is present.
+- Strict projection v1 has one externally testable capability target and reachable evidence
+  mark, but no real independently demonstrated external capability.
 - Only Base and Authenticated Base have external full-profile IUT targets; both ordinary
   marks are reachable, but neither has real independent external evidence in this repository.
 - Base 0.2 has internal experimental conformance only; it does not authenticate senders and
   has no external-IUT or independent external evidence.
 - Binding suites are static fixtures, the security review is internal, and release
   repackaging remains planned under M69.
+- Projection v2 remains internal-only; external composition and pairwise evidence remain
+  unavailable.
 
 ## [0.1.0-rc.1] - 2026-03-22
 

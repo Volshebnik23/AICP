@@ -149,6 +149,31 @@ combine full-profile execution with `--include-session-state-projection`; emit s
 projection evidence as a separate capability run. Every skipped mandatory check
 suppresses profile eligibility even if an adapter reports `degraded=false`.
 
+## External capability evidence
+
+The frozen profile IUT report v1 path above remains valid. M62 adds a separate,
+target-oriented report v2 path for the exact experimental capability
+`aicp.session_state_projection@v1`; it does not reinterpret a capability as a product
+profile.
+
+An adapter using the existing protocol 1.1 wrapper must declare the exact capability in
+`supported_aicp_capabilities`. Run the diagnostic reference paths with:
+
+```text
+make evidence-targets-validate
+make evidence-capability-smoke-reference
+make evidence-capability-full-reference
+```
+
+For an external adapter, run
+`conformance/evidence/aicp_external_evidence_runner.py --cmd-json <JSON-array> --target
+aicp.session_state_projection@v1 --mode full-capability --out <report>`. Only a complete,
+non-degraded `external_implementation` report with all mandatory cases and current
+`AICP-EVIDENCE-TCK-1.0.0` provenance can be independently eligible for
+`AICP-Evidence-SESSION-STATE-PROJECTION-v1`. Smoke and `reference_corpus` runs emit no
+mark. The capability mark proves neither a product profile nor pairwise interoperability.
+See `conformance/evidence/README.md`.
+
 
 ## Template smoke commands (shipped onboarding)
 

@@ -103,3 +103,12 @@ access control, and avoid placing private internal state in `extension_data`.
 
 Strict support is tested by `OR_SESSION_STATE_PROJECTION_V1.json`; a complete,
 non-degraded pass may emit `AICP-Evidence-SESSION-STATE-PROJECTION-v1`.
+
+The internal suite mark and the external capability mark have the same identity but
+different evidence boundaries. Strong external evidence requires the separate
+target-oriented report v2 path, exact target `aicp.session_state_projection@v1`,
+`full-capability` execution against an `external_implementation`, complete producer and
+all 12 consumer cases, and independently validated `AICP-EVIDENCE-TCK-1.0.0` provenance.
+Smoke and `reference_corpus` reports emit no external mark. This capability evidence does
+not imply product-profile conformance or pairwise interoperability. Projection v2 remains
+internal-only and is not an external evidence target.

@@ -44,16 +44,20 @@ mature.
 | Registered profiles | 16 (4 stable, 12 experimental) | `registry/aicp_profiles.json` |
 | External-IUT targets | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | `conformance/iut/cases.json` |
 | Ordinary external marks currently reachable | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | profile catalogs and IUT cases |
+| External capability targets | 1 | `conformance/evidence/targets.json` |
+| Reachable external capability marks | 1 | evidence target registry and TCK provenance |
+| Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
-| Eligible external submissions | 0 | public interop eligibility result plus profile computed marks |
+| Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability evidence |
 | Rejected/ineligible real packages | 0 | `interop/interop_matrix.json` |
-| Externally demonstrated profiles | 0: None | eligible profile-specific `computed_marks` only |
+| Externally demonstrated profiles | 0: None | eligible profile-specific `computed_profile_marks` only |
 | Pairwise publication / demonstration | No / No | joint-evidence validator status |
 | Live binding paths | 0: None | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
 | Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
@@ -64,7 +68,7 @@ mature.
 | M59 | shipped | Authenticated Base Evidence Reachability | `ROADMAP.md` |
 | M60 | shipped | Exact Contract Agreement Core | `ROADMAP.md` |
 | M61 | shipped | Multi-Profile Composition and CAPNEG v2 | `ROADMAP.md` |
-| M62 | planned | Generalized External Evidence Framework | `AICP_Backlog` |
+| M62 | shipped | Generalized External Evidence Framework | `ROADMAP.md` |
 | M63 | planned | Tier-1 External Profile TCK | `AICP_Backlog` |
 | M64 | planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
 | M65 | planned | Registered Message Surface Completion | `AICP_Backlog` |
@@ -78,14 +82,15 @@ mature.
 
 | Surface | Repository truth | Independent-evidence boundary | Planned gap |
 |---|---|---|---|
-| Profiles | 16 shipped catalogs; maturity is 4 stable / 12 experimental | 0 externally demonstrated profiles | M62, M63, M70 |
-| External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and expected profile `computed_marks` count | M70 |
+| Profiles | 16 shipped catalogs; maturity is 4 stable / 12 experimental | 0 externally demonstrated profiles | M63, M70 |
+| Capability evidence | 1 external targets; 1 reachable marks | 0 externally demonstrated capabilities | M64, M70 |
+| External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |
 | Pairwise | publication=false, demonstrated=false | A valid eligible joint-execution result is required | M66 |
 | Bindings | 24 static cases; 0 live paths | Static cases do not prove live independent interoperability | M64 |
 | Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
 | Message surface | 132 machine-mapped entries; 17 positive-fixture gaps | Aggregates are derived from entries | M65 |
-| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | M62 |
+| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | Deferred |
 | Release | `release-candidate-with-unreleased-post-rc-changes` | Repository metadata is not external adoption or GA evidence | M69 |
 <!-- END GENERATED REPO-TRUTH FACTS -->
 
@@ -97,11 +102,12 @@ mature.
 2. **Exact contract agreement boundary:** M60 ships separate experimental Core v0.2 exact
    artifact/head agreement. It does not reinterpret Core v0.1, authenticate senders, add an
    external-IUT target, or join projection v1 to the new reference shape.
-3. **Profile composition:** CAPNEG selects one product profile while product guidance
-   recommends combinations. Combination guidance is deployment composition, not implemented
-   multi-profile negotiation. Routed to M61.
+3. **Profile composition evidence:** M61 ships internal CAPNEG v0.2 multi-profile
+   composition, but it does not award component marks or provide generalized external
+   composition evidence. That external target remains deferred.
 4. **External evidence breadth:** only two of 16 registered profiles have full external-IUT
-   targets; strict projection uses a separate weaker capability path. Routed to M62/M63.
+   targets. M62 adds one complete projection-v1 capability target without expanding the
+   profile target set. Tier-1 profile breadth remains routed to M63.
 5. **Transport evidence:** binding suites validate static case artifacts, not live endpoints.
    Routed to M64.
 6. **Registered message surface:** the following experimental registered types have no

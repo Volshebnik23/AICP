@@ -91,7 +91,7 @@ def test_current_planning_and_repo_truth_status_pass() -> None:
     assert VALIDATOR.validate(ROOT) == []
 
 
-def test_current_m61_profile_and_milestone_truth() -> None:
+def test_current_m62_profile_capability_and_milestone_truth() -> None:
     status = _status()
     assert status["profile_summary"] == {
         "registered": 16,
@@ -101,13 +101,34 @@ def test_current_m61_profile_and_milestone_truth() -> None:
         "ordinary_external_mark_reachable_targets": 2,
         "externally_demonstrated": 0,
     }
+    assert status["capability_summary"] == {
+        "external_capability_targets": 1,
+        "reachable_external_capability_marks": 1,
+        "externally_demonstrated_capabilities": 0,
+    }
+    projection_v1 = status["capability_evidence"][
+        "aicp.session_state_projection.v1"
+    ]
+    assert projection_v1["external_evidence_target"] is True
+    assert projection_v1["external_test_path"] == "full-capability"
+    assert projection_v1["external_evidence_mark"] == (
+        "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+    )
+    assert projection_v1["external_evidence_mark_reachable"] is True
+    assert projection_v1["ordinary_compatibility_mark"] is False
+    assert projection_v1["independent_external_evidence"] is False
+    projection_v2 = status["capability_evidence"][
+        "aicp.session_state_projection.v2"
+    ]
+    assert projection_v2["external_evidence_target"] is False
+    assert projection_v2["independent_external_evidence"] is False
     milestones = {item["id"]: item for item in status["milestones"]}
-    for number in range(58, 62):
+    for number in range(58, 63):
         assert milestones[f"M{number}"]["status"] == "shipped"
         assert milestones[f"M{number}"]["document"] == "ROADMAP.md"
     assert all(
         milestones[f"M{number}"]["status"] == "planned"
-        for number in range(62, 71)
+        for number in range(63, 71)
     )
 
 
@@ -246,6 +267,37 @@ def test_eligible_wrong_profile_submission_does_not_prove_base() -> None:
     assert flags["AICP-BASE@0.1"] is False
 
 
+def test_eligible_capability_submission_does_not_demonstrate_profile() -> None:
+    evidence, flags = _derive(
+        _row(
+            claim_type="implements_capability",
+            computed_marks=[],
+            computed_profile_marks=[],
+            computed_capability_marks=[
+                "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+            ],
+            eligible_targets=[
+                {
+                    "kind": "capability",
+                    "target_id": "aicp.session_state_projection",
+                    "target_version": "v1",
+                }
+            ],
+        )
+    )
+    assert evidence["externally_demonstrated_profiles"] == []
+    assert evidence["externally_demonstrated_capabilities"] == [
+        {
+            "capability_id": "aicp.session_state_projection",
+            "capability_version": "v1",
+        }
+    ]
+    assert flags == {
+        "AICP-BASE@0.1": False,
+        "AICP-MEDIATED-BLOCKING@0.1": False,
+    }
+
+
 def test_forged_raw_marks_with_empty_computed_marks_are_ignored() -> None:
     evidence, flags = _derive(
         _row(
@@ -348,7 +400,7 @@ def test_baseline_rejects_stale_message_gap_count() -> None:
 
 def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
     roadmap = _roadmap().replace(
-        "| M62 | Planned |", "| M62 | Shipped |", 1
+        "| M63 | Planned |", "| M63 | Shipped |", 1
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), roadmap, _backlog()
@@ -358,21 +410,22 @@ def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
 
 def test_backlog_visible_status_must_match_marker_and_json() -> None:
     backlog = _backlog().replace(
-        "<!-- milestone-status: M62 planned -->\n- **Status:** Planned.",
-        "<!-- milestone-status: M62 planned -->\n- **Status:** Shipped.",
+        "<!-- milestone-status: M63 planned -->\n- **Status:** Planned.",
+        "<!-- milestone-status: M63 planned -->\n- **Status:** Shipped.",
         1,
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), _roadmap(), backlog
     )
-    assert any("M62: visible status" in error for error in errors)
+    assert any("M63: visible status" in error for error in errors)
 
 
 def test_future_milestone_document_must_resolve() -> None:
     status = _status()
-    status["milestones"][1]["document"] = (
-        "docs/process/DOES_NOT_EXIST.md"
-    )
+    next(
+        milestone for milestone in status["milestones"]
+        if milestone["id"] == "M63"
+    )["document"] = "docs/process/DOES_NOT_EXIST.md"
     errors = VALIDATOR._milestone_errors(
         ROOT, status, _roadmap(), _backlog()
     )
