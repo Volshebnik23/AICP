@@ -1,0 +1,16 @@
+{
+  "submission_id": "example-capability-claim",
+  "manifest_version": "1.0",
+  "generated_at": "2026-07-30T00:00:00Z",
+  "digest_alg": "sha256",
+  "files": [
+    {
+      "path": "submission.json",
+      "digest": "efa3d787fb453cf4771d94b925af5787767669d533cd944048a75718799c3292"
+    },
+    {
+      "path": "reports/report_capability_projection_v1.json",
+      "digest": "50bf2eab461976b0faf4ed490086879fbde3655452f6c858c65b415cce12a434"
+    }
+  ]
+}

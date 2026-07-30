@@ -1,0 +1,36 @@
+{
+  "catalog_version": "1.0",
+  "description": "Reviewed negative public capability-claim examples. Tests apply each mutation to an otherwise valid fictional package.",
+  "cases": [
+    {
+      "id": "CAP-CLAIM-NEG-01",
+      "description": "Profile and capability claim fields are mixed.",
+      "mutation": "add_profile_fields",
+      "expected_error_fragment": "capability"
+    },
+    {
+      "id": "CAP-CLAIM-NEG-02",
+      "description": "The capability version is not registered.",
+      "mutation": "wrong_capability_version",
+      "expected_error_fragment": "unknown capability target"
+    },
+    {
+      "id": "CAP-CLAIM-NEG-03",
+      "description": "A self-attested package attempts a strong capability claim.",
+      "mutation": "self_attested",
+      "expected_error_fragment": "reproducible"
+    },
+    {
+      "id": "CAP-CLAIM-NEG-04",
+      "description": "A profile report is presented as capability evidence.",
+      "mutation": "profile_report_confusion",
+      "expected_error_fragment": "eligible external capability report"
+    },
+    {
+      "id": "CAP-CLAIM-NEG-05",
+      "description": "The report subject does not match the manifest subject.",
+      "mutation": "subject_mismatch",
+      "expected_error_fragment": "implementation"
+    }
+  ]
+}

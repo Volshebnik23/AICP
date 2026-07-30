@@ -36,6 +36,7 @@ ALLOWED_CLAIM_SCOPES = {"self_attested", "pairwise"}
 ALLOWED_EVIDENCE_TYPES = {
     "conformance_report",
     "profile_report",
+    "capability_report",
     "golden_transcript",
     "pairwise_transcript",
     "human_summary",
@@ -48,12 +49,18 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--submission-id", required=True)
     parser.add_argument("--implementation-id", required=True)
     parser.add_argument("--implementation-version", required=True)
-    parser.add_argument("--profile-id", action="append", required=True, dest="profile_ids")
+    parser.add_argument("--profile-id", action="append", dest="profile_ids")
     parser.add_argument(
         "--profile-ref",
         action="append",
         dest="profile_refs",
         help="Exact PROFILE_ID@VERSION claim; repeat for every --profile-id in a real public package",
+    )
+    parser.add_argument(
+        "--capability-ref",
+        action="append",
+        dest="capability_refs",
+        help="Exact CAPABILITY_ID@VERSION claim; only for implements_capability",
     )
     parser.add_argument("--claim-type", required=True, choices=sorted(ALLOWED_CLAIM_TYPES))
     parser.add_argument("--claim-scope", required=True, choices=sorted(ALLOWED_CLAIM_SCOPES))
@@ -106,6 +113,11 @@ def _infer_evidence_types(report_paths: list[Path]) -> list[str]:
             inferred.append("conformance_report")
         if isinstance(report.get("profile_id"), str) and report.get("profile_id"):
             inferred.append("profile_report")
+        if (
+            report.get("report_format_version") == "2.0"
+            and report.get("report_type") == "aicp.external_evidence"
+        ):
+            inferred.append("capability_report")
     return _stable_unique(inferred)
 
 
@@ -139,8 +151,33 @@ def _validate_inputs(args: argparse.Namespace, report_paths: list[Path]) -> list
                 errors.append(f"--profile-ref must use PROFILE_ID@VERSION syntax: {value}")
                 continue
             parsed_ids.append(value.rsplit("@", 1)[0])
-        if set(parsed_ids) != set(args.profile_ids):
+        if set(parsed_ids) != set(args.profile_ids or []):
             errors.append("--profile-ref IDs must exactly match --profile-id values")
+    if args.claim_type == "implements_capability":
+        if args.profile_ids or args.profile_refs:
+            errors.append(
+                "--claim-type implements_capability cannot use profile fields"
+            )
+        if not args.capability_refs:
+            errors.append(
+                "--claim-type implements_capability requires --capability-ref"
+            )
+        if args.evidence_status != "reproducible":
+            errors.append(
+                "--claim-type implements_capability requires --evidence-status reproducible"
+            )
+    else:
+        if not args.profile_ids:
+            errors.append("profile and pairwise claims require --profile-id")
+        if args.capability_refs:
+            errors.append(
+                "--capability-ref is only supported for implements_capability"
+            )
+    for value in args.capability_refs or []:
+        if "@" not in value or not all(value.rsplit("@", 1)):
+            errors.append(
+                f"--capability-ref must use CAPABILITY_ID@VERSION syntax: {value}"
+            )
     for report_path in report_paths:
         if not report_path.exists() or not report_path.is_file():
             errors.append(f"report path does not exist or is not a file: {report_path}")
@@ -154,7 +191,6 @@ def _build_manifest(args: argparse.Namespace, report_refs: list[str], evidence_t
         "submission_id": args.submission_id,
         "implementation_id": args.implementation_id,
         "implementation_version": args.implementation_version,
-        "profile_ids": _stable_unique(args.profile_ids),
         "evidence_types": evidence_types,
         "evidence_status": args.evidence_status,
         "report_refs": report_refs,
@@ -164,6 +200,8 @@ def _build_manifest(args: argparse.Namespace, report_refs: list[str], evidence_t
         "generated_at": args.generated_at or _utc_now(),
         "disclosures": args.disclosures,
     }
+    if args.profile_ids:
+        manifest["profile_ids"] = _stable_unique(args.profile_ids)
     if args.peer_implementation_id:
         manifest["peer_implementation_id"] = args.peer_implementation_id
     if args.peer_implementation_version:
@@ -172,6 +210,14 @@ def _build_manifest(args: argparse.Namespace, report_refs: list[str], evidence_t
         manifest["profile_refs"] = [
             {"profile_id": value.rsplit("@", 1)[0], "profile_version": value.rsplit("@", 1)[1]}
             for value in _stable_unique(args.profile_refs)
+        ]
+    if args.capability_refs:
+        manifest["capability_refs"] = [
+            {
+                "capability_id": value.rsplit("@", 1)[0],
+                "capability_version": value.rsplit("@", 1)[1],
+            }
+            for value in _stable_unique(args.capability_refs)
         ]
     if args.note:
         manifest["notes"] = args.note

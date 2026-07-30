@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -23,6 +23,8 @@ validate:
 	$(PYTHON) scripts/generate_core_v02_fixtures.py --check
 	$(PYTHON) scripts/generate_profile_composition_registry.py --check
 	$(PYTHON) scripts/generate_capneg_v02_fixtures.py --check
+	$(PYTHON) scripts/generate_evidence_framework.py --check
+	$(PYTHON) scripts/generate_evidence_submission_example.py --check
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
 	else \
@@ -96,6 +98,22 @@ conformance-iut-smoke:
 conformance-iut-full-reference:
 	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-BASE@0.1 --mode full-profile --out conformance/iut/report_reference_base_full.json
 	$(PYTHON) conformance/iut/aicp_iut_runner.py --cmd "$(PYTHON) conformance/iut/reference_adapter.py" --profile AICP-AUTHENTICATED-BASE@0.1 --mode full-profile --out conformance/iut/report_reference_authenticated_base_full.json
+
+evidence-targets-validate:
+	$(PYTHON) scripts/generate_evidence_framework.py --check
+
+evidence-capability-smoke-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/reference_adapter.py"]' --target aicp.session_state_projection@v1 --mode smoke --out out/evidence/projection-v1-reference-smoke.json
+
+evidence-capability-full-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/reference_adapter.py"]' --target aicp.session_state_projection@v1 --mode full-capability --out out/evidence/projection-v1-reference-full.json
+
+evidence-capability-full-external-test:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/fake_adapters.py","--mode","external_good"]' --target aicp.session_state_projection@v1 --mode full-capability --out out/evidence/projection-v1-external-test.json
+
+evidence-submission-examples:
+	$(PYTHON) scripts/generate_evidence_submission_example.py --check
+	$(PYTHON) scripts/validate_interop_submission_examples.py
 
 interop-validate:
 	$(PYTHON) scripts/validate_interop_submission_examples.py
@@ -188,11 +206,17 @@ prepr:
 	$(MAKE) quickstart-capneg-v02-ts
 	$(MAKE) template-smoke
 	$(MAKE) conformance-iut-smoke
+	$(MAKE) evidence-targets-validate
+	$(MAKE) evidence-capability-smoke-reference
+	$(MAKE) evidence-capability-full-reference
+	$(MAKE) evidence-capability-full-external-test
+	$(MAKE) evidence-submission-examples
 	cd sdk/typescript && npm ci && npm test
 
 compatibility-gate:
 	$(MAKE) validate
 	$(MAKE) conformance-all
+	$(MAKE) evidence-targets-validate
 	$(MAKE) snapshot
 
 release-gate:
