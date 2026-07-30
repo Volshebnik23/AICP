@@ -66,6 +66,23 @@ def _message_binding(message: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _negotiation_context_key(
+    result: dict[str, Any],
+) -> tuple[Any, Any, tuple[str, ...]]:
+    participants = result.get("participants")
+    canonical_participants = (
+        tuple(sorted(participants))
+        if isinstance(participants, list)
+        and all(isinstance(party, str) for party in participants)
+        else ()
+    )
+    return (
+        result.get("session_id"),
+        result.get("contract_id"),
+        canonical_participants,
+    )
+
+
 def _check_selection_support(
     result: dict[str, Any],
     selected_records: dict[str, dict[str, Any]],
@@ -242,6 +259,50 @@ class CapnegV02Reducer:
         self.issues: list[dict[str, Any]] = []
         self.bound_contracts: list[str] = []
         self.current_message_index: int | None = None
+
+    def _current_accepted_roots(
+        self, result: dict[str, Any]
+    ) -> list[tuple[str, dict[str, Any]]]:
+        context_key = _negotiation_context_key(result)
+        return [
+            (negotiation_id, negotiation)
+            for negotiation_id, negotiation in sorted(self.negotiations.items())
+            if negotiation.get("state") == "ACCEPTED"
+            and negotiation.get("superseded_by") is None
+            and _negotiation_context_key(negotiation.get("result", {}))
+            == context_key
+        ]
+
+    def _accepted_root_issues(
+        self,
+        result: dict[str, Any],
+        *,
+        negotiation_id: str,
+        message: dict[str, Any],
+    ) -> list[dict[str, Any]]:
+        roots = self._current_accepted_roots(result)
+        if len(roots) > 1:
+            return [
+                _issue(
+                    "NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS",
+                    "the negotiation context contains more than one current accepted root",
+                    message,
+                )
+            ]
+        if not roots or roots[0][0] == negotiation_id:
+            return []
+        supersedes = result.get("supersedes_negotiation_id")
+        if supersedes is None:
+            return [
+                _issue(
+                    "NEGOTIATION_SUPERSESSION_REQUIRED",
+                    "a new negotiation in a context with an accepted root must explicitly supersede that exact root",
+                    message,
+                )
+            ]
+        if supersedes != roots[0][0]:
+            return []
+        return []
 
     def add_issue(
         self, code: str, detail: str, message: dict[str, Any] | None = None
@@ -538,6 +599,13 @@ class CapnegV02Reducer:
                     )
                 )
             supersedes_negotiation_id = result.get("supersedes_negotiation_id")
+            issues.extend(
+                self._accepted_root_issues(
+                    result,
+                    negotiation_id=str(negotiation_id),
+                    message=message,
+                )
+            )
             if supersedes_negotiation_id is not None:
                 prior_negotiation = self.negotiations.get(supersedes_negotiation_id)
                 if (
@@ -735,13 +803,41 @@ class CapnegV02Reducer:
                     )
                 )
         supersedes = result.get("supersedes_negotiation_id")
+        issues.extend(
+            self._accepted_root_issues(
+                result,
+                negotiation_id=str(payload.get("negotiation_id")),
+                message=message,
+            )
+        )
         if supersedes is not None:
             prior = self.negotiations.get(str(supersedes))
-            if prior is None or prior.get("state") != "ACCEPTED":
+            prior_is_current_root = (
+                prior is not None
+                and prior.get("state") == "ACCEPTED"
+                and prior.get("superseded_by") is None
+            )
+            prior_is_replay_safe = (
+                prior is not None
+                and prior.get("state") == "SUPERSEDED"
+                and prior.get("superseded_by")
+                == result.get("negotiation_id")
+            )
+            if not (prior_is_current_root or prior_is_replay_safe):
                 issues.append(
                     _issue(
                         "NEGOTIATION_SUPERSESSION_INVALID",
-                        "superseded negotiation must remain accepted until the successor is fully accepted",
+                        "the predecessor must be the current accepted root or be superseded by this exact successor",
+                        message,
+                    )
+                )
+            elif _negotiation_context_key(prior.get("result", {})) != (
+                _negotiation_context_key(result)
+            ):
+                issues.append(
+                    _issue(
+                        "NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH",
+                        "successor replay must preserve session, contract, and exact participants",
                         message,
                     )
                 )
@@ -755,6 +851,14 @@ class CapnegV02Reducer:
     ) -> list[dict[str, Any]]:
         signatures = message.get("signatures")
         if not self.crypto_available:
+            if required and (not isinstance(signatures, list) or not signatures):
+                return [
+                    _issue(
+                        "AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED",
+                        "Authenticated Base acceptance requires a sender signature",
+                        message,
+                    )
+                ]
             if not isinstance(signatures, list) or not signatures:
                 return []
             return [
@@ -1084,6 +1188,26 @@ class CapnegV02Reducer:
                 )
             )
             return issues
+        if negotiation is not None:
+            roots = self._current_accepted_roots(negotiation.get("result", {}))
+            if len(roots) > 1:
+                issues.append(
+                    _issue(
+                        "NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS",
+                        "contract binding cannot resolve an ambiguous accepted root",
+                        message,
+                    )
+                )
+                return issues
+            if len(roots) == 1 and roots[0][0] != str(negotiation_id):
+                issues.append(
+                    _issue(
+                        "CONTRACT_BINDING_ACCEPTANCE_INCOMPLETE",
+                        "contract binding must identify the exact current accepted root",
+                        message,
+                    )
+                )
+                return issues
         if negotiation is None or negotiation.get("state") != "ACCEPTED":
             issues.append(
                 _issue(
@@ -1153,13 +1277,13 @@ class CapnegV02Reducer:
             self.bound_contracts.append(str(message.get("contract_id")))
         return issues
 
-    def snapshot(self) -> dict[str, Any]:
+    def snapshot(self, *, include_internal: bool = False) -> dict[str, Any]:
         active = (
             self.negotiations.get(self.active_negotiation_id)
             if self.active_negotiation_id is not None
             else None
         )
-        return {
+        snapshot = {
             "state": active.get("state") if active else "COLLECTING_DECLARATIONS",
             "latest_declarations": [
                 _message_binding(self.latest_declarations[party])
@@ -1203,6 +1327,18 @@ class CapnegV02Reducer:
             "issues": copy.deepcopy(self.issues),
             "errors": [issue["code"] for issue in self.issues],
         }
+        if include_internal:
+            snapshot["_negotiation_contexts"] = {
+                negotiation_id: {
+                    "session_id": negotiation.get("result", {}).get("session_id"),
+                    "contract_id": negotiation.get("result", {}).get("contract_id"),
+                    "participants": copy.deepcopy(
+                        negotiation.get("result", {}).get("participants", [])
+                    ),
+                }
+                for negotiation_id, negotiation in self.negotiations.items()
+            }
+        return snapshot
 
 
 def reduce_capneg_v02(
@@ -1213,6 +1349,7 @@ def reduce_capneg_v02(
     key_map: dict[str, Any] | None = None,
     crypto_available: bool = True,
     invalid_messages: dict[int, list[dict[str, Any]]] | None = None,
+    include_internal: bool = False,
 ) -> dict[str, Any]:
     reducer = CapnegV02Reducer(
         rules=rules,
@@ -1228,4 +1365,4 @@ def reduce_capneg_v02(
             message_valid=index not in invalid_messages,
             invalid_issues=invalid_messages.get(index),
         )
-    return reducer.snapshot()
+    return reducer.snapshot(include_internal=include_internal)

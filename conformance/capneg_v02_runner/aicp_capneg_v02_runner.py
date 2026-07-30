@@ -6,7 +6,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,6 +36,21 @@ def _load(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_without_duplicate_keys(path: Path) -> Any:
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"{path}: duplicate JSON object key {key!r}")
+            result[key] = value
+        return result
+
+    return json.loads(
+        path.read_text(encoding="utf-8"),
+        object_pairs_hook=unique_object,
+    )
+
+
 def _failure(
     test_id: str,
     detail: str,
@@ -51,7 +66,7 @@ def _failure(
     }
 
 
-def _run_case(
+def execute_case(
     case: dict[str, Any],
     *,
     message_schema: dict[str, Any],
@@ -66,28 +81,42 @@ def _run_case(
     key_map: dict[str, Any],
     jsonschema_available: bool,
     crypto_available: bool,
-) -> tuple[list[dict[str, Any]], bool]:
+    reducer_function: Callable[..., dict[str, Any]] = reduce_capneg_v02,
+    projection_validator_function: Callable[
+        ..., list[dict[str, Any]]
+    ] = validate_session_state_projection_v2,
+    message_validity_validator: Callable[
+        ..., tuple[dict[int, list[dict[str, Any]]], list[dict[str, Any]]]
+    ] = validate_messages,
+    observation_normalizer: Callable[
+        [list[dict[str, Any]]], list[dict[str, Any]]
+    ] = normalize_observations,
+) -> dict[str, Any]:
     case_id = str(case.get("id"))
     messages = case.get("messages")
     if not isinstance(messages, list) or not all(
         isinstance(message, dict) for message in messages
     ):
-        return [
-            _failure(
-                "RUNNER-CASE-SHAPE-01",
-                "case messages must be an array of objects",
-                case_id=case_id,
-            )
-        ], False
-    expected_observations = case.get(
-        "expected_error_observations",
-        case.get("expected", {}).get("error_observations", []),
+        return {
+            "ran": False,
+            "failures": [
+                _failure(
+                    "RUNNER-CASE-SHAPE-01",
+                    "case messages must be an array of objects",
+                    case_id=case_id,
+                )
+            ],
+            "observations": [],
+            "snapshot": {},
+        }
+    case_execution = case.get("execution_metadata", {})
+    effective_crypto_available = (
+        False
+        if isinstance(case_execution, dict)
+        and case_execution.get("crypto_available") is False
+        else crypto_available
     )
-    expected_state = case.get(
-        "expected_final_state",
-        case.get("expected", {}).get("final_state", {}),
-    )
-    invalid, transcript_issues = validate_messages(
+    invalid, transcript_issues = message_validity_validator(
         messages,
         message_schema=message_schema,
         capneg_schema=capneg_schema,
@@ -97,15 +126,14 @@ def _run_case(
         registered_messages=registered_messages,
         key_map=key_map,
         jsonschema_available=jsonschema_available,
-        crypto_available=crypto_available,
+        crypto_available=effective_crypto_available,
     )
-    failures: list[dict[str, Any]] = []
-    snapshot = reduce_capneg_v02(
+    snapshot = reducer_function(
         messages,
         rules=rules,
         registered_reason_codes=registered_reasons,
         key_map=key_map,
-        crypto_available=crypto_available,
+        crypto_available=effective_crypto_available,
         invalid_messages=invalid,
     )
     observed_issues = list(snapshot["issues"])
@@ -115,7 +143,7 @@ def _run_case(
             continue
         if message.get("message_type") == "STATE_SYNC_RESPONSE":
             observed_issues.extend(
-                validate_session_state_projection_v2(
+                projection_validator_function(
                     message,
                     messages,
                     index,
@@ -123,7 +151,7 @@ def _run_case(
                     rules=rules,
                     registered_reason_codes=registered_reasons,
                     key_map=key_map,
-                    crypto_available=crypto_available,
+                    crypto_available=effective_crypto_available,
                     invalid_messages=invalid,
                 )
             )
@@ -136,7 +164,28 @@ def _run_case(
                 "detail": "the transcript did not reach fully accepted CAPNEG state",
             }
         )
-    observed = normalize_observations(observed_issues)
+    observed = observation_normalizer(observed_issues)
+    return {
+        "ran": True,
+        "failures": [],
+        "observations": observed,
+        "snapshot": snapshot,
+    }
+
+
+def compare_case_to_oracle(
+    case: dict[str, Any],
+    execution: dict[str, Any],
+    expectation: dict[str, Any],
+) -> list[dict[str, Any]]:
+    case_id = str(case.get("id"))
+    expected_observations = expectation["expected_error_observations"]
+    expected_state = expectation["expected_final_state"]
+    observed = execution["observations"]
+    snapshot = execution["snapshot"]
+    failures: list[dict[str, Any]] = list(execution.get("failures", []))
+    if not execution.get("ran", False):
+        return failures
     if observed != expected_observations:
         failures.append(
             _failure(
@@ -154,11 +203,109 @@ def _run_case(
         failures.append(
             _failure(
                 "RUNNER-EXPECTED-STATE-01",
-                "exact final CAPNEG state differs from the generated expectation",
+                "exact final CAPNEG state differs: "
+                f"expected {expected_state}, observed {observed_state}",
                 case_id=case_id,
             )
         )
-    return failures, True
+    return failures
+
+
+def evaluate_case(
+    case: dict[str, Any],
+    *,
+    oracle_cases: dict[str, Any],
+    **execution_dependencies: Any,
+) -> dict[str, Any]:
+    case_id = str(case.get("id"))
+    oracle_case_id = case.get("oracle_case_id")
+    if not isinstance(oracle_case_id, str) or not oracle_case_id:
+        return {
+            "passed": False,
+            "ran": False,
+            "failures": [
+                _failure(
+                    "RUNNER-ORACLE-REFERENCE-01",
+                    "case must identify one non-empty oracle_case_id",
+                    case_id=case_id,
+                )
+            ],
+            "observations": [],
+            "snapshot": {},
+        }
+    expectation = oracle_cases.get(oracle_case_id)
+    if not isinstance(expectation, dict):
+        return {
+            "passed": False,
+            "ran": False,
+            "failures": [
+                _failure(
+                    "RUNNER-ORACLE-MISSING-01",
+                    f"oracle entry {oracle_case_id!r} does not resolve",
+                    case_id=case_id,
+                )
+            ],
+            "observations": [],
+            "snapshot": {},
+        }
+    execution = execute_case(case, **execution_dependencies)
+    failures = compare_case_to_oracle(case, execution, expectation)
+    return {
+        **execution,
+        "passed": not failures,
+        "failures": failures,
+        "oracle_case_id": oracle_case_id,
+    }
+
+
+def _resolved_catalog_cases(
+    catalog_ref: str,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    catalog = _load(ROOT / catalog_ref)
+    cases: list[dict[str, Any]] = []
+    failures: list[dict[str, Any]] = []
+    for entry in catalog.get("cases", []):
+        if not isinstance(entry, dict):
+            failures.append(
+                _failure(
+                    "RUNNER-CASE-SHAPE-01",
+                    f"{catalog_ref}: every case entry must be an object",
+                )
+            )
+            continue
+        source_catalog = entry.get("source_catalog")
+        if not isinstance(source_catalog, str):
+            cases.append(entry)
+            continue
+        source_case_id = entry.get("case_id")
+        source = _load(ROOT / source_catalog)
+        matches = [
+            candidate
+            for candidate in source.get("cases", [])
+            if isinstance(candidate, dict)
+            and candidate.get("id") == source_case_id
+        ]
+        if len(matches) != 1:
+            failures.append(
+                _failure(
+                    "RUNNER-CASE-REFERENCE-01",
+                    f"{catalog_ref}: {source_catalog}#{source_case_id} resolved {len(matches)} times",
+                    case_id=str(entry.get("id")),
+                )
+            )
+            continue
+        resolved = dict(matches[0])
+        if entry.get("oracle_case_id") != resolved.get("oracle_case_id"):
+            failures.append(
+                _failure(
+                    "RUNNER-ORACLE-REFERENCE-01",
+                    f"{catalog_ref}: manifest oracle_case_id must equal the source case reference",
+                    case_id=str(entry.get("id")),
+                )
+            )
+            continue
+        cases.append(resolved)
+    return cases, failures
 
 
 def run_suite(
@@ -166,6 +313,17 @@ def run_suite(
     *,
     simulate_no_jsonschema: bool = False,
     simulate_no_crypto: bool = False,
+    reducer_function: Callable[..., dict[str, Any]] = reduce_capneg_v02,
+    projection_validator_function: Callable[
+        ..., list[dict[str, Any]]
+    ] = validate_session_state_projection_v2,
+    message_validity_validator: Callable[
+        ..., tuple[dict[int, list[dict[str, Any]]], list[dict[str, Any]]]
+    ] = validate_messages,
+    observation_normalizer: Callable[
+        [list[dict[str, Any]]], list[dict[str, Any]]
+    ] = normalize_observations,
+    case_ids: set[str] | None = None,
 ) -> dict[str, Any]:
     suite = _load(suite_path)
     message_schema = _load(ROOT / suite["schema_ref"])
@@ -193,6 +351,30 @@ def run_suite(
         entry["id"] for entry in _load(ROOT / "registry/capneg_reason_codes.json")
     }
     key_map = _load(ROOT / "fixtures/keys/GT_public_keys.json")
+    oracle_ref = suite.get("oracle_expectations_ref")
+    failures: list[dict[str, Any]] = []
+    if not isinstance(oracle_ref, str):
+        oracle_cases: dict[str, Any] = {}
+        failures.append(
+            _failure(
+                "RUNNER-ORACLE-REFERENCE-01",
+                "suite must identify oracle_expectations_ref",
+            )
+        )
+    else:
+        try:
+            oracle_document = _load_without_duplicate_keys(ROOT / oracle_ref)
+            oracle_cases = oracle_document.get("cases", {})
+            if not isinstance(oracle_cases, dict):
+                raise ValueError("oracle cases must be an object")
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            oracle_cases = {}
+            failures.append(
+                _failure(
+                    "RUNNER-ORACLE-LOAD-01",
+                    f"failed to load unique oracle entries: {exc}",
+                )
+            )
 
     jsonschema_available = (
         Draft202012Validator is not None and not simulate_no_jsonschema
@@ -216,13 +398,15 @@ def run_suite(
         )
         skipped_checks.append("CT-SIGNATURE-VERIFY-01")
 
-    failures: list[dict[str, Any]] = []
     positive_count = 0
     negative_count = 0
     for catalog_ref in suite.get("case_catalogs", []):
-        catalog = _load(ROOT / catalog_ref)
-        for case in catalog.get("cases", []):
+        catalog_cases, catalog_failures = _resolved_catalog_cases(catalog_ref)
+        failures.extend(catalog_failures)
+        for case in catalog_cases:
             case_id = str(case.get("id"))
+            if case_ids is not None and case_id not in case_ids:
+                continue
             if not crypto_available and case_requires_crypto(case.get("messages", [])):
                 skipped_case_ids.append(case_id)
                 continue
@@ -233,8 +417,9 @@ def run_suite(
                 positive_count += 1
             else:
                 negative_count += 1
-            case_failures, _ran = _run_case(
+            evaluation = evaluate_case(
                 case,
+                oracle_cases=oracle_cases,
                 message_schema=message_schema,
                 capneg_schema=capneg_schema,
                 projection_schema=projection_schema,
@@ -247,8 +432,12 @@ def run_suite(
                 key_map=key_map,
                 jsonschema_available=jsonschema_available,
                 crypto_available=crypto_available,
+                reducer_function=reducer_function,
+                projection_validator_function=projection_validator_function,
+                message_validity_validator=message_validity_validator,
+                observation_normalizer=observation_normalizer,
             )
-            failures.extend(case_failures)
+            failures.extend(evaluation["failures"])
 
     passed = not failures
     degraded = bool(degraded_reasons or skipped_checks or skipped_case_ids)

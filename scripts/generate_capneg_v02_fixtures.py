@@ -25,7 +25,6 @@ from capneg_v02_fixture_model import (  # noqa: E402
     COMPOSITION_HASH_DOMAIN,
     COMPOSITION_VERSION,
     canonical_profile_ref_key,
-    resolve_fixture_composition,
 )
 
 
@@ -42,6 +41,7 @@ PRIVATE_KEYS = ROOT / "fixtures/keys/TEST_private_keys.json"
 PUBLIC_KEYS = ROOT / "fixtures/keys/GT_public_keys.json"
 REASON_CODES = ROOT / "registry/capneg_reason_codes.json"
 ORACLE_EXPECTATIONS = OUT / "oracle_expectations.json"
+COMPOSITION_ORACLE = OUT / "composition_oracle.json"
 NEGOTIATION_HASH_DOMAIN = "capneg.negotiation_result"
 PROJECTION_OBJECT_TYPE = "session_state_projection"
 PROJECTION_VERSION = "aicp.session_state_projection.v2"
@@ -79,7 +79,7 @@ def configure_root(root: Path) -> None:
     global ROOT, OUT, POSITIVE_OUT, NEGATIVE_OUT, VECTORS_OUT
     global PROJECTION_OUT, PROJECTION_POSITIVE_OUT, PROJECTION_NEGATIVE_OUT
     global PRIVATE_KEYS, PUBLIC_KEYS, REASON_CODES, ORACLE_EXPECTATIONS
-    global RULES, PRIVATE_KEY_MAP, PUBLIC_KEY_MAP
+    global COMPOSITION_ORACLE, PRIVATE_KEY_MAP, PUBLIC_KEY_MAP
 
     ROOT = root.resolve()
     OUT = ROOT / "fixtures/extensions/capneg_v0_2"
@@ -93,12 +93,11 @@ def configure_root(root: Path) -> None:
     PUBLIC_KEYS = ROOT / "fixtures/keys/GT_public_keys.json"
     REASON_CODES = ROOT / "registry/capneg_reason_codes.json"
     ORACLE_EXPECTATIONS = OUT / "oracle_expectations.json"
-    RULES = _load(ROOT / "registry/aicp_profile_composition_rules.json")
+    COMPOSITION_ORACLE = OUT / "composition_oracle.json"
     PRIVATE_KEY_MAP = _load(PRIVATE_KEYS)
     PUBLIC_KEY_MAP = _load(PUBLIC_KEYS)
 
 
-RULES = _load(ROOT / "registry/aicp_profile_composition_rules.json")
 PRIVATE_KEY_MAP = _load(PRIVATE_KEYS)
 PUBLIC_KEY_MAP = _load(PUBLIC_KEYS)
 
@@ -181,6 +180,23 @@ def _canonical_composition(profiles: list[dict[str, str]]) -> dict[str, Any]:
     }
 
 
+def _reviewed_composition_expectation(
+    composition: dict[str, Any],
+) -> dict[str, Any]:
+    oracle = _load(COMPOSITION_ORACLE)
+    matches = [
+        entry.get("expected")
+        for entry in oracle.get("cases", {}).values()
+        if isinstance(entry, dict) and entry.get("input") == composition
+    ]
+    if len(matches) != 1 or not isinstance(matches[0], dict):
+        raise ValueError(
+            "composition must resolve exactly once in the reviewed composition oracle: "
+            f"{composition}"
+        )
+    return copy.deepcopy(matches[0])
+
+
 def _proposal_index(messages: list[dict[str, Any]], revision: int = 1) -> int:
     return next(
         index
@@ -245,7 +261,7 @@ def build_negotiation(
     session_id = f"session-{case_id.lower()}"
     contract_id = f"contract-{case_id.lower()}"
     composition = _canonical_composition(profiles)
-    resolved = resolve_fixture_composition(composition, RULES)
+    resolved = _reviewed_composition_expectation(composition)
     if resolved["errors"]:
         raise ValueError(f"{case_id}: invalid base composition {resolved['errors']}")
     signed_acceptances = (
@@ -610,6 +626,59 @@ def append_superseding_negotiation(
     return messages
 
 
+def append_new_negotiation(
+    messages: list[dict[str, Any]],
+    *,
+    suffix: str,
+    supersedes_negotiation_id: str | None,
+    profiles: list[dict[str, str]] | None = None,
+    acceptance_senders: tuple[str, ...] = (),
+) -> dict[str, Any]:
+    first = messages[_proposal_index(messages)]
+    old_result = first["payload"]["negotiation_result"]
+    new_result = copy.deepcopy(old_result)
+    new_result["negotiation_id"] = old_result["negotiation_id"] + f"-{suffix}"
+    new_result["proposal_revision"] = 1
+    if supersedes_negotiation_id is None:
+        new_result.pop("supersedes_negotiation_id", None)
+    else:
+        new_result["supersedes_negotiation_id"] = supersedes_negotiation_id
+    if profiles is not None:
+        composition = _canonical_composition(profiles)
+        resolved = _reviewed_composition_expectation(composition)
+        new_result["selected"].update(
+            {
+                "crypto_profiles": resolved["required_crypto_profiles"],
+                "profile_composition": composition,
+                "profile_composition_hash": resolved["composition_hash"],
+                "required_extensions": resolved["required_extensions"],
+                "required_policy_categories": resolved[
+                    "required_policy_categories"
+                ],
+            }
+        )
+    proposal = _new_message(
+        session_id=old_result["session_id"],
+        contract_id=old_result["contract_id"],
+        index=len(messages) + 1,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_PROPOSE",
+        payload={
+            "capneg_version": "0.2",
+            "proposal_revision": 1,
+            "negotiation_result": new_result,
+            "negotiation_result_hash": object_hash(
+                NEGOTIATION_HASH_DOMAIN, new_result
+            ),
+        },
+    )
+    messages.append(proposal)
+    _rehash_preserving_signatures(messages)
+    for sender in acceptance_senders:
+        append_decision(messages, sender=sender, proposal=proposal)
+    return proposal
+
+
 def _rehash_preserving_signatures(messages: list[dict[str, Any]]) -> None:
     signed_ids = {
         message["message_id"]
@@ -743,6 +812,7 @@ def finalize_case(
     required_error: str | None = None,
     invalid_messages: dict[int, str] | None = None,
     require_accepted: bool = False,
+    execution_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     invalid_messages = invalid_messages or {}
     oracle = _load(ORACLE_EXPECTATIONS)
@@ -763,7 +833,7 @@ def finalize_case(
         raise ValueError(
             f"{case_id}: required error {required_error} absent from reviewed oracle"
         )
-    return {
+    result = {
         "id": case_id,
         "description": description,
         "expect_pass": expect_pass,
@@ -771,9 +841,11 @@ def finalize_case(
         "invalid_message_indices": sorted(invalid_messages),
         "requires_jsonschema": bool(expectation.get("requires_jsonschema", False)),
         "require_accepted": require_accepted,
-        "expected_error_observations": observations,
-        "expected_final_state": final_state,
+        "oracle_case_id": case_id,
     }
+    if execution_metadata:
+        result["execution_metadata"] = copy.deepcopy(execution_metadata)
+    return result
 
 
 def _semantic_mutation_case(
@@ -1034,7 +1106,76 @@ def positive_cases() -> list[dict[str, Any]]:
             expect_pass=True,
         )
     )
-    return sorted(cases, key=lambda case: case["id"])
+
+    successor_proposed = build_negotiation(
+        [MEDIATED, RESUMABLE], case_id="P18"
+    )
+    root_id = successor_proposed[2]["payload"]["negotiation_result"][
+        "negotiation_id"
+    ]
+    append_new_negotiation(
+        successor_proposed,
+        suffix="successor",
+        supersedes_negotiation_id=root_id,
+    )
+    cases.append(
+        finalize_case(
+            "P18",
+            "explicit successor proposal leaves the accepted predecessor current",
+            successor_proposed,
+            expect_pass=True,
+        )
+    )
+
+    rejected_successor = build_negotiation(
+        [MEDIATED, RESUMABLE], case_id="P19"
+    )
+    root_id = rejected_successor[2]["payload"]["negotiation_result"][
+        "negotiation_id"
+    ]
+    successor = append_new_negotiation(
+        rejected_successor,
+        suffix="successor",
+        supersedes_negotiation_id=root_id,
+    )
+    append_decision(
+        rejected_successor,
+        sender=PARTY_B,
+        message_type="CAPABILITIES_REJECT",
+        proposal=successor,
+    )
+    cases.append(
+        finalize_case(
+            "P19",
+            "rejected successor leaves the predecessor accepted",
+            rejected_successor,
+            expect_pass=True,
+        )
+    )
+
+    replayed_successor = build_negotiation(
+        [MEDIATED, RESUMABLE], case_id="P20"
+    )
+    root_id = replayed_successor[2]["payload"]["negotiation_result"][
+        "negotiation_id"
+    ]
+    successor = append_new_negotiation(
+        replayed_successor,
+        suffix="successor",
+        supersedes_negotiation_id=root_id,
+        acceptance_senders=(PARTY_A, PARTY_B),
+    )
+    append_decision(replayed_successor, sender=PARTY_B, proposal=successor)
+    append_decision(replayed_successor, sender=PARTY_A, proposal=successor)
+    cases.append(
+        finalize_case(
+            "P20",
+            "accepted successor decisions replay idempotently in reverse order",
+            replayed_successor,
+            expect_pass=True,
+        )
+    )
+    return sorted(cases, key=lambda case: int(case["id"][1:]))
 
 
 def negative_cases() -> list[dict[str, Any]]:
@@ -2708,36 +2849,139 @@ def negative_cases() -> list[dict[str, Any]]:
         )
     )
 
-    if len(cases) != 98:
-        raise ValueError(f"expected 98 negative families, generated {len(cases)}")
-    return sorted(cases, key=lambda case: case["id"])
-
-
-def composition_vectors() -> list[dict[str, Any]]:
-    definitions = [
-        ("singleton-base", [BASE]),
-        ("mediated-resumable", [MEDIATED, RESUMABLE]),
-        ("authenticated-mediated", [AUTH, MEDIATED]),
-        ("delegated-workflow", [DELEGATED, WORKFLOW]),
-        ("agent-media-bazaar", [AGENT_MEDIA, BAZAAR]),
-        ("redundant-base-mediated", [BASE, MEDIATED]),
-        ("exclusive-policy-dialects", [POLICY_ABAC, POLICY_LLM]),
-        ("core-family-conflict", [BASE_V02, MEDIATED]),
-    ]
-    vectors: list[dict[str, Any]] = []
-    for vector_id, profiles in definitions:
-        composition = {
-            "composition_version": COMPOSITION_VERSION,
-            "profiles": copy.deepcopy(profiles),
-        }
-        vectors.append(
-            {
-                "id": vector_id,
-                "input": composition,
-                "expected": resolve_fixture_composition(composition, RULES),
-            }
+    unlinked_same = build_negotiation([BASE], case_id="N99")
+    append_new_negotiation(
+        unlinked_same,
+        suffix="unlinked",
+        supersedes_negotiation_id=None,
+    )
+    cases.append(
+        finalize_case(
+            "N99",
+            "same-composition second root omits required supersession",
+            unlinked_same,
+            expect_pass=False,
+            required_error="NEGOTIATION_SUPERSESSION_REQUIRED",
         )
-    return vectors
+    )
+
+    unlinked_different = build_negotiation(
+        [MEDIATED, RESUMABLE], case_id="N100"
+    )
+    append_new_negotiation(
+        unlinked_different,
+        suffix="unlinked",
+        supersedes_negotiation_id=None,
+        profiles=[MEDIATED],
+    )
+    cases.append(
+        finalize_case(
+            "N100",
+            "different-composition second root omits required supersession",
+            unlinked_different,
+            expect_pass=False,
+            required_error="NEGOTIATION_SUPERSESSION_REQUIRED",
+        )
+    )
+
+    accept_unlinked = build_negotiation([BASE], case_id="N101")
+    append_new_negotiation(
+        accept_unlinked,
+        suffix="unlinked",
+        supersedes_negotiation_id=None,
+        acceptance_senders=(PARTY_A, PARTY_B),
+    )
+    cases.append(
+        finalize_case(
+            "N101",
+            "attempt to fully accept an unlinked second root",
+            accept_unlinked,
+            expect_pass=False,
+            required_error="NEGOTIATION_SUPERSESSION_REQUIRED",
+        )
+    )
+
+    forked_successors = build_negotiation([BASE], case_id="N102")
+    root_id = forked_successors[2]["payload"]["negotiation_result"][
+        "negotiation_id"
+    ]
+    first_successor = append_new_negotiation(
+        forked_successors,
+        suffix="successor-a",
+        supersedes_negotiation_id=root_id,
+    )
+    other_successor = append_new_negotiation(
+        forked_successors,
+        suffix="successor-b",
+        supersedes_negotiation_id=root_id,
+    )
+    append_decision(
+        forked_successors, sender=PARTY_A, proposal=first_successor
+    )
+    append_decision(
+        forked_successors, sender=PARTY_B, proposal=first_successor
+    )
+    append_decision(
+        forked_successors, sender=PARTY_A, proposal=other_successor
+    )
+    append_decision(
+        forked_successors, sender=PARTY_B, proposal=other_successor
+    )
+    cases.append(
+        finalize_case(
+            "N102",
+            "successor decisions cannot replay through a predecessor superseded by another successor",
+            forked_successors,
+            expect_pass=False,
+            required_error="NEGOTIATION_SUPERSESSION_INVALID",
+        )
+    )
+
+    unsigned_without_crypto = build_negotiation([AUTH], case_id="N103")[:4]
+    unsigned_without_crypto[-1].pop("signatures", None)
+    _rehash(unsigned_without_crypto)
+    cases.append(
+        finalize_case(
+            "N103",
+            "direct Authenticated Base acceptance requires a signature without crypto",
+            unsigned_without_crypto,
+            expect_pass=False,
+            required_error="AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED",
+            execution_metadata={"crypto_available": False},
+        )
+    )
+
+    signed_without_crypto = build_negotiation([AUTH], case_id="N104")[:4]
+    cases.append(
+        finalize_case(
+            "N104",
+            "signed Authenticated Base acceptance cannot advance without verification",
+            signed_without_crypto,
+            expect_pass=False,
+            required_error="CRYPTO_VERIFICATION_UNAVAILABLE",
+            execution_metadata={"crypto_available": False},
+        )
+    )
+
+    if len(cases) != 104:
+        raise ValueError(f"expected 104 negative families, generated {len(cases)}")
+    return sorted(cases, key=lambda case: int(case["id"][1:]))
+
+
+def composition_vectors() -> list[dict[str, str]]:
+    return [
+        {"id": vector_id, "oracle_case_id": vector_id}
+        for vector_id in (
+            "singleton-base",
+            "mediated-resumable",
+            "authenticated-mediated",
+            "delegated-workflow",
+            "agent-media-bazaar",
+            "redundant-base-mediated",
+            "exclusive-policy-dialects",
+            "core-family-conflict",
+        )
+    ]
 
 
 def render_payload(
@@ -2745,7 +2989,7 @@ def render_payload(
     negative: list[dict[str, Any]],
 ) -> tuple[str, str, str, str, str]:
     metadata = {
-        "fixture_version": "aicp.capneg_v0_2.fixtures.v2",
+        "fixture_version": "aicp.capneg_v0_2.fixtures.v3",
         "generator": "scripts/generate_capneg_v02_fixtures.py",
     }
     positive_payload = {
@@ -2761,20 +3005,25 @@ def render_payload(
         "cases": negative,
     }
     vectors_payload = {
-        "vector_version": "aicp.capneg_v0_2.cross_language.v2",
+        "vector_version": "aicp.capneg_v0_2.cross_language.v3",
         "generator": "scripts/generate_capneg_v02_fixtures.py",
+        "composition_oracle_ref": (
+            "fixtures/extensions/capneg_v0_2/composition_oracle.json"
+        ),
+        "negotiation_oracle_ref": (
+            "fixtures/extensions/capneg_v0_2/oracle_expectations.json"
+        ),
         "composition_vectors": composition_vectors(),
         "negotiation_vectors": [
             {
                 "id": case["id"],
-                "messages": case["messages"],
-                "invalid_message_indices": case["invalid_message_indices"],
-                "requires_jsonschema": case["requires_jsonschema"],
-                "require_accepted": case["require_accepted"],
-                "expected_error_observations": case[
-                    "expected_error_observations"
-                ],
-                "expected_final_state": case["expected_final_state"],
+                "source_catalog": (
+                    "fixtures/extensions/capneg_v0_2/positive_cases.json"
+                    if case["expect_pass"]
+                    else "fixtures/extensions/capneg_v0_2/negative_cases.json"
+                ),
+                "case_id": case["id"],
+                "oracle_case_id": case["oracle_case_id"],
             }
             for case in positive + negative
             if case["id"]
@@ -2791,6 +3040,9 @@ def render_payload(
                 "P15",
                 "P16",
                 "P17",
+                "P18",
+                "P19",
+                "P20",
                 "N06",
                 "N11",
                 "N25",
@@ -2844,6 +3096,12 @@ def render_payload(
                 "N94",
                 "N97",
                 "N98",
+                "N99",
+                "N100",
+                "N101",
+                "N102",
+                "N103",
+                "N104",
             }
         ],
     }
@@ -2853,7 +3111,14 @@ def render_payload(
         "expectation": "pass",
         "case_count": 4,
         "cases": [
-            case
+            {
+                "id": case["id"],
+                "source_catalog": (
+                    "fixtures/extensions/capneg_v0_2/positive_cases.json"
+                ),
+                "case_id": case["id"],
+                "oracle_case_id": case["oracle_case_id"],
+            }
             for case in positive
             if case["id"] in {"P09", "P15", "P16", "P17"}
         ],
@@ -2869,7 +3134,17 @@ def render_payload(
         "capability": PROJECTION_VERSION,
         "expectation": "fail",
         "case_count": len(projection_negative_cases),
-        "cases": projection_negative_cases,
+        "cases": [
+            {
+                "id": case["id"],
+                "source_catalog": (
+                    "fixtures/extensions/capneg_v0_2/negative_cases.json"
+                ),
+                "case_id": case["id"],
+                "oracle_case_id": case["oracle_case_id"],
+            }
+            for case in projection_negative_cases
+        ],
     }
     render = lambda payload: json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     return (

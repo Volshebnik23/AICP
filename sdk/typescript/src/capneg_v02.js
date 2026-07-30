@@ -62,6 +62,17 @@ function messageBinding(message) {
   };
 }
 
+function negotiationContextKey(result) {
+  const participants = Array.isArray(result?.participants)
+    ? [...result.participants].sort()
+    : [];
+  return JSON.stringify([
+    result?.session_id ?? null,
+    result?.contract_id ?? null,
+    participants,
+  ]);
+}
+
 function verifyMessageSignatures(message, keyMap) {
   const signatures = message.signatures;
   if (!Array.isArray(signatures) || signatures.length === 0) {
@@ -199,10 +210,11 @@ function selectionErrors(result, declarations, resolved) {
 }
 
 class Reducer {
-  constructor({ rules, reasonCodes, keyMap }) {
+  constructor({ rules, reasonCodes, keyMap, cryptoAvailable = true }) {
     this.rules = rules;
     this.reasonCodes = reasonCodes;
     this.keyMap = keyMap;
+    this.cryptoAvailable = cryptoAvailable;
     this.latestDeclarations = new Map();
     this.capabilityIds = new Map();
     this.negotiations = new Map();
@@ -210,6 +222,32 @@ class Reducer {
     this.errors = [];
     this.issues = [];
     this.boundContracts = [];
+  }
+
+  currentAcceptedRoots(result) {
+    const contextKey = negotiationContextKey(result);
+    return [...this.negotiations.entries()]
+      .filter(
+        ([, negotiation]) =>
+          negotiation.state === "ACCEPTED" &&
+          (negotiation.superseded_by === null ||
+            negotiation.superseded_by === undefined) &&
+          negotiationContextKey(negotiation.result) === contextKey,
+      )
+      .sort(([left], [right]) => left.localeCompare(right));
+  }
+
+  acceptedRootIssues(result, negotiationId) {
+    const roots = this.currentAcceptedRoots(result);
+    if (roots.length > 1) return ["NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS"];
+    if (roots.length === 0 || roots[0][0] === negotiationId) return [];
+    if (result.supersedes_negotiation_id === undefined) {
+      return ["NEGOTIATION_SUPERSESSION_REQUIRED"];
+    }
+    if (result.supersedes_negotiation_id !== roots[0][0]) {
+      return [];
+    }
+    return [];
   }
 
   declaration(message) {
@@ -340,6 +378,7 @@ class Reducer {
       ) {
         issues.push("PROPOSAL_SUPERSESSION_INVALID");
       }
+      issues.push(...this.acceptedRootIssues(result, negotiationId));
       if (result.supersedes_negotiation_id !== undefined) {
         const prior = this.negotiations.get(result.supersedes_negotiation_id);
         if (prior === undefined || prior.state !== "ACCEPTED") {
@@ -441,10 +480,29 @@ class Reducer {
       }
     }
     const supersedes = negotiation.result.supersedes_negotiation_id;
+    issues.push(
+      ...this.acceptedRootIssues(
+        negotiation.result,
+        String(message.payload?.negotiation_id),
+      ),
+    );
     if (supersedes !== undefined) {
       const prior = this.negotiations.get(supersedes);
-      if (prior === undefined || prior.state !== "ACCEPTED") {
+      const priorIsCurrentRoot =
+        prior !== undefined &&
+        prior.state === "ACCEPTED" &&
+        (prior.superseded_by === null || prior.superseded_by === undefined);
+      const priorIsReplaySafe =
+        prior !== undefined &&
+        prior.state === "SUPERSEDED" &&
+        prior.superseded_by === negotiation.result.negotiation_id;
+      if (!priorIsCurrentRoot && !priorIsReplaySafe) {
         issues.push("NEGOTIATION_SUPERSESSION_INVALID");
+      } else if (
+        negotiationContextKey(prior.result) !==
+        negotiationContextKey(negotiation.result)
+      ) {
+        issues.push("NEGOTIATION_SUPERSESSION_CONTEXT_MISMATCH");
       }
     }
     return [negotiation, issues];
@@ -463,6 +521,8 @@ class Reducer {
     if (selectedProfiles.has(AUTHENTICATED_PROFILE_KEY)) {
       if (!Array.isArray(signatures) || signatures.length === 0) {
         issues.push("AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED");
+      } else if (!this.cryptoAvailable) {
+        issues.push("CRYPTO_VERIFICATION_UNAVAILABLE");
       } else {
         const verified = verifyMessageSignatures(message, this.keyMap);
         if (!verified.allValid) {
@@ -472,7 +532,9 @@ class Reducer {
         }
       }
     } else if (Array.isArray(signatures) && signatures.length > 0) {
-      if (!verifyMessageSignatures(message, this.keyMap).allValid) {
+      if (!this.cryptoAvailable) {
+        issues.push("CRYPTO_VERIFICATION_UNAVAILABLE");
+      } else if (!verifyMessageSignatures(message, this.keyMap).allValid) {
         issues.push("ACCEPTANCE_SIGNATURE_INVALID");
       }
     }
@@ -607,6 +669,20 @@ class Reducer {
       this.errors.push("CONTRACT_BINDING_SUPERSEDED");
       return;
     }
+    if (negotiation !== undefined) {
+      const roots = this.currentAcceptedRoots(negotiation.result);
+      if (roots.length > 1) {
+        this.errors.push("NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS");
+        return;
+      }
+      if (
+        roots.length === 1 &&
+        roots[0][0] !== String(binding.negotiation_id)
+      ) {
+        this.errors.push("CONTRACT_BINDING_ACCEPTANCE_INCOMPLETE");
+        return;
+      }
+    }
     if (negotiation === undefined || negotiation.state !== "ACCEPTED") {
       this.errors.push("CONTRACT_BINDING_ACCEPTANCE_INCOMPLETE");
       return;
@@ -694,12 +770,12 @@ class Reducer {
     }
   }
 
-  snapshot() {
+  snapshot(includeInternal = false) {
     const active =
       this.activeNegotiationId === null
         ? null
         : this.negotiations.get(this.activeNegotiationId);
-    return {
+    const snapshot = {
       state: active?.state ?? "COLLECTING_DECLARATIONS",
       latest_declarations: [...this.latestDeclarations.keys()]
         .sort()
@@ -736,14 +812,40 @@ class Reducer {
       issues: clone(this.issues),
       errors: [...this.errors],
     };
+    if (includeInternal) {
+      snapshot._negotiation_contexts = Object.fromEntries(
+        [...this.negotiations.entries()].map(([negotiationId, negotiation]) => [
+          negotiationId,
+          {
+            session_id: negotiation.result?.session_id ?? null,
+            contract_id: negotiation.result?.contract_id ?? null,
+            participants: clone(negotiation.result?.participants ?? []),
+          },
+        ]),
+      );
+    }
+    return snapshot;
   }
 }
 
 export function reduceCapnegV02(
   messages,
-  { rules, reasonCodes, keyMap, invalidIndices = [], invalidReasons = {} },
+  {
+    rules,
+    reasonCodes,
+    keyMap,
+    cryptoAvailable = true,
+    invalidIndices = [],
+    invalidReasons = {},
+    includeInternal = false,
+  },
 ) {
-  const reducer = new Reducer({ rules, reasonCodes, keyMap });
+  const reducer = new Reducer({
+    rules,
+    reasonCodes,
+    keyMap,
+    cryptoAvailable,
+  });
   const invalid = new Set(invalidIndices);
   messages.forEach((message, index) => {
     reducer.apply(
@@ -753,7 +855,7 @@ export function reduceCapnegV02(
       index,
     );
   });
-  return reducer.snapshot();
+  return reducer.snapshot(includeInternal);
 }
 
 export function validateProjectionV2(
@@ -826,13 +928,30 @@ export function validateProjectionV2(
       keyMap,
       invalidIndices: prefixInvalid,
       invalidReasons,
+      includeInternal: true,
     });
   }
+  const targetParticipants = Array.isArray(projection.participant_refs)
+    ? [...projection.participant_refs].sort()
+    : null;
   const acceptedCandidates =
     prefixState?.negotiations?.filter(
-      (negotiation) =>
-        negotiation.state === "ACCEPTED",
+      (negotiation) => {
+        const context =
+          prefixState._negotiation_contexts?.[negotiation.negotiation_id] ?? {};
+        return (
+          negotiation.state === "ACCEPTED" &&
+          context.session_id === projection.session_id &&
+          context.contract_id === projection.contract_id &&
+          (targetParticipants === null ||
+            JSON.stringify([...(context.participants ?? [])].sort()) ===
+              JSON.stringify(targetParticipants))
+        );
+      },
     ) ?? [];
+  if (acceptedCandidates.length > 1) {
+    issues.push("NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS");
+  }
   const acceptedNegotiation =
     acceptedCandidates.length === 1 ? acceptedCandidates[0] : null;
   if (prefixState !== null && acceptedNegotiation === null) {
@@ -867,6 +986,8 @@ export function evaluateCapnegVector(
   { rules, reasonCodes, keyMap, registeredExtensions },
 ) {
   const messages = vector.messages;
+  const cryptoAvailable =
+    vector.execution_metadata?.crypto_available !== false;
   const invalidReasons = {};
   const addInvalid = (index, code) => {
     invalidReasons[index] ??= [];
@@ -950,6 +1071,8 @@ export function evaluateCapnegVector(
               : "CAPNEG_SIGNATURE_INVALID",
           );
         }
+      } else if (!cryptoAvailable) {
+        addInvalid(index, "CRYPTO_VERIFICATION_UNAVAILABLE");
       } else {
         const verified = verifyMessageSignatures(message, keyMap);
         if (!verified.allValid) {
@@ -998,6 +1121,7 @@ export function evaluateCapnegVector(
     rules,
     reasonCodes,
     keyMap,
+    cryptoAvailable,
     invalidIndices,
     invalidReasons,
   });
