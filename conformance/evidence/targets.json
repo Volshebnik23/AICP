@@ -1,0 +1,25 @@
+{
+  "registry_version": "1.0",
+  "targets": [
+    {
+      "target_key": "aicp.session_state_projection@v1",
+      "target_kind": "capability",
+      "target_id": "aicp.session_state_projection",
+      "target_version": "v1",
+      "status": "experimental",
+      "target_catalog": "conformance/evidence/session_state_projection_v1_target.json",
+      "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+      "required_suites": [
+        "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
+      ],
+      "required_operations": [
+        "describe",
+        "canonicalize_hash",
+        "validate_transcript",
+        "project_session_state"
+      ],
+      "external_execution_mode": "full-capability",
+      "evidence_claim_type": "implements_capability"
+    }
+  ]
+}
