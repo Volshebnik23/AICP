@@ -147,17 +147,52 @@ def validate_session_state_projection_v2(
             key_map=key_map,
             crypto_available=crypto_available,
             invalid_messages=prefix_invalid,
+            include_internal=True,
         )
 
+    projection_participants = projection.get("participant_refs")
+    target_participants = (
+        sorted(projection_participants)
+        if isinstance(projection_participants, list)
+        and all(isinstance(party, str) for party in projection_participants)
+        else None
+    )
+    negotiation_contexts = (
+        prefix_state.get("_negotiation_contexts", {})
+        if prefix_state is not None
+        else {}
+    )
     accepted_candidates = (
         [
             negotiation
             for negotiation in prefix_state.get("negotiations", [])
             if negotiation.get("state") == "ACCEPTED"
+            and negotiation_contexts.get(
+                str(negotiation.get("negotiation_id")), {}
+            ).get("session_id")
+            == projection.get("session_id")
+            and negotiation_contexts.get(
+                str(negotiation.get("negotiation_id")), {}
+            ).get("contract_id")
+            == projection.get("contract_id")
+            and (
+                target_participants is None
+                or sorted(
+                    negotiation_contexts.get(
+                        str(negotiation.get("negotiation_id")), {}
+                    ).get("participants", [])
+                )
+                == target_participants
+            )
         ]
         if prefix_state is not None
         else []
     )
+    if len(accepted_candidates) > 1:
+        issue(
+            "NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS",
+            "projection cannot resolve more than one current accepted root for its negotiation context",
+        )
     accepted_negotiation = (
         accepted_candidates[0] if len(accepted_candidates) == 1 else None
     )

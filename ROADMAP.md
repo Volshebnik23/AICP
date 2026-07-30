@@ -90,11 +90,14 @@ _Last updated: 2026-07-29_
   authority, policy, transport, or external-conformance claim.
 - **Dependencies:** shipped M60 result, stable CAPNEG v0.1, the 16 registered product
   profiles, and existing Core v0.1 hashing/envelope semantics.
-- **Completion evidence:** `CN_CAPNEG_0.2` passes 17 positive and 98 exact expected-fail
+- **Completion evidence:** `CN_CAPNEG_0.2` passes 20 positive and 104 exact expected-fail
   cases from a reducer-independent reviewed oracle; projection v2 passes four positive
-  and nine negative temporal cases. Python/TypeScript vectors and direct tests match
+  and nine negative temporal cases. Executable mutation controls traverse the real suite
+  evaluator/comparator; message catalogs, semantic oracles, cross-language manifests, and
+  projection manifests are single-source. Python/TypeScript vectors and direct tests match
   exact error origin/multiplicity, selection rules, replay/rejection/supersession behavior,
-  contract binding, temporal projection, and final multi-negotiation state. Non-degraded
+  one accepted root per context, fail-closed no-crypto reduction, contract binding,
+  temporal projection, and final multi-negotiation state. Non-degraded
   execution emits only `AICP-EXT-CAPNEG-0.2`; missing schema/crypto dependencies skip
   content-derived cases, suppress the mark, and report degradation explicitly.
 - **Independent-evidence boundary:** CAPNEG v0.2 and projection v2 are shipped experimental

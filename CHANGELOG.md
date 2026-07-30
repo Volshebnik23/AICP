@@ -18,7 +18,7 @@ All notable repo-backed release metadata changes should be recorded here.
 - Added separately selected experimental EXT-CAPNEG v0.2 with a generated 16-profile
   composition-rules registry, canonical set/result hashing, declaration/revision/full-
   acceptance state reduction, contract binding, Authenticated Base Ed25519 enforcement,
-  17 positive and 98 exact expected-fail cases, and Python/TypeScript shared/direct parity.
+  20 positive and 104 exact expected-fail cases, and Python/TypeScript shared/direct parity.
 - Added composition-aware session-state projection v2 with four positive and nine negative
   cases and an internal-only evidence mark.
 
@@ -54,6 +54,11 @@ All notable repo-backed release metadata changes should be recorded here.
   Python/TypeScript channel/limit parity, prefix-exact projection v2, and frozen Core
   v0.1 contract validation. CAPNEG v0.1, Core, projection v1, UAT, and IUT surfaces were
   not changed.
+- Completed the M61 follow-up correction with executable oracle mutation controls, one
+  current accepted root per session/contract/participant context, replay-safe successor
+  supersession, direct fail-closed no-crypto reducers, reviewed composition expectations,
+  and reference-only cross-language/projection manifests. Generated messages and expected
+  semantics now each have one canonical representation.
 
 ### Known limitations
 - No real external or pairwise interop submission is present.

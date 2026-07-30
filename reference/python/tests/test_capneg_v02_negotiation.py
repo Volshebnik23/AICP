@@ -22,17 +22,22 @@ def _load(relative: str) -> dict:
 def test_capneg_v02_has_exact_generated_fixture_totals() -> None:
     positive = _load("fixtures/extensions/capneg_v0_2/positive_cases.json")
     negative = _load("fixtures/extensions/capneg_v0_2/negative_cases.json")
-    assert positive["case_count"] == len(positive["cases"]) == 17
-    assert negative["case_count"] == len(negative["cases"]) == 98
+    oracle = _load("fixtures/extensions/capneg_v0_2/oracle_expectations.json")[
+        "cases"
+    ]
+    assert positive["case_count"] == len(positive["cases"]) == 20
+    assert negative["case_count"] == len(negative["cases"]) == 104
     assert [case["id"] for case in positive["cases"]] == [
-        f"P{index:02d}" for index in range(1, 18)
+        f"P{index:02d}" for index in range(1, 21)
     ]
     assert [case["id"] for case in negative["cases"]] == [
-        f"N{index:02d}" for index in range(1, 99)
+        f"N{index:02d}" for index in range(1, 105)
     ]
     for case in negative["cases"]:
-        assert case["expected_error_observations"]
-        for observation in case["expected_error_observations"]:
+        assert case["oracle_case_id"] == case["id"]
+        expectation = oracle[case["oracle_case_id"]]
+        assert expectation["expected_error_observations"]
+        for observation in expectation["expected_error_observations"]:
             assert set(observation) == {
                 "code",
                 "message_index",
@@ -40,7 +45,7 @@ def test_capneg_v02_has_exact_generated_fixture_totals() -> None:
                 "exact_count",
             }
             assert observation["exact_count"] >= 1
-        final_state = case["expected_final_state"]
+        final_state = expectation["expected_final_state"]
         assert "state" in final_state
         assert "current_revision" in final_state
         assert "acceptances" in final_state
@@ -92,8 +97,8 @@ def test_capneg_v02_full_suite_emits_only_its_direct_mark() -> None:
     )
     assert report["passed"] is True
     assert report["degraded"] is False
-    assert report["positive_cases"] == 17
-    assert report["negative_cases"] == 98
+    assert report["positive_cases"] == 20
+    assert report["negative_cases"] == 104
     assert report["compatibility_marks"] == ["AICP-EXT-CAPNEG-0.2"]
 
 

@@ -35,8 +35,13 @@ tag, package publication, GA declaration, or final RC repackaging.
   declarations, makes rejection revision-terminal, enforces participant crypto minimums
   and same-context supersession, aligns Python/TypeScript selection semantics, validates
   bound Core v0.1 contracts, and evaluates projection v2 at its exact transcript prefix.
-  The strengthened corpus contains 17 positive and 98 negative CAPNEG cases plus four
+  The strengthened corpus contains 20 positive and 104 negative CAPNEG cases plus four
   positive and nine negative projection-v2 cases.
+- The M61 follow-up executes broken semantic implementations through the real suite
+  comparator, enforces one accepted negotiation root per exact context, keeps exact
+  successor replay safe after predecessor supersession, makes direct reducers fail closed
+  without crypto verification, and replaces copied cross-language/projection evidence with
+  compact references to one message source and one reviewed semantic oracle.
 
 ### Current evidence limits
 

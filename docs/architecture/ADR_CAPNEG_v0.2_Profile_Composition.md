@@ -29,6 +29,12 @@ accepted composition requires a new negotiation ID with an explicit supersession
 link. Supersession is same-session, same-contract, exact-participant-set only and takes
 effect after full successor acceptance.
 
+The tuple of session, contract, and canonical participant set has one current accepted
+root. A new negotiation in that context must explicitly name the root it supersedes.
+Parallel roots are invalid defensive state. A rejected or partial successor leaves the
+root accepted; only full acceptance supersedes it. Exact successor decisions remain
+idempotent after that transition only when the predecessor records that same successor.
+
 Decision envelopes are bound to the result's exact session and contract. Decisions
 revalidate the proposal's declaration bindings against the latest valid declarations;
 a rejection is terminal for its revision. Every participant-required crypto identifier
@@ -39,6 +45,13 @@ oracle catalog. Expected errors preserve message index, message ID, and multipli
 and expected state is never populated by the production reducer. Projection v2 likewise
 reduces the exact transcript prefix named by `as_of_message_hash`, rather than comparing
 with future final state.
+
+Messages are canonical only in the positive and negative case catalogs. Negotiation
+semantics are canonical only in `oracle_expectations.json`; composition semantics are
+canonical only in `composition_oracle.json`. Cross-language and projection artifacts
+contain references, not copied transcripts or outcomes. Oracle mutation tests execute the
+production suite evaluator and comparator, and direct Python/TypeScript tests assemble
+their transcripts without generated case catalogs.
 
 ## Rejected alternatives
 

@@ -7,6 +7,7 @@
   "payload_schema_ref": "schemas/extensions/session-state-projection-v2.schema.json",
   "capneg_payload_schema_ref": "schemas/extensions/ext-capneg-v0.2-payloads.schema.json",
   "composition_rules_ref": "registry/aicp_profile_composition_rules.json",
+  "oracle_expectations_ref": "fixtures/extensions/capneg_v0_2/oracle_expectations.json",
   "payload_surface": {
     "surface_kind": "capability",
     "surface_id": "aicp.session_state_projection",

@@ -13,10 +13,10 @@ cases are in `fixtures/extensions/capneg_v0_2/negative_cases.json`.
 | Stale or forked capability declarations | Proposals and decisions bind each participant's latest valid declaration | N23-N29, N69-N72 |
 | Proposal rollback or decision retargeting | Revisions are contiguous/predecessor-bound; decisions bind exact result, session, and contract | N30-N35, N39, N40, N52-N55, N66-N68 |
 | Rejection/replay state corruption | Rejection is terminal per revision; exact accept/reject replay is validated before idempotence | N36-N38, N57, N58, N73-N75, N94 |
-| Cross-context supersession | Only an accepted, unsuperseded same-session/contract/participant result may be superseded | N79-N82 |
+| Cross-context or missing supersession | One exact accepted root exists per session/contract/participant context; every later negotiation names it | N79-N82, N99-N102 |
 | Composition/result/Core-contract substitution | Frozen Core v0.1 schemas and envelope/object contract identity pass before exact CAPNEG binding | N21, N22, N41-N43, N88-N91 |
 | Projection time/substitution | Projection matches accepted state at its exact prior transcript prefix; branch-head-only evidence fails | N44-N47, N83-N87 |
-| Signature spoofing or partial validation | Auth acceptances require a sender signature; every present signature entry on every message validates | N17-N20, N51, N56-N65, N97, N98 |
+| Signature spoofing, unavailable verification, or partial validation | Auth acceptances require a sender signature even without a backend; present unverifiable signatures fail closed; every present signature entry validates | N17-N20, N51, N56-N65, N97, N98, N103, N104 |
 | Invalid-message state injection | Schema, ID, context, chain, hash, and signature invalidity blocks mutation and retains multiplicity | N48-N65, N95-N98 |
 | Unbounded rejection constraints | Alternative constraints are closed/versioned and preserve participant requirements | N92-N94 |
 | Composition explosion/resource abuse | Schema and rules enforce a bounded non-empty set; the registry maximum is 16 profiles | N01 and composition schema/rules validation |
@@ -30,6 +30,11 @@ The fixture serializer and production implementation do not generate the expecte
 result. A reviewed oracle catalog records exact message origin and multiplicity, with
 negative controls for context, signer, rejection, participant crypto, and projection-time
 defects.
+
+Those controls run deliberately broken implementations through the same case execution,
+observation normalization, oracle comparison, and suite-failure path as production. The
+reviewed oracle therefore detects wrong origin, wrong multiplicity, and unexpected
+observations rather than testing dictionary inequality.
 
 CAPNEG v0.2 does not prove real participant identity, authority to declare capabilities,
 truthfulness of implementation-support declarations, external component conformance,

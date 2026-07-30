@@ -1,0 +1,398 @@
+{
+  "oracle_version": "aicp.capneg.composition_oracle.v1",
+  "cases": {
+    "singleton-base": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-BASE", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:aQvYbMTnkMx0fctlMoPlKG-XAYAOiKqj_98c-DriYzc",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": ["conformance/core/CT_CORE_0.1.json"],
+        "required_extensions": [],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": ["AICP-Profile-BASE-0.1"],
+        "errors": []
+      }
+    },
+    "singleton-mediated": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-MEDIATED-BLOCKING", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:f0_2H0bNxeSS_TawKDqL2_Z51cqpMUdOkb8cecepLU0",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json"
+        ],
+        "required_extensions": ["EXT-CAPNEG", "EXT-ENFORCEMENT", "EXT-POLICY-EVAL"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": ["AICP-Profile-MEDIATED-BLOCKING-0.1"],
+        "errors": []
+      }
+    },
+    "singleton-authenticated": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-AUTHENTICATED-BASE", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:DqiJ6f_gzszExlj-mhlbacACjHCWvyrQh-V-GBwAiCA",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
+        ],
+        "required_extensions": [],
+        "required_crypto_profiles": ["aicp.crypto.ed25519.v1"],
+        "required_policy_categories": [],
+        "component_compatibility_marks": ["AICP-Profile-AUTHENTICATED-BASE-0.1"],
+        "errors": []
+      }
+    },
+    "singleton-mediated-ops": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-MEDIATED-BLOCKING-OPS", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:6ZhOsydhtxiUGDpsXe-FrwqDHaUmBzfDQIKYiWp8ikw",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/AL_ALERTS_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json"
+        ],
+        "required_extensions": ["EXT-ALERTS", "EXT-CAPNEG", "EXT-ENFORCEMENT", "EXT-POLICY-EVAL", "EXT-RESUME"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": ["AICP-Profile-MEDIATED-BLOCKING-OPS-0.1"],
+        "errors": []
+      }
+    },
+    "singleton-execution-interop": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-EXECUTION-INTEROP", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:f8na0QQ3lc6r-y6p0EkBde1ir8B1xMOb2FEFwBTVvSU",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json"
+        ],
+        "required_extensions": ["EXT-EXECUTION-LIFECYCLE", "EXT-OBJECT-RESYNC", "EXT-RESUME"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": ["AICP-Profile-EXECUTION-INTEROP-0.1"],
+        "errors": []
+      }
+    },
+    "singleton-policy-abac-rbac": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-POLICY-ABAC-RBAC", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:cscMrNziJJxplr_y5ooYLlcFEGd5PynzNF-H_oN8rq8",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json"
+        ],
+        "required_extensions": ["EXT-POLICY-EVAL"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": ["AICP-Profile-POLICY-ABAC-RBAC-0.1"],
+        "errors": []
+      }
+    },
+    "singleton-bazaar-reception": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-BAZAAR-RECEPTION", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:CKng_Jj0vnOeMUSKwwwe8YzC_-Hqwl0Lpr52Ug2mie8",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json"
+        ],
+        "required_extensions": ["EXT-ADMISSION", "EXT-ENFORCEMENT", "EXT-PARTICIPANTS", "EXT-POLICY-EVAL", "EXT-QUEUE-LEASES"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": ["artifact_constraints", "content_budgets", "facilitation", "traffic_shaping"],
+        "component_compatibility_marks": ["AICP-Profile-BAZAAR-RECEPTION-0.1"],
+        "errors": []
+      }
+    },
+    "mediated-resumable": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-MEDIATED-BLOCKING", "profile_version": "0.1"},
+          {"profile_id": "AICP-RESUMABLE-SESSIONS", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:R7J-Tf8O7els55GKLJQm3MfF6dw1gDerJTjkB0I0CGg",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json"
+        ],
+        "required_extensions": ["EXT-CAPNEG", "EXT-ENFORCEMENT", "EXT-OBJECT-RESYNC", "EXT-POLICY-EVAL", "EXT-RESUME"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": [
+          "AICP-Profile-MEDIATED-BLOCKING-0.1",
+          "AICP-Profile-RESUMABLE-SESSIONS-0.1"
+        ],
+        "errors": []
+      }
+    },
+    "authenticated-mediated": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-AUTHENTICATED-BASE", "profile_version": "0.1"},
+          {"profile_id": "AICP-MEDIATED-BLOCKING", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:TXyF7nnrW3HE0sArh3StOwUC-JmW2ZRry0W6PEiVDMo",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
+        ],
+        "required_extensions": ["EXT-CAPNEG", "EXT-ENFORCEMENT", "EXT-POLICY-EVAL"],
+        "required_crypto_profiles": ["aicp.crypto.ed25519.v1"],
+        "required_policy_categories": [],
+        "component_compatibility_marks": [
+          "AICP-Profile-AUTHENTICATED-BASE-0.1",
+          "AICP-Profile-MEDIATED-BLOCKING-0.1"
+        ],
+        "errors": []
+      }
+    },
+    "delegated-workflow": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-DELEGATED-IDENTITY", "profile_version": "0.1"},
+          {"profile_id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:SNfy9yVApXqSI77Di99kfFE0eJv0TIxLnops0W_mrDo",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/AL_ALERTS_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+          "conformance/extensions/DL_DELEGATION_0.1.json",
+          "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+          "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/RS_RESUME_0.1.json",
+          "conformance/extensions/SA_SECURITY_ALERT_0.1.json",
+          "conformance/extensions/TG_TOOL_GATING_0.1.json",
+          "conformance/extensions/WF_WORKFLOW_SYNC_0.1.json"
+        ],
+        "required_extensions": [
+          "EXT-ALERTS",
+          "EXT-CAPNEG",
+          "EXT-DELEGATED-IDENTITY",
+          "EXT-DELEGATION",
+          "EXT-IDENTITY-LC",
+          "EXT-OBJECT-RESYNC",
+          "EXT-POLICY-EVAL",
+          "EXT-RESUME",
+          "EXT-SECURITY-ALERT",
+          "EXT-TOOL-GATING",
+          "EXT-WORKFLOW-SYNC"
+        ],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": [
+          "AICP-Profile-DELEGATED-IDENTITY-0.1",
+          "AICP-Profile-WORKFLOW-ORCHESTRATION-DELEGATION-0.1"
+        ],
+        "errors": []
+      }
+    },
+    "agent-media-bazaar": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-AGENT-MEDIA", "profile_version": "0.1"},
+          {"profile_id": "AICP-BAZAAR-RECEPTION", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": "sha256:zjtKTu5oJA-jSzeQ_LBqNWB69TXHO7X4mRlCrWxCwv0",
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/AD_ADMISSION_0.1.json",
+          "conformance/extensions/CH_CHANNELS_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/PB_PUBLICATIONS_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/QL_QUEUE_LEASES_0.1.json",
+          "conformance/extensions/SB_SUBSCRIPTIONS_0.1.json"
+        ],
+        "required_extensions": [
+          "EXT-ADMISSION",
+          "EXT-CHANNELS",
+          "EXT-ENFORCEMENT",
+          "EXT-PARTICIPANTS",
+          "EXT-POLICY-EVAL",
+          "EXT-PUBLICATIONS",
+          "EXT-QUEUE-LEASES",
+          "EXT-SUBSCRIPTIONS"
+        ],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [
+          "artifact_constraints",
+          "content_budgets",
+          "distribution",
+          "facilitation",
+          "traffic_shaping"
+        ],
+        "component_compatibility_marks": [
+          "AICP-Profile-AGENT-MEDIA-0.1",
+          "AICP-Profile-BAZAAR-RECEPTION-0.1"
+        ],
+        "errors": []
+      }
+    },
+    "redundant-base-mediated": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-BASE", "profile_version": "0.1"},
+          {"profile_id": "AICP-MEDIATED-BLOCKING", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": null,
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json"
+        ],
+        "required_extensions": ["EXT-CAPNEG", "EXT-ENFORCEMENT", "EXT-POLICY-EVAL"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": [
+          "AICP-Profile-BASE-0.1",
+          "AICP-Profile-MEDIATED-BLOCKING-0.1"
+        ],
+        "errors": [{"code": "PROFILE_COMPOSITION_REDUNDANT", "detail": "AICP-BASE@0.1 is a strict required-suite subset of AICP-MEDIATED-BLOCKING@0.1"}]
+      }
+    },
+    "exclusive-policy-dialects": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-POLICY-ABAC-RBAC", "profile_version": "0.1"},
+          {"profile_id": "AICP-POLICY-LLM-SAFETY", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": null,
+        "core_suite": {"suite_id": "CT-CORE-0.1", "suite_version": "0.1.0-dev", "path": "conformance/core/CT_CORE_0.1.json"},
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+          "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json",
+          "conformance/extensions/PE_PROFILE_LLM_SAFETY_0.1.json"
+        ],
+        "required_extensions": ["EXT-POLICY-EVAL"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": [
+          "AICP-Profile-POLICY-ABAC-RBAC-0.1",
+          "AICP-Profile-POLICY-LLM-SAFETY-0.1"
+        ],
+        "errors": [{"code": "PROFILE_COMPOSITION_EXCLUSIVE_CONFLICT", "detail": "exclusive group policy-semantic-dialect allows at most 1: [('AICP-POLICY-ABAC-RBAC', '0.1'), ('AICP-POLICY-LLM-SAFETY', '0.1')]"}]
+      }
+    },
+    "core-family-conflict": {
+      "input": {
+        "composition_version": "aicp.profile_composition.v1",
+        "profiles": [
+          {"profile_id": "AICP-BASE", "profile_version": "0.2"},
+          {"profile_id": "AICP-MEDIATED-BLOCKING", "profile_version": "0.1"}
+        ]
+      },
+      "expected": {
+        "composition_hash": null,
+        "core_suite": null,
+        "required_suites": [
+          "conformance/core/CT_CORE_0.1.json",
+          "conformance/core/CT_CORE_0.2.json",
+          "conformance/extensions/CN_CAPNEG_0.1.json",
+          "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json"
+        ],
+        "required_extensions": ["EXT-CAPNEG", "EXT-ENFORCEMENT", "EXT-POLICY-EVAL"],
+        "required_crypto_profiles": [],
+        "required_policy_categories": [],
+        "component_compatibility_marks": [
+          "AICP-Profile-BASE-0.2",
+          "AICP-Profile-MEDIATED-BLOCKING-0.1"
+        ],
+        "errors": [
+          {"code": "PROFILE_CORE_VERSION_CONFLICT", "detail": "selected profiles resolve to multiple Core suites: ['conformance/core/CT_CORE_0.1.json', 'conformance/core/CT_CORE_0.2.json']"},
+          {"code": "CAPNEG_CORE_FAMILY_UNSUPPORTED", "detail": "EXT-CAPNEG v0.2 uses the Core v0.1 bootstrap envelope and does not negotiate profiles requiring conformance/core/CT_CORE_0.2.json."}
+        ]
+      }
+    }
+  }
+}

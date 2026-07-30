@@ -150,6 +150,14 @@ exactly equal. Merely proposing the link does not supersede anything. The old re
 becomes `SUPERSEDED` only after every participant accepts the successor; cross-context,
 unknown, non-accepted, participant-substitution, and double-fork supersessions fail.
 
+The negotiation context key is the exact `session_id`, `contract_id`, and canonical
+participant set. Each context MUST have at most one current unsuperseded accepted
+negotiation. Revision one may omit `supersedes_negotiation_id` only when no such root
+exists. Once a root exists, every new negotiation ID MUST name that exact root; omission
+fails with `NEGOTIATION_SUPERSESSION_REQUIRED`. More than one current accepted root is
+corrupt ambiguous state and MUST block proposals, decisions, contract binding, and
+projection with `NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS`.
+
 ## Accept and reject
 
 An acceptance contains:
@@ -177,6 +185,9 @@ that participant's latest valid declaration. A newer valid declaration makes the
 proposal stale until a contiguous replacement revision binds the new declarations.
 Replay safety is checked only after the replay message itself passes envelope, chain,
 hash, signature, sender, proposal, result, context, and decision-consistency checks.
+An exact successor acceptance remains replay-safe after full acceptance when its named
+predecessor is `SUPERSEDED` and `predecessor.superseded_by` equals that exact successor.
+A predecessor superseded by any other negotiation does not authorize replay.
 
 A rejection contains the same proposal binding plus a registered `reason_code`.
 `reason_detail`, canonical `alternative_profile_compositions`, and
@@ -202,6 +213,13 @@ are optional, but every signature entry present on any declaration, proposal,
 acceptance, rejection, CAPNEG-bound contract, or projection message MUST validate its
 structure, exact message-hash binding, signer/key identity, `kid`, and cryptographic
 bytes. One valid entry never excuses another invalid entry.
+
+The reusable reducer is fail-closed independently of suite skipping. With no crypto
+backend, an absent required signature emits
+`AUTHENTICATED_ACCEPTANCE_SIGNATURE_REQUIRED`; a present signature emits
+`CRYPTO_VERIFICATION_UNAVAILABLE` because it cannot be classified as valid or invalid.
+Neither decision mutates state. Optional unsigned non-authenticated acceptance remains
+permitted, while an optional present signature still requires executable verification.
 
 ## Contract binding and projection
 
@@ -245,6 +263,13 @@ The conformance validity barrier records every failure as
 messages/hashes/signatures are generated independently from the reviewed expectation
 catalog; production reducers and projection validators do not generate their own
 expected results.
+
+Generated case catalogs store messages once and reference
+`oracle_expectations.json` by exact `oracle_case_id`. Cross-language and projection
+catalogs are manifests over those sources. Expected composition outcomes live in the
+separate reviewed `composition_oracle.json`, not in a resolver clone. Mutation controls
+inject broken reducers, validators, and normalizers into the same case evaluator and
+oracle comparator used by the suite.
 
 ## Security and evidence boundary
 
