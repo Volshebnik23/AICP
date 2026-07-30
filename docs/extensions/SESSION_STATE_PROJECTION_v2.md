@@ -33,8 +33,14 @@ accepted CAPNEG state at that point. Acceptance or supersession that occurs late
 transcript cannot leak backward. Unknown/future hashes and hashes supplied only as an
 unproved `branch_heads` entry fail; v2 defines no separate branch-head proof mechanism.
 
+The accepted result is resolved within the exact session, contract, and canonical
+participant context. More than one current accepted root in that context is ambiguous
+corrupt state and fails with `NEGOTIATION_ACCEPTED_ROOT_AMBIGUOUS`; the verifier MUST NOT
+select the first candidate or use final transcript state.
+
 `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json` executes four positive and nine
-negative cases from `fixtures/extensions/object_resync/state_projection_v2/`, including
+negative manifest references from
+`fixtures/extensions/object_resync/state_projection_v2/`, including
 declaration, proposal, partial-acceptance, exact-final-acceptance, and supersession
 boundaries. A complete,
 non-degraded internal run emits
