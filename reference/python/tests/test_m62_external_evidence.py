@@ -11,13 +11,27 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_DIR = ROOT / "conformance" / "evidence"
+IUT_DIR = ROOT / "conformance" / "iut"
+RUNNER_DIR = ROOT / "conformance" / "runner"
 SCRIPTS_DIR = ROOT / "scripts"
 INTEROP_TOOLS = ROOT / "interop" / "tools"
-for path in (EVIDENCE_DIR, SCRIPTS_DIR, INTEROP_TOOLS):
+for path in (EVIDENCE_DIR, IUT_DIR, RUNNER_DIR, SCRIPTS_DIR, INTEROP_TOOLS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from aicp_external_evidence_runner import run_evidence  # noqa: E402
+from adapter_process import (  # noqa: E402
+    AdapterProcessError,
+    invoke_adapter as invoke_evidence_adapter,
+)
+from aicp_external_evidence_runner import (  # noqa: E402
+    build_execution_plan,
+    run_evidence,
+)
+from aicp_iut_runner import (  # noqa: E402
+    IUTProtocolError,
+    invoke_adapter as invoke_iut_adapter,
+    run_iut,
+)
 from fake_adapters import MODES  # noqa: E402
 from interop_matrix import build_matrix  # noqa: E402
 from interop_submission_validation import (  # noqa: E402
@@ -29,22 +43,35 @@ from interop_submission_validation import (  # noqa: E402
     validate_common_rules,
     validate_schema,
 )
+from projection_v1_handler import derive_projection  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
+    BUNDLE_MANIFEST_PATH,
     EXPECTED_MARK,
+    HISTORICAL_RELEASE_RECORD_DIGEST,
+    HISTORICAL_TCK_RELEASE_ID,
     TARGET_CATALOG_PATH,
     TARGET_KEY,
     TCK_RELEASE_ID,
     bundle_digest,
+    canonical_digest,
     digest_bytes,
+    expected_input_artifacts,
+    expected_suite_records,
     file_digest,
     load_json,
+    load_jsonl,
+    release_record,
+    release_supersession,
+    resolve_target_record,
     runner_bundle_paths,
     target_catalog,
+    validate_bundle_manifest,
     validate_release_registry,
     validate_target_catalog,
     validate_target_registry,
 )
+from target_handlers import resolve_handler  # noqa: E402
 
 
 GENERATOR_PATH = ROOT / "scripts" / "generate_evidence_framework.py"
@@ -153,19 +180,29 @@ def _write_package(
 
 
 def test_generated_target_registry_catalog_and_release_are_exact() -> None:
-    targets, catalog, releases = GENERATOR.generated_payloads()
+    targets, catalog, bundle_manifest, releases = GENERATOR.generated_payloads()
     assert json.loads(
         (EVIDENCE_DIR / "targets.json").read_text(encoding="utf-8")
     ) == targets
     assert json.loads(TARGET_CATALOG_PATH.read_text(encoding="utf-8")) == catalog
+    assert json.loads(
+        BUNDLE_MANIFEST_PATH.read_text(encoding="utf-8")
+    ) == bundle_manifest
     assert json.loads(
         (EVIDENCE_DIR / "evidence_tck_releases.json").read_text(
             encoding="utf-8"
         )
     ) == releases
     assert validate_target_registry(targets) == []
-    assert validate_target_catalog(catalog) == []
-    assert validate_release_registry(releases) == []
+    assert validate_target_catalog(
+        catalog,
+        handler=resolve_handler("projection_v1"),
+    ) == []
+    assert validate_bundle_manifest(bundle_manifest) == []
+    assert validate_release_registry(
+        releases,
+        bundle_manifest=bundle_manifest,
+    ) == []
     assert [item["target_key"] for item in targets["targets"]] == [TARGET_KEY]
     assert "aicp.session_state_projection@v2" not in json.dumps(targets)
 
@@ -184,6 +221,174 @@ def test_target_catalog_covers_one_producer_and_all_twelve_consumers() -> None:
         item["input_digest"] == file_digest(ROOT / item["fixture"])
         for item in catalog["consumer_cases"]
     )
+
+
+def test_producer_requests_are_answer_isolated_and_repeat_is_opaque() -> None:
+    record = resolve_target_record(TARGET_KEY)
+    handler = resolve_handler(record.handler_id)
+    catalog = target_catalog(record)
+    requests, _checks = build_execution_plan(
+        record,
+        catalog,
+        handler,
+        "full-capability",
+    )
+    producer_requests = [
+        request
+        for request in requests
+        if request["operation"] == "project_session_state"
+    ]
+    assert len(producer_requests) == 2
+    assert producer_requests[0]["request_id"] != producer_requests[1]["request_id"]
+    assert producer_requests[0]["input"] == producer_requests[1]["input"]
+
+    producer = catalog["producer_case"]
+    forbidden_values = (
+        producer["expected_projection_hash"],
+        producer["transcript_fixture"],
+        producer["source_case_id"],
+        "m2",
+        "projection_version",
+    )
+    reviewed_projection = json.dumps(
+        producer["expected_projection"],
+        separators=(",", ":"),
+        sort_keys=True,
+    )
+    for request in producer_requests:
+        serialized = json.dumps(
+            request,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+        assert reviewed_projection not in serialized
+        assert all(value not in serialized for value in forbidden_values)
+        assert "context" not in request["input"]
+        assert all(
+            message.get("message_type") != "STATE_SYNC_RESPONSE"
+            for message in request["input"]["transcript"]
+        )
+
+
+def test_neutral_scenario_derives_exact_reviewed_projection() -> None:
+    record = resolve_target_record(TARGET_KEY)
+    handler = resolve_handler(record.handler_id)
+    catalog = target_catalog(record)
+    requests, _checks = build_execution_plan(
+        record,
+        catalog,
+        handler,
+        "full-capability",
+    )
+    producer_input = next(
+        request["input"]
+        for request in requests
+        if request["operation"] == "project_session_state"
+    )
+    projection, projection_hash = derive_projection(
+        producer_input["scenario"],
+        producer_input["transcript"],
+    )
+    assert projection == catalog["producer_case"]["expected_projection"]
+    assert projection_hash == catalog["producer_case"][
+        "expected_projection_hash"
+    ]
+    assert set(producer_input["scenario"]).isdisjoint(
+        {
+            "projection_version",
+            "as_of_message_hash",
+            "evidence_refs",
+            "active_contract_ref",
+            "session_state_hash",
+        }
+    )
+
+
+def test_producer_catalog_rejects_completed_projection_response() -> None:
+    record = resolve_target_record(TARGET_KEY)
+    handler = resolve_handler(record.handler_id)
+    catalog = target_catalog(record)
+    full_transcript = load_jsonl(
+        ROOT / catalog["producer_case"]["transcript_fixture"]
+    )
+    errors = handler.validate_catalog(
+        catalog,
+        transcript_override=full_transcript,
+    )
+    assert any("strict projection object" in error for error in errors)
+
+
+@pytest.mark.parametrize(
+    ("target_kind", "target_id", "target_version", "execution_mode"),
+    [
+        ("capability", "aicp.session_state_projection", "v1", "full-capability"),
+        ("product_profile", "AICP-MEDIATED-BLOCKING", "0.1", "full-profile"),
+        ("binding", "BIND-HTTP-WS", "0.1", "full-binding"),
+    ],
+)
+def test_registry_schema_accepts_kind_appropriate_versions_and_dispatch_fails_closed(
+    target_kind: str,
+    target_id: str,
+    target_version: str,
+    execution_mode: str,
+) -> None:
+    item = copy.deepcopy(load_json(EVIDENCE_DIR / "targets.json")["targets"][0])
+    item.update(
+        {
+            "target_key": f"{target_id}@{target_version}",
+            "target_kind": target_kind,
+            "target_id": target_id,
+            "target_version": target_version,
+            "execution_mode": execution_mode,
+            "evidence_claim_type": f"implements_{target_kind.removeprefix('product_')}",
+            "handler_id": "projection_v1"
+            if target_kind == "capability"
+            else f"future_{target_kind}",
+        }
+    )
+    registry = {"registry_version": "1.1", "targets": [item]}
+    assert validate_target_registry(
+        registry,
+        require_repository_references=False,
+        enforce_current_scope=False,
+    ) == []
+    resolved = resolve_target_record(item["target_key"], registry)
+    if target_kind == "capability":
+        assert resolve_handler(resolved.handler_id).handler_id == "projection_v1"
+    else:
+        with pytest.raises(
+            ValueError,
+            match="target registered but handler unavailable",
+        ):
+            resolve_handler(resolved.handler_id)
+
+
+def test_invalid_registered_profile_and_binding_references_are_rejected() -> None:
+    template = load_json(EVIDENCE_DIR / "targets.json")["targets"][0]
+    for kind, target_id, version, mode in (
+        ("product_profile", "AICP-NOT-REGISTERED", "0.1", "full-profile"),
+        ("binding", "BIND-NOT-REGISTERED", "0.1", "full-binding"),
+    ):
+        item = copy.deepcopy(template)
+        item.update(
+            {
+                "target_key": f"{target_id}@{version}",
+                "target_kind": kind,
+                "target_id": target_id,
+                "target_version": version,
+                "execution_mode": mode,
+                "evidence_claim_type": "implements_profile"
+                if kind == "product_profile"
+                else "implements_binding",
+                "handler_id": "future",
+            }
+        )
+        errors = validate_target_registry(
+            {"registry_version": "1.1", "targets": [item]},
+            enforce_current_scope=False,
+        )
+        assert any("not registered" in error for error in errors)
 
 
 def test_unknown_and_projection_v2_targets_fail_closed() -> None:
@@ -228,6 +433,73 @@ def test_complete_external_report_is_independently_eligible(
     }
 
 
+def _as_historical_report(report: dict) -> dict:
+    historical = release_record(HISTORICAL_TCK_RELEASE_ID)
+    supersession = release_supersession(HISTORICAL_TCK_RELEASE_ID)
+    assert supersession is not None
+    mutated = copy.deepcopy(report)
+    catalog_digest = historical["target"]["target_catalog"]["content_digest"]
+    mutated["target"]["target_catalog_digest"] = catalog_digest
+    mutated["runner"]["source_revision"] = historical["runner_bundle"]["digest"]
+    mutated["tck_release"] = {
+        "release_id": HISTORICAL_TCK_RELEASE_ID,
+        "registry_digest": supersession["release_registry_digest"],
+        "target_registry_digest": historical["target_registry"][
+            "content_digest"
+        ],
+        "target_registry_schema_digest": supersession[
+            "target_registry_schema_digest"
+        ],
+        "target_catalog_digest": catalog_digest,
+        "report_schema_digest": historical["report_schema"]["content_digest"],
+        "runner_bundle_digest": historical["runner_bundle"]["digest"],
+    }
+    mutated["required_suites"] = expected_suite_records(historical)
+    mutated["input_artifacts"] = expected_input_artifacts(historical)
+    mutated["compatibility_marks"] = []
+    return mutated
+
+
+def test_evidence_tck_100_record_is_frozen_and_superseded() -> None:
+    historical = release_record(HISTORICAL_TCK_RELEASE_ID)
+    assert canonical_digest(historical) == HISTORICAL_RELEASE_RECORD_DIGEST
+    supersession = release_supersession(HISTORICAL_TCK_RELEASE_ID)
+    assert supersession is not None
+    assert supersession["status"] == "superseded-experimental"
+    assert supersession["superseded_by"] == TCK_RELEASE_ID
+    assert supersession["current_strong_eligibility"] is False
+
+
+def test_structurally_valid_historical_report_is_currently_ineligible(
+    external_report: dict,
+) -> None:
+    historical = _as_historical_report(external_report)
+    schema = load_json(EVIDENCE_DIR / "external_evidence_report_v2.schema.json")
+    from jsonschema import Draft202012Validator
+
+    assert list(Draft202012Validator(schema).iter_errors(historical)) == []
+    result = _evaluate(historical)
+    assert result == {
+        "status": "ineligible",
+        "errors": [],
+        "eligible_marks": [],
+        "eligible_targets": [],
+    }
+
+
+def test_target_registry_schema_digest_is_independently_load_bearing(
+    external_report: dict,
+) -> None:
+    report = copy.deepcopy(external_report)
+    report["tck_release"]["target_registry_schema_digest"] = (
+        "sha256:" + "9" * 64
+    )
+    result = _evaluate(report)
+    assert result["status"] == "rejected"
+    assert result["eligible_marks"] == []
+    assert any("TCK_PROVENANCE" in error for error in result["errors"])
+
+
 def test_reference_and_smoke_reports_never_emit_external_mark(
     reference_report: dict,
 ) -> None:
@@ -246,6 +518,19 @@ def test_reference_and_smoke_reports_never_emit_external_mark(
     assert smoke["passed"] is True
     assert smoke["compatibility_marks"] == []
     assert _evaluate(smoke)["status"] == "ineligible"
+
+
+def test_echo_context_adapter_is_rejected() -> None:
+    report = run_evidence(
+        _command(
+            "conformance/evidence/fake_adapters.py",
+            "--mode",
+            "echo_context",
+        ),
+        timestamp="2026-07-30T00:00:00Z",
+    )
+    assert report["passed"] is False
+    assert report["compatibility_marks"] == []
 
 
 @pytest.mark.parametrize("mode", [item for item in MODES if item != "external_good"])
@@ -419,11 +704,12 @@ def test_missing_dependencies_are_truthful_and_suppress_mark() -> None:
 def test_tck_digests_are_load_bearing() -> None:
     paths = runner_bundle_paths()
     original = bundle_digest(paths)
-    changed = bundle_digest(
-        paths,
-        overrides={paths[0]: b"mutated runner bytes"},
-    )
-    assert changed != original
+    for path in paths:
+        changed = bundle_digest(
+            paths,
+            overrides={path: b"mutated load-bearing bytes"},
+        )
+        assert changed != original, path
     catalog_bytes = TARGET_CATALOG_PATH.read_bytes()
     assert digest_bytes(catalog_bytes + b"\nmutated") != file_digest(
         TARGET_CATALOG_PATH
@@ -431,6 +717,98 @@ def test_tck_digests_are_load_bearing() -> None:
     fixture = ROOT / target_catalog()["consumer_cases"][0]["fixture"]
     assert digest_bytes(fixture.read_bytes() + b"\nmutated") != file_digest(
         fixture
+    )
+
+
+def test_new_unlisted_runtime_import_fails_bundle_validation() -> None:
+    manifest = load_json(BUNDLE_MANIFEST_PATH)
+    runner_path = "conformance/evidence/aicp_external_evidence_runner.py"
+    mutated = (ROOT / runner_path).read_bytes() + (
+        b"\nfrom aicp_ref.session_state import project_session_state\n"
+    )
+    errors = validate_bundle_manifest(
+        manifest,
+        overrides={runner_path: mutated},
+    )
+    assert any("unlisted runtime imports" in error for error in errors)
+    assert any("session_state.py" in error for error in errors)
+
+
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "success",
+        "timeout",
+        "stdout_overflow",
+        "stderr_overflow",
+        "malformed_json",
+        "missing_response",
+        "correlation_mismatch",
+        "early_exit",
+    ],
+)
+def test_evidence_process_supervisor_matches_frozen_iut_behavior(
+    tmp_path: Path,
+    mode: str,
+) -> None:
+    adapter = tmp_path / "adapter.py"
+    adapter.write_text(
+        """import json
+import sys
+import time
+
+mode = sys.argv[1]
+requests = [json.loads(line) for line in sys.stdin if line.strip()]
+if mode == "timeout":
+    time.sleep(2)
+elif mode == "stdout_overflow":
+    sys.stdout.write("X" * 2048)
+elif mode == "stderr_overflow":
+    sys.stderr.write("X" * 2048)
+elif mode == "malformed_json":
+    print("{")
+elif mode == "missing_response":
+    pass
+elif mode == "early_exit":
+    raise SystemExit(7)
+else:
+    for request in requests:
+        response = {
+            "adapter_protocol_version": "1.1",
+            "request_id": request["request_id"],
+            "operation": request["operation"],
+            "success": True,
+            "result": {},
+        }
+        if mode == "correlation_mismatch":
+            response["request_id"] = "wrong"
+        print(json.dumps(response, separators=(",", ":")))
+""",
+        encoding="utf-8",
+    )
+    requests = [
+        {
+            "adapter_protocol_version": "1.1",
+            "request_id": "parity-1",
+            "operation": "describe",
+            "input": {},
+        }
+    ]
+    kwargs = {
+        "timeout_seconds": 0.15,
+        "max_stdout_bytes": 512,
+        "max_stderr_bytes": 512,
+    }
+
+    def outcome(invoke, error_type):
+        try:
+            return ("ok", invoke([sys.executable, str(adapter), mode], requests, **kwargs))
+        except error_type as exc:
+            return ("error", str(exc))
+
+    assert outcome(invoke_evidence_adapter, AdapterProcessError) == outcome(
+        invoke_iut_adapter,
+        IUTProtocolError,
     )
 
 
@@ -571,6 +949,7 @@ def test_reviewed_public_capability_negative_examples_are_enforced(
         "CAP-CLAIM-NEG-03",
         "CAP-CLAIM-NEG-04",
         "CAP-CLAIM-NEG-05",
+        "CAP-CLAIM-NEG-06",
     ]
     _, validator, known_profiles = load_schema_and_registry()
     profile_report = load_json(
@@ -595,6 +974,8 @@ def test_reviewed_public_capability_negative_examples_are_enforced(
             report = profile_report
         elif mutation == "subject_mismatch":
             report["execution_subject"]["implementation_id"] = "other"
+        elif mutation == "historical_release":
+            report = _as_historical_report(report)
         else:  # pragma: no cover - reviewed catalog is closed by the assertion above
             pytest.fail(f"unknown reviewed mutation: {mutation}")
 
@@ -689,3 +1070,30 @@ def test_matrix_keeps_profile_and_capability_marks_typed(
             "target_version": "v1",
         }
     ]
+
+
+def test_product_profile_iut_v1_bytes_and_eligibility_remain_unchanged() -> None:
+    protected = {
+        "conformance/iut/iut_report_v1.schema.json": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4",
+        "conformance/iut/cases.json": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe",
+        "conformance/iut/aicp_iut_runner.py": "sha256:bc82d59ffe919098606d9543a823811da43bc1720436fe1197636edc46e9e2fd",
+        "conformance/iut/aicp_iut_catalog.py": "sha256:ea4ee227426aa26d342ae1497ccd6917fddf17ffb05da211929daa783d858b87",
+        "conformance/iut/_iut_evaluator.py": "sha256:764cfce25e05083a1a94d11d6604475b1e5d71f372825b1d04322b418fad96f3",
+        "conformance/iut/adapter_protocol.schema.json": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186",
+        "conformance/iut/tck_releases.json": "sha256:f89c7dc476041f79558157bb6d0178d7b43158913a2dbe5ee0191d017903a25e",
+    }
+    assert {
+        path: file_digest(ROOT / path) for path in protected
+    } == protected
+    report = run_iut(
+        [
+            sys.executable,
+            "conformance/iut/fakes/fake_adapter.py",
+            "--mode",
+            "external_good",
+        ],
+        "AICP-BASE@0.1",
+        mode="full-profile",
+    )
+    assert report["passed"] is True
+    assert report["compatibility_marks"] == ["AICP-Profile-BASE-0.1"]
