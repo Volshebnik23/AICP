@@ -31,6 +31,12 @@
       "description": "The report subject does not match the manifest subject.",
       "mutation": "subject_mismatch",
       "expected_error_fragment": "implementation"
+    },
+    {
+      "id": "CAP-CLAIM-NEG-06",
+      "description": "A structurally valid historical evidence TCK 1.0.0 report attempts a current reproducible claim.",
+      "mutation": "historical_release",
+      "expected_error_fragment": "eligible external capability report"
     }
   ]
 }

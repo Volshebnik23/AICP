@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "3c3c2857a35a73082dece2a83c8eb5d5d669cd335de4c3e8bce98ef8d003ec64",
+      "combined_sha256": "036c36a6ea61de73f2cb8df96d8c654348d2571541251dc70e4e4f595558993f",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -36,28 +36,44 @@
           "sha256": "e625966cff52ec3a5b9a6c72db8fb3433123ab235649fe3edf1f38d1a4eb0ef0"
         },
         {
+          "path": "conformance/evidence/evidence_runner_bundle.json",
+          "sha256": "a1505f9a8e2519009a3d18dd7c1c114c2752f6e942432cd6846137640504d2d0"
+        },
+        {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "bbc549d1d0ca6344de41a149430c25e257cf3438845f6e4ccdf0eab17f81ceaf"
+          "sha256": "b480aceb911e7f284352f157f3e04914788bdbdaa95d4c1857ea3ab8ac810426"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
-          "sha256": "5d107c975f9303d5f445ad22c1b18d710c10c88cb46988bb781032ddc670dd62"
+          "sha256": "f1afe5b31e231f1fb3e24c151b6a0ccf07fd025e9e79cd903293ac7210ae8ddd"
         },
         {
           "path": "conformance/evidence/projection_v1_expectations.json",
-          "sha256": "181cfb59a8091c786281dba0c8c9d3517731318726208694792c9c74d292e1b4"
+          "sha256": "e75d8a325f587add0bd9b6883edd8f12308676c9f4cf1c280dcda18077fc628a"
+        },
+        {
+          "path": "conformance/evidence/projection_v1_producer_scenario.json",
+          "sha256": "07aa03727c5653b8f54ede45a1b562dde977678f581d8868bb71f0b35f152d99"
+        },
+        {
+          "path": "conformance/evidence/projection_v1_producer_scenario.schema.json",
+          "sha256": "7be1ee597e6ce67e80df0e926897ff31f72b6e18f6fecd053e0739ea8134054a"
+        },
+        {
+          "path": "conformance/evidence/projection_v1_producer_transcript.json",
+          "sha256": "4839e2f89a891cc64ac8b3329c76feff6375caadd2d3e95a6e32412980679394"
         },
         {
           "path": "conformance/evidence/session_state_projection_v1_target.json",
-          "sha256": "6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046"
+          "sha256": "b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20"
         },
         {
           "path": "conformance/evidence/target_registry.schema.json",
-          "sha256": "a4d63416e0e387ef3e6bff0d3b9397e37a2f380961360a5e4d63096228bcfc50"
+          "sha256": "3e71ef6d64826a748cac2ad3de9926232ed5617d5cee88bef43b655f43920d13"
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "343c979dbff3e2ac7a928a9409894bc8f1769b521948394a7c874b33d8b2fbdd"
+          "sha256": "378a3a2002cd3fc9c48abd1095505065f1ed5501f6c82591b72c5aefbea3c5f2"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
@@ -350,7 +366,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "2c26903fa83467d64f64a4d0f464c33996e58009df273080a4ee50aa27633e7e",
+      "combined_sha256": "1f24cae4f521eb34c84f1cda8419bd3bb8ff81f138baf32b57961345fa0c70cf",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -1634,7 +1650,7 @@
         },
         {
           "path": "fixtures/interop/capability_claims/negative_examples.json",
-          "sha256": "3fd6f6008fd1981e677d3a7c53046d68d7d4ce502eb7b87c9c0c653e2c921be1"
+          "sha256": "c6f23c8ce90c1d37df29e2fd75adc0205e5e58d273ba0b7e87396311f3d8cb3d"
         },
         {
           "path": "fixtures/keys/GT_public_keys.json",

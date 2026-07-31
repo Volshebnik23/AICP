@@ -1,0 +1,61 @@
+{
+  "manifest_version": "1.0",
+  "entries": [
+    {
+      "path": "conformance/evidence/adapter_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:e60858148f45edbde78dd8500de13fbab082f4cd8e767beac8068d983ca77deb"
+    },
+    {
+      "path": "conformance/evidence/aicp_external_evidence_runner.py",
+      "role": "runner",
+      "digest": "sha256:509ade42285a7ce913e74c6845b5cdfabbba95c26e26cb984ef12f8c271643cd"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:c2adc1dc0d4efa2b6e4c2096363a8b023c76a42b07dd62877f3c948cd3c3d0a8"
+    },
+    {
+      "path": "conformance/evidence/report_evaluator.py",
+      "role": "evaluator",
+      "digest": "sha256:417afd7c18908cc286e263216bb8e018a235a4d1367b3be46f860d3dd5d8c8db"
+    },
+    {
+      "path": "conformance/evidence/target_catalog.py",
+      "role": "target_dispatch",
+      "digest": "sha256:c295a886a01a24c9270e99c5c12910c874d84afb13b7543e19f77fcaaf94b73a"
+    },
+    {
+      "path": "conformance/evidence/target_handlers.py",
+      "role": "target_dispatch",
+      "digest": "sha256:1bc89cf9335ac5a1aeb99263194bad33b598073398dc765e2c302d39946595cb"
+    },
+    {
+      "path": "conformance/runner/_runner_context.py",
+      "role": "report_schema_support",
+      "digest": "sha256:302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "reference/python/aicp_ref/__init__.py",
+      "role": "package_initialization",
+      "digest": "sha256:d463f315e8571772889691718d2791e10a674f9fcb07e147ef8ba5b22731b6c0"
+    },
+    {
+      "path": "reference/python/aicp_ref/hashing.py",
+      "role": "canonicalization",
+      "digest": "sha256:0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "reference/python/aicp_ref/jcs.py",
+      "role": "canonicalization",
+      "digest": "sha256:ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "reference/python/aicp_ref/signatures.py",
+      "role": "dependency_probe",
+      "digest": "sha256:7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    }
+  ],
+  "bundle_digest": "sha256:7542ef3f63841c151381ab49acdf9047ea5b3d25503ab47fdab60297848a4a86"
+}

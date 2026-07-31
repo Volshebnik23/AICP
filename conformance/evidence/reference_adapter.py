@@ -18,7 +18,7 @@ for path in (REF_PY, IUT_DIR):
 from _iut_evaluator import evaluate_transcript  # noqa: E402
 from aicp_ref.hashing import object_hash  # noqa: E402
 from aicp_ref.jcs import canonicalize_json  # noqa: E402
-from aicp_ref.session_state import project_session_state  # noqa: E402
+from projection_v1_handler import derive_projection  # noqa: E402
 
 
 PROTOCOL_VERSION = "1.1"
@@ -37,13 +37,17 @@ def _file_digest(path: Path) -> str:
 
 
 def _validate_transcript(input_obj: dict[str, Any]) -> dict[str, Any]:
-    if input_obj.get("target_capability") != TARGET_KEY:
+    if input_obj.get("target") != {
+        "kind": "capability",
+        "target_id": "aicp.session_state_projection",
+        "target_version": "v1",
+    }:
         return {
             "accepted": False,
             "errors": [
                 {
                     "code": "TARGET_NOT_SUPPORTED",
-                    "message": "target_capability must be exact projection v1",
+                    "message": "target must be exact projection v1",
                 }
             ],
             "degraded": False,
@@ -117,15 +121,19 @@ def handle_request(
     elif operation == "validate_transcript":
         result = _validate_transcript(input_obj)
     elif operation == "project_session_state":
-        if input_obj.get("target_capability") != TARGET_KEY:
+        if input_obj.get("target") != {
+            "kind": "capability",
+            "target_id": "aicp.session_state_projection",
+            "target_version": "v1",
+        }:
             raise ValueError("project_session_state target is not supported")
         transcript = input_obj.get("transcript")
-        context = input_obj.get("context")
+        scenario = input_obj.get("scenario")
         if not isinstance(transcript, list) or not transcript:
             raise ValueError("project_session_state requires a transcript")
-        if not isinstance(context, dict):
-            raise ValueError("project_session_state requires projection context")
-        projection, projection_hash = project_session_state(context)
+        if not isinstance(scenario, dict):
+            raise ValueError("project_session_state requires a neutral scenario")
+        projection, projection_hash = derive_projection(scenario, transcript)
         result = {
             "projection": projection,
             "session_state_hash": projection_hash,

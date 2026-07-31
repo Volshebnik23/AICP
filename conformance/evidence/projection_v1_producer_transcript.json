@@ -1,0 +1,15 @@
+[
+  {
+    "session_id": "sSP1",
+    "message_id": "m1",
+    "timestamp": "2026-06-01T00:00:00Z",
+    "sender": "agent:A",
+    "message_type": "STATE_SYNC_REQUEST",
+    "contract_id": "cSP1",
+    "payload": {
+      "request_id": "sp-request-1",
+      "want_closed_status": true
+    },
+    "message_hash": "sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310"
+  }
+]
