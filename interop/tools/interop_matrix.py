@@ -83,9 +83,13 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         "claim_type": None,
         "claim_scope": None,
         "profile_ids": [],
+        "capability_refs": [],
         "reports": [],
         "compatibility_marks": [],
         "computed_marks": [],
+        "computed_profile_marks": [],
+        "computed_capability_marks": [],
+        "eligible_targets": [],
         "evidence_validation_status": "not_evaluated",
         "errors": [],
         "warnings": [],
@@ -121,6 +125,7 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
     entry["claim_type"] = manifest.get("claim_type")
     entry["claim_scope"] = manifest.get("claim_scope")
     entry["profile_ids"] = manifest.get("profile_ids", [])
+    entry["capability_refs"] = manifest.get("capability_refs", [])
 
     marks: set[str] = set()
     for ref in manifest.get("report_refs", []):
@@ -152,6 +157,20 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
             _add_error(entry, "STRONG_EVIDENCE_INELIGIBLE", message)
         if entry["valid"] and evaluation.status == "eligible":
             entry["computed_marks"] = list(evaluation.eligible_marks)
+            entry["computed_profile_marks"] = list(
+                evaluation.eligible_profile_marks
+            )
+            entry["computed_capability_marks"] = list(
+                evaluation.eligible_capability_marks
+            )
+            entry["eligible_targets"] = [
+                {
+                    "kind": kind,
+                    "target_id": target_id,
+                    "target_version": target_version,
+                }
+                for kind, target_id, target_version in evaluation.eligible_targets
+            ]
     else:
         entry["evidence_validation_status"] = "not_promotable"
         if marks:
@@ -176,9 +195,13 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
         "claim_type": "compatible_with_profile",
         "claim_scope": "self_attested",
         "profile_ids": [],
+        "capability_refs": [],
         "reports": [],
         "compatibility_marks": [],
         "computed_marks": [],
+        "computed_profile_marks": [],
+        "computed_capability_marks": [],
+        "eligible_targets": [],
         "evidence_validation_status": "not_promotable",
         "errors": [],
         "warnings": [],
@@ -294,6 +317,8 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
             "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
             "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only.",
             "Only independently validated reproducible external full-profile IUT evidence produces computed marks.",
+            "Capability marks are computed separately from product-profile marks and never prove a profile.",
+            "Only independently validated full-capability report v2 evidence produces computed capability marks.",
         ],
     }
 
@@ -320,8 +345,11 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
             "Claim type",
             "Claim scope",
             "Profiles",
+            "Capabilities",
             "Reported marks",
-            "Eligible marks",
+            "Eligible profile marks",
+            "Eligible capability marks",
+            "Eligible targets",
             "Matrix status",
         ]
     )
@@ -340,8 +368,30 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
                 entry.get("claim_type") or "—",
                 entry.get("claim_scope") or "—",
                 _fmt_profiles(entry.get("profile_ids")),
+                _fmt_profiles(
+                    [
+                        (
+                            f"{item.get('capability_id')}@"
+                            f"{item.get('capability_version')}"
+                        )
+                        for item in entry.get("capability_refs", [])
+                        if isinstance(item, dict)
+                    ]
+                ),
                 _fmt_marks(entry.get("compatibility_marks")),
-                _fmt_marks(entry.get("computed_marks")),
+                _fmt_marks(entry.get("computed_profile_marks")),
+                _fmt_marks(entry.get("computed_capability_marks")),
+                _fmt_marks(
+                    [
+                        (
+                            f"{item.get('kind')}:"
+                            f"{item.get('target_id')}@"
+                            f"{item.get('target_version')}"
+                        )
+                        for item in entry.get("eligible_targets", [])
+                        if isinstance(item, dict)
+                    ]
+                ),
                 entry.get("matrix_status") or _entry_status(entry),
             ]
         )

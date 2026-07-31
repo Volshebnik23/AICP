@@ -1,0 +1,430 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/external-evidence-report-2.0.json",
+  "title": "AICP Generalized External Evidence Report v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_format_version",
+    "report_type",
+    "execution_mode",
+    "execution_subject",
+    "runner",
+    "tck_release",
+    "target",
+    "required_suites",
+    "input_artifacts",
+    "generated_artifacts",
+    "timestamp",
+    "passed",
+    "case_results",
+    "failures",
+    "degraded",
+    "degraded_reasons",
+    "skipped_checks",
+    "compatibility_marks",
+    "adapter_stderr"
+  ],
+  "properties": {
+    "report_format_version": {
+      "const": "2.0"
+    },
+    "report_type": {
+      "const": "aicp.external_evidence"
+    },
+    "execution_mode": {
+      "enum": [
+        "full-capability",
+        "smoke"
+      ]
+    },
+    "execution_subject": {
+      "$ref": "#/$defs/ExecutionSubject"
+    },
+    "runner": {
+      "$ref": "#/$defs/Runner"
+    },
+    "tck_release": {
+      "$ref": "#/$defs/TckRelease"
+    },
+    "target": {
+      "$ref": "#/$defs/Target"
+    },
+    "required_suites": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "$ref": "#/$defs/Suite"
+      }
+    },
+    "input_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/InputArtifact"
+      }
+    },
+    "generated_artifacts": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "$ref": "#/$defs/GeneratedArtifact"
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "passed": {
+      "type": "boolean"
+    },
+    "case_results": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "$ref": "#/$defs/CaseResult"
+      }
+    },
+    "failures": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "$ref": "#/$defs/Failure"
+      }
+    },
+    "degraded": {
+      "type": "boolean"
+    },
+    "degraded_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "skipped_checks": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "compatibility_marks": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 32,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "adapter_stderr": {
+      "type": "string",
+      "maxLength": 262144
+    }
+  },
+  "$defs": {
+    "Digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "ExecutionSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "implementation_id",
+        "implementation_version",
+        "implementation_digest"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "external_implementation",
+            "reference_corpus"
+          ]
+        },
+        "implementation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "Runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "source_revision"
+      ],
+      "properties": {
+        "name": {
+          "const": "aicp-external-evidence-runner"
+        },
+        "version": {
+          "const": "2.0"
+        },
+        "source_revision": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "TckRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_id",
+        "registry_digest",
+        "target_registry_digest",
+        "target_catalog_digest",
+        "report_schema_digest",
+        "runner_bundle_digest"
+      ],
+      "properties": {
+        "release_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "target_registry_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "target_catalog_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "report_schema_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "runner_bundle_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "target_id",
+        "target_version",
+        "target_catalog_digest"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "product_profile",
+            "capability",
+            "binding"
+          ]
+        },
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_catalog_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "Suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite_id",
+        "suite_version",
+        "path",
+        "suite_digest"
+      ],
+      "properties": {
+        "suite_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suite_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suite_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "InputArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "content_digest"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      }
+    },
+    "GeneratedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "content_digest",
+        "repeat_content_digest",
+        "content"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "repeat_content_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "projection",
+            "session_state_hash"
+          ],
+          "properties": {
+            "projection": {
+              "type": "object"
+            },
+            "session_state_hash": {
+              "type": "string",
+              "pattern": "^sha256:[A-Za-z0-9_-]{43}$"
+            }
+          }
+        }
+      }
+    },
+    "ExecutionObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accepted",
+        "errors",
+        "degraded",
+        "degraded_reasons",
+        "skipped_checks"
+      ],
+      "properties": {
+        "accepted": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "degraded": {
+          "type": "boolean"
+        },
+        "degraded_reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "skipped_checks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "CaseResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "passed",
+        "message"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "execution_observation": {
+          "$ref": "#/$defs/ExecutionObservation"
+        }
+      }
+    },
+    "Failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test_id",
+        "message"
+      ],
+      "properties": {
+        "test_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

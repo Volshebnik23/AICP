@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "297777837db4a49637c50e603b6cf5dddc30570fb4066963c1658867e430ec2d",
+      "combined_sha256": "3c3c2857a35a73082dece2a83c8eb5d5d669cd335de4c3e8bce98ef8d003ec64",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -34,6 +34,30 @@
         {
           "path": "conformance/demos/DEMO_ENFORCEMENT_BEHAVIORAL_0.1.json",
           "sha256": "e625966cff52ec3a5b9a6c72db8fb3433123ab235649fe3edf1f38d1a4eb0ef0"
+        },
+        {
+          "path": "conformance/evidence/evidence_tck_releases.json",
+          "sha256": "bbc549d1d0ca6344de41a149430c25e257cf3438845f6e4ccdf0eab17f81ceaf"
+        },
+        {
+          "path": "conformance/evidence/external_evidence_report_v2.schema.json",
+          "sha256": "5d107c975f9303d5f445ad22c1b18d710c10c88cb46988bb781032ddc670dd62"
+        },
+        {
+          "path": "conformance/evidence/projection_v1_expectations.json",
+          "sha256": "181cfb59a8091c786281dba0c8c9d3517731318726208694792c9c74d292e1b4"
+        },
+        {
+          "path": "conformance/evidence/session_state_projection_v1_target.json",
+          "sha256": "6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046"
+        },
+        {
+          "path": "conformance/evidence/target_registry.schema.json",
+          "sha256": "a4d63416e0e387ef3e6bff0d3b9397e37a2f380961360a5e4d63096228bcfc50"
+        },
+        {
+          "path": "conformance/evidence/targets.json",
+          "sha256": "343c979dbff3e2ac7a928a9409894bc8f1769b521948394a7c874b33d8b2fbdd"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
@@ -326,7 +350,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "c12dd2e4290b6134fa7b8520bd313637de47a80c9f58c3f031e451df63267084",
+      "combined_sha256": "2c26903fa83467d64f64a4d0f464c33996e58009df273080a4ee50aa27633e7e",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -1607,6 +1631,10 @@
         {
           "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
           "sha256": "08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+        },
+        {
+          "path": "fixtures/interop/capability_claims/negative_examples.json",
+          "sha256": "3fd6f6008fd1981e677d3a7c53046d68d7d4ce502eb7b87c9c0c653e2c921be1"
         },
         {
           "path": "fixtures/keys/GT_public_keys.json",

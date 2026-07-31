@@ -1,0 +1,410 @@
+{
+  "report_format_version": "2.0",
+  "report_type": "aicp.external_evidence",
+  "execution_mode": "full-capability",
+  "execution_subject": {
+    "kind": "external_implementation",
+    "implementation_id": "example-projection-v1-implementation",
+    "implementation_version": "1.0.0-example",
+    "implementation_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "runner": {
+    "name": "aicp-external-evidence-runner",
+    "version": "2.0",
+    "source_revision": "sha256:cc695f4b3b0d211d59b1213ad31a56839e49bececd1564cea633d78c2f3b1522"
+  },
+  "tck_release": {
+    "release_id": "AICP-EVIDENCE-TCK-1.0.0",
+    "registry_digest": "sha256:bbc549d1d0ca6344de41a149430c25e257cf3438845f6e4ccdf0eab17f81ceaf",
+    "target_registry_digest": "sha256:343c979dbff3e2ac7a928a9409894bc8f1769b521948394a7c874b33d8b2fbdd",
+    "target_catalog_digest": "sha256:6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046",
+    "report_schema_digest": "sha256:5d107c975f9303d5f445ad22c1b18d710c10c88cb46988bb781032ddc670dd62",
+    "runner_bundle_digest": "sha256:cc695f4b3b0d211d59b1213ad31a56839e49bececd1564cea633d78c2f3b1522"
+  },
+  "target": {
+    "kind": "capability",
+    "target_id": "aicp.session_state_projection",
+    "target_version": "v1",
+    "target_catalog_digest": "sha256:6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046"
+  },
+  "required_suites": [
+    {
+      "suite_id": "OR-SESSION-STATE-PROJECTION-V1",
+      "suite_version": "1.0.0-experimental",
+      "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+      "suite_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+    }
+  ],
+  "input_artifacts": [
+    {
+      "path": "conformance/evidence/projection_v1_expectations.json",
+      "content_digest": "sha256:181cfb59a8091c786281dba0c8c9d3517731318726208694792c9c74d292e1b4"
+    },
+    {
+      "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+      "content_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+    },
+    {
+      "path": "conformance/vectors/unicode_codepoint_key_order.json",
+      "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+      "content_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+      "content_digest": "sha256:eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+      "content_digest": "sha256:9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+      "content_digest": "sha256:03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+      "content_digest": "sha256:def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+      "content_digest": "sha256:bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+      "content_digest": "sha256:d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+      "content_digest": "sha256:4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
+    },
+    {
+      "path": "registry/aicp_profiles.json",
+      "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+    },
+    {
+      "path": "registry/extension_ids.json",
+      "content_digest": "sha256:665f107066bb9a4c47e493cc0b3d9d07747d15e7cdab76a3b8b9177b0256f10a"
+    },
+    {
+      "path": "schemas/core/aicp-core-message.schema.json",
+      "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+    },
+    {
+      "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+      "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+    }
+  ],
+  "generated_artifacts": [
+    {
+      "artifact_id": "EVIDENCE-PRODUCER-SP-01",
+      "content_digest": "sha256:23089a695541bfa6b2c248ef29d131a3433356fa5beeccb814f5244b0e1cc31e",
+      "repeat_content_digest": "sha256:23089a695541bfa6b2c248ef29d131a3433356fa5beeccb814f5244b0e1cc31e",
+      "content": {
+        "projection": {
+          "projection_version": "aicp.session_state_projection.v1",
+          "session_id": "sSP1",
+          "contract_id": "cSP1",
+          "as_of_message_hash": "sha256:IkiKDdCVIdkgtZx17iR7_hSKAYX7xlMPIvtRqfYlG78",
+          "session_status": "OPEN",
+          "active_contract_ref": {
+            "branch_id": "main",
+            "base_version": "v1",
+            "head_version": "v2"
+          },
+          "selected_aicp_profile": {
+            "profile_id": "AICP-BASE",
+            "profile_version": "0.1"
+          },
+          "active_extensions": [
+            "EXT-OBJECT-RESYNC"
+          ],
+          "participant_refs": [
+            "agent:A",
+            "agent:B"
+          ],
+          "evidence_refs": [
+            "msghash:sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310"
+          ]
+        },
+        "session_state_hash": "sha256:kPqZ9musmznNE6H2fNQrMr4ZSdlyzvh6HW2cnk3cAoY"
+      }
+    }
+  ],
+  "timestamp": "2026-07-30T00:00:00Z",
+  "passed": true,
+  "case_results": [
+    {
+      "case_id": "EVIDENCE-TARGET-CATALOG-01",
+      "passed": true,
+      "message": "registered target and owning-suite catalog are complete"
+    },
+    {
+      "case_id": "EVIDENCE-TCK-PROVENANCE-01",
+      "passed": true,
+      "message": "evidence TCK provenance matches current bytes"
+    },
+    {
+      "case_id": "EVIDENCE-DESCRIBE-START-01",
+      "passed": true,
+      "message": "implementation metadata is complete and provenance claims are consistent"
+    },
+    {
+      "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+      "passed": true,
+      "message": "canonical bytes and hash match"
+    },
+    {
+      "case_id": "EVIDENCE-PRODUCER-SP-01",
+      "passed": true,
+      "message": "producer projection passed independent schema, binding, field, and hash checks; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-01",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": true,
+        "errors": [],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-02",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-SESSION-01",
+            "message": "projection session_id must equal envelope session_id"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-03",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-CONTRACT-01",
+            "message": "projection contract_id must equal envelope contract_id"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-04",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-HASH-01",
+            "message": "session_state_hash mismatch (expected sha256:gwKulRXDTNd8Xnx8MQxf2nCSvlMaBrUrFRUM2TICsfI, got sha256:kPqZ9musmznNE6H2fNQrMr4ZSdlyzvh6HW2cnk3cAoY)"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-05",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "CN-PAYLOAD-SCHEMA-01",
+            "message": "{'projection_version': 'aicp.session_state_projection.v1', 'session_id': 'sSP1', 'contract_id': 'cSP1', 'as_of_message_hash': 'sha256:IkiKDdCVIdkgtZx17iR7_hSKAYX7xlMPIvtRqfYlG78', 'session_status': 'OPEN', 'active_contract_ref': {'branch_id': 'main', 'head_version': 'v2'}, 'selected_aicp_profile': {'profile_id': 'AICP-BASE', 'profile_version': '0.1'}, 'active_extensions': ['EXT-OBJECT-RESYNC'], 'participant_refs': ['agent:A', 'agent:B'], 'evidence_refs': ['msghash:sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310']} is not valid under any of the given schemas"
+          },
+          {
+            "code": "OR-SP-CONTRACT-REF-01",
+            "message": "active_contract_ref must have the canonical Core contract-ref shape"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-06",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-PROFILE-01",
+            "message": "selected_aicp_profile AICP-NOT-REGISTERED@9.9 is not registered"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-07",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-EXTENSION-01",
+            "message": "active extension 'EXT-NOT-REGISTERED' is not registered or namespaced"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-08",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-ACTIVE-HEAD-01",
+            "message": "active_head_version must equal active_contract_ref.head_version"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-09",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-REFERENCE-01",
+            "message": "evidence reference 'msghash:sha256:y3wETYRxp-ZEtDNONEaR6x0tGyyW2jh00rLfcvgTLf8' is unresolved, not prior evidence"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-10",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-STATE-01",
+            "message": "unresolved_conflict_refs requires session_status CONFLICTED"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-11",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "OR-SP-AS-OF-01",
+            "message": "as_of_message_hash must bind to a known message or declared branch head"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-12",
+      "passed": true,
+      "message": "consumer observation exactly matches reviewed expectation",
+      "execution_observation": {
+        "accepted": false,
+        "errors": [
+          {
+            "code": "CN-PAYLOAD-SCHEMA-01",
+            "message": "{'projection_version': 'aicp.session_state_projection.v1', 'session_id': 'sSP1', 'contract_id': 'cSP1', 'as_of_message_hash': 'sha256:short', 'session_status': 'OPEN', 'active_contract_ref': {'branch_id': 'main', 'base_version': 'v1', 'head_version': 'v2'}, 'selected_aicp_profile': {'profile_id': 'AICP-BASE', 'profile_version': '0.1'}, 'active_extensions': ['EXT-OBJECT-RESYNC'], 'participant_refs': ['agent:A', 'agent:B'], 'evidence_refs': ['msghash:sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310']} is not valid under any of the given schemas"
+          },
+          {
+            "code": "OR-SP-AS-OF-01",
+            "message": "as_of_message_hash must use the exact AICP SHA-256 syntax"
+          },
+          {
+            "code": "OR-SP-AS-OF-01",
+            "message": "as_of_message_hash must bind to a known message or declared branch head"
+          }
+        ],
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "EVIDENCE-DESCRIBE-STABILITY-01",
+      "passed": true,
+      "message": "implementation metadata remained immutable"
+    },
+    {
+      "case_id": "EVIDENCE-TARGET-SUPPORT-01",
+      "passed": true,
+      "message": "adapter explicitly declares exact projection v1 capability"
+    }
+  ],
+  "failures": [],
+  "degraded": false,
+  "degraded_reasons": [],
+  "skipped_checks": [],
+  "compatibility_marks": [
+    "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+  ],
+  "adapter_stderr": ""
+}

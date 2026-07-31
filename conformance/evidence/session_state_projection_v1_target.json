@@ -1,0 +1,301 @@
+{
+  "catalog_version": "1.0",
+  "target_key": "aicp.session_state_projection@v1",
+  "target": {
+    "kind": "capability",
+    "target_id": "aicp.session_state_projection",
+    "target_version": "v1"
+  },
+  "owning_suite": {
+    "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+    "suite_id": "OR-SESSION-STATE-PROJECTION-V1",
+    "suite_version": "1.0.0-experimental",
+    "suite_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+  },
+  "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+  "external_execution_mode": "full-capability",
+  "required_operations": [
+    "describe",
+    "canonicalize_hash",
+    "validate_transcript",
+    "project_session_state"
+  ],
+  "canonicalization_vectors": [
+    {
+      "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+      "path": "conformance/vectors/unicode_codepoint_key_order.json",
+      "input_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+    }
+  ],
+  "producer_case": {
+    "case_id": "EVIDENCE-PRODUCER-SP-01",
+    "source_case_id": "SP-01",
+    "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+    "input_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c",
+    "deterministic_seed": "aicp-evidence-projection-v1-seed-1",
+    "expected_projection": {
+      "projection_version": "aicp.session_state_projection.v1",
+      "session_id": "sSP1",
+      "contract_id": "cSP1",
+      "as_of_message_hash": "sha256:IkiKDdCVIdkgtZx17iR7_hSKAYX7xlMPIvtRqfYlG78",
+      "session_status": "OPEN",
+      "active_contract_ref": {
+        "branch_id": "main",
+        "base_version": "v1",
+        "head_version": "v2"
+      },
+      "selected_aicp_profile": {
+        "profile_id": "AICP-BASE",
+        "profile_version": "0.1"
+      },
+      "active_extensions": [
+        "EXT-OBJECT-RESYNC"
+      ],
+      "participant_refs": [
+        "agent:A",
+        "agent:B"
+      ],
+      "evidence_refs": [
+        "msghash:sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310"
+      ]
+    },
+    "expected_projection_hash": "sha256:kPqZ9musmznNE6H2fNQrMr4ZSdlyzvh6HW2cnk3cAoY"
+  },
+  "consumer_cases": [
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-01",
+      "source_case_id": "SP-01",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+      "input_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c",
+      "accepted": true,
+      "expected_error_codes": [],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-02",
+      "source_case_id": "SP-02",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+      "input_digest": "sha256:6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-SESSION-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-03",
+      "source_case_id": "SP-03",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+      "input_digest": "sha256:2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-CONTRACT-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-04",
+      "source_case_id": "SP-04",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+      "input_digest": "sha256:ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-HASH-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-05",
+      "source_case_id": "SP-05",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+      "input_digest": "sha256:eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d",
+      "accepted": false,
+      "expected_error_codes": [
+        "CN-PAYLOAD-SCHEMA-01",
+        "OR-SP-CONTRACT-REF-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-06",
+      "source_case_id": "SP-06",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+      "input_digest": "sha256:9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-PROFILE-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-07",
+      "source_case_id": "SP-07",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+      "input_digest": "sha256:03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-EXTENSION-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-08",
+      "source_case_id": "SP-08",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+      "input_digest": "sha256:a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-ACTIVE-HEAD-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-09",
+      "source_case_id": "SP-09",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+      "input_digest": "sha256:def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-REFERENCE-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-10",
+      "source_case_id": "SP-10",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+      "input_digest": "sha256:bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-STATE-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-11",
+      "source_case_id": "SP-11",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+      "input_digest": "sha256:d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb",
+      "accepted": false,
+      "expected_error_codes": [
+        "OR-SP-AS-OF-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-SP-12",
+      "source_case_id": "SP-12",
+      "fixture": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+      "input_digest": "sha256:4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28",
+      "accepted": false,
+      "expected_error_codes": [
+        "CN-PAYLOAD-SCHEMA-01",
+        "OR-SP-AS-OF-01",
+        "OR-SP-AS-OF-01"
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    }
+  ],
+  "required_input_artifacts": [
+    {
+      "path": "conformance/evidence/projection_v1_expectations.json",
+      "content_digest": "sha256:181cfb59a8091c786281dba0c8c9d3517731318726208694792c9c74d292e1b4"
+    },
+    {
+      "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+      "content_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+    },
+    {
+      "path": "conformance/vectors/unicode_codepoint_key_order.json",
+      "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+      "content_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+      "content_digest": "sha256:eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+      "content_digest": "sha256:9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+      "content_digest": "sha256:03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+      "content_digest": "sha256:def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+      "content_digest": "sha256:bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+      "content_digest": "sha256:d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+      "content_digest": "sha256:4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
+    },
+    {
+      "path": "registry/aicp_profiles.json",
+      "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+    },
+    {
+      "path": "registry/extension_ids.json",
+      "content_digest": "sha256:665f107066bb9a4c47e493cc0b3d9d07747d15e7cdab76a3b8b9177b0256f10a"
+    },
+    {
+      "path": "schemas/core/aicp-core-message.schema.json",
+      "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+    },
+    {
+      "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+      "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+    }
+  ]
+}

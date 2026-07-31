@@ -31,6 +31,7 @@
       "profile_ids": [
         "AICP-BASE"
       ],
+      "capability_refs": [],
       "reports": [
         {
           "path": "reports/report_profile_base.json",
@@ -57,6 +58,9 @@
         "AICP-Profile-BASE-0.1"
       ],
       "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -70,6 +74,59 @@
     }
   ],
   "instructional_artifacts": [
+    {
+      "folder": "capability_claim",
+      "submission_id": "example-capability-claim",
+      "implementation_id": "example-projection-v1-implementation",
+      "implementation": {
+        "implementation_id": "example-projection-v1-implementation",
+        "implementation_version": "1.0.0-example",
+        "peer_implementation_id": null,
+        "claim_type": "implements_capability",
+        "claim_scope": "self_attested",
+        "evidence_status": "example"
+      },
+      "peer_implementation_id": null,
+      "artifact_kind": "example",
+      "evidence_status": "example",
+      "claim_type": "implements_capability",
+      "claim_scope": "self_attested",
+      "profile_ids": [],
+      "capability_refs": [
+        {
+          "capability_id": "aicp.session_state_projection",
+          "capability_version": "v1"
+        }
+      ],
+      "reports": [
+        {
+          "path": "reports/report_capability_projection_v1.json",
+          "suite_id": null,
+          "profile_id": null,
+          "passed": true,
+          "compatibility_marks": [
+            "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+          ]
+        }
+      ],
+      "compatibility_marks": [
+        "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
+      ],
+      "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "eligible_targets": [],
+      "evidence_validation_status": "not_promotable",
+      "errors": [],
+      "warnings": [
+        {
+          "warning_code": "NON_PUBLICATION_MARKS_NOT_PROMOTED",
+          "warning_message": "reported marks remain visible for audit but are not promoted outside a real eligible submission"
+        }
+      ],
+      "valid": true,
+      "matrix_status": "INSTRUCTIONAL"
+    },
     {
       "folder": "pairwise_profile_interop",
       "submission_id": "example-pairwise-profile-interop",
@@ -90,6 +147,7 @@
       "profile_ids": [
         "AICP-MEDIATED-BLOCKING"
       ],
+      "capability_refs": [],
       "reports": [
         {
           "path": "reports/report_profile_mediated_blocking_a.json",
@@ -124,6 +182,9 @@
         "AICP-Profile-MEDIATED-BLOCKING-0.1"
       ],
       "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -155,6 +216,7 @@
       "profile_ids": [
         "AICP-BASE"
       ],
+      "capability_refs": [],
       "reports": [
         {
           "path": "reports/report_profile_base.json",
@@ -181,6 +243,9 @@
         "AICP-Profile-BASE-0.1"
       ],
       "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -212,15 +277,60 @@
       "profile_ids": [
         "AICP-BASE"
       ],
+      "capability_refs": [],
       "reports": [],
       "compatibility_marks": [],
       "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
         {
           "warning_code": "TEMPLATE_PLACEHOLDER_REF",
           "warning_message": "template placeholder report_refs target not yet replaced: reports/replace-with-profile-report.json"
+        }
+      ],
+      "valid": true,
+      "matrix_status": "INSTRUCTIONAL"
+    },
+    {
+      "folder": "capability_submission",
+      "submission_id": "replace-capability-submission-id",
+      "implementation_id": "replace-implementation-id",
+      "implementation": {
+        "implementation_id": "replace-implementation-id",
+        "implementation_version": "replace-version",
+        "peer_implementation_id": null,
+        "claim_type": "implements_capability",
+        "claim_scope": "self_attested",
+        "evidence_status": "template"
+      },
+      "peer_implementation_id": null,
+      "artifact_kind": "template",
+      "evidence_status": "template",
+      "claim_type": "implements_capability",
+      "claim_scope": "self_attested",
+      "profile_ids": [],
+      "capability_refs": [
+        {
+          "capability_id": "aicp.session_state_projection",
+          "capability_version": "v1"
+        }
+      ],
+      "reports": [],
+      "compatibility_marks": [],
+      "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "eligible_targets": [],
+      "evidence_validation_status": "not_promotable",
+      "errors": [],
+      "warnings": [
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/replace-with-full-capability-report.json"
         }
       ],
       "valid": true,
@@ -234,6 +344,8 @@
     "evidence_status describes package strength/scope and does not imply maintainer endorsement.",
     "Template placeholder refs are surfaced as instructional warnings, not as real-submission compatibility evidence.",
     "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only.",
-    "Only independently validated reproducible external full-profile IUT evidence produces computed marks."
+    "Only independently validated reproducible external full-profile IUT evidence produces computed marks.",
+    "Capability marks are computed separately from product-profile marks and never prove a profile.",
+    "Only independently validated full-capability report v2 evidence produces computed capability marks."
   ]
 }

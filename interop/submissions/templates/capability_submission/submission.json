@@ -1,0 +1,28 @@
+{
+  "submission_id": "replace-capability-submission-id",
+  "implementation_id": "replace-implementation-id",
+  "implementation_version": "replace-version",
+  "capability_refs": [
+    {
+      "capability_id": "aicp.session_state_projection",
+      "capability_version": "v1"
+    }
+  ],
+  "evidence_types": [
+    "capability_report"
+  ],
+  "evidence_status": "template",
+  "report_refs": [
+    "reports/replace-with-full-capability-report.json"
+  ],
+  "suite_refs": [
+    "OR-SESSION-STATE-PROJECTION-V1"
+  ],
+  "claim_type": "implements_capability",
+  "claim_scope": "self_attested",
+  "generated_at": "2026-07-30T00:00:00Z",
+  "notes": "Replace every placeholder and use reproducible evidence for a real strong capability claim.",
+  "disclosures": [
+    "Template only; not submission evidence."
+  ]
+}

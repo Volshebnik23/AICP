@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/evidence-target-registry-1.0.json",
+  "title": "AICP External Evidence Target Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry_version",
+    "targets"
+  ],
+  "properties": {
+    "registry_version": {
+      "const": "1.0"
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/Target"
+      }
+    }
+  },
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_key",
+        "target_kind",
+        "target_id",
+        "target_version",
+        "status",
+        "target_catalog",
+        "expected_mark",
+        "required_suites",
+        "required_operations",
+        "external_execution_mode",
+        "evidence_claim_type"
+      ],
+      "properties": {
+        "target_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+@v[0-9]+$"
+        },
+        "target_kind": {
+          "enum": [
+            "product_profile",
+            "capability",
+            "binding"
+          ]
+        },
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+$"
+        },
+        "status": {
+          "enum": [
+            "experimental",
+            "stable"
+          ]
+        },
+        "target_catalog": {
+          "$ref": "#/$defs/RelativePath"
+        },
+        "expected_mark": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_suites": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/RelativePath"
+          }
+        },
+        "required_operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "describe",
+              "canonicalize_hash",
+              "validate_transcript",
+              "generate_scenario",
+              "project_session_state"
+            ]
+          }
+        },
+        "external_execution_mode": {
+          "enum": [
+            "full-profile",
+            "full-capability",
+            "full-binding"
+          ]
+        },
+        "evidence_claim_type": {
+          "enum": [
+            "implements_profile",
+            "implements_capability",
+            "implements_binding"
+          ]
+        }
+      }
+    },
+    "RelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\./).+"
+    }
+  }
+}

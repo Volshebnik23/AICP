@@ -13,7 +13,7 @@ tag, package publication, GA declaration, or final RC repackaging.
 - The canonical repository-truth baseline now distinguishes shipped artifacts, registry
   stability, internal verification, external testability, independent evidence, live
   binding evidence, and remaining milestones.
-- Roadmap and backlog roles are separated: M58–M61 are shipped, while M62–M70 retain
+- Roadmap and backlog roles are separated: M58–M62 are shipped, while M63–M70 retain
   the remaining evidence, interop, security, governance, and release work.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
@@ -42,6 +42,17 @@ tag, package publication, GA declaration, or final RC repackaging.
   successor replay safe after predecessor supersession, makes direct reducers fail closed
   without crypto verification, and replaces copied cross-language/projection evidence with
   compact references to one message source and one reviewed semantic oracle.
+- M62 adds a separate target-oriented external evidence report v2 and deterministic
+  `AICP-EVIDENCE-TCK-1.0.0` without changing profile IUT report v1 or adapter protocol 1.1.
+  Its only registered target is experimental
+  `aicp.session_state_projection@v1`: one deterministic producer and all 12 owning-suite
+  consumers are digest-bound and independently evaluated. Only complete non-degraded
+  `full-capability` execution by an `external_implementation` can reach
+  `AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference and smoke runs emit no mark.
+- Public submissions now support exact `implements_capability` claims and the matrix keeps
+  independently computed profile and capability marks/targets separate. The checked-in
+  capability example and external-kind adapter are fictional test artifacts, not real
+  external evidence.
 
 ### Current evidence limits
 
@@ -51,7 +62,9 @@ tag, package publication, GA declaration, or final RC repackaging.
   use projection v1 as an exact-head overlay, and has no external-IUT target in M60.
 - CAPNEG v0.2 and projection v2 have internal evidence only. They do not create an
   aggregate profile badge, award component marks, or enable external composition claims;
-  generalized external evidence remains M62 work.
+  M62 does not register either as an external target.
+- Projection v1 has one externally testable capability target and one reachable evidence
+  mark, but no real independent external capability submission is present.
 - The authenticated 37-case target can emit its ordinary external mark for a complete
   eligible implementation. Its mandatory unavailable-crypto probe remains exact and
   case-local; real degradation or skipped normal verification remains ineligible.

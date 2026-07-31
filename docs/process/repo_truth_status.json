@@ -379,7 +379,10 @@
         "internally_verified",
         "externally_testable"
       ],
-      "external_test_path": "separate_smoke_capability_run",
+      "external_test_path": "full-capability",
+      "external_evidence_target": true,
+      "external_evidence_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+      "external_evidence_mark_reachable": true,
       "ordinary_compatibility_mark": false,
       "independent_external_evidence": false
     },
@@ -390,9 +393,12 @@
         "internally_verified"
       ],
       "external_test_path": null,
+      "external_evidence_target": false,
+      "external_evidence_mark": null,
+      "external_evidence_mark_reachable": false,
       "ordinary_compatibility_mark": false,
       "independent_external_evidence": false,
-      "external_evidence_gap_milestone": "M62"
+      "external_evidence_status": "deferred"
     }
   },
   "binding_evidence": [
@@ -416,10 +422,11 @@
     "eligible_external_submission_count": 0,
     "rejected_real_submission_count": 0,
     "externally_demonstrated_profiles": [],
+    "externally_demonstrated_capabilities": [],
     "pairwise_publication_available": false,
     "pairwise_demonstrated": false,
     "dry_run_count": 1,
-    "instructional_artifact_count": 3
+    "instructional_artifact_count": 5
   },
   "security_review": {
     "internal_self_review_completed": true,
@@ -4134,8 +4141,8 @@
     {
       "id": "M62",
       "title": "Generalized External Evidence Framework",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M63",
@@ -4195,6 +4202,11 @@
     "suite": "conformance/extensions/CN_CAPNEG_0.2.json",
     "compatibility_mark": "AICP-EXT-CAPNEG-0.2",
     "composition_external_evidence": false,
-    "external_evidence_gap_milestone": "M62"
+    "external_evidence_status": "deferred"
+  },
+  "capability_summary": {
+    "external_capability_targets": 1,
+    "reachable_external_capability_marks": 1,
+    "externally_demonstrated_capabilities": 0
   }
 }
