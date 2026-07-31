@@ -31,7 +31,7 @@ jobs:
       - name: Install minimal deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install jsonschema
+          python -m pip install jsonschema cryptography
 
       - name: Run lightweight validation
         run: make validate
