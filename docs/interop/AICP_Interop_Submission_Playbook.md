@@ -101,11 +101,16 @@ For strict session-state projection v1 use:
   `full-capability` mode
 
 The validator independently evaluates the current target registry and
-`AICP-EVIDENCE-TCK-1.0.0` bindings. It does not trust `passed` or
+`AICP-EVIDENCE-TCK-1.1.0` bindings. It does not trust `passed` or
 `compatibility_marks` alone. Smoke, `reference_corpus`, self-attested, degraded, skipped,
 incomplete, wrong-version, or subject-mismatched reports cannot support the strong claim.
 The capability mark does not prove any product profile or pairwise run. Projection v2
 remains internal-only.
+
+The 1.1.0 producer challenge contains raw scenario facts and a transcript prefix without a
+completed projection response. The implementation must derive message hashes, evidence
+references, canonical fields, and the projection hash. Evidence TCK 1.0.0 is historical,
+superseded, and ineligible for a current reproducible claim.
 
 ## Pairwise vocabulary is currently instructional only
 

@@ -108,7 +108,10 @@ The internal suite mark and the external capability mark have the same identity 
 different evidence boundaries. Strong external evidence requires the separate
 target-oriented report v2 path, exact target `aicp.session_state_projection@v1`,
 `full-capability` execution against an `external_implementation`, complete producer and
-all 12 consumer cases, and independently validated `AICP-EVIDENCE-TCK-1.0.0` provenance.
+all 12 consumer cases, and independently validated `AICP-EVIDENCE-TCK-1.1.0` provenance.
+The producer input is an answer-isolated scenario of raw facts plus a transcript prefix
+without the requested `STATE_SYNC_RESPONSE`; the adapter derives hashes and references.
+Historical 1.0.0 evidence is not eligible for the current external mark.
 Smoke and `reference_corpus` reports emit no external mark. This capability evidence does
 not imply product-profile conformance or pairwise interoperability. Projection v2 remains
 internal-only and is not an external evidence target.

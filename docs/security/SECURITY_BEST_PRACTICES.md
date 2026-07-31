@@ -144,3 +144,10 @@ that a named vendor produced the report. `execution_subject`, review, and public
 process supply separate identity context. The checked-in reference adapter and fictional
 external-kind test adapter are not independent implementations, and no real external
 capability submission is currently present.
+
+Evidence TCK 1.1.0 also treats expected-answer disclosure as a test-integrity risk.
+Producer requests contain only raw scenario facts and a response-free transcript prefix;
+reviewed projections, hashes, fixture paths, and case IDs remain private to the TCK.
+Registry/schema/catalog and every statically imported load-bearing runner module are bound
+by digest. Unknown handlers, unavailable schema validation, historical 1.0.0 reports, and
+dependency-closure drift fail closed and emit no capability mark.

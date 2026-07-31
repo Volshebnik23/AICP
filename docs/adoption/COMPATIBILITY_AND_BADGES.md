@@ -99,12 +99,16 @@ not organizational identity, certification, or endorsement.
 
 Generalized external report v2 is a separate target-oriented family. M62 registers only
 `aicp.session_state_projection@v1` in `full-capability` mode under
-`AICP-EVIDENCE-TCK-1.0.0`. A complete external implementation may be eligible for
+`AICP-EVIDENCE-TCK-1.1.0`. A complete external implementation may be eligible for
 `AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference, smoke, degraded, skipped, incomplete,
 or provenance-mismatched reports emit no capability mark. This evidence mark is not an
 ordinary product-profile mark and cannot prove profile conformance, certification,
 composition, organizational identity, or pairwise interoperability. Projection v2 remains
 internal-only.
+
+Evidence TCK 1.0.0 is frozen historical data with superseded-experimental status: its
+producer challenge did not isolate the expected answer, and no real external submission
+depended on it. A schema-valid 1.0.0 report cannot support the current capability mark.
 
 ## Current external reachability
 

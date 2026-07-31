@@ -42,8 +42,13 @@ tag, package publication, GA declaration, or final RC repackaging.
   successor replay safe after predecessor supersession, makes direct reducers fail closed
   without crypto verification, and replaces copied cross-language/projection evidence with
   compact references to one message source and one reviewed semantic oracle.
-- M62 adds a separate target-oriented external evidence report v2 and deterministic
-  `AICP-EVIDENCE-TCK-1.0.0` without changing profile IUT report v1 or adapter protocol 1.1.
+- M62 adds a separate target-oriented external evidence report v2 without changing profile
+  IUT report v1 or adapter protocol 1.1. The original `AICP-EVIDENCE-TCK-1.0.0` record is
+  byte-frozen and superseded because its producer challenge disclosed the reviewed answer;
+  no real external submission depended on it. Corrected `AICP-EVIDENCE-TCK-1.1.0` uses a
+  neutral raw-fact scenario and response-free transcript prefix, registry-driven handler
+  dispatch, kind-appropriate exact target versions, registry-schema provenance, and a
+  generated static import-closure runner manifest.
   Its only registered target is experimental
   `aicp.session_state_projection@v1`: one deterministic producer and all 12 owning-suite
   consumers are digest-bound and independently evaluated. Only complete non-degraded
