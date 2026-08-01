@@ -100,13 +100,18 @@ external-IUT evidence; M62 does not add external composition evidence.
 
 M62 adds one separate target-oriented capability path:
 `aicp.session_state_projection@v1`, report format `2.0`, `full-capability` execution, and
-`AICP-EVIDENCE-TCK-1.0.0`. A strong `implements_capability` package requires exact
+`AICP-EVIDENCE-TCK-1.1.0`. A strong `implements_capability` package requires exact
 `capability_refs`, `evidence_status=reproducible`, `capability_report`, and an independently
 eligible external-implementation report whose computed mark is
 `AICP-Evidence-SESSION-STATE-PROJECTION-v1`. Capability and profile fields cannot be mixed
 in one M62 manifest. Capability evidence cannot prove a product profile. Smoke, reference,
 internal, self-attested, incomplete, degraded, skipped, and raw-mark-only evidence is
 ineligible. Projection v2 is not registered as an external target.
+
+Release 1.1.0 uses answer-isolated raw producer facts and binds the target-registry schema
+and generated runner import closure. Historical 1.0.0 reports remain parseable but cannot
+support current strong eligibility. The checked-in fictional example uses 1.1.0 and is not
+counted as independent evidence.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.
 

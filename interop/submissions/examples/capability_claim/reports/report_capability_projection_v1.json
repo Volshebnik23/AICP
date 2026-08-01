@@ -11,21 +11,22 @@
   "runner": {
     "name": "aicp-external-evidence-runner",
     "version": "2.0",
-    "source_revision": "sha256:cc695f4b3b0d211d59b1213ad31a56839e49bececd1564cea633d78c2f3b1522"
+    "source_revision": "sha256:7542ef3f63841c151381ab49acdf9047ea5b3d25503ab47fdab60297848a4a86"
   },
   "tck_release": {
-    "release_id": "AICP-EVIDENCE-TCK-1.0.0",
-    "registry_digest": "sha256:bbc549d1d0ca6344de41a149430c25e257cf3438845f6e4ccdf0eab17f81ceaf",
-    "target_registry_digest": "sha256:343c979dbff3e2ac7a928a9409894bc8f1769b521948394a7c874b33d8b2fbdd",
-    "target_catalog_digest": "sha256:6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046",
-    "report_schema_digest": "sha256:5d107c975f9303d5f445ad22c1b18d710c10c88cb46988bb781032ddc670dd62",
-    "runner_bundle_digest": "sha256:cc695f4b3b0d211d59b1213ad31a56839e49bececd1564cea633d78c2f3b1522"
+    "release_id": "AICP-EVIDENCE-TCK-1.1.0",
+    "registry_digest": "sha256:b480aceb911e7f284352f157f3e04914788bdbdaa95d4c1857ea3ab8ac810426",
+    "target_registry_digest": "sha256:378a3a2002cd3fc9c48abd1095505065f1ed5501f6c82591b72c5aefbea3c5f2",
+    "target_registry_schema_digest": "sha256:3e71ef6d64826a748cac2ad3de9926232ed5617d5cee88bef43b655f43920d13",
+    "target_catalog_digest": "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20",
+    "report_schema_digest": "sha256:f1afe5b31e231f1fb3e24c151b6a0ccf07fd025e9e79cd903293ac7210ae8ddd",
+    "runner_bundle_digest": "sha256:7542ef3f63841c151381ab49acdf9047ea5b3d25503ab47fdab60297848a4a86"
   },
   "target": {
     "kind": "capability",
     "target_id": "aicp.session_state_projection",
     "target_version": "v1",
-    "target_catalog_digest": "sha256:6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046"
+    "target_catalog_digest": "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20"
   },
   "required_suites": [
     {
@@ -38,7 +39,19 @@
   "input_artifacts": [
     {
       "path": "conformance/evidence/projection_v1_expectations.json",
-      "content_digest": "sha256:181cfb59a8091c786281dba0c8c9d3517731318726208694792c9c74d292e1b4"
+      "content_digest": "sha256:e75d8a325f587add0bd9b6883edd8f12308676c9f4cf1c280dcda18077fc628a"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_producer_scenario.json",
+      "content_digest": "sha256:07aa03727c5653b8f54ede45a1b562dde977678f581d8868bb71f0b35f152d99"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_producer_scenario.schema.json",
+      "content_digest": "sha256:7be1ee597e6ce67e80df0e926897ff31f72b6e18f6fecd053e0739ea8134054a"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_producer_transcript.json",
+      "content_digest": "sha256:4839e2f89a891cc64ac8b3329c76feff6375caadd2d3e95a6e32412980679394"
     },
     {
       "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
@@ -116,14 +129,14 @@
   "generated_artifacts": [
     {
       "artifact_id": "EVIDENCE-PRODUCER-SP-01",
-      "content_digest": "sha256:23089a695541bfa6b2c248ef29d131a3433356fa5beeccb814f5244b0e1cc31e",
-      "repeat_content_digest": "sha256:23089a695541bfa6b2c248ef29d131a3433356fa5beeccb814f5244b0e1cc31e",
+      "content_digest": "sha256:2ea450d372f8887cc90a0c0be4d3a8ab6bfe70638b1200bc1cc0adee62305fda",
+      "repeat_content_digest": "sha256:2ea450d372f8887cc90a0c0be4d3a8ab6bfe70638b1200bc1cc0adee62305fda",
       "content": {
         "projection": {
           "projection_version": "aicp.session_state_projection.v1",
           "session_id": "sSP1",
           "contract_id": "cSP1",
-          "as_of_message_hash": "sha256:IkiKDdCVIdkgtZx17iR7_hSKAYX7xlMPIvtRqfYlG78",
+          "as_of_message_hash": "sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310",
           "session_status": "OPEN",
           "active_contract_ref": {
             "branch_id": "main",
@@ -145,7 +158,7 @@
             "msghash:sha256:vj2Aoj6yNJDvRVSO9xcfkGgFe1Rh_svRMyaC42S8310"
           ]
         },
-        "session_state_hash": "sha256:kPqZ9musmznNE6H2fNQrMr4ZSdlyzvh6HW2cnk3cAoY"
+        "session_state_hash": "sha256:_Li1EzzQW0MPAbtfwJBBMMf-71zW28suIPWUAlWvmxE"
       }
     }
   ],
@@ -155,17 +168,17 @@
     {
       "case_id": "EVIDENCE-TARGET-CATALOG-01",
       "passed": true,
-      "message": "registered target and owning-suite catalog are complete"
+      "message": "registry-schema-validated target and catalog are complete"
     },
     {
       "case_id": "EVIDENCE-TCK-PROVENANCE-01",
       "passed": true,
-      "message": "evidence TCK provenance matches current bytes"
+      "message": "evidence TCK provenance and import-closed bundle match current bytes"
     },
     {
       "case_id": "EVIDENCE-DESCRIBE-START-01",
       "passed": true,
-      "message": "implementation metadata is complete and provenance claims are consistent"
+      "message": "implementation metadata and provenance claims are consistent"
     },
     {
       "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
@@ -175,12 +188,12 @@
     {
       "case_id": "EVIDENCE-PRODUCER-SP-01",
       "passed": true,
-      "message": "producer projection passed independent schema, binding, field, and hash checks; deterministic repeat digest matched"
+      "message": "producer output passed scenario, transcript, schema, ordering, binding, and hash checks; deterministic repeat digest matched"
     },
     {
       "case_id": "EVIDENCE-CONSUMER-SP-01",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": true,
         "errors": [],
@@ -192,7 +205,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-02",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -209,7 +222,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-03",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -226,7 +239,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-04",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -243,7 +256,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-05",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -264,7 +277,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-06",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -281,7 +294,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-07",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -298,7 +311,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-08",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -315,7 +328,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-09",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -332,7 +345,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-10",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -349,7 +362,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-11",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -366,7 +379,7 @@
     {
       "case_id": "EVIDENCE-CONSUMER-SP-12",
       "passed": true,
-      "message": "consumer observation exactly matches reviewed expectation",
+      "message": "consumer observation exactly matches reviewed counts and ordering",
       "execution_observation": {
         "accepted": false,
         "errors": [
@@ -396,7 +409,7 @@
     {
       "case_id": "EVIDENCE-TARGET-SUPPORT-01",
       "passed": true,
-      "message": "adapter explicitly declares exact projection v1 capability"
+      "message": "adapter explicitly declares the exact registered target"
     }
   ],
   "failures": [],

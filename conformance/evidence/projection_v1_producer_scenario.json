@@ -1,0 +1,36 @@
+{
+  "scenario_version": "aicp.evidence.session_state_projection_input.v1",
+  "target_capability": {
+    "capability_id": "aicp.session_state_projection",
+    "capability_version": "v1"
+  },
+  "session": {
+    "session_id": "sSP1",
+    "contract_id": "cSP1",
+    "status": "OPEN"
+  },
+  "as_of": {
+    "message_id": "m1",
+    "branch_id": "main",
+    "head_version": "v2"
+  },
+  "contract": {
+    "branch_id": "main",
+    "base_version": "v1",
+    "head_version": "v2"
+  },
+  "selected_profile": {
+    "profile_id": "AICP-BASE",
+    "profile_version": "0.1"
+  },
+  "active_extension_ids": [
+    "EXT-OBJECT-RESYNC"
+  ],
+  "participant_ids": [
+    "agent:A",
+    "agent:B"
+  ],
+  "evidence_message_ids": [
+    "m1"
+  ]
+}

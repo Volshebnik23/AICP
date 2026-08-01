@@ -25,10 +25,12 @@ capability evidence.
 3. Reuse adapter protocol 1.1. Its open `result` object can carry
    `supported_aicp_capabilities`, so no wrapper revision is needed. Successful operation
    dispatch alone never implies capability support.
-4. Register a separate deterministic release family,
-   `AICP-EVIDENCE-TCK-1.0.0`, binding the report schema, target registry and catalog,
-   runner/evaluator bundle, suites, input artifacts, vectors, mandatory cases, and expected
-   mark. The release registry is not a certification authority.
+4. Preserve `AICP-EVIDENCE-TCK-1.0.0` as a byte-frozen historical experimental record.
+   Its producer request disclosed the ready-made projection, so supersession metadata
+   makes it ineligible for current strong claims. No real external submission depended on
+   that release. `AICP-EVIDENCE-TCK-1.1.0` binds the answer-isolated scenario and schema,
+   target registry and registry schema, catalog, handler, evaluator, generated import-
+   closure bundle, suites, reviewed inputs, mandatory cases, and expected mark.
 5. Treat `AICP-Evidence-SESSION-STATE-PROJECTION-v1` as a capability evidence mark.
    Eligibility is independently recomputed from the complete external report; raw mark
    presence, internal reports, smoke runs, reference runs, and examples do not establish
@@ -51,7 +53,10 @@ capability evidence.
 ## Consequences
 
 Future releases can register additional capability, product-profile, or binding targets
-without changing the report family, provided each target has a deterministic catalog and
-independently evaluated provenance. M62 proves that architecture with only
-`aicp.session_state_projection@v1`. Capability and product-profile marks remain typed and
-cannot cross-prove one another. Pairwise publication remains unavailable.
+without changing the report family: exact target keys use kind-appropriate versions and
+dispatch through an explicit handler registry. Unknown handlers fail closed. M62 proves
+that architecture with only `aicp.session_state_projection@v1` and `projection_v1`.
+Producer scenarios expose raw facts and a response-free transcript prefix, never the
+reviewed projection/hash. Capability and product-profile marks remain typed and cannot
+cross-prove one another. Projection v2 stays internal and pairwise publication remains
+unavailable.

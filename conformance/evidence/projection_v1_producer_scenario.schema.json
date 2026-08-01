@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/evidence-session-state-projection-input-v1.json",
+  "title": "AICP Session-State Projection v1 Evidence Producer Scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenario_version",
+    "target_capability",
+    "session",
+    "as_of",
+    "contract",
+    "selected_profile",
+    "active_extension_ids",
+    "participant_ids",
+    "evidence_message_ids"
+  ],
+  "properties": {
+    "scenario_version": {
+      "const": "aicp.evidence.session_state_projection_input.v1"
+    },
+    "target_capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "capability_version"],
+      "properties": {
+        "capability_id": {"const": "aicp.session_state_projection"},
+        "capability_version": {"const": "v1"}
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "contract_id", "status"],
+      "properties": {
+        "session_id": {"type": "string", "minLength": 1},
+        "contract_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["OPEN", "CLOSED", "CONFLICTED", "UNKNOWN"]}
+      }
+    },
+    "as_of": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["message_id", "branch_id", "head_version"],
+      "properties": {
+        "message_id": {"type": "string", "minLength": 1},
+        "branch_id": {"type": "string", "minLength": 1},
+        "head_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch_id", "base_version", "head_version"],
+      "properties": {
+        "branch_id": {"type": "string", "minLength": 1},
+        "base_version": {"type": "string", "minLength": 1},
+        "head_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "selected_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version"],
+      "properties": {
+        "profile_id": {"type": "string", "minLength": 1},
+        "profile_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "active_extension_ids": {
+      "$ref": "#/$defs/SortedIdentifiers"
+    },
+    "participant_ids": {
+      "$ref": "#/$defs/SortedIdentifiers"
+    },
+    "evidence_message_ids": {
+      "$ref": "#/$defs/SortedIdentifiers"
+    }
+  },
+  "$defs": {
+    "SortedIdentifiers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

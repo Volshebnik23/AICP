@@ -21,13 +21,18 @@ All notable repo-backed release metadata changes should be recorded here.
   20 positive and 104 exact expected-fail cases, and Python/TypeScript shared/direct parity.
 - Added composition-aware session-state projection v2 with four positive and nine negative
   cases and an internal-only evidence mark.
-- Added target-oriented external evidence report v2, the deterministic
-  `AICP-EVIDENCE-TCK-1.0.0` release, and the exact
+- Added target-oriented external evidence report v2, frozen historical
+  `AICP-EVIDENCE-TCK-1.0.0`, corrected `AICP-EVIDENCE-TCK-1.1.0`, and the exact
   `aicp.session_state_projection@v1` full-capability target with one producer and all 12
   owning-suite consumer transcripts.
 - Added independent capability report evaluation, protocol-1.1 reference/test adapters,
-  20 negative adapter modes, report-forgery and mutation controls, and truthful
+  35 negative adapter modes, report-forgery and mutation controls, and truthful
   missing-dependency handling.
+- Corrected M62 producer evidence so adapter requests contain a neutral raw-fact scenario
+  and response-free transcript prefix rather than the reviewed projection. Target lookup
+  is registry-driven through explicit handlers, target versions are kind-appropriate, the
+  registry schema is provenance-bound, and the runner bundle is generated from its static
+  runtime import closure. Historical 1.0.0 reports cannot support current strong claims.
 - Added typed public `implements_capability` submissions, a fictional example and template,
   independently computed capability marks/targets in the interop matrix, and separate
   profile/capability repo-truth counts.

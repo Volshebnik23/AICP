@@ -190,6 +190,7 @@
         "release_id",
         "registry_digest",
         "target_registry_digest",
+        "target_registry_schema_digest",
         "target_catalog_digest",
         "report_schema_digest",
         "runner_bundle_digest"
@@ -203,6 +204,9 @@
           "$ref": "#/$defs/Digest"
         },
         "target_registry_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "target_registry_schema_digest": {
           "$ref": "#/$defs/Digest"
         },
         "target_catalog_digest": {

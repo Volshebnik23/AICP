@@ -892,6 +892,17 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
     suite_exists = (
         root / "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
     ).is_file()
+    target_registry = _json(root, EVIDENCE_TARGETS)
+    projection_target = next(
+        (
+            item
+            for item in target_registry.get("targets", [])
+            if isinstance(item, dict)
+            and item.get("target_key")
+            == "aicp.session_state_projection@v1"
+        ),
+        {},
+    )
     expected_v1 = {
         "status": [
             "shipped",
@@ -900,6 +911,9 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
             "externally_testable",
         ],
         "external_test_path": "full-capability",
+        "current_evidence_tck_release": projection_target.get(
+            "current_release_id"
+        ),
         "external_evidence_target": True,
         "external_evidence_mark": (
             "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
@@ -945,7 +959,6 @@ def _capability_errors(root: Path, status: dict[str, Any]) -> list[str]:
         errors.append("CAPNEG v0.2 status does not match canonical model")
     if "session_state_projection" not in iut_cases or not suite_exists:
         errors.append("strict session-state projection evidence paths do not resolve")
-    target_registry = _json(root, EVIDENCE_TARGETS)
     capability_targets = [
         item
         for item in target_registry.get("targets", [])

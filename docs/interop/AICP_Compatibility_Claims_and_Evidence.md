@@ -79,6 +79,10 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
+The current release is `AICP-EVIDENCE-TCK-1.1.0`. It binds an answer-isolated neutral
+producer scenario, registry schema, registered handler, and import-closed runner bundle.
+The frozen historical 1.0.0 release cannot support a current strong claim.
+
 The exact eligible mark is `AICP-Evidence-SESSION-STATE-PROJECTION-v1`. It is a capability
 evidence mark, not a product-profile mark, certification, composition mark, or pairwise
 result. An internal suite report, reference report, smoke report, self-attested package, or

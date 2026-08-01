@@ -756,7 +756,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Governance model / maturity | `{governance['current_model']}` / `{governance['standard_maturity']}` | `GOVERNANCE.md` |",
         f"| Registered message surface | {message_summary['registered_count']} entries; {version_selected_messages} IDs use version-selected payload schemas; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
         f"| CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence={str(status['capneg_v0_2']['composition_external_evidence']).lower()} | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |",
-        f"| Session-state projection v1 | shipped / experimental / internally verified / externally testable; evidence target={str(status['capability_evidence']['aicp.session_state_projection.v1']['external_evidence_target']).lower()}; reachable mark={str(status['capability_evidence']['aicp.session_state_projection.v1']['external_evidence_mark_reachable']).lower()} | `conformance/evidence/targets.json`, `capability_evidence` |",
+        f"| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK={status['capability_evidence']['aicp.session_state_projection.v1']['current_evidence_tck_release']}; evidence target={str(status['capability_evidence']['aicp.session_state_projection.v1']['external_evidence_target']).lower()}; reachable mark={str(status['capability_evidence']['aicp.session_state_projection.v1']['external_evidence_mark_reachable']).lower()} | `conformance/evidence/targets.json`, `capability_evidence` |",
         f"| Session-state projection v2 | shipped / experimental / internally verified; ordinary mark={str(status['capability_evidence']['aicp.session_state_projection.v2']['ordinary_compatibility_mark']).lower()} | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |",
         "",
         "### Milestone summary",
@@ -906,6 +906,13 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         "composition_external_evidence": False,
         "external_evidence_status": "deferred",
     }
+    evidence_targets = load_json(root, EVIDENCE_TARGETS_PATH).get("targets", [])
+    projection_v1_target = next(
+        item
+        for item in evidence_targets
+        if isinstance(item, dict)
+        and item.get("target_key") == "aicp.session_state_projection@v1"
+    )
     status["capability_evidence"] = {
         "aicp.session_state_projection.v1": {
             "status": [
@@ -915,6 +922,9 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
                 "externally_testable",
             ],
             "external_test_path": "full-capability",
+            "current_evidence_tck_release": projection_v1_target[
+                "current_release_id"
+            ],
             "external_evidence_target": True,
             "external_evidence_mark": (
                 "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
@@ -962,7 +972,7 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
     }
     capability_targets = [
         item
-        for item in load_json(root, EVIDENCE_TARGETS_PATH).get("targets", [])
+        for item in evidence_targets
         if isinstance(item, dict)
         and item.get("target_kind") == "capability"
     ]

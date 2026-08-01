@@ -116,9 +116,11 @@ _Last updated: 2026-07-29_
 - **Non-goals:** no reinterpretation of profile IUT v1, Core, CAPNEG, product profiles,
   UAT, or the adapter wrapper; no projection-v2, Tier-1 profile, live binding, aggregate
   composition, real external submission, certification, or pairwise target.
-- **Completion evidence:** `AICP-EVIDENCE-TCK-1.0.0` binds report v2, the exact capability
-  target/catalog, runner/evaluator bundle, owning suite, canonicalization vector, one
-  deterministic producer, and all 12 projection-v1 consumers. A complete non-degraded
+- **Completion evidence:** byte-frozen `AICP-EVIDENCE-TCK-1.0.0` is historical and
+  superseded; `AICP-EVIDENCE-TCK-1.1.0` binds report v2, the registry and schema, exact
+  capability target/catalog/handler, generated import-closure bundle, owning suite,
+  answer-isolated neutral producer scenario, canonicalization vector, and all 12
+  projection-v1 consumers. A complete non-degraded
   external-kind test implementation reaches
   `AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference, smoke, incomplete, forged,
   degraded, skipped, wrong-subject, and provenance-mismatched evidence does not.

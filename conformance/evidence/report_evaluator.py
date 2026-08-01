@@ -15,27 +15,24 @@ for path in (EVIDENCE_DIR, RUNNER_DIR):
 
 from _runner_context import build_validator  # noqa: E402
 from target_catalog import (  # noqa: E402
-    EXPECTED_MARK,
     REPORT_SCHEMA_PATH,
-    TARGET_CATALOG_PATH,
-    TARGET_ID,
-    TARGET_KEY,
-    TARGET_VERSION,
     TARGETS_PATH,
     TCK_RELEASES_PATH,
-    canonical_digest,
+    canonical_target_key,
     expected_input_artifacts,
     expected_suite_records,
     file_digest,
     load_json,
     mandatory_case_ids,
     release_record,
+    release_supersession,
+    resolve_target_record,
     target_catalog,
-    target_record,
     validate_release_registry,
     validate_target_catalog,
     validate_target_registry,
 )
+from target_handlers import resolve_handler  # noqa: E402
 
 
 ALL_CHECKS = frozenset(
@@ -67,8 +64,7 @@ def _schema_errors(report: dict[str, Any]) -> list[str]:
         _error(
             "EVIDENCE_REPORT_SCHEMA_INVALID",
             (
-                "/"
-                + "/".join(str(part) for part in issue.path)
+                "/" + "/".join(str(part) for part in issue.path)
                 if issue.path
                 else "/"
             )
@@ -90,14 +86,21 @@ def _case_results_by_id(
     counts: Counter[str] = Counter()
     by_id: dict[str, dict[str, Any]] = {}
     for item in results:
-        if not isinstance(item, dict) or not isinstance(
-            item.get("case_id"), str
-        ):
+        if not isinstance(item, dict) or not isinstance(item.get("case_id"), str):
             continue
         case_id = str(item["case_id"])
         counts[case_id] += 1
         by_id.setdefault(case_id, item)
     return by_id, counts
+
+
+def _rejected(errors: list[str]) -> dict[str, Any]:
+    return {
+        "status": "rejected",
+        "errors": sorted(set(errors)),
+        "eligible_marks": [],
+        "eligible_targets": [],
+    }
 
 
 def evaluate_report(
@@ -114,103 +117,161 @@ def evaluate_report(
         )
     errors = _schema_errors(report)
     if errors:
-        return {
-            "status": "rejected",
-            "errors": sorted(set(errors)),
-            "eligible_marks": [],
-            "eligible_targets": [],
-        }
+        return _rejected(errors)
 
-    catalog = target_catalog()
-    release = release_record()
-    registry_target = target_record()
-    expected_catalog_digest = file_digest(TARGET_CATALOG_PATH)
-    expected_registry_digest = file_digest(TARGETS_PATH)
-    expected_report_schema_digest = file_digest(REPORT_SCHEMA_PATH)
-    expected_tck_registry_digest = file_digest(TCK_RELEASES_PATH)
-    expected_suites = expected_suite_records(release)
-    expected_inputs = expected_input_artifacts(release)
-    mode = report.get("execution_mode")
+    target = report.get("target")
+    if not isinstance(target, dict):
+        return _rejected(
+            [_error("EVIDENCE_TARGET_INVALID", "report target is missing")]
+        )
+    try:
+        target_key = canonical_target_key(
+            str(target.get("kind")),
+            str(target.get("target_id")),
+            str(target.get("target_version")),
+        )
+        registry_target = resolve_target_record(target_key)
+    except (KeyError, TypeError, ValueError) as exc:
+        return _rejected(
+            [
+                _error(
+                    "EVIDENCE_TARGET_UNREGISTERED",
+                    f"target does not resolve exactly in the registry: {exc}",
+                )
+            ]
+        )
+    try:
+        handler = resolve_handler(registry_target.handler_id)
+    except ValueError as exc:
+        return _rejected(
+            [_error("EVIDENCE_TARGET_HANDLER_UNAVAILABLE", str(exc))]
+        )
+    catalog = target_catalog(registry_target)
+
+    tck = report.get("tck_release")
+    declared_release_id = (
+        tck.get("release_id") if isinstance(tck, dict) else None
+    )
+    if not isinstance(declared_release_id, str):
+        return _rejected(
+            [_error("EVIDENCE_TCK_RELEASE_INVALID", "release ID is missing")]
+        )
+    try:
+        selected_release = release_record(declared_release_id)
+    except ValueError as exc:
+        return _rejected(
+            [_error("EVIDENCE_TCK_RELEASE_UNKNOWN", str(exc))]
+        )
+    if selected_release.get("target", {}).get("target_key") != target_key:
+        errors.append(
+            _error(
+                "EVIDENCE_TCK_TARGET_MISMATCH",
+                "declared release does not bind the report target",
+            )
+        )
+    is_current_release = (
+        declared_release_id == registry_target.current_release_id
+    )
 
     for message in [
         *validate_target_registry(),
-        *validate_target_catalog(catalog),
+        *validate_target_catalog(
+            catalog,
+            record=registry_target,
+            handler=handler,
+        ),
         *validate_release_registry(),
     ]:
         errors.append(_error("EVIDENCE_CURRENT_PROVENANCE_INVALID", message))
 
     if report.get("report_format_version") != "2.0":
-        errors.append(_error("EVIDENCE_REPORT_VERSION", "report format must be 2.0"))
+        errors.append(
+            _error("EVIDENCE_REPORT_VERSION", "report format must be 2.0")
+        )
     if report.get("report_type") != "aicp.external_evidence":
         errors.append(
             _error(
                 "EVIDENCE_REPORT_TYPE",
-                "legacy/internal/profile reports cannot substantiate capability evidence",
+                "legacy, internal, and profile reports cannot substantiate this target",
             )
         )
 
-    target = report.get("target")
+    expected_catalog_digest = selected_release["target"]["target_catalog"][
+        "content_digest"
+    ]
     if "target_provenance" not in disabled_checks:
-        if not isinstance(target, dict) or target != {
-            "kind": "capability",
-            "target_id": TARGET_ID,
-            "target_version": TARGET_VERSION,
+        expected_target = {
+            **registry_target.identity(),
             "target_catalog_digest": expected_catalog_digest,
-        }:
+        }
+        if target != expected_target:
             errors.append(
                 _error(
                     "EVIDENCE_TARGET_MISMATCH",
-                    "report target does not exactly match the registered executable capability",
-                )
-            )
-        if registry_target.get("target_key") != TARGET_KEY:
-            errors.append(
-                _error(
-                    "EVIDENCE_TARGET_UNREGISTERED",
-                    "target does not resolve in the current registry",
+                    "report target does not exactly match the registered target and selected release",
                 )
             )
 
-    tck = report.get("tck_release")
+    supersession = release_supersession(declared_release_id)
+    schema_digest = selected_release["target_registry"].get("schema_digest")
+    registry_digest = file_digest(TCK_RELEASES_PATH)
+    if not is_current_release:
+        if not isinstance(supersession, dict):
+            errors.append(
+                _error(
+                    "EVIDENCE_HISTORICAL_RELEASE_METADATA_MISSING",
+                    "historical release lacks frozen supersession metadata",
+                )
+            )
+        else:
+            schema_digest = supersession.get("target_registry_schema_digest")
+            registry_digest = supersession.get("release_registry_digest")
     expected_tck = {
-        "release_id": release["release_id"],
-        "registry_digest": expected_tck_registry_digest,
-        "target_registry_digest": expected_registry_digest,
+        "release_id": selected_release["release_id"],
+        "registry_digest": registry_digest,
+        "target_registry_digest": selected_release["target_registry"][
+            "content_digest"
+        ],
+        "target_registry_schema_digest": schema_digest,
         "target_catalog_digest": expected_catalog_digest,
-        "report_schema_digest": expected_report_schema_digest,
-        "runner_bundle_digest": release["runner_bundle"]["digest"],
+        "report_schema_digest": selected_release["report_schema"][
+            "content_digest"
+        ],
+        "runner_bundle_digest": selected_release["runner_bundle"]["digest"],
     }
     if tck != expected_tck:
         errors.append(
             _error(
                 "EVIDENCE_TCK_PROVENANCE_MISMATCH",
-                "report TCK provenance does not match the registered release and current bytes",
+                "report provenance does not match the exact declared release",
             )
         )
     runner = report.get("runner")
     if runner != {
         "name": "aicp-external-evidence-runner",
         "version": "2.0",
-        "source_revision": release["runner_bundle"]["digest"],
+        "source_revision": selected_release["runner_bundle"]["digest"],
     }:
         errors.append(
             _error(
                 "EVIDENCE_RUNNER_PROVENANCE_MISMATCH",
-                "runner bundle is not registered for the selected evidence TCK",
+                "runner bundle is not registered for the selected release",
             )
         )
+    expected_suites = expected_suite_records(selected_release)
+    expected_inputs = expected_input_artifacts(selected_release)
     if report.get("required_suites") != expected_suites:
         errors.append(
             _error(
                 "EVIDENCE_SUITE_PROVENANCE_MISMATCH",
-                "required suite set or digest does not exactly match the release",
+                "required suite set does not match the selected release",
             )
         )
     if report.get("input_artifacts") != expected_inputs:
         errors.append(
             _error(
                 "EVIDENCE_INPUT_PROVENANCE_MISMATCH",
-                "required input set or digest does not exactly match the release",
+                "required input set does not match the selected release",
             )
         )
 
@@ -222,18 +283,21 @@ def evaluate_report(
         subject_kind = None
     else:
         subject_kind = subject.get("kind")
-        if expected_implementation_id is not None and subject.get(
-            "implementation_id"
-        ) != expected_implementation_id:
+        if (
+            expected_implementation_id is not None
+            and subject.get("implementation_id") != expected_implementation_id
+        ):
             errors.append(
                 _error(
                     "EVIDENCE_SUBJECT_MISMATCH",
                     "implementation ID does not match the submission manifest",
                 )
             )
-        if expected_implementation_version is not None and subject.get(
-            "implementation_version"
-        ) != expected_implementation_version:
+        if (
+            expected_implementation_version is not None
+            and subject.get("implementation_version")
+            != expected_implementation_version
+        ):
             errors.append(
                 _error(
                     "EVIDENCE_SUBJECT_MISMATCH",
@@ -241,8 +305,9 @@ def evaluate_report(
                 )
             )
 
+    mode = str(report.get("execution_mode"))
     by_id, counts = _case_results_by_id(report)
-    expected_ids = Counter(mandatory_case_ids(catalog, str(mode)))
+    expected_ids = Counter(mandatory_case_ids(catalog, mode, handler))
     if "case_coverage" not in disabled_checks and counts != expected_ids:
         errors.append(
             _error(
@@ -257,91 +322,6 @@ def evaluate_report(
                 "every observed mandatory case result must pass",
             )
         )
-
-    generated = report.get("generated_artifacts")
-    producer = catalog["producer_case"]
-    if not isinstance(generated, list) or len(generated) != 1:
-        errors.append(
-            _error(
-                "EVIDENCE_PRODUCER_ARTIFACT_MISSING",
-                "exactly one producer artifact is required",
-            )
-        )
-    else:
-        artifact = generated[0]
-        content = artifact.get("content") if isinstance(artifact, dict) else None
-        if (
-            not isinstance(artifact, dict)
-            or artifact.get("artifact_id") != producer["case_id"]
-            or content
-            != {
-                "projection": producer["expected_projection"],
-                "session_state_hash": producer["expected_projection_hash"],
-            }
-            or artifact.get("content_digest") != canonical_digest(content)
-        ):
-            errors.append(
-                _error(
-                    "EVIDENCE_PRODUCER_ARTIFACT_INVALID",
-                    "producer content or content digest does not match reviewed expectations",
-                )
-            )
-        if (
-            "determinism" not in disabled_checks
-            and isinstance(artifact, dict)
-            and artifact.get("repeat_content_digest")
-            != artifact.get("content_digest")
-        ):
-            errors.append(
-                _error(
-                    "EVIDENCE_PRODUCER_NONDETERMINISTIC",
-                    "producer repeat digest does not match",
-                )
-            )
-
-    if "consumer_observations" not in disabled_checks:
-        for case in consumer_cases_for_mode(catalog, str(mode)):
-            result = by_id.get(str(case["case_id"]))
-            observation = (
-                result.get("execution_observation")
-                if isinstance(result, dict)
-                else None
-            )
-            if not isinstance(observation, dict):
-                errors.append(
-                    _error(
-                        "EVIDENCE_CONSUMER_OBSERVATION_MISSING",
-                        f"{case['case_id']} has no structured observation",
-                    )
-                )
-                continue
-            error_codes = [
-                item.get("code")
-                for item in observation.get("errors", [])
-                if isinstance(item, dict)
-            ]
-            actual = {
-                "accepted": observation.get("accepted"),
-                "error_codes": error_codes,
-                "degraded": observation.get("degraded"),
-                "degraded_reasons": observation.get("degraded_reasons"),
-                "skipped_checks": observation.get("skipped_checks"),
-            }
-            expected = {
-                "accepted": case["accepted"],
-                "error_codes": case["expected_error_codes"],
-                "degraded": case["expected_degraded"],
-                "degraded_reasons": case["expected_degraded_reasons"],
-                "skipped_checks": case["expected_skipped_checks"],
-            }
-            if actual != expected:
-                errors.append(
-                    _error(
-                        "EVIDENCE_CONSUMER_OBSERVATION_MISMATCH",
-                        f"{case['case_id']} does not match the reviewed target catalog",
-                    )
-                )
-
     if report.get("passed") is not True:
         errors.append(
             _error("EVIDENCE_REPORT_NOT_PASSED", "report must have passed=true")
@@ -369,12 +349,38 @@ def evaluate_report(
             )
         )
 
+    if not is_current_release:
+        if report.get("compatibility_marks") != []:
+            errors.append(
+                _error(
+                    "EVIDENCE_HISTORICAL_MARK_INELIGIBLE",
+                    "a historical release cannot emit a current strong mark",
+                )
+            )
+        if errors:
+            return _rejected(errors)
+        return {
+            "status": "ineligible",
+            "errors": [],
+            "eligible_marks": [],
+            "eligible_targets": [],
+        }
+
+    for code, message in handler.evaluate_report(
+        report,
+        catalog,
+        by_id,
+        mode,
+        disabled_checks,
+    ):
+        errors.append(_error(code, message))
+
     eligible_subject = subject_kind == "external_implementation"
     if "subject_kind" in disabled_checks:
         eligible_subject = True
-    eligible_mode = mode == "full-capability"
+    eligible_mode = mode == registry_target.execution_mode
     computed_marks = (
-        [EXPECTED_MARK]
+        [registry_target.expected_mark]
         if not errors and eligible_subject and eligible_mode
         else []
     )
@@ -386,14 +392,8 @@ def evaluate_report(
             )
         )
         computed_marks = []
-
     if errors:
-        return {
-            "status": "rejected",
-            "errors": sorted(set(errors)),
-            "eligible_marks": [],
-            "eligible_targets": [],
-        }
+        return _rejected(errors)
     if not eligible_subject or not eligible_mode:
         return {
             "status": "ineligible",
@@ -405,21 +405,5 @@ def evaluate_report(
         "status": "eligible",
         "errors": [],
         "eligible_marks": computed_marks,
-        "eligible_targets": [
-            {
-                "kind": "capability",
-                "target_id": TARGET_ID,
-                "target_version": TARGET_VERSION,
-            }
-        ],
+        "eligible_targets": [registry_target.identity()],
     }
-
-
-def consumer_cases_for_mode(
-    catalog: dict[str, Any],
-    mode: str,
-) -> list[dict[str, Any]]:
-    cases = list(catalog["consumer_cases"])
-    if mode == "smoke":
-        return [item for item in cases if item["source_case_id"] == "SP-01"]
-    return cases

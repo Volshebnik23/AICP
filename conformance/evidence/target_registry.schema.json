@@ -1,23 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://aicp.dev/schemas/evidence-target-registry-1.0.json",
+  "$id": "https://aicp.dev/schemas/evidence-target-registry-1.1.json",
   "title": "AICP External Evidence Target Registry",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "registry_version",
-    "targets"
-  ],
+  "required": ["registry_version", "targets"],
   "properties": {
-    "registry_version": {
-      "const": "1.0"
-    },
+    "registry_version": {"const": "1.1"},
     "targets": {
       "type": "array",
       "minItems": 1,
-      "items": {
-        "$ref": "#/$defs/Target"
-      }
+      "items": {"$ref": "#/$defs/Target"}
     }
   },
   "$defs": {
@@ -30,53 +23,58 @@
         "target_id",
         "target_version",
         "status",
-        "target_catalog",
+        "catalog_path",
         "expected_mark",
+        "execution_mode",
+        "evidence_claim_type",
+        "handler_id",
+        "current_release_id",
         "required_suites",
-        "required_operations",
-        "external_execution_mode",
-        "evidence_claim_type"
+        "required_operations"
       ],
       "properties": {
         "target_key": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9._-]+@v[0-9]+$"
+          "minLength": 3,
+          "pattern": "^[^@\\s]+@[^@\\s]+$"
         },
         "target_kind": {
-          "enum": [
-            "product_profile",
-            "capability",
-            "binding"
-          ]
+          "enum": ["product_profile", "capability", "binding"]
         },
         "target_id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "^[^@\\s]+$"
         },
         "target_version": {
           "type": "string",
-          "pattern": "^v[0-9]+$"
+          "minLength": 1,
+          "pattern": "^[^@\\s]+$"
         },
-        "status": {
+        "status": {"enum": ["experimental", "stable"]},
+        "catalog_path": {"$ref": "#/$defs/RelativePath"},
+        "expected_mark": {"type": "string", "minLength": 1},
+        "execution_mode": {
+          "enum": ["full-profile", "full-capability", "full-binding"]
+        },
+        "evidence_claim_type": {
           "enum": [
-            "experimental",
-            "stable"
+            "implements_profile",
+            "implements_capability",
+            "implements_binding"
           ]
         },
-        "target_catalog": {
-          "$ref": "#/$defs/RelativePath"
-        },
-        "expected_mark": {
+        "handler_id": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._-]+$"
         },
+        "current_release_id": {"type": "string", "minLength": 1},
         "required_suites": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/RelativePath"
-          }
+          "items": {"$ref": "#/$defs/RelativePath"}
         },
         "required_operations": {
           "type": "array",
@@ -91,20 +89,6 @@
               "project_session_state"
             ]
           }
-        },
-        "external_execution_mode": {
-          "enum": [
-            "full-profile",
-            "full-capability",
-            "full-binding"
-          ]
-        },
-        "evidence_claim_type": {
-          "enum": [
-            "implements_profile",
-            "implements_capability",
-            "implements_binding"
-          ]
         }
       }
     },
