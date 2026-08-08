@@ -74,7 +74,9 @@ A valid submission package should include:
 6. Notes/disclosures when the evidence is limited, synthetic, or example-only.
 
 For real `reproducible` implementation/compatibility claims, at least one report must be a
-schema-valid `full-profile` external-IUT v1 report. The validator independently checks the
+schema-valid `full-profile` report from the claimed profile's registered mechanism. The
+Base and Authenticated Base mechanisms remain external-IUT v1; the M63 Tier-1 mechanisms
+use generalized report 2.1. The validator independently checks the
 manifest subject, registered TCK release, complete mandatory case set, suite/profile and
 every required fixture/vector digest, generated artifacts, non-degraded/no-skip state, and
 the exact registered per-consumer execution observations and recomputed mark list. Smoke,
@@ -83,8 +85,10 @@ errors for strong external evidence, not proof of an external product.
 Strong `implements_profile` and `compatible_with_profile` claims also require
 `evidence_status=reproducible`; `self_attested` cannot bypass this rule.
 
-The current full-profile runner targets only `AICP-BASE@0.1` and experimental
-`AICP-AUTHENTICATED-BASE@0.1`. Both ordinary marks are reachable for complete eligible
+The frozen IUT runner targets `AICP-BASE@0.1` and experimental
+`AICP-AUTHENTICATED-BASE@0.1`. Evidence TCK 1.2.0 separately targets exactly
+`AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and
+`AICP-DELEGATED-IDENTITY@0.1`. All five ordinary marks are reachable for complete eligible
 external implementations. The authenticated unavailable-crypto probe remains mandatory,
 but its exact simulated result is case-local; any actual degradation elsewhere suppresses
 eligibility. No real eligible external submission is currently present.
@@ -96,7 +100,7 @@ versioned evidence/TCK milestone explicitly adds that path.
 Experimental CAPNEG v0.2 composition reports are also internal-only in M61. The current
 submission schema deliberately has no composition claim/evidence fields and rejects
 unknown properties. Component profile claims continue to require their own eligible
-external-IUT evidence; M62 does not add external composition evidence.
+external evidence for each component; M63 does not add external composition evidence.
 
 M62 adds one separate target-oriented capability path:
 `aicp.session_state_projection@v1`, report format `2.0`, `full-capability` execution, and
@@ -107,6 +111,13 @@ eligible external-implementation report whose computed mark is
 in one M62 manifest. Capability evidence cannot prove a product profile. Smoke, reference,
 internal, self-attested, incomplete, degraded, skipped, and raw-mark-only evidence is
 ineligible. Projection v2 is not registered as an external target.
+
+M63 profile reports contain one exact `product_profile` target and discriminated transcript
+artifacts. Their neutral producer requests disclose no case IDs, fixture paths, golden
+messages/hashes, or marks. Strong profile manifests must list the exact union of required
+suite IDs or paths in `suite_refs`; missing, unrelated, and duplicate suites fail closed.
+Reference, smoke, example, and test-only adapter reports do not count as real external
+evidence. No real eligible Tier-1 submission is currently present.
 
 Release 1.1.0 uses answer-isolated raw producer facts and binds the target-registry schema
 and generated runner import closure. Historical 1.0.0 reports remain parseable but cannot

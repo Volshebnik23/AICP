@@ -128,7 +128,27 @@ _Last updated: 2026-07-29_
   `implements_capability`, `capability_report`, and reproducible evidence. Capability and
   profile marks are independently computed and cannot cross-prove. The repository contains
   no real external capability submission, and pairwise publication remains fail-closed.
-- **Next concrete step:** M63 remains planned and has not started.
+- **Next concrete step:** M63 ships the first generalized product-profile targets; M64
+  remains planned for live transport and binding interoperability.
+
+### ✅ M63 — Tier-1 External Profile TCK
+<!-- milestone-status: M63 shipped -->
+- **Status:** Shipped.
+- **Problem:** the Tier-1 mediated-blocking, resumable-sessions, and delegated-identity
+  profiles had internal conformance catalogs but no complete generalized external target.
+- **Scope:** register exactly those three `product_profile` targets on report 2.1 and
+  `AICP-EVIDENCE-TCK-1.2.0`, using one reusable handler, neutral producer scenarios,
+  independent transcript evaluation, and all 69 required-suite consumer cases.
+- **Completion evidence:** 10/9/13 deterministic producer scenarios cover the three
+  profiles; full test-only external runs reach their exact ordinary profile marks, while
+  reference, smoke, degraded, forged, incomplete, semantically invalid, and
+  provenance-mismatched evidence remains ineligible. Public `suite_refs` are the exact
+  required-suite union and reports are independently re-evaluated.
+- **Compatibility boundary:** product-profile IUT v1 and projection report 2.0 remain
+  valid; Evidence TCK 1.0 and 1.1 records are frozen. No target is added for other
+  profiles, composition, live bindings, or pairwise interoperability.
+- **Next concrete step:** M64 remains planned for live transport and binding
+  interoperability.
 
 ## Planned milestones
 
@@ -138,7 +158,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M63 | Planned | Tier-1 External Profile TCK | `AICP_Backlog` |
 | M64 | Planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
 | M65 | Planned | Registered Message Surface Completion | `AICP_Backlog` |
 | M66 | Planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |

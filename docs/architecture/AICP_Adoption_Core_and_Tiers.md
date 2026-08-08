@@ -96,11 +96,13 @@ The truthful compatibility story is:
 1. implement the Core transcript integrity baseline,
 2. implement the smallest shipped profile that matches your need,
 3. pass the required repository-owned suite/profile conformance runs for that profile,
-4. use a full external-IUT target when one exists before making an external product claim.
+4. use an eligible external profile target when one exists before making an external
+   product claim.
 
-Only Base and experimental Authenticated Base currently have full external-IUT targets, and
-both can reach an ordinary external profile mark for complete eligible implementations. See
-`docs/process/AICP_Repo_Truth_Baseline.md`.
+Base and experimental Authenticated Base have full external-IUT v1 targets. M63 adds
+generalized report-2.1 targets for Mediated Blocking, Resumable Sessions, and Delegated
+Identity. Those five exact profiles can reach an ordinary external profile mark for a
+complete eligible implementation. See `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 ## 4) Optional governance stack (important, but not prerequisite to all adoption)
 

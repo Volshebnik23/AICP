@@ -4,9 +4,11 @@
 
 This document defines the **truthful claim language** implementers should use when describing AICP compatibility and the minimum evidence expected for each claim shape.
 
-Current reachability is narrower than the registered catalog: only Base and Authenticated
-Base have full external-IUT targets, both ordinary marks are reachable for complete eligible
-implementations. Separately, strict session-state projection v1 has one generalized
+Current reachability is narrower than the registered catalog. Base and Authenticated Base
+retain full external-IUT v1 targets. M63 adds generalized report-2.1 targets for exactly
+Mediated Blocking, Resumable Sessions, and Delegated Identity. All five ordinary profile
+marks are reachable only for complete eligible external implementations. Separately,
+strict session-state projection v1 has one generalized
 `full-capability` external target and one reachable capability evidence mark. No real
 external capability, profile, or pairwise submission is present. See
 `docs/process/AICP_Repo_Truth_Baseline.md`.
@@ -20,8 +22,8 @@ submission schema accepts exact named profile and capability claims, but has no 
 composition hash, accepted-result hash, or composition evidence object. Because the schema
 is closed to additional properties, attempted composition claims fail validation. Do not
 translate an internal `AICP-EXT-CAPNEG-0.2` report into external component-profile proof or
-an aggregate badge. M62 registers only projection-v1 capability evidence; it does not add
-external composition evidence.
+an aggregate badge. M63's three targets prove one exact component profile per report; they
+do not add external composition evidence.
 
 M61's internal suite uses a reviewed expectation catalog that is independent of the
 production reducer and compares exact message origin, multiplicity, and final state.
@@ -46,7 +48,8 @@ Use this when the implementation has evidence that it implements the named shipp
 Minimum expected evidence:
 - the exact shipped profile identifier and version (for example `AICP-BASE@0.1`) in
   `profile_refs`,
-- an eligible full-profile external-IUT v1 report bound to the implementation
+- an eligible full-profile report from the registered mechanism (`profile_iut_v1` for Base
+  and Authenticated Base; `generalized_evidence_v2_1` for the three Tier-1 targets), bound to the implementation
   ID/version/build digest and a registered TCK release,
 - non-degraded report outputs where compatibility marks are being relied on,
 - implementation/version identification in the submission manifest.
@@ -59,7 +62,7 @@ Use this when the evidence shows compatibility with the named shipped profile ta
 
 Minimum expected evidence:
 - the exact shipped profile identifier/version,
-- a passed, non-degraded full-profile external-IUT v1 report whose complete mandatory case
+- a passed, non-degraded full-profile report whose complete mandatory case
   set, suite/profile/input/generated digests, and mark are independently revalidated,
 - no skipped mandatory checks, plus explicit disclosures.
 
@@ -68,8 +71,9 @@ This is still a **profile-scoped** claim. It is not equivalent to claiming broad
 ### 3) “Implements AICP capability X”
 
 Use this only for an exact capability ID/version registered by the external evidence
-framework. M62's only executable target is
-`aicp.session_state_projection@v1`.
+framework. The only executable capability target remains
+`aicp.session_state_projection@v1`; M63's new targets are product-profile targets and do
+not expand the capability target set.
 
 Minimum expected evidence:
 - `claim_type=implements_capability`,
@@ -79,7 +83,7 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
-The current release is `AICP-EVIDENCE-TCK-1.1.0`. It binds an answer-isolated neutral
+The target remains bound to `AICP-EVIDENCE-TCK-1.1.0`. It binds an answer-isolated neutral
 producer scenario, registry schema, registered handler, and import-closed runner bundle.
 The frozen historical 1.0.0 release cannot support a current strong claim.
 
@@ -130,17 +134,19 @@ The status should stay aligned with the actual package:
 
 | Claim shape | Minimum evidence expectation |
 |---|---|
-| Implements profile X | `evidence_status=reproducible` + exact profile/version + eligible full-profile external-IUT v1 evidence bound to the implementation/build |
-| Compatible with profile X | `evidence_status=reproducible` + exact profile/version + eligible full-profile external-IUT v1 evidence + truthful disclosures |
+| Implements profile X | `evidence_status=reproducible` + exact profile/version + exact required-suite `suite_refs` + eligible full-profile evidence from the profile's registered mechanism |
+| Compatible with profile X | `evidence_status=reproducible` + exact profile/version + exact required-suite `suite_refs` + eligible full-profile evidence + truthful disclosures |
 | Implements capability X | `evidence_status=reproducible` + exact capability ID/version + eligible target-oriented full-capability report v2 bound to the implementation/build |
 | Pairwise interoperable with implementation Y on profile X | Not currently publishable; reserved manifest vocabulary and instructional examples fail closed until a dedicated joint-execution runner exists |
 
 Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
 repository's canonical artifacts but cannot substantiate an external implementation claim.
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
-IUT smoke reports are likewise diagnostic-only and cannot substantiate a real profile claim.
-Capability smoke and `reference_corpus` reports are likewise ineligible. Projection v2
-remains internal-only and has no external target.
+IUT and generalized profile smoke reports are diagnostic-only and cannot substantiate a
+real profile claim. Generalized profile reports use report 2.1 and TCK 1.2.0; their
+`suite_refs` must be the exact required-suite union with no missing, unrelated, or duplicate
+suite. Capability smoke and every `reference_corpus` report are likewise ineligible.
+Projection v2 remains internal-only and has no external target.
 
 For current TCK reports, every consumer case carries a schema-bound execution observation.
 The validator independently compares its accounting scope, accepted result, degraded

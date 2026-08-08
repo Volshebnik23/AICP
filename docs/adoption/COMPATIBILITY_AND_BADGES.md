@@ -27,8 +27,8 @@ CAPNEG v0.2 composition is not another profile tier. The resolver exposes expect
 component mark identities for auditing but does not award them. There is no dynamic
 composition profile ID, aggregate product mark, or external composition badge. A truthful
 composition claim requires CAPNEG v0.2 evidence plus separate evidence for every component;
-M62's generalized framework registers only projection-v1 capability evidence and does not
-add external composition evidence.
+  M63's three generalized profile targets remain component-specific and do not add external
+  composition evidence.
 
 The internal CAPNEG v0.2 mark is eligible only when the reducer-independent reviewed
 oracle matches exact error origin/multiplicity and final state, all mandatory message and
@@ -89,22 +89,26 @@ Post-UAT provenance and external-IUT v1 reports additionally provide:
   IUT case catalog
 
 Opt-in provenance repository runs label their subject `reference_corpus`. They prove the
-checked-in corpus/runner behavior, not an external product. IUT smoke reports also cannot
-support an ordinary profile claim. Only a full-profile, complete, non-degraded external-IUT
-v1 report with no skipped mandatory checks may carry an external product-profile mark.
+checked-in corpus/runner behavior, not an external product. IUT or generalized-profile smoke
+reports also cannot support an ordinary profile claim. Only a full-profile, complete,
+non-degraded report from the profile's registered external mechanism with no skipped
+mandatory checks may carry an external product-profile mark.
 Public interop matrix marks are recomputed through the same eligibility validator; they are
 never copied from arbitrary report JSON. `self_attested` packaging alone is not eligible for
 an ordinary profile mark. File digests prove artifact integrity,
 not organizational identity, certification, or endorsement.
 
-Generalized external report v2 is a separate target-oriented family. M62 registers only
+Generalized external reports are a separate target-oriented family. Report 2.0 retains
 `aicp.session_state_projection@v1` in `full-capability` mode under
 `AICP-EVIDENCE-TCK-1.1.0`. A complete external implementation may be eligible for
 `AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference, smoke, degraded, skipped, incomplete,
 or provenance-mismatched reports emit no capability mark. This evidence mark is not an
 ordinary product-profile mark and cannot prove profile conformance, certification,
 composition, organizational identity, or pairwise interoperability. Projection v2 remains
-internal-only.
+internal-only. Report 2.1 and `AICP-EVIDENCE-TCK-1.2.0` add the exact Mediated Blocking,
+Resumable Sessions, and Delegated Identity `full-profile` targets. They independently
+compute ordinary product-profile marks, but one report covers one exact profile and
+component suites do not become separate external claims.
 
 Evidence TCK 1.0.0 is frozen historical data with superseded-experimental status: its
 producer challenge did not isolate the expected answer, and no real external submission
@@ -112,7 +116,7 @@ depended on it. A schema-valid 1.0.0 report cannot support the current capabilit
 
 ## Current external reachability
 
-This table describes external-IUT target availability, not repository availability or
+This table describes external profile-target availability, not repository availability or
 registry maturity. Those separate facts are generated from the registry in
 [`AICP_Profiles.md`](../profiles/AICP_Profiles.md#2-profile-catalog-and-status).
 
@@ -120,10 +124,14 @@ registry maturity. Those separate facts are generated from the registry in
 |---|---|---|
 | `AICP-BASE@0.1` | Available (21 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |
 | `AICP-AUTHENTICATED-BASE@0.1` | Available (37 mandatory cases) | Reachable for a complete eligible external implementation; the unavailable-crypto probe remains mandatory and case-local |
+| `AICP-MEDIATED-BLOCKING@0.1` | Generalized report 2.1 (41 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |
+| `AICP-RESUMABLE-SESSIONS@0.1` | Generalized report 2.1 (31 mandatory cases) | Reachable only for a complete, non-degraded `external_implementation` report |
+| `AICP-DELEGATED-IDENTITY@0.1` | Generalized report 2.1 (47 mandatory cases) | Reachable only with complete non-degraded evidence and Ed25519 verification |
 | `AICP-BASE@0.2` | Not available | Internal experimental conformance only in M60 |
-| Other 13 registered profiles | Not available | Unreachable through the current external-IUT runner |
+| Other 10 registered profiles | Not available | No registered external profile target |
 
-This table is validated against `conformance/iut/cases.json` and
+This table is validated against `conformance/iut/cases.json`,
+`conformance/evidence/targets.json`, and
 `docs/process/repo_truth_status.json`. Internal profile marks remain repository-owned
 conformance evidence, not external product proof.
 

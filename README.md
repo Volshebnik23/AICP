@@ -62,11 +62,11 @@ See: [docs/architecture/AICP_in_the_Ecosystem.md](docs/architecture/AICP_in_the_
 
 Start with the packaged adoption model in [docs/architecture/AICP_Adoption_Core_and_Tiers.md](docs/architecture/AICP_Adoption_Core_and_Tiers.md), then choose the smallest shipped profile that satisfies your need.
 
-“Shipped” here means present in the repository. Of 15 registered product profiles, all have
-internal profile suites, but only `AICP-BASE@0.1` and experimental
-`AICP-AUTHENTICATED-BASE@0.1` have external full-profile IUT targets. The authenticated
-target cannot currently emit an ordinary profile mark, and the public corpus contains no
-real independent external submission. See the
+“Shipped” here means present in the repository. All 16 registered product profiles have
+internal profile suites. Base and Authenticated Base retain external profile-IUT v1 targets;
+Mediated Blocking, Resumable Sessions, and Delegated Identity use generalized report-2.1
+targets. All five ordinary marks are reachable only for complete eligible external
+implementations, and the public corpus contains no real independent external submission. See the
 [repository-truth baseline](docs/process/AICP_Repo_Truth_Baseline.md) for the evidence map.
 
 1. **Embed AICP directly in an agent/app**

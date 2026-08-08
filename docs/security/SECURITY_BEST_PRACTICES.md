@@ -141,9 +141,9 @@ inputs. Treat reports as potentially sensitive before publication:
 SHA-256 digests bind the evaluated bytes and detect drift; they do not authenticate an
 organization, establish authority over a session, certify an implementation, or prove
 that a named vendor produced the report. `execution_subject`, review, and publication
-process supply separate identity context. The checked-in reference adapter and fictional
-external-kind test adapter are not independent implementations, and no real external
-capability submission is currently present.
+process supply separate identity context. The checked-in reference adapters and fictional
+external-kind test adapters are not independent implementations, and no real external
+capability or Tier-1 profile submission is currently present.
 
 Evidence TCK 1.1.0 also treats expected-answer disclosure as a test-integrity risk.
 Producer requests contain only raw scenario facts and a response-free transcript prefix;
@@ -151,3 +151,12 @@ reviewed projections, hashes, fixture paths, and case IDs remain private to the 
 Registry/schema/catalog and every statically imported load-bearing runner module are bound
 by digest. Unknown handlers, unavailable schema validation, historical 1.0.0 reports, and
 dependency-closure drift fail closed and emit no capability mark.
+
+Evidence TCK 1.2.0 applies the same disclosure boundary to generated profile transcripts.
+Neutral producer requests contain the exact profile, session/contract/participant facts,
+required suites, and a deterministic seed, but no fixture path, case identity, golden
+message/hash, expected error, or mark. Treat generated transcripts as potentially sensitive
+before publication. Missing JSON Schema or Ed25519 verification, invalid hash/signature or
+key lifecycle, suite/input/profile provenance drift, and incomplete coverage suppress the
+profile mark. Report digests establish byte integrity, not implementer identity,
+certification, live transport interoperability, or pairwise interoperability.

@@ -490,6 +490,13 @@ def _profile_errors(root: Path, status: dict[str, Any]) -> list[str]:
         item.get("id"): item for item in status_profiles if isinstance(item, dict)
     }
     iut_profiles = _json(root, IUT_CASES).get("profiles", {})
+    evidence_targets = _json(root, EVIDENCE_TARGETS).get("targets", [])
+    generalized_profiles = {
+        f"{item['target_id']}@{item['target_version']}": item
+        for item in evidence_targets
+        if isinstance(item, dict)
+        and item.get("target_kind") == "product_profile"
+    }
     catalog_outputs = _load_profile_outputs(root)
     profile_doc = _text(root, PROFILE_DOC)
 
@@ -556,13 +563,31 @@ def _profile_errors(root: Path, status: dict[str, Any]) -> list[str]:
                 errors.append(
                     f"{profile_id}: IUT profile catalog does not match profile map"
                 )
-        expected_mark_status = derive_external_mark_status(
-            iut_profiles.get(profile_id)
+        has_generalized = profile_id in generalized_profiles
+        if item.get("generalized_evidence_target") is not has_generalized:
+            errors.append(
+                f"{profile_id}: generalized profile target status does not match targets.json"
+            )
+        if item.get("external_profile_target") is not (has_iut or has_generalized):
+            errors.append(f"{profile_id}: external profile target status is stale")
+        expected_mechanism = (
+            "profile_iut_v1"
+            if has_iut
+            else "generalized_evidence_v2_1"
+            if has_generalized
+            else None
+        )
+        if item.get("external_target_mechanism") != expected_mechanism:
+            errors.append(f"{profile_id}: external target mechanism is stale")
+        expected_mark_status = (
+            "reachable_for_eligible_external_implementation"
+            if has_generalized
+            else derive_external_mark_status(iut_profiles.get(profile_id))
         )
         if item.get("external_mark_status") != expected_mark_status:
             errors.append(
                 f"{profile_id}: external mark reachability is inconsistent with "
-                "IUT coverage"
+                "registered external target coverage"
             )
 
     summary = status.get("profile_summary", {})
@@ -573,6 +598,8 @@ def _profile_errors(root: Path, status: dict[str, Any]) -> list[str]:
             item.get("status") == "experimental" for item in registry
         ),
         "external_iut_targets": len(iut_profiles),
+        "generalized_profile_targets": len(generalized_profiles),
+        "external_profile_targets": len(iut_profiles) + len(generalized_profiles),
         "ordinary_external_mark_reachable_targets": sum(
             item.get("external_mark_status")
             == "reachable_for_eligible_external_implementation"

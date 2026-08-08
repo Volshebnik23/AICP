@@ -7,9 +7,8 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Completed M58 Repo-Truth Rebaseline, M59 Authenticated Base Evidence Reachability, M60
-  Exact Contract Agreement Core, M61 Multi-Profile Composition and CAPNEG v0.2, and M62
-  Generalized External Evidence Framework; M63–M70 remain planned.
+- Completed M58 Repo-Truth Rebaseline through M63 Tier-1 External Profile TCK; M64–M70
+  remain planned.
 - Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
   `AICP-IUT-TCK-1.0.0` metadata.
 - Added separate experimental Core v0.2 schemas, exact-agreement conformance, 9 positive
@@ -36,6 +35,13 @@ All notable repo-backed release metadata changes should be recorded here.
 - Added typed public `implements_capability` submissions, a fictional example and template,
   independently computed capability marks/targets in the interop matrix, and separate
   profile/capability repo-truth counts.
+- Added generalized external report 2.1 and `AICP-EVIDENCE-TCK-1.2.0` for exactly Mediated
+  Blocking, Resumable Sessions, and Delegated Identity, with one reusable product-profile
+  handler, 32 answer-isolated producer scenarios, and all 69 required-suite consumer cases.
+- Added independent in-memory transcript validation, one target-aware reference adapter,
+  a test-only external adapter, fail-closed profile-specific/generic negative modes, nine
+  focused Make targets, and public report-2.1 strong profile-claim evaluation with exact
+  load-bearing `suite_refs`.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
@@ -82,8 +88,9 @@ All notable repo-backed release metadata changes should be recorded here.
 - No real external or pairwise interop submission is present.
 - Strict projection v1 has one externally testable capability target and reachable evidence
   mark, but no real independently demonstrated external capability.
-- Only Base and Authenticated Base have external full-profile IUT targets; both ordinary
-  marks are reachable, but neither has real independent external evidence in this repository.
+- Five profiles have external full-profile targets: Base and Authenticated Base through
+  profile-IUT v1, plus the three Tier-1 profiles through generalized evidence v2.1. Their
+  ordinary marks are reachable, but none has real independent external evidence here.
 - Base 0.2 has internal experimental conformance only; it does not authenticate senders and
   has no external-IUT or independent external evidence.
 - Binding suites are static fixtures, the security review is internal, and release

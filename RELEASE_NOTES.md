@@ -13,7 +13,7 @@ tag, package publication, GA declaration, or final RC repackaging.
 - The canonical repository-truth baseline now distinguishes shipped artifacts, registry
   stability, internal verification, external testability, independent evidence, live
   binding evidence, and remaining milestones.
-- Roadmap and backlog roles are separated: M58–M62 are shipped, while M63–M70 retain
+- Roadmap and backlog roles are separated: M58–M63 are shipped, while M64–M70 retain
   the remaining evidence, interop, security, governance, and release work.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
@@ -58,11 +58,18 @@ tag, package publication, GA declaration, or final RC repackaging.
   independently computed profile and capability marks/targets separate. The checked-in
   capability example and external-kind adapter are fictional test artifacts, not real
   external evidence.
+- M63 adds report 2.1 and Evidence TCK 1.2.0 for exactly the Mediated Blocking, Resumable
+  Sessions, and Delegated Identity product profiles. A shared handler runs 32 neutral
+  producer scenarios and 69 suite-derived consumer cases, independently validates returned
+  transcripts, and emits an ordinary profile mark only for complete non-degraded external
+  execution. Public profile claims accept this path with exact required-suite `suite_refs`;
+  reference and test-only adapters do not count as external evidence.
 
 ### Current evidence limits
 
-- The registry contains 16 product profiles; all have internal profile suites, but only Base
-  and Authenticated Base have full external-IUT targets.
+- The registry contains 16 product profiles; all have internal profile suites. Base and
+  Authenticated Base have profile-IUT v1 targets, while the three Tier-1 profiles have
+  generalized report-2.1 targets. No other profile has an external target.
 - Base 0.2 has internal conformance evidence only. It does not authenticate senders, cannot
   use projection v1 as an exact-head overlay, and has no external-IUT target in M60.
 - CAPNEG v0.2 and projection v2 have internal evidence only. They do not create an

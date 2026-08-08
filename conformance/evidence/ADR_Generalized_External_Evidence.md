@@ -1,8 +1,8 @@
 # ADR: Generalized provenance-bound external evidence
 
-- **Status:** Accepted for M62
-- **Decision date:** 2026-07-30
-- **Scope:** external evidence for non-profile AICP targets
+- **Status:** Accepted for M62; extended by M63
+- **Decision date:** 2026-08-08
+- **Scope:** target-oriented external evidence for capabilities and exact product profiles
 
 ## Context
 
@@ -35,6 +35,17 @@ capability evidence.
    Eligibility is independently recomputed from the complete external report; raw mark
    presence, internal reports, smoke runs, reference runs, and examples do not establish
    the claim.
+6. Keep product IUT v1 frozen for `AICP-BASE@0.1` and
+   `AICP-AUTHENTICATED-BASE@0.1`. Add report 2.1 and Evidence TCK 1.2.0 for exactly
+   `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and
+   `AICP-DELEGATED-IDENTITY@0.1`; projection v1 remains on report 2.0/TCK 1.1.0.
+7. Use one registered `product_profile_v01` handler. Producer challenges contain neutral
+   facts, never case IDs, fixture paths, golden messages/hashes, or expected marks. The
+   runner validates returned transcripts independently in memory, including cryptographic
+   and lifecycle semantics, without golden-byte equality.
+8. A report proves one exact target. Public profile claims accept either frozen profile-IUT
+   v1 or generalized report 2.1 only after independent evaluation, and `suite_refs` must
+   exactly identify the claimed profiles' required-suite union.
 
 ## Rejected alternatives
 
@@ -47,15 +58,17 @@ capability evidence.
 - Treating internal marks, reference adapters, smoke results, or submitted mark strings as
   external proof was rejected because none establishes a complete eligible external
   subject and execution.
-- Registering projection v2, Tier-1 profiles, live bindings, aggregate composition, or
-  pairwise evidence was rejected as outside M62.
+- Registering every profile, a multi-profile composition, projection v2, live bindings, or
+  pairwise evidence was rejected. M63 deliberately selects only the three Tier-1 profiles;
+  live binding and pairwise work remain M64 and M66.
 
 ## Consequences
 
 Future releases can register additional capability, product-profile, or binding targets
 without changing the report family: exact target keys use kind-appropriate versions and
 dispatch through an explicit handler registry. Unknown handlers fail closed. M62 proves
-that architecture with only `aicp.session_state_projection@v1` and `projection_v1`.
+that architecture with `aicp.session_state_projection@v1`; M63 proves reusable
+product-profile execution without altering the frozen v1 IUT path.
 Producer scenarios expose raw facts and a response-free transcript prefix, never the
 reviewed projection/hash. Capability and product-profile marks remain typed and cannot
 cross-prove one another. Projection v2 stays internal and pairwise publication remains

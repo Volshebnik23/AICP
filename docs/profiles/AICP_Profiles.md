@@ -10,30 +10,30 @@ An implementation claiming profile conformance MUST satisfy all required suites 
 ## 2. Profile Catalog and Status
 
 The generated table below is the canonical human-readable profile-status view. Repository
-availability, registry maturity, internal evidence, external-IUT reachability, and independent
-evidence are separate facts. The table and the structured status block in each profile section
+availability, registry maturity, internal evidence, external profile-target reachability and
+mechanism, and independent evidence are separate facts. The table and the structured status block in each profile section
 are checked against `registry/aicp_profiles.json` and
 `docs/process/repo_truth_status.json`.
 
 <!-- BEGIN GENERATED PROFILE STATUS -->
-| Profile | Repository availability | Registry maturity | Internal evidence | External-IUT target | Ordinary external mark | Independent external evidence |
-|---|---|---|---|---|---|---|
-| `AICP-AGENT-MEDIA@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-AUTHENTICATED-BASE@0.1` | Shipped | Experimental | Available | Yes | Reachable for an eligible external implementation | Absent |
-| `AICP-BASE@0.1` | Shipped | Stable | Available | Yes | Reachable for an eligible external implementation | Absent |
-| `AICP-BASE@0.2` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-BAZAAR-RECEPTION@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-COMMERCE-ACP@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-DELEGATED-IDENTITY@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-EXECUTION-INTEROP@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-MEDIATED-BLOCKING-OPS@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-MEDIATED-BLOCKING@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-POLICY-ABAC-RBAC@0.1` | Shipped | Stable | Available | No | No external-IUT target | Absent |
-| `AICP-POLICY-LLM-SAFETY@0.1` | Shipped | Stable | Available | No | No external-IUT target | Absent |
-| `AICP-POLICY-OPA-REGO@0.1` | Shipped | Stable | Available | No | No external-IUT target | Absent |
-| `AICP-RECEPTION-CHAT@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-RESUMABLE-SESSIONS@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
-| `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` | Shipped | Experimental | Available | No | No external-IUT target | Absent |
+| Profile | Repository availability | Registry maturity | Internal evidence | External profile target | Mechanism | Ordinary external mark | Independent external evidence |
+|---|---|---|---|---|---|---|---|
+| `AICP-AGENT-MEDIA@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-AUTHENTICATED-BASE@0.1` | Shipped | Experimental | Available | Yes | profile_iut_v1 | Reachable for an eligible external implementation | Absent |
+| `AICP-BASE@0.1` | Shipped | Stable | Available | Yes | profile_iut_v1 | Reachable for an eligible external implementation | Absent |
+| `AICP-BASE@0.2` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-BAZAAR-RECEPTION@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-COMMERCE-ACP@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-DELEGATED-IDENTITY@0.1` | Shipped | Experimental | Available | Yes | generalized_evidence_v2_1 | Reachable for an eligible external implementation | Absent |
+| `AICP-EXECUTION-INTEROP@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-MEDIATED-BLOCKING-OPS@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-MEDIATED-BLOCKING@0.1` | Shipped | Experimental | Available | Yes | generalized_evidence_v2_1 | Reachable for an eligible external implementation | Absent |
+| `AICP-POLICY-ABAC-RBAC@0.1` | Shipped | Stable | Available | No | None | No external-IUT target | Absent |
+| `AICP-POLICY-LLM-SAFETY@0.1` | Shipped | Stable | Available | No | None | No external-IUT target | Absent |
+| `AICP-POLICY-OPA-REGO@0.1` | Shipped | Stable | Available | No | None | No external-IUT target | Absent |
+| `AICP-RECEPTION-CHAT@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
+| `AICP-RESUMABLE-SESSIONS@0.1` | Shipped | Experimental | Available | Yes | generalized_evidence_v2_1 | Reachable for an eligible external implementation | Absent |
+| `AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1` | Shipped | Experimental | Available | No | None | No external-IUT target | Absent |
 <!-- END GENERATED PROFILE STATUS -->
 
 ### 2.1 Primary catalog entries
@@ -43,7 +43,8 @@ are checked against `registry/aicp_profiles.json` and
 - **Repository availability:** Shipped.
 - **Registry maturity:** Stable.
 - **Internal evidence:** Available.
-- **External-IUT target:** Available.
+- **External profile target:** Available.
+- **External target mechanism:** profile_iut_v1.
 - **Ordinary external mark:** Reachable for an eligible external implementation.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-BASE@0.1 -->
@@ -58,7 +59,8 @@ are checked against `registry/aicp_profiles.json` and
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-BASE@0.2 -->
@@ -85,7 +87,8 @@ are checked against `registry/aicp_profiles.json` and
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Available.
+- **External profile target:** Available.
+- **External target mechanism:** profile_iut_v1.
 - **Ordinary external mark:** Reachable for an eligible external implementation.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-AUTHENTICATED-BASE@0.1 -->
@@ -132,8 +135,9 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
-- **Ordinary external mark:** No external-IUT target.
+- **External profile target:** Available.
+- **External target mechanism:** generalized_evidence_v2_1.
+- **Ordinary external mark:** Reachable for an eligible external implementation.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-MEDIATED-BLOCKING@0.1 -->
 - **Required suites/extensions:**
@@ -152,7 +156,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-MEDIATED-BLOCKING-OPS@0.1 -->
@@ -174,8 +179,9 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
-- **Ordinary external mark:** No external-IUT target.
+- **External profile target:** Available.
+- **External target mechanism:** generalized_evidence_v2_1.
+- **Ordinary external mark:** Reachable for an eligible external implementation.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-RESUMABLE-SESSIONS@0.1 -->
 - **Required suites/extensions:**
@@ -193,7 +199,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-RECEPTION-CHAT@0.1 -->
@@ -219,8 +226,9 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
-- **Ordinary external mark:** No external-IUT target.
+- **External profile target:** Available.
+- **External target mechanism:** generalized_evidence_v2_1.
+- **Ordinary external mark:** Reachable for an eligible external implementation.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-DELEGATED-IDENTITY@0.1 -->
 - **Required suites/extensions:**
@@ -239,7 +247,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-AGENT-MEDIA@0.1 -->
@@ -252,7 +261,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-BAZAAR-RECEPTION@0.1 -->
@@ -265,7 +275,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1 -->
@@ -293,7 +304,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Stable.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-POLICY-OPA-REGO@0.1 -->
@@ -309,7 +321,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Stable.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-POLICY-ABAC-RBAC@0.1 -->
@@ -325,7 +338,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Stable.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-POLICY-LLM-SAFETY@0.1 -->
@@ -341,7 +355,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-EXECUTION-INTEROP@0.1 -->
@@ -361,7 +376,8 @@ non-equivocation, witnessing, policy/moderation correctness, or universal trust.
 - **Repository availability:** Shipped.
 - **Registry maturity:** Experimental.
 - **Internal evidence:** Available.
-- **External-IUT target:** Not available.
+- **External profile target:** Not available.
+- **External target mechanism:** None.
 - **Ordinary external mark:** No external-IUT target.
 - **Independent external evidence:** Absent.
 <!-- END GENERATED PROFILE TRUTH: AICP-COMMERCE-ACP@0.1 -->
@@ -383,10 +399,11 @@ A **conformance badge** is a profile-level compatibility mark issued when all re
 
 Repository-owned profile runner results are internal conformance evidence. They do not prove
 an independent implementation. An ordinary external product-profile mark additionally
-requires an eligible full-profile external-IUT report. The current external runner targets
-only Base and Authenticated Base. Both marks are reachable for complete eligible external
-implementations; the repository currently contains no independent external evidence for
-either profile.
+requires an eligible full-profile external evidence report. Base and Authenticated Base
+retain full external-IUT v1 targets. Evidence TCK 1.2.0 adds generalized report-2.1 targets
+for exactly Mediated Blocking, Resumable Sessions, and Delegated Identity. All five marks
+are reachable for complete eligible external implementations; the repository currently
+contains no independent external evidence for any of them.
 
 Normative rules:
 - Badge computation MUST be derived from machine-readable conformance reports.
