@@ -152,14 +152,19 @@ def _all_keys(value: object) -> set[str]:
 
 
 def test_frozen_m62_and_iut_boundaries_are_unchanged() -> None:
+    # Git stores these text artifacts with LF. Windows checkouts may materialize
+    # CRLF, so hash the repository-normalized bytes rather than platform-specific
+    # working-tree line endings.
     frozen_files = {
-        "conformance/iut/iut_report_v1.schema.json": "b34464432d7a0d5d5d87af6016315ab6117b2f0457f41dcac688ec9e60b755de",
-        "conformance/iut/cases.json": "e0552d67e600af994a2d80d8d048d9316ecd9c29ebd510a62899bc1b7d0107b4",
+        "conformance/iut/iut_report_v1.schema.json": "728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4",
+        "conformance/iut/cases.json": "6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe",
+        "conformance/iut/aicp_iut_runner.py": "bc82d59ffe919098606d9543a823811da43bc1720436fe1197636edc46e9e2fd",
         "conformance/evidence/external_evidence_report_v2.schema.json": "f1afe5b31e231f1fb3e24c151b6a0ccf07fd025e9e79cd903293ac7210ae8ddd",
-        "conformance/evidence/evidence_runner_bundle.json": "3c2f42b49eaff14a3cc4951bec44218271d08ea05e920355c574d885a3b24a73",
+        "conformance/evidence/evidence_runner_bundle.json": "a1505f9a8e2519009a3d18dd7c1c114c2752f6e942432cd6846137640504d2d0",
     }
     for relative, expected in frozen_files.items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+        repository_bytes = (ROOT / relative).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(repository_bytes).hexdigest() == expected
     assert canonical_digest(release_record("AICP-EVIDENCE-TCK-1.0.0")) == (
         HISTORICAL_RELEASE_RECORD_DIGEST
     )
