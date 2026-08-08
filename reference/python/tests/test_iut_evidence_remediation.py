@@ -387,6 +387,9 @@ def test_process_supervision_fails_closed(
 def _manifest_for(report: dict) -> dict:
     subject = report["execution_subject"]
     profile = report["profile"]
+    suite_refs = ["CT-CORE-0.1"]
+    if profile["profile_id"] == "AICP-AUTHENTICATED-BASE":
+        suite_refs.append("AUTH-AUTHENTICATED-MESSAGES-0.1")
     return {
         "implementation_id": subject["implementation_id"],
         "implementation_version": subject["implementation_version"],
@@ -397,6 +400,7 @@ def _manifest_for(report: dict) -> dict:
             }
         ],
         "report_refs": ["reports/iut.json"],
+        "suite_refs": suite_refs,
         "claim_type": "implements_profile",
         "evidence_status": "reproducible",
     }
@@ -605,6 +609,7 @@ def test_reproducible_strong_claim_without_eligible_report_is_rejected(tmp_path:
         "implementation_id": "external-a",
         "implementation_version": "1.0.0",
         "profile_refs": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}],
+        "suite_refs": ["CT-CORE-0.1"],
         "report_refs": [],
         "claim_type": "implements_profile",
         "evidence_status": "reproducible",
