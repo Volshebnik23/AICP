@@ -265,6 +265,12 @@ def consumer_cases(catalog: dict[str, Any], mode: str) -> list[dict[str, Any]]:
     return cases
 
 
+def producer_cases(catalog: dict[str, Any], mode: str) -> list[dict[str, Any]]:
+    if mode not in {"smoke", "full-capability"}:
+        raise ValueError("execution mode must be full-capability or smoke")
+    return [catalog["producer_case"]]
+
+
 def build_plan_entries(
     catalog: dict[str, Any],
     mode: str,
@@ -521,6 +527,7 @@ class ProjectionV1Handler:
 
     build_plan_entries = staticmethod(build_plan_entries)
     consumer_cases = staticmethod(consumer_cases)
+    producer_cases = staticmethod(producer_cases)
     expected_error_codes = staticmethod(expected_error_codes)
     producer_errors = staticmethod(producer_errors)
     producer_validators = staticmethod(producer_validators)

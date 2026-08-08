@@ -21,7 +21,6 @@ for path in (EVIDENCE_DIR, REF_PY):
 from adapter_process import AdapterProcessError, invoke_adapter  # noqa: E402
 from aicp_ref.signatures import signature_verifier_available  # noqa: E402
 from target_catalog import (  # noqa: E402
-    REPORT_SCHEMA_PATH,
     TARGET_KEY,
     TARGET_SCHEMA_PATH,
     TARGETS_PATH,
@@ -34,6 +33,7 @@ from target_catalog import (  # noqa: E402
     load_json,
     mandatory_case_ids,
     release_record,
+    release_target_entry,
     resolve_target_record,
     target_catalog,
     validate_release_registry,
@@ -181,6 +181,7 @@ def _describe_errors(
     suites: list[dict[str, str]],
 ) -> list[str]:
     errors: list[str] = []
+    release_target = release_target_entry(release, record.target_key)
     support_field, expected_support = _support_metadata(record)
     required = [
         "implementation_kind",
@@ -220,10 +221,13 @@ def _describe_errors(
         "claimed_target_registry_digest": release["target_registry"][
             "content_digest"
         ],
-        "claimed_target_catalog_digest": release["target"]["target_catalog"][
+        "claimed_target_catalog_digest": release_target["target_catalog"][
             "content_digest"
         ],
         "claimed_suite_digest": suites[0]["suite_digest"],
+        "claimed_report_schema_digest": release["report_schema"][
+            "content_digest"
+        ],
         "claimed_input_digest": canonical_digest(inputs),
     }
     for field, expected in claim_checks.items():
@@ -244,8 +248,13 @@ def _base_report(
     suites: list[dict[str, str]],
     timestamp: str,
 ) -> dict[str, Any]:
+    report_version = (
+        "2.1"
+        if str(release["report_schema"]["path"]).endswith("v2_1.schema.json")
+        else "2.0"
+    )
     return {
-        "report_format_version": "2.0",
+        "report_format_version": report_version,
         "report_type": "aicp.external_evidence",
         "execution_mode": mode,
         "execution_subject": {
@@ -256,7 +265,7 @@ def _base_report(
         },
         "runner": {
             "name": "aicp-external-evidence-runner",
-            "version": "2.0",
+            "version": report_version,
             "source_revision": release["runner_bundle"]["digest"],
         },
         "tck_release": {
@@ -321,8 +330,8 @@ def run_evidence(
         )
     catalog = target_catalog(record)
     release = release_record(record.current_release_id)
-    inputs = expected_input_artifacts(release)
-    suites = expected_suite_records(release)
+    inputs = expected_input_artifacts(release, record.target_key)
+    suites = expected_suite_records(release, record.target_key)
     catalog_path = ROOT / record.catalog_path
     catalog_digest = file_digest(catalog_path)
     report = _base_report(
@@ -382,9 +391,17 @@ def run_evidence(
         else "; ".join(release_errors),
     )
 
-    producer = catalog["producer_case"]
+    producer = (
+        catalog["producer_scenario_catalog"]
+        if record.target_kind == "product_profile"
+        else catalog["producer_case"]
+    )
     scenario_validator, projection_validator = handler.producer_validators(
-        ROOT / producer["scenario_schema_path"],
+        ROOT
+        / str(
+            producer.get("schema_path")
+            or producer["scenario_schema_path"]
+        ),
         simulate_no_jsonschema=simulate_no_jsonschema,
     )
     if scenario_validator is None or projection_validator is None:
@@ -420,9 +437,9 @@ def run_evidence(
 
     first_metadata: dict[str, Any] | None = None
     final_metadata: dict[str, Any] | None = None
-    producer_result: dict[str, Any] | None = None
-    producer_digest: str | None = None
-    producer_case_result: dict[str, Any] | None = None
+    producer_results: dict[str, dict[str, Any]] = {}
+    producer_digests: dict[str, str] = {}
+    producer_case_results: dict[str, dict[str, Any]] = {}
     for response, check in zip(responses, checks):
         result = response["result"]
         kind = check["kind"]
@@ -465,9 +482,10 @@ def run_evidence(
                 projection_validator=projection_validator,
             )
             digest = canonical_digest(result)
+            artifact_id = str(check.get("artifact_id", check["case_id"]))
             if kind == "producer":
-                producer_result = result
-                producer_digest = digest
+                producer_results[artifact_id] = result
+                producer_digests[artifact_id] = digest
                 record_case(
                     check["case_id"],
                     not errors,
@@ -475,8 +493,11 @@ def run_evidence(
                     if not errors
                     else "; ".join(errors),
                 )
-                producer_case_result = case_results[-1]
+                producer_case_results[artifact_id] = case_results[-1]
             else:
+                producer_result = producer_results.get(artifact_id)
+                producer_digest = producer_digests.get(artifact_id)
+                producer_case_result = producer_case_results.get(artifact_id)
                 if producer_result is None or producer_digest is None:
                     errors.append("first producer result is missing")
                 elif result != producer_result or digest != producer_digest:
@@ -494,14 +515,17 @@ def run_evidence(
                             }
                         )
                 if producer_result is not None and producer_digest is not None:
-                    report["generated_artifacts"] = [
-                        {
-                            "artifact_id": check["case_id"],
-                            "content_digest": producer_digest,
-                            "repeat_content_digest": digest,
-                            "content": producer_result,
-                        }
-                    ]
+                    artifact = {
+                        "artifact_id": artifact_id,
+                        "content_digest": producer_digest,
+                        "repeat_content_digest": digest,
+                        "content": producer_result,
+                    }
+                    if report["report_format_version"] == "2.1":
+                        artifact["artifact_kind"] = str(
+                            producer_result.get("artifact_kind", "transcript")
+                        )
+                    report["generated_artifacts"].append(artifact)
                     if producer_case_result is not None and not errors:
                         producer_case_result[
                             "message"
@@ -623,8 +647,10 @@ def run_evidence(
         and report["degraded_reasons"] == []
         and report["skipped_checks"] == []
         and report["generated_artifacts"]
-        and report["generated_artifacts"][0]["content_digest"]
-        == report["generated_artifacts"][0]["repeat_content_digest"]
+        and all(
+            artifact["content_digest"] == artifact["repeat_content_digest"]
+            for artifact in report["generated_artifacts"]
+        )
     )
     report["compatibility_marks"] = [record.expected_mark] if eligible else []
     return report

@@ -3,10 +3,12 @@ from __future__ import annotations
 from typing import Any
 
 from projection_v1_handler import ProjectionV1Handler
+from product_profile_handler import ProductProfileV01Handler
 
 
 HANDLERS: dict[str, Any] = {
     ProjectionV1Handler.handler_id: ProjectionV1Handler(),
+    ProductProfileV01Handler.handler_id: ProductProfileV01Handler(),
 }
 
 

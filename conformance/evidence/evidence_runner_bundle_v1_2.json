@@ -1,0 +1,81 @@
+{
+  "manifest_version": "1.0",
+  "entries": [
+    {
+      "path": "conformance/evidence/adapter_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:e60858148f45edbde78dd8500de13fbab082f4cd8e767beac8068d983ca77deb"
+    },
+    {
+      "path": "conformance/evidence/aicp_external_evidence_runner.py",
+      "role": "runner",
+      "digest": "sha256:fd86bb3328e2318d00de9b007783a02bda595890e3c665a6f980861c26bd2f1d"
+    },
+    {
+      "path": "conformance/evidence/product_profile_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:3cb59cfc57aec351da21d7a9c8bf5be25bca4259992d212c8223df5c94df5ff4"
+    },
+    {
+      "path": "conformance/evidence/profile_transcript_evaluator.py",
+      "role": "transcript_validation",
+      "digest": "sha256:b2dabfed407a12ee45b7ccaaa1ab5ea68acd91acae3785cd419938ab0937e7e8"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:65d6050f50b929122614df54fb4da657a605543e1ee6936e1e826fb2b2014285"
+    },
+    {
+      "path": "conformance/evidence/report_evaluator.py",
+      "role": "evaluator",
+      "digest": "sha256:63c2913f9ad2c5be5507632eb6b15e60d3c4b35962ad6a9ea80f11c956549f2a"
+    },
+    {
+      "path": "conformance/evidence/target_catalog.py",
+      "role": "target_dispatch",
+      "digest": "sha256:136dba455deda023cfcdcd2750d61dae304be034ead83418b69f03c1f17ab2d9"
+    },
+    {
+      "path": "conformance/evidence/target_handlers.py",
+      "role": "target_dispatch",
+      "digest": "sha256:8f4ea18d108ddc6ab50fdceed6bbecc6587daca21ac9eada3a761f65cfa8b4f8"
+    },
+    {
+      "path": "conformance/runner/_runner_context.py",
+      "role": "report_schema_support",
+      "digest": "sha256:302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "reference/python/aicp_ref/__init__.py",
+      "role": "package_initialization",
+      "digest": "sha256:d463f315e8571772889691718d2791e10a674f9fcb07e147ef8ba5b22731b6c0"
+    },
+    {
+      "path": "reference/python/aicp_ref/chain.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "reference/python/aicp_ref/hashing.py",
+      "role": "canonicalization",
+      "digest": "sha256:0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "reference/python/aicp_ref/jcs.py",
+      "role": "canonicalization",
+      "digest": "sha256:ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "reference/python/aicp_ref/signatures.py",
+      "role": "dependency_probe",
+      "digest": "sha256:7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "reference/python/aicp_ref/validate.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    }
+  ],
+  "bundle_digest": "sha256:bd2339a7809725c9334aa1e887a0cd98bae8d22f66e6b16ae1047930c4bff2a5"
+}

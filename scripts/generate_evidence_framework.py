@@ -17,6 +17,7 @@ from target_catalog import (  # noqa: E402
     BUNDLE_MANIFEST_PATH,
     EXPECTATIONS_PATH,
     EXPECTED_MARK,
+    FROZEN_TCK_1_1_RECORD_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_RELEASE_REGISTRY_DIGEST,
     HISTORICAL_TARGET_SCHEMA_DIGEST,
@@ -24,11 +25,15 @@ from target_catalog import (  # noqa: E402
     PRODUCER_SCENARIO_PATH,
     PRODUCER_SCENARIO_SCHEMA_PATH,
     PRODUCER_TRANSCRIPT_PATH,
+    PROFILE_TCK_RELEASE_ID,
+    PROFILE_TARGET_KEYS,
     REPORT_SCHEMA_PATH,
+    REPORT_SCHEMA_V21_PATH,
     TARGET_CATALOG_PATH,
     TARGET_ID,
     TARGET_KEY,
     TARGET_SCHEMA_PATH,
+    TargetRecord,
     TARGET_VERSION,
     TARGETS_PATH,
     TCK_RELEASES_PATH,
@@ -38,11 +43,13 @@ from target_catalog import (  # noqa: E402
     digest_bytes,
     file_digest,
     load_json,
+    mandatory_case_ids,
     validate_release_registry,
     validate_target_catalog,
     validate_target_registry,
 )
 from target_handlers import resolve_handler  # noqa: E402
+from profile_scenario_builder import scenario_template_paths  # noqa: E402
 
 
 SUITE_REF = "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
@@ -58,37 +65,95 @@ STATIC_INPUTS = [
     "registry/extension_ids.json",
 ]
 
+PROFILE_EXPECTATIONS_PATH = EVIDENCE_DIR / "product_profile_consumer_expectations.json"
+PROFILE_SCENARIO_SCHEMA_PATH = EVIDENCE_DIR / "product_profile_producer_scenario.schema.json"
+PROFILE_CONFIGS = (
+    {
+        "target_key": "AICP-MEDIATED-BLOCKING@0.1",
+        "target_id": "AICP-MEDIATED-BLOCKING",
+        "profile_path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json",
+        "catalog_path": "conformance/evidence/mediated_blocking_target.json",
+        "scenario_path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
+        "case_prefix": "MB",
+    },
+    {
+        "target_key": "AICP-RESUMABLE-SESSIONS@0.1",
+        "target_id": "AICP-RESUMABLE-SESSIONS",
+        "profile_path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
+        "catalog_path": "conformance/evidence/resumable_sessions_target.json",
+        "scenario_path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
+        "case_prefix": "RS",
+    },
+    {
+        "target_key": "AICP-DELEGATED-IDENTITY@0.1",
+        "target_id": "AICP-DELEGATED-IDENTITY",
+        "profile_path": "conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json",
+        "catalog_path": "conformance/evidence/delegated_identity_target.json",
+        "scenario_path": "conformance/evidence/delegated_identity_producer_scenarios.json",
+        "case_prefix": "DI",
+    },
+)
+
 
 def render(value: Any) -> str:
     return json.dumps(value, indent=2, ensure_ascii=False) + "\n"
 
 
 def target_registry_payload() -> dict[str, Any]:
-    return {
-        "registry_version": "1.1",
-        "targets": [
+    targets = [
+        {
+            "target_key": TARGET_KEY,
+            "target_kind": "capability",
+            "target_id": TARGET_ID,
+            "target_version": TARGET_VERSION,
+            "status": "experimental",
+            "catalog_path": TARGET_CATALOG_PATH.relative_to(ROOT).as_posix(),
+            "expected_mark": EXPECTED_MARK,
+            "execution_mode": "full-capability",
+            "evidence_claim_type": "implements_capability",
+            "handler_id": "projection_v1",
+            "current_release_id": TCK_RELEASE_ID,
+            "required_suites": [SUITE_REF],
+            "required_operations": [
+                "describe",
+                "canonicalize_hash",
+                "validate_transcript",
+                "project_session_state",
+            ],
+        }
+    ]
+    registry = load_json(ROOT / "registry/aicp_profiles.json")
+    profile_entries = {
+        (str(item.get("profile_id")), str(item.get("profile_version"))): item
+        for item in registry
+        if isinstance(item, dict)
+    }
+    for config in PROFILE_CONFIGS:
+        profile = load_json(ROOT / config["profile_path"])
+        entry = profile_entries[(config["target_id"], "0.1")]
+        targets.append(
             {
-                "target_key": TARGET_KEY,
-                "target_kind": "capability",
-                "target_id": TARGET_ID,
-                "target_version": TARGET_VERSION,
-                "status": "experimental",
-                "catalog_path": TARGET_CATALOG_PATH.relative_to(ROOT).as_posix(),
-                "expected_mark": EXPECTED_MARK,
-                "execution_mode": "full-capability",
-                "evidence_claim_type": "implements_capability",
-                "handler_id": "projection_v1",
-                "current_release_id": TCK_RELEASE_ID,
-                "required_suites": [SUITE_REF],
+                "target_key": config["target_key"],
+                "target_kind": "product_profile",
+                "target_id": config["target_id"],
+                "target_version": "0.1",
+                "status": str(entry["status"]),
+                "catalog_path": config["catalog_path"],
+                "expected_mark": str(profile["compatibility_mark"]),
+                "execution_mode": "full-profile",
+                "evidence_claim_type": "implements_profile",
+                "handler_id": "product_profile_v01",
+                "current_release_id": PROFILE_TCK_RELEASE_ID,
+                "required_suites": list(profile["required_suites"]),
                 "required_operations": [
                     "describe",
                     "canonicalize_hash",
                     "validate_transcript",
-                    "project_session_state",
+                    "generate_scenario",
                 ],
             }
-        ],
-    }
+        )
+    return {"registry_version": "1.1", "targets": targets}
 
 
 def target_catalog_payload() -> dict[str, Any]:
@@ -252,34 +317,249 @@ def target_catalog_payload() -> dict[str, Any]:
     }
 
 
-def _historical_release() -> dict[str, Any]:
+def _bounded_case_token(value: str) -> str:
+    return "".join(
+        character if character.isalnum() else "-" for character in value.upper()
+    ).strip("-")
+
+
+def profile_target_catalog_payload(config: dict[str, str]) -> dict[str, Any]:
+    profile = load_json(ROOT / config["profile_path"])
+    expectations = load_json(PROFILE_EXPECTATIONS_PATH)
+    target_expectation_suites = expectations["target_suites"].get(
+        config["target_key"]
+    )
+    required_suite_paths = list(profile["required_suites"])
+    if target_expectation_suites != required_suite_paths:
+        raise ValueError(
+            f"reviewed suite expectations drift from profile: {config['target_key']}"
+        )
+    suite_records: list[dict[str, str]] = []
+    consumers: list[dict[str, Any]] = []
+    fixture_paths: list[str] = []
+    schema_paths: set[str] = {"schemas/core/aicp-core-message.schema.json"}
+    for suite_path in required_suite_paths:
+        suite = load_json(ROOT / suite_path)
+        suite_records.append(
+            {
+                "path": suite_path,
+                "suite_id": str(suite["suite_id"]),
+                "suite_version": str(suite["suite_version"]),
+                "suite_digest": file_digest(ROOT / suite_path),
+            }
+        )
+        for field in ("schema_ref", "payload_schema_ref"):
+            if isinstance(suite.get(field), str):
+                schema_paths.add(str(suite[field]))
+        suite_expectations = expectations["suite_expectations"].get(suite_path)
+        if not isinstance(suite_expectations, dict):
+            raise ValueError(f"reviewed suite expectations missing: {suite_path}")
+        source_ids = [str(item["id"]) for item in suite.get("transcripts", [])]
+        if set(source_ids) != set(suite_expectations):
+            raise ValueError(f"reviewed suite cases drift: {suite_path}")
+        for transcript in suite["transcripts"]:
+            source_id = str(transcript["id"])
+            oracle = suite_expectations[source_id]
+            accepted = transcript.get("expect_pass", True) is True
+            if oracle.get("accepted") is not accepted:
+                raise ValueError(f"reviewed acceptance drift: {suite_path}/{source_id}")
+            suite_codes = [
+                str(item["test_id"])
+                for item in transcript.get("expected_failures", [])
+                if isinstance(item, dict)
+            ]
+            reviewed_codes = [
+                str(observation["code"])
+                for observation in oracle.get("error_observations", [])
+                for _ in range(int(observation["exact_count"]))
+            ]
+            if reviewed_codes != suite_codes:
+                raise ValueError(
+                    f"reviewed exact errors drift: {suite_path}/{source_id}"
+                )
+            fixture = str(transcript["path"])
+            fixture_paths.append(fixture)
+            case_id = (
+                f"EVIDENCE-CONSUMER-{config['case_prefix']}-"
+                f"{_bounded_case_token(str(suite['suite_id']))}-"
+                f"{_bounded_case_token(source_id)}"
+            )
+            consumers.append(
+                {
+                    "case_id": case_id,
+                    "source_suite_id": str(suite["suite_id"]),
+                    "source_case_id": source_id,
+                    "fixture": fixture,
+                    "input_digest": file_digest(ROOT / fixture),
+                    "accepted": accepted,
+                    "expected_error_observations": oracle[
+                        "error_observations"
+                    ],
+                    "expected_degraded": False,
+                    "expected_degraded_reasons": [],
+                    "expected_skipped_checks": [],
+                }
+            )
+
+    scenario_path = ROOT / config["scenario_path"]
+    scenario_catalog = load_json(scenario_path)
+    if scenario_catalog.get("target") != {
+        "kind": "product_profile",
+        "target_id": config["target_id"],
+        "target_version": "0.1",
+    }:
+        raise ValueError(f"producer scenario target drift: {config['target_key']}")
+    producer_scenarios = [
+        {
+            "case_id": f"EVIDENCE-PRODUCER-{scenario['scenario_id']}",
+            "scenario_id": str(scenario["scenario_id"]),
+            "artifact_id": f"PROFILE-TRANSCRIPT-{scenario['scenario_id']}",
+        }
+        for scenario in scenario_catalog["scenarios"]
+    ]
+    vector_entries: list[dict[str, Any]] = []
+    for vector_ref in VECTOR_REFS:
+        vector = load_json(ROOT / vector_ref)
+        vector_entries.append(
+            {
+                "case_id": str(vector["vector_id"]),
+                "path": vector_ref,
+                "input_digest": file_digest(ROOT / vector_ref),
+            }
+        )
+    static_paths = {
+        config["profile_path"],
+        config["scenario_path"],
+        PROFILE_SCENARIO_SCHEMA_PATH.relative_to(ROOT).as_posix(),
+        PROFILE_EXPECTATIONS_PATH.relative_to(ROOT).as_posix(),
+        "fixtures/keys/GT_public_keys.json",
+        "registry/aicp_profiles.json",
+        "registry/message_types.json",
+        "registry/policy_reason_codes.json",
+        "registry/crypto_profiles.json",
+        *required_suite_paths,
+        *fixture_paths,
+        *schema_paths,
+        *VECTOR_REFS,
+        *scenario_template_paths(),
+    }
+    required_inputs = [
+        {"path": relative, "content_digest": file_digest(ROOT / relative)}
+        for relative in sorted(static_paths)
+    ]
+    return {
+        "catalog_version": "1.2",
+        "target_key": config["target_key"],
+        "target": {
+            "kind": "product_profile",
+            "target_id": config["target_id"],
+            "target_version": "0.1",
+        },
+        "handler_id": "product_profile_v01",
+        "profile_catalog": {
+            "path": config["profile_path"],
+            "content_digest": file_digest(ROOT / config["profile_path"]),
+        },
+        "expected_mark": str(profile["compatibility_mark"]),
+        "external_execution_mode": "full-profile",
+        "required_operations": [
+            "describe",
+            "canonicalize_hash",
+            "validate_transcript",
+            "generate_scenario",
+        ],
+        "required_suite_paths": required_suite_paths,
+        "required_suites": suite_records,
+        "canonicalization_vectors": vector_entries,
+        "producer_scenario_catalog": {
+            "path": config["scenario_path"],
+            "content_digest": file_digest(scenario_path),
+            "schema_path": PROFILE_SCENARIO_SCHEMA_PATH.relative_to(ROOT).as_posix(),
+            "schema_digest": file_digest(PROFILE_SCENARIO_SCHEMA_PATH),
+        },
+        "producer_scenarios": producer_scenarios,
+        "consumer_error_ordering": expectations["error_ordering"],
+        "consumer_cases": consumers,
+        "required_input_artifacts": required_inputs,
+    }
+
+
+def _frozen_release(release_id: str, expected_digest: str) -> dict[str, Any]:
     registry = load_json(TCK_RELEASES_PATH)
-    historical = next(
+    frozen = next(
         (
             item
             for item in registry.get("releases", [])
-            if item.get("release_id") == HISTORICAL_TCK_RELEASE_ID
+            if item.get("release_id") == release_id
         ),
         None,
     )
-    if not isinstance(historical, dict):
-        raise ValueError("historical evidence TCK 1.0.0 record is missing")
-    if canonical_digest(historical) != HISTORICAL_RELEASE_RECORD_DIGEST:
-        raise ValueError("historical evidence TCK 1.0.0 record changed")
-    return historical
+    if not isinstance(frozen, dict):
+        raise ValueError(f"frozen evidence TCK record is missing: {release_id}")
+    if canonical_digest(frozen) != expected_digest:
+        raise ValueError(f"frozen evidence TCK record changed: {release_id}")
+    return frozen
 
 
 def release_registry_payload(
     targets_rendered: str,
-    catalog_rendered: str,
+    profile_catalogs_rendered: dict[str, str],
     bundle_manifest_rendered: str,
-    catalog: dict[str, Any],
+    profile_catalogs: dict[str, dict[str, Any]],
     bundle_manifest: dict[str, Any],
 ) -> dict[str, Any]:
-    suite = catalog["owning_suite"]
-    historical = _historical_release()
+    historical = _frozen_release(
+        HISTORICAL_TCK_RELEASE_ID,
+        HISTORICAL_RELEASE_RECORD_DIGEST,
+    )
+    projection_release = _frozen_release(
+        TCK_RELEASE_ID,
+        FROZEN_TCK_1_1_RECORD_DIGEST,
+    )
+    product_handler = resolve_handler("product_profile_v01")
+    release_targets: list[dict[str, Any]] = []
+    for config in PROFILE_CONFIGS:
+        key = config["target_key"]
+        catalog = profile_catalogs[key]
+        release_targets.append(
+            {
+                "target_key": key,
+                "handler_id": "product_profile_v01",
+                "expected_mark": catalog["expected_mark"],
+                "target_catalog": {
+                    "path": config["catalog_path"],
+                    "content_digest": digest_bytes(
+                        profile_catalogs_rendered[key].encode("utf-8")
+                    ),
+                },
+                "profile_catalog": catalog["profile_catalog"],
+                "required_suites": catalog["required_suites"],
+                "required_input_artifacts": catalog[
+                    "required_input_artifacts"
+                ],
+                "canonicalization_vectors": [
+                    {
+                        "case_id": item["case_id"],
+                        "path": item["path"],
+                        "content_digest": item["input_digest"],
+                    }
+                    for item in catalog["canonicalization_vectors"]
+                ],
+                "mandatory_producer_ids": [
+                    item["case_id"] for item in catalog["producer_scenarios"]
+                ],
+                "mandatory_consumer_ids": [
+                    item["case_id"] for item in catalog["consumer_cases"]
+                ],
+                "mandatory_case_ids": mandatory_case_ids(
+                    catalog,
+                    "full-profile",
+                    product_handler,
+                ),
+            }
+        )
     return {
-        "registry_version": "1.1",
+        "registry_version": "1.2",
         "supersessions": [
             {
                 "release_id": HISTORICAL_TCK_RELEASE_ID,
@@ -297,12 +577,13 @@ def release_registry_payload(
         ],
         "releases": [
             historical,
+            projection_release,
             {
-                "release_id": TCK_RELEASE_ID,
+                "release_id": PROFILE_TCK_RELEASE_ID,
                 "status": "experimental",
                 "report_schema": {
-                    "path": REPORT_SCHEMA_PATH.relative_to(ROOT).as_posix(),
-                    "content_digest": file_digest(REPORT_SCHEMA_PATH),
+                    "path": REPORT_SCHEMA_V21_PATH.relative_to(ROOT).as_posix(),
+                    "content_digest": file_digest(REPORT_SCHEMA_V21_PATH),
                 },
                 "target_registry": {
                     "path": TARGETS_PATH.relative_to(ROOT).as_posix(),
@@ -324,42 +605,7 @@ def release_registry_payload(
                     ],
                     "digest": bundle_manifest["bundle_digest"],
                 },
-                "target": {
-                    "target_key": TARGET_KEY,
-                    "handler_id": "projection_v1",
-                    "expected_mark": EXPECTED_MARK,
-                    "target_catalog": {
-                        "path": TARGET_CATALOG_PATH.relative_to(ROOT).as_posix(),
-                        "content_digest": digest_bytes(
-                            catalog_rendered.encode("utf-8")
-                        ),
-                    },
-                    "required_suites": [
-                        {
-                            "path": suite["path"],
-                            "suite_id": suite["suite_id"],
-                            "suite_version": suite["suite_version"],
-                            "suite_digest": suite["suite_digest"],
-                        }
-                    ],
-                    "required_input_artifacts": catalog[
-                        "required_input_artifacts"
-                    ],
-                    "canonicalization_vectors": [
-                        {
-                            "case_id": item["case_id"],
-                            "path": item["path"],
-                            "content_digest": item["input_digest"],
-                        }
-                        for item in catalog["canonicalization_vectors"]
-                    ],
-                    "mandatory_producer_ids": [
-                        catalog["producer_case"]["case_id"]
-                    ],
-                    "mandatory_consumer_ids": [
-                        item["case_id"] for item in catalog["consumer_cases"]
-                    ],
-                },
+                "targets": release_targets,
             },
         ],
     }
@@ -368,23 +614,30 @@ def release_registry_payload(
 def generated_payloads() -> tuple[
     dict[str, Any],
     dict[str, Any],
+    dict[str, dict[str, Any]],
     dict[str, Any],
     dict[str, Any],
 ]:
     targets = target_registry_payload()
-    catalog = target_catalog_payload()
+    projection_catalog = target_catalog_payload()
+    profile_catalogs = {
+        config["target_key"]: profile_target_catalog_payload(config)
+        for config in PROFILE_CONFIGS
+    }
     bundle_manifest = bundle_manifest_payload()
     targets_rendered = render(targets)
-    catalog_rendered = render(catalog)
+    profile_catalogs_rendered = {
+        key: render(value) for key, value in profile_catalogs.items()
+    }
     bundle_manifest_rendered = render(bundle_manifest)
     releases = release_registry_payload(
         targets_rendered,
-        catalog_rendered,
+        profile_catalogs_rendered,
         bundle_manifest_rendered,
-        catalog,
+        profile_catalogs,
         bundle_manifest,
     )
-    return targets, catalog, bundle_manifest, releases
+    return targets, projection_catalog, profile_catalogs, bundle_manifest, releases
 
 
 def main() -> int:
@@ -394,17 +647,28 @@ def main() -> int:
     mode.add_argument("--check", action="store_true")
     args = parser.parse_args()
 
-    targets, catalog, bundle_manifest, releases = generated_payloads()
-    paths = (
+    (
+        targets,
+        projection_catalog,
+        profile_catalogs,
+        bundle_manifest,
+        releases,
+    ) = generated_payloads()
+    paths = [
         TARGETS_PATH,
         TARGET_CATALOG_PATH,
+        *[ROOT / config["catalog_path"] for config in PROFILE_CONFIGS],
         BUNDLE_MANIFEST_PATH,
         TCK_RELEASES_PATH,
-    )
-    rendered = tuple(
-        render(value)
-        for value in (targets, catalog, bundle_manifest, releases)
-    )
+    ]
+    values = [
+        targets,
+        projection_catalog,
+        *[profile_catalogs[config["target_key"]] for config in PROFILE_CONFIGS],
+        bundle_manifest,
+        releases,
+    ]
+    rendered = [render(value) for value in values]
     if args.write:
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
         for path, content in zip(paths, rendered):
@@ -423,24 +687,55 @@ def main() -> int:
             )
             return 1
 
-    handler = resolve_handler("projection_v1")
     errors = [
-        *validate_target_registry(targets),
-        *validate_target_catalog(catalog, handler=handler),
-        *validate_release_registry(
-            releases,
-            bundle_manifest=bundle_manifest,
+        *validate_target_registry(targets, enforce_current_scope=True),
+        *validate_target_catalog(
+            projection_catalog,
+            record=next(
+                record
+                for record in (
+                    TargetRecord.from_mapping(item)
+                    for item in targets["targets"]
+                )
+                if record.target_key == TARGET_KEY
+            ),
+            handler=resolve_handler("projection_v1"),
         ),
     ]
+    for item in targets["targets"]:
+        if item["target_key"] not in PROFILE_TARGET_KEYS:
+            continue
+        record = TargetRecord.from_mapping(item)
+        errors.extend(
+            validate_target_catalog(
+                profile_catalogs[record.target_key],
+                record=record,
+                handler=resolve_handler(record.handler_id),
+            )
+        )
+    errors.extend(
+        validate_release_registry(
+            releases,
+            bundle_manifest=bundle_manifest,
+        )
+    )
     if errors:
         for error in sorted(set(errors)):
             print(f"[FAIL] {error}")
         return 1
     action = "Generated" if args.write else "OK"
+    producer_count = sum(
+        len(catalog["producer_scenarios"])
+        for catalog in profile_catalogs.values()
+    )
+    consumer_count = sum(
+        len(catalog["consumer_cases"])
+        for catalog in profile_catalogs.values()
+    )
     print(
-        f"{action}: one external evidence target, 1 producer, "
-        f"{len(catalog['consumer_cases'])} consumers, {TCK_RELEASE_ID}; "
-        f"{HISTORICAL_TCK_RELEASE_ID} retained."
+        f"{action}: three Tier-1 profile targets, {producer_count} producers, "
+        f"{consumer_count} consumers, {PROFILE_TCK_RELEASE_ID}; "
+        f"{HISTORICAL_TCK_RELEASE_ID} and {TCK_RELEASE_ID} retained."
     )
     return 0
 
