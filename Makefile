@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -111,6 +111,33 @@ evidence-capability-full-reference:
 evidence-capability-full-external-test:
 	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/fake_adapters.py","--mode","external_good"]' --target aicp.session_state_projection@v1 --mode full-capability --out out/evidence/projection-v1-external-test.json
 
+evidence-profile-mediated-smoke-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_reference_adapter.py"]' --target AICP-MEDIATED-BLOCKING@0.1 --mode smoke --out out/evidence/mediated-blocking-reference-smoke.json
+
+evidence-profile-mediated-full-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_reference_adapter.py"]' --target AICP-MEDIATED-BLOCKING@0.1 --mode full-profile --out out/evidence/mediated-blocking-reference-full.json
+
+evidence-profile-mediated-full-external-test:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_fake_adapters.py","--mode","external_good"]' --target AICP-MEDIATED-BLOCKING@0.1 --mode full-profile --out out/evidence/mediated-blocking-external-test.json
+
+evidence-profile-resumable-smoke-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_reference_adapter.py"]' --target AICP-RESUMABLE-SESSIONS@0.1 --mode smoke --out out/evidence/resumable-sessions-reference-smoke.json
+
+evidence-profile-resumable-full-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_reference_adapter.py"]' --target AICP-RESUMABLE-SESSIONS@0.1 --mode full-profile --out out/evidence/resumable-sessions-reference-full.json
+
+evidence-profile-resumable-full-external-test:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_fake_adapters.py","--mode","external_good"]' --target AICP-RESUMABLE-SESSIONS@0.1 --mode full-profile --out out/evidence/resumable-sessions-external-test.json
+
+evidence-profile-delegated-smoke-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_reference_adapter.py"]' --target AICP-DELEGATED-IDENTITY@0.1 --mode smoke --out out/evidence/delegated-identity-reference-smoke.json
+
+evidence-profile-delegated-full-reference:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_reference_adapter.py"]' --target AICP-DELEGATED-IDENTITY@0.1 --mode full-profile --out out/evidence/delegated-identity-reference-full.json
+
+evidence-profile-delegated-full-external-test:
+	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_fake_adapters.py","--mode","external_good"]' --target AICP-DELEGATED-IDENTITY@0.1 --mode full-profile --out out/evidence/delegated-identity-external-test.json
+
 evidence-submission-examples:
 	$(PYTHON) scripts/generate_evidence_submission_example.py --check
 	$(PYTHON) scripts/validate_interop_submission_examples.py
@@ -210,6 +237,15 @@ prepr:
 	$(MAKE) evidence-capability-smoke-reference
 	$(MAKE) evidence-capability-full-reference
 	$(MAKE) evidence-capability-full-external-test
+	$(MAKE) evidence-profile-mediated-smoke-reference
+	$(MAKE) evidence-profile-mediated-full-reference
+	$(MAKE) evidence-profile-mediated-full-external-test
+	$(MAKE) evidence-profile-resumable-smoke-reference
+	$(MAKE) evidence-profile-resumable-full-reference
+	$(MAKE) evidence-profile-resumable-full-external-test
+	$(MAKE) evidence-profile-delegated-smoke-reference
+	$(MAKE) evidence-profile-delegated-full-reference
+	$(MAKE) evidence-profile-delegated-full-external-test
 	$(MAKE) evidence-submission-examples
 	cd sdk/typescript && npm ci && npm test
 
