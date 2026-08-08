@@ -59,9 +59,9 @@ PAIRWISE_JOINT_EVIDENCE_ERROR = (
     "artifacts consumed in every required direction"
 )
 STRONG_PROFILE_CLAIM_EVIDENCE_ERROR = (
-    "STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_IUT: "
+    "STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_EXTERNAL_REPORT: "
     "implements_profile and compatible_with_profile claims require evidence_status='reproducible' "
-    "and an independently eligible external full-profile IUT report"
+    "and an independently eligible external full-profile report"
 )
 STRONG_CAPABILITY_CLAIM_EVIDENCE_ERROR = (
     "STRONG_CAPABILITY_CLAIM_REQUIRES_REPRODUCIBLE_REPORT: "
@@ -604,6 +604,42 @@ def _profile_catalog(profile_id: str, profile_version: str) -> tuple[Path | None
     return None, None
 
 
+def _profile_suite_ref_errors(claims: list[tuple[str, str]], manifest: dict[str, Any]) -> list[str]:
+    expected_paths: set[str] = set()
+    aliases: dict[str, str] = {}
+    errors: list[str] = []
+    for profile_id, profile_version in claims:
+        _, profile = _profile_catalog(profile_id, profile_version)
+        if not isinstance(profile, dict):
+            errors.append(f"no conformance profile catalog exists for {profile_id}@{profile_version}")
+            continue
+        for suite_path in profile.get("required_suites", []):
+            if not isinstance(suite_path, str):
+                continue
+            suite = load_json(ROOT / suite_path)
+            suite_id = suite.get("suite_id")
+            expected_paths.add(suite_path)
+            aliases[suite_path] = suite_path
+            if isinstance(suite_id, str):
+                aliases[suite_id] = suite_path
+
+    refs = manifest.get("suite_refs")
+    if not isinstance(refs, list):
+        return [*errors, "suite_refs must exactly identify the claimed profiles' required suites"]
+    normalized: list[str] = []
+    for value in refs:
+        if not isinstance(value, str) or value not in aliases:
+            errors.append(f"suite_refs contains an unrelated or unknown suite: {value}")
+            continue
+        normalized.append(aliases[value])
+    counts = Counter(normalized)
+    if any(count != 1 for count in counts.values()):
+        errors.append("suite_refs contains a duplicate required suite")
+    if set(normalized) != expected_paths or len(normalized) != len(expected_paths):
+        errors.append("suite_refs must exactly equal the union of required suites for the claimed profiles")
+    return errors
+
+
 def _eligible_external_profile_report(
     report: dict[str, Any],
     *,
@@ -862,6 +898,13 @@ def evaluate_strong_report_evidence(
                 (),
                 "rejected",
             )
+        suite_ref_errors = _profile_suite_ref_errors(claims, manifest)
+        if suite_ref_errors:
+            return StrongEvidenceEvaluation(
+                tuple(suite_ref_errors),
+                (),
+                "rejected",
+            )
     elif claim_type == "pairwise_interop":
         return StrongEvidenceEvaluation(
             (PAIRWISE_JOINT_EVIDENCE_ERROR,),
@@ -917,22 +960,45 @@ def evaluate_strong_report_evidence(
     eligible_capability_marks: set[str] = set()
     eligible_targets: set[tuple[str, str, str]] = set()
     if claim_type in {"implements_profile", "compatible_with_profile"}:
-        catalog = load_json(IUT_CASES_PATH)
         for profile_id, profile_version in claims:
             eligible = False
             report_errors: list[str] = []
             for ref, report in reports:
-                current = _eligible_external_profile_report(
-                    report,
-                    implementation_id=implementation_id,
-                    implementation_version=implementation_version,
-                    profile_id=profile_id,
-                    profile_version=profile_version,
-                )
-                if not current:
-                    eligible = True
-                    break
-                report_errors.append(f"{ref}: " + "; ".join(current))
+                if report.get("report_format_version") == "2.1":
+                    evaluation = evaluate_capability_report(
+                        report,
+                        expected_implementation_id=implementation_id,
+                        expected_implementation_version=implementation_version,
+                    )
+                    exact_target = {
+                        "kind": "product_profile",
+                        "target_id": profile_id,
+                        "target_version": profile_version,
+                    }
+                    if (
+                        evaluation.get("status") == "eligible"
+                        and exact_target in evaluation.get("eligible_targets", [])
+                    ):
+                        eligible = True
+                        break
+                    report_errors.append(
+                        f"{ref}: "
+                        + "; ".join(
+                            str(item) for item in evaluation.get("errors", [])
+                        )
+                    )
+                else:
+                    current = _eligible_external_profile_report(
+                        report,
+                        implementation_id=implementation_id,
+                        implementation_version=implementation_version,
+                        profile_id=profile_id,
+                        profile_version=profile_version,
+                    )
+                    if not current:
+                        eligible = True
+                        break
+                    report_errors.append(f"{ref}: " + "; ".join(current))
             if not eligible:
                 errors.append(
                     f"no eligible external IUT report proves {profile_id}@{profile_version} for "
@@ -940,11 +1006,11 @@ def evaluate_strong_report_evidence(
                 )
                 errors.extend(report_errors)
                 continue
-            profile = catalog.get("profiles", {}).get(
-                f"{profile_id}@{profile_version}"
-            )
+            _, profile = _profile_catalog(profile_id, profile_version)
             expected_mark = (
                 profile.get("expected_mark")
+                if isinstance(profile, dict) and "expected_mark" in profile
+                else profile.get("compatibility_mark")
                 if isinstance(profile, dict)
                 else None
             )

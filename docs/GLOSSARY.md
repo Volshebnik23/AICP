@@ -112,8 +112,8 @@ Successful composition negotiation does not award or replace component profile e
 ## Internal composition evidence
 A non-degraded `CN_CAPNEG_0.2` repository run showing that the checked-in
 resolver, fixtures, hashes, and negotiation reducer agree. It is not independent external
-implementation evidence. M62 registers projection-v1 capability evidence only; generalized
-external composition evidence remains unavailable.
+implementation evidence. M63 registers generalized targets for three exact component
+profiles, but generalized external composition evidence remains unavailable.
 
 ## Crypto profile
 A negotiated cryptographic/canonicalization capability set represented in CAPNEG `supported_profiles` and `selected.crypto_profile`; distinct from AICP product profiles.

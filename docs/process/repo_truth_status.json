@@ -40,7 +40,9 @@
     "stable": 4,
     "experimental": 12,
     "external_iut_targets": 2,
-    "ordinary_external_mark_reachable_targets": 2,
+    "generalized_profile_targets": 3,
+    "external_profile_targets": 5,
+    "ordinary_external_mark_reachable_targets": 5,
     "externally_demonstrated": 0
   },
   "profiles": [
@@ -62,7 +64,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-AGENT-MEDIA-0.1"
+      "compatibility_mark": "AICP-Profile-AGENT-MEDIA-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-AUTHENTICATED-BASE@0.1",
@@ -80,7 +85,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-AUTHENTICATED-BASE-0.1"
+      "compatibility_mark": "AICP-Profile-AUTHENTICATED-BASE-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": true,
+      "external_target_mechanism": "profile_iut_v1"
     },
     {
       "id": "AICP-BASE@0.1",
@@ -97,7 +105,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-BASE-0.1"
+      "compatibility_mark": "AICP-Profile-BASE-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": true,
+      "external_target_mechanism": "profile_iut_v1"
     },
     {
       "id": "AICP-BASE@0.2",
@@ -114,7 +125,10 @@
       "compatibility_mark": "AICP-Profile-BASE-0.2",
       "external_iut_target": false,
       "external_mark_status": "no_external_iut_target",
-      "independent_external_evidence": false
+      "independent_external_evidence": false,
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-BAZAAR-RECEPTION@0.1",
@@ -136,7 +150,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-BAZAAR-RECEPTION-0.1"
+      "compatibility_mark": "AICP-Profile-BAZAAR-RECEPTION-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-COMMERCE-ACP@0.1",
@@ -160,7 +177,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-COMMERCE-ACP-0.1"
+      "compatibility_mark": "AICP-Profile-COMMERCE-ACP-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-DELEGATED-IDENTITY@0.1",
@@ -175,12 +195,15 @@
       "internal_report_output": "conformance/report_profile_delegated_identity.json",
       "tracked_report_present": true,
       "external_iut_target": false,
-      "external_mark_status": "no_external_iut_target",
+      "external_mark_status": "reachable_for_eligible_external_implementation",
       "live_binding_tested": false,
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-DELEGATED-IDENTITY-0.1"
+      "compatibility_mark": "AICP-Profile-DELEGATED-IDENTITY-0.1",
+      "generalized_evidence_target": true,
+      "external_profile_target": true,
+      "external_target_mechanism": "generalized_evidence_v2_1"
     },
     {
       "id": "AICP-EXECUTION-INTEROP@0.1",
@@ -200,7 +223,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-EXECUTION-INTEROP-0.1"
+      "compatibility_mark": "AICP-Profile-EXECUTION-INTEROP-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-MEDIATED-BLOCKING-OPS@0.1",
@@ -222,7 +248,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1"
+      "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-OPS-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-MEDIATED-BLOCKING@0.1",
@@ -237,12 +266,15 @@
       "internal_report_output": "conformance/report_profile_mediated_blocking.json",
       "tracked_report_present": true,
       "external_iut_target": false,
-      "external_mark_status": "no_external_iut_target",
+      "external_mark_status": "reachable_for_eligible_external_implementation",
       "live_binding_tested": false,
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-0.1"
+      "compatibility_mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
+      "generalized_evidence_target": true,
+      "external_profile_target": true,
+      "external_target_mechanism": "generalized_evidence_v2_1"
     },
     {
       "id": "AICP-POLICY-ABAC-RBAC@0.1",
@@ -261,7 +293,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-POLICY-ABAC-RBAC-0.1"
+      "compatibility_mark": "AICP-Profile-POLICY-ABAC-RBAC-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-POLICY-LLM-SAFETY@0.1",
@@ -280,7 +315,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-POLICY-LLM-SAFETY-0.1"
+      "compatibility_mark": "AICP-Profile-POLICY-LLM-SAFETY-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-POLICY-OPA-REGO@0.1",
@@ -299,7 +337,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-POLICY-OPA-REGO-0.1"
+      "compatibility_mark": "AICP-Profile-POLICY-OPA-REGO-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-RECEPTION-CHAT@0.1",
@@ -323,7 +364,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-RECEPTION-CHAT-0.1"
+      "compatibility_mark": "AICP-Profile-RECEPTION-CHAT-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     },
     {
       "id": "AICP-RESUMABLE-SESSIONS@0.1",
@@ -337,12 +381,15 @@
       "internal_report_output": "conformance/report_profile_resumable_sessions.json",
       "tracked_report_present": true,
       "external_iut_target": false,
-      "external_mark_status": "no_external_iut_target",
+      "external_mark_status": "reachable_for_eligible_external_implementation",
       "live_binding_tested": false,
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1"
+      "compatibility_mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1",
+      "generalized_evidence_target": true,
+      "external_profile_target": true,
+      "external_target_mechanism": "generalized_evidence_v2_1"
     },
     {
       "id": "AICP-WORKFLOW-ORCHESTRATION-DELEGATION@0.1",
@@ -368,7 +415,10 @@
       "independent_external_evidence": false,
       "repository_availability": "shipped",
       "internal_evidence": "available",
-      "compatibility_mark": "AICP-Profile-WORKFLOW-ORCHESTRATION-DELEGATION-0.1"
+      "compatibility_mark": "AICP-Profile-WORKFLOW-ORCHESTRATION-DELEGATION-0.1",
+      "generalized_evidence_target": false,
+      "external_profile_target": false,
+      "external_target_mechanism": null
     }
   ],
   "capability_evidence": {
@@ -4148,8 +4198,8 @@
     {
       "id": "M63",
       "title": "Tier-1 External Profile TCK",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M64",

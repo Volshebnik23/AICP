@@ -42,8 +42,10 @@ mature.
 |---|---|---|
 | Version / release phase | `0.1.0-rc.1` / `release-candidate-with-unreleased-post-rc-changes` | `VERSION`, `repo_truth_status.json` |
 | Registered profiles | 16 (4 stable, 12 experimental) | `registry/aicp_profiles.json` |
-| External-IUT targets | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | `conformance/iut/cases.json` |
-| Ordinary external marks currently reachable | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | profile catalogs and IUT cases |
+| Profile IUT v1 targets | 2: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1` | `conformance/iut/cases.json` |
+| Generalized profile evidence v2.1 targets | 3: `AICP-DELEGATED-IDENTITY@0.1`, `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1` | `conformance/evidence/targets.json` |
+| Total external profile targets | 5: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1`, `AICP-DELEGATED-IDENTITY@0.1`, `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1` | profile IUT v1 plus generalized evidence v2.1 |
+| Ordinary external marks currently reachable | 5: `AICP-AUTHENTICATED-BASE@0.1`, `AICP-BASE@0.1`, `AICP-DELEGATED-IDENTITY@0.1`, `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1` | profile catalogs and registered external target mechanisms |
 | External capability targets | 1 | `conformance/evidence/targets.json` |
 | Reachable external capability marks | 1 | evidence target registry and TCK provenance |
 | Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
@@ -69,7 +71,7 @@ mature.
 | M60 | shipped | Exact Contract Agreement Core | `ROADMAP.md` |
 | M61 | shipped | Multi-Profile Composition and CAPNEG v2 | `ROADMAP.md` |
 | M62 | shipped | Generalized External Evidence Framework | `ROADMAP.md` |
-| M63 | planned | Tier-1 External Profile TCK | `AICP_Backlog` |
+| M63 | shipped | Tier-1 External Profile TCK | `ROADMAP.md` |
 | M64 | planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
 | M65 | planned | Registered Message Surface Completion | `AICP_Backlog` |
 | M66 | planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
@@ -82,7 +84,7 @@ mature.
 
 | Surface | Repository truth | Independent-evidence boundary | Planned gap |
 |---|---|---|---|
-| Profiles | 16 shipped catalogs; maturity is 4 stable / 12 experimental | 0 externally demonstrated profiles | M63, M70 |
+| Profiles | 16 shipped catalogs; 5 external targets (2 `profile_iut_v1`, 3 `generalized_evidence_v2_1`) | 0 externally demonstrated profiles | M70 |
 | Capability evidence | 1 external targets; 1 reachable marks | 0 externally demonstrated capabilities | M64, M70 |
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |
 | Pairwise | publication=false, demonstrated=false | A valid eligible joint-execution result is required | M66 |

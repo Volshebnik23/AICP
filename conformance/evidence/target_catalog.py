@@ -23,9 +23,11 @@ TARGETS_PATH = EVIDENCE_DIR / "targets.json"
 TARGET_SCHEMA_PATH = EVIDENCE_DIR / "target_registry.schema.json"
 TARGET_CATALOG_PATH = EVIDENCE_DIR / "session_state_projection_v1_target.json"
 REPORT_SCHEMA_PATH = EVIDENCE_DIR / "external_evidence_report_v2.schema.json"
+REPORT_SCHEMA_V21_PATH = EVIDENCE_DIR / "external_evidence_report_v2_1.schema.json"
 TCK_RELEASES_PATH = EVIDENCE_DIR / "evidence_tck_releases.json"
 EXPECTATIONS_PATH = EVIDENCE_DIR / "projection_v1_expectations.json"
-BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle.json"
+LEGACY_BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle.json"
+BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_2.json"
 PRODUCER_SCENARIO_PATH = EVIDENCE_DIR / "projection_v1_producer_scenario.json"
 PRODUCER_TRANSCRIPT_PATH = EVIDENCE_DIR / "projection_v1_producer_transcript.json"
 PRODUCER_SCENARIO_SCHEMA_PATH = (
@@ -36,6 +38,7 @@ TARGET_ID = "aicp.session_state_projection"
 TARGET_VERSION = "v1"
 EXPECTED_MARK = "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
 TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.1.0"
+PROFILE_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.2.0"
 HISTORICAL_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.0.0"
 HISTORICAL_RELEASE_RECORD_DIGEST = (
     "sha256:e227fdb2b2d35f83cfeeceff6e80f455ff8a95a1e56244bb6d4433942c53ba80"
@@ -46,7 +49,21 @@ HISTORICAL_TARGET_SCHEMA_DIGEST = (
 HISTORICAL_RELEASE_REGISTRY_DIGEST = (
     "sha256:bbc549d1d0ca6344de41a149430c25e257cf3438845f6e4ccdf0eab17f81ceaf"
 )
+FROZEN_TCK_1_1_RECORD_DIGEST = (
+    "sha256:a1b4515821b86a23daff0df9a8b1d6bbf68eec3c5768172c06ed34afb0e7b5cb"
+)
+PROFILE_TARGET_KEYS = (
+    "AICP-MEDIATED-BLOCKING@0.1",
+    "AICP-RESUMABLE-SESSIONS@0.1",
+    "AICP-DELEGATED-IDENTITY@0.1",
+)
+EXPECTED_TARGET_KEYS = (TARGET_KEY, *PROFILE_TARGET_KEYS)
 TARGET_KINDS = {"product_profile", "capability", "binding"}
+TARGET_KIND_POLICY = {
+    "product_profile": ("full-profile", "implements_profile"),
+    "capability": ("full-capability", "implements_capability"),
+    "binding": ("full-binding", "implements_binding"),
+}
 
 
 @dataclass(frozen=True)
@@ -219,9 +236,35 @@ def release_supersession(
     return None
 
 
-def expected_input_artifacts(release: dict[str, Any]) -> list[dict[str, str]]:
-    target = release.get("target")
-    if not isinstance(target, dict):
+def release_target_entry(
+    release: dict[str, Any],
+    target_key: str | None = None,
+) -> dict[str, Any]:
+    singular = release.get("target")
+    if isinstance(singular, dict):
+        if target_key is not None and singular.get("target_key") != target_key:
+            raise ValueError("declared release does not contain the exact target")
+        return singular
+    targets = release.get("targets")
+    if not isinstance(targets, list) or not isinstance(target_key, str):
+        raise ValueError("multi-target evidence release requires an exact target key")
+    matches = [
+        item
+        for item in targets
+        if isinstance(item, dict) and item.get("target_key") == target_key
+    ]
+    if len(matches) != 1:
+        raise ValueError("declared release must contain the exact target once")
+    return matches[0]
+
+
+def expected_input_artifacts(
+    release: dict[str, Any],
+    target_key: str | None = None,
+) -> list[dict[str, str]]:
+    try:
+        target = release_target_entry(release, target_key)
+    except ValueError:
         return []
     return [
         {
@@ -235,9 +278,13 @@ def expected_input_artifacts(release: dict[str, Any]) -> list[dict[str, str]]:
     ]
 
 
-def expected_suite_records(release: dict[str, Any]) -> list[dict[str, str]]:
-    target = release.get("target")
-    if not isinstance(target, dict):
+def expected_suite_records(
+    release: dict[str, Any],
+    target_key: str | None = None,
+) -> list[dict[str, str]]:
+    try:
+        target = release_target_entry(release, target_key)
+    except ValueError:
         return []
     return [
         {
@@ -265,7 +312,12 @@ def mandatory_case_ids(
         str(item["case_id"])
         for item in catalog.get("canonicalization_vectors", [])
     )
-    ids.append(str(catalog["producer_case"]["case_id"]))
+    producer_records = (
+        handler.producer_cases(catalog, mode)
+        if hasattr(handler, "producer_cases")
+        else [catalog["producer_case"]]
+    )
+    ids.extend(str(item["case_id"]) for item in producer_records)
     ids.extend(
         str(item["case_id"])
         for item in handler.consumer_cases(catalog, mode)
@@ -338,6 +390,20 @@ def validate_target_registry(
     marks: list[str] = []
     identities: list[tuple[str, str, str]] = []
     identities_by_key: dict[str, set[tuple[str, str, str]]] = {}
+    profile_registry = load_json(root / "registry/aicp_profiles.json")
+    profile_entries = {
+        (str(item.get("profile_id")), str(item.get("profile_version"))): item
+        for item in profile_registry
+        if isinstance(item, dict)
+    }
+    releases_value = (
+        release_registry()
+        if require_repository_references and root == ROOT
+        else load_json(root / "conformance/evidence/evidence_tck_releases.json")
+        if require_repository_references
+        and (root / "conformance/evidence/evidence_tck_releases.json").is_file()
+        else None
+    )
     for item in targets:
         if not isinstance(item, dict):
             errors.append("target records must be objects")
@@ -372,9 +438,76 @@ def validate_target_registry(
             errors.append(
                 f"target identity is not registered: {record.target_key}"
             )
-        for relative in (record.catalog_path, *record.required_suites):
-            if not (root / relative).is_file():
-                errors.append(f"target registry path does not resolve: {relative}")
+        expected_mode, expected_claim = TARGET_KIND_POLICY[record.target_kind]
+        if record.execution_mode != expected_mode:
+            errors.append(
+                f"target kind/execution mode mismatch: {record.target_key}"
+            )
+        if record.evidence_claim_type != expected_claim:
+            errors.append(
+                f"target kind/claim type mismatch: {record.target_key}"
+            )
+        catalog_path = root / record.catalog_path
+        if require_repository_references:
+            for relative in (record.catalog_path, *record.required_suites):
+                if not (root / relative).is_file():
+                    errors.append(f"target registry path does not resolve: {relative}")
+            if catalog_path.is_file():
+                catalog_value = load_json(catalog_path)
+                if catalog_value.get("target") != record.identity():
+                    errors.append(
+                        f"target catalog identity mismatch: {record.target_key}"
+                    )
+                if catalog_value.get("handler_id") != record.handler_id:
+                    errors.append(
+                        f"target registry handler mismatch: {record.target_key}"
+                    )
+                if catalog_value.get("expected_mark") != record.expected_mark:
+                    errors.append(
+                        f"target registry mark mismatch: {record.target_key}"
+                    )
+                if tuple(catalog_value.get("required_suite_paths", record.required_suites)) != record.required_suites:
+                    errors.append(
+                        f"target registry required suites mismatch: {record.target_key}"
+                    )
+                if tuple(catalog_value.get("required_operations", ())) != record.required_operations:
+                    errors.append(
+                        f"target registry required operations mismatch: {record.target_key}"
+                    )
+            if record.target_kind == "product_profile":
+                profile = profile_entries.get((record.target_id, record.target_version))
+                if not isinstance(profile, dict) or profile.get("status") != record.status:
+                    errors.append(
+                        f"target maturity differs from profile registry: {record.target_key}"
+                    )
+                if catalog_path.is_file():
+                    catalog_value = load_json(catalog_path)
+                    profile_path_value = catalog_value.get("profile_catalog", {}).get("path")
+                    if not isinstance(profile_path_value, str) or not (root / profile_path_value).is_file():
+                        errors.append(
+                            f"profile target catalog does not bind a profile catalog: {record.target_key}"
+                        )
+                    else:
+                        profile_catalog = load_json(root / profile_path_value)
+                        if profile_catalog.get("compatibility_mark") != record.expected_mark:
+                            errors.append(
+                                f"profile mark differs from owning catalog: {record.target_key}"
+                            )
+                        if tuple(profile_catalog.get("required_suites", ())) != record.required_suites:
+                            errors.append(
+                                f"profile suites differ from owning catalog: {record.target_key}"
+                            )
+        if releases_value is not None:
+            try:
+                selected_release = release_record(record.current_release_id, releases_value)
+                release_target = release_target_entry(selected_release, record.target_key)
+            except ValueError as exc:
+                errors.append(f"target current release is invalid: {record.target_key}: {exc}")
+            else:
+                if release_target.get("handler_id") != record.handler_id:
+                    errors.append(f"release handler mismatch: {record.target_key}")
+                if release_target.get("expected_mark") != record.expected_mark:
+                    errors.append(f"release mark mismatch: {record.target_key}")
     if len(keys) != len(set(keys)):
         errors.append("target keys must be unique")
     if len(marks) != len(set(marks)):
@@ -383,9 +516,9 @@ def validate_target_registry(
         errors.append("exact target identities must be unique")
     if any(len(values) != 1 for values in identities_by_key.values()):
         errors.append("the same target key maps to different identities")
-    if enforce_current_scope and keys != [TARGET_KEY]:
+    if enforce_current_scope and keys != list(EXPECTED_TARGET_KEYS):
         errors.append(
-            "M62 correction must register only projection v1 as a real target"
+            "M63 must register exactly projection v1 and the three Tier-1 profiles"
         )
     return sorted(set(errors))
 
@@ -400,6 +533,14 @@ def validate_target_catalog(
 ) -> list[str]:
     selected = record or target_record()
     value = catalog if catalog is not None else target_catalog(selected)
+    if selected.target_kind == "product_profile":
+        return _validate_product_profile_catalog(
+            value,
+            selected=selected,
+            handler=handler,
+            root=root,
+            simulate_no_jsonschema=simulate_no_jsonschema,
+        )
     errors: list[str] = []
     suite_ref = value.get("owning_suite", {}).get("path")
     if not isinstance(suite_ref, str) or not (root / suite_ref).is_file():
@@ -516,6 +657,156 @@ def validate_target_catalog(
     return sorted(set(errors))
 
 
+def _validate_product_profile_catalog(
+    value: dict[str, Any],
+    *,
+    selected: TargetRecord,
+    handler: Any | None,
+    root: Path,
+    simulate_no_jsonschema: bool,
+) -> list[str]:
+    errors: list[str] = []
+    profile_record = value.get("profile_catalog")
+    if not isinstance(profile_record, dict):
+        return ["profile evidence target catalog lacks profile_catalog provenance"]
+    profile_path = profile_record.get("path")
+    if not isinstance(profile_path, str) or not (root / profile_path).is_file():
+        return ["profile evidence target owning profile catalog does not resolve"]
+    profile = load_json(root / profile_path)
+    if (
+        profile.get("profile_id") != selected.target_id
+        or profile.get("profile_version") != selected.target_version
+    ):
+        errors.append("profile target catalog identity differs from owning profile")
+    if profile.get("compatibility_mark") != selected.expected_mark:
+        errors.append("profile target catalog mark differs from owning profile")
+    required_suite_paths = list(profile.get("required_suites", []))
+    if value.get("required_suite_paths") != required_suite_paths:
+        errors.append("profile target required suites differ from owning profile")
+    if profile_record.get("content_digest") != file_digest(root / profile_path):
+        errors.append("profile catalog digest is stale")
+
+    suite_records = value.get("required_suites")
+    if not isinstance(suite_records, list):
+        return sorted(set([*errors, "profile target required_suites must be an array"]))
+    if [item.get("path") for item in suite_records if isinstance(item, dict)] != required_suite_paths:
+        errors.append("profile target suite records are missing, duplicated, or reordered")
+    expected_sources: dict[tuple[str, str], dict[str, Any]] = {}
+    for suite_record in suite_records:
+        if not isinstance(suite_record, dict):
+            errors.append("profile target suite record must be an object")
+            continue
+        relative = suite_record.get("path")
+        if not isinstance(relative, str) or not (root / relative).is_file():
+            errors.append(f"profile target suite does not resolve: {relative}")
+            continue
+        suite = load_json(root / relative)
+        if suite_record.get("suite_id") != suite.get("suite_id") or suite_record.get(
+            "suite_version"
+        ) != suite.get("suite_version"):
+            errors.append(f"profile target suite identity is stale: {relative}")
+        if suite_record.get("suite_digest") != file_digest(root / relative):
+            errors.append(f"profile target suite digest is stale: {relative}")
+        for transcript in suite.get("transcripts", []):
+            if isinstance(transcript, dict) and isinstance(transcript.get("id"), str):
+                expected_sources[(str(suite.get("suite_id")), str(transcript["id"]))] = {
+                    "suite_path": relative,
+                    "transcript": transcript,
+                }
+
+    consumers = value.get("consumer_cases")
+    if not isinstance(consumers, list):
+        return sorted(set([*errors, "profile target consumer_cases must be an array"]))
+    observed_sources = Counter(
+        (str(item.get("source_suite_id")), str(item.get("source_case_id")))
+        for item in consumers
+        if isinstance(item, dict)
+    )
+    if observed_sources != Counter({key: 1 for key in expected_sources}):
+        errors.append("profile target must cover every required-suite transcript exactly once")
+    case_ids = [item.get("case_id") for item in consumers if isinstance(item, dict)]
+    if len(case_ids) != len(set(case_ids)):
+        errors.append("profile target public consumer case IDs must be globally unique")
+    for item in consumers:
+        if not isinstance(item, dict):
+            errors.append("profile target consumer case must be an object")
+            continue
+        source_key = (str(item.get("source_suite_id")), str(item.get("source_case_id")))
+        source = expected_sources.get(source_key)
+        if source is None:
+            errors.append(f"profile target consumer source is unknown: {source_key}")
+            continue
+        transcript = source["transcript"]
+        fixture = transcript.get("path")
+        if item.get("fixture") != fixture:
+            errors.append(f"profile target consumer fixture drift: {source_key}")
+        if isinstance(fixture, str) and item.get("input_digest") != file_digest(root / fixture):
+            errors.append(f"profile target consumer fixture digest is stale: {source_key}")
+        expected_accepted = transcript.get("expect_pass", True) is True
+        if item.get("accepted") is not expected_accepted:
+            errors.append(f"profile target consumer acceptance drift: {source_key}")
+        suite_codes = [
+            str(failure.get("test_id"))
+            for failure in transcript.get("expected_failures", [])
+            if isinstance(failure, dict) and isinstance(failure.get("test_id"), str)
+        ]
+        observations = item.get("expected_error_observations")
+        if not isinstance(observations, list):
+            errors.append(f"profile target reviewed observation missing: {source_key}")
+            continue
+        reviewed_codes: list[str] = []
+        for observation in observations:
+            if not isinstance(observation, dict):
+                errors.append(f"profile target observation is not an object: {source_key}")
+                continue
+            code = observation.get("code")
+            count = observation.get("exact_count")
+            scope = observation.get("check_scope")
+            if not isinstance(code, str) or not isinstance(count, int) or count < 1:
+                errors.append(f"profile target observation is invalid: {source_key}")
+                continue
+            if not isinstance(scope, str) or not scope:
+                errors.append(f"profile target observation scope missing: {source_key}")
+            reviewed_codes.extend([code] * count)
+            if code not in suite_codes and not observation.get("supplemental_reason"):
+                errors.append(f"profile target supplemental observation lacks rationale: {source_key}/{code}")
+        if reviewed_codes != suite_codes:
+            errors.append(f"profile target observations differ from reviewed suite order: {source_key}")
+
+    if value.get("target") != selected.identity() or value.get("target_key") != selected.target_key:
+        errors.append("profile target catalog identity differs from target registry")
+    if value.get("handler_id") != selected.handler_id:
+        errors.append("profile target catalog handler differs from target registry")
+    if value.get("expected_mark") != selected.expected_mark:
+        errors.append("profile target catalog mark differs from target registry")
+    if tuple(value.get("required_operations", ())) != selected.required_operations:
+        errors.append("profile target operation set differs from target registry")
+    for artifact in value.get("required_input_artifacts", []):
+        if not isinstance(artifact, dict):
+            errors.append("profile target required input record must be an object")
+            continue
+        relative = artifact.get("path")
+        if not isinstance(relative, str) or not (root / relative).is_file():
+            errors.append(f"profile target required input does not resolve: {relative}")
+        elif artifact.get("content_digest") != file_digest(root / relative):
+            errors.append(f"profile target required input digest is stale: {relative}")
+    if handler is not None:
+        try:
+            ids = mandatory_case_ids(value, "full-profile", handler)
+        except (KeyError, TypeError, ValueError) as exc:
+            errors.append(f"profile target mandatory case derivation failed: {exc}")
+        else:
+            if len(ids) != len(set(ids)):
+                errors.append("profile target mandatory evidence case IDs are not unique")
+        errors.extend(
+            handler.validate_catalog(
+                value,
+                simulate_no_jsonschema=simulate_no_jsonschema,
+            )
+        )
+    return sorted(set(errors))
+
+
 _BUNDLE_SEEDS = (
     "conformance/evidence/aicp_external_evidence_runner.py",
     "conformance/evidence/report_evaluator.py",
@@ -528,6 +819,8 @@ _BUNDLE_ROLES = {
     "conformance/evidence/target_catalog.py": "target_dispatch",
     "conformance/evidence/target_handlers.py": "target_dispatch",
     "conformance/evidence/projection_v1_handler.py": "target_handler",
+    "conformance/evidence/product_profile_handler.py": "target_handler",
+    "conformance/evidence/profile_transcript_evaluator.py": "transcript_validation",
     "conformance/evidence/adapter_process.py": "process_supervision",
     "conformance/runner/_runner_context.py": "report_schema_support",
     "reference/python/aicp_ref/hashing.py": "canonicalization",
@@ -723,8 +1016,13 @@ def validate_release_registry(
     ids = [item.get("release_id") for item in releases if isinstance(item, dict)]
     if len(ids) != len(set(ids)):
         errors.append("evidence TCK release IDs must be unique")
-    if set(ids) != {HISTORICAL_TCK_RELEASE_ID, TCK_RELEASE_ID}:
-        errors.append("evidence TCK registry must retain 1.0.0 and register 1.1.0")
+    required_ids = {
+        HISTORICAL_TCK_RELEASE_ID,
+        TCK_RELEASE_ID,
+        PROFILE_TCK_RELEASE_ID,
+    }
+    if not required_ids.issubset(set(ids)):
+        errors.append("evidence TCK registry must retain 1.0.0/1.1.0 and register 1.2.0")
     try:
         historical = release_record(HISTORICAL_TCK_RELEASE_ID, value)
     except ValueError as exc:
@@ -748,46 +1046,130 @@ def validate_release_registry(
             errors.append("evidence TCK supersession does not point to 1.1.0")
 
     try:
-        current = release_record(TCK_RELEASE_ID, value)
+        projection_release = release_record(TCK_RELEASE_ID, value)
     except ValueError as exc:
         errors.append(str(exc))
         return sorted(set(errors))
-    target = target_record()
-    if target.current_release_id != TCK_RELEASE_ID:
+    if canonical_digest(projection_release) != FROZEN_TCK_1_1_RECORD_DIGEST:
+        errors.append("evidence TCK 1.1.0 frozen record changed")
+    projection_target = target_record()
+    if projection_target.current_release_id != TCK_RELEASE_ID:
         errors.append("projection v1 current release is not evidence TCK 1.1.0")
-    if current.get("target", {}).get("target_key") != target.target_key:
-        errors.append("current release target identity does not match registry")
+    if projection_release.get("target", {}).get("target_key") != projection_target.target_key:
+        errors.append("evidence TCK 1.1.0 target identity changed")
+    if projection_release.get("report_schema", {}).get("content_digest") != file_digest(
+        root / REPORT_SCHEMA_PATH.relative_to(ROOT)
+    ):
+        errors.append("evidence report 2.0 bytes differ from frozen TCK 1.1.0")
+    legacy_manifest = load_json(root / LEGACY_BUNDLE_MANIFEST_PATH.relative_to(ROOT))
+    legacy_bundle = projection_release.get("runner_bundle", {})
+    if legacy_bundle.get("manifest_digest") != file_digest(
+        root / LEGACY_BUNDLE_MANIFEST_PATH.relative_to(ROOT)
+    ):
+        errors.append("evidence TCK 1.1.0 frozen bundle manifest changed")
+    if legacy_bundle.get("digest") != legacy_manifest.get("bundle_digest"):
+        errors.append("evidence TCK 1.1.0 frozen bundle digest changed")
+
+    try:
+        profile_release = release_record(PROFILE_TCK_RELEASE_ID, value)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return sorted(set(errors))
+    release_targets = profile_release.get("targets")
+    if not isinstance(release_targets, list):
+        return sorted(set([*errors, "evidence TCK 1.2.0 targets are missing"]))
+    release_keys = [
+        item.get("target_key") for item in release_targets if isinstance(item, dict)
+    ]
+    if len(release_keys) != len(set(release_keys)):
+        errors.append("evidence TCK 1.2.0 target keys must be unique")
+    if release_keys != list(PROFILE_TARGET_KEYS):
+        errors.append("evidence TCK 1.2.0 must contain exactly the three Tier-1 targets")
     expected_checks = {
-        current.get("report_schema", {}).get("content_digest"): file_digest(
-            root / "conformance/evidence/external_evidence_report_v2.schema.json"
+        profile_release.get("report_schema", {}).get("content_digest"): file_digest(
+            root / REPORT_SCHEMA_V21_PATH.relative_to(ROOT)
         ),
-        current.get("target_registry", {}).get("content_digest"): file_digest(
-            root / "conformance/evidence/targets.json"
+        profile_release.get("target_registry", {}).get("content_digest"): file_digest(
+            root / TARGETS_PATH.relative_to(ROOT)
         ),
-        current.get("target_registry", {}).get("schema_digest"): file_digest(
-            root / "conformance/evidence/target_registry.schema.json"
-        ),
-        current.get("target", {}).get("target_catalog", {}).get("content_digest"): file_digest(
-            root / target.catalog_path
+        profile_release.get("target_registry", {}).get("schema_digest"): file_digest(
+            root / TARGET_SCHEMA_PATH.relative_to(ROOT)
         ),
     }
     if any(actual != expected for actual, expected in expected_checks.items()):
-        errors.append("evidence TCK 1.1.0 provenance does not match current bytes")
+        errors.append("evidence TCK 1.2.0 common provenance does not match current bytes")
     manifest = bundle_manifest or load_json(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT))
     errors.extend(validate_bundle_manifest(manifest, root=root))
-    runner_bundle = current.get("runner_bundle", {})
+    runner_bundle = profile_release.get("runner_bundle", {})
     if runner_bundle.get("manifest_path") != BUNDLE_MANIFEST_PATH.relative_to(ROOT).as_posix():
-        errors.append("evidence TCK runner bundle manifest path is incorrect")
+        errors.append("evidence TCK 1.2.0 runner bundle manifest path is incorrect")
     if runner_bundle.get("manifest_digest") != file_digest(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT)):
-        errors.append("evidence TCK runner bundle manifest digest is stale")
+        errors.append("evidence TCK 1.2.0 runner bundle manifest digest is stale")
     if runner_bundle.get("digest") != manifest.get("bundle_digest"):
-        errors.append("evidence TCK runner bundle digest is stale")
+        errors.append("evidence TCK 1.2.0 runner bundle digest is stale")
     if runner_bundle.get("paths") != [item["path"] for item in manifest.get("entries", [])]:
-        errors.append("evidence TCK runner bundle paths do not match manifest")
-    for item in expected_input_artifacts(current):
-        if file_digest(root / item["path"]) != item["content_digest"]:
-            errors.append(f"evidence TCK input digest is stale: {item['path']}")
-    for item in expected_suite_records(current):
-        if file_digest(root / item["path"]) != item["suite_digest"]:
-            errors.append(f"evidence TCK suite digest is stale: {item['path']}")
+        errors.append("evidence TCK 1.2.0 runner bundle paths do not match manifest")
+
+    for record in [resolve_target_record(key) for key in EXPECTED_TARGET_KEYS]:
+        try:
+            selected_release = release_record(record.current_release_id, value)
+            selected_target = release_target_entry(selected_release, record.target_key)
+        except ValueError as exc:
+            errors.append(f"target/release resolution failed: {record.target_key}: {exc}")
+            continue
+        catalog_value = target_catalog(record)
+        if selected_target.get("handler_id") != record.handler_id:
+            errors.append(f"release handler mismatch: {record.target_key}")
+        if selected_target.get("expected_mark") != record.expected_mark:
+            errors.append(f"release mark mismatch: {record.target_key}")
+        if selected_target.get("target_catalog", {}).get("path") != record.catalog_path:
+            errors.append(f"release target catalog path mismatch: {record.target_key}")
+        if selected_target.get("target_catalog", {}).get("content_digest") != file_digest(
+            root / record.catalog_path
+        ):
+            errors.append(f"release target catalog digest is stale: {record.target_key}")
+        expected_suite_paths = list(record.required_suites)
+        suites = expected_suite_records(selected_release, record.target_key)
+        if [item["path"] for item in suites] != expected_suite_paths:
+            errors.append(f"release required suites mismatch: {record.target_key}")
+        for item in suites:
+            if file_digest(root / item["path"]) != item["suite_digest"]:
+                errors.append(f"evidence TCK suite digest is stale: {item['path']}")
+        for item in expected_input_artifacts(selected_release, record.target_key):
+            if file_digest(root / item["path"]) != item["content_digest"]:
+                errors.append(f"evidence TCK input digest is stale: {item['path']}")
+        try:
+            from target_handlers import resolve_handler
+
+            handler = resolve_handler(record.handler_id)
+            expected_ids = mandatory_case_ids(
+                catalog_value,
+                record.execution_mode,
+                handler,
+            )
+        except (ImportError, KeyError, TypeError, ValueError) as exc:
+            errors.append(f"release mandatory-case resolution failed: {record.target_key}: {exc}")
+        else:
+            if "mandatory_case_ids" in selected_target:
+                if selected_target.get("mandatory_case_ids") != expected_ids:
+                    errors.append(f"release mandatory case IDs are stale: {record.target_key}")
+            else:
+                producer_ids = [
+                    str(item["case_id"])
+                    for item in handler.producer_cases(
+                        catalog_value,
+                        record.execution_mode,
+                    )
+                ]
+                consumer_ids = [
+                    str(item["case_id"])
+                    for item in handler.consumer_cases(
+                        catalog_value,
+                        record.execution_mode,
+                    )
+                ]
+                if selected_target.get("mandatory_producer_ids") != producer_ids:
+                    errors.append(f"release mandatory producer IDs are stale: {record.target_key}")
+                if selected_target.get("mandatory_consumer_ids") != consumer_ids:
+                    errors.append(f"release mandatory consumer IDs are stale: {record.target_key}")
     return sorted(set(errors))

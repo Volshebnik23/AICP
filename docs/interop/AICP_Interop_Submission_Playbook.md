@@ -33,7 +33,8 @@ capability-scoped evidence that another reviewer can inspect.
 Typical submitters include:
 - implementers of an AICP-capable agent, gateway, or platform component,
 - teams that ran repo-backed conformance/profile tooling against their implementation,
-- teams that completed repo-backed full-profile IUT evaluation for their own implementation.
+- teams that completed a registered full-profile IUT v1 or generalized report-2.1
+  evaluation for their own implementation.
 
 If you only need an example of the package shape, use the shipped examples/templates instead of opening a real submission.
 
@@ -49,8 +50,9 @@ It should contain:
 4. Exact shipped `profile_ids` from `registry/aicp_profiles.json`.
 5. Exact `profile_refs` containing each claimed `profile_id` and `profile_version`.
 
-For a capability claim, replace items 4 and 5 with exact `capability_refs`. M62 supports
-only `aicp.session_state_projection@v1`, and one manifest must use only one claim family.
+For a capability claim, replace items 4 and 5 with exact `capability_refs`. The generalized
+framework supports `aicp.session_state_projection@v1`; one manifest must use only one claim
+family.
 
 ## Claim / evidence status model
 
@@ -78,14 +80,24 @@ Recommended shape:
 - `evidence_status`: exactly `reproducible`
 - no `peer_implementation_id`
 - one or more report JSON files in `report_refs`, including an eligible `full-profile`
-  external-IUT v1 report for a real reproducible claim. Smoke and legacy reports are
+  report from the profile's registered mechanism: profile-IUT v1 for Base/Authenticated
+  Base or generalized report 2.1 for the three Tier-1 profiles. Smoke and legacy reports are
   diagnostic/migration artifacts and are not eligible for this claim.
+- `suite_refs` equal to the exact union of required suite IDs or paths for every claimed
+  profile, with no missing, unrelated, or duplicate suite.
 
 Prefer `reproducible` when the package includes actual conformance/profile report outputs generated from shipped repo tooling.
 
 The validator rejects `implements_profile` or `compatible_with_profile` paired with
-`self_attested` using `STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_IUT`. Retaining that enum
-does not create a weaker certification tier.
+`self_attested` using `STRONG_PROFILE_CLAIM_REQUIRES_REPRODUCIBLE_EXTERNAL_REPORT`.
+Retaining that enum does not create a weaker certification tier.
+
+The M63 generalized targets are exactly `AICP-MEDIATED-BLOCKING@0.1`,
+`AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-DELEGATED-IDENTITY@0.1` under Evidence TCK 1.2.0.
+One report proves one exact profile. Reference and test-only adapters are verification
+fixtures, not external implementations. No real Tier-1 submission is currently present;
+multi-profile composition, live binding interoperability, and pairwise publication remain
+separate work.
 
 ### Capability claim
 

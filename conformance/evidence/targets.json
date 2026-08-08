@@ -22,6 +22,80 @@
         "validate_transcript",
         "project_session_state"
       ]
+    },
+    {
+      "target_key": "AICP-MEDIATED-BLOCKING@0.1",
+      "target_kind": "product_profile",
+      "target_id": "AICP-MEDIATED-BLOCKING",
+      "target_version": "0.1",
+      "status": "experimental",
+      "catalog_path": "conformance/evidence/mediated_blocking_target.json",
+      "expected_mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
+      "execution_mode": "full-profile",
+      "evidence_claim_type": "implements_profile",
+      "handler_id": "product_profile_v01",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.2.0",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json"
+      ],
+      "required_operations": [
+        "describe",
+        "canonicalize_hash",
+        "validate_transcript",
+        "generate_scenario"
+      ]
+    },
+    {
+      "target_key": "AICP-RESUMABLE-SESSIONS@0.1",
+      "target_kind": "product_profile",
+      "target_id": "AICP-RESUMABLE-SESSIONS",
+      "target_version": "0.1",
+      "status": "experimental",
+      "catalog_path": "conformance/evidence/resumable_sessions_target.json",
+      "expected_mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1",
+      "execution_mode": "full-profile",
+      "evidence_claim_type": "implements_profile",
+      "handler_id": "product_profile_v01",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.2.0",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/RS_RESUME_0.1.json",
+        "conformance/extensions/OR_OBJECT_RESYNC_0.1.json"
+      ],
+      "required_operations": [
+        "describe",
+        "canonicalize_hash",
+        "validate_transcript",
+        "generate_scenario"
+      ]
+    },
+    {
+      "target_key": "AICP-DELEGATED-IDENTITY@0.1",
+      "target_kind": "product_profile",
+      "target_id": "AICP-DELEGATED-IDENTITY",
+      "target_version": "0.1",
+      "status": "experimental",
+      "catalog_path": "conformance/evidence/delegated_identity_target.json",
+      "expected_mark": "AICP-Profile-DELEGATED-IDENTITY-0.1",
+      "execution_mode": "full-profile",
+      "evidence_claim_type": "implements_profile",
+      "handler_id": "product_profile_v01",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.2.0",
+      "required_suites": [
+        "conformance/core/CT_CORE_0.1.json",
+        "conformance/extensions/CN_CAPNEG_0.1.json",
+        "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+        "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json"
+      ],
+      "required_operations": [
+        "describe",
+        "canonicalize_hash",
+        "validate_transcript",
+        "generate_scenario"
+      ]
     }
   ]
 }

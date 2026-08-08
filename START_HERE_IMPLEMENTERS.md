@@ -114,9 +114,11 @@ For compatibility or badge evidence, run `make compatibility-gate` so validation
 
 ## External implementation conformance
 
-The registry contains 16 profiles, but the external runner currently accepts only
-`AICP-BASE@0.1` and `AICP-AUTHENTICATED-BASE@0.1`. Internal profile reports for the other
-profiles are not external implementation evidence.
+The registry contains 16 profiles. The frozen profile-IUT v1 runner accepts
+`AICP-BASE@0.1` and `AICP-AUTHENTICATED-BASE@0.1`; the generalized report-2.1 runner accepts
+exactly `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and
+`AICP-DELEGATED-IDENTITY@0.1`. Internal profile reports for other profiles are not external
+implementation evidence.
 
 Repository suites exercise the checked-in reference corpus and label it
 `execution_subject.kind=reference_corpus`; that is not evidence for an external product.
@@ -176,6 +178,16 @@ The producer request contains a neutral scenario and a transcript prefix without
 projection response; adapters must derive message hashes, references, canonical projection
 fields, and the projection hash. Historical 1.0.0 reports are not current strong evidence.
 See `conformance/evidence/README.md`.
+
+## Tier-1 external profile evidence
+
+Use the nine `evidence-profile-{mediated,resumable,delegated}-*` Make targets to run smoke,
+full reference, or test-only external paths. A real adapter declares exact entries in
+`supported_aicp_profiles` and implements `generate_scenario` plus transcript validation.
+Only complete `full-profile`, non-degraded report-2.1 evidence from an
+`external_implementation` can carry the exact ordinary profile mark. Reference and smoke
+runs carry none. One report covers one profile; suite component marks, CAPNEG composition,
+live transport interoperability, and pairwise interoperability remain separate.
 
 
 ## Template smoke commands (shipped onboarding)

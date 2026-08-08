@@ -13,22 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M63 — Tier-1 External Profile TCK
-
-<!-- milestone-status: M63 planned -->
-- **Status:** Planned.
-- **Problem statement:** mediated blocking, resumable sessions, and delegated identity have
-  internal profile suites but no external full-profile IUT targets.
-- **Scope:** add external targets for those three exact profiles using the generalized
-  evidence rules and complete producer/consumer coverage derived from required suites.
-- **Explicit non-goals:** no target for every registered profile and no multi-profile
-  composition semantics.
-- **Principal evidence gap:** no external implementation can be evaluated for the Tier-1
-  profile center through a full-profile target.
-- **Dependencies:** M62; M61 only where a future target actually requires composition.
-- **Completion criterion:** all three targets have registered TCK coverage, positive and
-  negative fake-adapter tests, reference behavior, and ordinary-mark eligibility rules.
-
 ## M64 — Live Transport and Binding Interoperability
 
 <!-- milestone-status: M64 planned -->

@@ -264,6 +264,7 @@ def test_incomplete_strong_interop_evidence_is_rejected(tmp_path: Path) -> None:
         "implementation_id": "external-a",
         "implementation_version": "1.2.3",
         "profile_refs": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}],
+        "suite_refs": ["CT-CORE-0.1"],
         "report_refs": ["reports/iut.json"],
         "claim_type": "implements_profile",
         "evidence_status": "reproducible",

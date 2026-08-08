@@ -643,8 +643,8 @@ def derive_external_mark_status(iut_profile: dict[str, Any] | None) -> str:
 
 def render_profile_status_table(status: dict[str, Any]) -> str:
     lines = [
-        "| Profile | Repository availability | Registry maturity | Internal evidence | External-IUT target | Ordinary external mark | Independent external evidence |",
-        "|---|---|---|---|---|---|---|",
+        "| Profile | Repository availability | Registry maturity | Internal evidence | External profile target | Mechanism | Ordinary external mark | Independent external evidence |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for profile in sorted(status["profiles"], key=lambda item: item["id"]):
         lines.append(
@@ -655,7 +655,8 @@ def render_profile_status_table(status: dict[str, Any]) -> str:
                     str(profile["repository_availability"]).capitalize(),
                     str(profile["registry_status"]).capitalize(),
                     str(profile["internal_evidence"]).capitalize(),
-                    _human_bool(profile["external_iut_target"]),
+                    _human_bool(profile["external_profile_target"]),
+                    str(profile.get("external_target_mechanism") or "None"),
                     _mark_status_text(profile["external_mark_status"]),
                     _human_bool(
                         profile["independent_external_evidence"],
@@ -675,12 +676,15 @@ def render_profile_status_block(profile: dict[str, Any]) -> str:
             f"- **Repository availability:** {str(profile['repository_availability']).capitalize()}.",
             f"- **Registry maturity:** {str(profile['registry_status']).capitalize()}.",
             f"- **Internal evidence:** {str(profile['internal_evidence']).capitalize()}.",
-            "- **External-IUT target:** "
+            "- **External profile target:** "
             + _human_bool(
-                profile["external_iut_target"],
+                profile["external_profile_target"],
                 present="Available.",
                 absent="Not available.",
             ),
+            "- **External target mechanism:** "
+            + str(profile.get("external_target_mechanism") or "None")
+            + ".",
             "- **Ordinary external mark:** "
             + _mark_status_text(profile["external_mark_status"])
             + ".",
@@ -721,7 +725,11 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         bool(entry.get("payload_schema_variants"))
         for entry in status["message_surface"]["entries"]
     )
-    targets = sorted(item["id"] for item in profiles if item["external_iut_target"])
+    iut_targets = sorted(item["id"] for item in profiles if item["external_iut_target"])
+    generalized_targets = sorted(
+        item["id"] for item in profiles if item.get("generalized_evidence_target")
+    )
+    targets = sorted(item["id"] for item in profiles if item["external_profile_target"])
     reachable = sorted(
         item["id"]
         for item in profiles
@@ -741,8 +749,10 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         "|---|---|---|",
         f"| Version / release phase | `{status['current_version']}` / `{status['release_phase']}` | `VERSION`, `repo_truth_status.json` |",
         f"| Registered profiles | {summary['registered']} ({summary['stable']} stable, {summary['experimental']} experimental) | `registry/aicp_profiles.json` |",
-        f"| External-IUT targets | {summary['external_iut_targets']}: {_code_list(targets)} | `conformance/iut/cases.json` |",
-        f"| Ordinary external marks currently reachable | {summary['ordinary_external_mark_reachable_targets']}: {_code_list(reachable)} | profile catalogs and IUT cases |",
+        f"| Profile IUT v1 targets | {summary['external_iut_targets']}: {_code_list(iut_targets)} | `conformance/iut/cases.json` |",
+        f"| Generalized profile evidence v2.1 targets | {summary['generalized_profile_targets']}: {_code_list(generalized_targets)} | `conformance/evidence/targets.json` |",
+        f"| Total external profile targets | {summary['external_profile_targets']}: {_code_list(targets)} | profile IUT v1 plus generalized evidence v2.1 |",
+        f"| Ordinary external marks currently reachable | {summary['ordinary_external_mark_reachable_targets']}: {_code_list(reachable)} | profile catalogs and registered external target mechanisms |",
         f"| External capability targets | {capability_summary['external_capability_targets']} | `conformance/evidence/targets.json` |",
         f"| Reachable external capability marks | {capability_summary['reachable_external_capability_marks']} | evidence target registry and TCK provenance |",
         f"| Externally demonstrated capabilities | {capability_summary['externally_demonstrated_capabilities']} | eligible capability-specific `eligible_targets` only |",
@@ -777,7 +787,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             "",
             "| Surface | Repository truth | Independent-evidence boundary | Planned gap |",
             "|---|---|---|---|",
-            f"| Profiles | {summary['registered']} shipped catalogs; maturity is {summary['stable']} stable / {summary['experimental']} experimental | {summary['externally_demonstrated']} externally demonstrated profiles | M63, M70 |",
+            f"| Profiles | {summary['registered']} shipped catalogs; {summary['external_profile_targets']} external targets ({summary['external_iut_targets']} `profile_iut_v1`, {summary['generalized_profile_targets']} `generalized_evidence_v2_1`) | {summary['externally_demonstrated']} externally demonstrated profiles | M70 |",
             f"| Capability evidence | {capability_summary['external_capability_targets']} external targets; {capability_summary['reachable_external_capability_marks']} reachable marks | {capability_summary['externally_demonstrated_capabilities']} externally demonstrated capabilities | M64, M70 |",
             f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |",
             f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, demonstrated={str(interop['pairwise_demonstrated']).lower()} | A valid eligible joint-execution result is required | M66 |",
@@ -861,6 +871,13 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
     }
     profiles = discover_profile_entries(root, status.get("profiles", []))
     iut_profiles = load_json(root, IUT_CASES_PATH)["profiles"]
+    evidence_targets = load_json(root, EVIDENCE_TARGETS_PATH).get("targets", [])
+    generalized_profile_targets = {
+        f"{item['target_id']}@{item['target_version']}": item
+        for item in evidence_targets
+        if isinstance(item, dict)
+        and item.get("target_kind") == "product_profile"
+    }
     for profile in profiles:
         profile_id = profile["id"]
         profile["registry_status"] = registry[profile_id]["status"]
@@ -870,7 +887,23 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         profile["compatibility_mark"] = profile_catalog["compatibility_mark"]
         iut_profile = iut_profiles.get(profile_id)
         profile["external_iut_target"] = iut_profile is not None
-        profile["external_mark_status"] = derive_external_mark_status(iut_profile)
+        generalized_target = generalized_profile_targets.get(profile_id)
+        profile["generalized_evidence_target"] = generalized_target is not None
+        profile["external_profile_target"] = (
+            iut_profile is not None or generalized_target is not None
+        )
+        profile["external_target_mechanism"] = (
+            "profile_iut_v1"
+            if iut_profile is not None
+            else "generalized_evidence_v2_1"
+            if generalized_target is not None
+            else None
+        )
+        profile["external_mark_status"] = (
+            "reachable_for_eligible_external_implementation"
+            if generalized_target is not None
+            else derive_external_mark_status(iut_profile)
+        )
 
     pairwise_source = (root / PAIRWISE_VALIDATOR_PATH).read_text(encoding="utf-8")
     pairwise_fail_closed = "PAIRWISE_JOINT_EVIDENCE_REQUIRED" in pairwise_source
@@ -906,7 +939,6 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         "composition_external_evidence": False,
         "external_evidence_status": "deferred",
     }
-    evidence_targets = load_json(root, EVIDENCE_TARGETS_PATH).get("targets", [])
     projection_v1_target = next(
         item
         for item in evidence_targets
@@ -963,6 +995,12 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
             item["registry_status"] == "experimental" for item in profiles
         ),
         "external_iut_targets": sum(item["external_iut_target"] for item in profiles),
+        "generalized_profile_targets": sum(
+            item["generalized_evidence_target"] for item in profiles
+        ),
+        "external_profile_targets": sum(
+            item["external_profile_target"] for item in profiles
+        ),
         "ordinary_external_mark_reachable_targets": sum(
             item["external_mark_status"]
             == "reachable_for_eligible_external_implementation"

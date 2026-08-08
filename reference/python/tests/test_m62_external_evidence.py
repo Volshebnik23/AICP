@@ -50,6 +50,7 @@ from target_catalog import (  # noqa: E402
     EXPECTED_MARK,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_TCK_RELEASE_ID,
+    PROFILE_TARGET_KEYS,
     TARGET_CATALOG_PATH,
     TARGET_KEY,
     TCK_RELEASE_ID,
@@ -180,7 +181,9 @@ def _write_package(
 
 
 def test_generated_target_registry_catalog_and_release_are_exact() -> None:
-    targets, catalog, bundle_manifest, releases = GENERATOR.generated_payloads()
+    targets, catalog, _profile_catalogs, bundle_manifest, releases = (
+        GENERATOR.generated_payloads()
+    )
     assert json.loads(
         (EVIDENCE_DIR / "targets.json").read_text(encoding="utf-8")
     ) == targets
@@ -203,7 +206,10 @@ def test_generated_target_registry_catalog_and_release_are_exact() -> None:
         releases,
         bundle_manifest=bundle_manifest,
     ) == []
-    assert [item["target_key"] for item in targets["targets"]] == [TARGET_KEY]
+    assert [item["target_key"] for item in targets["targets"]] == [
+        TARGET_KEY,
+        *PROFILE_TARGET_KEYS,
+    ]
     assert "aicp.session_state_projection@v2" not in json.dumps(targets)
 
 

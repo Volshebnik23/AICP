@@ -15,7 +15,6 @@ for path in (EVIDENCE_DIR, RUNNER_DIR):
 
 from _runner_context import build_validator  # noqa: E402
 from target_catalog import (  # noqa: E402
-    REPORT_SCHEMA_PATH,
     TARGETS_PATH,
     TCK_RELEASES_PATH,
     canonical_target_key,
@@ -26,6 +25,7 @@ from target_catalog import (  # noqa: E402
     mandatory_case_ids,
     release_record,
     release_supersession,
+    release_target_entry,
     resolve_target_record,
     target_catalog,
     validate_release_registry,
@@ -50,9 +50,13 @@ def _error(code: str, message: str) -> str:
     return f"{code}: {message}"
 
 
-def _schema_errors(report: dict[str, Any]) -> list[str]:
-    schema = load_json(REPORT_SCHEMA_PATH)
-    validator = build_validator(schema, REPORT_SCHEMA_PATH)
+def _schema_errors(
+    report: dict[str, Any],
+    release: dict[str, Any],
+) -> list[str]:
+    schema_path = ROOT / str(release["report_schema"]["path"])
+    schema = load_json(schema_path)
+    validator = build_validator(schema, schema_path)
     if validator is None:
         return [
             _error(
@@ -115,7 +119,21 @@ def evaluate_report(
         raise ValueError(
             "unknown evaluator checks: " + ", ".join(sorted(unknown_disabled))
         )
-    errors = _schema_errors(report)
+    tck = report.get("tck_release")
+    declared_release_id = (
+        tck.get("release_id") if isinstance(tck, dict) else None
+    )
+    if not isinstance(declared_release_id, str):
+        return _rejected(
+            [_error("EVIDENCE_TCK_RELEASE_INVALID", "release ID is missing")]
+        )
+    try:
+        selected_release = release_record(declared_release_id)
+    except ValueError as exc:
+        return _rejected(
+            [_error("EVIDENCE_TCK_RELEASE_UNKNOWN", str(exc))]
+        )
+    errors = _schema_errors(report, selected_release)
     if errors:
         return _rejected(errors)
 
@@ -148,27 +166,16 @@ def evaluate_report(
         )
     catalog = target_catalog(registry_target)
 
-    tck = report.get("tck_release")
-    declared_release_id = (
-        tck.get("release_id") if isinstance(tck, dict) else None
-    )
-    if not isinstance(declared_release_id, str):
-        return _rejected(
-            [_error("EVIDENCE_TCK_RELEASE_INVALID", "release ID is missing")]
-        )
     try:
-        selected_release = release_record(declared_release_id)
+        selected_target = release_target_entry(selected_release, target_key)
     except ValueError as exc:
-        return _rejected(
-            [_error("EVIDENCE_TCK_RELEASE_UNKNOWN", str(exc))]
-        )
-    if selected_release.get("target", {}).get("target_key") != target_key:
         errors.append(
             _error(
                 "EVIDENCE_TCK_TARGET_MISMATCH",
-                "declared release does not bind the report target",
+                f"declared release does not bind the report target: {exc}",
             )
         )
+        selected_target = {}
     is_current_release = (
         declared_release_id == registry_target.current_release_id
     )
@@ -184,9 +191,19 @@ def evaluate_report(
     ]:
         errors.append(_error("EVIDENCE_CURRENT_PROVENANCE_INVALID", message))
 
-    if report.get("report_format_version") != "2.0":
+    expected_report_version = (
+        "2.1"
+        if str(selected_release["report_schema"]["path"]).endswith(
+            "v2_1.schema.json"
+        )
+        else "2.0"
+    )
+    if report.get("report_format_version") != expected_report_version:
         errors.append(
-            _error("EVIDENCE_REPORT_VERSION", "report format must be 2.0")
+            _error(
+                "EVIDENCE_REPORT_VERSION",
+                f"report format must be {expected_report_version}",
+            )
         )
     if report.get("report_type") != "aicp.external_evidence":
         errors.append(
@@ -196,9 +213,9 @@ def evaluate_report(
             )
         )
 
-    expected_catalog_digest = selected_release["target"]["target_catalog"][
+    expected_catalog_digest = selected_target.get("target_catalog", {}).get(
         "content_digest"
-    ]
+    )
     if "target_provenance" not in disabled_checks:
         expected_target = {
             **registry_target.identity(),
@@ -249,7 +266,7 @@ def evaluate_report(
     runner = report.get("runner")
     if runner != {
         "name": "aicp-external-evidence-runner",
-        "version": "2.0",
+        "version": expected_report_version,
         "source_revision": selected_release["runner_bundle"]["digest"],
     }:
         errors.append(
@@ -258,8 +275,8 @@ def evaluate_report(
                 "runner bundle is not registered for the selected release",
             )
         )
-    expected_suites = expected_suite_records(selected_release)
-    expected_inputs = expected_input_artifacts(selected_release)
+    expected_suites = expected_suite_records(selected_release, target_key)
+    expected_inputs = expected_input_artifacts(selected_release, target_key)
     if report.get("required_suites") != expected_suites:
         errors.append(
             _error(
