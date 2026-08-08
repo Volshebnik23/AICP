@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/evidence-product-profile-scenarios-1.0.json",
+  "title": "AICP Product Profile Evidence Producer Scenario Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["catalog_version", "target", "scenarios"],
+  "properties": {
+    "catalog_version": {"const": "1.0"},
+    "target": {"$ref": "#/$defs/Target"},
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {"$ref": "#/$defs/Scenario"}
+    }
+  },
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "target_id", "target_version"],
+      "properties": {
+        "kind": {"const": "product_profile"},
+        "target_id": {"type": "string", "minLength": 1},
+        "target_version": {"const": "0.1"}
+      }
+    },
+    "Scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario_version",
+        "scenario_id",
+        "flow_id",
+        "deterministic_seed",
+        "target",
+        "session_id",
+        "contract_id",
+        "participant_ids",
+        "required_suites"
+      ],
+      "properties": {
+        "scenario_version": {
+          "const": "aicp.evidence.product_profile_input.v1"
+        },
+        "scenario_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9._-]{2,95}$"
+        },
+        "flow_id": {
+          "enum": [
+            "core_contract_action",
+            "core_conflict_choose",
+            "core_consent_grant",
+            "core_consent_revoke",
+            "core_resync",
+            "core_error",
+            "profile_accept_contract",
+            "profile_reject",
+            "policy_allow_delivery",
+            "policy_deny_block",
+            "resume_in_sync",
+            "resume_needs_resync",
+            "object_retrieval",
+            "identity_announce_use",
+            "identity_rotate_use",
+            "identity_revoke_clean",
+            "binding_issue_use",
+            "binding_revoke_clean"
+          ]
+        },
+        "deterministic_seed": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+        },
+        "target": {"$ref": "#/$defs/Target"},
+        "session_id": {"type": "string", "minLength": 1},
+        "contract_id": {"type": "string", "minLength": 1},
+        "participant_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "required_suites": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^conformance/(core|extensions)/.+\\.json$"
+          }
+        }
+      }
+    }
+  }
+}
