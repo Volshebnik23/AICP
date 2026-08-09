@@ -1,0 +1,96 @@
+{
+  "manifest_version": "1.0",
+  "entries": [
+    {
+      "path": "conformance/evidence/adapter_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:e60858148f45edbde78dd8500de13fbab082f4cd8e767beac8068d983ca77deb"
+    },
+    {
+      "path": "conformance/evidence/aicp_external_evidence_runner.py",
+      "role": "runner",
+      "digest": "sha256:5121284bbf6df5f70b3b03f0ae22fa2412ed30371be83a5ccfe8929e9131d745"
+    },
+    {
+      "path": "conformance/evidence/evidence_identifier_rules.py",
+      "role": "identifier_semantics",
+      "digest": "sha256:33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
+    },
+    {
+      "path": "conformance/evidence/producer_payload_schema_router.py",
+      "role": "payload_schema_routing",
+      "digest": "sha256:779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
+    },
+    {
+      "path": "conformance/evidence/producer_suite_semantics.py",
+      "role": "producer_semantic_dispatch",
+      "digest": "sha256:ebf2682a870a6613ce42af1df516238b86594236688ffecff287ea2e4cdf48a1"
+    },
+    {
+      "path": "conformance/evidence/product_profile_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:78d2bb44a78c45515ce7d7ccd7ad0ba665e8bd9935d2de4833d5a93cb41ff341"
+    },
+    {
+      "path": "conformance/evidence/profile_transcript_evaluator.py",
+      "role": "transcript_validation",
+      "digest": "sha256:f695586dac1e50d584997c15dfdd78bfa9b6b449f7e19c0a71a629b616eb4a8d"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:a61ca62ca6c0a5337d08c85e1adfa71b80a3d3863016ed2902faa15dcff246c9"
+    },
+    {
+      "path": "conformance/evidence/report_evaluator.py",
+      "role": "evaluator",
+      "digest": "sha256:bcedade28ab1444249a177436da3ed600d2ca66599ae2a3cb8b1f62f7c377230"
+    },
+    {
+      "path": "conformance/evidence/target_catalog.py",
+      "role": "target_dispatch",
+      "digest": "sha256:7886ac4c81f75287bca0fa5ef0e69a3a6a35f9af4b24a03e8f3eecee34549ec0"
+    },
+    {
+      "path": "conformance/evidence/target_handlers.py",
+      "role": "target_dispatch",
+      "digest": "sha256:8f4ea18d108ddc6ab50fdceed6bbecc6587daca21ac9eada3a761f65cfa8b4f8"
+    },
+    {
+      "path": "conformance/runner/_runner_context.py",
+      "role": "report_schema_support",
+      "digest": "sha256:302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "reference/python/aicp_ref/__init__.py",
+      "role": "package_initialization",
+      "digest": "sha256:d463f315e8571772889691718d2791e10a674f9fcb07e147ef8ba5b22731b6c0"
+    },
+    {
+      "path": "reference/python/aicp_ref/chain.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "reference/python/aicp_ref/hashing.py",
+      "role": "canonicalization",
+      "digest": "sha256:0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "reference/python/aicp_ref/jcs.py",
+      "role": "canonicalization",
+      "digest": "sha256:ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "reference/python/aicp_ref/signatures.py",
+      "role": "dependency_probe",
+      "digest": "sha256:7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "reference/python/aicp_ref/validate.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    }
+  ],
+  "bundle_digest": "sha256:c86e1a86ac5f7125c79132ce2158b47367321079cb85360c26a7574e2b832f4b"
+}

@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "4dba128efa34b84e75db7d657366424b1fafce325dcf5e0e5212151dad372e33",
+      "combined_sha256": "6f49f21762ce2a5937b24c9939a776ca04cdc0b9e74aaed8194d9bb5cf807f9f",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -41,7 +41,7 @@
         },
         {
           "path": "conformance/evidence/delegated_identity_target.json",
-          "sha256": "a5d2ddc506878af85f80b71753bb55ffa106302dbf9de4f30b057e1f37a402ed"
+          "sha256": "c1c83123526b3e9e27e8c774086699df968263d1b52360530fabef35923a520d"
         },
         {
           "path": "conformance/evidence/evidence_runner_bundle.json",
@@ -56,8 +56,12 @@
           "sha256": "16ac67d3c290111b206b50313af8e265f6d10a96a55d1b3dc3f5008eef75da53"
         },
         {
+          "path": "conformance/evidence/evidence_runner_bundle_v1_4.json",
+          "sha256": "4e7714c5bd82ff7188c68e7d9f7ab38ce58b27f03c4c4f15da394d0ff7a1f004"
+        },
+        {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "99549237497fe8388a966d338c9d047e414884dc696af872db10032a85efe90b"
+          "sha256": "caae4b440907017075f3829e92c88b718abae600072a83162d55b1991982f2fb"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -73,7 +77,7 @@
         },
         {
           "path": "conformance/evidence/mediated_blocking_target.json",
-          "sha256": "e90b375a01a7ca469ea1c431f8b763fe74f2ff9934d23c0eff488019ef349ba0"
+          "sha256": "0457228ab0789997d23e6b655fdd3c8447cf5fd7e01d87b7ca34ca120c635948"
         },
         {
           "path": "conformance/evidence/product_profile_consumer_expectations.json",
@@ -112,12 +116,16 @@
           "sha256": "99549237497fe8388a966d338c9d047e414884dc696af872db10032a85efe90b"
         },
         {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.4.0.json",
+          "sha256": "caae4b440907017075f3829e92c88b718abae600072a83162d55b1991982f2fb"
+        },
+        {
           "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
           "sha256": "2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
         },
         {
           "path": "conformance/evidence/resumable_sessions_target.json",
-          "sha256": "aa23e2baf15bbd6b756c6de8317cf1ad7b2d8b5b9567ee759c71e5c5e3ee2076"
+          "sha256": "f845e6707f1456b4e8ad0e1ab02b83eacc0647c04053793f1adee973e4fa5a88"
         },
         {
           "path": "conformance/evidence/session_state_projection_v1_target.json",
@@ -129,7 +137,7 @@
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "dca00290f63cd360924055293d79f6201d83f128e0fa7db9b737f873cc7a9474"
+          "sha256": "ad3164e3c165d3601c30473b6c0185b92f096b822af3bd2325dd48ad0a972a03"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
