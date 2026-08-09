@@ -64,6 +64,12 @@ tag, package publication, GA declaration, or final RC repackaging.
   transcripts, and emits an ordinary profile mark only for complete non-degraded external
   execution. Public profile claims accept this path with exact required-suite `suite_refs`;
   reference and test-only adapters do not count as external evidence.
+- The M63 correction freezes 1.2.0 as strong-ineligible and registers current Evidence TCK
+  1.3.0. Release-specific snapshots preserve exact historical registry provenance, current
+  executions self-check their actual import-closure bundle, every required producer-suite
+  check is machine-accounted and executable, and duplicate/missing/unknown generated
+  artifact IDs fail exact `Counter` equality before map construction. Exact 1.1.0
+  projection reports remain strong-eligible; report 2.0 support is retained.
 
 ### Current evidence limits
 

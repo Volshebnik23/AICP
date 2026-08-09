@@ -15,7 +15,7 @@
   },
   "tck_release": {
     "release_id": "AICP-EVIDENCE-TCK-1.1.0",
-    "registry_digest": "sha256:2cab009915eb5af6ff1a0940173aaee85fba672b3f2f9bfd578e4c3b1139d60c",
+    "registry_digest": "sha256:b480aceb911e7f284352f157f3e04914788bdbdaa95d4c1857ea3ab8ac810426",
     "target_registry_digest": "sha256:378a3a2002cd3fc9c48abd1095505065f1ed5501f6c82591b72c5aefbea3c5f2",
     "target_registry_schema_digest": "sha256:3e71ef6d64826a748cac2ad3de9926232ed5617d5cee88bef43b655f43920d13",
     "target_catalog_digest": "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20",

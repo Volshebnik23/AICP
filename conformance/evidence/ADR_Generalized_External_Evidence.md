@@ -36,14 +36,20 @@ capability evidence.
    presence, internal reports, smoke runs, reference runs, and examples do not establish
    the claim.
 6. Keep product IUT v1 frozen for `AICP-BASE@0.1` and
-   `AICP-AUTHENTICATED-BASE@0.1`. Add report 2.1 and Evidence TCK 1.2.0 for exactly
+   `AICP-AUTHENTICATED-BASE@0.1`. Add report 2.1 for exactly
    `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and
-   `AICP-DELEGATED-IDENTITY@0.1`; projection v1 remains on report 2.0/TCK 1.1.0.
+   `AICP-DELEGATED-IDENTITY@0.1`. Freeze the audited Evidence TCK 1.2.0 as historical
+   and strong-ineligible; corrected 1.3.0 is current for all four generalized targets,
+   while exact report-2.0/TCK-1.1.0 projection evidence remains strong-eligible.
 7. Use one registered `product_profile_v01` handler. Producer challenges contain neutral
    facts, never case IDs, fixture paths, golden messages/hashes, or expected marks. The
-   runner validates returned transcripts independently in memory, including cryptographic
-   and lifecycle semantics, without golden-byte equality.
-8. A report proves one exact target. Public profile claims accept either frozen profile-IUT
+   runner validates returned transcripts independently in memory, including every check
+   ID derived from required suites, private exact flow sequences, cryptographic and
+   lifecycle semantics, without golden-byte equality. Unknown checks fail closed.
+8. Bind report registry provenance to immutable per-release snapshots, self-check the
+   actual runtime import-closure digest, let handlers select report-2.1 artifact kinds,
+   and require exact generated-artifact ID `Counter` equality before map construction.
+9. A report proves one exact target. Public profile claims accept either frozen profile-IUT
    v1 or generalized report 2.1 only after independent evaluation, and `suite_refs` must
    exactly identify the claimed profiles' required-suite union.
 

@@ -1,0 +1,329 @@
+{
+  "registry_version": "1.1",
+  "supersessions": [
+    {
+      "release_id": "AICP-EVIDENCE-TCK-1.0.0",
+      "status": "superseded-experimental",
+      "superseded_by": "AICP-EVIDENCE-TCK-1.1.0",
+      "frozen_record_digest": "sha256:e227fdb2b2d35f83cfeeceff6e80f455ff8a95a1e56244bb6d4433942c53ba80",
+      "target_registry_schema_digest": "sha256:a4d63416e0e387ef3e6bff0d3b9397e37a2f380961360a5e4d63096228bcfc50",
+      "release_registry_digest": "sha256:bbc549d1d0ca6344de41a149430c25e257cf3438845f6e4ccdf0eab17f81ceaf",
+      "current_strong_eligibility": false,
+      "reason": "Producer answer isolation was insufficient; no real external submission depended on this release."
+    }
+  ],
+  "releases": [
+    {
+      "release_id": "AICP-EVIDENCE-TCK-1.0.0",
+      "status": "experimental",
+      "report_schema": {
+        "path": "conformance/evidence/external_evidence_report_v2.schema.json",
+        "content_digest": "sha256:5d107c975f9303d5f445ad22c1b18d710c10c88cb46988bb781032ddc670dd62"
+      },
+      "target_registry": {
+        "path": "conformance/evidence/targets.json",
+        "schema_path": "conformance/evidence/target_registry.schema.json",
+        "content_digest": "sha256:343c979dbff3e2ac7a928a9409894bc8f1769b521948394a7c874b33d8b2fbdd"
+      },
+      "runner_bundle": {
+        "paths": [
+          "conformance/evidence/aicp_external_evidence_runner.py",
+          "conformance/evidence/report_evaluator.py",
+          "conformance/evidence/target_catalog.py",
+          "conformance/iut/_iut_evaluator.py",
+          "conformance/iut/aicp_iut_runner.py",
+          "conformance/runner/_runner_context.py",
+          "conformance/runner/_runner_provenance.py",
+          "conformance/runner/_runner_state_projection_checks.py",
+          "conformance/runner/aicp_conformance_runner.py",
+          "reference/python/aicp_ref/hashing.py",
+          "reference/python/aicp_ref/jcs.py",
+          "reference/python/aicp_ref/session_state.py",
+          "reference/python/aicp_ref/signatures.py"
+        ],
+        "digest": "sha256:cc695f4b3b0d211d59b1213ad31a56839e49bececd1564cea633d78c2f3b1522"
+      },
+      "target": {
+        "target_key": "aicp.session_state_projection@v1",
+        "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+        "target_catalog": {
+          "path": "conformance/evidence/session_state_projection_v1_target.json",
+          "content_digest": "sha256:6dc6eab7f5f49986e72f78cfc166ccb0bcb47a3389af551f0078e301c8b3b046"
+        },
+        "required_suites": [
+          {
+            "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+            "suite_id": "OR-SESSION-STATE-PROJECTION-V1",
+            "suite_version": "1.0.0-experimental",
+            "suite_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+          }
+        ],
+        "required_input_artifacts": [
+          {
+            "path": "conformance/evidence/projection_v1_expectations.json",
+            "content_digest": "sha256:181cfb59a8091c786281dba0c8c9d3517731318726208694792c9c74d292e1b4"
+          },
+          {
+            "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+            "content_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+          },
+          {
+            "path": "conformance/vectors/unicode_codepoint_key_order.json",
+            "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+            "content_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+            "content_digest": "sha256:eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+            "content_digest": "sha256:9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+            "content_digest": "sha256:03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+            "content_digest": "sha256:def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+            "content_digest": "sha256:bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+            "content_digest": "sha256:d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+            "content_digest": "sha256:4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
+          },
+          {
+            "path": "registry/aicp_profiles.json",
+            "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+          },
+          {
+            "path": "registry/extension_ids.json",
+            "content_digest": "sha256:665f107066bb9a4c47e493cc0b3d9d07747d15e7cdab76a3b8b9177b0256f10a"
+          },
+          {
+            "path": "schemas/core/aicp-core-message.schema.json",
+            "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+          },
+          {
+            "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+            "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+          }
+        ],
+        "canonicalization_vectors": [
+          {
+            "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+            "path": "conformance/vectors/unicode_codepoint_key_order.json",
+            "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+          }
+        ],
+        "mandatory_producer_ids": [
+          "EVIDENCE-PRODUCER-SP-01"
+        ],
+        "mandatory_consumer_ids": [
+          "EVIDENCE-CONSUMER-SP-01",
+          "EVIDENCE-CONSUMER-SP-02",
+          "EVIDENCE-CONSUMER-SP-03",
+          "EVIDENCE-CONSUMER-SP-04",
+          "EVIDENCE-CONSUMER-SP-05",
+          "EVIDENCE-CONSUMER-SP-06",
+          "EVIDENCE-CONSUMER-SP-07",
+          "EVIDENCE-CONSUMER-SP-08",
+          "EVIDENCE-CONSUMER-SP-09",
+          "EVIDENCE-CONSUMER-SP-10",
+          "EVIDENCE-CONSUMER-SP-11",
+          "EVIDENCE-CONSUMER-SP-12"
+        ]
+      }
+    },
+    {
+      "release_id": "AICP-EVIDENCE-TCK-1.1.0",
+      "status": "experimental",
+      "report_schema": {
+        "path": "conformance/evidence/external_evidence_report_v2.schema.json",
+        "content_digest": "sha256:f1afe5b31e231f1fb3e24c151b6a0ccf07fd025e9e79cd903293ac7210ae8ddd"
+      },
+      "target_registry": {
+        "path": "conformance/evidence/targets.json",
+        "schema_path": "conformance/evidence/target_registry.schema.json",
+        "schema_digest": "sha256:3e71ef6d64826a748cac2ad3de9926232ed5617d5cee88bef43b655f43920d13",
+        "content_digest": "sha256:378a3a2002cd3fc9c48abd1095505065f1ed5501f6c82591b72c5aefbea3c5f2"
+      },
+      "runner_bundle": {
+        "manifest_path": "conformance/evidence/evidence_runner_bundle.json",
+        "manifest_digest": "sha256:a1505f9a8e2519009a3d18dd7c1c114c2752f6e942432cd6846137640504d2d0",
+        "paths": [
+          "conformance/evidence/adapter_process.py",
+          "conformance/evidence/aicp_external_evidence_runner.py",
+          "conformance/evidence/projection_v1_handler.py",
+          "conformance/evidence/report_evaluator.py",
+          "conformance/evidence/target_catalog.py",
+          "conformance/evidence/target_handlers.py",
+          "conformance/runner/_runner_context.py",
+          "reference/python/aicp_ref/__init__.py",
+          "reference/python/aicp_ref/hashing.py",
+          "reference/python/aicp_ref/jcs.py",
+          "reference/python/aicp_ref/signatures.py"
+        ],
+        "digest": "sha256:7542ef3f63841c151381ab49acdf9047ea5b3d25503ab47fdab60297848a4a86"
+      },
+      "target": {
+        "target_key": "aicp.session_state_projection@v1",
+        "handler_id": "projection_v1",
+        "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+        "target_catalog": {
+          "path": "conformance/evidence/session_state_projection_v1_target.json",
+          "content_digest": "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20"
+        },
+        "required_suites": [
+          {
+            "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+            "suite_id": "OR-SESSION-STATE-PROJECTION-V1",
+            "suite_version": "1.0.0-experimental",
+            "suite_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+          }
+        ],
+        "required_input_artifacts": [
+          {
+            "path": "conformance/evidence/projection_v1_expectations.json",
+            "content_digest": "sha256:e75d8a325f587add0bd9b6883edd8f12308676c9f4cf1c280dcda18077fc628a"
+          },
+          {
+            "path": "conformance/evidence/projection_v1_producer_scenario.json",
+            "content_digest": "sha256:07aa03727c5653b8f54ede45a1b562dde977678f581d8868bb71f0b35f152d99"
+          },
+          {
+            "path": "conformance/evidence/projection_v1_producer_scenario.schema.json",
+            "content_digest": "sha256:7be1ee597e6ce67e80df0e926897ff31f72b6e18f6fecd053e0739ea8134054a"
+          },
+          {
+            "path": "conformance/evidence/projection_v1_producer_transcript.json",
+            "content_digest": "sha256:4839e2f89a891cc64ac8b3329c76feff6375caadd2d3e95a6e32412980679394"
+          },
+          {
+            "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+            "content_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+          },
+          {
+            "path": "conformance/vectors/unicode_codepoint_key_order.json",
+            "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+            "content_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+            "content_digest": "sha256:eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+            "content_digest": "sha256:9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+            "content_digest": "sha256:03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+            "content_digest": "sha256:a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+            "content_digest": "sha256:def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+            "content_digest": "sha256:bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+            "content_digest": "sha256:d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb"
+          },
+          {
+            "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+            "content_digest": "sha256:4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
+          },
+          {
+            "path": "registry/aicp_profiles.json",
+            "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+          },
+          {
+            "path": "registry/extension_ids.json",
+            "content_digest": "sha256:665f107066bb9a4c47e493cc0b3d9d07747d15e7cdab76a3b8b9177b0256f10a"
+          },
+          {
+            "path": "schemas/core/aicp-core-message.schema.json",
+            "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+          },
+          {
+            "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+            "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+          }
+        ],
+        "canonicalization_vectors": [
+          {
+            "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+            "path": "conformance/vectors/unicode_codepoint_key_order.json",
+            "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+          }
+        ],
+        "mandatory_producer_ids": [
+          "EVIDENCE-PRODUCER-SP-01"
+        ],
+        "mandatory_consumer_ids": [
+          "EVIDENCE-CONSUMER-SP-01",
+          "EVIDENCE-CONSUMER-SP-02",
+          "EVIDENCE-CONSUMER-SP-03",
+          "EVIDENCE-CONSUMER-SP-04",
+          "EVIDENCE-CONSUMER-SP-05",
+          "EVIDENCE-CONSUMER-SP-06",
+          "EVIDENCE-CONSUMER-SP-07",
+          "EVIDENCE-CONSUMER-SP-08",
+          "EVIDENCE-CONSUMER-SP-09",
+          "EVIDENCE-CONSUMER-SP-10",
+          "EVIDENCE-CONSUMER-SP-11",
+          "EVIDENCE-CONSUMER-SP-12"
+        ]
+      }
+    }
+  ]
+}

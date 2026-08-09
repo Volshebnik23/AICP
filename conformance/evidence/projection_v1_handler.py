@@ -442,6 +442,10 @@ def evaluate_report(
         if (
             not isinstance(artifact, dict)
             or artifact.get("artifact_id") != producer["case_id"]
+            or (
+                report.get("report_format_version") == "2.1"
+                and artifact.get("artifact_kind") != "projection"
+            )
             or content != expected_content
             or artifact.get("content_digest")
             != _canonical_digest(expected_content)
@@ -524,6 +528,7 @@ def _canonical_digest(value: Any) -> str:
 
 class ProjectionV1Handler:
     handler_id = HANDLER_ID
+    artifact_kind = "projection"
 
     build_plan_entries = staticmethod(build_plan_entries)
     consumer_cases = staticmethod(consumer_cases)

@@ -24,6 +24,7 @@ from product_profile_fake_adapters import MODES  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
     BUNDLE_MANIFEST_PATH,
+    CURRENT_TCK_RELEASE_ID,
     FROZEN_TCK_1_1_RECORD_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     PROFILE_TARGET_KEYS,
@@ -60,11 +61,21 @@ EXPECTED = {
             "profile_downgrade",
             "missing_capneg_contract_binding",
             "unsupported_selected_profile",
+            "malformed_core_contract",
+            "unknown_core_policy_category",
+            "duplicate_core_policy_id",
+            "wrong_generated_sequence",
+            "invalid_capneg_reason_code",
+            "invalid_capneg_privacy_mode",
+            "invalid_capneg_binding",
+            "invalid_capneg_channel_properties",
             "policy_reason_code_failure",
             "policy_context_hash_failure",
             "deny_followed_by_delivery",
             "wrong_enforcement_binding",
             "unauthorized_enforcer",
+            "invalid_enforcement_sanction_code",
+            "malformed_namespaced_enforcement_sanction",
         ),
     },
     "AICP-RESUMABLE-SESSIONS@0.1": {
@@ -76,6 +87,7 @@ EXPECTED = {
             "mismatched_resume_response",
             "inconsistent_resume_head",
             "forced_resync_loop",
+            "invalid_resume_recommended_action",
             "invalid_object_hash",
             "mismatched_object_response",
             "invalid_state_sync",
@@ -105,7 +117,7 @@ GENERIC_NEGATIVE_MODES = (
     "wrong_profile_id",
     "wrong_profile_version",
     "missing_producer_scenario",
-    "duplicate_producer_artifact",
+    "wrong_producer_scenario_identity",
     "nondeterministic_repeat",
     "missing_consumer_case",
     "duplicate_consumer_case",
@@ -172,7 +184,7 @@ def test_frozen_m62_and_iut_boundaries_are_unchanged() -> None:
         FROZEN_TCK_1_1_RECORD_DIGEST
     )
     assert resolve_target_record(TARGET_KEY).current_release_id == (
-        "AICP-EVIDENCE-TCK-1.1.0"
+        CURRENT_TCK_RELEASE_ID
     )
 
 
@@ -217,7 +229,7 @@ def test_generated_registry_release_and_three_catalogs_are_exact() -> None:
             )
         assert observed == expected
         assert len(mandatory_case_ids(catalog, "full-profile", resolve_handler(record.handler_id))) == (
-            6 + expectation["producer_count"] + expectation["consumer_count"]
+            7 + expectation["producer_count"] + expectation["consumer_count"]
         )
     assert total_consumers == 69
 

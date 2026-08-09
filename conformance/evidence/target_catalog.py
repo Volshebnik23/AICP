@@ -27,7 +27,11 @@ REPORT_SCHEMA_V21_PATH = EVIDENCE_DIR / "external_evidence_report_v2_1.schema.js
 TCK_RELEASES_PATH = EVIDENCE_DIR / "evidence_tck_releases.json"
 EXPECTATIONS_PATH = EVIDENCE_DIR / "projection_v1_expectations.json"
 LEGACY_BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle.json"
-BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_2.json"
+FROZEN_TCK_1_2_BUNDLE_MANIFEST_PATH = (
+    EVIDENCE_DIR / "evidence_runner_bundle_v1_2.json"
+)
+BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_3.json"
+RELEASE_SNAPSHOT_DIR = EVIDENCE_DIR / "release_registry_snapshots"
 PRODUCER_SCENARIO_PATH = EVIDENCE_DIR / "projection_v1_producer_scenario.json"
 PRODUCER_TRANSCRIPT_PATH = EVIDENCE_DIR / "projection_v1_producer_transcript.json"
 PRODUCER_SCENARIO_SCHEMA_PATH = (
@@ -39,6 +43,7 @@ TARGET_VERSION = "v1"
 EXPECTED_MARK = "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
 TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.1.0"
 PROFILE_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.2.0"
+CURRENT_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.3.0"
 HISTORICAL_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.0.0"
 HISTORICAL_RELEASE_RECORD_DIGEST = (
     "sha256:e227fdb2b2d35f83cfeeceff6e80f455ff8a95a1e56244bb6d4433942c53ba80"
@@ -51,6 +56,15 @@ HISTORICAL_RELEASE_REGISTRY_DIGEST = (
 )
 FROZEN_TCK_1_1_RECORD_DIGEST = (
     "sha256:a1b4515821b86a23daff0df9a8b1d6bbf68eec3c5768172c06ed34afb0e7b5cb"
+)
+FROZEN_TCK_1_2_RECORD_DIGEST = (
+    "sha256:71e231798a6e6c9a12e890f64ce0a1d4af26045d426057d5765700af5bb68913"
+)
+FROZEN_TCK_1_1_REGISTRY_SNAPSHOT_DIGEST = (
+    "sha256:b480aceb911e7f284352f157f3e04914788bdbdaa95d4c1857ea3ab8ac810426"
+)
+FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST = (
+    "sha256:2cab009915eb5af6ff1a0940173aaee85fba672b3f2f9bfd578e4c3b1139d60c"
 )
 PROFILE_TARGET_KEYS = (
     "AICP-MEDIATED-BLOCKING@0.1",
@@ -172,6 +186,45 @@ def release_registry() -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError("evidence TCK release registry must be an object")
     return value
+
+
+def release_snapshot_path(release_id: str) -> Path:
+    if not isinstance(release_id, str) or not release_id.startswith("AICP-EVIDENCE-TCK-"):
+        raise ValueError("invalid evidence TCK release snapshot identity")
+    return RELEASE_SNAPSHOT_DIR / f"{release_id}.json"
+
+
+def release_snapshot(release_id: str) -> dict[str, Any]:
+    path = release_snapshot_path(release_id)
+    if not path.is_file():
+        raise ValueError(f"evidence TCK release snapshot is missing: {release_id}")
+    value = load_json(path)
+    if not isinstance(value, dict):
+        raise ValueError(f"evidence TCK release snapshot must be an object: {release_id}")
+    release_record(release_id, value)
+    return value
+
+
+def release_snapshot_digest(release_id: str) -> str:
+    path = release_snapshot_path(release_id)
+    if not path.is_file():
+        raise ValueError(f"evidence TCK release snapshot is missing: {release_id}")
+    return file_digest(path)
+
+
+def release_policy(
+    release_id: str,
+    registry: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    value = registry if registry is not None else release_registry()
+    matches = [
+        item
+        for item in value.get("release_policies", [])
+        if isinstance(item, dict) and item.get("release_id") == release_id
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"evidence TCK release policy must resolve exactly once: {release_id}")
+    return matches[0]
 
 
 def resolve_target_record(
@@ -306,6 +359,7 @@ def mandatory_case_ids(
     ids = [
         "EVIDENCE-TARGET-CATALOG-01",
         "EVIDENCE-TCK-PROVENANCE-01",
+        "EVIDENCE-RUNNER-WORKTREE-01",
         "EVIDENCE-DESCRIBE-START-01",
     ]
     ids.extend(
@@ -1020,9 +1074,10 @@ def validate_release_registry(
         HISTORICAL_TCK_RELEASE_ID,
         TCK_RELEASE_ID,
         PROFILE_TCK_RELEASE_ID,
+        CURRENT_TCK_RELEASE_ID,
     }
     if not required_ids.issubset(set(ids)):
-        errors.append("evidence TCK registry must retain 1.0.0/1.1.0 and register 1.2.0")
+        errors.append("evidence TCK registry must retain 1.0.0/1.1.0/1.2.0 and register 1.3.0")
     try:
         historical = release_record(HISTORICAL_TCK_RELEASE_ID, value)
     except ValueError as exc:
@@ -1053,8 +1108,6 @@ def validate_release_registry(
     if canonical_digest(projection_release) != FROZEN_TCK_1_1_RECORD_DIGEST:
         errors.append("evidence TCK 1.1.0 frozen record changed")
     projection_target = target_record()
-    if projection_target.current_release_id != TCK_RELEASE_ID:
-        errors.append("projection v1 current release is not evidence TCK 1.1.0")
     if projection_release.get("target", {}).get("target_key") != projection_target.target_key:
         errors.append("evidence TCK 1.1.0 target identity changed")
     if projection_release.get("report_schema", {}).get("content_digest") != file_digest(
@@ -1075,40 +1128,102 @@ def validate_release_registry(
     except ValueError as exc:
         errors.append(str(exc))
         return sorted(set(errors))
-    release_targets = profile_release.get("targets")
-    if not isinstance(release_targets, list):
+    if canonical_digest(profile_release) != FROZEN_TCK_1_2_RECORD_DIGEST:
+        errors.append("evidence TCK 1.2.0 frozen record changed")
+    frozen_profile_targets = profile_release.get("targets")
+    if not isinstance(frozen_profile_targets, list):
         return sorted(set([*errors, "evidence TCK 1.2.0 targets are missing"]))
+    frozen_profile_keys = [
+        item.get("target_key") for item in frozen_profile_targets if isinstance(item, dict)
+    ]
+    if len(frozen_profile_keys) != len(set(frozen_profile_keys)):
+        errors.append("evidence TCK 1.2.0 target keys must be unique")
+    if frozen_profile_keys != list(PROFILE_TARGET_KEYS):
+        errors.append("evidence TCK 1.2.0 must contain exactly the three Tier-1 targets")
+    frozen_profile_manifest = load_json(
+        root / FROZEN_TCK_1_2_BUNDLE_MANIFEST_PATH.relative_to(ROOT)
+    )
+    frozen_profile_bundle = profile_release.get("runner_bundle", {})
+    if frozen_profile_bundle.get("manifest_digest") != file_digest(
+        root / FROZEN_TCK_1_2_BUNDLE_MANIFEST_PATH.relative_to(ROOT)
+    ):
+        errors.append("evidence TCK 1.2.0 frozen bundle manifest changed")
+    if frozen_profile_bundle.get("digest") != frozen_profile_manifest.get("bundle_digest"):
+        errors.append("evidence TCK 1.2.0 frozen bundle digest changed")
+
+    try:
+        current_release = release_record(CURRENT_TCK_RELEASE_ID, value)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return sorted(set(errors))
+    release_targets = current_release.get("targets")
+    if not isinstance(release_targets, list):
+        return sorted(set([*errors, "evidence TCK 1.3.0 targets are missing"]))
     release_keys = [
         item.get("target_key") for item in release_targets if isinstance(item, dict)
     ]
     if len(release_keys) != len(set(release_keys)):
-        errors.append("evidence TCK 1.2.0 target keys must be unique")
-    if release_keys != list(PROFILE_TARGET_KEYS):
-        errors.append("evidence TCK 1.2.0 must contain exactly the three Tier-1 targets")
+        errors.append("evidence TCK 1.3.0 target keys must be unique")
+    if release_keys != list(EXPECTED_TARGET_KEYS):
+        errors.append("evidence TCK 1.3.0 must contain projection v1 and the three Tier-1 targets")
     expected_checks = {
-        profile_release.get("report_schema", {}).get("content_digest"): file_digest(
+        current_release.get("report_schema", {}).get("content_digest"): file_digest(
             root / REPORT_SCHEMA_V21_PATH.relative_to(ROOT)
         ),
-        profile_release.get("target_registry", {}).get("content_digest"): file_digest(
+        current_release.get("target_registry", {}).get("content_digest"): file_digest(
             root / TARGETS_PATH.relative_to(ROOT)
         ),
-        profile_release.get("target_registry", {}).get("schema_digest"): file_digest(
+        current_release.get("target_registry", {}).get("schema_digest"): file_digest(
             root / TARGET_SCHEMA_PATH.relative_to(ROOT)
         ),
     }
     if any(actual != expected for actual, expected in expected_checks.items()):
-        errors.append("evidence TCK 1.2.0 common provenance does not match current bytes")
+        errors.append("evidence TCK 1.3.0 common provenance does not match current bytes")
     manifest = bundle_manifest or load_json(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT))
     errors.extend(validate_bundle_manifest(manifest, root=root))
-    runner_bundle = profile_release.get("runner_bundle", {})
+    runner_bundle = current_release.get("runner_bundle", {})
     if runner_bundle.get("manifest_path") != BUNDLE_MANIFEST_PATH.relative_to(ROOT).as_posix():
-        errors.append("evidence TCK 1.2.0 runner bundle manifest path is incorrect")
+        errors.append("evidence TCK 1.3.0 runner bundle manifest path is incorrect")
     if runner_bundle.get("manifest_digest") != file_digest(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT)):
-        errors.append("evidence TCK 1.2.0 runner bundle manifest digest is stale")
+        errors.append("evidence TCK 1.3.0 runner bundle manifest digest is stale")
     if runner_bundle.get("digest") != manifest.get("bundle_digest"):
-        errors.append("evidence TCK 1.2.0 runner bundle digest is stale")
+        errors.append("evidence TCK 1.3.0 runner bundle digest is stale")
     if runner_bundle.get("paths") != [item["path"] for item in manifest.get("entries", [])]:
-        errors.append("evidence TCK 1.2.0 runner bundle paths do not match manifest")
+        errors.append("evidence TCK 1.3.0 runner bundle paths do not match manifest")
+
+    expected_policies = {
+        HISTORICAL_TCK_RELEASE_ID: False,
+        TCK_RELEASE_ID: True,
+        PROFILE_TCK_RELEASE_ID: False,
+        CURRENT_TCK_RELEASE_ID: True,
+    }
+    for release_id, eligible in expected_policies.items():
+        try:
+            policy = release_policy(release_id, value)
+        except ValueError as exc:
+            errors.append(str(exc))
+            continue
+        if policy.get("strong_eligible") is not eligible:
+            errors.append(f"evidence TCK strong-eligibility policy is inaccurate: {release_id}")
+        if not isinstance(policy.get("reason"), str) or not policy.get("reason"):
+            errors.append(f"evidence TCK release policy reason is missing: {release_id}")
+
+    snapshot_expectations = {
+        TCK_RELEASE_ID: FROZEN_TCK_1_1_REGISTRY_SNAPSHOT_DIGEST,
+        PROFILE_TCK_RELEASE_ID: FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST,
+    }
+    for release_id in (TCK_RELEASE_ID, PROFILE_TCK_RELEASE_ID, CURRENT_TCK_RELEASE_ID):
+        try:
+            snapshot = release_snapshot(release_id)
+            snapshot_record = release_record(release_id, snapshot)
+        except ValueError as exc:
+            errors.append(str(exc))
+            continue
+        expected_snapshot_digest = snapshot_expectations.get(release_id)
+        if expected_snapshot_digest and release_snapshot_digest(release_id) != expected_snapshot_digest:
+            errors.append(f"evidence TCK release snapshot changed: {release_id}")
+        if canonical_digest(snapshot_record) != canonical_digest(release_record(release_id, value)):
+            errors.append(f"evidence TCK release snapshot record differs from registry: {release_id}")
 
     for record in [resolve_target_record(key) for key in EXPECTED_TARGET_KEYS]:
         try:

@@ -171,12 +171,13 @@ For an external adapter, run
 `conformance/evidence/aicp_external_evidence_runner.py --cmd-json <JSON-array> --target
 aicp.session_state_projection@v1 --mode full-capability --out <report>`. Only a complete,
 non-degraded `external_implementation` report with all mandatory cases and current
-`AICP-EVIDENCE-TCK-1.1.0` provenance can be independently eligible for
+`AICP-EVIDENCE-TCK-1.3.0` provenance can be independently eligible for
 `AICP-Evidence-SESSION-STATE-PROJECTION-v1`. Smoke and `reference_corpus` runs emit no
 mark. The capability mark proves neither a product profile nor pairwise interoperability.
 The producer request contains a neutral scenario and a transcript prefix without the final
 projection response; adapters must derive message hashes, references, canonical projection
-fields, and the projection hash. Historical 1.0.0 reports are not current strong evidence.
+fields, and the projection hash. Exact frozen 1.1.0 projection reports remain eligible;
+historical 1.0.0 and 1.2.0 reports are strong-ineligible for documented evidence defects.
 See `conformance/evidence/README.md`.
 
 ## Tier-1 external profile evidence
