@@ -17,7 +17,7 @@ MODES = (
     "wrong_profile_id",
     "wrong_profile_version",
     "missing_producer_scenario",
-    "duplicate_producer_artifact",
+    "wrong_producer_scenario_identity",
     "nondeterministic_repeat",
     "missing_consumer_case",
     "duplicate_consumer_case",
@@ -36,15 +36,26 @@ MODES = (
     "profile_downgrade",
     "missing_capneg_contract_binding",
     "unsupported_selected_profile",
+    "malformed_core_contract",
+    "unknown_core_policy_category",
+    "duplicate_core_policy_id",
+    "wrong_generated_sequence",
+    "invalid_capneg_reason_code",
+    "invalid_capneg_privacy_mode",
+    "invalid_capneg_binding",
+    "invalid_capneg_channel_properties",
     "policy_reason_code_failure",
     "policy_context_hash_failure",
     "deny_followed_by_delivery",
     "wrong_enforcement_binding",
     "unauthorized_enforcer",
+    "invalid_enforcement_sanction_code",
+    "malformed_namespaced_enforcement_sanction",
     "missing_resume_response",
     "mismatched_resume_response",
     "inconsistent_resume_head",
     "forced_resync_loop",
+    "invalid_resume_recommended_action",
     "invalid_object_hash",
     "mismatched_object_response",
     "invalid_state_sync",
@@ -79,6 +90,54 @@ def _mutate_generated(mode: str, result: dict[str, Any], call: int) -> dict[str,
             if isinstance((contract.get("ext") or {}).get("capneg"), dict):
                 contract["ext"].pop("capneg", None)
                 break
+    elif mode in {
+        "malformed_core_contract",
+        "unknown_core_policy_category",
+        "duplicate_core_policy_id",
+    }:
+        for message in messages:
+            contract = ((message.get("payload") or {}).get("contract") or {})
+            if not isinstance(contract, dict) or not contract:
+                continue
+            if mode == "malformed_core_contract":
+                contract.pop("goal", None)
+            elif mode == "unknown_core_policy_category":
+                contract["policies"] = [
+                    {
+                        "policy_id": "policy-1",
+                        "category": "NOT_REGISTERED",
+                        "parameters": {},
+                    }
+                ]
+            else:
+                contract["policies"] = [
+                    {"policy_id": "policy-1", "category": "safety", "parameters": {}},
+                    {"policy_id": "policy-1", "category": "safety", "parameters": {}},
+                ]
+            break
+    elif mode == "wrong_generated_sequence" and len(messages) >= 3:
+        messages[1], messages[2] = messages[2], messages[1]
+    elif mode == "invalid_capneg_reason_code":
+        for message in messages:
+            if message.get("message_type") == "CAPABILITIES_REJECT":
+                (message.get("payload") or {})["reason_code"] = "NOT_REGISTERED"
+                break
+    elif mode in {
+        "invalid_capneg_privacy_mode",
+        "invalid_capneg_binding",
+        "invalid_capneg_channel_properties",
+    }:
+        for message in messages:
+            if message.get("message_type") != "CAPABILITIES_PROPOSE":
+                continue
+            selected = (((message.get("payload") or {}).get("negotiation_result") or {}).get("selected") or {})
+            if mode == "invalid_capneg_privacy_mode":
+                selected["privacy_mode"] = "not-registered"
+            elif mode == "invalid_capneg_binding":
+                selected["binding"] = "NOT-REGISTERED"
+            else:
+                selected["channel_properties"] = {"CP-ORDERING-0.1": "ordered"}
+            break
     elif mode == "policy_reason_code_failure":
         for message in messages:
             decision = ((message.get("payload") or {}).get("policy_decision") or {})
@@ -103,6 +162,20 @@ def _mutate_generated(mode: str, result: dict[str, Any], call: int) -> dict[str,
         for message in messages:
             if message.get("message_type") == "ENFORCEMENT_VERDICT":
                 message["sender"] = "agent:unauthorized"
+    elif mode in {
+        "invalid_enforcement_sanction_code",
+        "malformed_namespaced_enforcement_sanction",
+    }:
+        for message in messages:
+            if message.get("message_type") == "ENFORCEMENT_VERDICT":
+                sanctions = (message.get("payload") or {}).get("sanctions") or []
+                if sanctions:
+                    sanctions[0]["code"] = (
+                        "vendor bad:code"
+                        if mode == "malformed_namespaced_enforcement_sanction"
+                        else "NOT-REGISTERED"
+                    )
+                break
     elif mode == "missing_resume_response":
         value["messages"] = [m for m in messages if m.get("message_type") != "RESUME_RESPONSE"]
     elif mode == "mismatched_resume_response":
@@ -117,6 +190,13 @@ def _mutate_generated(mode: str, result: dict[str, Any], call: int) -> dict[str,
     elif mode == "forced_resync_loop":
         pair = [m for m in messages if m.get("message_type") in {"RESUME_REQUEST", "RESUME_RESPONSE"}]
         value["messages"] = [*messages, *copy.deepcopy(pair), *copy.deepcopy(pair)]
+    elif mode == "invalid_resume_recommended_action":
+        for message in messages:
+            if message.get("message_type") == "RESUME_RESPONSE":
+                (message.get("payload") or {})["recommended_actions"] = [
+                    "NOT-REGISTERED"
+                ]
+                break
     elif mode == "invalid_object_hash":
         for message in messages:
             refs = (message.get("payload") or {}).get("entries")
@@ -248,7 +328,7 @@ def main() -> int:
             result = _mutate_generated(args.mode, result, calls)
             if args.mode == "missing_producer_scenario":
                 result = {"artifact_kind": "transcript", "scenario_id": "missing", "target": result.get("target"), "messages": []}
-            elif args.mode == "duplicate_producer_artifact":
+            elif args.mode == "wrong_producer_scenario_identity":
                 result["scenario_id"] = "duplicate"
         response = {
             "adapter_protocol_version": "1.1",

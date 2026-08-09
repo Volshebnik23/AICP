@@ -406,15 +406,17 @@ def test_unknown_and_projection_v2_targets_fail_closed() -> None:
             )
 
 
-def test_report_v2_is_strict_and_target_oriented(
+def test_current_projection_report_is_strict_and_target_oriented(
     external_report: dict,
 ) -> None:
     schema = load_json(
-        EVIDENCE_DIR / "external_evidence_report_v2.schema.json"
+        EVIDENCE_DIR / "external_evidence_report_v2_1.schema.json"
     )
     from jsonschema import Draft202012Validator
 
     assert list(Draft202012Validator(schema).iter_errors(external_report)) == []
+    assert external_report["report_format_version"] == "2.1"
+    assert external_report["generated_artifacts"][0]["artifact_kind"] == "projection"
     assert "profile" not in external_report
     mutated = copy.deepcopy(external_report)
     mutated["raw_badge"] = EXPECTED_MARK
@@ -444,6 +446,15 @@ def _as_historical_report(report: dict) -> dict:
     supersession = release_supersession(HISTORICAL_TCK_RELEASE_ID)
     assert supersession is not None
     mutated = copy.deepcopy(report)
+    mutated["report_format_version"] = "2.0"
+    mutated["runner"]["version"] = "2.0"
+    for artifact in mutated["generated_artifacts"]:
+        artifact.pop("artifact_kind", None)
+    mutated["case_results"] = [
+        item
+        for item in mutated["case_results"]
+        if item["case_id"] != "EVIDENCE-RUNNER-WORKTREE-01"
+    ]
     catalog_digest = historical["target"]["target_catalog"]["content_digest"]
     mutated["target"]["target_catalog_digest"] = catalog_digest
     mutated["runner"]["source_revision"] = historical["runner_bundle"]["digest"]
