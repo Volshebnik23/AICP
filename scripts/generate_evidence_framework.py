@@ -15,9 +15,13 @@ if str(EVIDENCE_DIR) not in sys.path:
 
 from target_catalog import (  # noqa: E402
     BUNDLE_MANIFEST_PATH,
+    CURRENT_TCK_RELEASE_ID,
     EXPECTATIONS_PATH,
     EXPECTED_MARK,
     FROZEN_TCK_1_1_RECORD_DIGEST,
+    FROZEN_TCK_1_1_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_2_RECORD_DIGEST,
+    FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_RELEASE_REGISTRY_DIGEST,
     HISTORICAL_TARGET_SCHEMA_DIGEST,
@@ -29,6 +33,7 @@ from target_catalog import (  # noqa: E402
     PROFILE_TARGET_KEYS,
     REPORT_SCHEMA_PATH,
     REPORT_SCHEMA_V21_PATH,
+    RELEASE_SNAPSHOT_DIR,
     TARGET_CATALOG_PATH,
     TARGET_ID,
     TARGET_KEY,
@@ -112,7 +117,7 @@ def target_registry_payload() -> dict[str, Any]:
             "execution_mode": "full-capability",
             "evidence_claim_type": "implements_capability",
             "handler_id": "projection_v1",
-            "current_release_id": TCK_RELEASE_ID,
+            "current_release_id": CURRENT_TCK_RELEASE_ID,
             "required_suites": [SUITE_REF],
             "required_operations": [
                 "describe",
@@ -143,7 +148,7 @@ def target_registry_payload() -> dict[str, Any]:
                 "execution_mode": "full-profile",
                 "evidence_claim_type": "implements_profile",
                 "handler_id": "product_profile_v01",
-                "current_release_id": PROFILE_TCK_RELEASE_ID,
+                "current_release_id": CURRENT_TCK_RELEASE_ID,
                 "required_suites": list(profile["required_suites"]),
                 "required_operations": [
                     "describe",
@@ -503,8 +508,10 @@ def _frozen_release(release_id: str, expected_digest: str) -> dict[str, Any]:
 
 def release_registry_payload(
     targets_rendered: str,
+    projection_catalog_rendered: str,
     profile_catalogs_rendered: dict[str, str],
     bundle_manifest_rendered: str,
+    projection_catalog: dict[str, Any],
     profile_catalogs: dict[str, dict[str, Any]],
     bundle_manifest: dict[str, Any],
 ) -> dict[str, Any]:
@@ -516,8 +523,54 @@ def release_registry_payload(
         TCK_RELEASE_ID,
         FROZEN_TCK_1_1_RECORD_DIGEST,
     )
+    profile_release = _frozen_release(
+        PROFILE_TCK_RELEASE_ID,
+        FROZEN_TCK_1_2_RECORD_DIGEST,
+    )
+    projection_handler = resolve_handler("projection_v1")
     product_handler = resolve_handler("product_profile_v01")
-    release_targets: list[dict[str, Any]] = []
+    release_targets: list[dict[str, Any]] = [
+        {
+            "target_key": TARGET_KEY,
+            "handler_id": "projection_v1",
+            "expected_mark": projection_catalog["expected_mark"],
+            "target_catalog": {
+                "path": TARGET_CATALOG_PATH.relative_to(ROOT).as_posix(),
+                "content_digest": digest_bytes(
+                    projection_catalog_rendered.encode("utf-8")
+                ),
+            },
+            "required_suites": [projection_catalog["owning_suite"]],
+            "required_input_artifacts": projection_catalog[
+                "required_input_artifacts"
+            ],
+            "canonicalization_vectors": [
+                {
+                    "case_id": item["case_id"],
+                    "path": item["path"],
+                    "content_digest": item["input_digest"],
+                }
+                for item in projection_catalog["canonicalization_vectors"]
+            ],
+            "mandatory_producer_ids": [
+                item["case_id"]
+                for item in projection_handler.producer_cases(
+                    projection_catalog, "full-capability"
+                )
+            ],
+            "mandatory_consumer_ids": [
+                item["case_id"]
+                for item in projection_handler.consumer_cases(
+                    projection_catalog, "full-capability"
+                )
+            ],
+            "mandatory_case_ids": mandatory_case_ids(
+                projection_catalog,
+                "full-capability",
+                projection_handler,
+            ),
+        }
+    ]
     for config in PROFILE_CONFIGS:
         key = config["target_key"]
         catalog = profile_catalogs[key]
@@ -559,7 +612,7 @@ def release_registry_payload(
             }
         )
     return {
-        "registry_version": "1.2",
+        "registry_version": "1.3",
         "supersessions": [
             {
                 "release_id": HISTORICAL_TCK_RELEASE_ID,
@@ -575,11 +628,38 @@ def release_registry_payload(
                 ),
             }
         ],
+        "release_policies": [
+            {
+                "release_id": HISTORICAL_TCK_RELEASE_ID,
+                "lifecycle": "historical",
+                "strong_eligible": False,
+                "reason": "Known M62 producer answer-isolation defect.",
+            },
+            {
+                "release_id": TCK_RELEASE_ID,
+                "lifecycle": "historical",
+                "strong_eligible": True,
+                "reason": "Exact frozen projection-v1 evidence remains valid; no security revocation applies.",
+            },
+            {
+                "release_id": PROFILE_TCK_RELEASE_ID,
+                "lifecycle": "historical",
+                "strong_eligible": False,
+                "reason": "Incomplete producer-suite semantic closure and generated-artifact multiplicity defect.",
+            },
+            {
+                "release_id": CURRENT_TCK_RELEASE_ID,
+                "lifecycle": "current",
+                "strong_eligible": True,
+                "reason": "Corrected release-immutable, suite-complete evidence framework.",
+            },
+        ],
         "releases": [
             historical,
             projection_release,
+            profile_release,
             {
-                "release_id": PROFILE_TCK_RELEASE_ID,
+                "release_id": CURRENT_TCK_RELEASE_ID,
                 "status": "experimental",
                 "report_schema": {
                     "path": REPORT_SCHEMA_V21_PATH.relative_to(ROOT).as_posix(),
@@ -632,12 +712,46 @@ def generated_payloads() -> tuple[
     bundle_manifest_rendered = render(bundle_manifest)
     releases = release_registry_payload(
         targets_rendered,
+        render(projection_catalog),
         profile_catalogs_rendered,
         bundle_manifest_rendered,
+        projection_catalog,
         profile_catalogs,
         bundle_manifest,
     )
     return targets, projection_catalog, profile_catalogs, bundle_manifest, releases
+
+
+def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    frozen_1_1 = {
+        "registry_version": "1.1",
+        "supersessions": releases["supersessions"],
+        "releases": releases["releases"][:2],
+    }
+    if digest_bytes(render(frozen_1_1).encode("utf-8")) != (
+        FROZEN_TCK_1_1_REGISTRY_SNAPSHOT_DIGEST
+    ):
+        raise ValueError("reconstructed evidence TCK 1.1.0 registry snapshot changed")
+
+    frozen_1_2_path = (
+        RELEASE_SNAPSHOT_DIR / f"{PROFILE_TCK_RELEASE_ID}.json"
+    )
+    if frozen_1_2_path.is_file():
+        frozen_1_2 = load_json(frozen_1_2_path)
+    else:
+        if file_digest(TCK_RELEASES_PATH) != FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST:
+            raise ValueError("cannot bootstrap the exact merged M63 registry snapshot")
+        frozen_1_2 = load_json(TCK_RELEASES_PATH)
+    if digest_bytes(render(frozen_1_2).encode("utf-8")) != (
+        FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST
+    ):
+        raise ValueError("evidence TCK 1.2.0 registry snapshot changed")
+
+    return {
+        TCK_RELEASE_ID: frozen_1_1,
+        PROFILE_TCK_RELEASE_ID: frozen_1_2,
+        CURRENT_TCK_RELEASE_ID: releases,
+    }
 
 
 def main() -> int:
@@ -654,12 +768,21 @@ def main() -> int:
         bundle_manifest,
         releases,
     ) = generated_payloads()
+    snapshots = release_snapshot_payloads(releases)
     paths = [
         TARGETS_PATH,
         TARGET_CATALOG_PATH,
         *[ROOT / config["catalog_path"] for config in PROFILE_CONFIGS],
         BUNDLE_MANIFEST_PATH,
         TCK_RELEASES_PATH,
+        *[
+            RELEASE_SNAPSHOT_DIR / f"{release_id}.json"
+            for release_id in (
+                TCK_RELEASE_ID,
+                PROFILE_TCK_RELEASE_ID,
+                CURRENT_TCK_RELEASE_ID,
+            )
+        ],
     ]
     values = [
         targets,
@@ -667,10 +790,19 @@ def main() -> int:
         *[profile_catalogs[config["target_key"]] for config in PROFILE_CONFIGS],
         bundle_manifest,
         releases,
+        *[
+            snapshots[release_id]
+            for release_id in (
+                TCK_RELEASE_ID,
+                PROFILE_TCK_RELEASE_ID,
+                CURRENT_TCK_RELEASE_ID,
+            )
+        ],
     ]
     rendered = [render(value) for value in values]
     if args.write:
         EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        RELEASE_SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
         for path, content in zip(paths, rendered):
             path.write_text(content, encoding="utf-8")
     else:
@@ -734,8 +866,9 @@ def main() -> int:
     )
     print(
         f"{action}: three Tier-1 profile targets, {producer_count} producers, "
-        f"{consumer_count} consumers, {PROFILE_TCK_RELEASE_ID}; "
-        f"{HISTORICAL_TCK_RELEASE_ID} and {TCK_RELEASE_ID} retained."
+        f"{consumer_count} consumers, {CURRENT_TCK_RELEASE_ID}; "
+        f"{HISTORICAL_TCK_RELEASE_ID}, {TCK_RELEASE_ID}, and "
+        f"{PROFILE_TCK_RELEASE_ID} retained."
     )
     return 0
 

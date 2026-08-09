@@ -24,8 +24,8 @@ from target_catalog import (  # noqa: E402
     TARGET_KEY,
     TARGET_SCHEMA_PATH,
     TARGETS_PATH,
-    TCK_RELEASES_PATH,
     TargetRecord,
+    bundle_digest,
     canonical_digest,
     expected_input_artifacts,
     expected_suite_records,
@@ -33,8 +33,10 @@ from target_catalog import (  # noqa: E402
     load_json,
     mandatory_case_ids,
     release_record,
+    release_snapshot_digest,
     release_target_entry,
     resolve_target_record,
+    runtime_import_closure,
     target_catalog,
     validate_release_registry,
     validate_target_catalog,
@@ -270,7 +272,7 @@ def _base_report(
         },
         "tck_release": {
             "release_id": release["release_id"],
-            "registry_digest": file_digest(TCK_RELEASES_PATH),
+            "registry_digest": release_snapshot_digest(release["release_id"]),
             "target_registry_digest": release["target_registry"][
                 "content_digest"
             ],
@@ -389,6 +391,20 @@ def run_evidence(
         "evidence TCK provenance and import-closed bundle match current bytes"
         if not release_errors
         else "; ".join(release_errors),
+    )
+    actual_runner_bundle_digest = bundle_digest(runtime_import_closure())
+    runner_bundle_matches = actual_runner_bundle_digest == release["runner_bundle"]["digest"]
+    if not runner_bundle_matches:
+        report["runner"]["source_revision"] = actual_runner_bundle_digest
+    record_case(
+        "EVIDENCE-RUNNER-WORKTREE-01",
+        runner_bundle_matches,
+        "actual runtime import-closure bundle matches the registered release"
+        if runner_bundle_matches
+        else (
+            "EVIDENCE_RUNNER_WORKTREE_MISMATCH: actual runtime import-closure "
+            "bundle differs from the registered release"
+        ),
     )
 
     producer = (
@@ -522,9 +538,7 @@ def run_evidence(
                         "content": producer_result,
                     }
                     if report["report_format_version"] == "2.1":
-                        artifact["artifact_kind"] = str(
-                            producer_result.get("artifact_kind", "transcript")
-                        )
+                        artifact["artifact_kind"] = str(handler.artifact_kind)
                     report["generated_artifacts"].append(artifact)
                     if producer_case_result is not None and not errors:
                         producer_case_result[

@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "0f675a2f1fb60a97f37c0305049a8e6732a2ab2417522055169845c2d710b860",
+      "combined_sha256": "4dba128efa34b84e75db7d657366424b1fafce325dcf5e0e5212151dad372e33",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -52,8 +52,12 @@
           "sha256": "c22951a810d76d4104275c65134cc4f0f50e92c47d61f5511238189e41272266"
         },
         {
+          "path": "conformance/evidence/evidence_runner_bundle_v1_3.json",
+          "sha256": "16ac67d3c290111b206b50313af8e265f6d10a96a55d1b3dc3f5008eef75da53"
+        },
+        {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "2cab009915eb5af6ff1a0940173aaee85fba672b3f2f9bfd578e4c3b1139d60c"
+          "sha256": "99549237497fe8388a966d338c9d047e414884dc696af872db10032a85efe90b"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -96,6 +100,18 @@
           "sha256": "4839e2f89a891cc64ac8b3329c76feff6375caadd2d3e95a6e32412980679394"
         },
         {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.1.0.json",
+          "sha256": "b480aceb911e7f284352f157f3e04914788bdbdaa95d4c1857ea3ab8ac810426"
+        },
+        {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.2.0.json",
+          "sha256": "2cab009915eb5af6ff1a0940173aaee85fba672b3f2f9bfd578e4c3b1139d60c"
+        },
+        {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.3.0.json",
+          "sha256": "99549237497fe8388a966d338c9d047e414884dc696af872db10032a85efe90b"
+        },
+        {
           "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
           "sha256": "2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
         },
@@ -113,7 +129,7 @@
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "ae51d401a2950ef2ee472643eea509b0135f50704c587653711065fddd64910c"
+          "sha256": "dca00290f63cd360924055293d79f6201d83f128e0fa7db9b737f873cc7a9474"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",

@@ -16,7 +16,6 @@ for path in (EVIDENCE_DIR, RUNNER_DIR):
 from _runner_context import build_validator  # noqa: E402
 from target_catalog import (  # noqa: E402
     TARGETS_PATH,
-    TCK_RELEASES_PATH,
     canonical_target_key,
     expected_input_artifacts,
     expected_suite_records,
@@ -24,6 +23,8 @@ from target_catalog import (  # noqa: E402
     load_json,
     mandatory_case_ids,
     release_record,
+    release_policy,
+    release_snapshot_digest,
     release_supersession,
     release_target_entry,
     resolve_target_record,
@@ -33,6 +34,7 @@ from target_catalog import (  # noqa: E402
     validate_target_registry,
 )
 from target_handlers import resolve_handler  # noqa: E402
+from producer_suite_semantics import CHECK_IMPLEMENTATIONS  # noqa: E402
 
 
 ALL_CHECKS = frozenset(
@@ -42,6 +44,8 @@ ALL_CHECKS = frozenset(
         "determinism",
         "consumer_observations",
         "subject_kind",
+        "artifact_multiplicity",
+        *CHECK_IMPLEMENTATIONS,
     }
 )
 
@@ -176,9 +180,12 @@ def evaluate_report(
             )
         )
         selected_target = {}
-    is_current_release = (
-        declared_release_id == registry_target.current_release_id
-    )
+    try:
+        policy = release_policy(declared_release_id)
+    except ValueError as exc:
+        errors.append(_error("EVIDENCE_TCK_RELEASE_POLICY_MISSING", str(exc)))
+        policy = {"strong_eligible": False}
+    strong_eligible_release = policy.get("strong_eligible") is True
 
     for message in [
         *validate_target_registry(),
@@ -229,20 +236,21 @@ def evaluate_report(
                 )
             )
 
-    supersession = release_supersession(declared_release_id)
     schema_digest = selected_release["target_registry"].get("schema_digest")
-    registry_digest = file_digest(TCK_RELEASES_PATH)
-    if not is_current_release:
-        if not isinstance(supersession, dict):
-            errors.append(
-                _error(
-                    "EVIDENCE_HISTORICAL_RELEASE_METADATA_MISSING",
-                    "historical release lacks frozen supersession metadata",
-                )
+    try:
+        registry_digest = release_snapshot_digest(declared_release_id)
+    except ValueError as exc:
+        supersession = release_supersession(declared_release_id)
+        if isinstance(supersession, dict) and isinstance(
+            supersession.get("release_registry_digest"), str
+        ):
+            registry_digest = supersession["release_registry_digest"]
+            schema_digest = supersession.get(
+                "target_registry_schema_digest", schema_digest
             )
         else:
-            schema_digest = supersession.get("target_registry_schema_digest")
-            registry_digest = supersession.get("release_registry_digest")
+            errors.append(_error("EVIDENCE_RELEASE_SNAPSHOT_MISSING", str(exc)))
+            registry_digest = None
     expected_tck = {
         "release_id": selected_release["release_id"],
         "registry_digest": registry_digest,
@@ -324,7 +332,31 @@ def evaluate_report(
 
     mode = str(report.get("execution_mode"))
     by_id, counts = _case_results_by_id(report)
-    expected_ids = Counter(mandatory_case_ids(catalog, mode, handler))
+    release_case_ids = selected_target.get("mandatory_case_ids")
+    if mode == "smoke":
+        expected_case_ids = mandatory_case_ids(catalog, mode, handler)
+    elif isinstance(release_case_ids, list):
+        expected_case_ids = [str(item) for item in release_case_ids]
+    elif isinstance(selected_target.get("mandatory_producer_ids"), list) and isinstance(
+        selected_target.get("mandatory_consumer_ids"), list
+    ):
+        expected_case_ids = [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-DESCRIBE-START-01",
+            *[
+                str(item["case_id"])
+                for item in selected_target.get("canonicalization_vectors", [])
+                if isinstance(item, dict) and isinstance(item.get("case_id"), str)
+            ],
+            *[str(item) for item in selected_target["mandatory_producer_ids"]],
+            *[str(item) for item in selected_target["mandatory_consumer_ids"]],
+            "EVIDENCE-DESCRIBE-STABILITY-01",
+            "EVIDENCE-TARGET-SUPPORT-01",
+        ]
+    else:
+        expected_case_ids = mandatory_case_ids(catalog, mode, handler)
+    expected_ids = Counter(expected_case_ids)
     if "case_coverage" not in disabled_checks and counts != expected_ids:
         errors.append(
             _error(
@@ -366,31 +398,15 @@ def evaluate_report(
             )
         )
 
-    if not is_current_release:
-        if report.get("compatibility_marks") != []:
-            errors.append(
-                _error(
-                    "EVIDENCE_HISTORICAL_MARK_INELIGIBLE",
-                    "a historical release cannot emit a current strong mark",
-                )
-            )
-        if errors:
-            return _rejected(errors)
-        return {
-            "status": "ineligible",
-            "errors": [],
-            "eligible_marks": [],
-            "eligible_targets": [],
-        }
-
-    for code, message in handler.evaluate_report(
-        report,
-        catalog,
-        by_id,
-        mode,
-        disabled_checks,
-    ):
-        errors.append(_error(code, message))
+    if strong_eligible_release:
+        for code, message in handler.evaluate_report(
+            report,
+            catalog,
+            by_id,
+            mode,
+            disabled_checks,
+        ):
+            errors.append(_error(code, message))
 
     eligible_subject = subject_kind == "external_implementation"
     if "subject_kind" in disabled_checks:
@@ -398,7 +414,10 @@ def evaluate_report(
     eligible_mode = mode == registry_target.execution_mode
     computed_marks = (
         [registry_target.expected_mark]
-        if not errors and eligible_subject and eligible_mode
+        if not errors
+        and strong_eligible_release
+        and eligible_subject
+        and eligible_mode
         else []
     )
     if report.get("compatibility_marks") != computed_marks:
@@ -411,7 +430,7 @@ def evaluate_report(
         computed_marks = []
     if errors:
         return _rejected(errors)
-    if not eligible_subject or not eligible_mode:
+    if not strong_eligible_release or not eligible_subject or not eligible_mode:
         return {
             "status": "ineligible",
             "errors": [],

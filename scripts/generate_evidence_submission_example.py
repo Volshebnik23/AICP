@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 import tempfile
@@ -16,7 +17,6 @@ for path in (EVIDENCE_DIR, SCRIPTS_DIR):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from aicp_external_evidence_runner import run_evidence  # noqa: E402
 from interop_submission_validation import (  # noqa: E402
     build_integrity_manifest,
     manifest_tracked_paths,
@@ -28,6 +28,9 @@ EXAMPLE_DIR = (
 )
 REPORT_REF = "reports/report_capability_projection_v1.json"
 TIMESTAMP = "2026-07-30T00:00:00Z"
+FROZEN_REPORT_SHA256 = (
+    "0f6987c223bb6ee962a6668ede5b0fc719019174160361a478631638969da695"
+)
 
 
 def render(value: Any) -> str:
@@ -63,20 +66,11 @@ def example_manifest() -> dict[str, Any]:
 
 
 def generated_files() -> dict[str, str]:
-    report = run_evidence(
-        [
-            sys.executable,
-            "conformance/evidence/fake_adapters.py",
-            "--mode",
-            "external_good",
-        ],
-        timestamp=TIMESTAMP,
-    )
-    report["execution_subject"] = {
-        **report["execution_subject"],
-        "implementation_id": "example-projection-v1-implementation",
-        "implementation_version": "1.0.0-example",
-    }
+    frozen_report_path = EXAMPLE_DIR / REPORT_REF
+    report_text = frozen_report_path.read_text(encoding="utf-8")
+    normalized = report_text.replace("\r\n", "\n").replace("\r", "\n")
+    if hashlib.sha256(normalized.encode("utf-8")).hexdigest() != FROZEN_REPORT_SHA256:
+        raise ValueError("frozen pre-M63 projection report bytes changed")
     manifest = example_manifest()
     with tempfile.TemporaryDirectory(prefix="aicp-evidence-example-") as raw:
         package = Path(raw)
@@ -86,7 +80,7 @@ def generated_files() -> dict[str, str]:
             render(manifest),
             encoding="utf-8",
         )
-        report_path.write_text(render(report), encoding="utf-8")
+        report_path.write_text(report_text, encoding="utf-8")
         integrity = build_integrity_manifest(
             package,
             manifest["submission_id"],
@@ -95,7 +89,7 @@ def generated_files() -> dict[str, str]:
         )
     return {
         "submission.json": render(manifest),
-        REPORT_REF: render(report),
+        REPORT_REF: report_text,
         "bundle-integrity.json": render(integrity),
     }
 

@@ -14,6 +14,7 @@ if str(RUNNER_DIR) not in sys.path:
 
 from _runner_context import build_validator  # noqa: E402
 from profile_transcript_evaluator import evaluate_profile_transcript  # noqa: E402
+from producer_suite_semantics import sequence_errors, suite_coverage_errors  # noqa: E402
 
 
 HANDLER_ID = "product_profile_v01"
@@ -192,8 +193,14 @@ def _flow_errors(
     flow_id: str,
     messages: list[dict[str, Any]],
     scenario: dict[str, Any],
+    *,
+    disabled_checks: frozenset[str] = frozenset(),
 ) -> list[str]:
-    errors: list[str] = []
+    errors: list[str] = (
+        []
+        if "CT-SEQUENCE-01" in disabled_checks
+        else sequence_errors(flow_id, messages)
+    )
     message_types = [str(message.get("message_type")) for message in messages]
 
     def require(*types: str) -> None:
@@ -332,6 +339,7 @@ def producer_errors(
     *,
     scenario_validator: Any | None,
     projection_validator: Any | None,
+    disabled_checks: frozenset[str] = frozenset(),
 ) -> list[str]:
     scenario = check["scenario"]
     if scenario_validator is None or projection_validator is None:
@@ -363,7 +371,12 @@ def producer_errors(
     }
     if not senders.issubset(set(scenario.get("participant_ids", []))):
         errors.append("generated transcript contains an undeclared participant")
-    evaluation = evaluate_profile_transcript(messages, scenario["required_suites"])
+    evaluation = evaluate_profile_transcript(
+        messages,
+        scenario["required_suites"],
+        disabled_checks=disabled_checks,
+        enforce_core_contract_semantics=True,
+    )
     if not evaluation.accepted:
         errors.extend(
             f"generated transcript failed {item['code']}: {item['message']}"
@@ -371,7 +384,14 @@ def producer_errors(
         )
     if evaluation.degraded:
         errors.append("generated transcript validation was degraded")
-    errors.extend(_flow_errors(str(scenario.get("flow_id")), messages, scenario))
+    errors.extend(
+        _flow_errors(
+            str(scenario.get("flow_id")),
+            messages,
+            scenario,
+            disabled_checks=disabled_checks,
+        )
+    )
     return sorted(set(errors))
 
 
@@ -397,6 +417,11 @@ def validate_catalog(
     if payload.get("target") != catalog.get("target"):
         errors.append("producer scenario catalog target does not match target catalog")
     scenarios = payload.get("scenarios") if isinstance(payload.get("scenarios"), list) else []
+    errors.extend(
+        suite_coverage_errors(
+            [item for item in scenarios if isinstance(item, dict)]
+        )
+    )
     scenario_ids = [item.get("scenario_id") for item in scenarios if isinstance(item, dict)]
     producer_ids = [item.get("scenario_id") for item in catalog.get("producer_scenarios", [])]
     if Counter(scenario_ids) != Counter(producer_ids):
@@ -438,6 +463,24 @@ def evaluate_report(
     generated = report.get("generated_artifacts")
     if not isinstance(generated, list):
         return [("EVIDENCE_GENERATED_ARTIFACTS", "generated artifacts are missing")]
+    artifact_counts = Counter(
+        item.get("artifact_id")
+        for item in generated
+        if isinstance(item, dict) and isinstance(item.get("artifact_id"), str)
+    )
+    expected_artifact_counts = Counter(
+        item["artifact_id"] for item in expected_producers
+    )
+    if (
+        "artifact_multiplicity" not in disabled_checks
+        and artifact_counts != expected_artifact_counts
+    ):
+        errors.append(
+            (
+                "EVIDENCE_PRODUCER_ARTIFACT_COVERAGE_MISMATCH",
+                "generated artifact IDs must match the expected exact multiplicity",
+            )
+        )
     by_artifact = {
         item.get("artifact_id"): item
         for item in generated
@@ -473,6 +516,7 @@ def evaluate_report(
                 },
                 scenario_validator=scenario_validator,
                 projection_validator=core_validator,
+                disabled_checks=disabled_checks,
             )
             errors.extend(
                 ("EVIDENCE_GENERATED_TRANSCRIPT_INVALID", message)
@@ -481,7 +525,12 @@ def evaluate_report(
         else:
             errors.append(("EVIDENCE_GENERATED_TRANSCRIPT_INVALID", "artifact content is missing"))
     if set(by_artifact) != {item["artifact_id"] for item in expected_producers}:
-        errors.append(("EVIDENCE_PRODUCER_COVERAGE", "producer artifact coverage is duplicated or unknown"))
+        errors.append(
+            (
+                "EVIDENCE_PRODUCER_ARTIFACT_COVERAGE_MISMATCH",
+                "generated artifact IDs are missing or unknown",
+            )
+        )
 
     if "consumer_observations" not in disabled_checks:
         for case in consumer_cases(catalog, mode):
@@ -521,6 +570,7 @@ def evaluate_report(
 
 class ProductProfileV01Handler:
     handler_id = HANDLER_ID
+    artifact_kind = "transcript"
     required_operations = REQUIRED_OPERATIONS
 
     build_plan_entries = staticmethod(build_plan_entries)
