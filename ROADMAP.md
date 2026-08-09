@@ -136,16 +136,18 @@ _Last updated: 2026-07-29_
 - **Status:** Shipped.
 - **Problem:** the Tier-1 mediated-blocking, resumable-sessions, and delegated-identity
   profiles had internal conformance catalogs but no complete generalized external target.
-- **Scope:** register exactly those three `product_profile` targets on report 2.1 and
-  `AICP-EVIDENCE-TCK-1.2.0`, using one reusable handler, neutral producer scenarios,
+- **Scope:** register exactly those three `product_profile` targets on report 2.1; freeze
+  the audited 1.2.0 result and use corrected current `AICP-EVIDENCE-TCK-1.3.0` with one reusable handler, neutral producer scenarios,
   independent transcript evaluation, and all 69 required-suite consumer cases.
 - **Completion evidence:** 10/9/13 deterministic producer scenarios cover the three
   profiles; full test-only external runs reach their exact ordinary profile marks, while
   reference, smoke, degraded, forged, incomplete, semantically invalid, and
   provenance-mismatched evidence remains ineligible. Public `suite_refs` are the exact
-  required-suite union and reports are independently re-evaluated.
+  required-suite union and reports are independently re-evaluated. Release-specific
+  registry snapshots preserve eligible 1.1.0 projection reports; every producer-suite
+  check is machine-accounted, and exact artifact-ID multiplicity is fail-closed.
 - **Compatibility boundary:** product-profile IUT v1 and projection report 2.0 remain
-  valid; Evidence TCK 1.0 and 1.1 records are frozen. No target is added for other
+  valid; Evidence TCK 1.0, 1.1, and 1.2 records are frozen. No target is added for other
   profiles, composition, live bindings, or pairwise interoperability.
 - **Next concrete step:** M64 remains planned for live transport and binding
   interoperability.

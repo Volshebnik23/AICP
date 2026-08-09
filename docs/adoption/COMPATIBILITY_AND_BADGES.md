@@ -98,21 +98,22 @@ never copied from arbitrary report JSON. `self_attested` packaging alone is not 
 an ordinary profile mark. File digests prove artifact integrity,
 not organizational identity, certification, or endorsement.
 
-Generalized external reports are a separate target-oriented family. Report 2.0 retains
-`aicp.session_state_projection@v1` in `full-capability` mode under
-`AICP-EVIDENCE-TCK-1.1.0`. A complete external implementation may be eligible for
+Generalized external reports are a separate target-oriented family. Exact report-2.0
+projection evidence under frozen `AICP-EVIDENCE-TCK-1.1.0` remains eligible, while new
+`aicp.session_state_projection@v1` executions use report 2.1 and current
+`AICP-EVIDENCE-TCK-1.3.0`. A complete external implementation may be eligible for
 `AICP-Evidence-SESSION-STATE-PROJECTION-v1`; reference, smoke, degraded, skipped, incomplete,
 or provenance-mismatched reports emit no capability mark. This evidence mark is not an
 ordinary product-profile mark and cannot prove profile conformance, certification,
 composition, organizational identity, or pairwise interoperability. Projection v2 remains
-internal-only. Report 2.1 and `AICP-EVIDENCE-TCK-1.2.0` add the exact Mediated Blocking,
+internal-only. Report 2.1 and current `AICP-EVIDENCE-TCK-1.3.0` provide the exact Mediated Blocking,
 Resumable Sessions, and Delegated Identity `full-profile` targets. They independently
 compute ordinary product-profile marks, but one report covers one exact profile and
 component suites do not become separate external claims.
 
-Evidence TCK 1.0.0 is frozen historical data with superseded-experimental status: its
-producer challenge did not isolate the expected answer, and no real external submission
-depended on it. A schema-valid 1.0.0 report cannot support the current capability mark.
+Evidence TCK 1.0.0 and 1.2.0 are frozen, historical, and strong-ineligible for their
+documented answer-isolation and producer-semantic/cardinality defects. No checked-in real
+external submission depended on either release.
 
 ## Current external reachability
 

@@ -59,7 +59,7 @@ mature.
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
 | Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
-| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.1.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.3.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
@@ -107,11 +107,11 @@ mature.
 3. **Profile composition evidence:** M61 ships internal CAPNEG v0.2 multi-profile
    composition, but it does not award component marks or provide generalized external
    composition evidence. That external target remains deferred.
-4. **External evidence breadth:** only two of 16 registered profiles have full external-IUT
-   targets. M62 adds one complete projection-v1 capability target without expanding the
-   profile target set. Its current answer-isolated release is
-   `AICP-EVIDENCE-TCK-1.1.0`; frozen 1.0.0 evidence is superseded and cannot support a
-   current strong claim. Tier-1 profile breadth remains routed to M63.
+4. **External evidence breadth:** two of 16 registered profiles have full external-IUT
+   targets, and three Tier-1 profiles have generalized report-2.1 targets. M62 added one
+   projection-v1 capability target; M63's corrected current release is
+   `AICP-EVIDENCE-TCK-1.3.0`. Exact 1.1.0 projection reports remain strong-eligible, while
+   frozen 1.0.0 and 1.2.0 cannot support a strong claim for their documented defects.
 5. **Transport evidence:** binding suites validate static case artifacts, not live endpoints.
    Routed to M64.
 6. **Registered message surface:** the following experimental registered types have no

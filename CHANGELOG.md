@@ -42,6 +42,12 @@ All notable repo-backed release metadata changes should be recorded here.
   a test-only external adapter, fail-closed profile-specific/generic negative modes, nine
   focused Make targets, and public report-2.1 strong profile-claim evaluation with exact
   load-bearing `suite_refs`.
+- Added corrected `AICP-EVIDENCE-TCK-1.3.0` for all four generalized targets, immutable
+  per-release registry snapshots, actual import-closure bundle self-checking, handler-owned
+  report-2.1 artifact kinds, dynamically derived producer suite-check inventory, and exact
+  generated-artifact ID cardinality enforcement. Frozen 1.1.0 projection reports remain
+  strong-eligible; frozen 1.0.0 and 1.2.0 are explicitly strong-ineligible for their
+  documented evidence defects.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release

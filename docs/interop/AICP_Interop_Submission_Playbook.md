@@ -93,7 +93,8 @@ The validator rejects `implements_profile` or `compatible_with_profile` paired w
 Retaining that enum does not create a weaker certification tier.
 
 The M63 generalized targets are exactly `AICP-MEDIATED-BLOCKING@0.1`,
-`AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-DELEGATED-IDENTITY@0.1` under Evidence TCK 1.2.0.
+`AICP-RESUMABLE-SESSIONS@0.1`, and `AICP-DELEGATED-IDENTITY@0.1` under current Evidence TCK 1.3.0.
+The frozen 1.2.0 release is historical and strong-ineligible.
 One report proves one exact profile. Reference and test-only adapters are verification
 fixtures, not external implementations. No real Tier-1 submission is currently present;
 multi-profile composition, live binding interoperability, and pairwise publication remain
