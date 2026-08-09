@@ -5,6 +5,11 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+from producer_payload_schema_router import (
+    payload_route_errors,
+    tier1_scenarios,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -15,8 +20,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CHECK_IMPLEMENTATIONS: dict[str, tuple[str, str]] = {
     "CT-SCHEMA-JSONL-01": ("executed_common_check", "core envelope schema"),
     "CT-MESSAGE-TYPE-REGISTRY-01": ("executed_common_check", "message type registry"),
-    "CT-PAYLOAD-SCHEMA-01": ("executed_common_check", "suite payload schema"),
-    "CN-PAYLOAD-SCHEMA-01": ("executed_common_check", "suite payload schema"),
+    "CT-PAYLOAD-SCHEMA-01": ("executed_common_check", "version-selected payload schema router"),
+    "CN-PAYLOAD-SCHEMA-01": ("executed_common_check", "version-selected payload schema router"),
     "CT-HASH-CHAIN-01": ("executed_common_check", "message hash chain"),
     "CT-PREV-MSG-REQUIRED-01": ("executed_common_check", "previous-message requirement"),
     "CT-INVARIANTS-01": ("executed_common_check", "session/contract/message invariants"),
@@ -58,6 +63,139 @@ CHECK_IMPLEMENTATIONS: dict[str, tuple[str, str]] = {
     "DI-EXPIRY-01": ("executed_suite_semantic_check", "binding expiry"),
     "DI-REVOKE-01": ("executed_suite_semantic_check", "binding revocation"),
 }
+
+
+SEMANTIC_PARITY_EVIDENCE: dict[str, dict[str, str]] = {
+    "core_envelope_hash_signature": {
+        "parity_mode": "shared_implementation",
+        "evidence": "Core schemas plus aicp_ref hashing/signature helpers",
+    },
+    "core_payload_schemas": {
+        "parity_mode": "shared_implementation",
+        "evidence": "suite payload_schema_map plus _runner_context validator builder",
+    },
+    "extension_payload_schemas": {
+        "parity_mode": "shared_implementation",
+        "evidence": "suite payload_schema_map plus _runner_context validator builder",
+    },
+    "private_sequence": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "core_contract": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "core_policy_categories": {
+        "parity_mode": "differential_test",
+        "evidence": "evidence_identifier_rules.is_broad_namespaced_identifier plus differential corpus",
+    },
+    "capneg_reason_codes": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "capneg_privacy_modes": {
+        "parity_mode": "differential_test",
+        "evidence": "evidence_identifier_rules.is_vendor_or_org_namespaced_identifier plus differential corpus",
+    },
+    "capneg_bindings": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "capneg_channel_properties": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "policy_reason_codes": {
+        "parity_mode": "differential_test",
+        "evidence": "evidence_identifier_rules.is_vendor_or_org_namespaced_identifier plus differential corpus",
+    },
+    "policy_context_hash": {
+        "parity_mode": "shared_implementation",
+        "evidence": "aicp_ref.hashing.object_hash",
+    },
+    "enforcement_sanctions": {
+        "parity_mode": "differential_test",
+        "evidence": "evidence_identifier_rules.is_broad_namespaced_identifier plus differential corpus",
+    },
+    "enforcement_gate_authorization": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "resume_semantics": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "object_hash": {
+        "parity_mode": "shared_implementation",
+        "evidence": "aicp_ref.hashing.object_hash",
+    },
+    "identity_lifecycle": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+    "delegated_identity": {
+        "parity_mode": "differential_test",
+        "evidence": "test_m63_payload_semantic_parity_correction.py",
+    },
+}
+
+
+def parity_family(check_id: str) -> str:
+    if check_id in {
+        "CT-SCHEMA-JSONL-01",
+        "CT-MESSAGE-TYPE-REGISTRY-01",
+        "CT-HASH-CHAIN-01",
+        "CT-PREV-MSG-REQUIRED-01",
+        "CT-INVARIANTS-01",
+        "CT-CONTRACT-ID-01",
+        "CT-SIGNATURE-HASH-01",
+        "CT-SIGNATURE-STRUCTURE-01",
+        "CT-MESSAGE-HASH-01",
+        "CT-SIGNATURE-VERIFY-01",
+    }:
+        return "core_envelope_hash_signature"
+    exact = {
+        "CT-PAYLOAD-SCHEMA-01": "core_payload_schemas",
+        "CN-PAYLOAD-SCHEMA-01": "extension_payload_schemas",
+        "CT-SEQUENCE-01": "private_sequence",
+        "CT-CONTRACT-SCHEMA-01": "core_contract",
+        "CT-POLICY-CATEGORIES-01": "core_policy_categories",
+        "CN-REASON-CODES-01": "capneg_reason_codes",
+        "CN-PRIVACY-MODES-01": "capneg_privacy_modes",
+        "CN-CHANNEL-PROPERTIES-01": "capneg_channel_properties",
+        "PE-REASON-CODES-01": "policy_reason_codes",
+        "PE-CONTEXT-HASH-01": "policy_context_hash",
+        "ENF-SANCTION-CODES-01": "enforcement_sanctions",
+        "OR-OBJECT-HASH-01": "object_hash",
+    }
+    if check_id in exact:
+        return exact[check_id]
+    if check_id.startswith("CN-"):
+        return "capneg_bindings"
+    if check_id.startswith("ENF-"):
+        return "enforcement_gate_authorization"
+    if check_id.startswith("RS-"):
+        return "resume_semantics"
+    if check_id.startswith("ID-"):
+        return "identity_lifecycle"
+    if check_id.startswith("DI-"):
+        return "delegated_identity"
+    raise ValueError(f"producer semantic check has no parity family: {check_id}")
+
+
+def semantic_parity_inventory() -> list[dict[str, Any]]:
+    covered: dict[str, list[str]] = defaultdict(list)
+    for check_id in CHECK_IMPLEMENTATIONS:
+        covered[parity_family(check_id)].append(check_id)
+    return [
+        {
+            "family": family,
+            **SEMANTIC_PARITY_EVIDENCE[family],
+            "check_ids": sorted(check_ids),
+        }
+        for family, check_ids in sorted(covered.items())
+    ]
 
 
 PRIVATE_FLOW_SEQUENCES: dict[str, tuple[str, ...]] = {
@@ -153,6 +291,14 @@ def producer_check_inventory(scenarios: list[dict[str, Any]]) -> list[dict[str, 
                 "check_id": check_id,
                 "execution_kind": implementation[0] if implementation else "unimplemented",
                 "implementation": implementation[1] if implementation else "unimplemented",
+                "parity_family": (
+                    parity_family(check_id) if implementation else "unimplemented"
+                ),
+                "parity_evidence": (
+                    SEMANTIC_PARITY_EVIDENCE[parity_family(check_id)]
+                    if implementation
+                    else None
+                ),
                 "producer_scenarios": sorted(exercising[(suite_id, check_id)]),
             }
         )
@@ -172,6 +318,9 @@ def suite_coverage_errors(scenarios: list[dict[str, Any]]) -> list[str]:
         f"mandatory producer suite check has no execution implementation: {check_id}"
         for check_id in unknown_suite_checks(paths)
     ]
+    errors.extend(
+        payload_route_errors(tier1_scenarios(), PRIVATE_FLOW_SEQUENCES)
+    )
     for scenario in scenarios:
         flow_id = scenario.get("flow_id")
         if "CT-SEQUENCE-01" in {
@@ -182,6 +331,10 @@ def suite_coverage_errors(scenarios: list[dict[str, Any]]) -> list[str]:
         if not item["producer_scenarios"]:
             errors.append(
                 f"mandatory producer suite check is not exercised: {item['suite']}/{item['check_id']}"
+            )
+        if not isinstance(item.get("parity_evidence"), dict):
+            errors.append(
+                f"mandatory producer suite check lacks parity evidence: {item['suite']}/{item['check_id']}"
             )
     return sorted(set(errors))
 

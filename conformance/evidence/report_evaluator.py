@@ -45,6 +45,7 @@ ALL_CHECKS = frozenset(
         "consumer_observations",
         "subject_kind",
         "artifact_multiplicity",
+        "EVIDENCE-GENERATED-PAYLOAD-SCHEMA-01",
         *CHECK_IMPLEMENTATIONS,
     }
 )
