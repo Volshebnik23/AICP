@@ -430,7 +430,7 @@
         "externally_testable"
       ],
       "external_test_path": "full-capability",
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.3.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.4.0",
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
       "external_evidence_mark_reachable": true,

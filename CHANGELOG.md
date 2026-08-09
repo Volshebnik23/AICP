@@ -48,6 +48,12 @@ All notable repo-backed release metadata changes should be recorded here.
   generated-artifact ID cardinality enforcement. Frozen 1.1.0 projection reports remain
   strong-eligible; frozen 1.0.0 and 1.2.0 are explicitly strong-ineligible for their
   documented evidence defects.
+- Froze `AICP-EVIDENCE-TCK-1.3.0` as strong-ineligible and registered current
+  `AICP-EVIDENCE-TCK-1.4.0`. Generated Tier-1 transcripts now route all 26 exercised
+  message types to their exact Core/extension v0.1 owner payload schemas, fail closed on
+  missing or conflicting routes, and match the ordinary conformance namespace rules.
+  Differential coverage compares all 38 canonical transcripts across the 18 semantic
+  implementation families represented by the unchanged 95 producer-suite rows.
 
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release

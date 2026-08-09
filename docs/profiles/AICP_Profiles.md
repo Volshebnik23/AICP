@@ -400,7 +400,7 @@ A **conformance badge** is a profile-level compatibility mark issued when all re
 Repository-owned profile runner results are internal conformance evidence. They do not prove
 an independent implementation. An ordinary external product-profile mark additionally
 requires an eligible full-profile external evidence report. Base and Authenticated Base
-retain full external-IUT v1 targets. Current Evidence TCK 1.3.0 provides generalized report-2.1 targets
+retain full external-IUT v1 targets. Current Evidence TCK 1.4.0 provides generalized report-2.1 targets
 for exactly Mediated Blocking, Resumable Sessions, and Delegated Identity. All five marks
 are reachable for complete eligible external implementations; the repository currently
 contains no independent external evidence for any of them.
