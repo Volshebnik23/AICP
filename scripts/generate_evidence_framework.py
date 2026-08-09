@@ -22,6 +22,8 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_1_REGISTRY_SNAPSHOT_DIGEST,
     FROZEN_TCK_1_2_RECORD_DIGEST,
     FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_3_RECORD_DIGEST,
+    FROZEN_TCK_1_3_REGISTRY_SNAPSHOT_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_RELEASE_REGISTRY_DIGEST,
     HISTORICAL_TARGET_SCHEMA_DIGEST,
@@ -30,6 +32,7 @@ from target_catalog import (  # noqa: E402
     PRODUCER_SCENARIO_SCHEMA_PATH,
     PRODUCER_TRANSCRIPT_PATH,
     PROFILE_TCK_RELEASE_ID,
+    PREVIOUS_TCK_RELEASE_ID,
     PROFILE_TARGET_KEYS,
     REPORT_SCHEMA_PATH,
     REPORT_SCHEMA_V21_PATH,
@@ -55,6 +58,9 @@ from target_catalog import (  # noqa: E402
 )
 from target_handlers import resolve_handler  # noqa: E402
 from profile_scenario_builder import scenario_template_paths  # noqa: E402
+from producer_payload_schema_router import (  # noqa: E402
+    tier1_payload_route_input_paths,
+)
 
 
 SUITE_REF = "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
@@ -443,6 +449,7 @@ def profile_target_catalog_payload(config: dict[str, str]) -> dict[str, Any]:
         "registry/policy_reason_codes.json",
         "registry/crypto_profiles.json",
         *required_suite_paths,
+        *tier1_payload_route_input_paths(),
         *fixture_paths,
         *schema_paths,
         *VECTOR_REFS,
@@ -526,6 +533,10 @@ def release_registry_payload(
     profile_release = _frozen_release(
         PROFILE_TCK_RELEASE_ID,
         FROZEN_TCK_1_2_RECORD_DIGEST,
+    )
+    previous_release = _frozen_release(
+        PREVIOUS_TCK_RELEASE_ID,
+        FROZEN_TCK_1_3_RECORD_DIGEST,
     )
     projection_handler = resolve_handler("projection_v1")
     product_handler = resolve_handler("product_profile_v01")
@@ -612,7 +623,7 @@ def release_registry_payload(
             }
         )
     return {
-        "registry_version": "1.3",
+        "registry_version": "1.4",
         "supersessions": [
             {
                 "release_id": HISTORICAL_TCK_RELEASE_ID,
@@ -648,16 +659,29 @@ def release_registry_payload(
                 "reason": "Incomplete producer-suite semantic closure and generated-artifact multiplicity defect.",
             },
             {
+                "release_id": PREVIOUS_TCK_RELEASE_ID,
+                "lifecycle": "historical",
+                "strong_eligible": False,
+                "reason": (
+                    "Incomplete message-owner payload-schema closure and "
+                    "ordinary-conformance namespace parity."
+                ),
+            },
+            {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "lifecycle": "current",
                 "strong_eligible": True,
-                "reason": "Corrected release-immutable, suite-complete evidence framework.",
+                "reason": (
+                    "Corrected message-owner payload-schema closure and "
+                    "behavioral conformance parity."
+                ),
             },
         ],
         "releases": [
             historical,
             projection_release,
             profile_release,
+            previous_release,
             {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "status": "experimental",
@@ -747,9 +771,19 @@ def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, A
     ):
         raise ValueError("evidence TCK 1.2.0 registry snapshot changed")
 
+    frozen_1_3_path = RELEASE_SNAPSHOT_DIR / f"{PREVIOUS_TCK_RELEASE_ID}.json"
+    if not frozen_1_3_path.is_file():
+        raise ValueError("frozen evidence TCK 1.3.0 registry snapshot is missing")
+    frozen_1_3 = load_json(frozen_1_3_path)
+    if digest_bytes(render(frozen_1_3).encode("utf-8")) != (
+        FROZEN_TCK_1_3_REGISTRY_SNAPSHOT_DIGEST
+    ):
+        raise ValueError("evidence TCK 1.3.0 registry snapshot changed")
+
     return {
         TCK_RELEASE_ID: frozen_1_1,
         PROFILE_TCK_RELEASE_ID: frozen_1_2,
+        PREVIOUS_TCK_RELEASE_ID: frozen_1_3,
         CURRENT_TCK_RELEASE_ID: releases,
     }
 
@@ -780,6 +814,7 @@ def main() -> int:
             for release_id in (
                 TCK_RELEASE_ID,
                 PROFILE_TCK_RELEASE_ID,
+                PREVIOUS_TCK_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -795,6 +830,7 @@ def main() -> int:
             for release_id in (
                 TCK_RELEASE_ID,
                 PROFILE_TCK_RELEASE_ID,
+                PREVIOUS_TCK_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -867,8 +903,8 @@ def main() -> int:
     print(
         f"{action}: three Tier-1 profile targets, {producer_count} producers, "
         f"{consumer_count} consumers, {CURRENT_TCK_RELEASE_ID}; "
-        f"{HISTORICAL_TCK_RELEASE_ID}, {TCK_RELEASE_ID}, and "
-        f"{PROFILE_TCK_RELEASE_ID} retained."
+        f"{HISTORICAL_TCK_RELEASE_ID}, {TCK_RELEASE_ID}, "
+        f"{PROFILE_TCK_RELEASE_ID}, and {PREVIOUS_TCK_RELEASE_ID} retained."
     )
     return 0
 

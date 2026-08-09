@@ -70,6 +70,13 @@ tag, package publication, GA declaration, or final RC repackaging.
   check is machine-accounted and executable, and duplicate/missing/unknown generated
   artifact IDs fail exact `Counter` equality before map construction. Exact 1.1.0
   projection reports remain strong-eligible; report 2.0 support is retained.
+- The M63 semantic-closure correction freezes 1.3.0 as strong-ineligible and registers
+  current Evidence TCK 1.4.0 without changing report 2.1. Its generated-message router is
+  derived from the exact v0.1 `payload_schema_ref`/`payload_schema_map` suite metadata and
+  validates Core lifecycle messages inside extension scenarios and extension messages
+  inside Core scenarios. Missing or conflicting owner routes fail closed. PE reason codes
+  and CAPNEG privacy modes now use the ordinary `vendor:`/`org:` rule, while broader Core
+  policy-category and enforcement-sanction namespaces remain unchanged.
 
 ### Current evidence limits
 

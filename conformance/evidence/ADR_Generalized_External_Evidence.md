@@ -1,6 +1,6 @@
 # ADR: Generalized provenance-bound external evidence
 
-- **Status:** Accepted for M62; extended by M63
+- **Status:** Accepted for M62; extended and corrected by M63
 - **Decision date:** 2026-08-08
 - **Scope:** target-oriented external evidence for capabilities and exact product profiles
 
@@ -39,8 +39,10 @@ capability evidence.
    `AICP-AUTHENTICATED-BASE@0.1`. Add report 2.1 for exactly
    `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and
    `AICP-DELEGATED-IDENTITY@0.1`. Freeze the audited Evidence TCK 1.2.0 as historical
-   and strong-ineligible; corrected 1.3.0 is current for all four generalized targets,
-   while exact report-2.0/TCK-1.1.0 projection evidence remains strong-eligible.
+   and strong-ineligible. Freeze 1.3.0 as historical and strong-ineligible because it did
+   not close generated messages over their exact owner payload schemas or match ordinary
+   namespace semantics; corrected 1.4.0 is current for all four generalized targets.
+   Exact report-2.0/TCK-1.1.0 projection evidence remains strong-eligible.
 7. Use one registered `product_profile_v01` handler. Producer challenges contain neutral
    facts, never case IDs, fixture paths, golden messages/hashes, or expected marks. The
    runner validates returned transcripts independently in memory, including every check
@@ -52,6 +54,11 @@ capability evidence.
 9. A report proves one exact target. Public profile claims accept either frozen profile-IUT
    v1 or generalized report 2.1 only after independent evaluation, and `suite_refs` must
    exactly identify the claimed profiles' required-suite union.
+10. For generated Tier-1 transcripts, derive message-owner payload routes from the union
+    of exact v0.1 suite metadata rather than from only a scenario's primary suites. Missing
+    or conflicting routes fail catalog validation. Mirror the ordinary narrow namespace
+    predicate for PE reason codes and CAPNEG privacy modes while retaining the intentionally
+    broader Core policy-category and enforcement-sanction predicates.
 
 ## Rejected alternatives
 

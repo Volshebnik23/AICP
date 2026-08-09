@@ -184,6 +184,27 @@ def _resume_with_state_sync() -> list[dict[str, Any]]:
     return messages
 
 
+def _canonicalize_binding_action(messages: list[dict[str, Any]]) -> None:
+    """Project the legacy DI action fixture into the Core v0.1 payload shape."""
+
+    action = next(
+        message
+        for message in reversed(messages)
+        if message.get("message_type") == "ATTEST_ACTION"
+    )
+    payload = action.get("payload")
+    if not isinstance(payload, dict) or not isinstance(payload.get("action"), str):
+        return
+    action_name = str(payload.pop("action"))
+    payload["action_id"] = f"{action['message_id']}-action"
+    payload["action_type"] = action_name
+    # The action is the terminal message in the generated issue/use flow. Its
+    # fixture signature covers the pre-projection body, so omit that optional
+    # signature and retain the still-valid required DI issuer signatures.
+    action.pop("signatures", None)
+    _rechain(messages, unsigned=False)
+
+
 def build_scenario_transcript(scenario: dict[str, Any]) -> list[dict[str, Any]]:
     flow_id = scenario.get("flow_id")
     if not isinstance(flow_id, str) or flow_id not in FLOW_TEMPLATES:
@@ -204,6 +225,8 @@ def build_scenario_transcript(scenario: dict[str, Any]) -> list[dict[str, Any]]:
         messages = copy.deepcopy(_load_jsonl(FLOW_TEMPLATES[flow_id][0]))
         if flow_id == "profile_accept_contract":
             messages = _retarget_profile(messages, profile_id, profile_version)
+        elif flow_id == "binding_issue_use":
+            _canonicalize_binding_action(messages)
         elif flow_id in {"identity_revoke_clean", "binding_revoke_clean"}:
             messages = messages[:-1]
 

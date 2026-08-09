@@ -573,9 +573,15 @@ def test_independent_evaluator_artifact_multiplicity_is_load_bearing() -> None:
     assert control["status"] == "eligible"
 
 
-def test_tck_1_2_is_ineligible_by_explicit_policy() -> None:
+@pytest.mark.parametrize(
+    "release_id",
+    ["AICP-EVIDENCE-TCK-1.2.0", "AICP-EVIDENCE-TCK-1.3.0"],
+)
+def test_superseded_tck_is_ineligible_by_explicit_policy(
+    release_id: str,
+) -> None:
     report = _external_report("AICP-MEDIATED-BLOCKING@0.1")
-    release = release_record("AICP-EVIDENCE-TCK-1.2.0")
+    release = release_record(release_id)
     target = release_target_entry(release, "AICP-MEDIATED-BLOCKING@0.1")
     report["tck_release"] = {
         "release_id": release["release_id"],
@@ -596,10 +602,11 @@ def test_tck_1_2_is_ineligible_by_explicit_policy() -> None:
     report["input_artifacts"] = expected_input_artifacts(
         release, "AICP-MEDIATED-BLOCKING@0.1"
     )
+    historical_case_ids = set(target["mandatory_case_ids"])
     report["case_results"] = [
         item
         for item in report["case_results"]
-        if item["case_id"] != "EVIDENCE-RUNNER-WORKTREE-01"
+        if item["case_id"] in historical_case_ids
     ]
     report["compatibility_marks"] = []
     verdict = evaluate_report(
@@ -656,7 +663,7 @@ def test_future_mutable_registry_addition_does_not_invalidate_frozen_reports(
     current = _external_report("AICP-MEDIATED-BLOCKING@0.1")
     registry = load_json(EVIDENCE_DIR / "evidence_tck_releases.json")
     hypothetical = copy.deepcopy(release_record(CURRENT_TCK_RELEASE_ID, registry))
-    hypothetical["release_id"] = "AICP-EVIDENCE-TCK-1.4.0"
+    hypothetical["release_id"] = "AICP-EVIDENCE-TCK-1.5.0"
     registry["releases"].append(hypothetical)
     future_path = tmp_path / "evidence_tck_releases.json"
     future_path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")

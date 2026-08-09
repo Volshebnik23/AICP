@@ -86,7 +86,7 @@ Strong `implements_profile` and `compatible_with_profile` claims also require
 `evidence_status=reproducible`; `self_attested` cannot bypass this rule.
 
 The frozen IUT runner targets `AICP-BASE@0.1` and experimental
-`AICP-AUTHENTICATED-BASE@0.1`. Current Evidence TCK 1.3.0 separately targets exactly
+`AICP-AUTHENTICATED-BASE@0.1`. Current Evidence TCK 1.4.0 separately targets exactly
 `AICP-MEDIATED-BLOCKING@0.1`, `AICP-RESUMABLE-SESSIONS@0.1`, and
 `AICP-DELEGATED-IDENTITY@0.1`. All five ordinary marks are reachable for complete eligible
 external implementations. The authenticated unavailable-crypto probe remains mandatory,
@@ -119,10 +119,11 @@ suite IDs or paths in `suite_refs`; missing, unrelated, and duplicate suites fai
 Reference, smoke, example, and test-only adapter reports do not count as real external
 evidence. No real eligible Tier-1 submission is currently present.
 
-Current release 1.3.0 uses answer-isolated raw producer facts, a release-specific registry
-snapshot, complete required-suite semantics, exact artifact multiplicity, and a self-checked
+Current release 1.4.0 uses answer-isolated raw producer facts, a release-specific registry
+snapshot, exact message-owner payload closure, ordinary-conformance semantic parity,
+complete required-suite semantics, exact artifact multiplicity, and a self-checked
 runner import closure. Exact 1.1.0 projection reports remain strong-eligible; historical
-1.0.0 and 1.2.0 cannot support strong eligibility. The checked-in fictional example uses
+1.0.0, 1.2.0, and 1.3.0 cannot support strong eligibility. The checked-in fictional example uses
 1.1.0 and is not counted as independent evidence.
 
 The evidence model is intentionally JSON-based and lightweight. The package should point to concrete repo-backed evidence rather than relying on prose-only claims.

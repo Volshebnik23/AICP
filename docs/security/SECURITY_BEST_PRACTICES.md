@@ -152,10 +152,11 @@ Registry/schema/catalog and every statically imported load-bearing runner module
 by digest. Unknown handlers, unavailable schema validation, historical 1.0.0 reports, and
 dependency-closure drift fail closed and emit no capability mark.
 
-Evidence TCK 1.3.0 retains the same disclosure boundary for generated profile transcripts
-and additionally executes every mandatory required-suite check, validates its actual
-runner import closure, and rejects exact generated-artifact cardinality violations.
-Frozen 1.2.0 is strong-ineligible.
+Evidence TCK 1.4.0 retains the same disclosure boundary for generated profile transcripts,
+executes every mandatory required-suite check, validates every generated message against
+its exact v0.1 owner payload schema, validates its actual runner import closure, and rejects
+exact generated-artifact cardinality violations. Frozen 1.2.0 and 1.3.0 are
+strong-ineligible.
 Neutral producer requests contain the exact profile, session/contract/participant facts,
 required suites, and a deterministic seed, but no fixture path, case identity, golden
 message/hash, expected error, or mark. Treat generated transcripts as potentially sensitive

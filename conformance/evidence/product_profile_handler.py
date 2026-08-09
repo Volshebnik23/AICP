@@ -376,6 +376,7 @@ def producer_errors(
         scenario["required_suites"],
         disabled_checks=disabled_checks,
         enforce_core_contract_semantics=True,
+        enforce_generated_payload_routes=True,
     )
     if not evaluation.accepted:
         errors.extend(

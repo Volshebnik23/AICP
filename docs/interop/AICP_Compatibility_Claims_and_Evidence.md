@@ -83,10 +83,10 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
-New executions use `AICP-EVIDENCE-TCK-1.3.0`; exact historical 1.1.0 reports remain
+New executions use `AICP-EVIDENCE-TCK-1.4.0`; exact historical 1.1.0 reports remain
 strong-eligible through their frozen release-registry snapshot. Both bind an answer-isolated
 neutral producer scenario, registry schema, registered handler, and import-closed runner
-bundle. Frozen 1.0.0 and 1.2.0 cannot support a strong claim for their documented evidence
+bundle. Frozen 1.0.0, 1.2.0, and 1.3.0 cannot support a strong claim for their documented evidence
 defects.
 
 The exact eligible mark is `AICP-Evidence-SESSION-STATE-PROJECTION-v1`. It is a capability
@@ -145,7 +145,7 @@ Repository golden-fixture and profile runs are labelled `reference_corpus`. They
 repository's canonical artifacts but cannot substantiate an external implementation claim.
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
 IUT and generalized profile smoke reports are diagnostic-only and cannot substantiate a
-real profile claim. New generalized profile reports use report 2.1 and TCK 1.3.0; their
+real profile claim. New generalized profile reports use report 2.1 and TCK 1.4.0; their
 `suite_refs` must be the exact required-suite union with no missing, unrelated, or duplicate
 suite. Capability smoke and every `reference_corpus` report are likewise ineligible.
 Projection v2 remains internal-only and has no external target.

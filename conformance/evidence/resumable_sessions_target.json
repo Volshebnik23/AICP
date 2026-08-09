@@ -341,6 +341,14 @@
       "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
     },
     {
+      "path": "conformance/evidence/delegated_identity_producer_scenarios.json",
+      "content_digest": "sha256:2e9a8ef25c2f4c59f7400785b2ef37311653a93878df1848df0eb1afaae523d5"
+    },
+    {
+      "path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
+      "content_digest": "sha256:28d2e19bc0d9962be955ae60b69eecfc97e7123b50da8b2afc3a7395bc3868d0"
+    },
+    {
       "path": "conformance/evidence/product_profile_consumer_expectations.json",
       "content_digest": "sha256:4b665168d1bb7ef1e5dcb82019a59d61b736a342c148138c9b8b5fd9d7634845"
     },
@@ -353,8 +361,28 @@
       "content_digest": "sha256:2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
     },
     {
+      "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+      "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+    },
+    {
+      "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+      "content_digest": "sha256:a61d207e412a87c5d58f3003530925d3726ab250b1f5c2a817ab775a47bf43ea"
+    },
+    {
+      "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+      "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+    },
+    {
+      "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+      "content_digest": "sha256:a8e371c8b98043a6c1d78493f4052cf4fd963dad328b02228fe482c94fde58d1"
+    },
+    {
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
       "content_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+    },
+    {
+      "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+      "content_digest": "sha256:f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
     },
     {
       "path": "conformance/extensions/RS_RESUME_0.1.json",
@@ -501,8 +529,28 @@
       "content_digest": "sha256:55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
     },
     {
+      "path": "schemas/extensions/ext-capneg-payloads.schema.json",
+      "content_digest": "sha256:a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
+    },
+    {
+      "path": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+      "content_digest": "sha256:107b14337f6cc39559422874e49a88ba8ff9c0ae34e0b7ff1d21cc0cbf25a30c"
+    },
+    {
+      "path": "schemas/extensions/ext-enforcement-payloads.schema.json",
+      "content_digest": "sha256:7b16e9ea1db9eeaebfaf378581afebf31c5e71fc050d856fcce6599c896a8353"
+    },
+    {
+      "path": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+      "content_digest": "sha256:4b1272eb2afb5b550cce53fa3b1c1a7288fbf6a5d9f434d8ef1087d644cbcac3"
+    },
+    {
       "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
       "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+    },
+    {
+      "path": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+      "content_digest": "sha256:613ffa2166457bdd91ea3f5a58079cba29f10ae46149be6024218ea6837483ee"
     },
     {
       "path": "schemas/extensions/ext-resume-payloads.schema.json",

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 import sys
 from dataclasses import dataclass
 from datetime import datetime
@@ -16,6 +15,10 @@ for path in (RUNNER_DIR, REF_PY):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
+from evidence_identifier_rules import (  # noqa: E402
+    is_broad_namespaced_identifier,
+    is_vendor_or_org_namespaced_identifier,
+)
 from _runner_context import build_validator  # noqa: E402
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.signatures import (  # noqa: E402
@@ -24,6 +27,7 @@ from aicp_ref.signatures import (  # noqa: E402
 )
 from aicp_ref.validate import validate_message_signatures  # noqa: E402
 from producer_suite_semantics import unknown_suite_checks  # noqa: E402
+from producer_payload_schema_router import tier1_payload_routes  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -143,6 +147,7 @@ def evaluate_profile_transcript(
     simulate_no_crypto: bool = False,
     disabled_checks: frozenset[str] = frozenset(),
     enforce_core_contract_semantics: bool = False,
+    enforce_generated_payload_routes: bool | None = None,
 ) -> TranscriptEvaluation:
     """Evaluate an in-memory transcript without fixture or suite-case identity.
 
@@ -161,6 +166,11 @@ def evaluate_profile_transcript(
             errors.append({"code": code, "message": message})
 
     enabled, payload_validators, registered_profiles = _suite_context(suite_paths)
+    generated_payload_routes = (
+        enforce_core_contract_semantics
+        if enforce_generated_payload_routes is None
+        else enforce_generated_payload_routes
+    )
     for check_id in unknown_suite_checks(suite_paths):
         add(
             "EVIDENCE_PRODUCER_SUITE_CHECK_UNIMPLEMENTED",
@@ -203,12 +213,52 @@ def evaluate_profile_transcript(
         message_type = message.get("message_type")
         if message_type not in registered_message_types:
             add("CT-MESSAGE-TYPE-REGISTRY-01", f"unregistered message type: {message_type}")
-        for selector, validator in payload_validators:
-            expected_type, check_id = selector.split("\0", 1)
-            if message_type == expected_type and list(
-                validator.iter_errors(message.get("payload"))
-            ):
-                add(check_id, f"{message_type} payload violates its selected schema")
+        if generated_payload_routes:
+            if "EVIDENCE-GENERATED-PAYLOAD-SCHEMA-01" not in disabled_checks:
+                try:
+                    route = tier1_payload_routes().get(str(message_type))
+                except ValueError as exc:
+                    add(
+                        "EVIDENCE-GENERATED-PAYLOAD-SCHEMA-01",
+                        f"payload route registry is invalid: {exc}",
+                    )
+                    route = None
+                if route is None:
+                    add(
+                        "EVIDENCE-GENERATED-PAYLOAD-SCHEMA-01",
+                        f"{message_type} has no exact AICP v0.1 payload schema route",
+                    )
+                else:
+                    schema_path = ROOT / route.schema_path
+                    schema = _load_json(schema_path)
+                    wrapper = {
+                        "$schema": schema.get("$schema"),
+                        "$id": schema.get("$id"),
+                        "$defs": schema.get("$defs", {}),
+                        "$ref": f"#{route.schema_pointer}",
+                    }
+                    validator = build_validator(wrapper, schema_path)
+                    if validator is None:
+                        add(
+                            "EVIDENCE-GENERATED-PAYLOAD-SCHEMA-01",
+                            "jsonschema unavailable for generated payload routing",
+                        )
+                    elif list(validator.iter_errors(message.get("payload"))):
+                        add(
+                            "EVIDENCE-GENERATED-PAYLOAD-SCHEMA-01",
+                            f"{message_type} payload violates {route.owning_suite}/"
+                            f"{route.check_id} at {route.schema_path}#{route.schema_pointer} "
+                            f"for {route.surface_kind}:{route.surface_id}@{route.surface_version}",
+                        )
+        else:
+            for selector, validator in payload_validators:
+                expected_type, check_id = selector.split("\0", 1)
+                if (
+                    check_id not in disabled_checks
+                    and message_type == expected_type
+                    and list(validator.iter_errors(message.get("payload")))
+                ):
+                    add(check_id, f"{message_type} payload violates its selected schema")
         session_id = message.get("session_id")
         contract_id = message.get("contract_id")
         message_id = message.get("message_id")
@@ -275,8 +325,6 @@ def evaluate_profile_transcript(
             for item in _load_json(ROOT / "registry/policy_categories.json")
             if isinstance(item, dict)
         }
-        namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
-        namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
         for message in messages:
             if message.get("message_type") != "CONTRACT_PROPOSE":
                 continue
@@ -305,8 +353,7 @@ def evaluate_profile_transcript(
                     or not category
                     or (
                         category not in registered_categories
-                        and not namespaced_dash.match(category)
-                        and not namespaced_colon.match(category)
+                        and not is_broad_namespaced_identifier(category)
                     )
                 ):
                     add("CT-POLICY-CATEGORIES-01", f"unknown policy category: {category}")
@@ -440,17 +487,23 @@ def evaluate_profile_transcript(
             for item in _load_json(ROOT / "registry/policy_reason_codes.json")
             if isinstance(item, dict)
         }
-        namespaced = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
         for message in messages:
             payload = message.get("payload") if isinstance(message.get("payload"), dict) else {}
-            if message.get("message_type") == "POLICY_EVAL_RESULT":
+            if (
+                "PE-REASON-CODES-01" in enabled
+                and message.get("message_type") == "POLICY_EVAL_RESULT"
+            ):
                 decision = payload.get("policy_decision") if isinstance(payload.get("policy_decision"), dict) else {}
                 if any(
-                    code not in reason_codes and not namespaced.match(str(code))
+                    code not in reason_codes
+                    and not is_vendor_or_org_namespaced_identifier(code)
                     for code in decision.get("reason_codes", []) or []
                 ):
                     add("PE-REASON-CODES-01", "policy decision contains an unknown reason code")
-            if message.get("message_type") == "POLICY_EVAL_REQUEST":
+            if (
+                "PE-CONTEXT-HASH-01" in enabled
+                and message.get("message_type") == "POLICY_EVAL_REQUEST"
+            ):
                 context = payload.get("evaluation_context") if isinstance(payload.get("evaluation_context"), dict) else {}
                 if "context_hash" in context:
                     stored = context.get("context_hash")
@@ -518,7 +571,6 @@ def _validate_capneg(
         for item in _load_json(ROOT / "registry/channel_properties.json")
         if isinstance(item, dict)
     }
-    namespaced = re.compile(r"^(?:x-[a-z0-9]+[a-z0-9._-]*|[a-z0-9]+:[a-z0-9][a-z0-9._-]*)$")
 
     def canonical_bindings(value: Any) -> set[str]:
         if not isinstance(value, list):
@@ -537,7 +589,7 @@ def _validate_capneg(
                 declares[party] = payload
             if "CN-PRIVACY-MODES-01" in enabled:
                 for mode in payload.get("supported_privacy_modes", []) or []:
-                    if mode not in privacy_modes and not namespaced.match(str(mode)):
+                    if mode not in privacy_modes and not is_vendor_or_org_namespaced_identifier(mode):
                         add("CN-PRIVACY-MODES-01", "declaration contains an unknown privacy mode")
         elif message_type == "CAPABILITIES_PROPOSE":
             result = payload.get("negotiation_result") if isinstance(payload.get("negotiation_result"), dict) else {}
@@ -554,7 +606,7 @@ def _validate_capneg(
                 if (
                     selected_privacy is not None
                     and selected_privacy not in privacy_modes
-                    and not namespaced.match(str(selected_privacy))
+                    and not is_vendor_or_org_namespaced_identifier(selected_privacy)
                 ):
                     add("CN-PRIVACY-MODES-01", "selected privacy mode is not registered or namespaced")
             participants = result.get("participants") if isinstance(result.get("participants"), list) else []
@@ -687,7 +739,7 @@ def _validate_capneg(
                 "CN-PRIVACY-MODES-01" in enabled
                 and selected_privacy is not None
                 and selected_privacy not in privacy_modes
-                and not namespaced.match(str(selected_privacy))
+                and not is_vendor_or_org_namespaced_identifier(selected_privacy)
             ):
                 add("CN-PRIVACY-MODES-01", "accepted privacy mode is not registered or namespaced")
         elif message_type == "CAPABILITIES_REJECT":
@@ -805,8 +857,6 @@ def _validate_enforcement(
         for item in _load_json(ROOT / "registry/enforcement_sanction_codes.json")
         if isinstance(item, dict)
     }
-    namespaced_dash = re.compile(r"^x-[a-z0-9]+[a-z0-9._-]*$")
-    namespaced_colon = re.compile(r"^[a-z0-9]+:[a-z0-9][a-z0-9._-]*$")
     contract = next(
         (
             (message.get("payload") or {}).get("contract")
@@ -834,8 +884,7 @@ def _validate_enforcement(
                     not isinstance(code, str)
                     or (
                         code not in sanction_codes
-                        and not namespaced_dash.match(code)
-                        and not namespaced_colon.match(code)
+                        and not is_broad_namespaced_identifier(code)
                     )
                 ):
                     add("ENF-SANCTION-CODES-01", "enforcement sanction code is unregistered")
