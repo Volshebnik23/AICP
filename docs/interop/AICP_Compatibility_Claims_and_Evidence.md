@@ -85,11 +85,11 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
-New executions use `AICP-EVIDENCE-TCK-1.5.0`; exact historical 1.1.0 reports remain
+New executions use `AICP-EVIDENCE-TCK-1.6.0`; exact historical 1.1.0 and 1.4.0 reports remain
 strong-eligible through their frozen release-registry snapshot. Both bind an answer-isolated
 neutral producer scenario, registry schema, registered handler, and import-closed runner
-bundle. Frozen 1.0.0, 1.2.0, and 1.3.0 cannot support a strong claim for their documented evidence
-defects.
+bundle. Frozen 1.0.0, 1.2.0, 1.3.0, and 1.5.0 cannot support a strong claim for their documented
+evidence defects.
 
 The exact eligible mark is `AICP-Evidence-SESSION-STATE-PROJECTION-v1`. It is a capability
 evidence mark, not a product-profile mark, certification, composition mark, or pairwise
@@ -109,8 +109,8 @@ Minimum expected evidence:
 - one eligible report 2.2 in `full-binding` mode that executes both roles of the same
   implementation ID, version, kind, and digest twice from clean state.
 
-The independent evaluator validates real socket/process observations, strict sanitized
-trace structure, scenario coverage, semantic repeat digests, and the exact typed binding
+The independent evaluator derives binding facts from strict sanitized HTTP/SSE/WS/WSS or
+MCP JSON-RPC exchanges, validates scenario coverage and semantic repeat digests, and checks the exact typed binding
 mark. Reference, smoke, server-only/client-only, raw-mark, and test-double artifacts do not
 establish a real external demonstration. A binding mark proves neither a product profile
 nor a capability.

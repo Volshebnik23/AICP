@@ -11,7 +11,7 @@ target kind:     capability
 execution mode:  full-capability
 eligible mark:   AICP-Evidence-SESSION-STATE-PROJECTION-v1
 historical TCK:  AICP-EVIDENCE-TCK-1.1.0 (strong-eligible exact reports)
-current TCK:     AICP-EVIDENCE-TCK-1.5.0
+current TCK:     AICP-EVIDENCE-TCK-1.6.0
 ```
 
 M63 adds exactly three product-profile targets:
@@ -23,7 +23,7 @@ AICP-DELEGATED-IDENTITY@0.1 -> AICP-Profile-DELEGATED-IDENTITY-0.1
 ```
 
 They use report 2.2 for new executions, `full-profile`, `product_profile_v01`, and current
-`AICP-EVIDENCE-TCK-1.5.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
+`AICP-EVIDENCE-TCK-1.6.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
 strong-ineligible. The 1.2.0 producer evaluator did not close every required-suite check
 and its report evaluator did not enforce exact generated-artifact multiplicity. The
 1.3.0 evaluator did not close generated messages over their exact owner payload schemas
@@ -46,15 +46,20 @@ BIND-MCP@0.1  -> AICP-BIND-MCP-0.1
 ```
 
 They use report 2.2, `full-binding`, `live_binding_v01`, and current Evidence TCK
-1.5. A full run launches the same implementation build in both roles and repeats both
-from clean state. HTTP uses real literal-loopback HTTP, SSE, and WebSocket traffic; MCP
+1.6. A full run launches the same implementation build in both roles and repeats both
+from clean state. HTTP uses real literal-loopback HTTP, SSE, WebSocket, and verified WSS traffic; MCP
 uses JSON-RPC over child-process stdio. Optional SSE/WebSocket scenarios run exactly when
-the role descriptor declares them. The reference implementation declares both.
+the role descriptor declares them. A WSS declaration additionally requires an executed
+TLS/WebSocket interaction. The reference implementation declares and exercises all three.
 
 ## Live endpoint test-control contract
 
 The runner starts every role with `shell=false` and a bounded process supervisor. It
-provides only the explicit test-control environment below; this contract is harness
+retains only runtime-discovery variables that are present and needed across supported
+platforms (`PATH`, `PATHEXT`, `SystemRoot`, `WINDIR`, `HOME`, `USERPROFILE`, `TMP`,
+`TEMP`, `TMPDIR`, `LANG`, `LC_ALL`, and `VIRTUAL_ENV`), then adds the explicit test-control
+environment below. Arbitrary `*_TOKEN`, `*_SECRET`, cloud, GitHub, and application
+credentials are not inherited. This contract is harness
 infrastructure and is not an AICP wire protocol:
 
 ```text
@@ -65,13 +70,18 @@ AICP_LIVE_ROLE
 AICP_LIVE_READY_FILE
 AICP_LIVE_SCENARIO_FILE       # client-under-test only
 AICP_LIVE_ENDPOINT_URL        # HTTP client-under-test only
+AICP_LIVE_WEBSOCKET_URL       # HTTP client-under-test or server WSS endpoint
 AICP_LIVE_TEST_BEARER         # HTTP only; never serialized into evidence
+AICP_LIVE_TLS_CA_FILE         # per-run trust anchor
+AICP_LIVE_TLS_CERT_FILE       # server-under-test only
+AICP_LIVE_TLS_KEY_FILE        # server-under-test only; temporary
 ```
 
-The child atomically writes an `aicp.live_endpoint_descriptor.v1` JSON object to the
+The child atomically writes an `aicp.live_endpoint_descriptor.v2` JSON object to the
 ready-file. The descriptor binds the exact binding, role, implementation kind, ID,
 version, digest, and declared optional features. An HTTP server additionally supplies a
-literal-loopback `base_url`; MCP declares `transport=stdio`. Descriptors using DNS names,
+literal-loopback `base_url` and, when WebSocket is declared, a `websocket_url`; WSS requires
+that URL to use `wss://`. MCP declares `transport=stdio`. Descriptors using DNS names,
 non-loopback addresses, a mismatched role or binding, unstable identity, or mixed
 reference/external implementation kinds fail closed. HTTP redirects are not followed.
 
@@ -81,14 +91,20 @@ roles from clean state. The two descriptors must name the same implementation bu
 Phase deadlines, stdout/stderr, response bodies, events, frames, JSON-RPC lines, and
 interaction counts are bounded; termination uses graceful shutdown followed by kill and
 reap fallback. Ready files and scenario files are temporary and are removed after each
-role. Recorded traces contain allowlisted observations only, never environment dumps,
-authorization values, bearer tokens, TLS private keys, or raw stderr.
+role. External processes inherit only the documented runtime-discovery allowlist plus
+explicit `AICP_LIVE_*` controls. Trace v2 contains strict, sanitized HTTP exchanges, parsed
+SSE events, WebSocket handshakes/frames, and MCP JSON-RPC exchanges. Authorization is
+represented only by presence and scheme; values, cookies, environment maps, bearer tokens,
+TLS private keys, temporary key paths, and raw stderr are absent. Exact reflection of a
+runner-created secret fails with `EVIDENCE_LIVE_SECRET_REFLECTION`.
 
-Release records 1.0.0 through 1.4.0 are byte-frozen. Release-specific registry
+Release records 1.0.0 through 1.5.0 are byte-frozen. Release-specific registry
 snapshots make `tck_release.registry_digest` immutable: 1.1.0 remains strong-eligible for
-its exact projection reports, while 1.0.0, 1.2.0, and 1.3.0 are explicitly strong-ineligible for
-their documented evidence defects. No checked-in real external submission depends on
-1.0.0, 1.2.0, or 1.3.0. Regenerate and check with:
+its exact projection reports and 1.4.0 remains strong-eligible for its exact reports.
+Releases 1.0.0, 1.2.0, 1.3.0, and 1.5.0 are explicitly strong-ineligible for their
+documented evidence defects. Repository inspection finds zero real external submission
+folders; examples, templates, reference reports, and test adapters are not adoption.
+Regenerate and check with:
 
 ```bash
 python scripts/generate_evidence_framework.py --write
@@ -165,7 +181,8 @@ the eligible mark. A raw
   `full-profile` paths remain valid and unchanged.
 - Report 2.0 remains valid for exact frozen projection-v1 releases. Report 2.1 adds discriminated
   projection/transcript artifacts and supports the three exact M63 product-profile targets.
-  New 1.5 executions use report 2.2, which adds a strict sanitized live-binding trace.
+  TCK 1.5 issued report 2.2 with trace v1 and is now frozen/ineligible. New 1.6 executions
+  keep report 2.2 but require independently evaluated transport-evidence trace v2.
 - A capability mark is not a product-profile mark, certification, endorsement, aggregate
   composition mark, or pairwise interoperability result.
 - A profile report covers one exact profile. Component-suite marks do not become separate
@@ -177,6 +194,9 @@ the eligible mark. A raw
 - Session-state projection v2 remains internal-only and is not registered here.
 - Live binding marks prove one local external implementation against the frozen TCK, not
   two independent vendors. Real pairwise publication remains M66 and fail-closed.
+- Reproducible live evidence is not remote hardware attestation: it proves an internally
+  consistent, rerunnable transport transcript, not that arbitrary submitted JSON is
+  cryptographically impossible to fabricate. AICP does not create a certification authority here.
 
 See `ADR_Generalized_External_Evidence.md` for the architectural decision and
 `docs/interop/AICP_Compatibility_Claims_and_Evidence.md` for public claim rules.

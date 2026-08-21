@@ -50,7 +50,7 @@ mature.
 | Reachable external capability marks | 1 | evidence target registry and TCK provenance |
 | Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
 | External binding targets | 2 | `conformance/evidence/targets.json` |
-| Reachable external binding marks | 2 | evidence target registry and TCK 1.5 provenance |
+| Reachable external binding marks | 2 | evidence target registry and TCK 1.6 provenance |
 | Externally demonstrated bindings | 0 | eligible binding-specific `computed_binding_marks` only |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
 | Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability/binding evidence |
@@ -62,7 +62,7 @@ mature.
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
 | Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
-| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.5.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.6.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
