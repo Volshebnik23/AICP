@@ -152,8 +152,31 @@ _Last updated: 2026-07-29_
 - **Compatibility boundary:** product-profile IUT v1 and projection report 2.0 remain
   valid; Evidence TCK 1.0, 1.1, 1.2, and 1.3 records are frozen. No target is added for other
   profiles, composition, live bindings, or pairwise interoperability.
-- **Next concrete step:** M64 remains planned for live transport and binding
-  interoperability.
+- **Next concrete step:** M64 ships live transport and binding evidence; M65 remains
+  planned for registered message-surface completion.
+
+### ✅ M64 — Live Transport and Binding Interoperability
+<!-- milestone-status: M64 shipped -->
+- **Status:** Shipped.
+- **Problem:** HTTP/WS/SSE and MCP binding evidence previously stopped at static case
+  files and could not prove real serialization, socket/stdio, reconnect, replay, or process
+  behavior for an independently supplied local implementation.
+- **Scope:** add loopback-only two-role live harnesses for `BIND-HTTP@0.1` and
+  `BIND-MCP@0.1`, report 2.2 `live_binding_trace` artifacts, Evidence TCK 1.5, exact
+  `implements_binding` public claims, and separately typed binding marks.
+- **Completion evidence:** each full-binding target runs the same implementation build
+  twice from clean state as server-under-test and client-under-test. HTTP crosses real
+  HTTP, SSE, and WebSocket sockets when declared; MCP crosses child-process JSON-RPC
+  stdio. The independent evaluator recomputes strict trace content and normalized semantic
+  digests, exact role/scenario coverage, transport relationships, subject identity, and
+  the eligible mark. Static MCP coverage now includes `aicp.pollMessages`.
+- **Safety boundary:** descriptors accept literal loopback endpoints only, redirects are
+  not followed, subprocesses use argument vectors with `shell=false`, all transport and
+  diagnostic channels are bounded, and trace schemas structurally exclude credentials.
+- **Independent-evidence boundary:** repository reference runs are behavioral evidence and
+  receive no external mark. Test-only external subjects prove reachability but are not
+  public submissions. No real external binding or pairwise demonstration is checked in.
+- **Next concrete step:** M65 remains planned for registered message-surface completion.
 
 ## Planned milestones
 
@@ -163,7 +186,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M64 | Planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
 | M65 | Planned | Registered Message Surface Completion | `AICP_Backlog` |
 | M66 | Planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
 | M67 | Planned | Security Coverage Closure | `AICP_Backlog` |

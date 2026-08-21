@@ -32,7 +32,9 @@
       "AICP-BASE@0.2",
       "EXT-CAPNEG@0.2",
       "aicp.session_state_projection.v1",
-      "aicp.session_state_projection.v2"
+      "aicp.session_state_projection.v2",
+      "BIND-HTTP@0.1 live evidence",
+      "BIND-MCP@0.1 live evidence"
     ]
   },
   "profile_summary": {
@@ -430,7 +432,7 @@
         "externally_testable"
       ],
       "external_test_path": "full-capability",
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.4.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.5.0",
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
       "external_evidence_mark_reachable": true,
@@ -454,17 +456,31 @@
   },
   "binding_evidence": [
     {
-      "id": "BIND-HTTP-0.1",
+      "id": "BIND-HTTP@0.1",
       "suite": "conformance/bindings/TB_HTTP_WS_0.1.json",
       "static_case_count": 21,
-      "live_test_paths": [],
+      "live_test_paths": [
+        "server_under_test",
+        "client_under_test"
+      ],
+      "external_evidence_target": true,
+      "external_evidence_mark": "AICP-BIND-HTTP-0.1",
+      "external_evidence_mark_reachable": true,
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.5.0",
       "independent_external_evidence": false
     },
     {
-      "id": "BIND-MCP-0.1",
+      "id": "BIND-MCP@0.1",
       "suite": "conformance/bindings/TB_MCP_0.1.json",
-      "static_case_count": 3,
-      "live_test_paths": [],
+      "static_case_count": 4,
+      "live_test_paths": [
+        "server_under_test",
+        "client_under_test"
+      ],
+      "external_evidence_target": true,
+      "external_evidence_mark": "AICP-BIND-MCP-0.1",
+      "external_evidence_mark_reachable": true,
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.5.0",
       "independent_external_evidence": false
     }
   ],
@@ -474,10 +490,11 @@
     "rejected_real_submission_count": 0,
     "externally_demonstrated_profiles": [],
     "externally_demonstrated_capabilities": [],
+    "externally_demonstrated_bindings": [],
     "pairwise_publication_available": false,
     "pairwise_demonstrated": false,
     "dry_run_count": 1,
-    "instructional_artifact_count": 5
+    "instructional_artifact_count": 6
   },
   "security_review": {
     "internal_self_review_completed": true,
@@ -4204,8 +4221,8 @@
     {
       "id": "M64",
       "title": "Live Transport and Binding Interoperability",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M65",
@@ -4259,5 +4276,11 @@
     "external_capability_targets": 1,
     "reachable_external_capability_marks": 1,
     "externally_demonstrated_capabilities": 0
+  },
+  "binding_summary": {
+    "external_binding_targets": 2,
+    "reachable_external_binding_marks": 2,
+    "externally_demonstrated_bindings": 0,
+    "live_role_paths": 4
   }
 }

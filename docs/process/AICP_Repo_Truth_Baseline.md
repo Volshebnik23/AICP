@@ -49,17 +49,20 @@ mature.
 | External capability targets | 1 | `conformance/evidence/targets.json` |
 | Reachable external capability marks | 1 | evidence target registry and TCK provenance |
 | Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
+| External binding targets | 2 | `conformance/evidence/targets.json` |
+| Reachable external binding marks | 2 | evidence target registry and TCK 1.5 provenance |
+| Externally demonstrated bindings | 0 | eligible binding-specific `computed_binding_marks` only |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
-| Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability evidence |
+| Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability/binding evidence |
 | Rejected/ineligible real packages | 0 | `interop/interop_matrix.json` |
 | Externally demonstrated profiles | 0: None | eligible profile-specific `computed_profile_marks` only |
 | Pairwise publication / demonstration | No / No | joint-evidence validator status |
-| Live binding paths | 0: None | binding evidence map |
+| Live binding paths | 2: `BIND-HTTP@0.1`, `BIND-MCP@0.1` | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
 | Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
-| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.4.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.5.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
@@ -72,7 +75,7 @@ mature.
 | M61 | shipped | Multi-Profile Composition and CAPNEG v2 | `ROADMAP.md` |
 | M62 | shipped | Generalized External Evidence Framework | `ROADMAP.md` |
 | M63 | shipped | Tier-1 External Profile TCK | `ROADMAP.md` |
-| M64 | planned | Live Transport and Binding Interoperability | `AICP_Backlog` |
+| M64 | shipped | Live Transport and Binding Interoperability | `ROADMAP.md` |
 | M65 | planned | Registered Message Surface Completion | `AICP_Backlog` |
 | M66 | planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
 | M67 | planned | Security Coverage Closure | `AICP_Backlog` |
@@ -85,10 +88,10 @@ mature.
 | Surface | Repository truth | Independent-evidence boundary | Planned gap |
 |---|---|---|---|
 | Profiles | 16 shipped catalogs; 5 external targets (2 `profile_iut_v1`, 3 `generalized_evidence_v2_1`) | 0 externally demonstrated profiles | M70 |
-| Capability evidence | 1 external targets; 1 reachable marks | 0 externally demonstrated capabilities | M64, M70 |
+| Capability evidence | 1 external targets; 1 reachable marks | 0 externally demonstrated capabilities | M70 |
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |
 | Pairwise | publication=false, demonstrated=false | A valid eligible joint-execution result is required | M66 |
-| Bindings | 24 static cases; 0 live paths | Static cases do not prove live independent interoperability | M64 |
+| Bindings | 25 static cases; 2 external targets; 4 live role paths; 2 reachable marks | 0 externally demonstrated bindings; reference evidence is not external evidence | M70 |
 | Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
 | Message surface | 132 machine-mapped entries; 17 positive-fixture gaps | Aggregates are derived from entries | M65 |
