@@ -160,6 +160,58 @@ def test_build_submission_tool_requires_peer_for_pairwise(tmp_path: Path) -> Non
     assert "--peer-implementation-id is required" in result.stdout
 
 
+def test_build_submission_tool_emits_typed_binding_claim(tmp_path: Path) -> None:
+    report = _write_json(
+        tmp_path / "inputs" / "bind-http-report.json",
+        {
+            "report_type": "aicp.external_evidence",
+            "target": {"kind": "binding"},
+        },
+    )
+    out_root = tmp_path / "submissions"
+
+    result = _run_tool(
+        "--out-root",
+        str(out_root),
+        "--submission-id",
+        "fictional-http-binding",
+        "--implementation-id",
+        "fictional-http-implementation",
+        "--implementation-version",
+        "1.0.0",
+        "--binding-ref",
+        "BIND-HTTP@0.1",
+        "--claim-type",
+        "implements_binding",
+        "--claim-scope",
+        "self_attested",
+        "--evidence-status",
+        "reproducible",
+        "--report-path",
+        str(report),
+        "--suite-ref",
+        "TB-HTTP-0.1",
+        "--disclosure",
+        "Fictional local builder test; not a real compatibility claim.",
+        "--generated-at",
+        "2026-08-21T00:00:00Z",
+    )
+
+    assert result.returncode == 0, result.stderr
+    manifest = json.loads(
+        (out_root / "fictional-http-binding" / "submission.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert manifest["binding_refs"] == [
+        {"binding_id": "BIND-HTTP", "binding_version": "0.1"}
+    ]
+    assert manifest["evidence_types"] == ["binding_report"]
+    assert "profile_ids" not in manifest
+    assert "profile_refs" not in manifest
+    assert "capability_refs" not in manifest
+
+
 def test_build_submission_tool_pairwise_package_with_integrity_fails_closed(tmp_path: Path) -> None:
     report_one = _write_json(
         tmp_path / "inputs" / "pair_a.json",

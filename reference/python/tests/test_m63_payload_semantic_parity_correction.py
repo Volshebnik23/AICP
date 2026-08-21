@@ -673,7 +673,7 @@ def test_tck_1_3_is_frozen_and_tck_1_4_is_current(
     ) == FROZEN_TCK_1_3_BUNDLE_MANIFEST_DIGEST
     assert release_policy(PREVIOUS_TCK_RELEASE_ID)["strong_eligible"] is False
     assert release_policy(CURRENT_TCK_RELEASE_ID)["strong_eligible"] is True
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.4.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.5.0"
     for report in external_reports.values():
         assert report["tck_release"]["release_id"] == CURRENT_TCK_RELEASE_ID
         assert _evaluate_report(report)["status"] == "eligible"
