@@ -1027,8 +1027,13 @@ _BUNDLE_ROLES = {
     "conformance/evidence/live_bindings/live_binding_handler.py": "target_handler",
     "conformance/evidence/live_bindings/live_binding_trace.py": "live_trace_evaluation",
     "conformance/evidence/live_bindings/live_binding_process.py": "process_supervision",
+    "conformance/evidence/live_bindings/live_http_capture.py": "transport_capture",
     "conformance/evidence/live_bindings/live_http_transport.py": "live_http_transport",
+    "conformance/evidence/live_bindings/live_mcp_capture.py": "transport_capture",
     "conformance/evidence/live_bindings/live_mcp_transport.py": "live_mcp_transport",
+    "conformance/evidence/live_bindings/live_tls.py": "tls_runtime",
+    "conformance/evidence/live_bindings/live_trace_evaluator.py": "live_trace_evaluation",
+    "conformance/evidence/live_bindings/live_trace_normalization.py": "semantic_normalization",
     "conformance/evidence/profile_transcript_evaluator.py": "transcript_validation",
     "conformance/evidence/producer_payload_schema_router.py": "payload_schema_routing",
     "conformance/evidence/producer_suite_semantics.py": "producer_semantic_dispatch",
@@ -1055,13 +1060,10 @@ def _local_module_map(root: Path) -> dict[str, str]:
             continue
         for path in base.rglob("*.py"):
             relative = path.relative_to(root).as_posix()
-            if base == root / "reference/python":
-                parts = list(path.relative_to(base).with_suffix("").parts)
-                if parts[-1] == "__init__":
-                    parts = parts[:-1]
-                module = ".".join(parts)
-            else:
-                module = path.stem
+            parts = list(path.relative_to(base).with_suffix("").parts)
+            if parts[-1] == "__init__":
+                parts = parts[:-1]
+            module = ".".join(parts)
             if module:
                 modules.setdefault(module, relative)
     return modules
@@ -1069,8 +1071,16 @@ def _local_module_map(root: Path) -> dict[str, str]:
 
 def _module_for_path(path: str) -> str:
     relative = Path(path)
-    if path.startswith("reference/python/"):
-        parts = list(relative.relative_to("reference/python").with_suffix("").parts)
+    for prefix in (
+        "conformance/evidence",
+        "conformance/runner",
+        "conformance/iut",
+        "reference/python",
+    ):
+        try:
+            parts = list(relative.relative_to(prefix).with_suffix("").parts)
+        except ValueError:
+            continue
         if parts[-1] == "__init__":
             parts = parts[:-1]
         return ".".join(parts)

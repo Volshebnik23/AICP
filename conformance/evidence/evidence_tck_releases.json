@@ -5422,12 +5422,23 @@
       },
       "runner_bundle": {
         "manifest_path": "conformance/evidence/evidence_runner_bundle_v1_6.json",
-        "manifest_digest": "sha256:a8b4122115ab481f86acacbba155bc81ae2b5227957b86d5f4602234d81e1264",
+        "manifest_digest": "sha256:463558c4c83714a80296f855d8ac3cf186fe745d8a9bf1642555ba9a16b605f3",
         "paths": [
           "conformance/evidence/adapter_process.py",
           "conformance/evidence/aicp_external_evidence_runner.py",
           "conformance/evidence/aicp_live_binding_runner.py",
           "conformance/evidence/evidence_identifier_rules.py",
+          "conformance/evidence/live_bindings/__init__.py",
+          "conformance/evidence/live_bindings/live_binding_handler.py",
+          "conformance/evidence/live_bindings/live_binding_process.py",
+          "conformance/evidence/live_bindings/live_binding_trace.py",
+          "conformance/evidence/live_bindings/live_http_capture.py",
+          "conformance/evidence/live_bindings/live_http_transport.py",
+          "conformance/evidence/live_bindings/live_mcp_capture.py",
+          "conformance/evidence/live_bindings/live_mcp_transport.py",
+          "conformance/evidence/live_bindings/live_tls.py",
+          "conformance/evidence/live_bindings/live_trace_evaluator.py",
+          "conformance/evidence/live_bindings/live_trace_normalization.py",
           "conformance/evidence/producer_payload_schema_router.py",
           "conformance/evidence/producer_suite_semantics.py",
           "conformance/evidence/product_profile_handler.py",
@@ -5444,7 +5455,7 @@
           "reference/python/aicp_ref/signatures.py",
           "reference/python/aicp_ref/validate.py"
         ],
-        "digest": "sha256:9bfcabb1a351c834d1076d1c389637b067c0a60373f15fbb77517e88106d0b49"
+        "digest": "sha256:853a077c2f4d2cfdf9ac83917c9aa8abee22c48120bc7e7e16fece673f4503ab"
       },
       "targets": [
         {

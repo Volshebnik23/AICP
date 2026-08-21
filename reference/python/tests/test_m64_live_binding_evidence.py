@@ -68,6 +68,7 @@ from live_mcp_transport import execute_mcp_server  # noqa: E402
 from live_tls import generate_ephemeral_tls_material, server_ssl_context  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
+    BUNDLE_MANIFEST_PATH,
     BINDING_TARGET_KEYS,
     CURRENT_TCK_RELEASE_ID,
     FROZEN_TCK_1_4_BUNDLE_MANIFEST_DIGEST,
@@ -92,12 +93,15 @@ from target_catalog import (  # noqa: E402
     TCK_1_4_RELEASE_ID,
     canonical_digest as target_canonical_digest,
     file_digest,
+    load_json,
     release_policy,
     release_record,
     release_snapshot_digest,
     release_target_entry,
     resolve_target_record,
+    runtime_import_closure,
     target_catalog,
+    validate_bundle_manifest,
     validate_release_registry,
     validate_target_catalog,
     validate_target_registry,
@@ -299,6 +303,35 @@ def test_zero_real_external_submissions_and_no_tck_15_adoption() -> None:
             if TCK_1_5_RELEASE_ID in candidate.read_text(encoding="utf-8"):
                 references.append(candidate.relative_to(ROOT).as_posix())
     assert references == []
+
+
+def test_tck_16_bundle_closes_over_live_binding_package_imports() -> None:
+    paths = set(runtime_import_closure())
+    expected_live_runtime = {
+        "conformance/evidence/live_bindings/__init__.py",
+        "conformance/evidence/live_bindings/live_binding_handler.py",
+        "conformance/evidence/live_bindings/live_binding_process.py",
+        "conformance/evidence/live_bindings/live_binding_trace.py",
+        "conformance/evidence/live_bindings/live_http_capture.py",
+        "conformance/evidence/live_bindings/live_http_transport.py",
+        "conformance/evidence/live_bindings/live_mcp_capture.py",
+        "conformance/evidence/live_bindings/live_mcp_transport.py",
+        "conformance/evidence/live_bindings/live_tls.py",
+        "conformance/evidence/live_bindings/live_trace_evaluator.py",
+        "conformance/evidence/live_bindings/live_trace_normalization.py",
+    }
+    assert expected_live_runtime <= paths
+
+    runner_path = "conformance/evidence/aicp_live_binding_runner.py"
+    mutated = (ROOT / runner_path).read_bytes() + (
+        b"\nfrom live_bindings.live_binding_test_implementation import main\n"
+    )
+    errors = validate_bundle_manifest(
+        load_json(BUNDLE_MANIFEST_PATH),
+        overrides={runner_path: mutated},
+    )
+    assert any("unlisted runtime imports" in error for error in errors)
+    assert any("live_binding_test_implementation.py" in error for error in errors)
 
 
 def test_live_child_environment_is_allowlisted_and_actual_child_cannot_see_secrets(

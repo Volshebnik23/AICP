@@ -22,6 +22,61 @@
       "digest": "sha256:33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
     },
     {
+      "path": "conformance/evidence/live_bindings/__init__.py",
+      "role": "package_initialization",
+      "digest": "sha256:b3a3d9fabbb92233c16d80e81d741a380723325a44d852296b73c2d229490b71"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:c9d533c5df08f30a044e24a10e53999fc8dbee4dc78b374097688bd61deadffa"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:9549593c5a657c3a016f4cc26542bc177fd7ae6f0210499ead266313d37c5776"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_trace.py",
+      "role": "live_trace_evaluation",
+      "digest": "sha256:363f9b455c575e4035804acdc1e2c9a72e529bda81302e96877cc4f6b37b2ebf"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_http_capture.py",
+      "role": "transport_capture",
+      "digest": "sha256:853af399a006c4f4211fb31305403cb72702d15bb9098ae5bf777de7dc5e112b"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_http_transport.py",
+      "role": "live_http_transport",
+      "digest": "sha256:173033e52e72d0c9e91ad54872eae1b955bed844a8a586d442b20dae3e8abdc3"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_mcp_capture.py",
+      "role": "transport_capture",
+      "digest": "sha256:b5e221efcc6d2a5226178f1fbd3b9d858a97a82ea989a95531c45b4191798176"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_mcp_transport.py",
+      "role": "live_mcp_transport",
+      "digest": "sha256:3d1a67b1ba51d5ddd553da6ec738e58d1b7ea2c82dc4caca121c6e111fe0590b"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_tls.py",
+      "role": "tls_runtime",
+      "digest": "sha256:dc8e778cab48d15ba3e9a2f6339ace872dd17868e7754e3416d8f2083d0fad8e"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_evaluator.py",
+      "role": "live_trace_evaluation",
+      "digest": "sha256:3755defa62a4938875a5b67054337a265b14c5a4ad384b3ca30ac79d047c759f"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_normalization.py",
+      "role": "semantic_normalization",
+      "digest": "sha256:56dae3c0b924ca30e598638d94b95122d957b4b3a988af764042767166e3f885"
+    },
+    {
       "path": "conformance/evidence/producer_payload_schema_router.py",
       "role": "payload_schema_routing",
       "digest": "sha256:779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
@@ -54,7 +109,7 @@
     {
       "path": "conformance/evidence/target_catalog.py",
       "role": "target_dispatch",
-      "digest": "sha256:6a481bd2f1c3562cd55c85da841335431695e3fa12eb54e98815a3705812a87b"
+      "digest": "sha256:c53ff1c1a9bbdad9f193d26ef387ddefc702e8f11b0620a9743fc0b53781089f"
     },
     {
       "path": "conformance/evidence/target_handlers.py",
@@ -97,5 +152,5 @@
       "digest": "sha256:5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
     }
   ],
-  "bundle_digest": "sha256:9bfcabb1a351c834d1076d1c389637b067c0a60373f15fbb77517e88106d0b49"
+  "bundle_digest": "sha256:853a077c2f4d2cfdf9ac83917c9aa8abee22c48120bc7e7e16fece673f4503ab"
 }

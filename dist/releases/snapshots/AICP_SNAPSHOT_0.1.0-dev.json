@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "f8f3a1206e3c6484224d60f9b6a86d249c80595639cf802533b2c807160bd8ca",
+      "combined_sha256": "84730e7e065775d1395c1fbc654fc5794e587f24b2c839b9d1d60a26a32186ad",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -65,11 +65,11 @@
         },
         {
           "path": "conformance/evidence/evidence_runner_bundle_v1_6.json",
-          "sha256": "a8b4122115ab481f86acacbba155bc81ae2b5227957b86d5f4602234d81e1264"
+          "sha256": "463558c4c83714a80296f855d8ac3cf186fe745d8a9bf1642555ba9a16b605f3"
         },
         {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "f6c29854dd2f34723be7aaf4ba9361b920461158eb67717f2b3365af79c10111"
+          "sha256": "eda719126cb49eddf48b5b445a80b5e92d6903ec0e8a3b6a6b2f637f31000311"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -181,7 +181,7 @@
         },
         {
           "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.6.0.json",
-          "sha256": "f6c29854dd2f34723be7aaf4ba9361b920461158eb67717f2b3365af79c10111"
+          "sha256": "eda719126cb49eddf48b5b445a80b5e92d6903ec0e8a3b6a6b2f637f31000311"
         },
         {
           "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
