@@ -15,6 +15,20 @@ MAX_READY_BYTES = 32_768
 MAX_STDOUT_BYTES = 262_144
 MAX_STDERR_BYTES = 262_144
 MAX_MCP_LINE_BYTES = 1_048_576
+RUNTIME_ENVIRONMENT_ALLOWLIST = (
+    "PATH",
+    "PATHEXT",
+    "SystemRoot",
+    "WINDIR",
+    "HOME",
+    "USERPROFILE",
+    "TMP",
+    "TEMP",
+    "TMPDIR",
+    "LANG",
+    "LC_ALL",
+    "VIRTUAL_ENV",
+)
 
 
 class LiveProcessError(RuntimeError):
@@ -50,14 +64,34 @@ def validate_loopback_url(value: str) -> str:
 
 
 def explicit_environment(values: dict[str, str]) -> dict[str, str]:
-    # Runtime discovery variables are retained so an independently installed
-    # executable can start; only AICP_LIVE_* test-control values are added.
-    environment = os.environ.copy()
-    for key in list(environment):
-        if key.startswith("AICP_LIVE_"):
-            environment.pop(key, None)
-    environment.update(values)
+    environment = {
+        key: os.environ[key]
+        for key in RUNTIME_ENVIRONMENT_ALLOWLIST
+        if key in os.environ
+    }
+    for key, value in values.items():
+        if not key.startswith("AICP_LIVE_"):
+            raise LiveProcessError("child control environment contains a non-AICP key")
+        environment[key] = value
     return environment
+
+
+def reject_secret_reflection(value: Any, secrets: list[str]) -> None:
+    protected = [item for item in secrets if isinstance(item, str) and item]
+    if not protected:
+        return
+
+    def walk(candidate: Any) -> bool:
+        if isinstance(candidate, str):
+            return any(secret in candidate for secret in protected)
+        if isinstance(candidate, dict):
+            return any(walk(key) or walk(child) for key, child in candidate.items())
+        if isinstance(candidate, (list, tuple)):
+            return any(walk(child) for child in candidate)
+        return False
+
+    if walk(value):
+        raise LiveProcessError("EVIDENCE_LIVE_SECRET_REFLECTION")
 
 
 class BoundedCollector:
