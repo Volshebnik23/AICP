@@ -457,11 +457,15 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
         else:
             self.send_response(101, "Switching Protocols")
             if self.state.mode != "websocket_missing_upgrade":
-                self.send_header("Upgrade", "websocket")
-            self.send_header(
-                "Connection",
-                "keep-alive" if self.state.mode == "websocket_wrong_connection" else "Upgrade",
-            )
+                self.send_header(
+                    "Upgrade",
+                    "h2c" if self.state.mode == "websocket_wrong_upgrade" else "websocket",
+                )
+            if self.state.mode != "websocket_missing_connection":
+                self.send_header(
+                    "Connection",
+                    "keep-alive" if self.state.mode == "websocket_wrong_connection" else "Upgrade",
+                )
             self.send_header(
                 "Sec-WebSocket-Accept",
                 "wrong-accept" if self.state.mode == "websocket_wrong_accept" else accept,
@@ -508,8 +512,20 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
                 "status": 101,
                 "response_body": response,
                 "response_headers": {
-                    "upgrade": "" if self.state.mode == "websocket_missing_upgrade" else "websocket",
-                    "connection": "keep-alive" if self.state.mode == "websocket_wrong_connection" else "Upgrade",
+                    "upgrade": (
+                        ""
+                        if self.state.mode == "websocket_missing_upgrade"
+                        else "h2c"
+                        if self.state.mode == "websocket_wrong_upgrade"
+                        else "websocket"
+                    ),
+                    "connection": (
+                        ""
+                        if self.state.mode == "websocket_missing_connection"
+                        else "keep-alive"
+                        if self.state.mode == "websocket_wrong_connection"
+                        else "Upgrade"
+                    ),
                     "sec-websocket-accept": "wrong-accept" if self.state.mode == "websocket_wrong_accept" else accept,
                 },
                 "transport": "websocket",
