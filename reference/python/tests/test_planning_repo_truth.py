@@ -128,7 +128,7 @@ def test_current_m64_profile_capability_binding_and_milestone_truth() -> None:
     assert projection_v1["external_evidence_target"] is True
     assert projection_v1["external_test_path"] == "full-capability"
     assert projection_v1["current_evidence_tck_release"] == (
-        "AICP-EVIDENCE-TCK-1.5.0"
+        "AICP-EVIDENCE-TCK-1.6.0"
     )
     assert projection_v1["external_evidence_mark"] == (
         "AICP-Evidence-SESSION-STATE-PROJECTION-v1"

@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import os
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -18,16 +19,19 @@ EVIDENCE_DIR = ROOT / "conformance" / "evidence"
 LIVE_DIR = EVIDENCE_DIR / "live_bindings"
 SCRIPTS_DIR = ROOT / "scripts"
 INTEROP_TOOLS_DIR = ROOT / "interop" / "tools"
-for path in (EVIDENCE_DIR, LIVE_DIR, SCRIPTS_DIR, INTEROP_TOOLS_DIR):
+RUNNER_DIR = ROOT / "conformance" / "runner"
+for path in (EVIDENCE_DIR, LIVE_DIR, SCRIPTS_DIR, INTEROP_TOOLS_DIR, RUNNER_DIR):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
+from aicp_external_evidence_runner import run_evidence  # noqa: E402
 from aicp_live_binding_runner import run_live_binding_evidence  # noqa: E402
 from interop_submission_validation import (  # noqa: E402
     evaluate_strong_report_evidence,
 )
 from interop_matrix import _manifest_entry  # noqa: E402
 from live_binding_process import (  # noqa: E402
+    LiveProcessError,
     explicit_environment,
     spawn_process,
     terminate_and_reap,
@@ -47,12 +51,21 @@ from live_binding_trace import (  # noqa: E402
     observation_map,
     semantic_digest,
 )
+from live_trace_evaluator import evaluate_v2_trace  # noqa: E402
+from live_trace_normalization import semantic_digest_v2  # noqa: E402
 from live_http_transport import (  # noqa: E402
+    LiveProcessError as HttpTransportError,
     execute_http_client,
+    http_request,
+    message_for_session,
+    load_messages,
     start_http_server,
     stop_http_server,
+    websocket_pull,
 )
+from live_http_capture import idempotency_key_valid  # noqa: E402
 from live_mcp_transport import execute_mcp_server  # noqa: E402
+from live_tls import generate_ephemeral_tls_material, server_ssl_context  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
     BINDING_TARGET_KEYS,
@@ -65,12 +78,24 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_4_TARGET_CATALOG_DIGESTS,
     FROZEN_TCK_1_4_TARGET_REGISTRY_DIGEST,
     FROZEN_TCK_1_4_TARGET_REGISTRY_SCHEMA_DIGEST,
+    FROZEN_TCK_1_5_BUNDLE_MANIFEST_DIGEST,
+    FROZEN_TCK_1_5_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST,
+    FROZEN_TCK_1_5_LIVE_TRACE_SCHEMA_DIGEST,
+    FROZEN_TCK_1_5_RECORD_DIGEST,
+    FROZEN_TCK_1_5_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_5_REPORT_SCHEMA_DIGEST,
+    FROZEN_TCK_1_5_RUNNER_BUNDLE_DIGEST,
+    FROZEN_TCK_1_5_TARGET_CATALOG_DIGESTS,
+    FROZEN_TCK_1_5_TARGET_REGISTRY_DIGEST,
+    FROZEN_TCK_1_5_TARGET_REGISTRY_SCHEMA_DIGEST,
+    TCK_1_5_RELEASE_ID,
     TCK_1_4_RELEASE_ID,
     canonical_digest as target_canonical_digest,
     file_digest,
     release_policy,
     release_record,
     release_snapshot_digest,
+    release_target_entry,
     resolve_target_record,
     target_catalog,
     validate_release_registry,
@@ -78,6 +103,7 @@ from target_catalog import (  # noqa: E402
     validate_target_registry,
 )
 from target_handlers import resolve_handler  # noqa: E402
+from aicp_conformance_runner import _run_binding_suite  # noqa: E402
 
 
 IMPLEMENTATION = "conformance/evidence/live_bindings/live_binding_test_implementation.py"
@@ -158,9 +184,9 @@ def _set_fact(report: dict, scenario_id: str, name: str, value: object) -> None:
     _recompute_trace(report)
 
 
-def test_exact_binding_targets_and_tck_15_registry() -> None:
+def test_exact_binding_targets_and_tck_16_registry() -> None:
     assert BINDING_TARGET_KEYS == ("BIND-HTTP@0.1", "BIND-MCP@0.1")
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.5.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.6.0"
     assert validate_target_registry() == []
     assert validate_release_registry() == []
     for key, mark in EXPECTED_MARKS.items():
@@ -191,6 +217,317 @@ def test_tck_14_is_byte_frozen_and_still_strong_eligible() -> None:
         for item in release["targets"]
     } == FROZEN_TCK_1_4_TARGET_CATALOG_DIGESTS
     assert release_policy(TCK_1_4_RELEASE_ID)["strong_eligible"] is True
+
+
+def test_exact_tck_11_and_tck_14_reports_remain_eligible() -> None:
+    tck_11_report = json.loads(
+        (
+            ROOT
+            / "interop/submissions/examples/capability_claim/reports/"
+            "report_capability_projection_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert evaluate_report(
+        tck_11_report,
+        expected_implementation_id="example-projection-v1-implementation",
+        expected_implementation_version="1.0.0-example",
+    )["status"] == "eligible"
+
+    tck_14_report = run_evidence(
+        [
+            sys.executable,
+            "conformance/evidence/product_profile_fake_adapters.py",
+            "--mode",
+            "external_good",
+        ],
+        target="AICP-MEDIATED-BLOCKING@0.1",
+        mode="full-profile",
+        timestamp="2026-08-21T00:00:00Z",
+    )
+    release = release_record(TCK_1_4_RELEASE_ID)
+    entry = release_target_entry(release, "AICP-MEDIATED-BLOCKING@0.1")
+    tck_14_report["report_format_version"] = "2.1"
+    tck_14_report["runner"] = {
+        "name": "aicp-external-evidence-runner",
+        "version": "2.1",
+        "source_revision": release["runner_bundle"]["digest"],
+    }
+    tck_14_report["tck_release"] = {
+        "release_id": release["release_id"],
+        "registry_digest": release_snapshot_digest(release["release_id"]),
+        "target_registry_digest": release["target_registry"]["content_digest"],
+        "target_registry_schema_digest": release["target_registry"]["schema_digest"],
+        "target_catalog_digest": entry["target_catalog"]["content_digest"],
+        "report_schema_digest": release["report_schema"]["content_digest"],
+        "runner_bundle_digest": release["runner_bundle"]["digest"],
+    }
+    tck_14_report["target"]["target_catalog_digest"] = entry["target_catalog"][
+        "content_digest"
+    ]
+    tck_14_report["required_suites"] = entry["required_suites"]
+    tck_14_report["input_artifacts"] = entry["required_input_artifacts"]
+    assert evaluate_report(
+        tck_14_report,
+        expected_implementation_id="test-only-product-profile-external",
+        expected_implementation_version="1.0.0",
+    )["status"] == "eligible"
+
+
+def test_tck_15_is_byte_frozen_and_explicitly_ineligible() -> None:
+    release = release_record(TCK_1_5_RELEASE_ID)
+    assert target_canonical_digest(release) == FROZEN_TCK_1_5_RECORD_DIGEST
+    assert release_snapshot_digest(TCK_1_5_RELEASE_ID) == FROZEN_TCK_1_5_REGISTRY_SNAPSHOT_DIGEST
+    assert file_digest(EVIDENCE_DIR / "evidence_runner_bundle_v1_5.json") == FROZEN_TCK_1_5_BUNDLE_MANIFEST_DIGEST
+    assert release["runner_bundle"]["digest"] == FROZEN_TCK_1_5_RUNNER_BUNDLE_DIGEST
+    assert release["report_schema"]["content_digest"] == FROZEN_TCK_1_5_REPORT_SCHEMA_DIGEST
+    assert release["target_registry"]["content_digest"] == FROZEN_TCK_1_5_TARGET_REGISTRY_DIGEST
+    assert release["target_registry"]["schema_digest"] == FROZEN_TCK_1_5_TARGET_REGISTRY_SCHEMA_DIGEST
+    assert {item["target_key"]: item["target_catalog"]["content_digest"] for item in release["targets"]} == FROZEN_TCK_1_5_TARGET_CATALOG_DIGESTS
+    assert file_digest(LIVE_DIR / "live_binding_trace.schema.json") == FROZEN_TCK_1_5_LIVE_TRACE_SCHEMA_DIGEST
+    assert file_digest(LIVE_DIR / "live_endpoint_descriptor.schema.json") == FROZEN_TCK_1_5_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST
+    assert release_policy(TCK_1_5_RELEASE_ID)["strong_eligible"] is False
+
+
+def test_zero_real_external_submissions_and_no_tck_15_adoption() -> None:
+    matrix = json.loads((ROOT / "interop/interop_matrix.json").read_text(encoding="utf-8"))
+    assert matrix["real_submissions"] == []
+    references: list[str] = []
+    for path in (ROOT / "interop/submissions").iterdir():
+        if not path.is_dir() or path.name in {"examples", "templates"} or path.name.startswith("dryrun-"):
+            continue
+        for candidate in path.rglob("*.json"):
+            if TCK_1_5_RELEASE_ID in candidate.read_text(encoding="utf-8"):
+                references.append(candidate.relative_to(ROOT).as_posix())
+    assert references == []
+
+
+def test_live_child_environment_is_allowlisted_and_actual_child_cannot_see_secrets(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sentinels = {
+        "GITHUB_TOKEN": "AICP_SENTINEL_GITHUB",
+        "OPENAI_API_KEY": "AICP_SENTINEL_OPENAI",
+        "AWS_SECRET_ACCESS_KEY": "AICP_SENTINEL_AWS",
+        "AICP_UNRELATED_SECRET": "AICP_SENTINEL_OTHER",
+    }
+    for name, value in sentinels.items():
+        monkeypatch.setenv(name, value)
+    environment = explicit_environment({"AICP_LIVE_RUN_ID": "allowlist-test"})
+    assert not set(sentinels) & set(environment)
+    child = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import os,sys; sys.exit(any(name in os.environ for name in "
+            + repr(sorted(sentinels))
+            + "))",
+        ],
+        cwd=ROOT,
+        env=environment,
+        shell=False,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert child.returncode == 0
+    assert child.stdout == ""
+    assert child.stderr == ""
+
+
+def test_secret_reflection_is_classified_and_never_serialized(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bearer = "m64-correction-reflection-sentinel"
+    import aicp_live_binding_runner as runner
+
+    monkeypatch.setattr(runner.secrets, "token_urlsafe", lambda _size: bearer)
+    report = _run("http", server_mode="secret_reflection")
+    assert report["passed"] is False
+    assert report["compatibility_marks"] == []
+    assert any(
+        failure["test_id"] == "EVIDENCE_LIVE_SECRET_REFLECTION"
+        for failure in report["failures"]
+    )
+    assert bearer not in json.dumps(report, sort_keys=True)
+
+
+def test_observation_only_v1_trace_and_forged_v2_observations_are_rejected(
+    external_reports: dict[str, dict],
+) -> None:
+    report = copy.deepcopy(external_reports["http"])
+    artifact = report["generated_artifacts"][0]
+    artifact["content"]["trace_version"] = "aicp.live_binding_trace.v1"
+    for run in artifact["content"]["runs"]:
+        run["interactions"] = [
+            {
+                "interaction_id": item["interaction_id"],
+                "role": item["role"],
+                "scenario_id": item["scenario_id"],
+                "transport": "websocket" if item["transport"] == "wss" else item["transport"],
+                "operation": item["operation"],
+                "observations": [
+                    {"name": "network_boundary", "value": "loopback_socket"},
+                    {"name": "message_digest_equal", "value": True},
+                    {"name": "websocket_handshake_valid", "value": True},
+                ],
+            }
+            for item in run["interactions"]
+            if item["transport"] != "wss"
+        ]
+    _recompute_trace(report)
+    assert evaluate_report(report)["status"] == "rejected"
+
+    contradictory = copy.deepcopy(external_reports["http"])
+    _mutate_raw(contradictory, "wrong_http_path", "LIVE-HTTP-SERVER-INGEST")
+    for run_index in range(2):
+        _interaction(contradictory, "LIVE-HTTP-SERVER-INGEST", run_index)["observations"] = [
+            {"name": "request_path_valid", "value": True}
+        ]
+    _recompute_trace(contradictory)
+    assert evaluate_report(contradictory)["status"] == "rejected"
+
+
+@pytest.mark.parametrize(
+    ("key", "expected"),
+    [
+        ("m1", True),
+        ("tenant-m1", True),
+        ("tenant:m1", True),
+        ("tenant/m1", True),
+        ("prefixm1", False),
+        ("xm1", False),
+        ("wrong", False),
+    ],
+)
+def test_live_idempotency_rule_has_exact_static_tb_http_parity(
+    key: str,
+    expected: bool,
+    tmp_path: Path,
+) -> None:
+    case = json.loads(
+        (ROOT / "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    case["http_request"]["headers"]["Idempotency-Key"] = key
+    case_path = tmp_path / f"idempotency-{key.replace('/', '_')}.json"
+    case_path.write_text(json.dumps(case), encoding="utf-8")
+    schema_path = ROOT / "schemas/bindings/bind-http-ws.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    suite = {
+        "suite_id": "TB-HTTP-0.1-IDEMPOTENCY-DIFFERENTIAL",
+        "suite_version": "0.1.0-test",
+        "aicp_version": "0.1",
+        "schema_ref": str(schema_path.relative_to(ROOT)),
+        "cases": [str(case_path)],
+        "compatibility_mark": "AICP-BIND-HTTP-0.1",
+        "checks": [{"test_id": "TB-HTTP-IDEMPOTENCY-01"}],
+    }
+    ordinary_report = _run_binding_suite(
+        suite,
+        schema,
+        tmp_path / "suite.json",
+        "legacy",
+    )
+    assert ordinary_report["passed"] is expected
+    assert idempotency_key_valid(key, "m1") is expected
+
+
+def test_actual_wss_verification_and_wrong_ca_failure() -> None:
+    with tempfile.TemporaryDirectory(prefix="aicp-live-wss-direct-") as temporary:
+        root = Path(temporary)
+        material = generate_ephemeral_tls_material(root / "trusted", stem="trusted")
+        wrong = generate_ephemeral_tls_material(root / "wrong", stem="wrong")
+        bearer = "wss-direct-test-bearer"
+        server, state, thread = start_http_server(
+            bearer,
+            ssl_context=server_ssl_context(material),
+        )
+        base = f"https://127.0.0.1:{server.server_address[1]}"
+        wss = f"wss://127.0.0.1:{server.server_address[1]}"
+        try:
+            status, _, created, _ = http_request(
+                base,
+                "POST",
+                "/aicp/v1/sessions",
+                bearer=bearer,
+                body={"client_id": "wss-direct"},
+                tls_ca_file=str(material.ca_file),
+            )
+            assert status == 201 and created
+            session = str(created["session_id"])
+            message = message_for_session(load_messages()[0], session)
+            status, _, _, _ = http_request(
+                base,
+                "POST",
+                f"/aicp/v1/sessions/{session}/messages",
+                bearer=bearer,
+                body=message,
+                headers={"Idempotency-Key": str(message["message_id"])},
+                tls_ca_file=str(material.ca_file),
+            )
+            assert status == 202
+            status, frame = websocket_pull(
+                wss,
+                f"/aicp/v1/sessions/{session}/messages/ws",
+                bearer=bearer,
+                after="c0",
+                limit=1,
+                tls_ca_file=str(material.ca_file),
+            )
+            assert status == 101
+            assert frame["type"] == "messages"
+            with pytest.raises((ssl.SSLCertVerificationError, LiveProcessError)):
+                websocket_pull(
+                    wss,
+                    f"/aicp/v1/sessions/{session}/messages/ws",
+                    bearer=bearer,
+                    after="c0",
+                    limit=1,
+                    tls_ca_file=str(wrong.ca_file),
+                )
+            state.mode = "websocket_wrong_accept"
+            with pytest.raises(HttpTransportError, match="handshake validation failed"):
+                websocket_pull(
+                    wss,
+                    f"/aicp/v1/sessions/{session}/messages/ws",
+                    bearer=bearer,
+                    after="c0",
+                    limit=1,
+                    tls_ca_file=str(material.ca_file),
+                )
+        finally:
+            stop_http_server(server, thread)
+
+
+def test_exact_live_scenario_counts_and_fresh_websocket_keys(
+    external_reports: dict[str, dict],
+) -> None:
+    http_run = external_reports["http"]["generated_artifacts"][0]["content"]["runs"][0]
+    mcp_run = external_reports["mcp"]["generated_artifacts"][0]["content"]["runs"][0]
+    assert sum(item["role"] == "server_under_test" for item in http_run["interactions"]) == 16
+    assert sum(item["role"] == "client_under_test" for item in http_run["interactions"]) == 16
+    assert sum(item["role"] == "server_under_test" for item in mcp_run["interactions"]) == 6
+    assert sum(item["role"] == "client_under_test" for item in mcp_run["interactions"]) == 6
+    websocket_interactions = [
+        item
+        for item in http_run["interactions"]
+        if item["transport"] in {"websocket", "wss"}
+    ]
+    keys = [
+        exchange["request"]["headers"]["sec-websocket-key"]
+        for item in websocket_interactions
+        for exchange in item["transport_evidence"]["exchanges"]
+        if exchange.get("scheme") in {"ws", "wss"}
+    ]
+    assert len(keys) == 8
+    assert len(set(keys)) == len(keys)
+    assert all(
+        exchange.get("tls_verified") is True
+        for item in websocket_interactions
+        if item["transport"] == "wss"
+        for exchange in item["transport_evidence"]["exchanges"]
+    )
 
 
 @pytest.mark.parametrize("binding", ["http", "mcp"])
@@ -275,51 +612,97 @@ def test_every_mcp_client_negative_mode_suppresses_mark(mode: str) -> None:
     assert report["compatibility_marks"] == []
 
 
-HTTP_MUTATIONS = [
-    ("LIVE-HTTP-SERVER-AUTH", "auth_rejected", False),
-    ("LIVE-HTTP-SERVER-SESSION", "session_distinct", False),
-    ("LIVE-HTTP-SERVER-INGEST", "message_digest_equal", False),
-    ("LIVE-HTTP-SERVER-REPLAY", "duplicate_count", 1),
-    ("LIVE-HTTP-SERVER-REPLAY-SCOPE", "replay_scope_isolated", False),
-    ("LIVE-HTTP-SERVER-POLL", "no_cross_session_leakage", False),
-    ("LIVE-HTTP-SERVER-HEAD", "head_session_match", False),
-    ("LIVE-HTTP-SERVER-ACK", "ack_matches", False),
-    ("LIVE-HTTP-SERVER-REPLAY-WINDOW", "status", 200),
-    ("LIVE-HTTP-SERVER-ORDERING", "ordered_chain_valid", False),
-    ("LIVE-HTTP-SERVER-OVERLOAD", "retry_after_present", False),
-    ("LIVE-HTTP-SERVER-SSE", "event_ids_match_cursors", False),
-    ("LIVE-HTTP-SERVER-SSE-RECONNECT", "reconnect_stable", False),
-    ("LIVE-HTTP-SERVER-WEBSOCKET", "cursor_relationship_valid", False),
-    ("LIVE-HTTP-SERVER-CLOSE", "closed_session_rejected", False),
+RAW_EVIDENCE_MUTATIONS = [
+    ("http", "wrong_http_path", "LIVE-HTTP-SERVER-INGEST", "message_ingest"),
+    ("http", "wrong_idempotency_delimiter", "LIVE-HTTP-SERVER-INGEST", "message_ingest"),
+    ("http", "changed_message_hash", "LIVE-HTTP-SERVER-INGEST", "message_ingest"),
+    ("http", "cross_session_poll", "LIVE-HTTP-SERVER-POLL", "polling_cursor"),
+    ("http", "wrong_cursor", "LIVE-HTTP-SERVER-ACK", "explicit_ack"),
+    ("http", "wrong_ack", "LIVE-HTTP-SERVER-ACK", "explicit_ack"),
+    ("http", "wrong_sse_event_id", "LIVE-HTTP-SERVER-SSE", "sse_stream"),
+    ("http", "wrong_sse_more", "LIVE-HTTP-SERVER-SSE", "sse_stream"),
+    ("http", "wrong_last_event_id", "LIVE-HTTP-SERVER-SSE-RECONNECT", "sse_reconnect"),
+    ("http", "wrong_websocket_accept", "LIVE-HTTP-SERVER-WEBSOCKET", "websocket_pull"),
+    ("http", "wrong_websocket_cursor", "LIVE-HTTP-SERVER-WEBSOCKET", "websocket_pull"),
+    ("mcp", "wrong_mcp_request_id", "LIVE-MCP-SERVER-SEND", "send_message"),
+    ("mcp", "wrong_mcp_tool", "LIVE-MCP-SERVER-SEND", "send_message"),
+    ("mcp", "wrong_mcp_after_cursor", "LIVE-MCP-SERVER-POLL", "poll_messages"),
+    ("mcp", "wrong_mcp_session", "LIVE-MCP-SERVER-POLL", "poll_messages"),
+    ("mcp", "wrong_object_content", "LIVE-MCP-SERVER-OBJECT", "get_object"),
 ]
 
 
-@pytest.mark.parametrize(("scenario_id", "fact", "value"), HTTP_MUTATIONS)
-def test_each_http_evaluator_family_is_load_bearing(
-    external_reports: dict[str, dict], scenario_id: str, fact: str, value: object
-) -> None:
-    report = copy.deepcopy(external_reports["http"])
-    _set_fact(report, scenario_id, fact, value)
-    assert evaluate_report(report)["status"] == "rejected"
+def _interaction(report: dict, scenario_id: str, run_index: int) -> dict:
+    return next(
+        item
+        for item in report["generated_artifacts"][0]["content"]["runs"][run_index]["interactions"]
+        if item["scenario_id"] == scenario_id
+    )
+
+
+def _mutate_raw(report: dict, mutation: str, scenario_id: str) -> None:
+    for run_index in range(2):
+        evidence = _interaction(report, scenario_id, run_index)["transport_evidence"]
+        exchanges = evidence["exchanges"]
+        if mutation == "wrong_http_path":
+            exchanges[0]["request"]["path"] = "/aicp/v1/sessions/wrong/messages"
+        elif mutation == "wrong_idempotency_delimiter":
+            exchanges[0]["request"]["headers"]["idempotency-key"] = "prefixm1"
+        elif mutation == "changed_message_hash":
+            exchanges[0]["request"]["body"]["message_refs"][0]["message_hash"] = "sha256:" + "0" * 64
+        elif mutation == "cross_session_poll":
+            exchanges[0]["response"]["body"]["message_refs"][0]["session_id"] = "other-session"
+        elif mutation == "wrong_cursor":
+            exchanges[0]["response"]["body"]["next_cursor"] = "other-cursor"
+        elif mutation == "wrong_ack":
+            exchanges[1]["request"]["body"]["cursor"] = "other-cursor"
+        elif mutation == "wrong_sse_event_id":
+            exchanges[0]["events"][0]["id"] = "other-cursor"
+        elif mutation == "wrong_sse_more":
+            exchanges[0]["events"][-1]["more"] = True
+        elif mutation == "wrong_last_event_id":
+            exchanges[1]["request"]["headers"]["last-event-id"] = "other-cursor"
+        elif mutation == "wrong_websocket_accept":
+            ws = next(item for item in exchanges if item.get("scheme") == "ws")
+            ws["response"]["headers"]["sec-websocket-accept"] = "wrong-accept"
+        elif mutation == "wrong_websocket_cursor":
+            ws = next(item for item in exchanges if item.get("server_frame", {}).get("type") == "messages")
+            ws["server_frame"]["cursor_after_last"] = "other-cursor"
+        elif mutation == "wrong_mcp_request_id":
+            exchanges[0]["response"]["id"] = "other-request"
+        elif mutation == "wrong_mcp_tool":
+            exchanges[0]["request"]["tool"] = "aicp.wrongTool"
+        elif mutation == "wrong_mcp_after_cursor":
+            exchanges[1]["request"]["arguments"]["after_cursor"] = "other-cursor"
+        elif mutation == "wrong_mcp_session":
+            exchanges[1]["request"]["arguments"]["session_id"] = "other-session"
+        elif mutation == "wrong_object_content":
+            exchanges[0]["response"]["result"]["object_content"]["goal"] = "rewritten"
+    _recompute_trace(report)
 
 
 @pytest.mark.parametrize(
-    ("scenario_id", "fact", "value"),
-    [
-        ("LIVE-MCP-SERVER-SEND", "message_digest_equal", False),
-        ("LIVE-MCP-SERVER-DUPLICATE", "duplicate_hash_stable", False),
-        ("LIVE-MCP-SERVER-POLL", "poll_limit_respected", False),
-        ("LIVE-MCP-SERVER-HEAD", "head_session_match", False),
-        ("LIVE-MCP-SERVER-OBJECT", "object_hash_recomputed", False),
-        ("LIVE-MCP-SERVER-INTEGRITY", "request_response_correlated", False),
-    ],
+    ("binding", "mutation", "scenario_id", "family"),
+    RAW_EVIDENCE_MUTATIONS,
 )
-def test_each_mcp_evaluator_family_is_load_bearing(
-    external_reports: dict[str, dict], scenario_id: str, fact: str, value: object
+def test_v2_raw_evidence_mutations_are_load_bearing(
+    external_reports: dict[str, dict],
+    binding: str,
+    mutation: str,
+    scenario_id: str,
+    family: str,
 ) -> None:
-    report = copy.deepcopy(external_reports["mcp"])
-    _set_fact(report, scenario_id, fact, value)
+    report = copy.deepcopy(external_reports[binding])
+    _mutate_raw(report, mutation, scenario_id)
     assert evaluate_report(report)["status"] == "rejected"
+    target_id = "BIND-HTTP" if binding == "http" else "BIND-MCP"
+    errors = evaluate_v2_trace(
+        report["generated_artifacts"][0],
+        load_scenario_catalog(target_id),
+        full_binding=True,
+        disabled_families=frozenset({family}),
+    )
+    assert errors == []
 
 
 @pytest.mark.parametrize(
@@ -391,11 +774,11 @@ def test_trace_schema_structurally_rejects_secret_fields(
 ) -> None:
     from jsonschema import Draft202012Validator
 
-    schema = json.loads((LIVE_DIR / "live_binding_trace.schema.json").read_text(encoding="utf-8"))
+    schema = json.loads((LIVE_DIR / "live_binding_trace_v2.schema.json").read_text(encoding="utf-8"))
     artifact = copy.deepcopy(external_reports["http"]["generated_artifacts"][0])
-    artifact["content"]["runs"][0]["interactions"][0]["observations"].append(
+    artifact["content"]["runs"][0]["interactions"][0]["observations"] = [
         {"name": "authorization", "value": "Bearer forbidden"}
-    )
+    ]
     assert list(Draft202012Validator(schema).iter_errors(artifact))
 
 
@@ -405,68 +788,16 @@ def test_semantic_normalization_allows_opaque_spelling_and_order_only(
     report = copy.deepcopy(external_reports["http"])
     artifact = report["generated_artifacts"][0]
     first, second = artifact["content"]["runs"]
-    second["interactions"].reverse()
-    mappings: dict[str, dict[str, str]] = {
-        "session": {},
-        "cursor": {},
-        "request": {},
-    }
-    session_names = {"session_id", "second_session_id"}
-    cursor_names = {
-        "poll_after",
-        "next_cursor",
-        "cursor_after_last",
-        "ack_cursor",
-        "expired_cursor",
-        "min_cursor",
-        "last_event_id",
-    }
-    request_names = {"request_id", "response_id"}
-    for interaction in second["interactions"]:
-        for fact in interaction["observations"]:
-            name = fact["name"]
-            value = fact["value"]
-            group = (
-                "session"
-                if name in session_names
-                else "cursor"
-                if name in cursor_names
-                else "request"
-                if name in request_names
-                else None
-            )
-            if group is not None and isinstance(value, str) and value:
-                mapping = mappings[group]
-                mapping.setdefault(value, f"opaque-{group}-{len(mapping) + 1}")
-                fact["value"] = mapping[value]
-    _recompute_trace(report)
-    assert semantic_digest(first) == semantic_digest(second)
+    assert first != second
+    assert semantic_digest_v2(first) == semantic_digest_v2(second)
     assert evaluate_report(report)["status"] == "eligible"
 
     broken = copy.deepcopy(report)
-    interaction = next(
-        item
-        for item in broken["generated_artifacts"][0]["content"]["runs"][1]["interactions"]
-        if item["scenario_id"] == "LIVE-HTTP-SERVER-ACK"
-    )
-    next(
-        item for item in interaction["observations"] if item["name"] == "ack_cursor"
-    )["value"] = "relationship-broken"
-    _recompute_trace(broken)
+    _mutate_raw(broken, "wrong_ack", "LIVE-HTTP-SERVER-ACK")
     assert evaluate_report(broken)["status"] == "rejected"
 
     message_changed = copy.deepcopy(report)
-    interaction = next(
-        item
-        for item in message_changed["generated_artifacts"][0]["content"]["runs"][1]["interactions"]
-        if item["scenario_id"] == "LIVE-HTTP-SERVER-INGEST"
-    )
-    next(
-        item
-        for item in interaction["observations"]
-        if item["name"] == "observed_message_hash"
-    )["value"] = "sha256:" + "0" * 64
-    _recompute_trace(message_changed)
+    _mutate_raw(message_changed, "changed_message_hash", "LIVE-HTTP-SERVER-INGEST")
     assert evaluate_report(message_changed)["status"] == "rejected"
 
 
@@ -482,7 +813,10 @@ def test_complete_report_never_contains_bearer_or_test_key_material(
     encoded = json.dumps(_run("http"), sort_keys=True)
     assert bearer not in encoded
     assert key_material not in encoded
-    assert "authorization" not in encoded.lower()
+    assert '"authorization":' not in encoded.lower()
+    assert '"cookie"' not in encoded.lower()
+    assert '"set-cookie"' not in encoded.lower()
+    assert '"proxy-authorization"' not in encoded.lower()
 
 
 def test_direct_http_socket_sse_websocket_and_client_process_capture() -> None:
@@ -501,7 +835,7 @@ def test_direct_http_socket_sse_websocket_and_client_process_capture() -> None:
         assert any(item["transport"] == "sse" for item in state.records)
         assert any(item["transport"] == "websocket" for item in state.records)
         assert all(
-            observation_map(item)["network_boundary"] == "loopback_socket"
+            item["transport_evidence"]["boundary"]["kind"] == "loopback_socket"
             for item in interactions
         )
     finally:
@@ -525,7 +859,7 @@ def test_direct_http_socket_sse_websocket_and_client_process_capture() -> None:
                 "AICP_LIVE_ENDPOINT_URL": f"http://127.0.0.1:{server.server_address[1]}",
             }
             process = subprocess.Popen(
-                _command("http", "client_under_test", "external_implementation"),
+                _command("http", "client_under_test", "external_implementation", "request_response_only"),
                 cwd=ROOT,
                 env=explicit_environment(values),
                 stdin=subprocess.PIPE,
@@ -578,11 +912,15 @@ def test_direct_mcp_child_process_stdio_and_jsonrpc_correlation() -> None:
                 role="server_under_test",
                 deadline=deadline,
             )
-            assert all(observation_map(item)["process_boundary"] is True for item in interactions)
             assert all(
-                observation_map(item)["request_id"]
-                == observation_map(item)["response_id"]
+                item["transport_evidence"]["boundary"]["kind"]
+                == "child_process_stdio"
                 for item in interactions
+            )
+            assert all(
+                exchange["request"]["id"] == exchange["response"]["id"]
+                for item in interactions
+                for exchange in item["transport_evidence"]["exchanges"]
             )
         finally:
             terminate_and_reap(process)
