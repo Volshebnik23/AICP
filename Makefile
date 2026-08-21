@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -138,6 +138,27 @@ evidence-profile-delegated-full-reference:
 evidence-profile-delegated-full-external-test:
 	$(PYTHON) conformance/evidence/aicp_external_evidence_runner.py --cmd-json '["$(PYTHON)","conformance/evidence/product_profile_fake_adapters.py","--mode","external_good"]' --target AICP-DELEGATED-IDENTITY@0.1 --mode full-profile --out out/evidence/delegated-identity-external-test.json
 
+live-binding-http-smoke-reference:
+	$(PYTHON) conformance/evidence/aicp_live_binding_runner.py --server-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","http","--role","server_under_test","--kind","reference_corpus","--mode","good"]' --target BIND-HTTP@0.1 --mode smoke --out out/evidence/bind-http-reference-smoke.json
+
+live-binding-http-full-reference:
+	$(PYTHON) conformance/evidence/aicp_live_binding_runner.py --server-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","http","--role","server_under_test","--kind","reference_corpus","--mode","good"]' --client-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","http","--role","client_under_test","--kind","reference_corpus","--mode","good"]' --target BIND-HTTP@0.1 --mode full-binding --out out/evidence/bind-http-reference-full.json
+
+live-binding-http-full-external-test:
+	$(PYTHON) conformance/evidence/aicp_live_binding_runner.py --server-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","http","--role","server_under_test","--kind","external_implementation","--mode","good"]' --client-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","http","--role","client_under_test","--kind","external_implementation","--mode","good"]' --target BIND-HTTP@0.1 --mode full-binding --out out/evidence/bind-http-external-test.json
+
+live-binding-mcp-smoke-reference:
+	$(PYTHON) conformance/evidence/aicp_live_binding_runner.py --server-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","mcp","--role","server_under_test","--kind","reference_corpus","--mode","good"]' --target BIND-MCP@0.1 --mode smoke --out out/evidence/bind-mcp-reference-smoke.json
+
+live-binding-mcp-full-reference:
+	$(PYTHON) conformance/evidence/aicp_live_binding_runner.py --server-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","mcp","--role","server_under_test","--kind","reference_corpus","--mode","good"]' --client-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","mcp","--role","client_under_test","--kind","reference_corpus","--mode","good"]' --target BIND-MCP@0.1 --mode full-binding --out out/evidence/bind-mcp-reference-full.json
+
+live-binding-mcp-full-external-test:
+	$(PYTHON) conformance/evidence/aicp_live_binding_runner.py --server-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","mcp","--role","server_under_test","--kind","external_implementation","--mode","good"]' --client-cmd-json '["$(PYTHON)","conformance/evidence/live_bindings/live_binding_test_implementation.py","--binding","mcp","--role","client_under_test","--kind","external_implementation","--mode","good"]' --target BIND-MCP@0.1 --mode full-binding --out out/evidence/bind-mcp-external-test.json
+
+evidence-binding-examples:
+	$(PYTHON) scripts/validate_interop_submission_examples.py
+
 evidence-submission-examples:
 	$(PYTHON) scripts/generate_evidence_submission_example.py --check
 	$(PYTHON) scripts/validate_interop_submission_examples.py
@@ -246,6 +267,13 @@ prepr:
 	$(MAKE) evidence-profile-delegated-smoke-reference
 	$(MAKE) evidence-profile-delegated-full-reference
 	$(MAKE) evidence-profile-delegated-full-external-test
+	$(MAKE) live-binding-http-smoke-reference
+	$(MAKE) live-binding-http-full-reference
+	$(MAKE) live-binding-http-full-external-test
+	$(MAKE) live-binding-mcp-smoke-reference
+	$(MAKE) live-binding-mcp-full-reference
+	$(MAKE) live-binding-mcp-full-external-test
+	$(MAKE) evidence-binding-examples
 	$(MAKE) evidence-submission-examples
 	cd sdk/typescript && npm ci && npm test
 
@@ -253,6 +281,9 @@ compatibility-gate:
 	$(MAKE) validate
 	$(MAKE) conformance-all
 	$(MAKE) evidence-targets-validate
+	$(MAKE) live-binding-http-full-reference
+	$(MAKE) live-binding-mcp-full-reference
+	$(MAKE) evidence-binding-examples
 	$(MAKE) snapshot
 
 release-gate:

@@ -1,0 +1,280 @@
+{
+  "catalog_version": "1.0",
+  "target": {
+    "kind": "binding",
+    "target_id": "BIND-HTTP",
+    "target_version": "0.1"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-AUTH",
+      "tested_role": "server_under_test",
+      "semantic_family": "authentication",
+      "deterministic_inputs": {"seed": 6401, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-HTTP-AUTH-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#security-considerations"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-SESSION",
+      "tested_role": "server_under_test",
+      "semantic_family": "session_lifecycle",
+      "deterministic_inputs": {"seed": 6402, "session_label": "primary", "second_session_label": "secondary"},
+      "required_static_suite_checks": ["TB-HTTP-SESSION-01"],
+      "normative_source_refs": ["conformance/bindings/TB_HTTP_WS_0.1.json"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-INGEST",
+      "tested_role": "server_under_test",
+      "semantic_family": "message_ingest",
+      "deterministic_inputs": {"seed": 6403, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["CT-MESSAGE-TYPE-REGISTRY-01", "TB-HTTP-IDEMPOTENCY-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-REPLAY",
+      "tested_role": "server_under_test",
+      "semantic_family": "idempotent_replay",
+      "deterministic_inputs": {"seed": 6404, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-HTTP-REPLAY-01", "TB-CP-RELIABILITY-02"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-REPLAY-SCOPE",
+      "tested_role": "server_under_test",
+      "semantic_family": "session_scoped_replay",
+      "deterministic_inputs": {"seed": 6405, "session_label": "primary", "second_session_label": "secondary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-HTTP-REPLAY-01", "TB-HTTP-SESSION-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-POLL",
+      "tested_role": "server_under_test",
+      "semantic_family": "polling_cursor",
+      "deterministic_inputs": {"seed": 6406, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-CP-RELIABILITY-01", "TB-CP-RELIABILITY-02"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-HEAD",
+      "tested_role": "server_under_test",
+      "semantic_family": "head",
+      "deterministic_inputs": {"seed": 6407, "session_label": "primary"},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-ACK",
+      "tested_role": "server_under_test",
+      "semantic_family": "explicit_ack",
+      "deterministic_inputs": {"seed": 6408, "session_label": "primary", "channel_properties": {"CP-ACK-0.1": "explicit"}},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#channel-properties-integration"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-REPLAY-WINDOW",
+      "tested_role": "server_under_test",
+      "semantic_family": "replay_window",
+      "deterministic_inputs": {"seed": 6409, "session_label": "primary", "channel_properties": {"CP-REPLAY-WINDOW-0.1": 2}},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#channel-properties-integration"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-ORDERING",
+      "tested_role": "server_under_test",
+      "semantic_family": "ordering",
+      "deterministic_inputs": {"seed": 6410, "session_label": "primary", "channel_properties": {"CP-ORDERING-0.1": "ordered"}},
+      "required_static_suite_checks": ["TB-CP-ORDERING-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#channel-properties-integration"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-OVERLOAD",
+      "tested_role": "server_under_test",
+      "semantic_family": "overload",
+      "deterministic_inputs": {"seed": 6411, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-HTTP-RATELIMIT-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#rate-limits-and-quotas"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-SSE",
+      "tested_role": "server_under_test",
+      "semantic_family": "sse_stream",
+      "deterministic_inputs": {"seed": 6412, "session_label": "primary", "limit": 3},
+      "required_static_suite_checks": ["TB-SSE-PULL-01", "TB-SSE-EVENT-MIRROR-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#minimal-sse-framing-pull-based-backpressure"],
+      "optional_feature_requirements": ["sse"]
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-SSE-RECONNECT",
+      "tested_role": "server_under_test",
+      "semantic_family": "sse_reconnect",
+      "deterministic_inputs": {"seed": 6413, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-SSE-RECONNECT-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#minimal-sse-framing-pull-based-backpressure"],
+      "optional_feature_requirements": ["sse"]
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-WEBSOCKET",
+      "tested_role": "server_under_test",
+      "semantic_family": "websocket_pull",
+      "deterministic_inputs": {"seed": 6414, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-WS-PULL-01", "TB-WS-FRAME-MIRROR-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#minimal-ws-framing"],
+      "optional_feature_requirements": ["websocket"]
+    },
+    {
+      "scenario_id": "LIVE-HTTP-SERVER-CLOSE",
+      "tested_role": "server_under_test",
+      "semantic_family": "close_session",
+      "deterministic_inputs": {"seed": 6415, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-HTTP-SESSION-01"],
+      "normative_source_refs": ["conformance/bindings/TB_HTTP_WS_0.1.json"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-AUTH",
+      "tested_role": "client_under_test",
+      "semantic_family": "authentication",
+      "deterministic_inputs": {"seed": 6451, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-HTTP-AUTH-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#security-considerations"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-SESSION",
+      "tested_role": "client_under_test",
+      "semantic_family": "session_lifecycle",
+      "deterministic_inputs": {"seed": 6452, "session_label": "primary", "second_session_label": "secondary"},
+      "required_static_suite_checks": ["TB-HTTP-SESSION-01"],
+      "normative_source_refs": ["conformance/bindings/TB_HTTP_WS_0.1.json"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-INGEST",
+      "tested_role": "client_under_test",
+      "semantic_family": "message_ingest",
+      "deterministic_inputs": {"seed": 6453, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["CT-MESSAGE-TYPE-REGISTRY-01", "TB-HTTP-IDEMPOTENCY-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-REPLAY",
+      "tested_role": "client_under_test",
+      "semantic_family": "idempotent_replay",
+      "deterministic_inputs": {"seed": 6454, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-HTTP-REPLAY-01", "TB-CP-RELIABILITY-02"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-REPLAY-SCOPE",
+      "tested_role": "client_under_test",
+      "semantic_family": "session_scoped_replay",
+      "deterministic_inputs": {"seed": 6455, "session_label": "primary", "second_session_label": "secondary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-HTTP-REPLAY-01", "TB-HTTP-SESSION-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-POLL",
+      "tested_role": "client_under_test",
+      "semantic_family": "polling_cursor",
+      "deterministic_inputs": {"seed": 6456, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-CP-RELIABILITY-01", "TB-CP-RELIABILITY-02"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-HEAD",
+      "tested_role": "client_under_test",
+      "semantic_family": "head",
+      "deterministic_inputs": {"seed": 6457, "session_label": "primary"},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#normative-behavior"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-ACK",
+      "tested_role": "client_under_test",
+      "semantic_family": "explicit_ack",
+      "deterministic_inputs": {"seed": 6458, "session_label": "primary", "channel_properties": {"CP-ACK-0.1": "explicit"}},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#channel-properties-integration"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-REPLAY-WINDOW",
+      "tested_role": "client_under_test",
+      "semantic_family": "replay_window",
+      "deterministic_inputs": {"seed": 6459, "session_label": "primary", "channel_properties": {"CP-REPLAY-WINDOW-0.1": 2}},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#channel-properties-integration"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-ORDERING",
+      "tested_role": "client_under_test",
+      "semantic_family": "ordering",
+      "deterministic_inputs": {"seed": 6460, "session_label": "primary", "channel_properties": {"CP-ORDERING-0.1": "ordered"}},
+      "required_static_suite_checks": ["TB-CP-ORDERING-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#channel-properties-integration"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-OVERLOAD",
+      "tested_role": "client_under_test",
+      "semantic_family": "overload",
+      "deterministic_inputs": {"seed": 6461, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-HTTP-RATELIMIT-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#rate-limits-and-quotas"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-SSE",
+      "tested_role": "client_under_test",
+      "semantic_family": "sse_stream",
+      "deterministic_inputs": {"seed": 6462, "session_label": "primary", "limit": 3},
+      "required_static_suite_checks": ["TB-SSE-PULL-01", "TB-SSE-EVENT-MIRROR-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#minimal-sse-framing-pull-based-backpressure"],
+      "optional_feature_requirements": ["sse"]
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-SSE-RECONNECT",
+      "tested_role": "client_under_test",
+      "semantic_family": "sse_reconnect",
+      "deterministic_inputs": {"seed": 6463, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-SSE-RECONNECT-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#minimal-sse-framing-pull-based-backpressure"],
+      "optional_feature_requirements": ["sse"]
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-WEBSOCKET",
+      "tested_role": "client_under_test",
+      "semantic_family": "websocket_pull",
+      "deterministic_inputs": {"seed": 6464, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-WS-PULL-01", "TB-WS-FRAME-MIRROR-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md#minimal-ws-framing"],
+      "optional_feature_requirements": ["websocket"]
+    },
+    {
+      "scenario_id": "LIVE-HTTP-CLIENT-CLOSE",
+      "tested_role": "client_under_test",
+      "semantic_family": "close_session",
+      "deterministic_inputs": {"seed": 6465, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-HTTP-SESSION-01"],
+      "normative_source_refs": ["conformance/bindings/TB_HTTP_WS_0.1.json"],
+      "optional_feature_requirements": []
+    }
+  ]
+}
