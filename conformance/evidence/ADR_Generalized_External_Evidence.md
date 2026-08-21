@@ -1,8 +1,9 @@
 # ADR: Generalized provenance-bound external evidence
 
-- **Status:** Accepted for M62; extended and corrected by M63
+- **Status:** Accepted for M62; extended and corrected by M63 and M64
 - **Decision date:** 2026-08-08
-- **Scope:** target-oriented external evidence for capabilities and exact product profiles
+- **Scope:** target-oriented external evidence for capabilities, exact product profiles,
+  and exact live transport bindings
 
 ## Context
 
@@ -59,6 +60,28 @@ capability evidence.
     or conflicting routes fail catalog validation. Mirror the ordinary narrow namespace
     predicate for PE reason codes and CAPNEG privacy modes while retaining the intentionally
     broader Core policy-category and enforcement-sanction predicates.
+11. Freeze Evidence TCK 1.4 byte-for-byte and make 1.5 current. Report 2.2 adds one strict
+    `live_binding_trace` artifact without changing report 2.0 or 2.1. Historical 1.1 and
+    1.4 reports retain strong eligibility under their frozen release snapshots.
+12. Register only `BIND-HTTP@0.1` and `BIND-MCP@0.1` as `binding` targets. One report
+    proves one exact binding. Full-binding eligibility requires both roles of the same
+    implementation ID, version, kind, and digest, executed twice from clean state.
+13. Live evidence crosses real boundaries: HTTP/SSE/WebSocket use literal-loopback sockets;
+    MCP uses JSON-RPC over a child process's stdin/stdout. A ready-file descriptor is
+    test-control metadata, not an AICP wire protocol. Commands are argument vectors with
+    `shell=false`; endpoints, streams, frames, lines, diagnostics, and deadlines are bounded.
+14. Mandatory HTTP request/response semantics always run. Declared optional SSE or
+    WebSocket support makes the corresponding live scenarios mandatory; an undeclared
+    optional transport neither passes nor fails those scenarios. The reference
+    implementation declares and exercises both.
+15. Store only schema-allowlisted observations. Authorization, cookies, bearer values,
+    environment dumps, ready paths, and key material are structurally absent. Normalize
+    sessions, opaque cursors, and JSON-RPC IDs by first-seen symbols before comparing the
+    two semantic digests; preserve message IDs/hashes and every relationship.
+16. Public binding claims use `implements_binding`, exact `binding_refs`,
+    `binding_report`, exact owning `suite_refs`, and reproducible evidence. Binding marks
+    remain separate from profile and capability marks. Repository reference runs, smoke or
+    one-role runs, examples, and test doubles cannot become external demonstrations.
 
 ## Rejected alternatives
 
@@ -71,9 +94,9 @@ capability evidence.
 - Treating internal marks, reference adapters, smoke results, or submitted mark strings as
   external proof was rejected because none establishes a complete eligible external
   subject and execution.
-- Registering every profile, a multi-profile composition, projection v2, live bindings, or
-  pairwise evidence was rejected. M63 deliberately selects only the three Tier-1 profiles;
-  live binding and pairwise work remain M64 and M66.
+- Registering every profile, a multi-profile composition, projection v2, BIND-BUS live
+  evidence, remote public endpoints, or pairwise evidence was rejected. M64 selects only
+  the HTTP and MCP bindings; pairwise work remains M66.
 
 ## Consequences
 
@@ -83,6 +106,7 @@ dispatch through an explicit handler registry. Unknown handlers fail closed. M62
 that architecture with `aicp.session_state_projection@v1`; M63 proves reusable
 product-profile execution without altering the frozen v1 IUT path.
 Producer scenarios expose raw facts and a response-free transcript prefix, never the
-reviewed projection/hash. Capability and product-profile marks remain typed and cannot
-cross-prove one another. Projection v2 stays internal and pairwise publication remains
+reviewed projection/hash. Capability, product-profile, and binding marks remain typed and
+cannot cross-prove one another. Reference loopback proves the harness, not independent
+external evidence. Projection v2 stays internal and pairwise publication remains
 unavailable.

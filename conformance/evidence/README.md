@@ -11,7 +11,7 @@ target kind:     capability
 execution mode:  full-capability
 eligible mark:   AICP-Evidence-SESSION-STATE-PROJECTION-v1
 historical TCK:  AICP-EVIDENCE-TCK-1.1.0 (strong-eligible exact reports)
-current TCK:     AICP-EVIDENCE-TCK-1.4.0
+current TCK:     AICP-EVIDENCE-TCK-1.5.0
 ```
 
 M63 adds exactly three product-profile targets:
@@ -22,8 +22,8 @@ AICP-RESUMABLE-SESSIONS@0.1 -> AICP-Profile-RESUMABLE-SESSIONS-0.1
 AICP-DELEGATED-IDENTITY@0.1 -> AICP-Profile-DELEGATED-IDENTITY-0.1
 ```
 
-They use report 2.1, `full-profile`, `product_profile_v01`, and current
-`AICP-EVIDENCE-TCK-1.4.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
+They use report 2.2 for new executions, `full-profile`, `product_profile_v01`, and current
+`AICP-EVIDENCE-TCK-1.5.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
 strong-ineligible. The 1.2.0 producer evaluator did not close every required-suite check
 and its report evaluator did not enforce exact generated-artifact multiplicity. The
 1.3.0 evaluator did not close generated messages over their exact owner payload schemas
@@ -38,7 +38,53 @@ handler, mark, suites, operations, and release are load-bearing. The projection 
 producer scenario plus all 12 consumer transcripts. `evidence_tck_releases.json` binds the
 report schema, registry and registry schema, catalog, generated import-closure bundle,
 owning suite, fixtures, neutral producer scenario, and canonicalization vector by digest.
-Release records 1.0.0 through 1.3.0 are byte-frozen. Release-specific registry
+M64 adds exactly two live binding targets:
+
+```text
+BIND-HTTP@0.1 -> AICP-BIND-HTTP-0.1
+BIND-MCP@0.1  -> AICP-BIND-MCP-0.1
+```
+
+They use report 2.2, `full-binding`, `live_binding_v01`, and current Evidence TCK
+1.5. A full run launches the same implementation build in both roles and repeats both
+from clean state. HTTP uses real literal-loopback HTTP, SSE, and WebSocket traffic; MCP
+uses JSON-RPC over child-process stdio. Optional SSE/WebSocket scenarios run exactly when
+the role descriptor declares them. The reference implementation declares both.
+
+## Live endpoint test-control contract
+
+The runner starts every role with `shell=false` and a bounded process supervisor. It
+provides only the explicit test-control environment below; this contract is harness
+infrastructure and is not an AICP wire protocol:
+
+```text
+AICP_LIVE_RUN_ID
+AICP_LIVE_BINDING_ID
+AICP_LIVE_BINDING_VERSION
+AICP_LIVE_ROLE
+AICP_LIVE_READY_FILE
+AICP_LIVE_SCENARIO_FILE       # client-under-test only
+AICP_LIVE_ENDPOINT_URL        # HTTP client-under-test only
+AICP_LIVE_TEST_BEARER         # HTTP only; never serialized into evidence
+```
+
+The child atomically writes an `aicp.live_endpoint_descriptor.v1` JSON object to the
+ready-file. The descriptor binds the exact binding, role, implementation kind, ID,
+version, digest, and declared optional features. An HTTP server additionally supplies a
+literal-loopback `base_url`; MCP declares `transport=stdio`. Descriptors using DNS names,
+non-loopback addresses, a mismatched role or binding, unstable identity, or mixed
+reference/external implementation kinds fail closed. HTTP redirects are not followed.
+
+For a full-binding report the runner launches a server-under-test against the repository
+client and a client-under-test against the repository reference server, then repeats both
+roles from clean state. The two descriptors must name the same implementation build.
+Phase deadlines, stdout/stderr, response bodies, events, frames, JSON-RPC lines, and
+interaction counts are bounded; termination uses graceful shutdown followed by kill and
+reap fallback. Ready files and scenario files are temporary and are removed after each
+role. Recorded traces contain allowlisted observations only, never environment dumps,
+authorization values, bearer tokens, TLS private keys, or raw stderr.
+
+Release records 1.0.0 through 1.4.0 are byte-frozen. Release-specific registry
 snapshots make `tck_release.registry_digest` immutable: 1.1.0 remains strong-eligible for
 its exact projection reports, while 1.0.0, 1.2.0, and 1.3.0 are explicitly strong-ineligible for
 their documented evidence defects. No checked-in real external submission depends on
@@ -105,7 +151,7 @@ scenarios. PE reason codes and CAPNEG privacy modes match the narrow ordinary-co
 `vendor:`/`org:` predicate; Core policy categories and enforcement sanctions retain their
 broader `x-...` and colon namespaces.
 
-The standalone `report_evaluator.py` selects report 2.0 or 2.1 through the declared TCK
+The standalone `report_evaluator.py` selects report 2.0, 2.1, or 2.2 through the declared TCK
 release and validates it through a generic envelope
 evaluator plus the registered target handler. It independently recomputes target/release
 resolution, subject, registry/schema/catalog and import-closed runner provenance, case
@@ -117,8 +163,9 @@ the eligible mark. A raw
 
 - Product-profile IUT report v1, its TCK releases, and the Base/Authenticated Base
   `full-profile` paths remain valid and unchanged.
-- Report 2.0 remains the current format for projection v1. Report 2.1 adds discriminated
+- Report 2.0 remains valid for exact frozen projection-v1 releases. Report 2.1 adds discriminated
   projection/transcript artifacts and supports the three exact M63 product-profile targets.
+  New 1.5 executions use report 2.2, which adds a strict sanitized live-binding trace.
 - A capability mark is not a product-profile mark, certification, endorsement, aggregate
   composition mark, or pairwise interoperability result.
 - A profile report covers one exact profile. Component-suite marks do not become separate
@@ -128,8 +175,8 @@ the eligible mark. A raw
 - Reference, smoke, example, and test-only fake-adapter reports are not real external
   evidence. No real external Tier-1 profile submission is checked into this repository.
 - Session-state projection v2 remains internal-only and is not registered here.
-- Live transport interoperability remains M64; real pairwise publication remains M66 and
-  fail-closed.
+- Live binding marks prove one local external implementation against the frozen TCK, not
+  two independent vendors. Real pairwise publication remains M66 and fail-closed.
 
 See `ADR_Generalized_External_Evidence.md` for the architectural decision and
 `docs/interop/AICP_Compatibility_Claims_and_Evidence.md` for public claim rules.
