@@ -6,7 +6,9 @@ import hashlib
 import http.client
 import json
 import os
+import secrets
 import socket
+import ssl
 import struct
 import threading
 from dataclasses import dataclass, field
@@ -30,6 +32,10 @@ from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 from target_catalog import canonical_digest  # noqa: E402
 from live_bindings.live_binding_process import LiveProcessError, validate_loopback_url  # noqa: E402
 from live_bindings.live_binding_trace import observation  # noqa: E402
+from live_bindings.live_http_capture import (  # noqa: E402
+    attach_http_transport_evidence,
+    idempotency_key_valid,
+)
 
 
 MAX_BODY_BYTES = 1_048_576
@@ -75,7 +81,11 @@ class HttpLiveState:
     def create_session(self, channel_properties: dict[str, Any]) -> str:
         with self.lock:
             self.session_counter += 1
-            session_id = f"sGT{self.session_counter}"
+            session_id = (
+                self.bearer
+                if self.mode == "secret_reflection" and self.session_counter == 1
+                else f"sGT{self.session_counter}"
+            )
             self.sessions[session_id] = {
                 "messages": [],
                 "message_ids": {},
@@ -236,7 +246,7 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
                 content_type = self.headers.get("Content-Type", "")
                 idem = self.headers.get("Idempotency-Key", "")
                 message_id = str(message.get("message_id", ""))
-                if "application/json" not in content_type or not idem.endswith(message_id):
+                if "application/json" not in content_type or not idempotency_key_valid(idem, message_id):
                     self._send_json(400, {"reason_code": "invalid_ingest_headers"}, request_body=request_body)
                     return
                 if message.get("session_id") != session_id:
@@ -275,6 +285,9 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
                 cursor = str((request_body or {}).get("cursor", ""))
                 if self.state.mode == "ack_ignored":
                     self._send_json(409, {"reason_code": "ack_ignored"}, request_body=request_body)
+                    return
+                if self.state.mode == "wrong_cursor" and cursor == "c999":
+                    self._send_json(409, {"reason_code": "unknown_cursor"}, request_body=request_body)
                     return
                 session["ack"] = cursor
                 self._send_json(204, None, request_body=request_body)
@@ -424,7 +437,12 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
         self.wfile.flush()
         self._record(
             status=200,
-            body={"events": [item[2] for item in events]},
+            body={
+                "events": [
+                    {"id": event_id, "event": event_name, "data": data}
+                    for event_id, event_name, data in events
+                ]
+            },
             request_body=None,
             response_headers={"Content-Type": "text/event-stream"},
             transport="sse",
@@ -433,11 +451,26 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
     def _serve_websocket(self, session_id: str, session: dict[str, Any]) -> None:
         key = self.headers.get("Sec-WebSocket-Key", "")
         accept = base64.b64encode(hashlib.sha1((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode("ascii")).digest()).decode("ascii")
-        self.send_response(101, "Switching Protocols")
-        self.send_header("Upgrade", "websocket")
-        self.send_header("Connection", "Upgrade")
-        self.send_header("Sec-WebSocket-Accept", accept)
-        self.end_headers()
+        if self.state.mode == "websocket_malformed_headers":
+            self.wfile.write(b"HTTP/1.1 101 Switching Protocols\r\nMalformed\r\n\r\n")
+            self.wfile.flush()
+        else:
+            self.send_response(101, "Switching Protocols")
+            if self.state.mode != "websocket_missing_upgrade":
+                self.send_header(
+                    "Upgrade",
+                    "h2c" if self.state.mode == "websocket_wrong_upgrade" else "websocket",
+                )
+            if self.state.mode != "websocket_missing_connection":
+                self.send_header(
+                    "Connection",
+                    "keep-alive" if self.state.mode == "websocket_wrong_connection" else "Upgrade",
+                )
+            self.send_header(
+                "Sec-WebSocket-Accept",
+                "wrong-accept" if self.state.mode == "websocket_wrong_accept" else accept,
+            )
+            self.end_headers()
         raw = _read_ws_frame(self.rfile, expect_masked=True)
         try:
             request = json.loads(raw.decode("utf-8"))
@@ -478,8 +511,26 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
                 "body": request,
                 "status": 101,
                 "response_body": response,
-                "response_headers": {"upgrade": "websocket"},
+                "response_headers": {
+                    "upgrade": (
+                        ""
+                        if self.state.mode == "websocket_missing_upgrade"
+                        else "h2c"
+                        if self.state.mode == "websocket_wrong_upgrade"
+                        else "websocket"
+                    ),
+                    "connection": (
+                        ""
+                        if self.state.mode == "websocket_missing_connection"
+                        else "keep-alive"
+                        if self.state.mode == "websocket_wrong_connection"
+                        else "Upgrade"
+                    ),
+                    "sec-websocket-accept": "wrong-accept" if self.state.mode == "websocket_wrong_accept" else accept,
+                },
                 "transport": "websocket",
+                "scheme": getattr(self.server, "live_scheme", "ws"),
+                "tls_verified": getattr(self.server, "live_scheme", "ws") == "wss",
             }
         )
         self.close_connection = True
@@ -489,9 +540,16 @@ def start_http_server(
     bearer: str,
     *,
     mode: str = "good",
+    ssl_context: ssl.SSLContext | None = None,
+    state: HttpLiveState | None = None,
 ) -> tuple[ThreadingHTTPServer, HttpLiveState, threading.Thread]:
-    state = HttpLiveState(bearer=bearer, mode=mode)
+    state = state or HttpLiveState(bearer=bearer, mode=mode)
     server = ThreadingHTTPServer(("127.0.0.1", 0), _NoRedirectHandler)
+    if ssl_context is not None:
+        server.socket = ssl_context.wrap_socket(server.socket, server_side=True)
+        server.live_scheme = "wss"  # type: ignore[attr-defined]
+    else:
+        server.live_scheme = "ws"  # type: ignore[attr-defined]
     server.daemon_threads = True
     server.live_state = state  # type: ignore[attr-defined]
     thread = threading.Thread(target=server.serve_forever, name="aicp-live-http", daemon=True)
@@ -557,7 +615,7 @@ def _write_ws_frame(stream: Any, payload: bytes, *, masked: bool) -> None:
         header.extend(struct.pack("!Q", len(payload)))
     data = bytearray(payload)
     if masked:
-        key = b"\x01\x02\x03\x04"
+        key = secrets.token_bytes(4)
         header.extend(key)
         for index in range(len(data)):
             data[index] ^= key[index % 4]
@@ -569,6 +627,10 @@ class _NoRedirect(http.client.HTTPConnection):
     pass
 
 
+class _NoRedirectHttps(http.client.HTTPSConnection):
+    pass
+
+
 def http_request(
     base_url: str,
     method: str,
@@ -577,12 +639,25 @@ def http_request(
     bearer: str | None,
     body: dict[str, Any] | None = None,
     headers: dict[str, str] | None = None,
+    capture: list[dict[str, Any]] | None = None,
+    tls_ca_file: str | None = None,
 ) -> tuple[int, dict[str, str], dict[str, Any] | None, bytes]:
     base = validate_loopback_url(base_url)
     parsed = urlsplit(base)
-    if parsed.scheme != "http":
-        raise LiveProcessError("M64 reference HTTP client supports loopback HTTP only unless explicit TLS files are supplied")
-    connection = _NoRedirect(parsed.hostname, parsed.port, timeout=3)
+    if parsed.scheme == "https":
+        if not tls_ca_file:
+            raise LiveProcessError("verified HTTPS requires an explicit per-run CA file")
+        context = ssl.create_default_context(cafile=tls_ca_file)
+        connection: http.client.HTTPConnection = _NoRedirectHttps(
+            parsed.hostname,
+            parsed.port,
+            timeout=3,
+            context=context,
+        )
+    elif parsed.scheme == "http":
+        connection = _NoRedirect(parsed.hostname, parsed.port, timeout=3)
+    else:
+        raise LiveProcessError("HTTP request scheme is not supported")
     request_headers = dict(headers or {})
     if bearer is not None:
         request_headers["Authorization"] = f"Bearer {bearer}"
@@ -606,6 +681,26 @@ def http_request(
             if not isinstance(parsed_body, dict):
                 raise LiveProcessError("HTTP response JSON must be an object")
             value = parsed_body
+        if capture is not None:
+            capture.append(
+                {
+                    "method": method,
+                    "path": path.split("?", 1)[0],
+                    "query": {
+                        key: values[-1]
+                        for key, values in parse_qs(
+                            urlsplit(path).query,
+                            keep_blank_values=True,
+                        ).items()
+                    },
+                    "headers": {str(key).lower(): str(value) for key, value in request_headers.items()},
+                    "body": copy.deepcopy(body),
+                    "status": response.status,
+                    "response_body": copy.deepcopy(value),
+                    "response_headers": response_headers,
+                    "transport": "http",
+                }
+            )
         return response.status, response_headers, value, raw
     finally:
         connection.close()
@@ -617,6 +712,7 @@ def read_sse(
     *,
     bearer: str,
     last_event_id: str | None = None,
+    capture: list[dict[str, Any]] | None = None,
 ) -> tuple[int, dict[str, str], list[dict[str, Any]], bytes]:
     headers = {"Accept": "text/event-stream"}
     if last_event_id is not None:
@@ -627,6 +723,7 @@ def read_sse(
         path,
         bearer=bearer,
         headers=headers,
+        capture=capture,
     )
     if body is not None:
         return status, response_headers, [], raw
@@ -651,21 +748,39 @@ def read_sse(
             current[field] = value
     if current:
         events.append(current)
+    if capture is not None and capture:
+        capture[-1]["transport"] = "sse"
+        capture[-1]["events"] = copy.deepcopy(events)
     return status, response_headers, events, raw
 
 
 def websocket_pull(
-    base_url: str,
+    websocket_url: str,
     path: str,
     *,
     bearer: str,
     after: str,
     limit: int,
+    tls_ca_file: str | None = None,
+    capture: list[dict[str, Any]] | None = None,
 ) -> tuple[int, dict[str, Any]]:
-    parsed = urlsplit(validate_loopback_url(base_url))
-    sock = socket.create_connection((parsed.hostname, parsed.port), timeout=3)
+    parsed = urlsplit(validate_loopback_url(websocket_url))
+    raw_sock = socket.create_connection((parsed.hostname, parsed.port), timeout=3)
+    tls_verified = False
+    if parsed.scheme == "wss":
+        if not tls_ca_file:
+            raw_sock.close()
+            raise LiveProcessError("WSS requires an explicit per-run CA file")
+        context = ssl.create_default_context(cafile=tls_ca_file)
+        sock: socket.socket = context.wrap_socket(raw_sock, server_hostname=parsed.hostname)
+        tls_verified = True
+    elif parsed.scheme == "ws":
+        sock = raw_sock
+    else:
+        raw_sock.close()
+        raise LiveProcessError("WebSocket endpoint must use ws or wss")
     try:
-        key = base64.b64encode(b"aicp-live-key-01").decode("ascii")
+        key = base64.b64encode(secrets.token_bytes(16)).decode("ascii")
         request = (
             f"GET {path} HTTP/1.1\r\n"
             f"Host: {parsed.hostname}:{parsed.port}\r\n"
@@ -689,16 +804,64 @@ def websocket_pull(
             status = int(status_line.split()[1])
         except (IndexError, ValueError) as exc:
             raise LiveProcessError("WebSocket handshake status is invalid") from exc
+        header_lines = response.split(b"\r\n\r\n", 1)[0].split(b"\r\n")[1:]
+        response_headers: dict[str, str] = {}
+        for raw_line in header_lines:
+            if b":" not in raw_line:
+                raise LiveProcessError("WebSocket handshake response header is malformed")
+            raw_name, raw_value = raw_line.split(b":", 1)
+            try:
+                name = raw_name.decode("ascii").strip().lower()
+                value_text = raw_value.decode("ascii").strip()
+            except UnicodeDecodeError as exc:
+                raise LiveProcessError("WebSocket handshake response headers are not ASCII") from exc
+            response_headers[name] = value_text
+        tokens = lambda value: {part.strip().lower() for part in value.split(",")}
+        expected_accept = base64.b64encode(
+            hashlib.sha1((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode("ascii")).digest()
+        ).decode("ascii")
+        if (
+            status != 101
+            or "websocket" not in tokens(response_headers.get("upgrade", ""))
+            or "upgrade" not in tokens(response_headers.get("connection", ""))
+            or response_headers.get("sec-websocket-accept") != expected_accept
+        ):
+            raise LiveProcessError("WebSocket handshake validation failed")
         stream = sock.makefile("rwb", buffering=0)
+        client_frame = {"type": "pull", "after": after, "limit": limit}
         _write_ws_frame(
             stream,
-            json.dumps({"type": "pull", "after": after, "limit": limit}, separators=(",", ":")).encode("utf-8"),
+            json.dumps(client_frame, separators=(",", ":")).encode("utf-8"),
             masked=True,
         )
         raw = _read_ws_frame(stream, expect_masked=False)
         value = json.loads(raw.decode("utf-8"))
         if not isinstance(value, dict):
             raise LiveProcessError("WebSocket response frame must be an object")
+        if capture is not None:
+            capture.append(
+                {
+                    "method": "GET",
+                    "path": path,
+                    "query": {},
+                    "headers": {
+                        "upgrade": "websocket",
+                        "connection": "Upgrade",
+                        "sec-websocket-key": key,
+                        "sec-websocket-version": "13",
+                        "authorization": f"Bearer {bearer}",
+                    },
+                    "body": copy.deepcopy(client_frame),
+                    "status": status,
+                    "response_body": copy.deepcopy(value),
+                    "response_headers": response_headers,
+                    "transport": "websocket",
+                    "scheme": parsed.scheme,
+                    "tls_verified": tls_verified,
+                    "client_frame": copy.deepcopy(client_frame),
+                    "server_frame": copy.deepcopy(value),
+                }
+            )
         return status, value
     finally:
         sock.close()
@@ -729,6 +892,8 @@ def execute_http_client(
     role: str,
     mode: str = "good",
     declared_features: dict[str, Any] | None = None,
+    websocket_url: str | None = None,
+    tls_ca_file: str | None = None,
 ) -> list[dict[str, Any]]:
     messages = load_messages()
     features = declared_features or {
@@ -737,11 +902,30 @@ def execute_http_client(
         "websocket": True,
         "wss": False,
     }
+    records: list[dict[str, Any]] = []
+
+    def request(
+        method: str,
+        path: str,
+        *,
+        bearer: str | None,
+        body: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> tuple[int, dict[str, str], dict[str, Any] | None, bytes]:
+        return http_request(
+            base_url,
+            method,
+            path,
+            bearer=bearer,
+            body=body,
+            headers=headers,
+            capture=records,
+        )
+
     boundary = {"network_boundary": "loopback_socket"}
-    unauthorized_status, _, _, _ = http_request(base_url, "POST", "/aicp/v1/sessions", bearer=None, body={"client_id": "live-client"})
+    unauthorized_status, _, _, _ = request("POST", "/aicp/v1/sessions", bearer=None, body={"client_id": "live-client"})
     auth_bearer = None if mode == "missing_authorization" else bearer
-    status1, _, created1, _ = http_request(
-        base_url,
+    status1, _, created1, _ = request(
         "POST",
         "/aicp/v1/sessions",
         bearer=auth_bearer,
@@ -756,7 +940,7 @@ def execute_http_client(
     )
     if status1 != 201 or not isinstance(created1, dict):
         raise LiveProcessError("HTTP client could not create primary session")
-    status2, _, created2, _ = http_request(base_url, "POST", "/aicp/v1/sessions", bearer=bearer, body={"client_id": "live-client-secondary"})
+    status2, _, created2, _ = request("POST", "/aicp/v1/sessions", bearer=bearer, body={"client_id": "live-client-secondary"})
     if status2 != 201 or not isinstance(created2, dict):
         raise LiveProcessError("HTTP client could not create secondary session")
     first = str(created1["session_id"])
@@ -768,25 +952,24 @@ def execute_http_client(
         sent["sender"] = "agent:rewritten"
     ingest_path_session = second if mode == "wrong_session_path" else first
     idempotency = "wrong" if mode == "wrong_idempotency_key" else str(sent["message_id"])
+    if mode == "invalid_idempotency_delimiter":
+        idempotency = "prefix" + str(sent["message_id"])
     ingest_headers = {} if mode == "missing_idempotency_key" else {"Idempotency-Key": idempotency}
-    ingest_status, _, ingest_body, _ = http_request(
-        base_url,
+    ingest_status, _, ingest_body, _ = request(
         "POST",
         f"/aicp/v1/sessions/{ingest_path_session}/messages",
         bearer=bearer,
         body=sent,
         headers=ingest_headers,
     )
-    replay_status, replay_headers, _, _ = http_request(
-        base_url,
+    replay_status, replay_headers, _, _ = request(
         "POST",
         f"/aicp/v1/sessions/{first}/messages",
         bearer=bearer,
         body=primary_messages[0],
         headers={"Idempotency-Key": str(primary_messages[0]["message_id"])},
     )
-    secondary_status, secondary_headers, _, _ = http_request(
-        base_url,
+    secondary_status, secondary_headers, _, _ = request(
         "POST",
         f"/aicp/v1/sessions/{second}/messages",
         bearer=bearer,
@@ -794,27 +977,25 @@ def execute_http_client(
         headers={"Idempotency-Key": str(secondary_message["message_id"])},
     )
     for message in primary_messages[1:]:
-        http_request(
-            base_url,
+        request(
             "POST",
             f"/aicp/v1/sessions/{first}/messages",
             bearer=bearer,
             body=message,
             headers={"Idempotency-Key": str(message["message_id"])},
         )
-    poll_status, _, poll_body, _ = http_request(
-        base_url,
+    poll_status, _, poll_body, _ = request(
         "GET",
         f"/aicp/v1/sessions/{first}/messages?{urlencode({'after': 'c0', 'limit': 2})}",
         bearer=bearer,
     )
     poll_messages = list((poll_body or {}).get("messages", []))
     next_cursor = str((poll_body or {}).get("next_cursor", ""))
-    head_status, _, head_body, _ = http_request(base_url, "GET", f"/aicp/v1/sessions/{first}/head", bearer=bearer)
+    head_status, _, head_body, _ = request("GET", f"/aicp/v1/sessions/{first}/head", bearer=bearer)
     ack_body = {"cursor": "wrong" if mode == "missing_ack" else next_cursor}
-    ack_status, _, _, _ = http_request(base_url, "POST", f"/aicp/v1/sessions/{first}/ack", bearer=bearer, body=ack_body)
-    expired_status, _, expired_body, _ = http_request(base_url, "GET", f"/aicp/v1/sessions/{first}/messages?after=expired&limit=2", bearer=bearer)
-    overload_status, overload_headers, _, _ = http_request(base_url, "GET", f"/aicp/v1/sessions/{first}/overload", bearer=bearer)
+    ack_status, _, _, _ = request("POST", f"/aicp/v1/sessions/{first}/ack", bearer=bearer, body=ack_body)
+    expired_status, _, expired_body, _ = request("GET", f"/aicp/v1/sessions/{first}/messages?after=expired&limit=2", bearer=bearer)
+    overload_status, overload_headers, _, _ = request("GET", f"/aicp/v1/sessions/{first}/overload", bearer=bearer)
     sse_status = overload_sse_status = reconnect_status = churn_status = mismatch_status = 0
     sse_headers: dict[str, str] = {}
     sse_events: list[dict[str, Any]] = []
@@ -824,8 +1005,8 @@ def execute_http_client(
     sse_raw = overload_raw = reconnect_raw = churn_raw = b""
     final_cursor = ""
     if features.get("sse") is True:
-        sse_status, sse_headers, sse_events, sse_raw = read_sse(base_url, f"/aicp/v1/sessions/{first}/messages/stream?after=c0&limit=3", bearer=bearer)
-        overload_sse_status, _, overload_events, overload_raw = read_sse(base_url, f"/aicp/v1/sessions/{first}/messages/stream?after=overload&limit=1", bearer=bearer)
+        sse_status, sse_headers, sse_events, sse_raw = read_sse(base_url, f"/aicp/v1/sessions/{first}/messages/stream?after=c0&limit=3", bearer=bearer, capture=records)
+        overload_sse_status, _, overload_events, overload_raw = read_sse(base_url, f"/aicp/v1/sessions/{first}/messages/stream?after=overload&limit=1", bearer=bearer, capture=records)
         final_cursor = str(sse_events[-1].get("id", "")) if sse_events else ""
         reconnect_after = "c0" if mode == "invalid_sse_reconnect" else final_cursor
         reconnect_status, _, reconnect_events, reconnect_raw = read_sse(
@@ -833,29 +1014,41 @@ def execute_http_client(
             f"/aicp/v1/sessions/{first}/messages/stream?after={final_cursor}&limit=2",
             bearer=bearer,
             last_event_id=reconnect_after,
+            capture=records,
         )
         churn_status, _, churn_events, churn_raw = read_sse(
             base_url,
             f"/aicp/v1/sessions/{first}/messages/stream?after={final_cursor}&limit=2",
             bearer=bearer,
             last_event_id=reconnect_after,
+            capture=records,
         )
         mismatch_status, _, _, _ = read_sse(
             base_url,
             f"/aicp/v1/sessions/{first}/messages/stream?after=c0&limit=1",
             bearer=bearer,
             last_event_id=final_cursor,
+            capture=records,
         )
     ws_status = ws_overload_status = 0
     ws_frame: dict[str, Any] = {}
     ws_overload: dict[str, Any] = {}
     if features.get("websocket") is True:
         ws_after = "c1" if mode == "invalid_ws_pull" else "c0"
-        ws_status, ws_frame = websocket_pull(base_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after=ws_after, limit=2)
-        ws_overload_status, ws_overload = websocket_pull(base_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="overload", limit=1)
-    close_status, _, _, _ = http_request(base_url, "POST", f"/aicp/v1/sessions/{first}/close", bearer=bearer)
-    closed_status, _, _, _ = http_request(
-        base_url,
+        parsed_base = urlsplit(validate_loopback_url(base_url))
+        plain_ws_url = f"ws://{parsed_base.hostname}:{parsed_base.port}"
+        ws_status, ws_frame = websocket_pull(plain_ws_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after=ws_after, limit=2, capture=records)
+        ws_overload_status, ws_overload = websocket_pull(plain_ws_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="overload", limit=1, capture=records)
+    wss_status = wss_overload_status = 0
+    wss_frame: dict[str, Any] = {}
+    wss_overload: dict[str, Any] = {}
+    if features.get("wss") is True:
+        if not websocket_url or not websocket_url.startswith("wss://"):
+            raise LiveProcessError("WSS was declared without an executable WSS endpoint")
+        wss_status, wss_frame = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="c0", limit=2, tls_ca_file=tls_ca_file, capture=records)
+        wss_overload_status, wss_overload = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="overload", limit=1, tls_ca_file=tls_ca_file, capture=records)
+    close_status, _, _, _ = request("POST", f"/aicp/v1/sessions/{first}/close", bearer=bearer)
+    closed_status, _, _, _ = request(
         "POST",
         f"/aicp/v1/sessions/{first}/messages",
         bearer=bearer,
@@ -899,13 +1092,16 @@ def execute_http_client(
         _interaction(role, "SSE", "sse", "sse_pull", {**boundary, "live_bytes": bool(sse_raw) and bool(overload_raw), "status": sse_status if overload_sse_status == 200 else overload_sse_status, "sse_content_type_valid": "text/event-stream" in sse_headers.get("content-type", ""), "event_ids_match_cursors": event_ids_valid, "more_flags_valid": bool(more_flags) and more_flags[-1] is False and all(value is True for value in more_flags[:-1]), "poll_limit": 3, "delivered_count": len(delivered_sse), "ordered_chain_valid": sse_chain_valid, "overload_retry_present": any(bool(event.get("data", {}).get("retry_after")) for event in overload_events)}),
         _interaction(role, "SSE-RECONNECT", "sse", "sse_reconnect", {**boundary, "live_bytes": bool(reconnect_raw) and bool(churn_raw), "last_event_id": final_cursor, "last_event_relationship_valid": reconnect_status == 200 and all(event.get("id") == final_cursor for event in reconnect_events), "mismatched_resume_rejected": mismatch_status == 400, "reconnect_stable": reconnect_events == churn_events, "reconnect_churn_valid": churn_status == 200}),
         _interaction(role, "WEBSOCKET", "websocket", "websocket_pull", {**boundary, "live_frames": bool(ws_frame) and bool(ws_overload), "websocket_handshake_valid": ws_status == 101 and ws_overload_status == 101, "websocket_frame_shape_valid": ws_frame.get("type") == "messages" and isinstance(ws_frame.get("messages"), list) and isinstance(ws_frame.get("more"), bool), "cursor_after_last": str(ws_frame.get("cursor_after_last", "")), "cursor_relationship_valid": ws_cursor_relationship_valid, "more_flags_valid": ws_frame.get("more") is False, "poll_limit": 2, "delivered_count": len(ws_messages), "ordered_chain_valid": ws_chain_valid, "overload_retry_present": ws_overload.get("type") == "overload" and bool(ws_overload.get("retry_after"))}),
+        _interaction(role, "WSS", "wss", "wss_pull", {**boundary, "live_frames": bool(wss_frame) and bool(wss_overload), "websocket_handshake_valid": wss_status == 101 and wss_overload_status == 101}),
         _interaction(role, "CLOSE", "http", "close_session", {**boundary, "closed_session_rejected": close_status == 204 and closed_status in {409, 410}}),
     ]
     if features.get("sse") is not True:
         interactions = [item for item in interactions if item["transport"] != "sse"]
     if features.get("websocket") is not True:
         interactions = [item for item in interactions if item["transport"] != "websocket"]
-    return interactions
+    if features.get("wss") is not True:
+        interactions = [item for item in interactions if item["transport"] != "wss"]
+    return attach_http_transport_evidence(interactions, records)
 
 
 def interactions_from_capture(
@@ -990,4 +1186,15 @@ def interactions_from_capture(
         interactions = [item for item in interactions if item["transport"] != "sse"]
     if features.get("websocket") is not True:
         interactions = [item for item in interactions if item["transport"] != "websocket"]
-    return interactions
+    if features.get("wss") is True:
+        interactions.insert(
+            -1,
+            _interaction(
+                role,
+                "WSS",
+                "wss",
+                "wss_pull",
+                {"network_boundary": "loopback_socket"},
+            ),
+        )
+    return attach_http_transport_evidence(interactions, records)

@@ -28,6 +28,7 @@ from live_bindings.live_binding_process import (  # noqa: E402
 )
 from live_bindings.live_http_transport import load_messages, message_for_session  # noqa: E402
 from live_bindings.live_binding_trace import observation  # noqa: E402
+from live_bindings.live_mcp_capture import attach_mcp_transport_evidence  # noqa: E402
 
 
 SESSION_ID = "sGT1"
@@ -116,12 +117,18 @@ class McpState:
                 limit = int(arguments.get("limit", 1000))
             except (TypeError, ValueError):
                 limit = 1000
-            messages = list(self.messages.get(session_id, []))
+            after_cursor = str(arguments.get("after_cursor", "c0"))
+            start = 0
+            if after_cursor.startswith("c") and after_cursor[1:].isdigit():
+                start = int(after_cursor[1:])
+            if self.mode == "mcp_server_ignores_after_cursor":
+                start = 0
+            messages = list(self.messages.get(session_id, []))[start:]
             if self.mode != "poll_ignores_limit":
                 messages = messages[: max(0, limit)]
             return rpc_result(
                 request_id,
-                {"messages": copy.deepcopy(messages), "next_cursor": f"c{len(messages)}"},
+                {"messages": copy.deepcopy(messages), "next_cursor": f"c{start + len(messages)}"},
             )
         if tool == "aicp.getHead":
             session_id = str(arguments.get("session_id", ""))
@@ -237,34 +244,46 @@ def execute_mcp_server(
 ) -> list[dict[str, Any]]:
     message = message_for_session(load_messages()[0], SESSION_ID)
     second = message_for_session(load_messages()[1], SESSION_ID)
-    requests = [
+    initial_requests = [
         rpc_request("rpc-send-1", "aicp.sendMessage", {"message": message}),
         rpc_request("rpc-send-2", "aicp.sendMessage", {"message": message}),
         rpc_request("rpc-send-3", "aicp.sendMessage", {"message": second}),
         rpc_request("rpc-poll-1", "aicp.pollMessages", {"session_id": SESSION_ID, "after_cursor": "c0", "limit": 1}),
+    ]
+    initial_responses = [_exchange(process, request, deadline=deadline) for request in initial_requests]
+    first_cursor = str((initial_responses[3].get("result") or {}).get("next_cursor", ""))
+    remaining_requests = [
+        rpc_request("rpc-poll-2", "aicp.pollMessages", {"session_id": SESSION_ID, "after_cursor": first_cursor, "limit": 1}),
         rpc_request("rpc-head-1", "aicp.getHead", {"session_id": SESSION_ID}),
         rpc_request("rpc-object-1", "aicp.getObject", {"object_hash": OBJECT_HASH}),
         rpc_request("rpc-object-2", "aicp.getObject", {"object_hash": "sha256:" + "A" * 43}),
         rpc_request("rpc-invalid-1", "aicp.sendMessage", {"message": {"session_id": SESSION_ID}}),
     ]
-    responses = [_exchange(process, request, deadline=deadline) for request in requests]
+    remaining_responses = [_exchange(process, request, deadline=deadline) for request in remaining_requests]
+    requests = [*initial_requests, *remaining_requests]
+    responses = [*initial_responses, *remaining_responses]
     send_result = responses[0].get("result") or {}
     duplicate_result = responses[1].get("result") or {}
     poll_result = responses[3].get("result") or {}
-    head_result = responses[4].get("result") or {}
-    object_result = responses[5].get("result") or {}
-    unknown_result = responses[6].get("result") or {}
+    head_result = responses[5].get("result") or {}
+    object_result = responses[6].get("result") or {}
+    unknown_result = responses[7].get("result") or {}
     polled = poll_result.get("messages") or []
     actual_object = object_result.get("object_json")
     actual_hash = object_hash("contract", actual_object) if isinstance(actual_object, dict) else ""
-    return [
+    interactions = [
         _interaction(role, "SEND", "send_message", {"request_id": "rpc-send-1", "response_id": str(responses[0].get("id", "")), "tool_name": "aicp.sendMessage", "expected_message_id": str(message["message_id"]), "observed_message_id": str(send_result.get("message_id", "")), "expected_message_hash": str(message["message_hash"]), "observed_message_hash": str(message["message_hash"]), "message_digest_equal": send_result.get("accepted") is True and send_result.get("message_id") == message["message_id"]}),
         _interaction(role, "DUPLICATE", "duplicate_send", {"request_id": "rpc-send-2", "response_id": str(responses[1].get("id", "")), "tool_name": "aicp.sendMessage", "logical_accept_count": 1 if duplicate_result.get("accepted") is True else 2, "duplicate_hash_stable": duplicate_result.get("message_id") == message["message_id"] and duplicate_result.get("message_hash") == message["message_hash"]}),
         _interaction(role, "POLL", "poll_messages", {"request_id": "rpc-poll-1", "response_id": str(responses[3].get("id", "")), "tool_name": "aicp.pollMessages", "poll_session_match": all(item.get("session_id") == SESSION_ID for item in polled), "poll_limit": 1, "delivered_count": len(polled), "poll_limit_respected": len(polled) <= 1, "message_hashes_intact": bool(polled) and polled[0].get("message_hash") == message["message_hash"], "next_cursor": str(poll_result.get("next_cursor", "")), "ordering_not_assumed": True}),
-        _interaction(role, "HEAD", "get_head", {"request_id": "rpc-head-1", "response_id": str(responses[4].get("id", "")), "tool_name": "aicp.getHead", "head_session_match": (head_result.get("session_state") or {}).get("session_id") == SESSION_ID}),
-        _interaction(role, "OBJECT", "get_object", {"request_id": "rpc-object-1", "response_id": str(responses[5].get("id", "")), "tool_name": "aicp.getObject", "object_expected_hash": OBJECT_HASH, "object_actual_hash": actual_hash, "object_hash_recomputed": actual_hash == OBJECT_HASH, "unknown_object_failed": unknown_result.get("status") == "NOT_FOUND"}),
-        _interaction(role, "INTEGRITY", "jsonrpc_integrity", {"request_id": "rpc-invalid-1", "response_id": str(responses[7].get("id", "")), "tool_name": "aicp.sendMessage", "request_response_correlated": all(response.get("id") == request.get("id") for request, response in zip(requests, responses)), "valid_utf8": True, "response_count": 1, "malformed_envelope_rejected": "error" in responses[7]}),
+        _interaction(role, "HEAD", "get_head", {"request_id": "rpc-head-1", "response_id": str(responses[5].get("id", "")), "tool_name": "aicp.getHead", "head_session_match": (head_result.get("session_state") or {}).get("session_id") == SESSION_ID}),
+        _interaction(role, "OBJECT", "get_object", {"request_id": "rpc-object-1", "response_id": str(responses[6].get("id", "")), "tool_name": "aicp.getObject", "object_expected_hash": OBJECT_HASH, "object_actual_hash": actual_hash, "object_hash_recomputed": actual_hash == OBJECT_HASH, "unknown_object_failed": unknown_result.get("status") == "NOT_FOUND"}),
+        _interaction(role, "INTEGRITY", "jsonrpc_integrity", {"request_id": "rpc-invalid-1", "response_id": str(responses[8].get("id", "")), "tool_name": "aicp.sendMessage", "request_response_correlated": all(response.get("id") == request.get("id") for request, response in zip(requests, responses)), "valid_utf8": True, "response_count": 1, "malformed_envelope_rejected": "error" in responses[8]}),
     ]
+    return attach_mcp_transport_evidence(
+        interactions,
+        list(zip(requests, responses)),
+        role=role,
+    )
 
 
 def _response_for_client_request(state: McpState, request: dict[str, Any]) -> dict[str, Any]:
@@ -281,7 +300,7 @@ def serve_mcp_client(
         raise LiveProcessError("MCP client pipes are unavailable")
     state = McpState()
     captured: list[tuple[dict[str, Any], dict[str, Any]]] = []
-    for _ in range(8):
+    for _ in range(9):
         raw = read_bounded_line(process.stdout, deadline=deadline)
         request = parse_json_line(raw)
         response = _response_for_client_request(state, request)
@@ -304,6 +323,7 @@ def serve_mcp_client(
         "aicp.sendMessage",
         "aicp.sendMessage",
         "aicp.pollMessages",
+        "aicp.pollMessages",
         "aicp.getHead",
         "aicp.getObject",
         "aicp.getObject",
@@ -319,8 +339,8 @@ def serve_mcp_client(
     duplicate_message = args[1].get("message") if len(args) > 1 else None
     poll_result = responses[3].get("result") or {}
     polled = poll_result.get("messages") or []
-    head_result = responses[4].get("result") or {}
-    object_result = responses[5].get("result") or {}
+    head_result = responses[5].get("result") or {}
+    object_result = responses[6].get("result") or {}
     actual_object = object_result.get("object_json")
     actual_hash = object_hash("contract", actual_object) if isinstance(actual_object, dict) else ""
     correlation = all(
@@ -330,14 +350,15 @@ def serve_mcp_client(
         for request, response in captured
     )
     ids = [item.get("id") for item in requests]
-    return [
+    interactions = [
         _interaction(role, "SEND", "send_message", {"request_id": str(requests[0].get("id", "")), "response_id": str(responses[0].get("id", "")), "tool_name": str(tools[0]), "expected_message_id": str(message["message_id"]), "observed_message_id": str((send_message or {}).get("message_id", "")), "expected_message_hash": str(message["message_hash"]), "observed_message_hash": str((send_message or {}).get("message_hash", "")), "message_digest_equal": isinstance(send_message, dict) and canonical_digest(send_message) == canonical_digest(message)}),
         _interaction(role, "DUPLICATE", "duplicate_send", {"request_id": str(requests[1].get("id", "")), "response_id": str(responses[1].get("id", "")), "tool_name": str(tools[1]), "logical_accept_count": 1 if isinstance(duplicate_message, dict) and duplicate_message == send_message else 2, "duplicate_hash_stable": isinstance(duplicate_message, dict) and duplicate_message.get("message_hash") == (send_message or {}).get("message_hash")}),
         _interaction(role, "POLL", "poll_messages", {"request_id": str(requests[3].get("id", "")), "response_id": str(responses[3].get("id", "")), "tool_name": str(tools[3]), "poll_session_match": args[3].get("session_id") == SESSION_ID and all(item.get("session_id") == SESSION_ID for item in polled), "poll_limit": int(args[3].get("limit", 0) or 0), "delivered_count": len(polled), "poll_limit_respected": len(polled) <= int(args[3].get("limit", 0) or 0), "message_hashes_intact": bool(polled) and polled[0].get("message_hash") == message["message_hash"], "next_cursor": str(poll_result.get("next_cursor", "")), "ordering_not_assumed": True}),
-        _interaction(role, "HEAD", "get_head", {"request_id": str(requests[4].get("id", "")), "response_id": str(responses[4].get("id", "")), "tool_name": str(tools[4]), "head_session_match": args[4].get("session_id") == SESSION_ID and (head_result.get("session_state") or {}).get("session_id") == SESSION_ID}),
-        _interaction(role, "OBJECT", "get_object", {"request_id": str(requests[5].get("id", "")), "response_id": str(responses[5].get("id", "")), "tool_name": str(tools[5]), "object_expected_hash": OBJECT_HASH, "object_actual_hash": actual_hash, "object_hash_recomputed": args[5].get("object_hash") == OBJECT_HASH and actual_hash == OBJECT_HASH, "unknown_object_failed": args[6].get("object_hash") != OBJECT_HASH and (responses[6].get("result") or {}).get("status") == "NOT_FOUND"}),
-        _interaction(role, "INTEGRITY", "jsonrpc_integrity", {"request_id": str(requests[7].get("id", "")), "response_id": str(responses[7].get("id", "")), "tool_name": str(tools[7]), "request_response_correlated": correlation and len(ids) == len(set(ids)) and tools == expected_tools, "valid_utf8": True, "response_count": 1, "malformed_envelope_rejected": "error" in responses[7]}),
+        _interaction(role, "HEAD", "get_head", {"request_id": str(requests[5].get("id", "")), "response_id": str(responses[5].get("id", "")), "tool_name": str(tools[5]), "head_session_match": args[5].get("session_id") == SESSION_ID and (head_result.get("session_state") or {}).get("session_id") == SESSION_ID}),
+        _interaction(role, "OBJECT", "get_object", {"request_id": str(requests[6].get("id", "")), "response_id": str(responses[6].get("id", "")), "tool_name": str(tools[6]), "object_expected_hash": OBJECT_HASH, "object_actual_hash": actual_hash, "object_hash_recomputed": args[6].get("object_hash") == OBJECT_HASH and actual_hash == OBJECT_HASH, "unknown_object_failed": args[7].get("object_hash") != OBJECT_HASH and (responses[7].get("result") or {}).get("status") == "NOT_FOUND"}),
+        _interaction(role, "INTEGRITY", "jsonrpc_integrity", {"request_id": str(requests[8].get("id", "")), "response_id": str(responses[8].get("id", "")), "tool_name": str(tools[8]), "request_response_correlated": correlation and len(ids) == len(set(ids)) and tools == expected_tools, "valid_utf8": True, "response_count": 1, "malformed_envelope_rejected": "error" in responses[8]}),
     ]
+    return attach_mcp_transport_evidence(interactions, captured, role=role)
 
 
 def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") -> int:
@@ -348,6 +369,7 @@ def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") ->
         rpc_request("rpc-send-2", "aicp.sendMessage", {"message": message}),
         rpc_request("rpc-send-3", "aicp.sendMessage", {"message": second}),
         rpc_request("rpc-poll-1", "aicp.pollMessages", {"session_id": SESSION_ID, "after_cursor": "c0", "limit": 1}),
+        rpc_request("rpc-poll-2", "aicp.pollMessages", {"session_id": SESSION_ID, "after_cursor": "c1", "limit": 1}),
         rpc_request("rpc-head-1", "aicp.getHead", {"session_id": SESSION_ID}),
         rpc_request("rpc-object-1", "aicp.getObject", {"object_hash": OBJECT_HASH}),
         rpc_request("rpc-object-2", "aicp.getObject", {"object_hash": "sha256:" + "A" * 43}),
@@ -361,8 +383,13 @@ def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") ->
         requests[0]["params"]["arguments"]["message"]["sender"] = "agent:rewritten"
     elif mode == "wrong_session":
         requests[3]["params"]["arguments"]["session_id"] = "other-session"
+        requests[4]["params"]["arguments"]["session_id"] = "other-session"
+    elif mode == "mcp_missing_after_cursor":
+        requests[4]["params"]["arguments"].pop("after_cursor", None)
+    elif mode == "mcp_wrong_after_cursor":
+        requests[4]["params"]["arguments"]["after_cursor"] = "unrelated-cursor"
     elif mode == "wrong_object_hash":
-        requests[5]["params"]["arguments"]["object_hash"] = "sha256:" + "B" * 43
+        requests[6]["params"]["arguments"]["object_hash"] = "sha256:" + "B" * 43
     elif mode == "request_id_reuse":
         requests[1]["id"] = requests[0]["id"]
     for index, request in enumerate(requests):

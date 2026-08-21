@@ -15,6 +15,8 @@ if str(EVIDENCE_DIR) not in sys.path:
     sys.path.insert(0, str(EVIDENCE_DIR))
 
 from target_catalog import canonical_digest, load_json  # noqa: E402
+from live_bindings.live_trace_evaluator import evaluate_v2_trace  # noqa: E402
+from live_bindings.live_trace_normalization import semantic_digest_v2  # noqa: E402
 
 
 ROLE_NAMES = ("server_under_test", "client_under_test")
@@ -95,6 +97,12 @@ def normalize_run(run: dict[str, Any]) -> dict[str, Any]:
 
 
 def semantic_digest(run: dict[str, Any]) -> str:
+    interactions = run.get("interactions") if isinstance(run, dict) else None
+    if isinstance(interactions, list) and any(
+        isinstance(item, dict) and "transport_evidence" in item
+        for item in interactions
+    ):
+        return semantic_digest_v2(run)
     return canonical_digest(normalize_run(run))
 
 
@@ -116,7 +124,7 @@ def build_trace_artifact(
     first_digest = semantic_digest(runs[0])
     repeat_digest = semantic_digest(runs[1])
     content = {
-        "trace_version": "aicp.live_binding_trace.v1",
+        "trace_version": "aicp.live_binding_trace.v2",
         "binding": {
             "binding_id": binding_id,
             "binding_version": "0.1",
@@ -272,7 +280,16 @@ def evaluate_live_binding_trace(
     catalog: dict[str, Any],
     *,
     full_binding: bool,
+    disabled_families: frozenset[str] = frozenset(),
 ) -> list[str]:
+    content = artifact.get("content")
+    if isinstance(content, dict) and content.get("trace_version") == "aicp.live_binding_trace.v2":
+        return evaluate_v2_trace(
+            artifact,
+            catalog,
+            full_binding=full_binding,
+            disabled_families=disabled_families,
+        )
     errors: list[str] = []
     if artifact.get("artifact_kind") != "live_binding_trace":
         return ["generated artifact is not a live binding trace"]

@@ -669,7 +669,7 @@ def test_future_mutable_registry_addition_does_not_invalidate_frozen_reports(
     current = _external_report("AICP-MEDIATED-BLOCKING@0.1")
     registry = load_json(EVIDENCE_DIR / "evidence_tck_releases.json")
     hypothetical = copy.deepcopy(release_record(CURRENT_TCK_RELEASE_ID, registry))
-    hypothetical["release_id"] = "AICP-EVIDENCE-TCK-1.6.0"
+    hypothetical["release_id"] = "AICP-EVIDENCE-TCK-1.7.0"
     registry["releases"].append(hypothetical)
     future_path = tmp_path / "evidence_tck_releases.json"
     future_path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")

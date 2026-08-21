@@ -20,6 +20,7 @@ from live_bindings.live_http_transport import (  # noqa: E402
     start_http_server,
 )
 from live_bindings.live_mcp_transport import mcp_client_loop, mcp_server_loop  # noqa: E402
+from live_bindings.live_tls import EphemeralTlsMaterial, server_ssl_context  # noqa: E402
 
 
 SERVER_MODES = {
@@ -53,6 +54,13 @@ SERVER_MODES = {
     "ws_wrong_more",
     "ws_ordering_broken",
     "ws_missing_retry",
+    "websocket_wrong_accept",
+    "websocket_missing_upgrade",
+    "websocket_wrong_upgrade",
+    "websocket_missing_connection",
+    "websocket_wrong_connection",
+    "websocket_malformed_headers",
+    "secret_reflection",
 }
 CONTROL_NEGATIVE_MODES = {
     "no_ready",
@@ -77,6 +85,8 @@ HTTP_CLIENT_NEGATIVE_MODES = {
     "missing_ack",
     "invalid_sse_reconnect",
     "invalid_ws_pull",
+    "invalid_idempotency_delimiter",
+    "wss_untrusted_certificate",
 }
 MCP_SERVER_NEGATIVE_MODES = {
     "missing_poll_tool",
@@ -90,6 +100,7 @@ MCP_SERVER_NEGATIVE_MODES = {
     "malformed_json",
     "oversized_line",
     "timeout",
+    "mcp_server_ignores_after_cursor",
 }
 MCP_CLIENT_NEGATIVE_MODES = {
     "wrong_tool",
@@ -99,6 +110,25 @@ MCP_CLIENT_NEGATIVE_MODES = {
     "wrong_object_hash",
     "malformed_json",
     "request_id_reuse",
+    "mcp_missing_after_cursor",
+    "mcp_wrong_after_cursor",
+}
+
+CORRECTION_NEGATIVE_MODES = {
+    "environment_sentinel_inheritance",
+    "secret_reflection",
+    "observation_only_trace",
+    "invalid_idempotency_delimiter",
+    "websocket_wrong_accept",
+    "websocket_missing_upgrade",
+    "websocket_wrong_upgrade",
+    "websocket_missing_connection",
+    "websocket_wrong_connection",
+    "wss_declared_without_wss_execution",
+    "wss_untrusted_certificate",
+    "mcp_missing_after_cursor",
+    "mcp_wrong_after_cursor",
+    "mcp_server_ignores_after_cursor",
 }
 
 
@@ -118,6 +148,7 @@ def _descriptor(
     implementation_version: str,
     mode: str,
     base_url: str | None = None,
+    websocket_url: str | None = None,
 ) -> dict[str, object]:
     binding_id = "BIND-HTTP" if binding == "http" else "BIND-MCP"
     if mode == "wrong_binding":
@@ -133,10 +164,13 @@ def _descriptor(
         "request_response": True,
         "sse": binding == "http" and mode not in {"no_sse", "request_response_only"},
         "websocket": binding == "http" and mode not in {"no_websocket", "request_response_only"},
-        "wss": False,
+        "wss": binding == "http" and mode not in {"no_websocket", "request_response_only"},
     }
+    if mode == "wss_declared_without_wss_execution":
+        features["websocket"] = True
+        features["wss"] = True
     descriptor: dict[str, object] = {
-        "protocol": "aicp.live_endpoint_descriptor.v1",
+        "protocol": "aicp.live_endpoint_descriptor.v2",
         "binding_id": binding_id,
         "binding_version": version,
         "role": role,
@@ -148,6 +182,8 @@ def _descriptor(
     }
     if binding == "http" and role == "server_under_test":
         descriptor["base_url"] = base_url
+        if features["websocket"] and mode != "wss_declared_without_wss_execution":
+            descriptor["websocket_url"] = websocket_url
     if binding == "mcp":
         descriptor["transport"] = "stdio"
     if mode == "non_loopback_endpoint":
@@ -196,8 +232,21 @@ def main() -> int:
 
     if args.binding == "http" and args.role == "server_under_test":
         server_mode = args.mode if args.mode in SERVER_MODES else "good"
-        server, _state, _thread = start_http_server(bearer, mode=server_mode)
+        server, state, _thread = start_http_server(bearer, mode=server_mode)
         base_url = f"http://127.0.0.1:{server.server_address[1]}"
+        tls_material = EphemeralTlsMaterial(
+            ca_file=Path(_required_environment("AICP_LIVE_TLS_CA_FILE")),
+            cert_file=Path(_required_environment("AICP_LIVE_TLS_CERT_FILE")),
+            key_file=Path(_required_environment("AICP_LIVE_TLS_KEY_FILE")),
+            private_key_pem="",
+        )
+        tls_server, _tls_state, _tls_thread = start_http_server(
+            bearer,
+            mode=server_mode,
+            ssl_context=server_ssl_context(tls_material),
+            state=state,
+        )
+        websocket_url = f"wss://127.0.0.1:{tls_server.server_address[1]}"
         descriptor = _descriptor(
             binding=args.binding,
             role=args.role,
@@ -206,6 +255,7 @@ def main() -> int:
             implementation_version=args.implementation_version,
             mode=args.mode,
             base_url=base_url,
+            websocket_url=websocket_url,
         )
         atomic_write_json(ready_path, descriptor)
         try:
@@ -226,12 +276,18 @@ def main() -> int:
 
     if args.binding == "http":
         endpoint = _required_environment("AICP_LIVE_ENDPOINT_URL")
+        websocket_url = os.environ.get("AICP_LIVE_WEBSOCKET_URL")
+        tls_ca_file = os.environ.get("AICP_LIVE_TLS_CA_FILE")
+        if args.mode == "wss_untrusted_certificate":
+            tls_ca_file = os.environ.get("AICP_LIVE_TLS_WRONG_CA_FILE")
         execute_http_client(
             endpoint,
             bearer,
             role="client_under_test",
             mode=args.mode,
             declared_features=descriptor["declared_features"],
+            websocket_url=websocket_url,
+            tls_ca_file=tls_ca_file,
         )
         return 0
     if args.role == "server_under_test":
