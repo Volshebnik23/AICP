@@ -45,6 +45,30 @@ MCP_FAMILIES = {
     "get_object",
     "jsonrpc_integrity",
 }
+CLIENT_OBSERVABLE_ACTIONS = {
+    "authentication": "send authenticated request after observing rejection",
+    "session_lifecycle": "send two create-session requests and consume distinct session IDs",
+    "message_ingest": "send the deterministic message on its session path with exact headers",
+    "idempotent_replay": "repeat the same session/message operation",
+    "session_scoped_replay": "send the same message ID in a second session",
+    "polling_cursor": "send poll with explicit after and limit",
+    "head": "request head for the created session",
+    "explicit_ack": "send the exact cursor returned by poll",
+    "replay_window": "send an expired-cursor request and consume the rejection",
+    "ordering": "request and consume adjacent message references",
+    "overload": "issue overload probe and consume retry metadata",
+    "sse_stream": "open and parse the SSE byte stream",
+    "sse_reconnect": "reuse the prior SSE event ID in both resume controls",
+    "websocket_pull": "send a masked pull frame after a verified handshake",
+    "wss_pull": "perform verified TLS then send a masked WebSocket pull frame",
+    "close_session": "close the session and retry an ingest",
+    "send_message": "emit an exact sendMessage JSON-RPC request",
+    "duplicate_send": "emit the same sendMessage request again",
+    "poll_messages": "reuse the first returned cursor in a second poll request",
+    "get_head": "emit getHead for the tested session",
+    "get_object": "emit known and unknown getObject requests",
+    "jsonrpc_integrity": "correlate unique request IDs and emit a malformed-envelope probe",
+}
 FORBIDDEN_ANSWER_KEYS = {
     "expected_response",
     "expected_headers",
@@ -146,6 +170,17 @@ class LiveBindingV01Handler:
         )
         if observed != required:
             errors.append("live scenario catalog does not cover every mandatory family once per role")
+        client_families = {
+            str(item.get("semantic_family"))
+            for item in scenario_items
+            if isinstance(item, dict) and item.get("tested_role") == "client_under_test"
+        }
+        missing_client_actions = sorted(client_families - set(CLIENT_OBSERVABLE_ACTIONS))
+        if missing_client_actions:
+            errors.append(
+                "client scenarios lack observable client-action mappings: "
+                + ", ".join(missing_client_actions)
+            )
         static_refs = {
             str(ref)
             for item in scenario_items
@@ -205,6 +240,11 @@ class LiveBindingV01Handler:
             artifact,
             load_json(ROOT / str(catalog["live_scenario_catalog"]["path"])),
             full_binding=mode == "full-binding",
+            disabled_families=frozenset(
+                value.removeprefix("LIVE-FAMILY-")
+                for value in _disabled_checks
+                if value.startswith("LIVE-FAMILY-")
+            ),
         ))
         content = artifact.get("content")
         roles = content.get("roles") if isinstance(content, dict) else None
