@@ -37,7 +37,10 @@ FROZEN_TCK_1_3_BUNDLE_MANIFEST_PATH = (
 FROZEN_TCK_1_4_BUNDLE_MANIFEST_PATH = (
     EVIDENCE_DIR / "evidence_runner_bundle_v1_4.json"
 )
-BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_5.json"
+FROZEN_TCK_1_5_BUNDLE_MANIFEST_PATH = (
+    EVIDENCE_DIR / "evidence_runner_bundle_v1_5.json"
+)
+BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_6.json"
 RELEASE_SNAPSHOT_DIR = EVIDENCE_DIR / "release_registry_snapshots"
 PRODUCER_SCENARIO_PATH = EVIDENCE_DIR / "projection_v1_producer_scenario.json"
 PRODUCER_TRANSCRIPT_PATH = EVIDENCE_DIR / "projection_v1_producer_transcript.json"
@@ -52,7 +55,8 @@ TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.1.0"
 PROFILE_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.2.0"
 PREVIOUS_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.3.0"
 TCK_1_4_RELEASE_ID = "AICP-EVIDENCE-TCK-1.4.0"
-CURRENT_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.5.0"
+TCK_1_5_RELEASE_ID = "AICP-EVIDENCE-TCK-1.5.0"
+CURRENT_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.6.0"
 HISTORICAL_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.0.0"
 HISTORICAL_RELEASE_RECORD_DIGEST = (
     "sha256:e227fdb2b2d35f83cfeeceff6e80f455ff8a95a1e56244bb6d4433942c53ba80"
@@ -128,6 +132,41 @@ FROZEN_TCK_1_4_TARGET_CATALOG_DIGESTS = {
     "AICP-MEDIATED-BLOCKING@0.1": "sha256:0457228ab0789997d23e6b655fdd3c8447cf5fd7e01d87b7ca34ca120c635948",
     "AICP-RESUMABLE-SESSIONS@0.1": "sha256:f845e6707f1456b4e8ad0e1ab02b83eacc0647c04053793f1adee973e4fa5a88",
     "AICP-DELEGATED-IDENTITY@0.1": "sha256:c1c83123526b3e9e27e8c774086699df968263d1b52360530fabef35923a520d",
+}
+FROZEN_TCK_1_5_RECORD_DIGEST = (
+    "sha256:e1a67c5a3147bf625dbbdd378afc2e3ee62fd52269c38ad382342cea7e687731"
+)
+FROZEN_TCK_1_5_REGISTRY_SNAPSHOT_DIGEST = (
+    "sha256:bc669bd4548471042098552693d5f0236354db7c90ba05d56133621edc30f0da"
+)
+FROZEN_TCK_1_5_BUNDLE_MANIFEST_DIGEST = (
+    "sha256:cf38835499b4b33457b73236e00445a6d794d828d5550531644be98262057297"
+)
+FROZEN_TCK_1_5_RUNNER_BUNDLE_DIGEST = (
+    "sha256:6b046eee701611564888585779042d29100bd049c28b5435550c58403a26369d"
+)
+FROZEN_TCK_1_5_REPORT_SCHEMA_DIGEST = (
+    "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+)
+FROZEN_TCK_1_5_TARGET_REGISTRY_SCHEMA_DIGEST = (
+    "sha256:2ce885d972041e631fc67d7a39fa8dbe54d04e123e6277ead6a4accc3b63020f"
+)
+FROZEN_TCK_1_5_TARGET_REGISTRY_DIGEST = (
+    "sha256:64b72ef7cc04a1d555cd8192eb47b67e0d82c392cc72c43a587332e5895b37f5"
+)
+FROZEN_TCK_1_5_LIVE_TRACE_SCHEMA_DIGEST = (
+    "sha256:3e641bfd95ffe6ad0cc3ade7136f10968dc88a62e2519846d55be84730df9fa8"
+)
+FROZEN_TCK_1_5_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST = (
+    "sha256:a7e36ee9b5a8a4de716bcb05b285fb237958566c8dcf8752e8e9b5f586f8c1b5"
+)
+FROZEN_TCK_1_5_TARGET_CATALOG_DIGESTS = {
+    TARGET_KEY: "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20",
+    "AICP-MEDIATED-BLOCKING@0.1": "sha256:0457228ab0789997d23e6b655fdd3c8447cf5fd7e01d87b7ca34ca120c635948",
+    "AICP-RESUMABLE-SESSIONS@0.1": "sha256:f845e6707f1456b4e8ad0e1ab02b83eacc0647c04053793f1adee973e4fa5a88",
+    "AICP-DELEGATED-IDENTITY@0.1": "sha256:c1c83123526b3e9e27e8c774086699df968263d1b52360530fabef35923a520d",
+    "BIND-HTTP@0.1": "sha256:57f08cc8cdba8a36a235e73e07f573556e0fbbcb5dcd7ba35bd4bfbb91f1af2e",
+    "BIND-MCP@0.1": "sha256:1dc25ca5709de839d84ea5bc92c1c217d1e2a42d34576902a5c85f808e44bd2f",
 }
 PROFILE_TARGET_KEYS = (
     "AICP-MEDIATED-BLOCKING@0.1",
@@ -1195,10 +1234,11 @@ def validate_release_registry(
         PROFILE_TCK_RELEASE_ID,
         PREVIOUS_TCK_RELEASE_ID,
         TCK_1_4_RELEASE_ID,
+        TCK_1_5_RELEASE_ID,
         CURRENT_TCK_RELEASE_ID,
     }
     if not required_ids.issubset(set(ids)):
-        errors.append("evidence TCK registry must retain 1.0.0 through 1.4.0 and register 1.5.0")
+        errors.append("evidence TCK registry must retain 1.0.0 through 1.5.0 and register 1.6.0")
     try:
         historical = release_record(HISTORICAL_TCK_RELEASE_ID, value)
     except ValueError as exc:
@@ -1347,20 +1387,56 @@ def validate_release_registry(
             errors.append("evidence TCK 1.4.0 target catalog digests changed")
 
     try:
+        frozen_1_5_release = release_record(TCK_1_5_RELEASE_ID, value)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return sorted(set(errors))
+    if canonical_digest(frozen_1_5_release) != FROZEN_TCK_1_5_RECORD_DIGEST:
+        errors.append("evidence TCK 1.5.0 frozen record changed")
+    frozen_1_5_bundle = frozen_1_5_release.get("runner_bundle", {})
+    if frozen_1_5_release.get("report_schema", {}).get("content_digest") != FROZEN_TCK_1_5_REPORT_SCHEMA_DIGEST:
+        errors.append("evidence TCK 1.5.0 report schema digest changed")
+    if frozen_1_5_release.get("target_registry", {}).get("schema_digest") != FROZEN_TCK_1_5_TARGET_REGISTRY_SCHEMA_DIGEST:
+        errors.append("evidence TCK 1.5.0 target registry schema digest changed")
+    if frozen_1_5_release.get("target_registry", {}).get("content_digest") != FROZEN_TCK_1_5_TARGET_REGISTRY_DIGEST:
+        errors.append("evidence TCK 1.5.0 target registry digest changed")
+    if frozen_1_5_bundle.get("manifest_digest") != FROZEN_TCK_1_5_BUNDLE_MANIFEST_DIGEST:
+        errors.append("evidence TCK 1.5.0 bundle manifest digest changed")
+    if frozen_1_5_bundle.get("digest") != FROZEN_TCK_1_5_RUNNER_BUNDLE_DIGEST:
+        errors.append("evidence TCK 1.5.0 runner bundle digest changed")
+    if file_digest(root / FROZEN_TCK_1_5_BUNDLE_MANIFEST_PATH.relative_to(ROOT)) != FROZEN_TCK_1_5_BUNDLE_MANIFEST_DIGEST:
+        errors.append("evidence TCK 1.5.0 bundle manifest bytes changed")
+    if file_digest(root / "conformance/evidence/live_bindings/live_binding_trace.schema.json") != FROZEN_TCK_1_5_LIVE_TRACE_SCHEMA_DIGEST:
+        errors.append("evidence TCK 1.5.0 live trace v1 schema changed")
+    if file_digest(root / "conformance/evidence/live_bindings/live_endpoint_descriptor.schema.json") != FROZEN_TCK_1_5_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST:
+        errors.append("evidence TCK 1.5.0 endpoint descriptor v1 schema changed")
+    frozen_1_5_targets = frozen_1_5_release.get("targets")
+    if not isinstance(frozen_1_5_targets, list):
+        errors.append("evidence TCK 1.5.0 targets are missing")
+    else:
+        observed_catalogs = {
+            str(item.get("target_key")): (item.get("target_catalog") or {}).get("content_digest")
+            for item in frozen_1_5_targets
+            if isinstance(item, dict)
+        }
+        if observed_catalogs != FROZEN_TCK_1_5_TARGET_CATALOG_DIGESTS:
+            errors.append("evidence TCK 1.5.0 target catalog digests changed")
+
+    try:
         current_release = release_record(CURRENT_TCK_RELEASE_ID, value)
     except ValueError as exc:
         errors.append(str(exc))
         return sorted(set(errors))
     release_targets = current_release.get("targets")
     if not isinstance(release_targets, list):
-        return sorted(set([*errors, "evidence TCK 1.5.0 targets are missing"]))
+        return sorted(set([*errors, "evidence TCK 1.6.0 targets are missing"]))
     release_keys = [
         item.get("target_key") for item in release_targets if isinstance(item, dict)
     ]
     if len(release_keys) != len(set(release_keys)):
-        errors.append("evidence TCK 1.5.0 target keys must be unique")
+        errors.append("evidence TCK 1.6.0 target keys must be unique")
     if release_keys != list(EXPECTED_TARGET_KEYS):
-        errors.append("evidence TCK 1.5.0 must contain all six generalized targets")
+        errors.append("evidence TCK 1.6.0 must contain all six generalized targets")
     expected_checks = {
         current_release.get("report_schema", {}).get("content_digest"): file_digest(
             root / REPORT_SCHEMA_V22_PATH.relative_to(ROOT)
@@ -1373,18 +1449,18 @@ def validate_release_registry(
         ),
     }
     if any(actual != expected for actual, expected in expected_checks.items()):
-        errors.append("evidence TCK 1.5.0 common provenance does not match current bytes")
+        errors.append("evidence TCK 1.6.0 common provenance does not match current bytes")
     manifest = bundle_manifest or load_json(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT))
     errors.extend(validate_bundle_manifest(manifest, root=root))
     runner_bundle = current_release.get("runner_bundle", {})
     if runner_bundle.get("manifest_path") != BUNDLE_MANIFEST_PATH.relative_to(ROOT).as_posix():
-        errors.append("evidence TCK 1.5.0 runner bundle manifest path is incorrect")
+        errors.append("evidence TCK 1.6.0 runner bundle manifest path is incorrect")
     if runner_bundle.get("manifest_digest") != file_digest(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT)):
-        errors.append("evidence TCK 1.5.0 runner bundle manifest digest is stale")
+        errors.append("evidence TCK 1.6.0 runner bundle manifest digest is stale")
     if runner_bundle.get("digest") != manifest.get("bundle_digest"):
-        errors.append("evidence TCK 1.5.0 runner bundle digest is stale")
+        errors.append("evidence TCK 1.6.0 runner bundle digest is stale")
     if runner_bundle.get("paths") != [item["path"] for item in manifest.get("entries", [])]:
-        errors.append("evidence TCK 1.5.0 runner bundle paths do not match manifest")
+        errors.append("evidence TCK 1.6.0 runner bundle paths do not match manifest")
 
     expected_policies = {
         HISTORICAL_TCK_RELEASE_ID: False,
@@ -1392,6 +1468,7 @@ def validate_release_registry(
         PROFILE_TCK_RELEASE_ID: False,
         PREVIOUS_TCK_RELEASE_ID: False,
         TCK_1_4_RELEASE_ID: True,
+        TCK_1_5_RELEASE_ID: False,
         CURRENT_TCK_RELEASE_ID: True,
     }
     for release_id, eligible in expected_policies.items():
@@ -1410,12 +1487,14 @@ def validate_release_registry(
         PROFILE_TCK_RELEASE_ID: FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST,
         PREVIOUS_TCK_RELEASE_ID: FROZEN_TCK_1_3_REGISTRY_SNAPSHOT_DIGEST,
         TCK_1_4_RELEASE_ID: FROZEN_TCK_1_4_REGISTRY_SNAPSHOT_DIGEST,
+        TCK_1_5_RELEASE_ID: FROZEN_TCK_1_5_REGISTRY_SNAPSHOT_DIGEST,
     }
     for release_id in (
         TCK_RELEASE_ID,
         PROFILE_TCK_RELEASE_ID,
         PREVIOUS_TCK_RELEASE_ID,
         TCK_1_4_RELEASE_ID,
+        TCK_1_5_RELEASE_ID,
         CURRENT_TCK_RELEASE_ID,
     ):
         try:

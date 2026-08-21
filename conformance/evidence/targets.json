@@ -12,7 +12,7 @@
       "execution_mode": "full-capability",
       "evidence_claim_type": "implements_capability",
       "handler_id": "projection_v1",
-      "current_release_id": "AICP-EVIDENCE-TCK-1.5.0",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.6.0",
       "required_suites": [
         "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json"
       ],
@@ -34,7 +34,7 @@
       "execution_mode": "full-profile",
       "evidence_claim_type": "implements_profile",
       "handler_id": "product_profile_v01",
-      "current_release_id": "AICP-EVIDENCE-TCK-1.5.0",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.6.0",
       "required_suites": [
         "conformance/core/CT_CORE_0.1.json",
         "conformance/extensions/CN_CAPNEG_0.1.json",
@@ -59,7 +59,7 @@
       "execution_mode": "full-profile",
       "evidence_claim_type": "implements_profile",
       "handler_id": "product_profile_v01",
-      "current_release_id": "AICP-EVIDENCE-TCK-1.5.0",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.6.0",
       "required_suites": [
         "conformance/core/CT_CORE_0.1.json",
         "conformance/extensions/RS_RESUME_0.1.json",
@@ -83,7 +83,7 @@
       "execution_mode": "full-profile",
       "evidence_claim_type": "implements_profile",
       "handler_id": "product_profile_v01",
-      "current_release_id": "AICP-EVIDENCE-TCK-1.5.0",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.6.0",
       "required_suites": [
         "conformance/core/CT_CORE_0.1.json",
         "conformance/extensions/CN_CAPNEG_0.1.json",
@@ -103,12 +103,12 @@
       "target_id": "BIND-HTTP",
       "target_version": "0.1",
       "status": "experimental",
-      "catalog_path": "conformance/evidence/live_bindings/http_v01_target.json",
+      "catalog_path": "conformance/evidence/live_bindings/http_v01_target_v2.json",
       "expected_mark": "AICP-BIND-HTTP-0.1",
       "execution_mode": "full-binding",
       "evidence_claim_type": "implements_binding",
       "handler_id": "live_binding_v01",
-      "current_release_id": "AICP-EVIDENCE-TCK-1.5.0",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.6.0",
       "required_suites": [
         "conformance/bindings/TB_HTTP_WS_0.1.json"
       ],
@@ -123,12 +123,12 @@
       "target_id": "BIND-MCP",
       "target_version": "0.1",
       "status": "stable",
-      "catalog_path": "conformance/evidence/live_bindings/mcp_v01_target.json",
+      "catalog_path": "conformance/evidence/live_bindings/mcp_v01_target_v2.json",
       "expected_mark": "AICP-BIND-MCP-0.1",
       "execution_mode": "full-binding",
       "evidence_claim_type": "implements_binding",
       "handler_id": "live_binding_v01",
-      "current_release_id": "AICP-EVIDENCE-TCK-1.5.0",
+      "current_release_id": "AICP-EVIDENCE-TCK-1.6.0",
       "required_suites": [
         "conformance/bindings/TB_MCP_0.1.json"
       ],
