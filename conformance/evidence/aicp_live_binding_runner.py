@@ -44,6 +44,7 @@ from target_handlers import resolve_handler  # noqa: E402
 from live_bindings.live_binding_process import (  # noqa: E402
     LiveProcessError,
     explicit_environment,
+    reject_secret_reflection,
     spawn_process,
     terminate_and_reap,
     validate_loopback_url,
@@ -65,10 +66,14 @@ from live_bindings.live_mcp_transport import (  # noqa: E402
     execute_mcp_server,
     serve_mcp_client,
 )
+from live_bindings.live_tls import (  # noqa: E402
+    generate_ephemeral_tls_material,
+    server_ssl_context,
+)
 
 
-READY_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_endpoint_descriptor.schema.json"
-TRACE_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_binding_trace.schema.json"
+READY_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_endpoint_descriptor_v2.schema.json"
+TRACE_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_binding_trace_v2.schema.json"
 ROLE_NAMES = ("server_under_test", "client_under_test")
 
 
@@ -113,6 +118,12 @@ def _validate_descriptor(
         raise LiveProcessError("MCP live endpoint must declare stdio transport")
     if binding_id == "BIND-HTTP" and role == "server_under_test":
         validate_loopback_url(str(descriptor.get("base_url", "")))
+        features = descriptor.get("declared_features", {})
+        websocket_url = descriptor.get("websocket_url")
+        if features.get("websocket") is True:
+            validate_loopback_url(str(websocket_url or ""))
+        if features.get("wss") is True and not str(websocket_url).startswith("wss://"):
+            raise LiveProcessError("WSS was declared without an executable WSS endpoint")
 
 
 def _scenario_payload(binding_id: str, role: str, run_index: int) -> dict[str, Any]:
@@ -138,6 +149,11 @@ def _control_environment(
     scenario_path: Path,
     bearer: str,
     endpoint_url: str | None = None,
+    websocket_url: str | None = None,
+    tls_ca_file: Path | None = None,
+    tls_cert_file: Path | None = None,
+    tls_key_file: Path | None = None,
+    tls_wrong_ca_file: Path | None = None,
 ) -> dict[str, str]:
     values = {
         "AICP_LIVE_RUN_ID": f"m64-{_binding_slug(binding_id)}-{role}-{run_index}",
@@ -150,6 +166,16 @@ def _control_environment(
     }
     if endpoint_url is not None:
         values["AICP_LIVE_ENDPOINT_URL"] = endpoint_url
+    if websocket_url is not None:
+        values["AICP_LIVE_WEBSOCKET_URL"] = websocket_url
+    for name, path in (
+        ("AICP_LIVE_TLS_CA_FILE", tls_ca_file),
+        ("AICP_LIVE_TLS_CERT_FILE", tls_cert_file),
+        ("AICP_LIVE_TLS_KEY_FILE", tls_key_file),
+        ("AICP_LIVE_TLS_WRONG_CA_FILE", tls_wrong_ca_file),
+    ):
+        if path is not None:
+            values[name] = str(path)
     return explicit_environment(values)
 
 
@@ -164,6 +190,8 @@ def _run_http_server_role(
         directory = Path(temporary)
         ready_path = directory / "ready.json"
         scenario_path = directory / "scenario.json"
+        material = generate_ephemeral_tls_material(directory, stem="server")
+        wrong_material = generate_ephemeral_tls_material(directory, stem="wrong")
         scenario_path.write_text(
             json.dumps(_scenario_payload("BIND-HTTP", "server_under_test", run_index), separators=(",", ":"), ensure_ascii=False),
             encoding="utf-8",
@@ -175,6 +203,10 @@ def _run_http_server_role(
             ready_path=ready_path,
             scenario_path=scenario_path,
             bearer=bearer,
+            tls_ca_file=material.ca_file,
+            tls_cert_file=material.cert_file,
+            tls_key_file=material.key_file,
+            tls_wrong_ca_file=wrong_material.ca_file,
         )
         process, stdout_collector, stderr_collector = spawn_process(
             command,
@@ -190,6 +222,12 @@ def _run_http_server_role(
                 bearer,
                 role="server_under_test",
                 declared_features=descriptor["declared_features"],
+                websocket_url=str(descriptor.get("websocket_url", "")) or None,
+                tls_ca_file=str(material.ca_file),
+            )
+            reject_secret_reflection(
+                {"descriptor": descriptor, "interactions": interactions},
+                [bearer, material.private_key_pem, wrong_material.private_key_pem],
             )
         finally:
             terminate_and_reap(process)
@@ -207,8 +245,18 @@ def _run_http_client_role(
     timeout_seconds: float,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], str]:
     bearer = secrets.token_urlsafe(32)
+    temporary_context = tempfile.TemporaryDirectory(prefix="aicp-live-http-client-tls-")
+    tls_directory = Path(temporary_context.name)
+    material = generate_ephemeral_tls_material(tls_directory, stem="server")
+    wrong_material = generate_ephemeral_tls_material(tls_directory, stem="wrong")
     server, state, thread = start_http_server(bearer)
+    tls_server, _tls_state, tls_thread = start_http_server(
+        bearer,
+        ssl_context=server_ssl_context(material),
+        state=state,
+    )
     base_url = f"http://127.0.0.1:{server.server_address[1]}"
+    websocket_url = f"wss://127.0.0.1:{tls_server.server_address[1]}"
     try:
         with tempfile.TemporaryDirectory(prefix="aicp-live-http-client-") as temporary:
             directory = Path(temporary)
@@ -226,6 +274,9 @@ def _run_http_client_role(
                 scenario_path=scenario_path,
                 bearer=bearer,
                 endpoint_url=base_url,
+                websocket_url=websocket_url,
+                tls_ca_file=material.ca_file,
+                tls_wrong_ca_file=wrong_material.ca_file,
             )
             process, stdout_collector, stderr_collector = spawn_process(
                 command,
@@ -248,6 +299,10 @@ def _run_http_client_role(
                     role="client_under_test",
                     declared_features=descriptor["declared_features"],
                 )
+                reject_secret_reflection(
+                    {"descriptor": descriptor, "interactions": interactions},
+                    [bearer, material.private_key_pem, wrong_material.private_key_pem],
+                )
             finally:
                 terminate_and_reap(process)
             stdout_text = stdout_collector.finish() if stdout_collector is not None else ""
@@ -257,6 +312,8 @@ def _run_http_client_role(
             return _descriptor_subject(descriptor), interactions, stderr_text
     finally:
         stop_http_server(server, thread)
+        stop_http_server(tls_server, tls_thread)
+        temporary_context.cleanup()
 
 
 def _run_mcp_server_role(
@@ -461,7 +518,7 @@ def run_live_binding_evidence(
     record_case(
         "EVIDENCE-RUNNER-WORKTREE-01",
         bundle_matches,
-        "actual runtime import closure matches TCK 1.5" if bundle_matches else "actual live runner bytes differ from the registered release",
+        "actual runtime import closure matches TCK 1.6" if bundle_matches else "actual live runner bytes differ from the registered release",
     )
 
     roles_to_run = ["server_under_test"] + (["client_under_test"] if mode == "full-binding" else [])
@@ -510,6 +567,14 @@ def run_live_binding_evidence(
             "EVIDENCE-LIVE-SERVER-ROLE-01" if role == "server_under_test" else "EVIDENCE-LIVE-CLIENT-ROLE-01",
             passed,
             f"{role} completed two clean real-transport runs" if passed else (execution_error or f"{role} did not complete"),
+        )
+
+    if execution_error == "EVIDENCE_LIVE_SECRET_REFLECTION":
+        report["failures"].append(
+            {
+                "test_id": "EVIDENCE_LIVE_SECRET_REFLECTION",
+                "message": "a runner-created live secret was reflected into candidate evidence",
+            }
         )
 
     identity_values = {
