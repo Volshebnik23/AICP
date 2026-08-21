@@ -250,9 +250,12 @@ def _base_report(
     suites: list[dict[str, str]],
     timestamp: str,
 ) -> dict[str, Any]:
+    schema_path = str(release["report_schema"]["path"])
     report_version = (
-        "2.1"
-        if str(release["report_schema"]["path"]).endswith("v2_1.schema.json")
+        "2.2"
+        if schema_path.endswith("v2_2.schema.json")
+        else "2.1"
+        if schema_path.endswith("v2_1.schema.json")
         else "2.0"
     )
     return {
@@ -537,7 +540,7 @@ def run_evidence(
                         "repeat_content_digest": digest,
                         "content": producer_result,
                     }
-                    if report["report_format_version"] == "2.1":
+                    if report["report_format_version"] in {"2.1", "2.2"}:
                         artifact["artifact_kind"] = str(handler.artifact_kind)
                     report["generated_artifacts"].append(artifact)
                     if producer_case_result is not None and not errors:

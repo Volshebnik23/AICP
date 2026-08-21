@@ -287,7 +287,7 @@ def test_current_release_uses_actual_runner_bundle_and_handler_artifact_kinds(
     )
     release = release_record(CURRENT_TCK_RELEASE_ID)
     actual = bundle_digest(runtime_import_closure())
-    assert projection["report_format_version"] == "2.1"
+    assert projection["report_format_version"] == "2.2"
     assert projection["tck_release"]["release_id"] == CURRENT_TCK_RELEASE_ID
     assert projection["tck_release"]["registry_digest"] == release_snapshot_digest(
         CURRENT_TCK_RELEASE_ID
@@ -593,6 +593,12 @@ def test_superseded_tck_is_ineligible_by_explicit_policy(
         "runner_bundle_digest": release["runner_bundle"]["digest"],
     }
     report["runner"]["source_revision"] = release["runner_bundle"]["digest"]
+    historical_schema = load_json(ROOT / release["report_schema"]["path"])
+    historical_format = historical_schema["properties"]["report_format_version"][
+        "const"
+    ]
+    report["report_format_version"] = historical_format
+    report["runner"]["version"] = historical_format
     report["target"]["target_catalog_digest"] = target["target_catalog"][
         "content_digest"
     ]
@@ -663,7 +669,7 @@ def test_future_mutable_registry_addition_does_not_invalidate_frozen_reports(
     current = _external_report("AICP-MEDIATED-BLOCKING@0.1")
     registry = load_json(EVIDENCE_DIR / "evidence_tck_releases.json")
     hypothetical = copy.deepcopy(release_record(CURRENT_TCK_RELEASE_ID, registry))
-    hypothetical["release_id"] = "AICP-EVIDENCE-TCK-1.5.0"
+    hypothetical["release_id"] = "AICP-EVIDENCE-TCK-1.6.0"
     registry["releases"].append(hypothetical)
     future_path = tmp_path / "evidence_tck_releases.json"
     future_path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")

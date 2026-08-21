@@ -487,6 +487,29 @@ def _eligible_capability_targets(
     }
 
 
+def _eligible_binding_targets(
+    row: dict[str, Any],
+    expected_targets: set[tuple[str, str]],
+) -> set[tuple[str, str]]:
+    if (
+        row.get("artifact_kind") != "submission"
+        or row.get("valid") is not True
+        or row.get("evidence_validation_status") != "eligible"
+    ):
+        return set()
+    targets = row.get("eligible_targets")
+    if not isinstance(targets, list):
+        return set()
+    return {
+        (str(item["target_id"]), str(item["target_version"]))
+        for item in targets
+        if isinstance(item, dict)
+        and item.get("kind") == "binding"
+        and (str(item.get("target_id")), str(item.get("target_version")))
+        in expected_targets
+    }
+
+
 def derive_interop_evidence(
     matrix: dict[str, Any],
     profiles: list[dict[str, Any]],
@@ -510,11 +533,23 @@ def derive_interop_evidence(
         if isinstance(item, dict)
         and item.get("target_kind") == "capability"
     }
+    expected_bindings = {
+        (str(item["target_id"]), str(item["target_version"]))
+        for item in target_registry.get("targets", [])
+        if isinstance(item, dict)
+        and item.get("target_kind") == "binding"
+    }
     eligible_rows: list[
-        tuple[dict[str, Any], set[str], set[tuple[str, str]]]
+        tuple[
+            dict[str, Any],
+            set[str],
+            set[tuple[str, str]],
+            set[tuple[str, str]],
+        ]
     ] = []
     demonstrated: set[str] = set()
     demonstrated_capabilities: set[tuple[str, str]] = set()
+    demonstrated_bindings: set[tuple[str, str]] = set()
     for row in real_rows:
         if not isinstance(row, dict):
             continue
@@ -523,18 +558,20 @@ def derive_interop_evidence(
             row,
             expected_capabilities,
         )
-        if not marks and not capabilities:
+        bindings = _eligible_binding_targets(row, expected_bindings)
+        if not marks and not capabilities and not bindings:
             continue
-        eligible_rows.append((row, marks, capabilities))
+        eligible_rows.append((row, marks, capabilities, bindings))
         demonstrated.update(mark_to_profile[mark] for mark in marks)
         demonstrated_capabilities.update(capabilities)
+        demonstrated_bindings.update(bindings)
 
     pairwise_demonstrated = (
         pairwise_publication_available
         and any(
             row.get("claim_type") == "pairwise_interop"
             and row.get("joint_evidence_validation_status") == "eligible"
-            for row, _marks, _capabilities in eligible_rows
+            for row, _marks, _capabilities, _bindings in eligible_rows
         )
     )
     flags = {item["id"]: item["id"] in demonstrated for item in profiles}
@@ -551,6 +588,10 @@ def derive_interop_evidence(
             for capability_id, capability_version in sorted(
                 demonstrated_capabilities
             )
+        ],
+        "externally_demonstrated_bindings": [
+            {"binding_id": binding_id, "binding_version": binding_version}
+            for binding_id, binding_version in sorted(demonstrated_bindings)
         ],
         "pairwise_publication_available": pairwise_publication_available,
         "pairwise_demonstrated": pairwise_demonstrated,
@@ -716,6 +757,7 @@ def render_planned_milestones(status: dict[str, Any]) -> str:
 def render_baseline_facts(status: dict[str, Any]) -> str:
     summary = status["profile_summary"]
     capability_summary = status["capability_summary"]
+    binding_summary = status["binding_summary"]
     profiles = status["profiles"]
     interop = status["interop_evidence"]
     security = status["security_review"]
@@ -756,8 +798,11 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| External capability targets | {capability_summary['external_capability_targets']} | `conformance/evidence/targets.json` |",
         f"| Reachable external capability marks | {capability_summary['reachable_external_capability_marks']} | evidence target registry and TCK provenance |",
         f"| Externally demonstrated capabilities | {capability_summary['externally_demonstrated_capabilities']} | eligible capability-specific `eligible_targets` only |",
+        f"| External binding targets | {binding_summary['external_binding_targets']} | `conformance/evidence/targets.json` |",
+        f"| Reachable external binding marks | {binding_summary['reachable_external_binding_marks']} | evidence target registry and TCK 1.5 provenance |",
+        f"| Externally demonstrated bindings | {binding_summary['externally_demonstrated_bindings']} | eligible binding-specific `computed_binding_marks` only |",
         f"| Real submission packages | {interop['real_submission_package_count']} | `interop/interop_matrix.json` |",
-        f"| Eligible external submissions | {interop['eligible_external_submission_count']} | public interop eligibility plus typed computed profile/capability evidence |",
+        f"| Eligible external submissions | {interop['eligible_external_submission_count']} | public interop eligibility plus typed computed profile/capability/binding evidence |",
         f"| Rejected/ineligible real packages | {interop['rejected_real_submission_count']} | `interop/interop_matrix.json` |",
         f"| Externally demonstrated profiles | {len(demonstrated)}: {_code_list(demonstrated)} | eligible profile-specific `computed_profile_marks` only |",
         f"| Pairwise publication / demonstration | {_human_bool(interop['pairwise_publication_available'])} / {_human_bool(interop['pairwise_demonstrated'])} | joint-evidence validator status |",
@@ -788,10 +833,10 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             "| Surface | Repository truth | Independent-evidence boundary | Planned gap |",
             "|---|---|---|---|",
             f"| Profiles | {summary['registered']} shipped catalogs; {summary['external_profile_targets']} external targets ({summary['external_iut_targets']} `profile_iut_v1`, {summary['generalized_profile_targets']} `generalized_evidence_v2_1`) | {summary['externally_demonstrated']} externally demonstrated profiles | M70 |",
-            f"| Capability evidence | {capability_summary['external_capability_targets']} external targets; {capability_summary['reachable_external_capability_marks']} reachable marks | {capability_summary['externally_demonstrated_capabilities']} externally demonstrated capabilities | M64, M70 |",
+            f"| Capability evidence | {capability_summary['external_capability_targets']} external targets; {capability_summary['reachable_external_capability_marks']} reachable marks | {capability_summary['externally_demonstrated_capabilities']} externally demonstrated capabilities | M70 |",
             f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |",
             f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, demonstrated={str(interop['pairwise_demonstrated']).lower()} | A valid eligible joint-execution result is required | M66 |",
-            f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {len(live_bindings)} live paths | Static cases do not prove live independent interoperability | M64 |",
+            f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {binding_summary['external_binding_targets']} external targets; {binding_summary['live_role_paths']} live role paths; {binding_summary['reachable_external_binding_marks']} reachable marks | {binding_summary['externally_demonstrated_bindings']} externally demonstrated bindings; reference evidence is not external evidence | M70 |",
             f"| Security review | internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support completion | M67 |",
             f"| Governance | `{governance['current_model']}` | No external standards body is recorded | M68 |",
             f"| Message surface | {message_summary['registered_count']} machine-mapped entries; {len(message_summary['missing_positive_fixture_types'])} positive-fixture gaps | Aggregates are derived from entries | M65 |",
@@ -927,6 +972,8 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         "EXT-CAPNEG@0.2",
         "aicp.session_state_projection.v1",
         "aicp.session_state_projection.v2",
+        "BIND-HTTP@0.1 live evidence",
+        "BIND-MCP@0.1 live evidence",
     ]
     status["capneg_v0_2"] = {
         "status": [
@@ -1025,6 +1072,51 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         ),
         "externally_demonstrated_capabilities": len(
             demonstrated_capabilities
+        ),
+    }
+    binding_targets = [
+        item
+        for item in evidence_targets
+        if isinstance(item, dict) and item.get("target_kind") == "binding"
+    ]
+    demonstrated_bindings = interop.get("externally_demonstrated_bindings", [])
+    binding_evidence: list[dict[str, Any]] = []
+    for target in sorted(binding_targets, key=lambda item: str(item["target_key"])):
+        suite_paths = [
+            path for path in target.get("required_suites", []) if isinstance(path, str)
+        ]
+        static_case_count = sum(
+            len(load_json(root, suite_path).get("cases", []))
+            for suite_path in suite_paths
+        )
+        catalog = load_json(root, str(target["catalog_path"]))
+        binding_evidence.append(
+            {
+                "id": target["target_key"],
+                "suite": suite_paths[0] if len(suite_paths) == 1 else suite_paths,
+                "static_case_count": static_case_count,
+                "live_test_paths": catalog.get("role_coverage", []),
+                "external_evidence_target": True,
+                "external_evidence_mark": target.get("expected_mark"),
+                "external_evidence_mark_reachable": bool(target.get("expected_mark")),
+                "current_evidence_tck_release": target.get("current_release_id"),
+                "independent_external_evidence": any(
+                    item.get("binding_id") == target.get("target_id")
+                    and item.get("binding_version") == target.get("target_version")
+                    for item in demonstrated_bindings
+                    if isinstance(item, dict)
+                ),
+            }
+        )
+    status["binding_evidence"] = binding_evidence
+    status["binding_summary"] = {
+        "external_binding_targets": len(binding_targets),
+        "reachable_external_binding_marks": sum(
+            bool(item.get("expected_mark")) for item in binding_targets
+        ),
+        "externally_demonstrated_bindings": len(demonstrated_bindings),
+        "live_role_paths": sum(
+            len(item.get("live_test_paths", [])) for item in binding_evidence
         ),
     }
     release_engineering = status["release_engineering"]

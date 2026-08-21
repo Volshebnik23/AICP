@@ -10,7 +10,9 @@ Mediated Blocking, Resumable Sessions, and Delegated Identity. All five ordinary
 marks are reachable only for complete eligible external implementations. Separately,
 strict session-state projection v1 has one generalized
 `full-capability` external target and one reachable capability evidence mark. No real
-external capability, profile, or pairwise submission is present. See
+external capability, profile, binding, or pairwise submission is present. M64 separately
+adds exact `full-binding` targets for `BIND-HTTP@0.1` and `BIND-MCP@0.1`; each binding
+mark is reachable only by a two-role report for one external implementation build. See
 `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 Experimental `AICP-BASE@0.2` has internal conformance only in M60. It has no external-IUT
@@ -83,7 +85,7 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
-New executions use `AICP-EVIDENCE-TCK-1.4.0`; exact historical 1.1.0 reports remain
+New executions use `AICP-EVIDENCE-TCK-1.5.0`; exact historical 1.1.0 reports remain
 strong-eligible through their frozen release-registry snapshot. Both bind an answer-isolated
 neutral producer scenario, registry schema, registered handler, and import-closed runner
 bundle. Frozen 1.0.0, 1.2.0, and 1.3.0 cannot support a strong claim for their documented evidence
@@ -94,7 +96,26 @@ evidence mark, not a product-profile mark, certification, composition mark, or p
 result. An internal suite report, reference report, smoke report, self-attested package, or
 raw mark string cannot substantiate this claim.
 
-### 4) “Pairwise interoperable with implementation Y on profile X”
+### 4) “Implements AICP binding X”
+
+Use this only for an exact registered live binding target. M64 registers
+`BIND-HTTP@0.1` and `BIND-MCP@0.1`; `BIND-BUS-0.1` has no live external target.
+
+Minimum expected evidence:
+- `claim_type=implements_binding`,
+- exact `binding_refs` containing the binding ID and version,
+- `evidence_status=reproducible` and `evidence_types` containing `binding_report`,
+- the exact owning binding suite in `suite_refs`,
+- one eligible report 2.2 in `full-binding` mode that executes both roles of the same
+  implementation ID, version, kind, and digest twice from clean state.
+
+The independent evaluator validates real socket/process observations, strict sanitized
+trace structure, scenario coverage, semantic repeat digests, and the exact typed binding
+mark. Reference, smoke, server-only/client-only, raw-mark, and test-double artifacts do not
+establish a real external demonstration. A binding mark proves neither a product profile
+nor a capability.
+
+### 5) “Pairwise interoperable with implementation Y on profile X”
 
 Use this only when the evidence is specifically about interoperability between two named implementations for a named shipped profile.
 
@@ -139,15 +160,16 @@ The status should stay aligned with the actual package:
 | Implements profile X | `evidence_status=reproducible` + exact profile/version + exact required-suite `suite_refs` + eligible full-profile evidence from the profile's registered mechanism |
 | Compatible with profile X | `evidence_status=reproducible` + exact profile/version + exact required-suite `suite_refs` + eligible full-profile evidence + truthful disclosures |
 | Implements capability X | `evidence_status=reproducible` + exact capability ID/version + eligible target-oriented full-capability report v2 bound to the implementation/build |
+| Implements binding X | `evidence_status=reproducible` + exact binding ID/version + exact owning suite + eligible two-role full-binding report 2.2 bound to one implementation build |
 | Pairwise interoperable with implementation Y on profile X | Not currently publishable; reserved manifest vocabulary and instructional examples fail closed until a dedicated joint-execution runner exists |
 
 Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
 repository's canonical artifacts but cannot substantiate an external implementation claim.
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
-IUT and generalized profile smoke reports are diagnostic-only and cannot substantiate a
+IUT, generalized profile, and live-binding smoke reports are diagnostic-only and cannot substantiate a
 real profile claim. New generalized profile reports use report 2.1 and TCK 1.4.0; their
 `suite_refs` must be the exact required-suite union with no missing, unrelated, or duplicate
-suite. Capability smoke and every `reference_corpus` report are likewise ineligible.
+suite. Capability smoke, one-role binding evidence, and every `reference_corpus` report are likewise ineligible.
 Projection v2 remains internal-only and has no external target.
 
 For current TCK reports, every consumer case carries a schema-bound execution observation.

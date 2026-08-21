@@ -872,36 +872,60 @@ def _message_surface_errors(
 
 def _binding_errors(root: Path, status: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-    registered = {item["id"] for item in _json(root, TRANSPORT_REGISTRY)}
+    registered = {
+        item["id"]
+        for item in _json(root, TRANSPORT_REGISTRY)
+        if isinstance(item, dict) and item.get("status") != "deprecated"
+    }
+    if registered != {"BIND-BUS-0.1", "BIND-HTTP-0.1", "BIND-MCP-0.1"}:
+        errors.append("canonical transport binding registry must contain exactly BUS, HTTP, and MCP v0.1")
+    target_registry = _json(root, EVIDENCE_TARGETS)
+    binding_targets = {
+        str(item["target_key"]): item
+        for item in target_registry.get("targets", [])
+        if isinstance(item, dict) and item.get("target_kind") == "binding"
+    }
+    if set(binding_targets) != {"BIND-HTTP@0.1", "BIND-MCP@0.1"}:
+        errors.append("generalized binding targets must be exactly BIND-HTTP@0.1 and BIND-MCP@0.1")
     binding_evidence = status.get("binding_evidence", [])
-    live_paths_present = False
+    demonstrated = status.get("interop_evidence", {}).get(
+        "externally_demonstrated_bindings", []
+    )
     for item in binding_evidence:
-        binding_id = item.get("id")
-        if binding_id not in registered:
-            errors.append(
-                f"binding evidence references unknown registry ID: {binding_id}"
-            )
+        target_key = item.get("id")
+        target = binding_targets.get(str(target_key))
+        if target is None:
+            errors.append(f"binding evidence references unknown target: {target_key}")
+            continue
         suite_ref = item.get("suite")
         if not isinstance(suite_ref, str) or not (root / suite_ref).is_file():
-            errors.append(f"{binding_id}: binding suite does not resolve")
+            errors.append(f"{target_key}: binding suite does not resolve")
             continue
         suite = _json(root, suite_ref)
         if item.get("static_case_count") != len(suite.get("cases", [])):
-            errors.append(
-                f"{binding_id}: static case count does not match binding suite"
-            )
-        for live_path in item.get("live_test_paths", []):
-            live_paths_present = True
-            if not isinstance(live_path, str) or not (root / live_path).exists():
-                errors.append(
-                    f"{binding_id}: live test path does not resolve: {live_path!r}"
-                )
-    if (
-        any(item.get("live_binding_tested") for item in status.get("profiles", []))
-        and not live_paths_present
-    ):
+            errors.append(f"{target_key}: static case count does not match binding suite")
+        catalog = _json(root, str(target["catalog_path"]))
+        if item.get("live_test_paths") != catalog.get("role_coverage"):
+            errors.append(f"{target_key}: live role coverage is stale")
+        expected_external = any(
+            record.get("binding_id") == target.get("target_id")
+            and record.get("binding_version") == target.get("target_version")
+            for record in demonstrated
+            if isinstance(record, dict)
+        )
+        if item.get("independent_external_evidence") is not expected_external:
+            errors.append(f"{target_key}: external demonstration flag is stale")
+    expected_summary = {
+        "external_binding_targets": 2,
+        "reachable_external_binding_marks": 2,
+        "externally_demonstrated_bindings": len(demonstrated),
+        "live_role_paths": 4,
+    }
+    if status.get("binding_summary") != expected_summary:
+        errors.append("binding_summary does not match registry, targets, and matrix")
+    if any(item.get("live_binding_tested") for item in status.get("profiles", [])):
         errors.append(
-            "profile map cannot claim live binding coverage while only static cases exist"
+            "product-profile live_binding_tested flags must remain false for binding-only evidence"
         )
     return errors
 

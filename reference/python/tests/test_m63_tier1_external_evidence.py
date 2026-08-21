@@ -24,6 +24,7 @@ from product_profile_fake_adapters import MODES  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
     BUNDLE_MANIFEST_PATH,
+    BINDING_TARGET_KEYS,
     CURRENT_TCK_RELEASE_ID,
     FROZEN_TCK_1_1_RECORD_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
@@ -197,6 +198,7 @@ def test_generated_registry_release_and_three_catalogs_are_exact() -> None:
     assert [item["target_key"] for item in targets["targets"]] == [
         TARGET_KEY,
         *PROFILE_TARGET_KEYS,
+        *BINDING_TARGET_KEYS,
     ]
     assert validate_target_registry(targets, enforce_current_scope=True) == []
     assert validate_bundle_manifest(bundle) == []
@@ -290,8 +292,8 @@ def test_reference_and_external_full_profile_eligibility(target_key: str) -> Non
 
     external = _external_report(target_key)
     expectation = EXPECTED[target_key]
-    assert external["report_format_version"] == "2.1"
-    assert external["runner"]["version"] == "2.1"
+    assert external["report_format_version"] == "2.2"
+    assert external["runner"]["version"] == "2.2"
     assert external["passed"] is True
     assert external["compatibility_marks"] == [expectation["mark"]]
     assert len(external["generated_artifacts"]) == expectation["producer_count"]

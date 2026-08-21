@@ -47,6 +47,7 @@ from projection_v1_handler import derive_projection  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
     BUNDLE_MANIFEST_PATH,
+    BINDING_TARGET_KEYS,
     EXPECTED_MARK,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_TCK_RELEASE_ID,
@@ -209,6 +210,7 @@ def test_generated_target_registry_catalog_and_release_are_exact() -> None:
     assert [item["target_key"] for item in targets["targets"]] == [
         TARGET_KEY,
         *PROFILE_TARGET_KEYS,
+        *BINDING_TARGET_KEYS,
     ]
     assert "aicp.session_state_projection@v2" not in json.dumps(targets)
 
@@ -410,12 +412,12 @@ def test_current_projection_report_is_strict_and_target_oriented(
     external_report: dict,
 ) -> None:
     schema = load_json(
-        EVIDENCE_DIR / "external_evidence_report_v2_1.schema.json"
+        EVIDENCE_DIR / "external_evidence_report_v2_2.schema.json"
     )
     from jsonschema import Draft202012Validator
 
     assert list(Draft202012Validator(schema).iter_errors(external_report)) == []
-    assert external_report["report_format_version"] == "2.1"
+    assert external_report["report_format_version"] == "2.2"
     assert external_report["generated_artifacts"][0]["artifact_kind"] == "projection"
     assert "profile" not in external_report
     mutated = copy.deepcopy(external_report)

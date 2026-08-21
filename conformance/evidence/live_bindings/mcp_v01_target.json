@@ -1,0 +1,111 @@
+{
+  "catalog_version": "1.0",
+  "target_key": "BIND-MCP@0.1",
+  "target": {
+    "kind": "binding",
+    "target_id": "BIND-MCP",
+    "target_version": "0.1"
+  },
+  "handler_id": "live_binding_v01",
+  "expected_mark": "AICP-BIND-MCP-0.1",
+  "external_execution_mode": "full-binding",
+  "required_operations": [
+    "live_server",
+    "live_client"
+  ],
+  "required_suites": [
+    {
+      "path": "conformance/bindings/TB_MCP_0.1.json",
+      "suite_id": "TB-MCP-0.1",
+      "suite_version": "0.1.0-dev",
+      "suite_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+    }
+  ],
+  "live_scenario_catalog": {
+    "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+    "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1",
+    "schema_path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+    "schema_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+  },
+  "live_trace_schema": {
+    "path": "conformance/evidence/live_bindings/live_binding_trace.schema.json",
+    "content_digest": "sha256:3e641bfd95ffe6ad0cc3ade7136f10968dc88a62e2519846d55be84730df9fa8"
+  },
+  "endpoint_descriptor_schema": {
+    "path": "conformance/evidence/live_bindings/live_endpoint_descriptor.schema.json",
+    "content_digest": "sha256:a7e36ee9b5a8a4de716bcb05b285fb237958566c8dcf8752e8e9b5f586f8c1b5"
+  },
+  "role_coverage": [
+    "server_under_test",
+    "client_under_test"
+  ],
+  "live_relevant_static_checks": [
+    "CT-MESSAGE-TYPE-REGISTRY-01",
+    "TB-MCP-01",
+    "TB-MCP-02",
+    "TB-MCP-03",
+    "TB-MCP-04"
+  ],
+  "required_input_artifacts": [
+    {
+      "path": "conformance/bindings/TB_MCP_0.1.json",
+      "content_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+      "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_trace.schema.json",
+      "content_digest": "sha256:3e641bfd95ffe6ad0cc3ade7136f10968dc88a62e2519846d55be84730df9fa8"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_endpoint_descriptor.schema.json",
+      "content_digest": "sha256:a7e36ee9b5a8a4de716bcb05b285fb237958566c8dcf8752e8e9b5f586f8c1b5"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+      "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+    },
+    {
+      "path": "docs/bindings/RFC_BIND_MCP.md",
+      "content_digest": "sha256:2fe13f35093df8397f55cc98cae02a84a684d576b3ffa60fcf2f74e00b67a180"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
+      "content_digest": "sha256:ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
+      "content_digest": "sha256:a3ce2f2e8a8b54279f90b504762c762dcaff4f0640767b490fdd7a27fb52c3d8"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
+      "content_digest": "sha256:b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json",
+      "content_digest": "sha256:dc57a4f1bda6ac5328cccff10c2e1327bc6fc26db26bb348c1c4d6383e47d8eb"
+    },
+    {
+      "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+      "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+    },
+    {
+      "path": "registry/message_types.json",
+      "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+    },
+    {
+      "path": "registry/transport_bindings.json",
+      "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+    },
+    {
+      "path": "schemas/bindings/bind-mcp.schema.json",
+      "content_digest": "sha256:938816c333cc849c9ce0da866b30a27bb6b65e47bc0afd17dbc3f9be6b241220"
+    },
+    {
+      "path": "schemas/core/aicp-core-message.schema.json",
+      "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "submission_id": "replace-binding-submission-id",
+  "implementation_id": "replace-implementation-id",
+  "implementation_version": "replace-version",
+  "binding_refs": [
+    {
+      "binding_id": "BIND-HTTP",
+      "binding_version": "0.1"
+    }
+  ],
+  "evidence_types": [
+    "binding_report"
+  ],
+  "evidence_status": "template",
+  "report_refs": [
+    "reports/replace-with-full-binding-report-v2.2.json"
+  ],
+  "suite_refs": [
+    "TB-HTTP-0.1"
+  ],
+  "claim_type": "implements_binding",
+  "claim_scope": "self_attested",
+  "generated_at": "2026-08-21T00:00:00Z",
+  "notes": "Replace every placeholder and use reproducible two-role evidence for one exact binding.",
+  "disclosures": [
+    "Template only; not submission evidence."
+  ]
+}

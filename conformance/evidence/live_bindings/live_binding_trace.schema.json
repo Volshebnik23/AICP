@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/live-binding-trace-v1.json",
+  "title": "AICP Sanitized Live Binding Trace v1",
+  "$ref": "#/$defs/LiveBindingTraceArtifact",
+  "$defs": {
+    "Digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "Subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "implementation_kind",
+        "implementation_id",
+        "implementation_version",
+        "implementation_digest",
+        "declared_features"
+      ],
+      "properties": {
+        "role": {"enum": ["server_under_test", "client_under_test"]},
+        "implementation_kind": {"enum": ["external_implementation", "reference_corpus"]},
+        "implementation_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "implementation_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "implementation_digest": {"$ref": "#/$defs/Digest"},
+        "declared_features": {"$ref": "#/$defs/Features"}
+      }
+    },
+    "Features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_response", "sse", "websocket", "wss"],
+      "properties": {
+        "request_response": {"type": "boolean"},
+        "sse": {"type": "boolean"},
+        "websocket": {"type": "boolean"},
+        "wss": {"type": "boolean"}
+      }
+    },
+    "Observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "enum": [
+            "network_boundary",
+            "process_boundary",
+            "live_bytes",
+            "live_frames",
+            "auth_present",
+            "auth_rejected",
+            "session_id",
+            "second_session_id",
+            "session_distinct",
+            "session_match",
+            "request_method",
+            "request_path_valid",
+            "content_type_valid",
+            "idempotency_key_valid",
+            "expected_message_id",
+            "observed_message_id",
+            "expected_message_hash",
+            "observed_message_hash",
+            "message_digest_equal",
+            "logical_accept_count",
+            "duplicate_count",
+            "replay_observed",
+            "replay_scope_isolated",
+            "poll_after",
+            "poll_limit",
+            "delivered_count",
+            "next_cursor",
+            "cursor_after_last",
+            "cursor_relationship_valid",
+            "no_cross_session_leakage",
+            "message_hashes_intact",
+            "head_session_match",
+            "ack_cursor",
+            "ack_matches",
+            "expired_cursor",
+            "reason_code",
+            "min_cursor",
+            "status",
+            "retry_after_present",
+            "rate_limit_hint_present",
+            "ordered_chain_valid",
+            "closed_session_rejected",
+            "sse_content_type_valid",
+            "event_ids_match_cursors",
+            "more_flags_valid",
+            "last_event_id",
+            "last_event_relationship_valid",
+            "mismatched_resume_rejected",
+            "reconnect_stable",
+            "reconnect_churn_valid",
+            "websocket_handshake_valid",
+            "websocket_frame_shape_valid",
+            "overload_retry_present",
+            "jsonrpc_version",
+            "request_id",
+            "response_id",
+            "request_response_correlated",
+            "response_count",
+            "valid_utf8",
+            "tool_name",
+            "poll_session_match",
+            "poll_limit_respected",
+            "object_expected_hash",
+            "object_actual_hash",
+            "object_hash_recomputed",
+            "unknown_object_failed",
+            "duplicate_hash_stable",
+            "ordering_not_assumed"
+            ,"malformed_envelope_rejected"
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {"type": "string", "maxLength": 512},
+            {"type": "boolean"},
+            {"type": "integer", "minimum": 0, "maximum": 1000000},
+            {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "oneOf": [
+                  {"type": "string", "maxLength": 256},
+                  {"type": "boolean"},
+                  {"type": "integer", "minimum": 0, "maximum": 1000000}
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interaction_id", "role", "scenario_id", "transport", "operation", "observations"],
+      "properties": {
+        "interaction_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "role": {"enum": ["server_under_test", "client_under_test"]},
+        "scenario_id": {"type": "string", "pattern": "^LIVE-(HTTP|MCP)-(SERVER|CLIENT)-[A-Z0-9-]+$"},
+        "transport": {"enum": ["http", "sse", "websocket", "mcp_stdio"]},
+        "operation": {"type": "string", "minLength": 1, "maxLength": 64},
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {"$ref": "#/$defs/Observation"}
+        }
+      }
+    },
+    "Run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_index", "interactions"],
+      "properties": {
+        "run_index": {"type": "integer", "minimum": 1, "maximum": 2},
+        "interactions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": {"$ref": "#/$defs/Interaction"}
+        }
+      }
+    },
+    "LiveBindingTraceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_kind",
+        "content_digest",
+        "repeat_content_digest",
+        "content"
+      ],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "artifact_kind": {"const": "live_binding_trace"},
+        "content_digest": {"$ref": "#/$defs/Digest"},
+        "repeat_content_digest": {"$ref": "#/$defs/Digest"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "trace_version",
+            "binding",
+            "roles",
+            "feature_coverage",
+            "runs",
+            "semantic_digest",
+            "repeat_semantic_digest"
+          ],
+          "properties": {
+            "trace_version": {"const": "aicp.live_binding_trace.v1"},
+            "binding": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["binding_id", "binding_version"],
+              "properties": {
+                "binding_id": {"enum": ["BIND-HTTP", "BIND-MCP"]},
+                "binding_version": {"const": "0.1"}
+              }
+            },
+            "roles": {
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "maxProperties": 2,
+              "properties": {
+                "server_under_test": {"$ref": "#/$defs/Subject"},
+                "client_under_test": {"$ref": "#/$defs/Subject"}
+              }
+            },
+            "feature_coverage": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["request_response", "sse", "websocket", "wss"],
+              "properties": {
+                "request_response": {"type": "boolean"},
+                "sse": {"type": "boolean"},
+                "websocket": {"type": "boolean"},
+                "wss": {"type": "boolean"}
+              }
+            },
+            "runs": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {"$ref": "#/$defs/Run"}
+            },
+            "semantic_digest": {"$ref": "#/$defs/Digest"},
+            "repeat_semantic_digest": {"$ref": "#/$defs/Digest"}
+          }
+        }
+      }
+    }
+  }
+}

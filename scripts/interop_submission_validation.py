@@ -35,7 +35,7 @@ from aicp_iut_catalog import (  # noqa: E402
     expected_execution_observation,
     mandatory_case_ids,
 )
-from report_evaluator import evaluate_report as evaluate_capability_report  # noqa: E402
+from report_evaluator import evaluate_report as evaluate_external_evidence_report  # noqa: E402
 RESERVED_DIRS = {"examples", "templates"}
 INTEGRITY_FILENAME = "bundle-integrity.json"
 INTEGRITY_MANIFEST_VERSION = "1.0"
@@ -43,6 +43,7 @@ ALLOWED_DIGEST_ALGS = {"sha256": hashlib.sha256}
 ALLOWED_CLAIM_TYPES = {
     "implements_profile",
     "implements_capability",
+    "implements_binding",
     "compatible_with_profile",
     "pairwise_interop",
 }
@@ -52,6 +53,15 @@ ALLOWED_EVIDENCE_STATUSES = {
     "self_attested",
     "reproducible",
     "pairwise",
+}
+ALLOWED_EVIDENCE_TYPES = {
+    "conformance_report",
+    "profile_report",
+    "capability_report",
+    "binding_report",
+    "golden_transcript",
+    "pairwise_transcript",
+    "human_summary",
 }
 PAIRWISE_JOINT_EVIDENCE_ERROR = (
     "PAIRWISE_JOINT_EVIDENCE_REQUIRED: real pairwise_interop publication is disabled until "
@@ -68,6 +78,11 @@ STRONG_CAPABILITY_CLAIM_EVIDENCE_ERROR = (
     "implements_capability claims require evidence_status='reproducible' and "
     "an independently eligible full-capability external evidence report"
 )
+STRONG_BINDING_CLAIM_EVIDENCE_ERROR = (
+    "STRONG_BINDING_CLAIM_REQUIRES_REPRODUCIBLE_REPORT: "
+    "implements_binding claims require evidence_status='reproducible' and "
+    "an independently eligible full-binding live evidence report"
+)
 
 
 @dataclass(frozen=True)
@@ -77,6 +92,7 @@ class StrongEvidenceEvaluation:
     status: str
     eligible_profile_marks: tuple[str, ...] = ()
     eligible_capability_marks: tuple[str, ...] = ()
+    eligible_binding_marks: tuple[str, ...] = ()
     eligible_targets: tuple[tuple[str, str, str], ...] = ()
 
 
@@ -123,6 +139,24 @@ def registry_capability_targets() -> set[tuple[str, str]]:
     }
     if not values:
         raise ValueError("evidence target registry has no capability target")
+    return values
+
+
+def registry_binding_targets() -> set[tuple[str, str]]:
+    registry = load_json(EVIDENCE_TARGETS_PATH)
+    targets = registry.get("targets") if isinstance(registry, dict) else None
+    if not isinstance(targets, list):
+        raise ValueError("evidence target registry must contain targets")
+    values = {
+        (str(item["target_id"]), str(item["target_version"]))
+        for item in targets
+        if isinstance(item, dict)
+        and item.get("target_kind") == "binding"
+        and isinstance(item.get("target_id"), str)
+        and isinstance(item.get("target_version"), str)
+    }
+    if not values:
+        raise ValueError("evidence target registry has no binding target")
     return values
 
 
@@ -222,9 +256,39 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
                             f"capability_refs[{index}].{field} must be a non-empty string"
                         )
 
+    binding_refs = manifest.get("binding_refs")
+    if binding_refs is not None:
+        if not isinstance(binding_refs, list) or not binding_refs:
+            errors.append("binding_refs must be a non-empty array when present")
+        else:
+            for index, binding_ref in enumerate(binding_refs):
+                if not isinstance(binding_ref, dict):
+                    errors.append(f"binding_refs[{index}] must be an object")
+                    continue
+                if set(binding_ref) != {"binding_id", "binding_version"}:
+                    errors.append(
+                        f"binding_refs[{index}] must contain only binding_id and binding_version"
+                    )
+                for field in ("binding_id", "binding_version"):
+                    if not isinstance(binding_ref.get(field), str) or not binding_ref.get(field):
+                        errors.append(
+                            f"binding_refs[{index}].{field} must be a non-empty string"
+                        )
+
     claim_type = manifest.get("claim_type")
     if isinstance(claim_type, str) and claim_type not in ALLOWED_CLAIM_TYPES:
         errors.append("claim_type must be one of: " + ", ".join(sorted(ALLOWED_CLAIM_TYPES)))
+
+    unknown_evidence_types = {
+        item
+        for item in manifest.get("evidence_types", [])
+        if isinstance(item, str) and item not in ALLOWED_EVIDENCE_TYPES
+    }
+    if unknown_evidence_types:
+        errors.append(
+            "evidence_types contains unsupported values: "
+            + ", ".join(sorted(unknown_evidence_types))
+        )
 
     evidence_status = manifest.get("evidence_status")
     if isinstance(evidence_status, str) and evidence_status not in ALLOWED_EVIDENCE_STATUSES:
@@ -265,10 +329,23 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
             errors.append(
                 "capability claims must not mix profile_ids or profile_refs"
             )
+        if binding_refs is not None:
+            errors.append("capability claims must not mix binding_refs")
         if "capability_report" not in (manifest.get("evidence_types") or []):
             errors.append(
                 "implements_capability claims require capability_report evidence"
             )
+    elif claim_type == "implements_binding":
+        if not binding_refs:
+            errors.append("implements_binding claims require exact binding_refs")
+        if (
+            manifest.get("profile_ids") is not None
+            or profile_refs is not None
+            or capability_refs is not None
+        ):
+            errors.append("binding claims must not mix profile or capability claim fields")
+        if "binding_report" not in (manifest.get("evidence_types") or []):
+            errors.append("implements_binding claims require binding_report evidence")
     else:
         if not manifest.get("profile_ids"):
             errors.append("profile and pairwise claims require profile_ids")
@@ -276,6 +353,8 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
             errors.append(
                 "profile and pairwise claims must not include capability_refs"
             )
+        if binding_refs is not None:
+            errors.append("profile and pairwise claims must not include binding_refs")
 
     return errors
 
@@ -486,10 +565,24 @@ def validate_common_rules(
             errors.append(
                 f"unknown capability target '{capability_id}@{capability_version}'"
             )
+    binding_refs = manifest.get("binding_refs")
+    if isinstance(binding_refs, list):
+        declared_bindings = {
+            (item.get("binding_id"), item.get("binding_version"))
+            for item in binding_refs
+            if isinstance(item, dict)
+        }
+        unknown = declared_bindings - registry_binding_targets()
+        for binding_id, binding_version in sorted(unknown):
+            errors.append(f"unknown binding target '{binding_id}@{binding_version}'")
     if claim_type == "implements_capability":
-        if manifest.get("profile_ids") is not None or profile_refs is not None:
+        if (
+            manifest.get("profile_ids") is not None
+            or profile_refs is not None
+            or binding_refs is not None
+        ):
             errors.append(
-                "one manifest may use only the capability claim family in M62"
+                "one manifest may use only the capability claim family"
             )
         if not isinstance(capability_refs, list) or not capability_refs:
             errors.append(
@@ -499,10 +592,26 @@ def validate_common_rules(
             errors.append(
                 "implements_capability requires capability_report evidence"
             )
-    elif capability_refs is not None:
-        errors.append(
-            "profile and pairwise claim families must not include capability_refs"
-        )
+    elif claim_type == "implements_binding":
+        if (
+            manifest.get("profile_ids") is not None
+            or profile_refs is not None
+            or capability_refs is not None
+        ):
+            errors.append("one manifest may use only the binding claim family")
+        if not isinstance(binding_refs, list) or not binding_refs:
+            errors.append("implements_binding requires exact binding_refs")
+        if "binding_report" not in set(manifest.get("evidence_types", [])):
+            errors.append("implements_binding requires binding_report evidence")
+    else:
+        if capability_refs is not None:
+            errors.append(
+                "profile and pairwise claim families must not include capability_refs"
+            )
+        if binding_refs is not None:
+            errors.append(
+                "profile and pairwise claim families must not include binding_refs"
+            )
 
     if kind == "example":
         if evidence_status != "example":
@@ -527,11 +636,11 @@ def validate_common_rules(
     if evidence_status == "reproducible":
         evidence_types = set(item for item in manifest.get("evidence_types", []) if isinstance(item, str))
         if not (
-            {"conformance_report", "profile_report", "capability_report"}
+            {"conformance_report", "profile_report", "capability_report", "binding_report"}
             & evidence_types
         ):
             errors.append(
-                "reproducible submissions must include a typed conformance, profile, or capability report"
+                "reproducible submissions must include a typed conformance, profile, capability, or binding report"
             )
 
     report_refs = manifest.get("report_refs", [])
@@ -589,6 +698,19 @@ def _capability_claims(
     ]
 
 
+def _binding_claims(manifest: dict[str, Any]) -> list[tuple[str, str]]:
+    refs = manifest.get("binding_refs")
+    if not isinstance(refs, list):
+        return []
+    return [
+        (item["binding_id"], item["binding_version"])
+        for item in refs
+        if isinstance(item, dict)
+        and isinstance(item.get("binding_id"), str)
+        and isinstance(item.get("binding_version"), str)
+    ]
+
+
 def _profile_catalog(profile_id: str, profile_version: str) -> tuple[Path | None, dict[str, Any] | None]:
     for catalog_path in sorted((ROOT / "conformance" / "profiles").glob("PF_*.json")):
         try:
@@ -637,6 +759,56 @@ def _profile_suite_ref_errors(claims: list[tuple[str, str]], manifest: dict[str,
         errors.append("suite_refs contains a duplicate required suite")
     if set(normalized) != expected_paths or len(normalized) != len(expected_paths):
         errors.append("suite_refs must exactly equal the union of required suites for the claimed profiles")
+    return errors
+
+
+def _binding_suite_ref_errors(
+    claims: list[tuple[str, str]], manifest: dict[str, Any]
+) -> list[str]:
+    registry = load_json(EVIDENCE_TARGETS_PATH)
+    targets = registry.get("targets", []) if isinstance(registry, dict) else []
+    expected_paths: set[str] = set()
+    aliases: dict[str, str] = {}
+    errors: list[str] = []
+    for binding_id, binding_version in claims:
+        target = next(
+            (
+                item
+                for item in targets
+                if isinstance(item, dict)
+                and item.get("target_kind") == "binding"
+                and item.get("target_id") == binding_id
+                and item.get("target_version") == binding_version
+            ),
+            None,
+        )
+        if not isinstance(target, dict):
+            errors.append(f"no evidence target exists for {binding_id}@{binding_version}")
+            continue
+        for suite_path in target.get("required_suites", []):
+            if not isinstance(suite_path, str):
+                continue
+            suite = load_json(ROOT / suite_path)
+            expected_paths.add(suite_path)
+            aliases[suite_path] = suite_path
+            suite_id = suite.get("suite_id") if isinstance(suite, dict) else None
+            if isinstance(suite_id, str):
+                aliases[suite_id] = suite_path
+
+    refs = manifest.get("suite_refs")
+    if not isinstance(refs, list):
+        return [*errors, "suite_refs must exactly identify the claimed bindings' required suites"]
+    normalized: list[str] = []
+    for value in refs:
+        if not isinstance(value, str) or value not in aliases:
+            errors.append(f"suite_refs contains an unrelated or unknown binding suite: {value}")
+            continue
+        normalized.append(aliases[value])
+    counts = Counter(normalized)
+    if any(count != 1 for count in counts.values()):
+        errors.append("suite_refs contains a duplicate required binding suite")
+    if set(normalized) != expected_paths or len(normalized) != len(expected_paths):
+        errors.append("suite_refs must exactly equal the union of required suites for the claimed bindings")
     return errors
 
 
@@ -933,6 +1105,39 @@ def evaluate_strong_report_evidence(
                 (),
                 "rejected",
             )
+    elif claim_type == "implements_binding":
+        binding_claims = _binding_claims(manifest)
+        if not binding_claims:
+            return StrongEvidenceEvaluation(
+                (
+                    "real binding submissions require exact binding_refs with binding_id and binding_version",
+                ),
+                (),
+                "rejected",
+            )
+        if (
+            _profile_claims(manifest)
+            or manifest.get("profile_ids") is not None
+            or _capability_claims(manifest)
+        ):
+            return StrongEvidenceEvaluation(
+                ("binding, capability, and profile claim fields must not be mixed",),
+                (),
+                "rejected",
+            )
+        if manifest.get("evidence_status") != "reproducible":
+            return StrongEvidenceEvaluation(
+                (STRONG_BINDING_CLAIM_EVIDENCE_ERROR,),
+                (),
+                "rejected",
+            )
+        suite_ref_errors = _binding_suite_ref_errors(binding_claims, manifest)
+        if suite_ref_errors:
+            return StrongEvidenceEvaluation(
+                tuple(suite_ref_errors),
+                (),
+                "rejected",
+            )
     else:
         return StrongEvidenceEvaluation((), (), "not_applicable")
 
@@ -958,14 +1163,15 @@ def evaluate_strong_report_evidence(
     eligible_marks: set[str] = set()
     eligible_profile_marks: set[str] = set()
     eligible_capability_marks: set[str] = set()
+    eligible_binding_marks: set[str] = set()
     eligible_targets: set[tuple[str, str, str]] = set()
     if claim_type in {"implements_profile", "compatible_with_profile"}:
         for profile_id, profile_version in claims:
             eligible = False
             report_errors: list[str] = []
             for ref, report in reports:
-                if report.get("report_format_version") == "2.1":
-                    evaluation = evaluate_capability_report(
+                if report.get("report_format_version") in {"2.1", "2.2"}:
+                    evaluation = evaluate_external_evidence_report(
                         report,
                         expected_implementation_id=implementation_id,
                         expected_implementation_version=implementation_version,
@@ -1020,12 +1226,12 @@ def evaluate_strong_report_evidence(
                 eligible_targets.add(
                     ("product_profile", profile_id, profile_version)
                 )
-    else:
+    elif claim_type == "implements_capability":
         for capability_id, capability_version in capability_claims:
             eligible = False
             report_errors: list[str] = []
             for ref, report in reports:
-                evaluation = evaluate_capability_report(
+                evaluation = evaluate_external_evidence_report(
                     report,
                     expected_implementation_id=implementation_id,
                     expected_implementation_version=implementation_version,
@@ -1062,6 +1268,49 @@ def evaluate_strong_report_evidence(
                 )
                 errors.extend(report_errors)
 
+    else:
+        for binding_id, binding_version in binding_claims:
+            eligible = False
+            report_errors: list[str] = []
+            for ref, report in reports:
+                if report.get("report_format_version") != "2.2":
+                    report_errors.append(
+                        f"{ref}: full-binding evidence requires report_format_version 2.2"
+                    )
+                    continue
+                evaluation = evaluate_external_evidence_report(
+                    report,
+                    expected_implementation_id=implementation_id,
+                    expected_implementation_version=implementation_version,
+                )
+                exact_target = {
+                    "kind": "binding",
+                    "target_id": binding_id,
+                    "target_version": binding_version,
+                }
+                if (
+                    evaluation.get("status") == "eligible"
+                    and exact_target in evaluation.get("eligible_targets", [])
+                ):
+                    eligible = True
+                    for mark in evaluation.get("eligible_marks", []):
+                        if isinstance(mark, str):
+                            eligible_marks.add(mark)
+                            eligible_binding_marks.add(mark)
+                    eligible_targets.add(("binding", binding_id, binding_version))
+                    break
+                report_errors.append(
+                    f"{ref}: "
+                    + "; ".join(str(item) for item in evaluation.get("errors", []))
+                )
+            if not eligible:
+                errors.append(
+                    f"no eligible external binding report proves "
+                    f"{binding_id}@{binding_version} for "
+                    f"{implementation_id}@{implementation_version}"
+                )
+                errors.extend(report_errors)
+
     if errors:
         return StrongEvidenceEvaluation(
             tuple(errors),
@@ -1074,6 +1323,7 @@ def evaluate_strong_report_evidence(
         "eligible",
         tuple(sorted(eligible_profile_marks)),
         tuple(sorted(eligible_capability_marks)),
+        tuple(sorted(eligible_binding_marks)),
         tuple(sorted(eligible_targets)),
     )
 

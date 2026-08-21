@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "6f49f21762ce2a5937b24c9939a776ca04cdc0b9e74aaed8194d9bb5cf807f9f",
+      "combined_sha256": "fedd2d7158b1bb2c0142e31d8e50d761646c02b69addd04ae7de62fc888b4602",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -9,7 +9,7 @@
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
-          "sha256": "2a93e947a2184b9da494d9c8404fa30c61fc5a193514690422ef1c8419ecb35f"
+          "sha256": "7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
         },
         {
           "path": "conformance/conformance_report_schema.json",
@@ -60,8 +60,12 @@
           "sha256": "4e7714c5bd82ff7188c68e7d9f7ab38ce58b27f03c4c4f15da394d0ff7a1f004"
         },
         {
+          "path": "conformance/evidence/evidence_runner_bundle_v1_5.json",
+          "sha256": "cf38835499b4b33457b73236e00445a6d794d828d5550531644be98262057297"
+        },
+        {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "caae4b440907017075f3829e92c88b718abae600072a83162d55b1991982f2fb"
+          "sha256": "bc669bd4548471042098552693d5f0236354db7c90ba05d56133621edc30f0da"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -70,6 +74,38 @@
         {
           "path": "conformance/evidence/external_evidence_report_v2_1.schema.json",
           "sha256": "c4f942cb26818269140faf292c7058f0e9cb4594f0dedecc098ca255888b71cc"
+        },
+        {
+          "path": "conformance/evidence/external_evidence_report_v2_2.schema.json",
+          "sha256": "5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/http_v01_scenarios.json",
+          "sha256": "ae778ee15932a8628ff60ca5c8e269b3136276e9c5fa32f3a5cbbbd7b976949f"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/http_v01_target.json",
+          "sha256": "57f08cc8cdba8a36a235e73e07f573556e0fbbcb5dcd7ba35bd4bfbb91f1af2e"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+          "sha256": "b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_binding_trace.schema.json",
+          "sha256": "3e641bfd95ffe6ad0cc3ade7136f10968dc88a62e2519846d55be84730df9fa8"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_endpoint_descriptor.schema.json",
+          "sha256": "a7e36ee9b5a8a4de716bcb05b285fb237958566c8dcf8752e8e9b5f586f8c1b5"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+          "sha256": "ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/mcp_v01_target.json",
+          "sha256": "1dc25ca5709de839d84ea5bc92c1c217d1e2a42d34576902a5c85f808e44bd2f"
         },
         {
           "path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
@@ -120,6 +156,10 @@
           "sha256": "caae4b440907017075f3829e92c88b718abae600072a83162d55b1991982f2fb"
         },
         {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.5.0.json",
+          "sha256": "bc669bd4548471042098552693d5f0236354db7c90ba05d56133621edc30f0da"
+        },
+        {
           "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
           "sha256": "2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
         },
@@ -133,11 +173,11 @@
         },
         {
           "path": "conformance/evidence/target_registry.schema.json",
-          "sha256": "3e71ef6d64826a748cac2ad3de9926232ed5617d5cee88bef43b655f43920d13"
+          "sha256": "2ce885d972041e631fc67d7a39fa8dbe54d04e123e6277ead6a4accc3b63020f"
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "ad3164e3c165d3601c30473b6c0185b92f096b822af3bd2325dd48ad0a972a03"
+          "sha256": "64b72ef7cc04a1d555cd8192eb47b67e0d82c392cc72c43a587332e5895b37f5"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
@@ -430,7 +470,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "1f24cae4f521eb34c84f1cda8419bd3bb8ff81f138baf32b57961345fa0c70cf",
+      "combined_sha256": "18615a33483df12ab2a46a268790048576761b6500d9689637cd76c813371a7b",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -527,6 +567,10 @@
         {
           "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
           "sha256": "b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+        },
+        {
+          "path": "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json",
+          "sha256": "dc57a4f1bda6ac5328cccff10c2e1327bc6fc26db26bb348c1c4d6383e47d8eb"
         },
         {
           "path": "fixtures/core/numeric/NUM-01_float_in_payload.jsonl",
@@ -1992,7 +2036,7 @@
       ]
     },
     "schemas": {
-      "combined_sha256": "055ad0156a8f7aca8b99657b5be0e2a0875597e2188f9601a0f24edcf7ac9833",
+      "combined_sha256": "55450bfffe5bc338d8d3aab75cc952cc280dacb7906d4fcb48f9e693178f25aa",
       "files": [
         {
           "path": "schemas/bindings/bind-http-ws.schema.json",
@@ -2000,7 +2044,7 @@
         },
         {
           "path": "schemas/bindings/bind-mcp.schema.json",
-          "sha256": "7bb7801ef0a0af4a60e2d1d8fb57510a859283658b08efee35128d63cd668f23"
+          "sha256": "938816c333cc849c9ce0da866b30a27bb6b65e47bc0afd17dbc3f9be6b241220"
         },
         {
           "path": "schemas/bindings/channel-properties.schema.json",

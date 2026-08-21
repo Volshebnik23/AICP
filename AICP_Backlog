@@ -13,21 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M64 — Live Transport and Binding Interoperability
-
-<!-- milestone-status: M64 planned -->
-- **Status:** Planned.
-- **Problem statement:** HTTP/WS/SSE and MCP binding conformance currently validates static
-  case files, not live independent endpoints.
-- **Scope:** build live client/server harnesses for the registered binding semantics,
-  including reconnect, replay, session scoping, backpressure, and failure paths.
-- **Explicit non-goals:** no redefinition of binding wire requirements and no claim of broad
-  vendor interoperability from repo-owned loopback tests alone.
-- **Principal evidence gap:** no live network execution or independent endpoint evidence.
-- **Dependencies:** M62.
-- **Completion criterion:** live harness runs are deterministic, externally usable, and
-  produce evidence that is clearly separated from static fixture conformance.
-
 ## M65 — Registered Message Surface Completion
 
 <!-- milestone-status: M65 planned -->
