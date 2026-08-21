@@ -53,6 +53,7 @@
               "type": "string",
               "enum": [
                 "aicp.sendMessage",
+                "aicp.pollMessages",
                 "aicp.getHead",
                 "aicp.getObject"
               ]

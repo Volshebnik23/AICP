@@ -7,7 +7,8 @@
   "cases": [
     "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
     "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
-    "fixtures/bindings/mcp/TB-MCP-03_getObject.json"
+    "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
+    "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json"
   ],
   "compatibility_mark": "AICP-BIND-MCP-0.1",
   "checks": [

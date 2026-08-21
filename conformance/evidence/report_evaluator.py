@@ -199,11 +199,12 @@ def evaluate_report(
     ]:
         errors.append(_error("EVIDENCE_CURRENT_PROVENANCE_INVALID", message))
 
+    schema_path = str(selected_release["report_schema"]["path"])
     expected_report_version = (
-        "2.1"
-        if str(selected_release["report_schema"]["path"]).endswith(
-            "v2_1.schema.json"
-        )
+        "2.2"
+        if schema_path.endswith("v2_2.schema.json")
+        else "2.1"
+        if schema_path.endswith("v2_1.schema.json")
         else "2.0"
     )
     if report.get("report_format_version") != expected_report_version:

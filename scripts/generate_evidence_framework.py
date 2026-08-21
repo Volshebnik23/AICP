@@ -15,6 +15,7 @@ if str(EVIDENCE_DIR) not in sys.path:
 
 from target_catalog import (  # noqa: E402
     BUNDLE_MANIFEST_PATH,
+    BINDING_TARGET_KEYS,
     CURRENT_TCK_RELEASE_ID,
     EXPECTATIONS_PATH,
     EXPECTED_MARK,
@@ -24,6 +25,8 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST,
     FROZEN_TCK_1_3_RECORD_DIGEST,
     FROZEN_TCK_1_3_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_4_RECORD_DIGEST,
+    FROZEN_TCK_1_4_REGISTRY_SNAPSHOT_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_RELEASE_REGISTRY_DIGEST,
     HISTORICAL_TARGET_SCHEMA_DIGEST,
@@ -33,9 +36,11 @@ from target_catalog import (  # noqa: E402
     PRODUCER_TRANSCRIPT_PATH,
     PROFILE_TCK_RELEASE_ID,
     PREVIOUS_TCK_RELEASE_ID,
+    TCK_1_4_RELEASE_ID,
     PROFILE_TARGET_KEYS,
     REPORT_SCHEMA_PATH,
     REPORT_SCHEMA_V21_PATH,
+    REPORT_SCHEMA_V22_PATH,
     RELEASE_SNAPSHOT_DIR,
     TARGET_CATALOG_PATH,
     TARGET_ID,
@@ -104,6 +109,28 @@ PROFILE_CONFIGS = (
         "case_prefix": "DI",
     },
 )
+BINDING_CONFIGS = (
+    {
+        "target_key": "BIND-HTTP@0.1",
+        "target_id": "BIND-HTTP",
+        "canonical_binding_id": "BIND-HTTP-0.1",
+        "suite_path": "conformance/bindings/TB_HTTP_WS_0.1.json",
+        "catalog_path": "conformance/evidence/live_bindings/http_v01_target.json",
+        "scenario_path": "conformance/evidence/live_bindings/http_v01_scenarios.json",
+        "spec_path": "docs/bindings/RFC_BIND_HTTP_WS.md",
+        "expected_mark": "AICP-BIND-HTTP-0.1",
+    },
+    {
+        "target_key": "BIND-MCP@0.1",
+        "target_id": "BIND-MCP",
+        "canonical_binding_id": "BIND-MCP-0.1",
+        "suite_path": "conformance/bindings/TB_MCP_0.1.json",
+        "catalog_path": "conformance/evidence/live_bindings/mcp_v01_target.json",
+        "scenario_path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+        "spec_path": "docs/bindings/RFC_BIND_MCP.md",
+        "expected_mark": "AICP-BIND-MCP-0.1",
+    },
+)
 
 
 def render(value: Any) -> str:
@@ -162,6 +189,30 @@ def target_registry_payload() -> dict[str, Any]:
                     "validate_transcript",
                     "generate_scenario",
                 ],
+            }
+        )
+    bindings = {
+        str(item.get("id")): item
+        for item in load_json(ROOT / "registry/transport_bindings.json")
+        if isinstance(item, dict)
+    }
+    for config in BINDING_CONFIGS:
+        binding = bindings[config["canonical_binding_id"]]
+        targets.append(
+            {
+                "target_key": config["target_key"],
+                "target_kind": "binding",
+                "target_id": config["target_id"],
+                "target_version": "0.1",
+                "status": str(binding["status"]),
+                "catalog_path": config["catalog_path"],
+                "expected_mark": config["expected_mark"],
+                "execution_mode": "full-binding",
+                "evidence_claim_type": "implements_binding",
+                "handler_id": "live_binding_v01",
+                "current_release_id": CURRENT_TCK_RELEASE_ID,
+                "required_suites": [config["suite_path"]],
+                "required_operations": ["live_server", "live_client"],
             }
         )
     return {"registry_version": "1.1", "targets": targets}
@@ -496,6 +547,84 @@ def profile_target_catalog_payload(config: dict[str, str]) -> dict[str, Any]:
     }
 
 
+def binding_target_catalog_payload(config: dict[str, str]) -> dict[str, Any]:
+    suite = load_json(ROOT / config["suite_path"])
+    scenario_path = ROOT / config["scenario_path"]
+    scenario_schema_path = EVIDENCE_DIR / "live_bindings/live_binding_scenario.schema.json"
+    trace_schema_path = EVIDENCE_DIR / "live_bindings/live_binding_trace.schema.json"
+    endpoint_schema_path = EVIDENCE_DIR / "live_bindings/live_endpoint_descriptor.schema.json"
+    scenarios = load_json(scenario_path)
+    expected_target = {
+        "kind": "binding",
+        "target_id": config["target_id"],
+        "target_version": "0.1",
+    }
+    if scenarios.get("target") != expected_target:
+        raise ValueError(f"live scenario target drift: {config['target_key']}")
+    static_checks = [
+        str(item["test_id"])
+        for item in suite.get("checks", [])
+        if isinstance(item, dict) and isinstance(item.get("test_id"), str)
+    ]
+    if config["target_id"] == "BIND-MCP":
+        static_checks.extend(
+            str(load_json(ROOT / relative)["case_id"])
+            for relative in suite["cases"]
+        )
+    static_paths = {
+        config["suite_path"],
+        str(suite["schema_ref"]),
+        *[str(item) for item in suite["cases"]],
+        config["scenario_path"],
+        config["spec_path"],
+        scenario_schema_path.relative_to(ROOT).as_posix(),
+        trace_schema_path.relative_to(ROOT).as_posix(),
+        endpoint_schema_path.relative_to(ROOT).as_posix(),
+        "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+        "registry/transport_bindings.json",
+        "registry/message_types.json",
+        "schemas/core/aicp-core-message.schema.json",
+    }
+    required_inputs = [
+        {"path": relative, "content_digest": file_digest(ROOT / relative)}
+        for relative in sorted(static_paths)
+    ]
+    return {
+        "catalog_version": "1.0",
+        "target_key": config["target_key"],
+        "target": expected_target,
+        "handler_id": "live_binding_v01",
+        "expected_mark": config["expected_mark"],
+        "external_execution_mode": "full-binding",
+        "required_operations": ["live_server", "live_client"],
+        "required_suites": [
+            {
+                "path": config["suite_path"],
+                "suite_id": str(suite["suite_id"]),
+                "suite_version": str(suite["suite_version"]),
+                "suite_digest": file_digest(ROOT / config["suite_path"]),
+            }
+        ],
+        "live_scenario_catalog": {
+            "path": config["scenario_path"],
+            "content_digest": file_digest(scenario_path),
+            "schema_path": scenario_schema_path.relative_to(ROOT).as_posix(),
+            "schema_digest": file_digest(scenario_schema_path),
+        },
+        "live_trace_schema": {
+            "path": trace_schema_path.relative_to(ROOT).as_posix(),
+            "content_digest": file_digest(trace_schema_path),
+        },
+        "endpoint_descriptor_schema": {
+            "path": endpoint_schema_path.relative_to(ROOT).as_posix(),
+            "content_digest": file_digest(endpoint_schema_path),
+        },
+        "role_coverage": ["server_under_test", "client_under_test"],
+        "live_relevant_static_checks": sorted(set(static_checks)),
+        "required_input_artifacts": required_inputs,
+    }
+
+
 def _frozen_release(release_id: str, expected_digest: str) -> dict[str, Any]:
     registry = load_json(TCK_RELEASES_PATH)
     frozen = next(
@@ -516,10 +645,10 @@ def _frozen_release(release_id: str, expected_digest: str) -> dict[str, Any]:
 def release_registry_payload(
     targets_rendered: str,
     projection_catalog_rendered: str,
-    profile_catalogs_rendered: dict[str, str],
+    catalogs_rendered: dict[str, str],
     bundle_manifest_rendered: str,
     projection_catalog: dict[str, Any],
-    profile_catalogs: dict[str, dict[str, Any]],
+    catalogs: dict[str, dict[str, Any]],
     bundle_manifest: dict[str, Any],
 ) -> dict[str, Any]:
     historical = _frozen_release(
@@ -538,8 +667,13 @@ def release_registry_payload(
         PREVIOUS_TCK_RELEASE_ID,
         FROZEN_TCK_1_3_RECORD_DIGEST,
     )
+    frozen_1_4_release = _frozen_release(
+        TCK_1_4_RELEASE_ID,
+        FROZEN_TCK_1_4_RECORD_DIGEST,
+    )
     projection_handler = resolve_handler("projection_v1")
     product_handler = resolve_handler("product_profile_v01")
+    binding_handler = resolve_handler("live_binding_v01")
     release_targets: list[dict[str, Any]] = [
         {
             "target_key": TARGET_KEY,
@@ -584,7 +718,7 @@ def release_registry_payload(
     ]
     for config in PROFILE_CONFIGS:
         key = config["target_key"]
-        catalog = profile_catalogs[key]
+        catalog = catalogs[key]
         release_targets.append(
             {
                 "target_key": key,
@@ -593,7 +727,7 @@ def release_registry_payload(
                 "target_catalog": {
                     "path": config["catalog_path"],
                     "content_digest": digest_bytes(
-                        profile_catalogs_rendered[key].encode("utf-8")
+                        catalogs_rendered[key].encode("utf-8")
                     ),
                 },
                 "profile_catalog": catalog["profile_catalog"],
@@ -622,8 +756,31 @@ def release_registry_payload(
                 ),
             }
         )
+    for config in BINDING_CONFIGS:
+        key = config["target_key"]
+        catalog = catalogs[key]
+        release_targets.append(
+            {
+                "target_key": key,
+                "handler_id": "live_binding_v01",
+                "expected_mark": catalog["expected_mark"],
+                "target_catalog": {
+                    "path": config["catalog_path"],
+                    "content_digest": digest_bytes(
+                        catalogs_rendered[key].encode("utf-8")
+                    ),
+                },
+                "required_suites": catalog["required_suites"],
+                "required_input_artifacts": catalog["required_input_artifacts"],
+                "mandatory_case_ids": mandatory_case_ids(
+                    catalog,
+                    "full-binding",
+                    binding_handler,
+                ),
+            }
+        )
     return {
-        "registry_version": "1.4",
+        "registry_version": "1.5",
         "supersessions": [
             {
                 "release_id": HISTORICAL_TCK_RELEASE_ID,
@@ -668,12 +825,21 @@ def release_registry_payload(
                 ),
             },
             {
-                "release_id": CURRENT_TCK_RELEASE_ID,
-                "lifecycle": "current",
+                "release_id": TCK_1_4_RELEASE_ID,
+                "lifecycle": "historical",
                 "strong_eligible": True,
                 "reason": (
                     "Corrected message-owner payload-schema closure and "
                     "behavioral conformance parity."
+                ),
+            },
+            {
+                "release_id": CURRENT_TCK_RELEASE_ID,
+                "lifecycle": "current",
+                "strong_eligible": True,
+                "reason": (
+                    "Adds deterministic two-role live HTTP and MCP binding evidence "
+                    "without invalidating exact eligible 1.1 or 1.4 reports."
                 ),
             },
         ],
@@ -682,12 +848,13 @@ def release_registry_payload(
             projection_release,
             profile_release,
             previous_release,
+            frozen_1_4_release,
             {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "status": "experimental",
                 "report_schema": {
-                    "path": REPORT_SCHEMA_V21_PATH.relative_to(ROOT).as_posix(),
-                    "content_digest": file_digest(REPORT_SCHEMA_V21_PATH),
+                    "path": REPORT_SCHEMA_V22_PATH.relative_to(ROOT).as_posix(),
+                    "content_digest": file_digest(REPORT_SCHEMA_V22_PATH),
                 },
                 "target_registry": {
                     "path": TARGETS_PATH.relative_to(ROOT).as_posix(),
@@ -728,22 +895,27 @@ def generated_payloads() -> tuple[
         config["target_key"]: profile_target_catalog_payload(config)
         for config in PROFILE_CONFIGS
     }
+    binding_catalogs = {
+        config["target_key"]: binding_target_catalog_payload(config)
+        for config in BINDING_CONFIGS
+    }
+    catalogs = {**profile_catalogs, **binding_catalogs}
     bundle_manifest = bundle_manifest_payload()
     targets_rendered = render(targets)
-    profile_catalogs_rendered = {
-        key: render(value) for key, value in profile_catalogs.items()
+    catalogs_rendered = {
+        key: render(value) for key, value in catalogs.items()
     }
     bundle_manifest_rendered = render(bundle_manifest)
     releases = release_registry_payload(
         targets_rendered,
         render(projection_catalog),
-        profile_catalogs_rendered,
+        catalogs_rendered,
         bundle_manifest_rendered,
         projection_catalog,
-        profile_catalogs,
+        catalogs,
         bundle_manifest,
     )
-    return targets, projection_catalog, profile_catalogs, bundle_manifest, releases
+    return targets, projection_catalog, catalogs, bundle_manifest, releases
 
 
 def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -780,10 +952,20 @@ def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, A
     ):
         raise ValueError("evidence TCK 1.3.0 registry snapshot changed")
 
+    frozen_1_4_path = RELEASE_SNAPSHOT_DIR / f"{TCK_1_4_RELEASE_ID}.json"
+    if not frozen_1_4_path.is_file():
+        raise ValueError("frozen evidence TCK 1.4.0 registry snapshot is missing")
+    frozen_1_4 = load_json(frozen_1_4_path)
+    if digest_bytes(render(frozen_1_4).encode("utf-8")) != (
+        FROZEN_TCK_1_4_REGISTRY_SNAPSHOT_DIGEST
+    ):
+        raise ValueError("evidence TCK 1.4.0 registry snapshot changed")
+
     return {
         TCK_RELEASE_ID: frozen_1_1,
         PROFILE_TCK_RELEASE_ID: frozen_1_2,
         PREVIOUS_TCK_RELEASE_ID: frozen_1_3,
+        TCK_1_4_RELEASE_ID: frozen_1_4,
         CURRENT_TCK_RELEASE_ID: releases,
     }
 
@@ -798,7 +980,7 @@ def main() -> int:
     (
         targets,
         projection_catalog,
-        profile_catalogs,
+        catalogs,
         bundle_manifest,
         releases,
     ) = generated_payloads()
@@ -807,6 +989,7 @@ def main() -> int:
         TARGETS_PATH,
         TARGET_CATALOG_PATH,
         *[ROOT / config["catalog_path"] for config in PROFILE_CONFIGS],
+        *[ROOT / config["catalog_path"] for config in BINDING_CONFIGS],
         BUNDLE_MANIFEST_PATH,
         TCK_RELEASES_PATH,
         *[
@@ -815,6 +998,7 @@ def main() -> int:
                 TCK_RELEASE_ID,
                 PROFILE_TCK_RELEASE_ID,
                 PREVIOUS_TCK_RELEASE_ID,
+                TCK_1_4_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -822,7 +1006,8 @@ def main() -> int:
     values = [
         targets,
         projection_catalog,
-        *[profile_catalogs[config["target_key"]] for config in PROFILE_CONFIGS],
+        *[catalogs[config["target_key"]] for config in PROFILE_CONFIGS],
+        *[catalogs[config["target_key"]] for config in BINDING_CONFIGS],
         bundle_manifest,
         releases,
         *[
@@ -831,6 +1016,7 @@ def main() -> int:
                 TCK_RELEASE_ID,
                 PROFILE_TCK_RELEASE_ID,
                 PREVIOUS_TCK_RELEASE_ID,
+                TCK_1_4_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -871,12 +1057,12 @@ def main() -> int:
         ),
     ]
     for item in targets["targets"]:
-        if item["target_key"] not in PROFILE_TARGET_KEYS:
+        if item["target_key"] not in (*PROFILE_TARGET_KEYS, *BINDING_TARGET_KEYS):
             continue
         record = TargetRecord.from_mapping(item)
         errors.extend(
             validate_target_catalog(
-                profile_catalogs[record.target_key],
+                catalogs[record.target_key],
                 record=record,
                 handler=resolve_handler(record.handler_id),
             )
@@ -893,18 +1079,19 @@ def main() -> int:
         return 1
     action = "Generated" if args.write else "OK"
     producer_count = sum(
-        len(catalog["producer_scenarios"])
-        for catalog in profile_catalogs.values()
+        len(catalogs[config["target_key"]]["producer_scenarios"])
+        for config in PROFILE_CONFIGS
     )
     consumer_count = sum(
-        len(catalog["consumer_cases"])
-        for catalog in profile_catalogs.values()
+        len(catalogs[config["target_key"]]["consumer_cases"])
+        for config in PROFILE_CONFIGS
     )
     print(
         f"{action}: three Tier-1 profile targets, {producer_count} producers, "
         f"{consumer_count} consumers, {CURRENT_TCK_RELEASE_ID}; "
         f"{HISTORICAL_TCK_RELEASE_ID}, {TCK_RELEASE_ID}, "
-        f"{PROFILE_TCK_RELEASE_ID}, and {PREVIOUS_TCK_RELEASE_ID} retained."
+        f"{PROFILE_TCK_RELEASE_ID}, {PREVIOUS_TCK_RELEASE_ID}, and "
+        f"{TCK_1_4_RELEASE_ID} retained; two live binding targets registered."
     )
     return 0
 

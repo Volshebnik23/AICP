@@ -24,6 +24,7 @@ TARGET_SCHEMA_PATH = EVIDENCE_DIR / "target_registry.schema.json"
 TARGET_CATALOG_PATH = EVIDENCE_DIR / "session_state_projection_v1_target.json"
 REPORT_SCHEMA_PATH = EVIDENCE_DIR / "external_evidence_report_v2.schema.json"
 REPORT_SCHEMA_V21_PATH = EVIDENCE_DIR / "external_evidence_report_v2_1.schema.json"
+REPORT_SCHEMA_V22_PATH = EVIDENCE_DIR / "external_evidence_report_v2_2.schema.json"
 TCK_RELEASES_PATH = EVIDENCE_DIR / "evidence_tck_releases.json"
 EXPECTATIONS_PATH = EVIDENCE_DIR / "projection_v1_expectations.json"
 LEGACY_BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle.json"
@@ -33,7 +34,10 @@ FROZEN_TCK_1_2_BUNDLE_MANIFEST_PATH = (
 FROZEN_TCK_1_3_BUNDLE_MANIFEST_PATH = (
     EVIDENCE_DIR / "evidence_runner_bundle_v1_3.json"
 )
-BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_4.json"
+FROZEN_TCK_1_4_BUNDLE_MANIFEST_PATH = (
+    EVIDENCE_DIR / "evidence_runner_bundle_v1_4.json"
+)
+BUNDLE_MANIFEST_PATH = EVIDENCE_DIR / "evidence_runner_bundle_v1_5.json"
 RELEASE_SNAPSHOT_DIR = EVIDENCE_DIR / "release_registry_snapshots"
 PRODUCER_SCENARIO_PATH = EVIDENCE_DIR / "projection_v1_producer_scenario.json"
 PRODUCER_TRANSCRIPT_PATH = EVIDENCE_DIR / "projection_v1_producer_transcript.json"
@@ -47,7 +51,8 @@ EXPECTED_MARK = "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
 TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.1.0"
 PROFILE_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.2.0"
 PREVIOUS_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.3.0"
-CURRENT_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.4.0"
+TCK_1_4_RELEASE_ID = "AICP-EVIDENCE-TCK-1.4.0"
+CURRENT_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.5.0"
 HISTORICAL_TCK_RELEASE_ID = "AICP-EVIDENCE-TCK-1.0.0"
 HISTORICAL_RELEASE_RECORD_DIGEST = (
     "sha256:e227fdb2b2d35f83cfeeceff6e80f455ff8a95a1e56244bb6d4433942c53ba80"
@@ -97,12 +102,40 @@ FROZEN_TCK_1_3_TARGET_CATALOG_DIGESTS = {
     "AICP-RESUMABLE-SESSIONS@0.1": "sha256:aa23e2baf15bbd6b756c6de8317cf1ad7b2d8b5b9567ee759c71e5c5e3ee2076",
     "AICP-DELEGATED-IDENTITY@0.1": "sha256:a5d2ddc506878af85f80b71753bb55ffa106302dbf9de4f30b057e1f37a402ed",
 }
+FROZEN_TCK_1_4_RECORD_DIGEST = (
+    "sha256:973dd768f50ed1fa11982feb7bfc14ff8adc98c223dd2a58ec0268f8ab524221"
+)
+FROZEN_TCK_1_4_REGISTRY_SNAPSHOT_DIGEST = (
+    "sha256:caae4b440907017075f3829e92c88b718abae600072a83162d55b1991982f2fb"
+)
+FROZEN_TCK_1_4_BUNDLE_MANIFEST_DIGEST = (
+    "sha256:4e7714c5bd82ff7188c68e7d9f7ab38ce58b27f03c4c4f15da394d0ff7a1f004"
+)
+FROZEN_TCK_1_4_RUNNER_BUNDLE_DIGEST = (
+    "sha256:c86e1a86ac5f7125c79132ce2158b47367321079cb85360c26a7574e2b832f4b"
+)
+FROZEN_TCK_1_4_REPORT_SCHEMA_DIGEST = (
+    "sha256:c4f942cb26818269140faf292c7058f0e9cb4594f0dedecc098ca255888b71cc"
+)
+FROZEN_TCK_1_4_TARGET_REGISTRY_SCHEMA_DIGEST = (
+    "sha256:3e71ef6d64826a748cac2ad3de9926232ed5617d5cee88bef43b655f43920d13"
+)
+FROZEN_TCK_1_4_TARGET_REGISTRY_DIGEST = (
+    "sha256:ad3164e3c165d3601c30473b6c0185b92f096b822af3bd2325dd48ad0a972a03"
+)
+FROZEN_TCK_1_4_TARGET_CATALOG_DIGESTS = {
+    TARGET_KEY: "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20",
+    "AICP-MEDIATED-BLOCKING@0.1": "sha256:0457228ab0789997d23e6b655fdd3c8447cf5fd7e01d87b7ca34ca120c635948",
+    "AICP-RESUMABLE-SESSIONS@0.1": "sha256:f845e6707f1456b4e8ad0e1ab02b83eacc0647c04053793f1adee973e4fa5a88",
+    "AICP-DELEGATED-IDENTITY@0.1": "sha256:c1c83123526b3e9e27e8c774086699df968263d1b52360530fabef35923a520d",
+}
 PROFILE_TARGET_KEYS = (
     "AICP-MEDIATED-BLOCKING@0.1",
     "AICP-RESUMABLE-SESSIONS@0.1",
     "AICP-DELEGATED-IDENTITY@0.1",
 )
-EXPECTED_TARGET_KEYS = (TARGET_KEY, *PROFILE_TARGET_KEYS)
+BINDING_TARGET_KEYS = ("BIND-HTTP@0.1", "BIND-MCP@0.1")
+EXPECTED_TARGET_KEYS = (TARGET_KEY, *PROFILE_TARGET_KEYS, *BINDING_TARGET_KEYS)
 TARGET_KINDS = {"product_profile", "capability", "binding"}
 TARGET_KIND_POLICY = {
     "product_profile": ("full-profile", "implements_profile"),
@@ -387,6 +420,8 @@ def mandatory_case_ids(
     mode: str,
     handler: Any,
 ) -> list[str]:
+    if hasattr(handler, "mandatory_case_ids"):
+        return list(handler.mandatory_case_ids(catalog, mode))
     ids = [
         "EVIDENCE-TARGET-CATALOG-01",
         "EVIDENCE-TCK-PROVENANCE-01",
@@ -603,7 +638,7 @@ def validate_target_registry(
         errors.append("the same target key maps to different identities")
     if enforce_current_scope and keys != list(EXPECTED_TARGET_KEYS):
         errors.append(
-            "M63 must register exactly projection v1 and the three Tier-1 profiles"
+            "M64 must register projection v1, the three Tier-1 profiles, and two live binding targets"
         )
     return sorted(set(errors))
 
@@ -626,6 +661,48 @@ def validate_target_catalog(
             root=root,
             simulate_no_jsonschema=simulate_no_jsonschema,
         )
+    if selected.target_kind == "binding":
+        errors: list[str] = []
+        if value.get("target") != selected.identity():
+            errors.append("binding target catalog identity differs from target registry")
+        if value.get("target_key") != selected.target_key:
+            errors.append("binding target catalog key differs from target registry")
+        if value.get("handler_id") != selected.handler_id:
+            errors.append("binding target handler differs from target registry")
+        if value.get("expected_mark") != selected.expected_mark:
+            errors.append("binding target mark differs from target registry")
+        if tuple(value.get("required_operations", ())) != selected.required_operations:
+            errors.append("binding target operation set differs from target registry")
+        suites = value.get("required_suites")
+        if not isinstance(suites, list):
+            errors.append("binding target required_suites must be an array")
+        else:
+            if [item.get("path") for item in suites if isinstance(item, dict)] != list(selected.required_suites):
+                errors.append("binding target suite records differ from registry")
+            for item in suites:
+                if not isinstance(item, dict):
+                    errors.append("binding target suite record is not an object")
+                    continue
+                relative = item.get("path")
+                if not isinstance(relative, str) or not (root / relative).is_file():
+                    errors.append(f"binding target suite does not resolve: {relative}")
+                    continue
+                suite = load_json(root / relative)
+                if item.get("suite_id") != suite.get("suite_id") or item.get("suite_version") != suite.get("suite_version"):
+                    errors.append(f"binding target suite identity is stale: {relative}")
+                if item.get("suite_digest") != file_digest(root / relative):
+                    errors.append(f"binding target suite digest is stale: {relative}")
+        if handler is not None:
+            ids = mandatory_case_ids(value, selected.execution_mode, handler)
+            if len(ids) != len(set(ids)):
+                errors.append("binding target mandatory evidence case IDs are not unique")
+            errors.extend(
+                handler.validate_catalog(
+                    value,
+                    simulate_no_jsonschema=simulate_no_jsonschema,
+                )
+            )
+        return sorted(set(errors))
     errors: list[str] = []
     suite_ref = value.get("owning_suite", {}).get("path")
     if not isinstance(suite_ref, str) or not (root / suite_ref).is_file():
@@ -894,17 +971,25 @@ def _validate_product_profile_catalog(
 
 _BUNDLE_SEEDS = (
     "conformance/evidence/aicp_external_evidence_runner.py",
+    "conformance/evidence/aicp_live_binding_runner.py",
     "conformance/evidence/report_evaluator.py",
     "conformance/evidence/target_catalog.py",
     "conformance/evidence/target_handlers.py",
 )
 _BUNDLE_ROLES = {
     "conformance/evidence/aicp_external_evidence_runner.py": "runner",
+    "conformance/evidence/aicp_live_binding_runner.py": "live_binding_runner",
     "conformance/evidence/report_evaluator.py": "evaluator",
     "conformance/evidence/target_catalog.py": "target_dispatch",
     "conformance/evidence/target_handlers.py": "target_dispatch",
     "conformance/evidence/projection_v1_handler.py": "target_handler",
     "conformance/evidence/product_profile_handler.py": "target_handler",
+    "conformance/evidence/live_bindings/__init__.py": "package_initialization",
+    "conformance/evidence/live_bindings/live_binding_handler.py": "target_handler",
+    "conformance/evidence/live_bindings/live_binding_trace.py": "live_trace_evaluation",
+    "conformance/evidence/live_bindings/live_binding_process.py": "process_supervision",
+    "conformance/evidence/live_bindings/live_http_transport.py": "live_http_transport",
+    "conformance/evidence/live_bindings/live_mcp_transport.py": "live_mcp_transport",
     "conformance/evidence/profile_transcript_evaluator.py": "transcript_validation",
     "conformance/evidence/producer_payload_schema_router.py": "payload_schema_routing",
     "conformance/evidence/producer_suite_semantics.py": "producer_semantic_dispatch",
@@ -1109,10 +1194,11 @@ def validate_release_registry(
         TCK_RELEASE_ID,
         PROFILE_TCK_RELEASE_ID,
         PREVIOUS_TCK_RELEASE_ID,
+        TCK_1_4_RELEASE_ID,
         CURRENT_TCK_RELEASE_ID,
     }
     if not required_ids.issubset(set(ids)):
-        errors.append("evidence TCK registry must retain 1.0.0 through 1.3.0 and register 1.4.0")
+        errors.append("evidence TCK registry must retain 1.0.0 through 1.4.0 and register 1.5.0")
     try:
         historical = release_record(HISTORICAL_TCK_RELEASE_ID, value)
     except ValueError as exc:
@@ -1229,23 +1315,55 @@ def validate_release_registry(
             errors.append("evidence TCK 1.3.0 target catalog digests changed")
 
     try:
+        frozen_1_4_release = release_record(TCK_1_4_RELEASE_ID, value)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return sorted(set(errors))
+    if canonical_digest(frozen_1_4_release) != FROZEN_TCK_1_4_RECORD_DIGEST:
+        errors.append("evidence TCK 1.4.0 frozen record changed")
+    frozen_1_4_bundle = frozen_1_4_release.get("runner_bundle", {})
+    if frozen_1_4_release.get("report_schema", {}).get("content_digest") != FROZEN_TCK_1_4_REPORT_SCHEMA_DIGEST:
+        errors.append("evidence TCK 1.4.0 report schema digest changed")
+    if frozen_1_4_release.get("target_registry", {}).get("schema_digest") != FROZEN_TCK_1_4_TARGET_REGISTRY_SCHEMA_DIGEST:
+        errors.append("evidence TCK 1.4.0 target registry schema digest changed")
+    if frozen_1_4_release.get("target_registry", {}).get("content_digest") != FROZEN_TCK_1_4_TARGET_REGISTRY_DIGEST:
+        errors.append("evidence TCK 1.4.0 target registry digest changed")
+    if frozen_1_4_bundle.get("manifest_digest") != FROZEN_TCK_1_4_BUNDLE_MANIFEST_DIGEST:
+        errors.append("evidence TCK 1.4.0 bundle manifest digest changed")
+    if frozen_1_4_bundle.get("digest") != FROZEN_TCK_1_4_RUNNER_BUNDLE_DIGEST:
+        errors.append("evidence TCK 1.4.0 runner bundle digest changed")
+    if file_digest(root / FROZEN_TCK_1_4_BUNDLE_MANIFEST_PATH.relative_to(ROOT)) != FROZEN_TCK_1_4_BUNDLE_MANIFEST_DIGEST:
+        errors.append("evidence TCK 1.4.0 bundle manifest bytes changed")
+    frozen_1_4_targets = frozen_1_4_release.get("targets")
+    if not isinstance(frozen_1_4_targets, list):
+        errors.append("evidence TCK 1.4.0 targets are missing")
+    else:
+        observed_catalogs = {
+            str(item.get("target_key")): (item.get("target_catalog") or {}).get("content_digest")
+            for item in frozen_1_4_targets
+            if isinstance(item, dict)
+        }
+        if observed_catalogs != FROZEN_TCK_1_4_TARGET_CATALOG_DIGESTS:
+            errors.append("evidence TCK 1.4.0 target catalog digests changed")
+
+    try:
         current_release = release_record(CURRENT_TCK_RELEASE_ID, value)
     except ValueError as exc:
         errors.append(str(exc))
         return sorted(set(errors))
     release_targets = current_release.get("targets")
     if not isinstance(release_targets, list):
-        return sorted(set([*errors, "evidence TCK 1.4.0 targets are missing"]))
+        return sorted(set([*errors, "evidence TCK 1.5.0 targets are missing"]))
     release_keys = [
         item.get("target_key") for item in release_targets if isinstance(item, dict)
     ]
     if len(release_keys) != len(set(release_keys)):
-        errors.append("evidence TCK 1.4.0 target keys must be unique")
+        errors.append("evidence TCK 1.5.0 target keys must be unique")
     if release_keys != list(EXPECTED_TARGET_KEYS):
-        errors.append("evidence TCK 1.4.0 must contain projection v1 and the three Tier-1 targets")
+        errors.append("evidence TCK 1.5.0 must contain all six generalized targets")
     expected_checks = {
         current_release.get("report_schema", {}).get("content_digest"): file_digest(
-            root / REPORT_SCHEMA_V21_PATH.relative_to(ROOT)
+            root / REPORT_SCHEMA_V22_PATH.relative_to(ROOT)
         ),
         current_release.get("target_registry", {}).get("content_digest"): file_digest(
             root / TARGETS_PATH.relative_to(ROOT)
@@ -1255,24 +1373,25 @@ def validate_release_registry(
         ),
     }
     if any(actual != expected for actual, expected in expected_checks.items()):
-        errors.append("evidence TCK 1.4.0 common provenance does not match current bytes")
+        errors.append("evidence TCK 1.5.0 common provenance does not match current bytes")
     manifest = bundle_manifest or load_json(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT))
     errors.extend(validate_bundle_manifest(manifest, root=root))
     runner_bundle = current_release.get("runner_bundle", {})
     if runner_bundle.get("manifest_path") != BUNDLE_MANIFEST_PATH.relative_to(ROOT).as_posix():
-        errors.append("evidence TCK 1.4.0 runner bundle manifest path is incorrect")
+        errors.append("evidence TCK 1.5.0 runner bundle manifest path is incorrect")
     if runner_bundle.get("manifest_digest") != file_digest(root / BUNDLE_MANIFEST_PATH.relative_to(ROOT)):
-        errors.append("evidence TCK 1.4.0 runner bundle manifest digest is stale")
+        errors.append("evidence TCK 1.5.0 runner bundle manifest digest is stale")
     if runner_bundle.get("digest") != manifest.get("bundle_digest"):
-        errors.append("evidence TCK 1.4.0 runner bundle digest is stale")
+        errors.append("evidence TCK 1.5.0 runner bundle digest is stale")
     if runner_bundle.get("paths") != [item["path"] for item in manifest.get("entries", [])]:
-        errors.append("evidence TCK 1.4.0 runner bundle paths do not match manifest")
+        errors.append("evidence TCK 1.5.0 runner bundle paths do not match manifest")
 
     expected_policies = {
         HISTORICAL_TCK_RELEASE_ID: False,
         TCK_RELEASE_ID: True,
         PROFILE_TCK_RELEASE_ID: False,
         PREVIOUS_TCK_RELEASE_ID: False,
+        TCK_1_4_RELEASE_ID: True,
         CURRENT_TCK_RELEASE_ID: True,
     }
     for release_id, eligible in expected_policies.items():
@@ -1290,11 +1409,13 @@ def validate_release_registry(
         TCK_RELEASE_ID: FROZEN_TCK_1_1_REGISTRY_SNAPSHOT_DIGEST,
         PROFILE_TCK_RELEASE_ID: FROZEN_TCK_1_2_REGISTRY_SNAPSHOT_DIGEST,
         PREVIOUS_TCK_RELEASE_ID: FROZEN_TCK_1_3_REGISTRY_SNAPSHOT_DIGEST,
+        TCK_1_4_RELEASE_ID: FROZEN_TCK_1_4_REGISTRY_SNAPSHOT_DIGEST,
     }
     for release_id in (
         TCK_RELEASE_ID,
         PROFILE_TCK_RELEASE_ID,
         PREVIOUS_TCK_RELEASE_ID,
+        TCK_1_4_RELEASE_ID,
         CURRENT_TCK_RELEASE_ID,
     ):
         try:
