@@ -84,11 +84,13 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         "claim_scope": None,
         "profile_ids": [],
         "capability_refs": [],
+        "binding_refs": [],
         "reports": [],
         "compatibility_marks": [],
         "computed_marks": [],
         "computed_profile_marks": [],
         "computed_capability_marks": [],
+        "computed_binding_marks": [],
         "eligible_targets": [],
         "evidence_validation_status": "not_evaluated",
         "errors": [],
@@ -126,6 +128,7 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
     entry["claim_scope"] = manifest.get("claim_scope")
     entry["profile_ids"] = manifest.get("profile_ids", [])
     entry["capability_refs"] = manifest.get("capability_refs", [])
+    entry["binding_refs"] = manifest.get("binding_refs", [])
 
     marks: set[str] = set()
     for ref in manifest.get("report_refs", []):
@@ -163,6 +166,9 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
             entry["computed_capability_marks"] = list(
                 evaluation.eligible_capability_marks
             )
+            entry["computed_binding_marks"] = list(
+                evaluation.eligible_binding_marks
+            )
             entry["eligible_targets"] = [
                 {
                     "kind": kind,
@@ -196,11 +202,13 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
         "claim_scope": "self_attested",
         "profile_ids": [],
         "capability_refs": [],
+        "binding_refs": [],
         "reports": [],
         "compatibility_marks": [],
         "computed_marks": [],
         "computed_profile_marks": [],
         "computed_capability_marks": [],
+        "computed_binding_marks": [],
         "eligible_targets": [],
         "evidence_validation_status": "not_promotable",
         "errors": [],
@@ -319,6 +327,8 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
             "Only independently validated reproducible external full-profile IUT evidence produces computed marks.",
             "Capability marks are computed separately from product-profile marks and never prove a profile.",
             "Only independently validated full-capability report v2 evidence produces computed capability marks.",
+            "Binding marks are computed separately from profile and capability marks and never prove either family.",
+            "Only independently validated two-role full-binding live report v2.2 evidence produces computed binding marks.",
         ],
     }
 
@@ -346,9 +356,11 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
             "Claim scope",
             "Profiles",
             "Capabilities",
+            "Bindings",
             "Reported marks",
             "Eligible profile marks",
             "Eligible capability marks",
+            "Eligible binding marks",
             "Eligible targets",
             "Matrix status",
         ]
@@ -378,9 +390,17 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
                         if isinstance(item, dict)
                     ]
                 ),
+                _fmt_profiles(
+                    [
+                        f"{item.get('binding_id')}@{item.get('binding_version')}"
+                        for item in entry.get("binding_refs", [])
+                        if isinstance(item, dict)
+                    ]
+                ),
                 _fmt_marks(entry.get("compatibility_marks")),
                 _fmt_marks(entry.get("computed_profile_marks")),
                 _fmt_marks(entry.get("computed_capability_marks")),
+                _fmt_marks(entry.get("computed_binding_marks")),
                 _fmt_marks(
                     [
                         (

@@ -32,6 +32,7 @@
         "AICP-BASE"
       ],
       "capability_refs": [],
+      "binding_refs": [],
       "reports": [
         {
           "path": "reports/report_profile_base.json",
@@ -60,6 +61,7 @@
       "computed_marks": [],
       "computed_profile_marks": [],
       "computed_capability_marks": [],
+      "computed_binding_marks": [],
       "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
@@ -98,6 +100,7 @@
           "capability_version": "v1"
         }
       ],
+      "binding_refs": [],
       "reports": [
         {
           "path": "reports/report_capability_projection_v1.json",
@@ -115,6 +118,7 @@
       "computed_marks": [],
       "computed_profile_marks": [],
       "computed_capability_marks": [],
+      "computed_binding_marks": [],
       "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
@@ -148,6 +152,7 @@
         "AICP-MEDIATED-BLOCKING"
       ],
       "capability_refs": [],
+      "binding_refs": [],
       "reports": [
         {
           "path": "reports/report_profile_mediated_blocking_a.json",
@@ -184,6 +189,7 @@
       "computed_marks": [],
       "computed_profile_marks": [],
       "computed_capability_marks": [],
+      "computed_binding_marks": [],
       "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
@@ -217,6 +223,7 @@
         "AICP-BASE"
       ],
       "capability_refs": [],
+      "binding_refs": [],
       "reports": [
         {
           "path": "reports/report_profile_base.json",
@@ -245,6 +252,7 @@
       "computed_marks": [],
       "computed_profile_marks": [],
       "computed_capability_marks": [],
+      "computed_binding_marks": [],
       "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
@@ -278,11 +286,13 @@
         "AICP-BASE"
       ],
       "capability_refs": [],
+      "binding_refs": [],
       "reports": [],
       "compatibility_marks": [],
       "computed_marks": [],
       "computed_profile_marks": [],
       "computed_capability_marks": [],
+      "computed_binding_marks": [],
       "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
@@ -290,6 +300,49 @@
         {
           "warning_code": "TEMPLATE_PLACEHOLDER_REF",
           "warning_message": "template placeholder report_refs target not yet replaced: reports/replace-with-profile-report.json"
+        }
+      ],
+      "valid": true,
+      "matrix_status": "INSTRUCTIONAL"
+    },
+    {
+      "folder": "binding_submission",
+      "submission_id": "replace-binding-submission-id",
+      "implementation_id": "replace-implementation-id",
+      "implementation": {
+        "implementation_id": "replace-implementation-id",
+        "implementation_version": "replace-version",
+        "peer_implementation_id": null,
+        "claim_type": "implements_binding",
+        "claim_scope": "self_attested",
+        "evidence_status": "template"
+      },
+      "peer_implementation_id": null,
+      "artifact_kind": "template",
+      "evidence_status": "template",
+      "claim_type": "implements_binding",
+      "claim_scope": "self_attested",
+      "profile_ids": [],
+      "capability_refs": [],
+      "binding_refs": [
+        {
+          "binding_id": "BIND-HTTP",
+          "binding_version": "0.1"
+        }
+      ],
+      "reports": [],
+      "compatibility_marks": [],
+      "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "computed_binding_marks": [],
+      "eligible_targets": [],
+      "evidence_validation_status": "not_promotable",
+      "errors": [],
+      "warnings": [
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/replace-with-full-binding-report-v2.2.json"
         }
       ],
       "valid": true,
@@ -319,11 +372,13 @@
           "capability_version": "v1"
         }
       ],
+      "binding_refs": [],
       "reports": [],
       "compatibility_marks": [],
       "computed_marks": [],
       "computed_profile_marks": [],
       "computed_capability_marks": [],
+      "computed_binding_marks": [],
       "eligible_targets": [],
       "evidence_validation_status": "not_promotable",
       "errors": [],
@@ -346,6 +401,8 @@
     "Legacy implementation.json folders are shown as self_attested by default for backward-compatible display only.",
     "Only independently validated reproducible external full-profile IUT evidence produces computed marks.",
     "Capability marks are computed separately from product-profile marks and never prove a profile.",
-    "Only independently validated full-capability report v2 evidence produces computed capability marks."
+    "Only independently validated full-capability report v2 evidence produces computed capability marks.",
+    "Binding marks are computed separately from profile and capability marks and never prove either family.",
+    "Only independently validated two-role full-binding live report v2.2 evidence produces computed binding marks."
   ]
 }

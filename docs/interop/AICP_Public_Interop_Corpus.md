@@ -7,7 +7,7 @@ The AICP public interop corpus is the repo-backed place for packaging **checkabl
 Its purpose is to let implementers publish narrowly-scoped, machine-readable claims such as:
 - an implementation **implements** a shipped AICP profile,
 - an implementation is **compatible with** a shipped AICP profile based on conformance evidence,
-- an implementation **implements** an exact registered external capability target,
+- an implementation **implements** an exact registered external capability or binding target,
 - reserved instructional packaging for a future claim that two implementations were
   **pairwise interoperable** for a specific profile and bound joint evidence set.
 
@@ -52,7 +52,7 @@ An interoperability submission is a directory-scoped package whose primary manif
 At minimum, a submission should identify:
 - the submitting implementation,
 - the implementation version,
-- the exact product-profile or capability references the claim is about,
+- the exact product-profile, capability, or binding references the claim is about,
 - the type of claim being made,
 - the evidence types included,
 - the report references and suite references that support the claim,
@@ -71,6 +71,8 @@ A valid submission package should include:
    and `profile_version`.
 5. For a capability claim, exact `capability_refs` carrying both `capability_id` and
    `capability_version`.
+6. For a binding claim, exact `binding_refs` carrying both `binding_id` and
+   `binding_version`, plus the binding's exact owning suite.
 6. Notes/disclosures when the evidence is limited, synthetic, or example-only.
 
 For real `reproducible` implementation/compatibility claims, at least one report must be a
@@ -178,6 +180,11 @@ For a capability package use `claim_type=implements_capability`, exact
 The shipped fictional capability example and template demonstrate only the package shape;
 they are not real external evidence.
 
+For a binding package use `claim_type=implements_binding`, exact `binding_refs`,
+`binding_report`, and one eligible report-2.2 `full-binding` result per claimed binding.
+Both live roles must name the same implementation build. The shipped binding template is
+instructional only; it is not a real external implementation or pairwise result.
+
 ### Pairwise interoperability claim package (instructional only)
 
 Use this when the claim is specifically about two implementations interoperating for a named profile.
@@ -211,7 +218,7 @@ This vocabulary is about package strength/scope only. It is not a certification 
 
 The matrix preserves raw legacy/instructional report contents for audit visibility but
 computes typed `computed_profile_marks`, `computed_capability_marks`, and
-`eligible_targets` through the strong-evidence validators. Compatibility `computed_marks`
+`computed_binding_marks`. `eligible_targets` retains each target kind; `computed_marks`
 is their derived union. The matrix never promotes a hand-shaped or legacy
 `compatibility_marks` string.
 

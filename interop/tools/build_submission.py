@@ -18,6 +18,7 @@ if str(SCRIPTS_DIR) not in sys.path:
 
 from interop_submission_validation import (  # noqa: E402
     ALLOWED_CLAIM_TYPES,
+    ALLOWED_EVIDENCE_TYPES,
     ALLOWED_EVIDENCE_STATUSES,
     INTEGRITY_FILENAME,
     PAIRWISE_JOINT_EVIDENCE_ERROR,
@@ -33,16 +34,6 @@ from interop_submission_validation import (  # noqa: E402
 
 REAL_EVIDENCE_STATUSES = {"self_attested", "reproducible", "pairwise"}
 ALLOWED_CLAIM_SCOPES = {"self_attested", "pairwise"}
-ALLOWED_EVIDENCE_TYPES = {
-    "conformance_report",
-    "profile_report",
-    "capability_report",
-    "golden_transcript",
-    "pairwise_transcript",
-    "human_summary",
-}
-
-
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build an AICP interop submission package from supplied evidence.")
     parser.add_argument("--out-root", required=True, help="Directory under which <submission-id>/ will be created")
@@ -61,6 +52,12 @@ def _parse_args() -> argparse.Namespace:
         action="append",
         dest="capability_refs",
         help="Exact CAPABILITY_ID@VERSION claim; only for implements_capability",
+    )
+    parser.add_argument(
+        "--binding-ref",
+        action="append",
+        dest="binding_refs",
+        help="Exact BINDING_ID@VERSION claim; only for implements_binding",
     )
     parser.add_argument("--claim-type", required=True, choices=sorted(ALLOWED_CLAIM_TYPES))
     parser.add_argument("--claim-scope", required=True, choices=sorted(ALLOWED_CLAIM_SCOPES))
@@ -113,11 +110,13 @@ def _infer_evidence_types(report_paths: list[Path]) -> list[str]:
             inferred.append("conformance_report")
         if isinstance(report.get("profile_id"), str) and report.get("profile_id"):
             inferred.append("profile_report")
-        if (
-            report.get("report_format_version") == "2.0"
-            and report.get("report_type") == "aicp.external_evidence"
-        ):
-            inferred.append("capability_report")
+        if report.get("report_type") == "aicp.external_evidence":
+            target = report.get("target")
+            target_kind = target.get("kind") if isinstance(target, dict) else None
+            if target_kind == "binding":
+                inferred.append("binding_report")
+            elif target_kind == "capability":
+                inferred.append("capability_report")
     return _stable_unique(inferred)
 
 
@@ -154,7 +153,7 @@ def _validate_inputs(args: argparse.Namespace, report_paths: list[Path]) -> list
         if set(parsed_ids) != set(args.profile_ids or []):
             errors.append("--profile-ref IDs must exactly match --profile-id values")
     if args.claim_type == "implements_capability":
-        if args.profile_ids or args.profile_refs:
+        if args.profile_ids or args.profile_refs or args.binding_refs:
             errors.append(
                 "--claim-type implements_capability cannot use profile fields"
             )
@@ -166,6 +165,13 @@ def _validate_inputs(args: argparse.Namespace, report_paths: list[Path]) -> list
             errors.append(
                 "--claim-type implements_capability requires --evidence-status reproducible"
             )
+    elif args.claim_type == "implements_binding":
+        if args.profile_ids or args.profile_refs or args.capability_refs:
+            errors.append("--claim-type implements_binding cannot use profile or capability fields")
+        if not args.binding_refs:
+            errors.append("--claim-type implements_binding requires --binding-ref")
+        if args.evidence_status != "reproducible":
+            errors.append("--claim-type implements_binding requires --evidence-status reproducible")
     else:
         if not args.profile_ids:
             errors.append("profile and pairwise claims require --profile-id")
@@ -173,11 +179,16 @@ def _validate_inputs(args: argparse.Namespace, report_paths: list[Path]) -> list
             errors.append(
                 "--capability-ref is only supported for implements_capability"
             )
+        if args.binding_refs:
+            errors.append("--binding-ref is only supported for implements_binding")
     for value in args.capability_refs or []:
         if "@" not in value or not all(value.rsplit("@", 1)):
             errors.append(
                 f"--capability-ref must use CAPABILITY_ID@VERSION syntax: {value}"
             )
+    for value in args.binding_refs or []:
+        if "@" not in value or not all(value.rsplit("@", 1)):
+            errors.append(f"--binding-ref must use BINDING_ID@VERSION syntax: {value}")
     for report_path in report_paths:
         if not report_path.exists() or not report_path.is_file():
             errors.append(f"report path does not exist or is not a file: {report_path}")
@@ -218,6 +229,14 @@ def _build_manifest(args: argparse.Namespace, report_refs: list[str], evidence_t
                 "capability_version": value.rsplit("@", 1)[1],
             }
             for value in _stable_unique(args.capability_refs)
+        ]
+    if args.binding_refs:
+        manifest["binding_refs"] = [
+            {
+                "binding_id": value.rsplit("@", 1)[0],
+                "binding_version": value.rsplit("@", 1)[1],
+            }
+            for value in _stable_unique(args.binding_refs)
         ]
     if args.note:
         manifest["notes"] = args.note
