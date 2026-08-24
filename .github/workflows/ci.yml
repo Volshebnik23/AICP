@@ -36,6 +36,13 @@ jobs:
       - name: Run make test
         run: make test
 
+      - name: Run explicit live binding full targets
+        run: |
+          make live-binding-http-full-reference
+          make live-binding-http-full-external-test
+          make live-binding-mcp-full-reference
+          make live-binding-mcp-full-external-test
+
       - name: Run deterministic reference IUT smoke
         run: make conformance-iut-smoke
 
