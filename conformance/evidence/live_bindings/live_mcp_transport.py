@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import secrets
 import subprocess
 import time
 from pathlib import Path
@@ -66,6 +67,27 @@ class McpState:
         self.mode = mode
         self.messages: dict[str, list[dict[str, Any]]] = {}
         self.message_ids: dict[tuple[str, str], dict[str, Any]] = {}
+        self.cursor_offsets: dict[str, dict[str, int]] = {}
+        self.offset_cursors: dict[str, dict[int, str]] = {}
+
+    def _ensure_cursor_state(self, session_id: str) -> None:
+        self.cursor_offsets.setdefault(session_id, {"c0": 0})
+        self.offset_cursors.setdefault(session_id, {0: "c0"})
+
+    def cursor_for_offset(self, session_id: str, offset: int) -> str:
+        self._ensure_cursor_state(session_id)
+        known = self.offset_cursors[session_id].get(offset)
+        if isinstance(known, str):
+            return known
+        cursor = "cursor:" + secrets.token_urlsafe(24)
+        self.offset_cursors[session_id][offset] = cursor
+        self.cursor_offsets[session_id][cursor] = offset
+        return cursor
+
+    def offset_for_cursor(self, session_id: str, cursor: str) -> int | None:
+        self._ensure_cursor_state(session_id)
+        value = self.cursor_offsets[session_id].get(cursor)
+        return value if isinstance(value, int) else None
 
     def handle(self, request: dict[str, Any]) -> dict[str, Any]:
         request_id = request.get("id")
@@ -104,7 +126,9 @@ class McpState:
                     "accepted": True,
                     "message_id": message_id,
                     "message_hash": stored_hash,
-                    "cursor": f"c{len(self.messages.get(session_id, []))}",
+                    "cursor": self.cursor_for_offset(
+                        session_id, len(self.messages.get(session_id, []))
+                    ),
                 },
             )
         if tool == "aicp.pollMessages":
@@ -117,10 +141,12 @@ class McpState:
                 limit = int(arguments.get("limit", 1000))
             except (TypeError, ValueError):
                 limit = 1000
-            after_cursor = str(arguments.get("after_cursor", "c0"))
-            start = 0
-            if after_cursor.startswith("c") and after_cursor[1:].isdigit():
-                start = int(after_cursor[1:])
+            if "after_cursor" not in arguments:
+                return rpc_error(request_id, -32602, "missing after_cursor")
+            after_cursor = str(arguments["after_cursor"])
+            start = self.offset_for_cursor(session_id, after_cursor)
+            if start is None:
+                return rpc_error(request_id, -32602, "unknown after_cursor")
             if self.mode == "mcp_server_ignores_after_cursor":
                 start = 0
             messages = list(self.messages.get(session_id, []))[start:]
@@ -128,7 +154,12 @@ class McpState:
                 messages = messages[: max(0, limit)]
             return rpc_result(
                 request_id,
-                {"messages": copy.deepcopy(messages), "next_cursor": f"c{start + len(messages)}"},
+                {
+                    "messages": copy.deepcopy(messages),
+                    "next_cursor": self.cursor_for_offset(
+                        session_id, start + len(messages)
+                    ),
+                },
             )
         if tool == "aicp.getHead":
             session_id = str(arguments.get("session_id", ""))
@@ -368,12 +399,11 @@ def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") ->
         rpc_request("rpc-send-1", "aicp.sendMessage", {"message": message}),
         rpc_request("rpc-send-2", "aicp.sendMessage", {"message": message}),
         rpc_request("rpc-send-3", "aicp.sendMessage", {"message": second}),
-        rpc_request("rpc-poll-1", "aicp.pollMessages", {"session_id": SESSION_ID, "after_cursor": "c0", "limit": 1}),
-        rpc_request("rpc-poll-2", "aicp.pollMessages", {"session_id": SESSION_ID, "after_cursor": "c1", "limit": 1}),
-        rpc_request("rpc-head-1", "aicp.getHead", {"session_id": SESSION_ID}),
-        rpc_request("rpc-object-1", "aicp.getObject", {"object_hash": OBJECT_HASH}),
-        rpc_request("rpc-object-2", "aicp.getObject", {"object_hash": "sha256:" + "A" * 43}),
-        rpc_request("rpc-invalid-1", "aicp.sendMessage", {"message": {"session_id": SESSION_ID}}),
+        rpc_request(
+            "rpc-poll-1",
+            "aicp.pollMessages",
+            {"session_id": SESSION_ID, "after_cursor": "c0", "limit": 1},
+        ),
     ]
     if mode == "wrong_tool":
         requests[0]["params"]["name"] = "aicp.send"
@@ -383,16 +413,12 @@ def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") ->
         requests[0]["params"]["arguments"]["message"]["sender"] = "agent:rewritten"
     elif mode == "wrong_session":
         requests[3]["params"]["arguments"]["session_id"] = "other-session"
-        requests[4]["params"]["arguments"]["session_id"] = "other-session"
-    elif mode == "mcp_missing_after_cursor":
-        requests[4]["params"]["arguments"].pop("after_cursor", None)
-    elif mode == "mcp_wrong_after_cursor":
-        requests[4]["params"]["arguments"]["after_cursor"] = "unrelated-cursor"
-    elif mode == "wrong_object_hash":
-        requests[6]["params"]["arguments"]["object_hash"] = "sha256:" + "B" * 43
     elif mode == "request_id_reuse":
         requests[1]["id"] = requests[0]["id"]
-    for index, request in enumerate(requests):
+
+    responses: list[dict[str, Any]] = []
+
+    def exchange(request: dict[str, Any], index: int) -> dict[str, Any] | None:
         if mode == "malformed_json" and index == 0:
             stdout.write(b"{not-json}\n")
             stdout.flush()
@@ -400,11 +426,63 @@ def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") ->
             write_json_line(stdout, request)
         raw = stdin.readline(1_048_577)
         if not raw:
-            return 3
+            return None
         try:
             response = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
-            return 4
+            return None
         if not isinstance(response, dict):
-            return 5
+            return None
+        return response
+
+    for index, request in enumerate(requests):
+        response = exchange(request, index)
+        if response is None:
+            return 3
+        responses.append(response)
+
+    first_cursor = str((responses[3].get("result") or {}).get("next_cursor", ""))
+    if mode in {"mcp_hardcoded_c1", "mcp_ignore_first_poll_response"}:
+        second_after = "c1"
+    elif mode == "mcp_reuse_stale_cursor":
+        second_after = "c0"
+    elif mode == "mcp_wrong_after_cursor":
+        second_after = "unrelated-cursor"
+    else:
+        second_after = first_cursor
+    second_arguments: dict[str, Any] = {
+        "session_id": "other-session" if mode == "wrong_session" else SESSION_ID,
+        "after_cursor": second_after,
+        "limit": 1,
+    }
+    if mode == "mcp_missing_after_cursor":
+        second_arguments.pop("after_cursor")
+    remaining = [
+        rpc_request("rpc-poll-2", "aicp.pollMessages", second_arguments),
+        rpc_request("rpc-head-1", "aicp.getHead", {"session_id": SESSION_ID}),
+        rpc_request(
+            "rpc-object-1",
+            "aicp.getObject",
+            {
+                "object_hash": (
+                    "sha256:" + "B" * 43
+                    if mode == "wrong_object_hash"
+                    else OBJECT_HASH
+                )
+            },
+        ),
+        rpc_request(
+            "rpc-object-2",
+            "aicp.getObject",
+            {"object_hash": "sha256:" + "A" * 43},
+        ),
+        rpc_request(
+            "rpc-invalid-1",
+            "aicp.sendMessage",
+            {"message": {"session_id": SESSION_ID}},
+        ),
+    ]
+    for index, request in enumerate(remaining, start=len(requests)):
+        if exchange(request, index) is None:
+            return 3
     return 0

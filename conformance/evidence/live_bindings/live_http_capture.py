@@ -302,3 +302,17 @@ def attach_http_transport_evidence(
             "exchanges": [safe_exchange(item) for item in selected],
         }
     return result
+
+
+def attach_tls_challenge_evidence(
+    interactions: list[dict[str, Any]],
+    challenges: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    result = copy.deepcopy(interactions)
+    for interaction in result:
+        if interaction.get("transport") != "wss":
+            continue
+        evidence = interaction.get("transport_evidence")
+        if isinstance(evidence, dict) and evidence.get("kind") == "wss":
+            evidence["tls_challenges"] = copy.deepcopy(challenges)
+    return result

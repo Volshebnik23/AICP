@@ -167,7 +167,14 @@ def wait_ready_descriptor(
 ) -> dict[str, Any]:
     while time.monotonic() < deadline:
         if ready_path.is_file():
-            data = ready_path.read_bytes()
+            try:
+                data = ready_path.read_bytes()
+            except (FileNotFoundError, PermissionError):
+                # On Windows, readers can briefly lose the race with an
+                # atomic replacement or a filesystem scanner. Readiness is a
+                # deadline-based contract, so retry that transient state.
+                time.sleep(0.01)
+                continue
             if len(data) > MAX_READY_BYTES:
                 raise LiveProcessError("live ready descriptor exceeded byte limit")
             try:

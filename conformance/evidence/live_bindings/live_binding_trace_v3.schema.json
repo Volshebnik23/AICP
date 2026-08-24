@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/live-binding-trace-v3.json",
+  "title": "AICP Sanitized Live Binding Transport Evidence Trace v3",
+  "$ref": "#/$defs/Artifact",
+  "$defs": {
+    "Digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "Features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_response", "sse", "websocket", "wss"],
+      "properties": {
+        "request_response": {"type": "boolean"},
+        "sse": {"type": "boolean"},
+        "websocket": {"type": "boolean"},
+        "wss": {"type": "boolean"}
+      }
+    },
+    "Subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "implementation_kind", "implementation_id", "implementation_version", "implementation_digest", "declared_features"],
+      "properties": {
+        "role": {"enum": ["server_under_test", "client_under_test"]},
+        "implementation_kind": {"enum": ["external_implementation", "reference_corpus"]},
+        "implementation_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "implementation_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "implementation_digest": {"$ref": "#/$defs/Digest"},
+        "declared_features": {"$ref": "#/$defs/Features"}
+      }
+    },
+    "MessageRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "message_id", "message_hash", "canonical_digest"],
+      "properties": {
+        "session_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "message_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "message_hash": {"type": "string", "minLength": 1, "maxLength": 128},
+        "canonical_digest": {"$ref": "#/$defs/Digest"},
+        "prev_msg_hash": {"type": "string", "minLength": 1, "maxLength": 128}
+      }
+    },
+    "BodySummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {"enum": ["none", "invalid", "message", "semantic"]},
+        "canonical_digest": {"$ref": "#/$defs/Digest"},
+        "message_refs": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/MessageRef"}},
+        "session_id": {"type": "string", "maxLength": 256},
+        "cursor": {"type": "string", "maxLength": 256},
+        "next_cursor": {"type": "string", "maxLength": 256},
+        "reason_code": {"type": "string", "maxLength": 256},
+        "min_cursor": {"type": "string", "maxLength": 256},
+        "message_id": {"type": "string", "maxLength": 256},
+        "message_hash": {"type": "string", "maxLength": 128},
+        "branch_id": {"type": "string", "maxLength": 128},
+        "head_message_id": {"type": "string", "maxLength": 256},
+        "head_message_hash": {"type": "string", "maxLength": 128},
+        "client_id": {"type": "string", "maxLength": 256},
+        "retry_after": {"type": "string", "maxLength": 64},
+        "accepted": {"type": "boolean"},
+        "auth_required": {"type": "boolean"},
+        "more": {"type": "boolean"}
+      }
+    },
+    "SafeHeaders": {
+      "type": "object",
+      "additionalProperties": false,
+      "maxProperties": 13,
+      "properties": {
+        "content-type": {"type": "string", "maxLength": 256},
+        "idempotency-key": {"type": "string", "maxLength": 256},
+        "aicp-replay": {"type": "string", "maxLength": 64},
+        "retry-after": {"type": "string", "maxLength": 64},
+        "ratelimit-limit": {"type": "string", "maxLength": 64},
+        "ratelimit-remaining": {"type": "string", "maxLength": 64},
+        "ratelimit-reset": {"type": "string", "maxLength": 64},
+        "last-event-id": {"type": "string", "maxLength": 256},
+        "upgrade": {"type": "string", "maxLength": 64},
+        "connection": {"type": "string", "maxLength": 128},
+        "sec-websocket-key": {"type": "string", "maxLength": 128},
+        "sec-websocket-accept": {"type": "string", "maxLength": 128},
+        "sec-websocket-version": {"type": "string", "maxLength": 16}
+      }
+    },
+    "HttpRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "path", "query", "header_names", "headers", "authorization_present", "authorization_scheme", "body"],
+      "properties": {
+        "method": {"enum": ["GET", "POST", "HEAD"]},
+        "path": {"type": "string", "pattern": "^/aicp/v1/", "maxLength": 512},
+        "query": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "after": {"type": "string", "maxLength": 256},
+            "limit": {"type": "integer", "minimum": 0, "maximum": 1000}
+          }
+        },
+        "header_names": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"enum": ["accept", "accept-encoding", "authorization", "connection", "content-length", "content-type", "host", "idempotency-key", "last-event-id", "sec-websocket-key", "sec-websocket-version", "upgrade"]}
+        },
+        "headers": {"$ref": "#/$defs/SafeHeaders"},
+        "authorization_present": {"type": "boolean"},
+        "authorization_scheme": {"enum": ["Bearer", "none"]},
+        "body": {"$ref": "#/$defs/BodySummary"}
+      }
+    },
+    "HttpResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "headers", "body"],
+      "properties": {
+        "status": {"type": "integer", "minimum": 0, "maximum": 599},
+        "headers": {"$ref": "#/$defs/SafeHeaders"},
+        "body": {"$ref": "#/$defs/BodySummary"}
+      }
+    },
+    "Event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event", "message_refs"],
+      "properties": {
+        "id": {"type": "string", "maxLength": 256},
+        "event": {"enum": ["messages", "overload"]},
+        "cursor_after_last": {"type": "string", "maxLength": 256},
+        "more": {"type": "boolean"},
+        "retry_after": {"type": "string", "maxLength": 64},
+        "message_refs": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/MessageRef"}}
+      }
+    },
+    "ClientFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "after", "limit"],
+      "properties": {
+        "type": {"type": "string", "maxLength": 64},
+        "after": {"type": "string", "maxLength": 256},
+        "limit": {"type": "integer", "minimum": 0, "maximum": 1000}
+      }
+    },
+    "ServerFrame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "message_refs"],
+      "properties": {
+        "type": {"type": "string", "maxLength": 64},
+        "cursor_after_last": {"type": "string", "maxLength": 256},
+        "more": {"type": "boolean"},
+        "retry_after": {"type": "string", "maxLength": 64},
+        "message_refs": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/MessageRef"}}
+      }
+    },
+    "HttpExchange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request", "response"],
+      "properties": {
+        "request": {"$ref": "#/$defs/HttpRequest"},
+        "response": {"$ref": "#/$defs/HttpResponse"},
+        "events": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/Event"}},
+        "client_frame": {"$ref": "#/$defs/ClientFrame"},
+        "server_frame": {"$ref": "#/$defs/ServerFrame"},
+        "scheme": {"enum": ["ws", "wss"]},
+        "tls_verified": {"type": "boolean"}
+      }
+    },
+    "McpArguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {"type": "string", "maxLength": 256},
+        "after_cursor": {"type": "string", "maxLength": 256},
+        "limit": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "object_hash": {"type": "string", "maxLength": 128},
+        "message_ref": {"$ref": "#/$defs/MessageRef"},
+        "malformed_message": {"type": "boolean"}
+      }
+    },
+    "ObjectContent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_id", "goal", "roles"],
+      "properties": {
+        "contract_id": {"type": "string", "maxLength": 128},
+        "goal": {"type": "string", "maxLength": 256},
+        "roles": {"type": "array", "maxItems": 16, "items": {"type": "string", "maxLength": 128}}
+      }
+    },
+    "McpResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "message_id": {"type": "string", "maxLength": 256},
+        "message_hash": {"type": "string", "maxLength": 128},
+        "cursor": {"type": "string", "maxLength": 256},
+        "next_cursor": {"type": "string", "maxLength": 256},
+        "status": {"type": "string", "maxLength": 64},
+        "object_type": {"type": "string", "maxLength": 64},
+        "accepted": {"type": "boolean"},
+        "message_refs": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/MessageRef"}},
+        "session_id": {"type": "string", "maxLength": 256},
+        "object_content": {"$ref": "#/$defs/ObjectContent"}
+      }
+    },
+    "McpExchange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request", "response"],
+      "properties": {
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["jsonrpc", "id", "method", "tool", "arguments"],
+          "properties": {
+            "jsonrpc": {"type": "string", "maxLength": 16},
+            "id": {"type": "string", "maxLength": 256},
+            "method": {"type": "string", "maxLength": 64},
+            "tool": {"type": "string", "maxLength": 128},
+            "arguments": {"$ref": "#/$defs/McpArguments"}
+          }
+        },
+        "response": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["jsonrpc", "id", "outcome"],
+          "properties": {
+            "jsonrpc": {"type": "string", "maxLength": 16},
+            "id": {"type": "string", "maxLength": 256},
+            "outcome": {"enum": ["result", "error"]},
+            "result": {"$ref": "#/$defs/McpResult"},
+            "error_code": {"type": "integer", "minimum": -32768, "maximum": 32767}
+          }
+        }
+      }
+    },
+    "TlsChallenge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint_class", "connection_attempted", "tls_handshake_completed", "websocket_application_handshake_observed", "connection_order", "tls_handshake_order", "websocket_application_handshake_order"],
+      "properties": {
+        "endpoint_class": {"enum": ["trusted", "untrusted"]},
+        "connection_attempted": {"type": "boolean"},
+        "tls_handshake_completed": {"type": "boolean"},
+        "websocket_application_handshake_observed": {"type": "boolean"},
+        "connection_order": {"type": ["integer", "null"], "minimum": 1},
+        "tls_handshake_order": {"type": ["integer", "null"], "minimum": 1},
+        "websocket_application_handshake_order": {"type": ["integer", "null"], "minimum": 1}
+      }
+    },
+    "HttpBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "transport_kind", "address_family", "local_host_class", "peer_host_class"],
+      "properties": {
+        "kind": {"const": "loopback_socket"},
+        "transport_kind": {"enum": ["tcp", "tls_tcp"]},
+        "address_family": {"enum": ["ipv4", "ipv6"]},
+        "local_host_class": {"const": "loopback"},
+        "peer_host_class": {"const": "loopback"}
+      }
+    },
+    "McpBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "transport_kind", "child_process_role"],
+      "properties": {
+        "kind": {"const": "child_process_stdio"},
+        "transport_kind": {"const": "stdio"},
+        "child_process_role": {"enum": ["server_under_test", "client_under_test"]}
+      }
+    },
+    "HttpEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "boundary", "exchanges"],
+      "properties": {
+        "kind": {"enum": ["http", "sse", "websocket", "wss"]},
+        "boundary": {"$ref": "#/$defs/HttpBoundary"},
+        "exchanges": {"type": "array", "minItems": 1, "maxItems": 16, "items": {"$ref": "#/$defs/HttpExchange"}},
+        "tls_challenges": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/TlsChallenge"}}
+      }
+    },
+    "McpEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "boundary", "exchanges"],
+      "properties": {
+        "kind": {"const": "mcp_stdio"},
+        "boundary": {"$ref": "#/$defs/McpBoundary"},
+        "exchanges": {"type": "array", "minItems": 1, "maxItems": 16, "items": {"$ref": "#/$defs/McpExchange"}}
+      }
+    },
+    "Interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interaction_id", "role", "scenario_id", "transport", "operation", "transport_evidence"],
+      "properties": {
+        "interaction_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "role": {"enum": ["server_under_test", "client_under_test"]},
+        "scenario_id": {"type": "string", "pattern": "^LIVE-(HTTP|MCP)-(SERVER|CLIENT)-[A-Z0-9-]+$"},
+        "transport": {"enum": ["http", "sse", "websocket", "wss", "mcp_stdio"]},
+        "operation": {"type": "string", "minLength": 1, "maxLength": 64},
+        "transport_evidence": {"oneOf": [{"$ref": "#/$defs/HttpEvidence"}, {"$ref": "#/$defs/McpEvidence"}]}
+      }
+    },
+    "Run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_index", "interactions"],
+      "properties": {
+        "run_index": {"type": "integer", "minimum": 1, "maximum": 2},
+        "interactions": {"type": "array", "minItems": 1, "maxItems": 256, "items": {"$ref": "#/$defs/Interaction"}}
+      }
+    },
+    "Artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "artifact_kind", "content_digest", "repeat_content_digest", "content"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "artifact_kind": {"const": "live_binding_trace"},
+        "content_digest": {"$ref": "#/$defs/Digest"},
+        "repeat_content_digest": {"$ref": "#/$defs/Digest"},
+        "content": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["trace_version", "binding", "roles", "feature_coverage", "runs", "semantic_digest", "repeat_semantic_digest"],
+          "properties": {
+            "trace_version": {"const": "aicp.live_binding_trace.v3"},
+            "binding": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["binding_id", "binding_version"],
+              "properties": {
+                "binding_id": {"enum": ["BIND-HTTP", "BIND-MCP"]},
+                "binding_version": {"const": "0.1"}
+              }
+            },
+            "roles": {
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "maxProperties": 2,
+              "properties": {
+                "server_under_test": {"$ref": "#/$defs/Subject"},
+                "client_under_test": {"$ref": "#/$defs/Subject"}
+              }
+            },
+            "feature_coverage": {"$ref": "#/$defs/Features"},
+            "runs": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/Run"}},
+            "semantic_digest": {"$ref": "#/$defs/Digest"},
+            "repeat_semantic_digest": {"$ref": "#/$defs/Digest"}
+          }
+        }
+      }
+    }
+  }
+}

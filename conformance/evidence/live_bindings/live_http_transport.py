@@ -32,6 +32,7 @@ from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 from target_catalog import canonical_digest  # noqa: E402
 from live_bindings.live_binding_process import LiveProcessError, validate_loopback_url  # noqa: E402
 from live_bindings.live_binding_trace import observation  # noqa: E402
+from live_bindings.live_trace_normalization import valid_websocket_key  # noqa: E402
 from live_bindings.live_http_capture import (  # noqa: E402
     attach_http_transport_evidence,
     idempotency_key_valid,
@@ -61,12 +62,24 @@ def message_for_session(message: dict[str, Any], session_id: str) -> dict[str, A
     return updated
 
 
-def _cursor_index(value: str | None) -> int:
-    if value in {None, "", "c0"}:
-        return 0
-    if isinstance(value, str) and value.startswith("c") and value[1:].isdigit():
-        return int(value[1:])
-    return 0
+def messages_for_session(
+    messages: list[dict[str, Any]], session_id: str
+) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    previous_hash: str | None = None
+    for source in messages:
+        updated = copy.deepcopy(source)
+        updated["session_id"] = session_id
+        updated.pop("signatures", None)
+        updated.pop("message_hash", None)
+        if previous_hash is None:
+            updated.pop("prev_msg_hash", None)
+        else:
+            updated["prev_msg_hash"] = previous_hash
+        updated["message_hash"] = message_hash_from_body(updated)
+        previous_hash = str(updated["message_hash"])
+        result.append(updated)
+    return result
 
 
 @dataclass
@@ -78,13 +91,17 @@ class HttpLiveState:
     lock: threading.Lock = field(default_factory=threading.Lock)
     session_counter: int = 0
 
+    @staticmethod
+    def _opaque(prefix: str) -> str:
+        return f"{prefix}:{secrets.token_urlsafe(24)}"
+
     def create_session(self, channel_properties: dict[str, Any]) -> str:
         with self.lock:
             self.session_counter += 1
             session_id = (
                 self.bearer
                 if self.mode == "secret_reflection" and self.session_counter == 1
-                else f"sGT{self.session_counter}"
+                else self._opaque("session")
             )
             self.sessions[session_id] = {
                 "messages": [],
@@ -92,12 +109,120 @@ class HttpLiveState:
                 "closed": False,
                 "ack": None,
                 "channel_properties": channel_properties,
+                "cursor_offsets": {"c0": 0},
+                "offset_cursors": {0: "c0"},
             }
             return session_id
+
+    def cursor_for_offset(self, session_id: str, offset: int) -> str:
+        with self.lock:
+            session = self.sessions[session_id]
+            known = session["offset_cursors"].get(offset)
+            if isinstance(known, str):
+                return known
+            cursor = self._opaque("cursor")
+            session["offset_cursors"][offset] = cursor
+            session["cursor_offsets"][cursor] = offset
+            return cursor
+
+    def offset_for_cursor(self, session_id: str, cursor: str | None) -> int | None:
+        if cursor in {None, ""}:
+            cursor = "c0"
+        with self.lock:
+            session = self.sessions.get(session_id)
+            if session is None:
+                return None
+            value = session["cursor_offsets"].get(cursor)
+            return value if isinstance(value, int) else None
 
     def add_record(self, record: dict[str, Any]) -> None:
         with self.lock:
             self.records.append(record)
+
+
+@dataclass
+class TlsChallengeSequence:
+    value: int = 0
+    lock: threading.Lock = field(default_factory=threading.Lock)
+
+    def next(self) -> int:
+        with self.lock:
+            self.value += 1
+            return self.value
+
+
+@dataclass
+class TlsChallengeObservation:
+    endpoint_class: str
+    sequence: TlsChallengeSequence = field(default_factory=TlsChallengeSequence)
+    tcp_accept_count: int = 0
+    tls_handshake_count: int = 0
+    websocket_upgrade_count: int = 0
+    connection_order: int | None = None
+    tls_handshake_order: int | None = None
+    websocket_application_handshake_order: int | None = None
+    lock: threading.Lock = field(default_factory=threading.Lock)
+
+    def note_tcp_accept(self) -> None:
+        with self.lock:
+            self.tcp_accept_count += 1
+            if self.connection_order is None:
+                self.connection_order = self.sequence.next()
+
+    def note_tls_handshake(self) -> None:
+        with self.lock:
+            self.tls_handshake_count += 1
+            if self.tls_handshake_order is None:
+                self.tls_handshake_order = self.sequence.next()
+
+    def note_websocket_upgrade(self) -> None:
+        with self.lock:
+            self.websocket_upgrade_count += 1
+            if self.websocket_application_handshake_order is None:
+                self.websocket_application_handshake_order = self.sequence.next()
+
+    def evidence(self) -> dict[str, Any]:
+        with self.lock:
+            return {
+                "endpoint_class": self.endpoint_class,
+                "connection_attempted": self.tcp_accept_count > 0,
+                "tls_handshake_completed": self.tls_handshake_count > 0,
+                "websocket_application_handshake_observed": (
+                    self.websocket_upgrade_count > 0
+                ),
+                "connection_order": self.connection_order,
+                "tls_handshake_order": self.tls_handshake_order,
+                "websocket_application_handshake_order": (
+                    self.websocket_application_handshake_order
+                ),
+            }
+
+
+class _ObservedTlsHttpServer(ThreadingHTTPServer):
+    def __init__(
+        self,
+        server_address: tuple[str, int],
+        handler: type[BaseHTTPRequestHandler],
+        *,
+        ssl_context: ssl.SSLContext,
+        observation: TlsChallengeObservation,
+    ) -> None:
+        self.live_ssl_context = ssl_context
+        self.live_tls_observation = observation
+        super().__init__(server_address, handler)
+
+    def get_request(self) -> tuple[socket.socket, Any]:
+        raw_socket, address = self.socket.accept()
+        self.live_tls_observation.note_tcp_accept()
+        try:
+            tls_socket = self.live_ssl_context.wrap_socket(
+                raw_socket, server_side=True
+            )
+        except ssl.SSLError:
+            raw_socket.close()
+            raise
+        self.live_tls_observation.note_tls_handshake()
+        return tls_socket, address
 
 
 class _NoRedirectHandler(BaseHTTPRequestHandler):
@@ -286,7 +411,7 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
                 if self.state.mode == "ack_ignored":
                     self._send_json(409, {"reason_code": "ack_ignored"}, request_body=request_body)
                     return
-                if self.state.mode == "wrong_cursor" and cursor == "c999":
+                if self.state.offset_for_cursor(session_id, cursor) is None:
                     self._send_json(409, {"reason_code": "unknown_cursor"}, request_body=request_body)
                     return
                 session["ack"] = cursor
@@ -325,7 +450,13 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
             query = {key: values[-1] for key, values in parse_qs(parsed.query, keep_blank_values=True).items()}
             after = query.get("after", "")
             if after == "expired" and self.state.mode != "expiry_wrong":
-                self._send_json(410, {"reason_code": "cursor_expired", "min_cursor": "c1"})
+                self._send_json(
+                    410,
+                    {
+                        "reason_code": "cursor_expired",
+                        "min_cursor": self.state.cursor_for_offset(session_id, 1),
+                    },
+                )
                 return
             try:
                 limit = max(1, min(int(query.get("limit", "1")), 1000))
@@ -335,9 +466,14 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
             if self.state.mode == "poll_wrong_session":
                 other = next((value for key, value in self.state.sessions.items() if key != session_id), session)
                 source = other["messages"]
-            start = _cursor_index(after)
+            start = self.state.offset_for_cursor(session_id, after)
+            if start is None:
+                self._send_json(400, {"reason_code": "unknown_cursor"})
+                return
             messages = copy.deepcopy(source[start : start + limit])
-            next_cursor = f"c{start + len(messages)}"
+            next_cursor = self.state.cursor_for_offset(
+                session_id, start + len(messages)
+            )
             if self.state.mode == "wrong_cursor":
                 next_cursor = "c999"
             self._send_json(200, {"messages": messages, "next_cursor": next_cursor})
@@ -390,7 +526,10 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
             retry = "5s" if self.state.mode != "sse_missing_retry" else ""
             events.append((None, "overload", {"retry_after": retry}))
         else:
-            start = _cursor_index(after)
+            start = self.state.offset_for_cursor(session_id, after)
+            if start is None:
+                self._send_json(400, {"reason_code": "unknown_cursor"})
+                return
             if self.state.mode == "sse_reconnect_wrong_messages" and last_event is not None:
                 start = 0
             take = limit + 1 if self.state.mode == "sse_delivered_over_limit" else limit
@@ -405,7 +544,7 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
             offset = start
             for index, chunk in enumerate(chunks):
                 offset += len(chunk)
-                cursor = f"c{offset}"
+                cursor = self.state.cursor_for_offset(session_id, offset)
                 event_id = "c999" if self.state.mode == "sse_wrong_event_id" else cursor
                 more = index < len(chunks) - 1
                 if self.state.mode == "sse_wrong_more":
@@ -450,6 +589,12 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
 
     def _serve_websocket(self, session_id: str, session: dict[str, Any]) -> None:
         key = self.headers.get("Sec-WebSocket-Key", "")
+        if not valid_websocket_key(key):
+            self._send_json(400, {"reason_code": "invalid_websocket_key"})
+            return
+        tls_observation = getattr(self.server, "live_tls_observation", None)
+        if isinstance(tls_observation, TlsChallengeObservation):
+            tls_observation.note_websocket_upgrade()
         accept = base64.b64encode(hashlib.sha1((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode("ascii")).digest()).decode("ascii")
         if self.state.mode == "websocket_malformed_headers":
             self.wfile.write(b"HTTP/1.1 101 Switching Protocols\r\nMalformed\r\n\r\n")
@@ -481,7 +626,11 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
             if self.state.mode == "ws_missing_retry":
                 response.pop("retry_after")
         else:
-            start = _cursor_index(str(request.get("after", "")))
+            start = self.state.offset_for_cursor(
+                session_id, str(request.get("after", ""))
+            )
+            if start is None:
+                start = 0
             limit = max(1, min(int(request.get("limit", 1)), 1000))
             messages = copy.deepcopy(session["messages"][start : start + limit])
             if self.state.mode == "ws_ordering_broken" and len(messages) > 1:
@@ -489,7 +638,9 @@ class _NoRedirectHandler(BaseHTTPRequestHandler):
             response = {
                 "type": "messages",
                 "messages": messages,
-                "cursor_after_last": f"c{start + len(messages)}",
+                "cursor_after_last": self.state.cursor_for_offset(
+                    session_id, start + len(messages)
+                ),
                 "more": False,
             }
             if self.state.mode == "ws_wrong_frame":
@@ -542,13 +693,20 @@ def start_http_server(
     mode: str = "good",
     ssl_context: ssl.SSLContext | None = None,
     state: HttpLiveState | None = None,
+    tls_observation: TlsChallengeObservation | None = None,
 ) -> tuple[ThreadingHTTPServer, HttpLiveState, threading.Thread]:
     state = state or HttpLiveState(bearer=bearer, mode=mode)
-    server = ThreadingHTTPServer(("127.0.0.1", 0), _NoRedirectHandler)
     if ssl_context is not None:
-        server.socket = ssl_context.wrap_socket(server.socket, server_side=True)
+        server = _ObservedTlsHttpServer(
+            ("127.0.0.1", 0),
+            _NoRedirectHandler,
+            ssl_context=ssl_context,
+            observation=tls_observation
+            or TlsChallengeObservation(endpoint_class="trusted"),
+        )
         server.live_scheme = "wss"  # type: ignore[attr-defined]
     else:
+        server = ThreadingHTTPServer(("127.0.0.1", 0), _NoRedirectHandler)
         server.live_scheme = "ws"  # type: ignore[attr-defined]
     server.daemon_threads = True
     server.live_state = state  # type: ignore[attr-defined]
@@ -762,6 +920,7 @@ def websocket_pull(
     after: str,
     limit: int,
     tls_ca_file: str | None = None,
+    tls_verify: bool = True,
     capture: list[dict[str, Any]] | None = None,
 ) -> tuple[int, dict[str, Any]]:
     parsed = urlsplit(validate_loopback_url(websocket_url))
@@ -771,9 +930,19 @@ def websocket_pull(
         if not tls_ca_file:
             raw_sock.close()
             raise LiveProcessError("WSS requires an explicit per-run CA file")
-        context = ssl.create_default_context(cafile=tls_ca_file)
-        sock: socket.socket = context.wrap_socket(raw_sock, server_hostname=parsed.hostname)
-        tls_verified = True
+        context = (
+            ssl.create_default_context(cafile=tls_ca_file)
+            if tls_verify
+            else ssl._create_unverified_context()
+        )
+        try:
+            sock: socket.socket = context.wrap_socket(
+                raw_sock, server_hostname=parsed.hostname
+            )
+        except ssl.SSLError:
+            raw_sock.close()
+            raise
+        tls_verified = tls_verify
     elif parsed.scheme == "ws":
         sock = raw_sock
     else:
@@ -893,6 +1062,7 @@ def execute_http_client(
     mode: str = "good",
     declared_features: dict[str, Any] | None = None,
     websocket_url: str | None = None,
+    wss_challenge_url: str | None = None,
     tls_ca_file: str | None = None,
 ) -> list[dict[str, Any]]:
     messages = load_messages()
@@ -943,9 +1113,17 @@ def execute_http_client(
     status2, _, created2, _ = request("POST", "/aicp/v1/sessions", bearer=bearer, body={"client_id": "live-client-secondary"})
     if status2 != 201 or not isinstance(created2, dict):
         raise LiveProcessError("HTTP client could not create secondary session")
-    first = str(created1["session_id"])
-    second = str(created2["session_id"])
-    primary_messages = [message_for_session(item, first) for item in messages]
+    first = (
+        "sGT1"
+        if mode == "http_hardcoded_primary_session"
+        else str(created1["session_id"])
+    )
+    second = (
+        "sGT2"
+        if mode == "http_hardcoded_second_session"
+        else str(created2["session_id"])
+    )
+    primary_messages = messages_for_session(messages, first)
     secondary_message = message_for_session(messages[0], second)
     sent = copy.deepcopy(primary_messages[0])
     if mode == "rewritten_envelope":
@@ -992,7 +1170,15 @@ def execute_http_client(
     poll_messages = list((poll_body or {}).get("messages", []))
     next_cursor = str((poll_body or {}).get("next_cursor", ""))
     head_status, _, head_body, _ = request("GET", f"/aicp/v1/sessions/{first}/head", bearer=bearer)
-    ack_body = {"cursor": "wrong" if mode == "missing_ack" else next_cursor}
+    ack_body = {
+        "cursor": (
+            "wrong"
+            if mode == "missing_ack"
+            else "c2"
+            if mode == "http_hardcoded_ack_c2"
+            else next_cursor
+        )
+    }
     ack_status, _, _, _ = request("POST", f"/aicp/v1/sessions/{first}/ack", bearer=bearer, body=ack_body)
     expired_status, _, expired_body, _ = request("GET", f"/aicp/v1/sessions/{first}/messages?after=expired&limit=2", bearer=bearer)
     overload_status, overload_headers, _, _ = request("GET", f"/aicp/v1/sessions/{first}/overload", bearer=bearer)
@@ -1008,7 +1194,13 @@ def execute_http_client(
         sse_status, sse_headers, sse_events, sse_raw = read_sse(base_url, f"/aicp/v1/sessions/{first}/messages/stream?after=c0&limit=3", bearer=bearer, capture=records)
         overload_sse_status, _, overload_events, overload_raw = read_sse(base_url, f"/aicp/v1/sessions/{first}/messages/stream?after=overload&limit=1", bearer=bearer, capture=records)
         final_cursor = str(sse_events[-1].get("id", "")) if sse_events else ""
-        reconnect_after = "c0" if mode == "invalid_sse_reconnect" else final_cursor
+        reconnect_after = (
+            "c0"
+            if mode == "invalid_sse_reconnect"
+            else "c3"
+            if mode == "http_hardcoded_sse_reconnect_c3"
+            else final_cursor
+        )
         reconnect_status, _, reconnect_events, reconnect_raw = read_sse(
             base_url,
             f"/aicp/v1/sessions/{first}/messages/stream?after={final_cursor}&limit=2",
@@ -1045,6 +1237,21 @@ def execute_http_client(
     if features.get("wss") is True:
         if not websocket_url or not websocket_url.startswith("wss://"):
             raise LiveProcessError("WSS was declared without an executable WSS endpoint")
+        if role == "client_under_test" and mode != "wss_skip_untrusted_challenge":
+            if not wss_challenge_url or not wss_challenge_url.startswith("wss://"):
+                raise LiveProcessError("WSS negative TLS challenge endpoint is missing")
+            try:
+                websocket_pull(
+                    wss_challenge_url,
+                    f"/aicp/v1/sessions/{first}/messages/ws",
+                    bearer=bearer,
+                    after="c0",
+                    limit=1,
+                    tls_ca_file=tls_ca_file,
+                    tls_verify=mode != "wss_tls_verification_disabled",
+                )
+            except (LiveProcessError, ssl.SSLError):
+                pass
         wss_status, wss_frame = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="c0", limit=2, tls_ca_file=tls_ca_file, capture=records)
         wss_overload_status, wss_overload = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="overload", limit=1, tls_ca_file=tls_ca_file, capture=records)
     close_status, _, _, _ = request("POST", f"/aicp/v1/sessions/{first}/close", bearer=bearer)
