@@ -87,6 +87,12 @@ HTTP_CLIENT_NEGATIVE_MODES = {
     "invalid_ws_pull",
     "invalid_idempotency_delimiter",
     "wss_untrusted_certificate",
+    "wss_tls_verification_disabled",
+    "wss_skip_untrusted_challenge",
+    "http_hardcoded_primary_session",
+    "http_hardcoded_second_session",
+    "http_hardcoded_ack_c2",
+    "http_hardcoded_sse_reconnect_c3",
 }
 MCP_SERVER_NEGATIVE_MODES = {
     "missing_poll_tool",
@@ -112,6 +118,9 @@ MCP_CLIENT_NEGATIVE_MODES = {
     "request_id_reuse",
     "mcp_missing_after_cursor",
     "mcp_wrong_after_cursor",
+    "mcp_hardcoded_c1",
+    "mcp_reuse_stale_cursor",
+    "mcp_ignore_first_poll_response",
 }
 
 CORRECTION_NEGATIVE_MODES = {
@@ -126,9 +135,18 @@ CORRECTION_NEGATIVE_MODES = {
     "websocket_wrong_connection",
     "wss_declared_without_wss_execution",
     "wss_untrusted_certificate",
+    "wss_tls_verification_disabled",
+    "wss_skip_untrusted_challenge",
     "mcp_missing_after_cursor",
     "mcp_wrong_after_cursor",
     "mcp_server_ignores_after_cursor",
+    "http_hardcoded_primary_session",
+    "http_hardcoded_second_session",
+    "http_hardcoded_ack_c2",
+    "http_hardcoded_sse_reconnect_c3",
+    "mcp_hardcoded_c1",
+    "mcp_reuse_stale_cursor",
+    "mcp_ignore_first_poll_response",
 }
 
 
@@ -277,6 +295,7 @@ def main() -> int:
     if args.binding == "http":
         endpoint = _required_environment("AICP_LIVE_ENDPOINT_URL")
         websocket_url = os.environ.get("AICP_LIVE_WEBSOCKET_URL")
+        wss_challenge_url = os.environ.get("AICP_LIVE_WSS_CHALLENGE_URL")
         tls_ca_file = os.environ.get("AICP_LIVE_TLS_CA_FILE")
         if args.mode == "wss_untrusted_certificate":
             tls_ca_file = os.environ.get("AICP_LIVE_TLS_WRONG_CA_FILE")
@@ -287,6 +306,7 @@ def main() -> int:
             mode=args.mode,
             declared_features=descriptor["declared_features"],
             websocket_url=websocket_url,
+            wss_challenge_url=wss_challenge_url,
             tls_ca_file=tls_ca_file,
         )
         return 0

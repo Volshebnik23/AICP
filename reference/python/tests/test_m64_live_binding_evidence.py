@@ -89,7 +89,18 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_5_TARGET_CATALOG_DIGESTS,
     FROZEN_TCK_1_5_TARGET_REGISTRY_DIGEST,
     FROZEN_TCK_1_5_TARGET_REGISTRY_SCHEMA_DIGEST,
+    FROZEN_TCK_1_6_BUNDLE_MANIFEST_DIGEST,
+    FROZEN_TCK_1_6_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST,
+    FROZEN_TCK_1_6_LIVE_TRACE_SCHEMA_DIGEST,
+    FROZEN_TCK_1_6_RECORD_DIGEST,
+    FROZEN_TCK_1_6_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_6_REPORT_SCHEMA_DIGEST,
+    FROZEN_TCK_1_6_RUNNER_BUNDLE_DIGEST,
+    FROZEN_TCK_1_6_TARGET_CATALOG_DIGESTS,
+    FROZEN_TCK_1_6_TARGET_REGISTRY_DIGEST,
+    FROZEN_TCK_1_6_TARGET_REGISTRY_SCHEMA_DIGEST,
     TCK_1_5_RELEASE_ID,
+    TCK_1_6_RELEASE_ID,
     TCK_1_4_RELEASE_ID,
     canonical_digest as target_canonical_digest,
     file_digest,
@@ -188,9 +199,9 @@ def _set_fact(report: dict, scenario_id: str, name: str, value: object) -> None:
     _recompute_trace(report)
 
 
-def test_exact_binding_targets_and_tck_16_registry() -> None:
+def test_exact_binding_targets_and_tck_17_registry() -> None:
     assert BINDING_TARGET_KEYS == ("BIND-HTTP@0.1", "BIND-MCP@0.1")
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.6.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.7.0"
     assert validate_target_registry() == []
     assert validate_release_registry() == []
     for key, mark in EXPECTED_MARKS.items():
@@ -292,7 +303,7 @@ def test_tck_15_is_byte_frozen_and_explicitly_ineligible() -> None:
     assert release_policy(TCK_1_5_RELEASE_ID)["strong_eligible"] is False
 
 
-def test_zero_real_external_submissions_and_no_tck_15_adoption() -> None:
+def test_zero_real_external_submissions_and_no_tck_16_adoption() -> None:
     matrix = json.loads((ROOT / "interop/interop_matrix.json").read_text(encoding="utf-8"))
     assert matrix["real_submissions"] == []
     references: list[str] = []
@@ -300,9 +311,24 @@ def test_zero_real_external_submissions_and_no_tck_15_adoption() -> None:
         if not path.is_dir() or path.name in {"examples", "templates"} or path.name.startswith("dryrun-"):
             continue
         for candidate in path.rglob("*.json"):
-            if TCK_1_5_RELEASE_ID in candidate.read_text(encoding="utf-8"):
+            if TCK_1_6_RELEASE_ID in candidate.read_text(encoding="utf-8"):
                 references.append(candidate.relative_to(ROOT).as_posix())
     assert references == []
+
+
+def test_tck_16_is_byte_frozen_and_explicitly_ineligible() -> None:
+    release = release_record(TCK_1_6_RELEASE_ID)
+    assert target_canonical_digest(release) == FROZEN_TCK_1_6_RECORD_DIGEST
+    assert release_snapshot_digest(TCK_1_6_RELEASE_ID) == FROZEN_TCK_1_6_REGISTRY_SNAPSHOT_DIGEST
+    assert file_digest(EVIDENCE_DIR / "evidence_runner_bundle_v1_6.json") == FROZEN_TCK_1_6_BUNDLE_MANIFEST_DIGEST
+    assert release["runner_bundle"]["digest"] == FROZEN_TCK_1_6_RUNNER_BUNDLE_DIGEST
+    assert release["report_schema"]["content_digest"] == FROZEN_TCK_1_6_REPORT_SCHEMA_DIGEST
+    assert release["target_registry"]["content_digest"] == FROZEN_TCK_1_6_TARGET_REGISTRY_DIGEST
+    assert release["target_registry"]["schema_digest"] == FROZEN_TCK_1_6_TARGET_REGISTRY_SCHEMA_DIGEST
+    assert {item["target_key"]: item["target_catalog"]["content_digest"] for item in release["targets"]} == FROZEN_TCK_1_6_TARGET_CATALOG_DIGESTS
+    assert file_digest(LIVE_DIR / "live_binding_trace_v2.schema.json") == FROZEN_TCK_1_6_LIVE_TRACE_SCHEMA_DIGEST
+    assert file_digest(LIVE_DIR / "live_endpoint_descriptor_v2.schema.json") == FROZEN_TCK_1_6_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST
+    assert release_policy(TCK_1_6_RELEASE_ID)["strong_eligible"] is False
 
 
 def test_tck_16_bundle_closes_over_live_binding_package_imports() -> None:
@@ -316,6 +342,7 @@ def test_tck_16_bundle_closes_over_live_binding_package_imports() -> None:
         "conformance/evidence/live_bindings/live_http_transport.py",
         "conformance/evidence/live_bindings/live_mcp_capture.py",
         "conformance/evidence/live_bindings/live_mcp_transport.py",
+        "conformance/evidence/live_bindings/live_public_scenarios.py",
         "conformance/evidence/live_bindings/live_tls.py",
         "conformance/evidence/live_bindings/live_trace_evaluator.py",
         "conformance/evidence/live_bindings/live_trace_normalization.py",
@@ -563,6 +590,102 @@ def test_exact_live_scenario_counts_and_fresh_websocket_keys(
     )
 
 
+def _prefixed_values(value: object, prefix: str) -> set[str]:
+    if isinstance(value, str):
+        return {value} if value.startswith(prefix) else set()
+    if isinstance(value, dict):
+        return {
+            item
+            for child in value.values()
+            for item in _prefixed_values(child, prefix)
+        }
+    if isinstance(value, list):
+        return {
+            item for child in value for item in _prefixed_values(child, prefix)
+        }
+    return set()
+
+
+@pytest.mark.parametrize("binding", ["http", "mcp"])
+def test_two_clean_runs_use_distinct_opaque_challenges_but_equal_semantics(
+    external_reports: dict[str, dict], binding: str
+) -> None:
+    content = external_reports[binding]["generated_artifacts"][0]["content"]
+    first, second = content["runs"]
+    prefixes = ("session:", "cursor:") if binding == "http" else ("cursor:",)
+    for prefix in prefixes:
+        first_values = _prefixed_values(first, prefix)
+        second_values = _prefixed_values(second, prefix)
+        assert first_values
+        assert second_values
+        assert first_values.isdisjoint(second_values)
+    assert content["semantic_digest"] == content["repeat_semantic_digest"]
+
+
+def test_wss_client_challenge_is_repository_observed(
+    external_reports: dict[str, dict]
+) -> None:
+    for run_index in range(2):
+        evidence = _interaction(
+            external_reports["http"], "LIVE-HTTP-CLIENT-WSS", run_index
+        )["transport_evidence"]
+        assert evidence["tls_challenges"] == [
+            {
+                "endpoint_class": "untrusted",
+                "connection_attempted": True,
+                "tls_handshake_completed": False,
+                "websocket_application_handshake_observed": False,
+                "connection_order": 1,
+                "tls_handshake_order": None,
+                "websocket_application_handshake_order": None,
+            },
+            {
+                "endpoint_class": "trusted",
+                "connection_attempted": True,
+                "tls_handshake_completed": True,
+                "websocket_application_handshake_observed": True,
+                "connection_order": 2,
+                "tls_handshake_order": 3,
+                "websocket_application_handshake_order": 4,
+            },
+        ]
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "remove_untrusted",
+        "accept_untrusted_tls",
+        "upgrade_untrusted",
+        "remove_trusted_success",
+        "swap_endpoint_classes",
+        "change_role_binding",
+    ],
+)
+def test_wss_challenge_mutations_are_rejected(
+    external_reports: dict[str, dict], mutation: str
+) -> None:
+    report = copy.deepcopy(external_reports["http"])
+    for run_index in range(2):
+        interaction = _interaction(report, "LIVE-HTTP-CLIENT-WSS", run_index)
+        challenges = interaction["transport_evidence"]["tls_challenges"]
+        if mutation == "remove_untrusted":
+            challenges.pop(0)
+        elif mutation == "accept_untrusted_tls":
+            challenges[0]["tls_handshake_completed"] = True
+        elif mutation == "upgrade_untrusted":
+            challenges[0]["websocket_application_handshake_observed"] = True
+        elif mutation == "remove_trusted_success":
+            challenges[1]["tls_handshake_completed"] = False
+        elif mutation == "swap_endpoint_classes":
+            challenges[0]["endpoint_class"] = "trusted"
+            challenges[1]["endpoint_class"] = "untrusted"
+        else:
+            interaction["role"] = "server_under_test"
+    _recompute_trace(report)
+    assert evaluate_report(report)["status"] == "rejected"
+
+
 @pytest.mark.parametrize("binding", ["http", "mcp"])
 def test_reference_full_and_smoke_have_no_external_mark(binding: str) -> None:
     reference = _run(binding, kind="reference_corpus")
@@ -807,12 +930,18 @@ def test_trace_schema_structurally_rejects_secret_fields(
 ) -> None:
     from jsonschema import Draft202012Validator
 
-    schema = json.loads((LIVE_DIR / "live_binding_trace_v2.schema.json").read_text(encoding="utf-8"))
+    schema = json.loads((LIVE_DIR / "live_binding_trace_v3.schema.json").read_text(encoding="utf-8"))
     artifact = copy.deepcopy(external_reports["http"]["generated_artifacts"][0])
     artifact["content"]["runs"][0]["interactions"][0]["observations"] = [
         {"name": "authorization", "value": "Bearer forbidden"}
     ]
     assert list(Draft202012Validator(schema).iter_errors(artifact))
+
+    exchange_leak = copy.deepcopy(external_reports["http"]["generated_artifacts"][0])
+    exchange_leak["content"]["runs"][0]["interactions"][0][
+        "transport_evidence"
+    ]["exchanges"][0]["private_oracle"] = "Bearer forbidden"
+    assert list(Draft202012Validator(schema).iter_errors(exchange_leak))
 
 
 def test_semantic_normalization_allows_opaque_spelling_and_order_only(
@@ -958,6 +1087,36 @@ def test_direct_mcp_child_process_stdio_and_jsonrpc_correlation() -> None:
         finally:
             terminate_and_reap(process)
             stderr.finish()
+
+
+def test_ready_descriptor_retries_transient_windows_read_denial(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    ready = tmp_path / "ready.json"
+    ready.write_text('{"transport":"stdio"}', encoding="utf-8")
+    original_read_bytes = Path.read_bytes
+    attempts = 0
+
+    def transient_read_denial(path: Path) -> bytes:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise PermissionError("transient sharing violation")
+        return original_read_bytes(path)
+
+    class RunningProcess:
+        @staticmethod
+        def poll() -> None:
+            return None
+
+    monkeypatch.setattr(Path, "read_bytes", transient_read_denial)
+    assert wait_ready_descriptor(
+        RunningProcess(),  # type: ignore[arg-type]
+        ready,
+        deadline=time.monotonic() + 1,
+    ) == {"transport": "stdio"}
+    assert attempts == 2
 
 
 def test_loopback_policy_and_subprocess_argument_vector_are_load_bearing(

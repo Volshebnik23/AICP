@@ -799,7 +799,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Reachable external capability marks | {capability_summary['reachable_external_capability_marks']} | evidence target registry and TCK provenance |",
         f"| Externally demonstrated capabilities | {capability_summary['externally_demonstrated_capabilities']} | eligible capability-specific `eligible_targets` only |",
         f"| External binding targets | {binding_summary['external_binding_targets']} | `conformance/evidence/targets.json` |",
-        f"| Reachable external binding marks | {binding_summary['reachable_external_binding_marks']} | evidence target registry and TCK 1.6 provenance |",
+        f"| Reachable external binding marks | {binding_summary['reachable_external_binding_marks']} | evidence target registry and TCK 1.7 provenance |",
         f"| Externally demonstrated bindings | {binding_summary['externally_demonstrated_bindings']} | eligible binding-specific `computed_binding_marks` only |",
         f"| Real submission packages | {interop['real_submission_package_count']} | `interop/interop_matrix.json` |",
         f"| Eligible external submissions | {interop['eligible_external_submission_count']} | public interop eligibility plus typed computed profile/capability/binding evidence |",

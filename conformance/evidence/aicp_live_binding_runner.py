@@ -56,16 +56,20 @@ from live_bindings.live_binding_trace import (  # noqa: E402
     load_scenario_catalog,
 )
 from live_bindings.live_http_transport import (  # noqa: E402
+    TlsChallengeObservation,
+    TlsChallengeSequence,
     execute_http_client,
     interactions_from_capture,
     load_messages,
     start_http_server,
     stop_http_server,
 )
+from live_bindings.live_http_capture import attach_tls_challenge_evidence  # noqa: E402
 from live_bindings.live_mcp_transport import (  # noqa: E402
     execute_mcp_server,
     serve_mcp_client,
 )
+from live_bindings.live_public_scenarios import public_scenario_projection  # noqa: E402
 from live_bindings.live_tls import (  # noqa: E402
     generate_ephemeral_tls_material,
     server_ssl_context,
@@ -73,7 +77,10 @@ from live_bindings.live_tls import (  # noqa: E402
 
 
 READY_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_endpoint_descriptor_v2.schema.json"
-TRACE_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_binding_trace_v2.schema.json"
+TRACE_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_binding_trace_v3.schema.json"
+PUBLIC_SCENARIO_SCHEMA_PATH = (
+    EVIDENCE_DIR / "live_bindings/live_public_scenario_v1.schema.json"
+)
 ROLE_NAMES = ("server_under_test", "client_under_test")
 
 
@@ -128,16 +135,21 @@ def _validate_descriptor(
 
 def _scenario_payload(binding_id: str, role: str, run_index: int) -> dict[str, Any]:
     catalog = load_scenario_catalog(binding_id)
-    return {
-        "protocol": "aicp.live_scenario.v1",
-        "target": catalog["target"],
-        "tested_role": role,
-        "run_index": run_index,
-        "scenarios": [
-            item for item in catalog["scenarios"] if item["tested_role"] == role
-        ],
-        "input_messages": load_messages(),
-    }
+    payload = public_scenario_projection(
+        catalog,
+        tested_role=role,
+        run_index=run_index,
+        input_messages=load_messages(),
+    )
+    validator = build_validator(
+        load_json(PUBLIC_SCENARIO_SCHEMA_PATH), PUBLIC_SCENARIO_SCHEMA_PATH
+    )
+    if validator is None:
+        raise LiveProcessError("jsonschema is required for public live scenarios")
+    issues = sorted(validator.iter_errors(payload), key=lambda item: list(item.path))
+    if issues:
+        raise LiveProcessError(f"public live scenario schema error: {issues[0].message}")
+    return payload
 
 
 def _control_environment(
@@ -150,6 +162,7 @@ def _control_environment(
     bearer: str,
     endpoint_url: str | None = None,
     websocket_url: str | None = None,
+    wss_challenge_url: str | None = None,
     tls_ca_file: Path | None = None,
     tls_cert_file: Path | None = None,
     tls_key_file: Path | None = None,
@@ -168,6 +181,8 @@ def _control_environment(
         values["AICP_LIVE_ENDPOINT_URL"] = endpoint_url
     if websocket_url is not None:
         values["AICP_LIVE_WEBSOCKET_URL"] = websocket_url
+    if wss_challenge_url is not None:
+        values["AICP_LIVE_WSS_CHALLENGE_URL"] = wss_challenge_url
     for name, path in (
         ("AICP_LIVE_TLS_CA_FILE", tls_ca_file),
         ("AICP_LIVE_TLS_CERT_FILE", tls_cert_file),
@@ -249,14 +264,31 @@ def _run_http_client_role(
     tls_directory = Path(temporary_context.name)
     material = generate_ephemeral_tls_material(tls_directory, stem="server")
     wrong_material = generate_ephemeral_tls_material(tls_directory, stem="wrong")
+    challenge_sequence = TlsChallengeSequence()
+    trusted_observation = TlsChallengeObservation(
+        endpoint_class="trusted", sequence=challenge_sequence
+    )
+    untrusted_observation = TlsChallengeObservation(
+        endpoint_class="untrusted", sequence=challenge_sequence
+    )
     server, state, thread = start_http_server(bearer)
     tls_server, _tls_state, tls_thread = start_http_server(
         bearer,
         ssl_context=server_ssl_context(material),
         state=state,
+        tls_observation=trusted_observation,
+    )
+    untrusted_server, _untrusted_state, untrusted_thread = start_http_server(
+        bearer,
+        ssl_context=server_ssl_context(wrong_material),
+        state=state,
+        tls_observation=untrusted_observation,
     )
     base_url = f"http://127.0.0.1:{server.server_address[1]}"
     websocket_url = f"wss://127.0.0.1:{tls_server.server_address[1]}"
+    wss_challenge_url = (
+        f"wss://127.0.0.1:{untrusted_server.server_address[1]}"
+    )
     try:
         with tempfile.TemporaryDirectory(prefix="aicp-live-http-client-") as temporary:
             directory = Path(temporary)
@@ -275,8 +307,8 @@ def _run_http_client_role(
                 bearer=bearer,
                 endpoint_url=base_url,
                 websocket_url=websocket_url,
+                wss_challenge_url=wss_challenge_url,
                 tls_ca_file=material.ca_file,
-                tls_wrong_ca_file=wrong_material.ca_file,
             )
             process, stdout_collector, stderr_collector = spawn_process(
                 command,
@@ -299,6 +331,13 @@ def _run_http_client_role(
                     role="client_under_test",
                     declared_features=descriptor["declared_features"],
                 )
+                interactions = attach_tls_challenge_evidence(
+                    interactions,
+                    [
+                        untrusted_observation.evidence(),
+                        trusted_observation.evidence(),
+                    ],
+                )
                 reject_secret_reflection(
                     {"descriptor": descriptor, "interactions": interactions},
                     [bearer, material.private_key_pem, wrong_material.private_key_pem],
@@ -313,6 +352,7 @@ def _run_http_client_role(
     finally:
         stop_http_server(server, thread)
         stop_http_server(tls_server, tls_thread)
+        stop_http_server(untrusted_server, untrusted_thread)
         temporary_context.cleanup()
 
 
@@ -518,7 +558,7 @@ def run_live_binding_evidence(
     record_case(
         "EVIDENCE-RUNNER-WORKTREE-01",
         bundle_matches,
-        "actual runtime import closure matches TCK 1.6" if bundle_matches else "actual live runner bytes differ from the registered release",
+        "actual runtime import closure matches TCK 1.7" if bundle_matches else "actual live runner bytes differ from the registered release",
     )
 
     roles_to_run = ["server_under_test"] + (["client_under_test"] if mode == "full-binding" else [])

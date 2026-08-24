@@ -11,6 +11,22 @@ from target_catalog import canonical_digest
 RFC6455_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 SESSION_FIELDS = {"session_id"}
 CURSOR_FIELDS = {"cursor", "next_cursor", "after", "after_cursor", "min_cursor", "id"}
+MESSAGE_DIGEST_FIELDS = {
+    "canonical_digest",
+    "message_hash",
+    "prev_msg_hash",
+    "head_message_hash",
+}
+
+
+def valid_websocket_key(key: Any) -> bool:
+    if not isinstance(key, str):
+        return False
+    try:
+        decoded = base64.b64decode(key.encode("ascii"), validate=True)
+    except (UnicodeEncodeError, ValueError):
+        return False
+    return len(decoded) == 16
 
 
 def websocket_accept(key: str) -> str:
@@ -36,7 +52,11 @@ def _normalize_ws(exchange: dict[str, Any]) -> None:
     key = request_headers.get("sec-websocket-key")
     accept = response_headers.get("sec-websocket-accept")
     if isinstance(key, str) and key:
-        valid = isinstance(accept, str) and accept == websocket_accept(key)
+        valid = (
+            valid_websocket_key(key)
+            and isinstance(accept, str)
+            and accept == websocket_accept(key)
+        )
         request_headers["sec-websocket-key"] = "ws-key"
         if isinstance(accept, str):
             response_headers["sec-websocket-accept"] = (
@@ -80,13 +100,19 @@ def normalize_v2_run(run: dict[str, Any]) -> dict[str, Any]:
     sessions: dict[str, str] = {}
     cursors: dict[str, str] = {}
     requests: dict[str, str] = {}
+    message_digests: dict[str, str] = {}
     _collect(ordered, SESSION_FIELDS, sessions, "session")
     _collect(ordered, CURSOR_FIELDS - {"id"}, cursors, "cursor")
+    _collect(ordered, MESSAGE_DIGEST_FIELDS, message_digests, "message-digest")
     for interaction in ordered:
         evidence = interaction.get("transport_evidence", {})
         if evidence.get("kind") == "mcp_stdio":
             _collect(evidence.get("exchanges", []), {"id"}, requests, "request")
-    return {"interactions": _replace(ordered, [sessions, cursors, requests])}
+    return {
+        "interactions": _replace(
+            ordered, [sessions, cursors, requests, message_digests]
+        )
+    }
 
 
 def semantic_digest_v2(run: dict[str, Any]) -> str:

@@ -19,6 +19,7 @@ from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from live_bindings.live_http_capture import idempotency_key_valid  # noqa: E402
 from live_bindings.live_trace_normalization import (  # noqa: E402
     semantic_digest_v2,
+    valid_websocket_key,
     websocket_accept,
 )
 from target_catalog import canonical_digest  # noqa: E402
@@ -42,13 +43,26 @@ def _required_scenarios(catalog: dict[str, Any], roles: dict[str, dict[str, Any]
 
 def _expected_message(session_id: str, index: int) -> dict[str, Any]:
     path = ROOT / "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"
-    source = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()][index]
-    value = copy.deepcopy(source)
-    value["session_id"] = session_id
-    value.pop("signatures", None)
-    value.pop("message_hash", None)
-    value["message_hash"] = message_hash_from_body(value)
-    return value
+    sources = [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    previous_hash: str | None = None
+    values: list[dict[str, Any]] = []
+    for source in sources:
+        value = copy.deepcopy(source)
+        value["session_id"] = session_id
+        value.pop("signatures", None)
+        value.pop("message_hash", None)
+        if previous_hash is None:
+            value.pop("prev_msg_hash", None)
+        else:
+            value["prev_msg_hash"] = previous_hash
+        value["message_hash"] = message_hash_from_body(value)
+        previous_hash = str(value["message_hash"])
+        values.append(value)
+    return values[index]
 
 
 def _headers_token(value: Any, token: str) -> bool:
@@ -75,7 +89,12 @@ def _message_refs(exchange: dict[str, Any]) -> list[dict[str, Any]]:
     return refs if isinstance(refs, list) else []
 
 
-def _http_errors(interaction: dict[str, Any], family: str) -> list[str]:
+def _http_errors(
+    interaction: dict[str, Any],
+    family: str,
+    *,
+    trace_version: str,
+) -> list[str]:
     evidence = interaction.get("transport_evidence", {})
     exchanges = evidence.get("exchanges") if isinstance(evidence, dict) else None
     if not isinstance(exchanges, list) or not exchanges:
@@ -228,7 +247,7 @@ def _http_errors(interaction: dict[str, Any], family: str) -> list[str]:
                 errors.append(f"{required_scheme.upper()} status or scheme is invalid")
             if not _headers_token(request_headers.get("upgrade"), "websocket") or not _headers_token(request_headers.get("connection"), "upgrade") or request_headers.get("sec-websocket-version") != "13":
                 errors.append("WebSocket request handshake headers are invalid")
-            if not _headers_token(response_headers.get("upgrade"), "websocket") or not _headers_token(response_headers.get("connection"), "upgrade") or not key or response_headers.get("sec-websocket-accept") != websocket_accept(key):
+            if not _headers_token(response_headers.get("upgrade"), "websocket") or not _headers_token(response_headers.get("connection"), "upgrade") or not valid_websocket_key(key) or response_headers.get("sec-websocket-accept") != websocket_accept(key):
                 errors.append("WebSocket response handshake or Sec-WebSocket-Accept is invalid")
             if required_scheme == "wss" and item.get("tls_verified") is not True:
                 errors.append("WSS certificate verification was not executed")
@@ -254,6 +273,54 @@ def _http_errors(interaction: dict[str, Any], family: str) -> list[str]:
                 errors.append("WebSocket ordered message chain is broken")
         if overload is None or not overload.get("server_frame", {}).get("retry_after"):
             errors.append("WebSocket overload retry frame is missing")
+        if (
+            family == "wss_pull"
+            and interaction.get("role") == "client_under_test"
+            and trace_version == "aicp.live_binding_trace.v3"
+        ):
+            challenges = evidence.get("tls_challenges")
+            by_class = {
+                item.get("endpoint_class"): item
+                for item in challenges
+                if isinstance(item, dict)
+            } if isinstance(challenges, list) else {}
+            if set(by_class) != {"trusted", "untrusted"} or len(challenges or []) != 2:
+                errors.append("WSS client TLS challenge pair is missing or duplicated")
+            else:
+                untrusted = by_class["untrusted"]
+                trusted = by_class["trusted"]
+                if (
+                    untrusted.get("connection_attempted") is not True
+                    or untrusted.get("tls_handshake_completed") is not False
+                    or untrusted.get("websocket_application_handshake_observed")
+                    is not False
+                ):
+                    errors.append("untrusted WSS endpoint was skipped or accepted")
+                if (
+                    trusted.get("connection_attempted") is not True
+                    or trusted.get("tls_handshake_completed") is not True
+                    or trusted.get("websocket_application_handshake_observed")
+                    is not True
+                ):
+                    errors.append("trusted WSS endpoint did not complete TLS and Upgrade")
+                untrusted_order = untrusted.get("connection_order")
+                trusted_order = trusted.get("connection_order")
+                if (
+                    not isinstance(untrusted_order, int)
+                    or not isinstance(trusted_order, int)
+                    or untrusted_order >= trusted_order
+                ):
+                    errors.append("untrusted WSS challenge did not precede trusted WSS execution")
+                trusted_tls_order = trusted.get("tls_handshake_order")
+                trusted_upgrade_order = trusted.get(
+                    "websocket_application_handshake_order"
+                )
+                if (
+                    not isinstance(trusted_tls_order, int)
+                    or not isinstance(trusted_upgrade_order, int)
+                    or not trusted_order < trusted_tls_order < trusted_upgrade_order
+                ):
+                    errors.append("trusted WSS observation order is inconsistent")
     elif family == "close_session":
         if len(exchanges) < 2 or exchanges[0]["response"].get("status") != 204 or exchanges[1]["response"].get("status") not in {409, 410}:
             errors.append("closed HTTP session continued accepting traffic")
@@ -357,8 +424,12 @@ def evaluate_v2_trace(
     content = artifact.get("content")
     if not isinstance(content, dict):
         return ["live binding trace content is missing"]
-    if content.get("trace_version") != "aicp.live_binding_trace.v2":
-        return ["TCK 1.6 requires live binding transport evidence trace v2"]
+    trace_version = str(content.get("trace_version", ""))
+    if trace_version not in {
+        "aicp.live_binding_trace.v2",
+        "aicp.live_binding_trace.v3",
+    }:
+        return ["live binding evidence requires transport evidence trace v2 or v3"]
     if artifact.get("content_digest") != canonical_digest(content):
         errors.append("live trace content digest does not recompute")
     if artifact.get("repeat_content_digest") != artifact.get("content_digest"):
@@ -417,6 +488,23 @@ def evaluate_v2_trace(
             family = family_by_id.get(scenario_id)
             if family is None or family in disabled_families:
                 continue
-            messages = _http_errors(interaction, family) if scenario_id.startswith("LIVE-HTTP") else _mcp_errors(interaction, family)
+            expected_role = (
+                "server_under_test"
+                if "-SERVER-" in scenario_id
+                else "client_under_test"
+            )
+            if interaction.get("role") != expected_role:
+                errors.append(
+                    f"{scenario_id}: interaction role does not match scenario/build binding"
+                )
+            messages = (
+                _http_errors(
+                    interaction,
+                    family,
+                    trace_version=trace_version,
+                )
+                if scenario_id.startswith("LIVE-HTTP")
+                else _mcp_errors(interaction, family)
+            )
             errors.extend(f"{scenario_id}: {message}" for message in messages)
     return sorted(set(errors))
