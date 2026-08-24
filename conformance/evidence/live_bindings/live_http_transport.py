@@ -46,6 +46,30 @@ ROLE_PREFIX = {
     "server_under_test": "LIVE-HTTP-SERVER",
     "client_under_test": "LIVE-HTTP-CLIENT",
 }
+TLS_FAILURE_CLASSES = {
+    "none",
+    "no_tls_handshake",
+    "non_tls_protocol",
+    "tls_pre_certificate_abort",
+    "certificate_rejected",
+    "tls_handshake_completed",
+}
+_CERTIFICATE_REJECTION_REASONS = {
+    "SSLV3_ALERT_BAD_CERTIFICATE",
+    "SSLV3_ALERT_CERTIFICATE_UNKNOWN",
+    "TLSV1_ALERT_ACCESS_DENIED",
+    # CPython/OpenSSL emits this alert when CertificateVerify validation fails
+    # for the challenge's TLS 1.2 handshake on supported Windows runtimes.
+    "TLSV1_ALERT_DECRYPT_ERROR",
+    "TLSV1_ALERT_UNKNOWN_CA",
+}
+_NON_TLS_REASONS = {
+    "HTTP_REQUEST",
+    "HTTPS_PROXY_REQUEST",
+    "PACKET_LENGTH_TOO_LONG",
+    "UNKNOWN_PROTOCOL",
+    "WRONG_VERSION_NUMBER",
+}
 
 
 def load_messages() -> list[dict[str, Any]]:
@@ -158,7 +182,9 @@ class TlsChallengeObservation:
     tcp_accept_count: int = 0
     tls_handshake_count: int = 0
     websocket_upgrade_count: int = 0
+    tls_failure_class: str = "none"
     connection_order: int | None = None
+    tls_failure_order: int | None = None
     tls_handshake_order: int | None = None
     websocket_application_handshake_order: int | None = None
     lock: threading.Lock = field(default_factory=threading.Lock)
@@ -175,6 +201,17 @@ class TlsChallengeObservation:
             if self.tls_handshake_order is None:
                 self.tls_handshake_order = self.sequence.next()
 
+    def note_tls_failure(self, failure_class: str) -> None:
+        if failure_class not in TLS_FAILURE_CLASSES - {
+            "none",
+            "tls_handshake_completed",
+        }:
+            raise ValueError(f"invalid TLS failure class: {failure_class}")
+        with self.lock:
+            if self.tls_failure_class == "none":
+                self.tls_failure_class = failure_class
+                self.tls_failure_order = self.sequence.next()
+
     def note_websocket_upgrade(self) -> None:
         with self.lock:
             self.websocket_upgrade_count += 1
@@ -186,16 +223,31 @@ class TlsChallengeObservation:
             return {
                 "endpoint_class": self.endpoint_class,
                 "connection_attempted": self.tcp_accept_count > 0,
+                "tls_failure_class": (
+                    "tls_handshake_completed"
+                    if self.tls_handshake_count > 0
+                    else self.tls_failure_class
+                ),
                 "tls_handshake_completed": self.tls_handshake_count > 0,
                 "websocket_application_handshake_observed": (
                     self.websocket_upgrade_count > 0
                 ),
                 "connection_order": self.connection_order,
+                "tls_failure_order": self.tls_failure_order,
                 "tls_handshake_order": self.tls_handshake_order,
                 "websocket_application_handshake_order": (
                     self.websocket_application_handshake_order
                 ),
             }
+
+
+def classify_tls_failure(exc: ssl.SSLError) -> str:
+    reason = str(getattr(exc, "reason", "") or "").upper()
+    if reason in _CERTIFICATE_REJECTION_REASONS:
+        return "certificate_rejected"
+    if reason in _NON_TLS_REASONS:
+        return "non_tls_protocol"
+    return "tls_pre_certificate_abort"
 
 
 class _ObservedTlsHttpServer(ThreadingHTTPServer):
@@ -214,11 +266,33 @@ class _ObservedTlsHttpServer(ThreadingHTTPServer):
     def get_request(self) -> tuple[socket.socket, Any]:
         raw_socket, address = self.socket.accept()
         self.live_tls_observation.note_tcp_accept()
+        raw_socket.settimeout(3)
+        try:
+            prefix = raw_socket.recv(5, socket.MSG_PEEK)
+        except socket.timeout:
+            self.live_tls_observation.note_tls_failure("no_tls_handshake")
+            raw_socket.close()
+            raise
+        if not prefix:
+            self.live_tls_observation.note_tls_failure("no_tls_handshake")
+            raw_socket.close()
+            raise OSError("peer closed before TLS negotiation")
+        if prefix[0] != 0x16:
+            self.live_tls_observation.note_tls_failure("non_tls_protocol")
+            raw_socket.close()
+            raise OSError("peer sent a non-TLS protocol to the TLS endpoint")
         try:
             tls_socket = self.live_ssl_context.wrap_socket(
                 raw_socket, server_side=True
             )
-        except ssl.SSLError:
+        except ssl.SSLError as exc:
+            self.live_tls_observation.note_tls_failure(classify_tls_failure(exc))
+            raw_socket.close()
+            raise
+        except OSError:
+            self.live_tls_observation.note_tls_failure(
+                "tls_pre_certificate_abort"
+            )
             raw_socket.close()
             raise
         self.live_tls_observation.note_tls_handshake()
@@ -1036,6 +1110,74 @@ def websocket_pull(
         sock.close()
 
 
+def reject_untrusted_tls_certificate(
+    websocket_url: str, *, tls_ca_file: str | None
+) -> None:
+    parsed = urlsplit(validate_loopback_url(websocket_url))
+    if parsed.scheme != "wss" or not tls_ca_file:
+        raise LiveProcessError(
+            "WSS certificate challenge requires wss and an explicit trusted CA"
+        )
+    context = ssl.create_default_context(cafile=tls_ca_file)
+    incoming = ssl.MemoryBIO()
+    outgoing = ssl.MemoryBIO()
+    tls = context.wrap_bio(
+        incoming,
+        outgoing,
+        server_side=False,
+        server_hostname=parsed.hostname,
+    )
+
+    def flush_outgoing(sock: socket.socket) -> None:
+        while True:
+            chunk = outgoing.read()
+            if not chunk:
+                return
+            sock.sendall(chunk)
+
+    with socket.create_connection((parsed.hostname, parsed.port), timeout=3) as sock:
+        while True:
+            try:
+                tls.do_handshake()
+            except ssl.SSLWantReadError:
+                flush_outgoing(sock)
+                data = sock.recv(16_384)
+                if not data:
+                    raise LiveProcessError(
+                        "TLS challenge ended before certificate validation"
+                    )
+                incoming.write(data)
+            except ssl.SSLCertVerificationError:
+                # MemoryBIO exposes the TLS alert generated by OpenSSL. Send
+                # it before closing so the repository endpoint can distinguish
+                # certificate rejection from an EOF-only handshake abort.
+                flush_outgoing(sock)
+                return
+            except ssl.SSLError as exc:
+                flush_outgoing(sock)
+                raise LiveProcessError(
+                    "TLS challenge failed before certificate rejection"
+                ) from exc
+            else:
+                flush_outgoing(sock)
+                raise LiveProcessError(
+                    "untrusted TLS challenge unexpectedly completed"
+                )
+
+
+def probe_tls_endpoint(websocket_url: str, *, plaintext: bool = False) -> None:
+    parsed = urlsplit(validate_loopback_url(websocket_url))
+    if parsed.scheme != "wss":
+        raise LiveProcessError("TLS challenge endpoint must use wss")
+    with socket.create_connection((parsed.hostname, parsed.port), timeout=3) as sock:
+        if plaintext:
+            sock.sendall(
+                f"GET / HTTP/1.1\r\nHost: {parsed.hostname}:{parsed.port}\r\n\r\n".encode(
+                    "ascii"
+                )
+            )
+
+
 def _interaction(
     role: str,
     suffix: str,
@@ -1240,7 +1382,15 @@ def execute_http_client(
         if role == "client_under_test" and mode != "wss_skip_untrusted_challenge":
             if not wss_challenge_url or not wss_challenge_url.startswith("wss://"):
                 raise LiveProcessError("WSS negative TLS challenge endpoint is missing")
-            try:
+            if mode in {
+                "wss_tcp_probe_then_disable_verification",
+                "wss_plaintext_probe_then_disable_verification",
+            }:
+                probe_tls_endpoint(
+                    wss_challenge_url,
+                    plaintext=mode == "wss_plaintext_probe_then_disable_verification",
+                )
+            elif mode == "wss_tls_verification_disabled":
                 websocket_pull(
                     wss_challenge_url,
                     f"/aicp/v1/sessions/{first}/messages/ws",
@@ -1248,12 +1398,19 @@ def execute_http_client(
                     after="c0",
                     limit=1,
                     tls_ca_file=tls_ca_file,
-                    tls_verify=mode != "wss_tls_verification_disabled",
+                    tls_verify=False,
                 )
-            except (LiveProcessError, ssl.SSLError):
-                pass
-        wss_status, wss_frame = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="c0", limit=2, tls_ca_file=tls_ca_file, capture=records)
-        wss_overload_status, wss_overload = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="overload", limit=1, tls_ca_file=tls_ca_file, capture=records)
+            else:
+                reject_untrusted_tls_certificate(
+                    wss_challenge_url,
+                    tls_ca_file=tls_ca_file,
+                )
+        trusted_tls_verify = mode not in {
+            "wss_tcp_probe_then_disable_verification",
+            "wss_plaintext_probe_then_disable_verification",
+        }
+        wss_status, wss_frame = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="c0", limit=2, tls_ca_file=tls_ca_file, tls_verify=trusted_tls_verify, capture=records)
+        wss_overload_status, wss_overload = websocket_pull(websocket_url, f"/aicp/v1/sessions/{first}/messages/ws", bearer=bearer, after="overload", limit=1, tls_ca_file=tls_ca_file, tls_verify=trusted_tls_verify, capture=records)
     close_status, _, _, _ = request("POST", f"/aicp/v1/sessions/{first}/close", bearer=bearer)
     closed_status, _, _, _ = request(
         "POST",

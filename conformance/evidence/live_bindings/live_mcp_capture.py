@@ -93,7 +93,10 @@ def attach_mcp_transport_evidence(
         elif scenario_id.endswith("-DUPLICATE"):
             selected = safe[:2]
         elif scenario_id.endswith("-POLL"):
-            selected = safe[3:5]
+            # Poll causality is evaluated from the complete client-visible
+            # response prefix, not from an isolated pair that could hide an
+            # earlier disclosure of the continuation token.
+            selected = safe[:5] if role == "client_under_test" else safe[3:5]
         elif scenario_id.endswith("-HEAD"):
             selected = safe[5:6]
         elif scenario_id.endswith("-OBJECT"):

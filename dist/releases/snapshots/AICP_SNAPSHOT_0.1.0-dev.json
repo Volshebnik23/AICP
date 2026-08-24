@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "760342d7b3391b1b0d95f6f9ef38d82b5218c416d243aa60a97ddf69a302ad47",
+      "combined_sha256": "be788ccefb5432c64df590fca239f19bfcb081e0e0c33750d0e0bd054a76cc3b",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -72,8 +72,12 @@
           "sha256": "2f64601d851ffc368545633ef29f52f893763ef06fe4e59d4117659b0218f8e6"
         },
         {
+          "path": "conformance/evidence/evidence_runner_bundle_v1_8.json",
+          "sha256": "b5d5e9bfece7f0743e336397f45cd9b8a755934468cd854d5f6f3ae1f23c8212"
+        },
+        {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "ec3a4470234c37a897c73f6d692e0ede9db44995f1f078ca3e11e93633578d8c"
+          "sha256": "cd37d66c92b6f49418b5c9fddb8c30976fce64a0622fd56e6ad16993c26a3f1e"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -104,6 +108,10 @@
           "sha256": "b6e15ef07eac998372408c8da7fb8ee76024ada04f9105f8d91a6dfa647e8fc0"
         },
         {
+          "path": "conformance/evidence/live_bindings/http_v01_target_v4.json",
+          "sha256": "00d440218fb22148ba277b3ebc67beff610cb0dec7bd927409dcd03b0e9cdba3"
+        },
+        {
           "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
           "sha256": "b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
         },
@@ -118,6 +126,10 @@
         {
           "path": "conformance/evidence/live_bindings/live_binding_trace_v3.schema.json",
           "sha256": "79809571d66260f0dc04a02a2c77c4cbacf88fb1f0f5c1b57d634da90e14a11f"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+          "sha256": "50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
         },
         {
           "path": "conformance/evidence/live_bindings/live_endpoint_descriptor.schema.json",
@@ -146,6 +158,10 @@
         {
           "path": "conformance/evidence/live_bindings/mcp_v01_target_v3.json",
           "sha256": "035b8711a1d3159be4ecd683d1934c8a2cd3b3487b11712b8428e20d799739d1"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+          "sha256": "1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
         },
         {
           "path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
@@ -208,6 +224,10 @@
           "sha256": "ec3a4470234c37a897c73f6d692e0ede9db44995f1f078ca3e11e93633578d8c"
         },
         {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.8.0.json",
+          "sha256": "cd37d66c92b6f49418b5c9fddb8c30976fce64a0622fd56e6ad16993c26a3f1e"
+        },
+        {
           "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
           "sha256": "2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
         },
@@ -225,7 +245,7 @@
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "8b0bd1b0bf19e0d3f0c0cf199f6120855360e39eca3169249f4cd6d4de6a6d05"
+          "sha256": "180a30bb4218345d59b8d236f9bd20db46ee47253aa78392e17bff767d8f591e"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",

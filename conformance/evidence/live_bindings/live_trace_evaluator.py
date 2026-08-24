@@ -276,7 +276,10 @@ def _http_errors(
         if (
             family == "wss_pull"
             and interaction.get("role") == "client_under_test"
-            and trace_version == "aicp.live_binding_trace.v3"
+            and trace_version in {
+                "aicp.live_binding_trace.v3",
+                "aicp.live_binding_trace.v4",
+            }
         ):
             challenges = evidence.get("tls_challenges")
             by_class = {
@@ -303,6 +306,17 @@ def _http_errors(
                     is not True
                 ):
                     errors.append("trusted WSS endpoint did not complete TLS and Upgrade")
+                if trace_version == "aicp.live_binding_trace.v4":
+                    if untrusted.get("tls_failure_class") != "certificate_rejected":
+                        errors.append(
+                            "untrusted WSS endpoint did not prove certificate rejection"
+                        )
+                    if trusted.get("tls_failure_class") != "tls_handshake_completed":
+                        errors.append("trusted WSS endpoint TLS outcome is invalid")
+                    if untrusted.get("tls_failure_order") is None:
+                        errors.append("untrusted WSS TLS failure order is missing")
+                    if trusted.get("tls_failure_order") is not None:
+                        errors.append("trusted WSS endpoint recorded a TLS failure")
                 untrusted_order = untrusted.get("connection_order")
                 trusted_order = trusted.get("connection_order")
                 if (
@@ -311,6 +325,19 @@ def _http_errors(
                     or untrusted_order >= trusted_order
                 ):
                     errors.append("untrusted WSS challenge did not precede trusted WSS execution")
+                if trace_version == "aicp.live_binding_trace.v4":
+                    untrusted_failure_order = untrusted.get("tls_failure_order")
+                    if (
+                        not isinstance(untrusted_failure_order, int)
+                        or not isinstance(untrusted_order, int)
+                        or not isinstance(trusted_order, int)
+                        or not untrusted_order
+                        < untrusted_failure_order
+                        < trusted_order
+                    ):
+                        errors.append(
+                            "certificate rejection was not observed between challenge connect and trusted execution"
+                        )
                 trusted_tls_order = trusted.get("tls_handshake_order")
                 trusted_upgrade_order = trusted.get(
                     "websocket_application_handshake_order"
@@ -356,19 +383,42 @@ def _mcp_errors(interaction: dict[str, Any], family: str) -> list[str]:
             if first_ref != second_ref or second_result.get("accepted") is not True or second_result.get("message_hash") != (first_ref or {}).get("message_hash"):
                 errors.append("MCP duplicate delivery is not hash-stable")
     elif family == "poll_messages":
-        if len(exchanges) < 2:
+        indexed_polls = [
+            (index, item)
+            for index, item in enumerate(exchanges)
+            if item.get("request", {}).get("tool") == "aicp.pollMessages"
+        ]
+        if len(indexed_polls) != 2:
             errors.append("MCP pollMessages requires two correlated polls")
         else:
-            first, second = exchanges[:2]
+            (first_index, first), (second_index, second) = indexed_polls
             first_args = first["request"].get("arguments", {})
             second_args = second["request"].get("arguments", {})
             first_result = first["response"].get("result", {})
             second_result = second["response"].get("result", {})
             first_cursor = first_result.get("next_cursor")
-            if first["request"].get("tool") != "aicp.pollMessages" or second["request"].get("tool") != "aicp.pollMessages":
-                errors.append("MCP poll exchange used the wrong tool")
-            if first_args.get("after_cursor") != "c0" or not first_cursor or second_args.get("after_cursor") != first_cursor:
+            if not isinstance(first_cursor, str) or not first_cursor:
+                errors.append("MCP first poll did not return a continuation cursor")
+            if (
+                interaction.get("role") == "client_under_test"
+                and isinstance(first_cursor, str)
+                and first_cursor
+                and any(
+                    isinstance(prior.get("response", {}).get("result"), dict)
+                    and any(
+                        prior["response"]["result"].get(name) == first_cursor
+                        for name in ("cursor", "next_cursor")
+                    )
+                    for prior in exchanges[:first_index]
+                )
+            ):
+                errors.append(
+                    "MCP poll continuation appeared in an earlier client-visible response"
+                )
+            if first_args.get("after_cursor") != "c0" or second_args.get("after_cursor") != first_cursor:
                 errors.append("MCP second poll did not consume the exact prior cursor")
+            if second_index <= first_index:
+                errors.append("MCP second poll did not follow the first poll response")
             if first_args.get("session_id") != second_args.get("session_id"):
                 errors.append("MCP poll session changed between cursor steps")
             for args, result in ((first_args, first_result), (second_args, second_result)):
@@ -428,8 +478,9 @@ def evaluate_v2_trace(
     if trace_version not in {
         "aicp.live_binding_trace.v2",
         "aicp.live_binding_trace.v3",
+        "aicp.live_binding_trace.v4",
     }:
-        return ["live binding evidence requires transport evidence trace v2 or v3"]
+        return ["live binding evidence requires transport evidence trace v2, v3, or v4"]
     if artifact.get("content_digest") != canonical_digest(content):
         errors.append("live trace content digest does not recompute")
     if artifact.get("repeat_content_digest") != artifact.get("content_digest"):

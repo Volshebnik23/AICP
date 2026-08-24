@@ -126,9 +126,6 @@ class McpState:
                     "accepted": True,
                     "message_id": message_id,
                     "message_hash": stored_hash,
-                    "cursor": self.cursor_for_offset(
-                        session_id, len(self.messages.get(session_id, []))
-                    ),
                 },
             )
         if tool == "aicp.pollMessages":
@@ -442,7 +439,10 @@ def mcp_client_loop(stdin: BinaryIO, stdout: BinaryIO, *, mode: str = "good") ->
         responses.append(response)
 
     first_cursor = str((responses[3].get("result") or {}).get("next_cursor", ""))
-    if mode in {"mcp_hardcoded_c1", "mcp_ignore_first_poll_response"}:
+    send_cursor = str((responses[0].get("result") or {}).get("cursor", ""))
+    if mode == "mcp_use_send_cursor_for_poll2":
+        second_after = send_cursor
+    elif mode in {"mcp_hardcoded_c1", "mcp_ignore_first_poll_response"}:
         second_after = "c1"
     elif mode == "mcp_reuse_stale_cursor":
         second_after = "c0"

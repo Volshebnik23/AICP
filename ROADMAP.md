@@ -176,6 +176,10 @@ _Last updated: 2026-07-29_
 - **Independent-evidence boundary:** repository reference runs are behavioral evidence and
   receive no external mark. Test-only external subjects prove reachability but are not
   public submissions. No real external binding or pairwise demonstration is checked in.
+- **Final evidence correction:** current Evidence TCK 1.8 keeps report 2.2 and adds trace v4,
+  first-seen MCP poll continuations, and repository-observed TLS failure classification so
+  TCP/plaintext probes cannot stand in for certificate rejection. TCK 1.7 is frozen and
+  historical/ineligible; no binding, Core, CAPNEG, projection, or profile wire semantics change.
 - **Next concrete step:** M65 remains planned for registered message-surface completion.
 
 ## Planned milestones

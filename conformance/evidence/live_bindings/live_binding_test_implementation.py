@@ -89,6 +89,8 @@ HTTP_CLIENT_NEGATIVE_MODES = {
     "wss_untrusted_certificate",
     "wss_tls_verification_disabled",
     "wss_skip_untrusted_challenge",
+    "wss_tcp_probe_then_disable_verification",
+    "wss_plaintext_probe_then_disable_verification",
     "http_hardcoded_primary_session",
     "http_hardcoded_second_session",
     "http_hardcoded_ack_c2",
@@ -121,6 +123,7 @@ MCP_CLIENT_NEGATIVE_MODES = {
     "mcp_hardcoded_c1",
     "mcp_reuse_stale_cursor",
     "mcp_ignore_first_poll_response",
+    "mcp_use_send_cursor_for_poll2",
 }
 
 CORRECTION_NEGATIVE_MODES = {
@@ -137,6 +140,8 @@ CORRECTION_NEGATIVE_MODES = {
     "wss_untrusted_certificate",
     "wss_tls_verification_disabled",
     "wss_skip_untrusted_challenge",
+    "wss_tcp_probe_then_disable_verification",
+    "wss_plaintext_probe_then_disable_verification",
     "mcp_missing_after_cursor",
     "mcp_wrong_after_cursor",
     "mcp_server_ignores_after_cursor",
@@ -147,6 +152,7 @@ CORRECTION_NEGATIVE_MODES = {
     "mcp_hardcoded_c1",
     "mcp_reuse_stale_cursor",
     "mcp_ignore_first_poll_response",
+    "mcp_use_send_cursor_for_poll2",
 }
 
 
