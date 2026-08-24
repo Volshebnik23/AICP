@@ -82,12 +82,16 @@ capability evidence.
     `binding_report`, exact owning `suite_refs`, and reproducible evidence. Binding marks
     remain separate from profile and capability marks. Repository reference runs, smoke or
     one-role runs, examples, and test doubles cannot become external demonstrations.
-17. Freeze Evidence TCK 1.5 byte-for-byte and make 1.6 current. TCK 1.5 is
+17. Freeze Evidence TCK 1.6 byte-for-byte and make 1.7 current. TCK 1.5 is
     strong-ineligible because trace v1 encoded runner conclusions, inherited ambient
-    credentials, and omitted complete WebSocket/WSS and MCP cursor evidence. TCK 1.6 keeps
+    credentials, and omitted complete WebSocket/WSS and MCP cursor evidence. TCK 1.6 kept
     report 2.2 but requires trace v2 transport exchanges, an allowlisted child environment,
     exact Idempotency-Key delimiters, verified RFC 6455 handshakes, real per-run WSS, and
-    two-poll MCP cursor correlation. Exact 1.1 and 1.4 reports remain eligible.
+    two-poll MCP cursor correlation; it is now historical/ineligible because predictable
+    reference values did not prove client response causality or certificate verification.
+    TCK 1.7 uses opaque response challenges, sequential MCP construction, a public scenario
+    projection, and repository-observed trusted/untrusted WSS trace v3 evidence. Exact 1.1
+    and 1.4 reports remain eligible.
 
 ## Rejected alternatives
 
