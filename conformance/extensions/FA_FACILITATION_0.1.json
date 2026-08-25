@@ -29,6 +29,19 @@
         "DIGEST_DELIVER",
         "MODERATOR_DIRECTIVE"
       ]
+    },
+    {
+      "id": "FA-02",
+      "path": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "AGENDA_DECLARE",
+        "AGENDA_UPDATE",
+        "TURN_REQUEST",
+        "TURN_GRANT",
+        "TURN_REVOKE"
+      ]
     }
   ],
   "checks": [

@@ -28,8 +28,13 @@ def finalize(rows: list[dict]) -> list[dict]:
 
 
 def write_jsonl(path: Path, rows: list[dict]) -> None:
+    rendered = "\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n"
+    if "--check" in sys.argv:
+        if not path.is_file() or path.read_text(encoding="utf-8") != rendered:
+            raise SystemExit(f"stale generated fixture: {path.relative_to(ROOT)}")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    path.write_text(rendered, encoding="utf-8")
 
 
 def rp01() -> list[dict]:
@@ -85,6 +90,15 @@ def rp05() -> list[dict]:
     ])
 
 
+def rp06() -> list[dict]:
+    return finalize([
+        {"session_id":"srp-06","message_id":"m1","timestamp":"2026-03-23T11:50:00Z","sender":"agent:orchestrator","message_type":"RESPONSIBILITY_ASSIGN","contract_id":"c-rp-06",
+         "payload":{"transfer_id":"t-06","action_ref":"toolcall:archive:06","from_party":"agent:orchestrator","to_party":"agent:worker","warranty_class":"best_effort"}},
+        {"session_id":"srp-06","message_id":"m2","timestamp":"2026-03-23T11:50:01Z","sender":"agent:orchestrator","message_type":"RESPONSIBILITY_REVOKE","contract_id":"c-rp-06",
+         "payload":{"transfer_id":"t-06","reason_code":"vendor:work_cancelled"}},
+    ])
+
+
 def main() -> int:
     fixtures = {
         "RP-01_assign_accept_failure_attest_pass.jsonl": rp01(),
@@ -92,6 +106,7 @@ def main() -> int:
         "RP-03_missing_terminal_transfer_expected_fail.jsonl": rp03(),
         "RP-04_transient_failure_without_retry_expected_fail.jsonl": rp04(),
         "RP-05_failure_with_missing_provenance_expected_fail.jsonl": rp05(),
+        "RP-06_assign_revoke_pass.jsonl": rp06(),
     }
     for name, rows in fixtures.items():
         path = OUT_DIR / name

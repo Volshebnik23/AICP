@@ -42,7 +42,7 @@
       "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
       "suite_id": "PE-POLICY-EVAL-0.1",
       "suite_version": "0.1.0-dev",
-      "suite_digest": "sha256:f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
+      "suite_digest": "sha256:e60a3dd1281a463e3b6f264bb95efedb8cc17df9ac1bd478365e4c0de8523dea"
     },
     {
       "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
@@ -460,6 +460,18 @@
       "expected_skipped_checks": []
     },
     {
+      "case_id": "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-05",
+      "source_suite_id": "PE-POLICY-EVAL-0.1",
+      "source_case_id": "PE-05",
+      "fixture": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
+      "input_digest": "sha256:37b542ccf743b485f07fae9fb7531d98f28e41a6f3a662ec295aad4b173fcfe2",
+      "accepted": true,
+      "expected_error_observations": [],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
       "case_id": "EVIDENCE-CONSUMER-MB-ENF-ENFORCEMENT-0-1-ENF-01",
       "source_suite_id": "ENF-ENFORCEMENT-0.1",
       "source_case_id": "ENF-01",
@@ -505,7 +517,7 @@
     },
     {
       "path": "conformance/evidence/product_profile_consumer_expectations.json",
-      "content_digest": "sha256:4b665168d1bb7ef1e5dcb82019a59d61b736a342c148138c9b8b5fd9d7634845"
+      "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
     },
     {
       "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
@@ -521,7 +533,7 @@
     },
     {
       "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
-      "content_digest": "sha256:a61d207e412a87c5d58f3003530925d3726ab250b1f5c2a817ab775a47bf43ea"
+      "content_digest": "sha256:a0fd761b4c7e96a1ff0e26d59539cd723d42400450c706c49d120ce3dbc34dfb"
     },
     {
       "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
@@ -529,7 +541,7 @@
     },
     {
       "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
-      "content_digest": "sha256:a8e371c8b98043a6c1d78493f4052cf4fd963dad328b02228fe482c94fde58d1"
+      "content_digest": "sha256:c22c6c840c33a011542db791877f0df95391e329b65147c5ad94ae4e73282edf"
     },
     {
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
@@ -537,7 +549,7 @@
     },
     {
       "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-      "content_digest": "sha256:f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
+      "content_digest": "sha256:e60a3dd1281a463e3b6f264bb95efedb8cc17df9ac1bd478365e4c0de8523dea"
     },
     {
       "path": "conformance/extensions/RS_RESUME_0.1.json",
@@ -638,6 +650,10 @@
     {
       "path": "fixtures/extensions/policy_eval/PE-02_unknown_reason_code_expected_fail.jsonl",
       "content_digest": "sha256:b51a0daee7409dc4ee915e92e1672eacd88272ed68ea07196d33632135f5bc0a"
+    },
+    {
+      "path": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
+      "content_digest": "sha256:37b542ccf743b485f07fae9fb7531d98f28e41a6f3a662ec295aad4b173fcfe2"
     },
     {
       "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",

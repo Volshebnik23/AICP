@@ -55,6 +55,19 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "DS-04",
+      "path": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ATTEST_ACTION",
+        "CHALLENGE_ASSERTION",
+        "CLAIM_BREACH",
+        "ARBITRATION_REQUEST",
+        "ARBITRATION_RESULT"
+      ]
     }
   ],
   "checks": [
@@ -100,7 +113,11 @@
     },
     {
       "test_id": "DS-EVIDENCE-RESOLVE-01",
-      "description": "CHALLENGE_ASSERTION evidence_refs must include at least one resolvable msgid:/msghash:/objhash: reference"
+      "description": "Dispute evidence_refs must include at least one resolvable msgid:/msghash:/objhash: reference"
+    },
+    {
+      "test_id": "DS-ARBITRATION-01",
+      "description": "Arbitration request/result identifiers bind to the prior challenge and request"
     }
   ],
   "compatibility_mark": "AICP-EXT-DISPUTES-0.1"

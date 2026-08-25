@@ -2,7 +2,7 @@
   "aicp_version": "0.1",
   "suite_id": "SIG-SIGNED-PATHS-0.1",
   "suite_version": "0.1.0-dev",
-  "timestamp": "2026-07-22T17:05:06.057030+00:00",
+  "timestamp": "2026-08-25T20:17:39.031299+00:00",
   "passed": true,
   "failures": [],
   "compatibility_marks": [

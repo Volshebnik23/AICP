@@ -50,6 +50,17 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "PA-04",
+      "path": "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "PARTICIPANT_JOIN",
+        "PARTICIPANT_ACCEPT",
+        "PARTICIPANT_LEAVE"
+      ]
     }
   ],
   "checks": [
@@ -95,7 +106,7 @@
     },
     {
       "test_id": "PA-MEM-01",
-      "description": "Participants cannot send gated messages before acceptance or after leave"
+      "description": "Participants must join before leaving and cannot send gated messages before acceptance or after leave"
     },
     {
       "test_id": "PA-AUTH-01",

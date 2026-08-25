@@ -150,6 +150,19 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "MP-10",
+      "path": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl",
+      "expected_message_types": [
+        "RFW_POST",
+        "BID_SUBMIT",
+        "BID_UPDATE",
+        "BID_WITHDRAW",
+        "BID_SUBMIT",
+        "AWARD_ISSUE",
+        "AWARD_DECLINE"
+      ]
     }
   ],
   "checks": [
@@ -191,7 +204,7 @@
     },
     {
       "test_id": "MP-BID-01",
-      "description": "Bids must reference valid prior RFW and coherent offer terms"
+      "description": "Bid submit/update/withdraw must preserve prior bid and RFW lifecycle bindings"
     },
     {
       "test_id": "MP-AWARD-01",

@@ -25,8 +25,13 @@ def finalize(rows: list[dict]) -> list[dict]:
 
 
 def write(path: Path, rows: list[dict]) -> None:
+    rendered = "\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n"
+    if "--check" in sys.argv:
+        if not path.is_file() or path.read_text(encoding="utf-8") != rendered:
+            raise SystemExit(f"stale generated fixture: {path.relative_to(ROOT)}")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    path.write_text(rendered, encoding="utf-8")
 
 
 def main() -> None:
@@ -54,10 +59,18 @@ def main() -> None:
         {"session_id": "sDL3", "message_id": "m4", "timestamp": "2026-01-06T00:20:06Z", "sender": "agent:A", "message_type": "DELEGATION_GRANT", "contract_id": "cDL3", "contract_ref": cref, "payload": {"delegation_id": "D1", "delegator": "agent:A", "delegatee": "agent:B", "parent_delegation_id": "D0", "authority_subset": {"tools": ["approve"]}, "scope": ["task:approve"], "purpose": "subdelegated approval", "expiry": "2027-01-06T00:00:00Z", "max_depth": 0}},
     ])
 
+    dl04 = finalize([
+        {"session_id": "sDL4", "message_id": "m1", "timestamp": "2026-03-02T00:10:00Z", "sender": "agent:A", "message_type": "CONTRACT_PROPOSE", "contract_id": "cDL4", "contract_ref": cref, "payload": {"contract": {"contract_id": "cDL4", "goal": "delegation_revoke", "roles": ["manager", "agent"]}}},
+        {"session_id": "sDL4", "message_id": "m2", "timestamp": "2026-03-02T00:10:02Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cDL4", "contract_ref": cref, "payload": {"accepted": True}},
+        {"session_id": "sDL4", "message_id": "m3", "timestamp": "2026-03-02T00:10:04Z", "sender": "manager:M", "message_type": "DELEGATION_GRANT", "contract_id": "cDL4", "contract_ref": cref, "payload": {"delegation_id": "D0", "delegator": "manager:M", "delegatee": "agent:A", "authority_subset": {"tools": ["summarize"]}, "scope": ["task:summary"], "purpose": "generate summary", "expiry": "2027-03-02T00:00:00Z", "max_depth": 1}},
+        {"session_id": "sDL4", "message_id": "m4", "timestamp": "2026-03-02T00:10:06Z", "sender": "manager:M", "message_type": "DELEGATION_REVOKE", "contract_id": "cDL4", "contract_ref": cref, "payload": {"delegation_id": "D0", "effective_at": "2026-03-02T00:10:06Z", "reason_code": "policy_update"}},
+    ])
+
     out = ROOT / "fixtures/extensions/delegation"
     write(out / "DL-01_grant_accept_result_happy.jsonl", dl01)
     write(out / "DL-02_expired_grant_expected_fail.jsonl", dl02)
     write(out / "DL-03_depth_exceeded_expected_fail.jsonl", dl03)
+    write(out / "DL-04_delegation_revoke_presence.jsonl", dl04)
     print("Generated delegation fixtures")
 
 

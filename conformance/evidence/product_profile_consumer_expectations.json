@@ -48,7 +48,8 @@
     },
     "conformance/extensions/PE_POLICY_EVAL_0.1.json": {
       "PE-01": {"accepted": true, "error_observations": []},
-      "PE-02": {"accepted": false, "error_observations": [{"code": "PE-REASON-CODES-01", "exact_count": 1, "check_scope": "Policy evaluation reason-code registry"}]}
+      "PE-02": {"accepted": false, "error_observations": [{"code": "PE-REASON-CODES-01", "exact_count": 1, "check_scope": "Policy evaluation reason-code registry"}]},
+      "PE-05": {"accepted": true, "error_observations": []}
     },
     "conformance/extensions/ENF_ENFORCEMENT_0.1.json": {
       "ENF-01": {"accepted": true, "error_observations": []},
@@ -67,13 +68,16 @@
     "conformance/extensions/ID_IDENTITY_LC_0.1.json": {
       "IL-01": {"accepted": true, "error_observations": []},
       "IL-02": {"accepted": true, "error_observations": []},
-      "IL-03": {"accepted": false, "error_observations": [{"code": "ID-REVOKE-01", "exact_count": 1, "check_scope": "Identity key revocation"}]}
+      "IL-03": {"accepted": false, "error_observations": [{"code": "ID-REVOKE-01", "exact_count": 1, "check_scope": "Identity key revocation"}]},
+      "IL-04": {"accepted": true, "error_observations": []},
+      "IL-05": {"accepted": true, "error_observations": []}
     },
     "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json": {
       "DI-01": {"accepted": true, "error_observations": []},
       "DI-02": {"accepted": false, "error_observations": [{"code": "DI-REVOKE-01", "exact_count": 1, "check_scope": "Subject binding revocation"}]},
       "DI-03": {"accepted": false, "error_observations": [{"code": "DI-EXPIRY-01", "exact_count": 1, "check_scope": "Subject binding expiry"}]},
-      "DI-04": {"accepted": false, "error_observations": [{"code": "DI-SIGNED-01", "exact_count": 1, "check_scope": "Subject binding issue signature requirement"}]}
+      "DI-04": {"accepted": false, "error_observations": [{"code": "DI-SIGNED-01", "exact_count": 1, "check_scope": "Subject binding issue signature requirement"}]},
+      "DI-05": {"accepted": true, "error_observations": []}
     }
   }
 }

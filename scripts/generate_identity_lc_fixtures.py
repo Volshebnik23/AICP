@@ -58,10 +58,15 @@ def _finalize_rows(rows: list[dict]) -> list[dict]:
 
 
 def _write_jsonl(path: Path, rows: list[dict]) -> None:
+    rendered = "\n".join(
+        json.dumps(row, separators=(",", ":"), ensure_ascii=False) for row in rows
+    ) + "\n"
+    if "--check" in sys.argv:
+        if not path.is_file() or path.read_text(encoding="utf-8") != rendered:
+            raise SystemExit(f"stale generated fixture: {path.relative_to(ROOT)}")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as f:
-        for row in rows:
-            f.write(json.dumps(row, separators=(",", ":"), ensure_ascii=False) + "\n")
+    path.write_text(rendered, encoding="utf-8")
 
 
 def _q_keys() -> tuple[Ed25519PrivateKey, Ed25519PrivateKey, dict, dict]:
@@ -178,6 +183,32 @@ def generate() -> None:
     _sign_message(il03[4], "moderator:Z", "Z1", z)
     _sign_message(il03[5], "agent:Q", "Q2", q2)
     _write_jsonl(ROOT / "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl", il03)
+
+    # IL-04: migration binds to the updated AID announced in this session.
+    il04 = _finalize_rows(
+        [
+            {"session_id": "sIL4", "message_id": "m1", "timestamp": "2026-03-02T00:00:00Z", "sender": "agent:A", "message_type": "CONTRACT_PROPOSE", "contract_id": "cIL4", "contract_ref": contract_ref, "payload": {"contract": {"contract_id": "cIL4", "goal": "identity_migration", "roles": ["agent"]}}},
+            {"session_id": "sIL4", "message_id": "m2", "timestamp": "2026-03-02T00:00:01Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cIL4", "contract_ref": contract_ref, "payload": {"accepted": True}},
+            {"session_id": "sIL4", "message_id": "m3", "timestamp": "2026-03-02T00:00:02Z", "sender": "agent:Q", "message_type": "IDENTITY_ANNOUNCE", "contract_id": "cIL4", "contract_ref": contract_ref, "payload": {"aid_hash": aid_hash, "aid_ref": aid_ref}},
+            {"session_id": "sIL4", "message_id": "m4", "timestamp": "2026-03-02T00:00:03Z", "sender": "agent:Q", "message_type": "AGENT_MIGRATION", "contract_id": "cIL4", "contract_ref": contract_ref, "payload": {"migration_id": "MIG-IL4", "aid_hash": aid_hash, "from_agent_version": "1.0", "to_agent_version": "1.1", "from_environment": "env:a", "to_environment": "env:b"}},
+        ]
+    )
+    _sign_message(il04[2], "agent:Q", "Q1", q1)
+    _sign_message(il04[3], "agent:Q", "Q1", q1)
+    _write_jsonl(ROOT / "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl", il04)
+
+    # IL-05: a valid revocation targets an active key from the prior AID.
+    il05 = _finalize_rows(
+        [
+            {"session_id": "sIL5", "message_id": "m1", "timestamp": "2026-03-02T00:10:00Z", "sender": "agent:A", "message_type": "CONTRACT_PROPOSE", "contract_id": "cIL5", "contract_ref": contract_ref, "payload": {"contract": {"contract_id": "cIL5", "goal": "identity_key_revoke", "roles": ["agent", "moderator"]}}},
+            {"session_id": "sIL5", "message_id": "m2", "timestamp": "2026-03-02T00:10:01Z", "sender": "agent:B", "message_type": "CONTRACT_ACCEPT", "contract_id": "cIL5", "contract_ref": contract_ref, "payload": {"accepted": True}},
+            {"session_id": "sIL5", "message_id": "m3", "timestamp": "2026-03-02T00:10:02Z", "sender": "agent:Q", "message_type": "IDENTITY_ANNOUNCE", "contract_id": "cIL5", "contract_ref": contract_ref, "payload": {"aid_hash": aid_hash, "aid_ref": aid_ref}},
+            {"session_id": "sIL5", "message_id": "m4", "timestamp": "2026-03-02T00:10:03Z", "sender": "moderator:Z", "message_type": "KEY_REVOKE", "contract_id": "cIL5", "contract_ref": contract_ref, "payload": {"revocation_id": "rev-il5-1", "effective_at": "2026-03-02T00:10:03Z", "target_kid": "Q1", "reason_code": "policy:key_revoke"}},
+        ]
+    )
+    _sign_message(il05[2], "agent:Q", "Q1", q1)
+    _sign_message(il05[3], "moderator:Z", "Z1", z)
+    _write_jsonl(ROOT / "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl", il05)
 
 
 if __name__ == "__main__":

@@ -82,6 +82,14 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "RP-06",
+      "path": "fixtures/extensions/responsibility/RP-06_assign_revoke_pass.jsonl",
+      "expected_message_types": [
+        "RESPONSIBILITY_ASSIGN",
+        "RESPONSIBILITY_REVOKE"
+      ]
     }
   ],
   "checks": [

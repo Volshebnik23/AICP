@@ -57,7 +57,7 @@ EXPECTED = {
     "AICP-MEDIATED-BLOCKING@0.1": {
         "mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
         "producer_count": 10,
-        "consumer_count": 25,
+        "consumer_count": 26,
         "negative_modes": (
             "profile_downgrade",
             "missing_capneg_contract_binding",
@@ -97,7 +97,7 @@ EXPECTED = {
     "AICP-DELEGATED-IDENTITY@0.1": {
         "mark": "AICP-Profile-DELEGATED-IDENTITY-0.1",
         "producer_count": 13,
-        "consumer_count": 28,
+        "consumer_count": 31,
         "negative_modes": (
             "unsigned_binding_issue",
             "invalid_issue_signature",
@@ -233,7 +233,7 @@ def test_generated_registry_release_and_three_catalogs_are_exact() -> None:
         assert len(mandatory_case_ids(catalog, "full-profile", resolve_handler(record.handler_id))) == (
             7 + expectation["producer_count"] + expectation["consumer_count"]
         )
-    assert total_consumers == 69
+    assert total_consumers == 73
 
 
 @pytest.mark.parametrize("target_key", PROFILE_TARGET_KEYS)

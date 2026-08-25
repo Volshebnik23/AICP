@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import sys
 from collections import Counter
 from pathlib import Path
@@ -110,6 +111,33 @@ def _rejected(errors: list[str]) -> dict[str, Any]:
         "eligible_marks": [],
         "eligible_targets": [],
     }
+
+
+def _release_bound_catalog(
+    catalog: dict[str, Any],
+    selected_target: dict[str, Any],
+) -> dict[str, Any]:
+    """Limit a superseded profile catalog to the exact cases frozen by its release."""
+    producer_ids = selected_target.get("mandatory_producer_ids")
+    consumer_ids = selected_target.get("mandatory_consumer_ids")
+    if not isinstance(producer_ids, list) or not isinstance(consumer_ids, list):
+        return catalog
+    bounded = copy.deepcopy(catalog)
+    producer_set = {str(item) for item in producer_ids}
+    consumer_set = {str(item) for item in consumer_ids}
+    if isinstance(bounded.get("producer_scenarios"), list):
+        bounded["producer_scenarios"] = [
+            item
+            for item in bounded["producer_scenarios"]
+            if isinstance(item, dict) and str(item.get("case_id")) in producer_set
+        ]
+    if isinstance(bounded.get("consumer_cases"), list):
+        bounded["consumer_cases"] = [
+            item
+            for item in bounded["consumer_cases"]
+            if isinstance(item, dict) and str(item.get("case_id")) in consumer_set
+        ]
+    return bounded
 
 
 def evaluate_report(
@@ -401,9 +429,10 @@ def evaluate_report(
         )
 
     if strong_eligible_release:
+        evaluation_catalog = _release_bound_catalog(catalog, selected_target)
         for code, message in handler.evaluate_report(
             report,
-            catalog,
+            evaluation_catalog,
             by_id,
             mode,
             disabled_checks,

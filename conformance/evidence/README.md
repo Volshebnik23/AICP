@@ -11,7 +11,7 @@ target kind:     capability
 execution mode:  full-capability
 eligible mark:   AICP-Evidence-SESSION-STATE-PROJECTION-v1
 historical TCK:  AICP-EVIDENCE-TCK-1.1.0 (strong-eligible exact reports)
-current TCK:     AICP-EVIDENCE-TCK-1.8.0
+current TCK:     AICP-EVIDENCE-TCK-1.9.0
 ```
 
 M63 adds exactly three product-profile targets:
@@ -23,13 +23,14 @@ AICP-DELEGATED-IDENTITY@0.1 -> AICP-Profile-DELEGATED-IDENTITY-0.1
 ```
 
 They use report 2.2 for new executions, `full-profile`, `product_profile_v01`, and current
-`AICP-EVIDENCE-TCK-1.8.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
+`AICP-EVIDENCE-TCK-1.9.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
 strong-ineligible. The 1.2.0 producer evaluator did not close every required-suite check
 and its report evaluator did not enforce exact generated-artifact multiplicity. The
 1.3.0 evaluator did not close generated messages over their exact owner payload schemas
 or match ordinary PE/CAPNEG namespace semantics. The shared handler executes 10, 9, and 13 neutral producer
-scenarios respectively and all required-suite transcripts exactly once: 25 mediated,
-16 resumable, and 28 delegated consumer cases (69 executions in total).
+scenarios respectively and all required-suite transcripts exactly once. M65 expands the
+consumer corpus from 25/16/28 to 26 mediated, 16 resumable, and 31 delegated cases (73
+executions in total), derived from the exact required suites.
 
 `targets.json` is schema-validated and resolves an exact target record to its catalog,
 registered handler, and current release. Target kind, execution mode, claim type,
@@ -46,7 +47,7 @@ BIND-MCP@0.1  -> AICP-BIND-MCP-0.1
 ```
 
 They use report 2.2, `full-binding`, `live_binding_v01`, and current Evidence TCK
-1.8. A full run launches the same implementation build in both roles and repeats both
+1.9. A full run launches the same implementation build in both roles and repeats both
 from clean state. HTTP uses real literal-loopback HTTP, SSE, WebSocket, and verified WSS traffic; MCP
 uses JSON-RPC over child-process stdio. Optional SSE/WebSocket scenarios run exactly when
 the role descriptor declares them. A WSS declaration additionally requires an executed
@@ -107,9 +108,9 @@ plaintext-on-TLS, pre-certificate abort, certificate rejection, and completed TL
 recording HTTP Upgrade independently. Skipping the negative endpoint, probing it without
 TLS, or disabling certificate verification fails. MCP client evidence omits optional
 sendMessage cursors and proves that poll-1 first discloses the opaque continuation consumed
-by the later poll-2. Release records 1.0.0 through 1.7.0 are byte-frozen. Release-specific registry
+by the later poll-2. Release records 1.0.0 through 1.8.0 are byte-frozen. Release-specific registry
 snapshots make `tck_release.registry_digest` immutable: 1.1.0 remains strong-eligible for
-its exact projection reports and 1.4.0 remains strong-eligible for its exact reports.
+its exact projection reports, while 1.4.0 and 1.8.0 remain strong-eligible for their exact reports.
 Releases 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, and 1.7.0 are explicitly strong-ineligible for their
 documented evidence defects. Repository inspection finds zero real external submission
 folders; examples, templates, reference reports, and test adapters are not adoption.
@@ -181,7 +182,9 @@ release and validates it through a generic envelope
 evaluator plus the registered target handler. It independently recomputes target/release
 resolution, subject, registry/schema/catalog and import-closed runner provenance, case
 coverage, producer validation and determinism, reviewed exact consumer observations, and
-the eligible mark. A raw
+the eligible mark. Historical profile reports are evaluated against the exact case IDs
+frozen in their selected release, so an expanded current corpus does not invalidate a
+complete TCK 1.8 report. A raw
 `compatibility_marks` string is never sufficient.
 
 ## Evidence boundaries
@@ -194,8 +197,10 @@ the eligible mark. A raw
   and is frozen/ineligible because client response causality and client certificate verification
   were not independently challenged. TCK 1.7 issued trace v3 and is frozen/ineligible
   because MCP poll continuation could be disclosed by an earlier send response and its WSS
-  challenge could be satisfied by a non-TLS probe. New 1.8 executions keep report 2.2 and
-  use trace v4 with first-seen MCP continuation and normalized TLS rejection evidence.
+  challenge could be satisfied by a non-TLS probe. TCK 1.8 introduced report 2.2 trace v4
+  with first-seen MCP continuation and normalized TLS rejection evidence and is now frozen
+  historical/eligible. New TCK 1.9 executions retain report 2.2 and trace v4 while binding
+  the expanded M65 conformance corpus.
 - A capability mark is not a product-profile mark, certification, endorsement, aggregate
   composition mark, or pairwise interoperability result.
 - A profile report covers one exact profile. Component-suite marks do not become separate

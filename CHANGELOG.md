@@ -7,8 +7,8 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Completed M58 Repo-Truth Rebaseline through M63 Tier-1 External Profile TCK; M64–M70
-  remain planned.
+- Completed M58 Repo-Truth Rebaseline through M65 Registered Message Surface Completion;
+  M66–M70 remain planned.
 - Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
   `AICP-IUT-TCK-1.0.0` metadata.
 - Added separate experimental Core v0.2 schemas, exact-agreement conformance, 9 positive
@@ -54,14 +54,25 @@ All notable repo-backed release metadata changes should be recorded here.
   missing or conflicting routes, and match the ordinary conformance namespace rules.
   Differential coverage compares all 38 canonical transcripts across the 18 semantic
   implementation families represented by the unchanged 95 producer-suite rows.
-
+- Added M64 live loopback HTTP/SSE/WebSocket/WSS and MCP stdio binding evidence, report
+  2.2, trace v4, and the exact `BIND-HTTP@0.1` and `BIND-MCP@0.1` external targets.
+- Completed M65 with byte-backed positive-fixture accounting for all 132 registered
+  messages. Five existing orphan fixture paths were promoted and strengthened, six new
+  deterministic positive lifecycle fixtures were added, four focused semantic check IDs
+  were introduced, and existing semantic families were extended with hash-valid mutation
+  controls. No new negative fixture, registered message ID, compatibility mark, or external
+  target was added.
+- Froze `AICP-EVIDENCE-TCK-1.8.0` as historical/strong-eligible and registered current
+  `AICP-EVIDENCE-TCK-1.9.0` for the expanded conformance corpus. Report 2.2 and trace v4
+  remain unchanged; Tier-1 consumer counts are now 26 mediated, 16 resumable, and 31
+  delegated.
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
   wording so repository presence/internal conformance is not presented as independent
   external or live-transport evidence.
 - Bound profile maturity, external-evidence eligibility, generated human truth, visible
-  milestone status, the complete 132-entry message surface, and independent security-review
-  claims to structured repository evidence.
+  milestone status, the complete 132/132 actual-positive message surface, and independent
+  security-review claims to structured repository evidence.
 - Extended planning validation with deterministic generation plus focused negative
   regression tests.
 - Separated expected case-local unavailable-crypto observations from actual run-level IUT
@@ -105,7 +116,8 @@ All notable repo-backed release metadata changes should be recorded here.
   ordinary marks are reachable, but none has real independent external evidence here.
 - Base 0.2 has internal experimental conformance only; it does not authenticate senders and
   has no external-IUT or independent external evidence.
-- Binding suites are static fixtures, the security review is internal, and release
+- Live binding targets have repository-owned loopback reference evidence but no real
+  independent external binding submission; the security review is internal, and release
   repackaging remains planned under M69.
 - Projection v2 remains internal-only; external composition and pairwise evidence remain
   unavailable.

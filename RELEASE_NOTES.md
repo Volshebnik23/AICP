@@ -13,8 +13,8 @@ tag, package publication, GA declaration, or final RC repackaging.
 - The canonical repository-truth baseline now distinguishes shipped artifacts, registry
   stability, internal verification, external testability, independent evidence, live
   binding evidence, and remaining milestones.
-- Roadmap and backlog roles are separated: M58–M63 are shipped, while M64–M70 retain
-  the remaining evidence, interop, security, governance, and release work.
+- Roadmap and backlog roles are separated: M58–M65 are shipped, while M66–M70 retain
+  the remaining pairwise interop, security, governance, release, and plugfest work.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
 - Experimental post-UAT Core v0.2 adds exact contract artifact and active-head agreement
@@ -77,6 +77,17 @@ tag, package publication, GA declaration, or final RC repackaging.
   inside Core scenarios. Missing or conflicting owner routes fail closed. PE reason codes
   and CAPNEG privacy modes now use the ordinary `vendor:`/`org:` rule, while broader Core
   policy-category and enforcement-sanction namespaces remain unchanged.
+- M64 adds live two-role loopback evidence for the exact HTTP and MCP binding targets.
+  Current trace v4 proves real HTTP/SSE/WebSocket/WSS or MCP stdio execution, first-seen
+  MCP continuation causality, and repository-observed TLS certificate rejection without
+  treating reference evidence as an independent external submission.
+- M65 completes the registered-message conformance surface: all 132 registered messages
+  have one owner, one canonical payload mapping, owning suite coverage, and an actual
+  positive suite-referenced fixture. Five orphan paths were reused and strengthened, six
+  positive fixtures were newly added, and no new negative fixture, message ID, protocol
+  mark, or external target was introduced. Evidence TCK 1.8 is frozen historical/eligible;
+  TCK 1.9 is current with report 2.2, trace v4, and Tier-1 consumer counts 26/16/31.
+  Product-IUT v1, IUT TCK 1.1, its targets, case sets, and marks remain unchanged.
 
 ### Current evidence limits
 
@@ -95,8 +106,8 @@ tag, package publication, GA declaration, or final RC repackaging.
   case-local; real degradation or skipped normal verification remains ineligible.
 - The interop matrix has no real independent external submission and pairwise publication
   is fail-closed.
-- HTTP/WS/SSE and MCP evidence is based on static case fixtures, not live independent
-  endpoint interoperability.
+- HTTP/WS/SSE and MCP have live repository-owned loopback reference evidence, but no real
+  independent external binding submission or two-vendor pairwise execution is present.
 - The security package contains internal self-review and partial coverage, not a completed
   independent external review.
 - Governance remains maintainer/steward based. Snapshot naming, generated report tracking,

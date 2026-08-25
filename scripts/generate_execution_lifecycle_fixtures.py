@@ -28,8 +28,13 @@ def finalize(rows: list[dict]) -> list[dict]:
 
 
 def write_jsonl(path: Path, rows: list[dict]) -> None:
+    rendered = "\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n"
+    if "--check" in sys.argv:
+        if not path.is_file() or path.read_text(encoding="utf-8") != rendered:
+            raise SystemExit(f"stale generated fixture: {path.relative_to(ROOT)}")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    path.write_text(rendered, encoding="utf-8")
 
 
 def ex01() -> list[dict]:
@@ -89,6 +94,13 @@ def ex07() -> list[dict]:
     ])
 
 
+def ex08() -> list[dict]:
+    return finalize([
+        {"session_id":"sex-08","message_id":"m1","timestamp":"2026-04-01T10:10:00Z","sender":"agent:worker","message_type":"RUN_CREATE","contract_id":"c-ex-08","payload":{"run_id":"run-08","status":"created"}},
+        {"session_id":"sex-08","message_id":"m2","timestamp":"2026-04-01T10:10:01Z","sender":"agent:worker","message_type":"RUN_CANCEL","contract_id":"c-ex-08","payload":{"run_id":"run-08","reason_code":"USER_CANCELLED"}},
+    ])
+
+
 def main() -> int:
     fixtures = {
         "EX-01_basic_run_lifecycle_pass.jsonl": ex01(),
@@ -98,6 +110,7 @@ def main() -> int:
         "EX-05_post_terminal_mutation_expected_fail.jsonl": ex05(),
         "EX-06_thread_append_after_close_expected_fail.jsonl": ex06(),
         "EX-07_dangling_store_ref_expected_fail.jsonl": ex07(),
+        "EX-08_active_run_cancel_pass.jsonl": ex08(),
     }
     for name, rows in fixtures.items():
         path = OUT_DIR / name

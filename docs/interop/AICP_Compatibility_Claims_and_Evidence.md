@@ -85,8 +85,8 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
-New executions use `AICP-EVIDENCE-TCK-1.8.0`; exact historical 1.1.0 and 1.4.0 reports remain
-strong-eligible through their frozen release-registry snapshot. Both bind an answer-isolated
+New executions use `AICP-EVIDENCE-TCK-1.9.0`; exact historical 1.1.0, 1.4.0, and 1.8.0 reports remain
+strong-eligible through their frozen release-registry snapshots. Those releases bind an answer-isolated
 neutral producer scenario, registry schema, registered handler, and import-closed runner
 bundle. Frozen 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, and 1.7.0 cannot support a strong claim for their documented
 evidence defects.

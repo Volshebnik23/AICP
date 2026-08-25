@@ -432,7 +432,7 @@
         "externally_testable"
       ],
       "external_test_path": "full-capability",
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.8.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.9.0",
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
       "external_evidence_mark_reachable": true,
@@ -466,7 +466,7 @@
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-BIND-HTTP-0.1",
       "external_evidence_mark_reachable": true,
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.8.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.9.0",
       "independent_external_evidence": false
     },
     {
@@ -480,7 +480,7 @@
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-BIND-MCP-0.1",
       "external_evidence_mark_reachable": true,
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.8.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.9.0",
       "independent_external_evidence": false
     }
   ],
@@ -515,28 +515,10 @@
       "registered_count": 132,
       "payload_schema_mapped_count": 132,
       "suite_referenced_count": 132,
-      "positive_fixture_referenced_count": 115,
+      "positive_fixture_referenced_count": 132,
       "negative_fixture_referenced_count": 84,
-      "missing_positive_fixture_types": [
-        "AGENDA_DECLARE",
-        "AGENDA_UPDATE",
-        "AGENT_MIGRATION",
-        "ARBITRATION_REQUEST",
-        "ARBITRATION_RESULT",
-        "AWARD_DECLINE",
-        "BID_UPDATE",
-        "BID_WITHDRAW",
-        "CLAIM_BREACH",
-        "DELEGATION_REVOKE",
-        "KEY_REVOKE",
-        "PARTICIPANT_LEAVE",
-        "POLICY_DECISION_ATTEST",
-        "RESPONSIBILITY_REVOKE",
-        "RUN_CANCEL",
-        "SUBJECT_BINDING_REVOKE",
-        "TURN_REVOKE"
-      ],
-      "gap_milestone": "M65"
+      "missing_positive_fixture_types": [],
+      "gap_milestone": null
     },
     "entries": [
       {
@@ -741,10 +723,12 @@
         "suites": [
           "conformance/extensions/FA_FACILITATION_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "AGENDA_UPDATE",
@@ -756,10 +740,12 @@
         "suites": [
           "conformance/extensions/FA_FACILITATION_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "AGENT_MIGRATION",
@@ -771,10 +757,12 @@
         "suites": [
           "conformance/extensions/ID_IDENTITY_LC_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "ALERT",
@@ -907,10 +895,12 @@
         "suites": [
           "conformance/extensions/DS_DISPUTES_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "ARBITRATION_RESULT",
@@ -922,10 +912,12 @@
         "suites": [
           "conformance/extensions/DS_DISPUTES_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "ATTEST_ACTION",
@@ -945,6 +937,7 @@
           "conformance/extensions/IB_IAM_BRIDGE_0.1.json",
           "conformance/extensions/ID_IDENTITY_LC_0.1.json",
           "conformance/extensions/PA_PARTICIPANTS_0.1.json",
+          "conformance/extensions/PE_POLICY_EVAL_0.1.json",
           "conformance/extensions/RS_RESUME_0.1.json",
           "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json"
         ],
@@ -956,12 +949,14 @@
           "fixtures/extensions/admission/AD-03_renew_with_prior_context_pass.jsonl",
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
           "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
           "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl",
           "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl",
           "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
           "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
           "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
           "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
           "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
           "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
           "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
@@ -1071,10 +1066,12 @@
         "suites": [
           "conformance/extensions/MP_MARKETPLACE_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "AWARD_ISSUE",
@@ -1087,7 +1084,8 @@
           "conformance/extensions/MP_MARKETPLACE_0.1.json"
         ],
         "positive_fixtures": [
-          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl"
+          "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
@@ -1108,7 +1106,8 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
-          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl"
+          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl",
@@ -1128,10 +1127,12 @@
         "suites": [
           "conformance/extensions/MP_MARKETPLACE_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "BID_WITHDRAW",
@@ -1143,10 +1144,12 @@
         "suites": [
           "conformance/extensions/MP_MARKETPLACE_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "BLACKBOARD_DECLARE",
@@ -1531,7 +1534,8 @@
           "conformance/extensions/DS_DISPUTES_0.1.json"
         ],
         "positive_fixtures": [
-          "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl"
+          "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
@@ -1604,10 +1608,12 @@
         "suites": [
           "conformance/extensions/DS_DISPUTES_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "CONTENT_DELIVER",
@@ -1825,8 +1831,11 @@
           "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
           "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
           "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl",
+          "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl",
           "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
           "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl",
           "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
@@ -1840,6 +1849,7 @@
           "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
           "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
           "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl",
           "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
           "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
           "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl",
@@ -1848,6 +1858,8 @@
           "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
           "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
           "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl",
+          "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl",
           "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
           "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
           "fixtures/extensions/observability/OB-02_trace_correlates_tool_call_pass.jsonl",
@@ -1856,6 +1868,7 @@
           "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
           "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
           "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
           "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
           "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl",
           "fixtures/extensions/queue_leases/QL-03_overload_signal_degraded_mode_pass.jsonl",
@@ -2076,8 +2089,11 @@
           "fixtures/extensions/confidentiality/CF-03_metadata_only_with_projection_pass.jsonl",
           "fixtures/extensions/confidentiality/CF-04_classification_only_with_labels_pass.jsonl",
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
           "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl",
+          "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl",
           "fixtures/extensions/disputes/DS-01_challenge_assertion_pass.jsonl",
+          "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
           "fixtures/extensions/economics/EC-01_paid_message_flow_pass.jsonl",
           "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
@@ -2091,6 +2107,7 @@
           "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
           "fixtures/extensions/external_transaction/ET-04_pii_ref_redaction_safe_pass.jsonl",
           "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl",
           "fixtures/extensions/human_approval/HA-01_basic_approval_grant_pass.jsonl",
           "fixtures/extensions/human_approval/HA-02_approval_deny_pass.jsonl",
           "fixtures/extensions/human_approval/HA-03_intervention_required_complete_pass.jsonl",
@@ -2099,6 +2116,8 @@
           "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
           "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
           "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl",
+          "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl",
           "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
           "fixtures/extensions/marketplace/MP-04_subchat_with_valid_admission_pass.jsonl",
           "fixtures/extensions/observability/OB-01_trace_correlates_message_pass.jsonl",
@@ -2108,6 +2127,7 @@
           "fixtures/extensions/observability/OB-05_stepup_flow_observability_pass.jsonl",
           "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
           "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
           "fixtures/extensions/publications/PB-01_publish_update_retract_with_policy_pass.jsonl",
           "fixtures/extensions/queue_leases/QL-01_enqueue_lease_grant_bounded_release_pass.jsonl",
           "fixtures/extensions/queue_leases/QL-02_nack_with_retry_guidance_pass.jsonl",
@@ -2315,7 +2335,8 @@
           "conformance/extensions/DL_DELEGATION_0.1.json"
         ],
         "positive_fixtures": [
-          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl"
+          "fixtures/extensions/delegation/DL-01_grant_accept_result_happy.jsonl",
+          "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/delegation/DL-02_expired_grant_expected_fail.jsonl",
@@ -2354,10 +2375,12 @@
         "suites": [
           "conformance/extensions/DL_DELEGATION_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "DIGEST_DELIVER",
@@ -2588,8 +2611,11 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
           "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
-          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl"
+          "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+          "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl",
+          "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
@@ -2743,12 +2769,14 @@
         "suites": [
           "conformance/extensions/ID_IDENTITY_LC_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl"
+        ],
         "negative_fixtures": [
           "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"
         ],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "KEY_ROTATION",
@@ -2931,6 +2959,7 @@
         "positive_fixtures": [
           "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
           "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
           "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl"
         ],
         "negative_fixtures": [
@@ -2954,6 +2983,7 @@
         "positive_fixtures": [
           "fixtures/extensions/participants/PA-01_shared_contract_join_accept.jsonl",
           "fixtures/extensions/participants/PA-02_per_participant_acceptance_join_accept.jsonl",
+          "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
           "fixtures/extensions/reception_chat/RC-01_reception_chat_semantics_pass.jsonl"
         ],
         "negative_fixtures": [
@@ -2973,10 +3003,12 @@
         "suites": [
           "conformance/extensions/PA_PARTICIPANTS_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "PAYMENT_PROOF_SUBMIT",
@@ -3005,10 +3037,12 @@
         "suites": [
           "conformance/extensions/PE_POLICY_EVAL_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "POLICY_EVAL_REQUEST",
@@ -3027,6 +3061,7 @@
         "positive_fixtures": [
           "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
           "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+          "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
           "fixtures/extensions/policy_profiles/PPS-ABAC-01_dimensions_deterministic_pass.jsonl",
           "fixtures/extensions/policy_profiles/PPS-LLM-01_evidence_boundary_pass.jsonl",
           "fixtures/extensions/policy_profiles/PPS-OPA-01_deterministic_pass.jsonl"
@@ -3058,6 +3093,7 @@
         "positive_fixtures": [
           "fixtures/extensions/external_transaction/ET-03_with_policy_link_pass.jsonl",
           "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+          "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
           "fixtures/extensions/policy_profiles/PPS-ABAC-01_dimensions_deterministic_pass.jsonl",
           "fixtures/extensions/policy_profiles/PPS-LLM-01_evidence_boundary_pass.jsonl",
           "fixtures/extensions/policy_profiles/PPS-OPA-01_deterministic_pass.jsonl",
@@ -3350,7 +3386,8 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/inbox/IB-01_inbox_with_queue_lease_pass.jsonl",
-          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl"
+          "fixtures/extensions/responsibility/RP-01_assign_accept_failure_attest_pass.jsonl",
+          "fixtures/extensions/responsibility/RP-06_assign_revoke_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/responsibility/RP-03_missing_terminal_transfer_expected_fail.jsonl",
@@ -3370,10 +3407,12 @@
         "suites": [
           "conformance/extensions/RP_RESPONSIBILITY_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/responsibility/RP-06_assign_revoke_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "RESUME_REQUEST",
@@ -3444,7 +3483,8 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/marketplace/MP-01_rfw_bid_award_workflow_pass.jsonl",
-          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl"
+          "fixtures/extensions/marketplace/MP-02_auction_open_close_pass.jsonl",
+          "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/marketplace/MP-06_award_without_required_evidence_expected_fail.jsonl",
@@ -3481,12 +3521,14 @@
         "suites": [
           "conformance/extensions/EX_EXECUTION_LIFECYCLE_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/execution_lifecycle/EX-08_active_run_cancel_pass.jsonl"
+        ],
         "negative_fixtures": [
           "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl"
         ],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "RUN_COMPLETE",
@@ -3517,7 +3559,8 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/execution_lifecycle/EX-01_basic_run_lifecycle_pass.jsonl",
-          "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl"
+          "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl",
+          "fixtures/extensions/execution_lifecycle/EX-08_active_run_cancel_pass.jsonl"
         ],
         "negative_fixtures": [
           "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl",
@@ -3623,7 +3666,6 @@
           "fixtures/extensions/capneg_v0_2/positive_cases.json",
           "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
           "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
-          "fixtures/extensions/object_resync/state_projection_v2/positive_cases.json",
           "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl"
         ],
         "negative_fixtures": [
@@ -3638,8 +3680,7 @@
           "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
           "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
           "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
-          "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
-          "fixtures/extensions/object_resync/state_projection_v2/negative_cases.json"
+          "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null,
@@ -3735,6 +3776,7 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+          "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
           "fixtures/extensions/iam_bridge/IB-01_scope_maps_to_delegation_authority_pass.jsonl",
           "fixtures/extensions/iam_bridge/IB-02_role_group_maps_to_protected_action_pass.jsonl",
           "fixtures/extensions/iam_bridge/IB-03_acr_amr_stepup_satisfied_pass.jsonl",
@@ -3764,12 +3806,14 @@
         "suites": [
           "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl"
+        ],
         "negative_fixtures": [
           "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl"
         ],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "SUBSCRIBE",
@@ -4017,7 +4061,8 @@
           "conformance/extensions/FA_FACILITATION_0.1.json"
         ],
         "positive_fixtures": [
-          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl"
         ],
         "negative_fixtures": [],
         "coverage_status": "complete",
@@ -4034,7 +4079,8 @@
           "conformance/extensions/FA_FACILITATION_0.1.json"
         ],
         "positive_fixtures": [
-          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl"
+          "fixtures/extensions/facilitation/FA-01_turn_pass.jsonl",
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl"
         ],
         "negative_fixtures": [],
         "coverage_status": "complete",
@@ -4050,10 +4096,12 @@
         "suites": [
           "conformance/extensions/FA_FACILITATION_0.1.json"
         ],
-        "positive_fixtures": [],
+        "positive_fixtures": [
+          "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl"
+        ],
         "negative_fixtures": [],
-        "coverage_status": "missing_positive_fixture",
-        "gap_milestone": "M65"
+        "coverage_status": "complete",
+        "gap_milestone": null
       },
       {
         "id": "UNSUBSCRIBE",
@@ -4227,8 +4275,8 @@
     {
       "id": "M65",
       "title": "Registered Message Surface Completion",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M66",

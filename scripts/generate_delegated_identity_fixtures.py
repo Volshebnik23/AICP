@@ -57,8 +57,13 @@ def sign_rows(rows: list[dict], keys: dict[str, tuple[str, Ed25519PrivateKey]], 
 
 
 def write(path: Path, rows: list[dict]) -> None:
+    rendered = "\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n"
+    if "--check" in sys.argv:
+        if not path.is_file() or path.read_text(encoding="utf-8") != rendered:
+            raise SystemExit(f"stale generated fixture: {path.relative_to(ROOT)}")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    path.write_text(rendered, encoding="utf-8")
 
 
 def aid_ref(agent_id: str, kid: str, pub: str, issued_at: str) -> dict:
@@ -71,7 +76,14 @@ def aid_ref(agent_id: str, kid: str, pub: str, issued_at: str) -> dict:
     return {"object_type": "aid", "object": aid_obj, "object_hash": object_hash("aid", aid_obj)}
 
 
-def build_rows(session: str, contract: str, use_ts: str, revoke_ts: str | None = None, issue_signed: bool = True) -> list[dict]:
+def build_rows(
+    session: str,
+    contract: str,
+    use_ts: str,
+    revoke_ts: str | None = None,
+    issue_signed: bool = True,
+    include_use: bool = True,
+) -> list[dict]:
     cref = {"branch_id": "main", "base_version": "v1", "head_version": "v1"}
 
     idp_seed = bytes([11]) * 32
@@ -105,7 +117,8 @@ def build_rows(session: str, contract: str, use_ts: str, revoke_ts: str | None =
         rows.append({"session_id": session, "message_id": f"m{mid}", "timestamp": "2026-03-01T00:00:05Z", "sender": "auth:IDP", "message_type": "SUBJECT_BINDING_REVOKE", "contract_id": contract, "contract_ref": cref, "payload": {"binding_hash": binding_hash, "effective_at": revoke_ts, "reason_code": "security_incident"}})
         mid += 1
 
-    rows.append({"session_id": session, "message_id": f"m{mid}", "timestamp": use_ts, "sender": "agent:A", "message_type": "ATTEST_ACTION", "contract_id": contract, "contract_ref": cref, "ext": {"subject_binding_hash": binding_hash}, "payload": {"action": "submit_reception_summary", "result_hash": f"sha256:{session}-result"}})
+    if include_use:
+        rows.append({"session_id": session, "message_id": f"m{mid}", "timestamp": use_ts, "sender": "agent:A", "message_type": "ATTEST_ACTION", "contract_id": contract, "contract_ref": cref, "ext": {"subject_binding_hash": binding_hash}, "payload": {"action": "submit_reception_summary", "result_hash": f"sha256:{session}-result"}})
 
     rows = finalize(rows)
     rows = sign_rows(rows, {"auth:IDP": ("P1", idp_key), "agent:A": ("A1", agent_key)}, include_unsigned_issue=not issue_signed)
@@ -118,11 +131,19 @@ def main() -> None:
     di02 = build_rows("sDI2", "cDI2", use_ts="2026-03-01T00:00:10Z", revoke_ts="2026-03-01T00:00:06Z")
     di03 = build_rows("sDI3", "cDI3", use_ts="2026-03-01T00:40:00Z")
     di04 = build_rows("sDI4", "cDI4", use_ts="2026-03-01T00:00:10Z", issue_signed=False)
+    di05 = build_rows(
+        "sDI5",
+        "cDI5",
+        use_ts="2026-03-01T00:00:10Z",
+        revoke_ts="2026-03-01T00:00:06Z",
+        include_use=False,
+    )
 
     write(out / "DI-01_issue_and_use_binding_pass.jsonl", di01)
     write(out / "DI-02_revoke_then_use_expected_fail.jsonl", di02)
     write(out / "DI-03_expired_binding_expected_fail.jsonl", di03)
     write(out / "DI-04_issue_not_signed_expected_fail.jsonl", di04)
+    write(out / "DI-05_issue_and_revoke_binding_pass.jsonl", di05)
     print("Generated delegated identity fixtures")
 
 

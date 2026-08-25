@@ -95,6 +95,20 @@ def _fixture_message_types(path: Path) -> set[str]:
     return found
 
 
+def _fixture_message_sequence(path: Path) -> list[str]:
+    """Return the top-level JSONL message sequence used by CT-SEQUENCE-01."""
+    if not path.is_file() or path.suffix != ".jsonl":
+        return []
+    sequence: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        value = json.loads(line)
+        if isinstance(value, dict) and isinstance(value.get("message_type"), str):
+            sequence.append(value["message_type"])
+    return sequence
+
+
 def _message_owners(root: Path) -> dict[str, str]:
     messages = load_json(root, MESSAGE_REGISTRY_PATH)
     extensions = load_json(root, EXTENSION_REGISTRY_PATH)
@@ -267,9 +281,6 @@ def derive_message_surface(root: Path = ROOT) -> dict[str, Any]:
             if not isinstance(fixture_ref, str):
                 continue
             message_types = _fixture_message_types(root / fixture_ref)
-            expected = case.get("expected_message_types", [])
-            if isinstance(expected, list):
-                message_types.update(item for item in expected if isinstance(item, str))
             target = positive if case.get("expect_pass", True) else negative
             for message_id in message_types & registered:
                 suites[message_id].add(suite_ref)
@@ -849,7 +860,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {binding_summary['external_binding_targets']} external targets; {binding_summary['live_role_paths']} live role paths; {binding_summary['reachable_external_binding_marks']} reachable marks | {binding_summary['externally_demonstrated_bindings']} externally demonstrated bindings; reference evidence is not external evidence | M70 |",
             f"| Security review | internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support completion | M67 |",
             f"| Governance | `{governance['current_model']}` | No external standards body is recorded | M68 |",
-            f"| Message surface | {message_summary['registered_count']} machine-mapped entries; {len(message_summary['missing_positive_fixture_types'])} positive-fixture gaps | Aggregates are derived from entries | M65 |",
+            f"| Message surface | {message_summary['registered_count']} machine-mapped entries; {len(message_summary['missing_positive_fixture_types'])} positive-fixture gaps | Aggregates are derived from entries | {'M65' if message_summary['missing_positive_fixture_types'] else 'None (M65 shipped)'} |",
             "| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | Deferred |",
             f"| Release | `{status['release_phase']}` | Repository metadata is not external adoption or GA evidence | M69 |",
         ]

@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate message-surface-complete interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -18,6 +18,8 @@ validate:
 	$(PYTHON) scripts/validate_productization_coverage.py
 	$(PYTHON) scripts/validate_errata.py
 	$(PYTHON) scripts/validate_planning_docs.py
+	$(PYTHON) scripts/validate_message_surface_completion.py
+	$(PYTHON) scripts/validate_m65_extension_semantics.py
 	$(PYTHON) scripts/validate_verification_gate_alignment.py
 	$(PYTHON) scripts/validate_shipped_extension_coverage.py
 	$(PYTHON) scripts/generate_core_v02_fixtures.py --check
@@ -33,6 +35,10 @@ validate:
 	$(PYTHON) scripts/check_naming.py
 	$(PYTHON) scripts/check_terms.py
 	$(PYTHON) scripts/check_no_binary_changes.py
+
+message-surface-complete:
+	$(PYTHON) scripts/validate_message_surface_completion.py
+	$(PYTHON) scripts/validate_m65_extension_semantics.py
 
 snapshot:
 	$(PYTHON) scripts/generate_snapshot_manifest.py
@@ -53,6 +59,7 @@ conformance-core:
 
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog extensions
+	$(PYTHON) scripts/validate_m65_extension_semantics.py
 	$(MAKE) conformance-capneg-v02
 	$(MAKE) conformance-session-state-projection-v2
 

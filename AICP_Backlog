@@ -13,24 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M65 — Registered Message Surface Completion
-
-<!-- milestone-status: M65 planned -->
-- **Status:** Planned.
-- **Problem statement:** 17 experimental registered lifecycle message types have payload
-  mappings and suite ownership but no positive conformance-referenced fixture.
-- **Scope:** add the missing positive lifecycle fixtures and matching semantic checks, plus
-  negative fixtures where the normative behavior requires them.
-- **Explicit non-goals:** no removal/renaming of message types and no schema or lifecycle
-  semantics change outside a reviewed versioned decision.
-- **Principal evidence gap:** the exact 17-type list is recorded in
-  `docs/process/AICP_Repo_Truth_Baseline.md` and mechanically checked in
-  `docs/process/repo_truth_status.json`.
-- **Dependencies:** M58.
-- **Completion criterion:** every registered type maps to an owning surface, payload schema,
-  conformance suite, and positive conformance-referenced fixture; applicable negative
-  coverage is documented and executable.
-
 ## M66 — Clean-Room Pairwise Interop Harness
 
 <!-- milestone-status: M66 planned -->

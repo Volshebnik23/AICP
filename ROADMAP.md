@@ -5,7 +5,7 @@
 > Source of truth for shipped/current/next milestone status.
 > `AICP_Backlog` is planning-only for remaining deliverables and should not duplicate shipped-history detail.
 
-_Last updated: 2026-07-29_
+_Last updated: 2026-08-25_
 
 ## Current / Next
 
@@ -152,8 +152,7 @@ _Last updated: 2026-07-29_
 - **Compatibility boundary:** product-profile IUT v1 and projection report 2.0 remain
   valid; Evidence TCK 1.0, 1.1, 1.2, and 1.3 records are frozen. No target is added for other
   profiles, composition, live bindings, or pairwise interoperability.
-- **Next concrete step:** M64 ships live transport and binding evidence; M65 remains
-  planned for registered message-surface completion.
+- **Next concrete step:** M64 and M65 are now shipped; M66 remains planned.
 
 ### ✅ M64 — Live Transport and Binding Interoperability
 <!-- milestone-status: M64 shipped -->
@@ -176,11 +175,31 @@ _Last updated: 2026-07-29_
 - **Independent-evidence boundary:** repository reference runs are behavioral evidence and
   receive no external mark. Test-only external subjects prove reachability but are not
   public submissions. No real external binding or pairwise demonstration is checked in.
-- **Final evidence correction:** current Evidence TCK 1.8 keeps report 2.2 and adds trace v4,
+- **Final evidence correction:** M64 issued Evidence TCK 1.8 with report 2.2 and trace v4,
   first-seen MCP poll continuations, and repository-observed TLS failure classification so
   TCP/plaintext probes cannot stand in for certificate rejection. TCK 1.7 is frozen and
   historical/ineligible; no binding, Core, CAPNEG, projection, or profile wire semantics change.
-- **Next concrete step:** M65 remains planned for registered message-surface completion.
+- **Next concrete step:** M65 completes the registered message surface; M66 remains planned.
+
+### ✅ M65 — Registered Message Surface Completion
+<!-- milestone-status: M65 shipped -->
+- **Status:** Shipped.
+- **Problem:** 17 registered lifecycle message types had owner-pure payload mappings and
+  suite ownership but no positive suite-referenced fixture whose actual bytes contained
+  the type.
+- **Scope:** make positive coverage byte-backed, reuse and strengthen five orphan fixtures,
+  add six deterministic lifecycle fixtures, and execute existing or narrowly added RFC-
+  grounded semantic checks without changing registered IDs, wire schemas, or marks.
+- **Completion evidence:** repo truth and `message-surface-complete` derive 132 registered,
+  132 payload-mapped, 132 suite-owned, and 132 actual-positive-covered types with zero
+  gaps and 11 version-selected IDs. Hash-valid mutation controls prove the load-bearing
+  lifecycle relations independently of schema/hash failures.
+- **Evidence boundary:** TCK 1.8 is byte-frozen and remains historical/strong-eligible;
+  current TCK 1.9 retains report 2.2, trace v4, and the same six targets while expanding
+  the exact Tier-1 consumer corpus from 25/16/28 to 26/16/31. Product-IUT report v1,
+  IUT TCK 1.1, its targets, and marks are unchanged.
+- **Next concrete step:** M66 remains planned for clean-room pairwise interoperability;
+  M65 does not claim external adoption or pairwise demonstration.
 
 ## Planned milestones
 
@@ -190,7 +209,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M65 | Planned | Registered Message Surface Completion | `AICP_Backlog` |
 | M66 | Planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
 | M67 | Planned | Security Coverage Closure | `AICP_Backlog` |
 | M68 | Planned | Governance and Standard Maturity | `AICP_Backlog` |
