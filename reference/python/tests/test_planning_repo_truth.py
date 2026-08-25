@@ -128,7 +128,7 @@ def test_current_m64_profile_capability_binding_and_milestone_truth() -> None:
     assert projection_v1["external_evidence_target"] is True
     assert projection_v1["external_test_path"] == "full-capability"
     assert projection_v1["current_evidence_tck_release"] == (
-        "AICP-EVIDENCE-TCK-1.8.0"
+        "AICP-EVIDENCE-TCK-1.9.0"
     )
     assert projection_v1["external_evidence_mark"] == (
         "AICP-Evidence-SESSION-STATE-PROJECTION-v1"
@@ -142,12 +142,12 @@ def test_current_m64_profile_capability_binding_and_milestone_truth() -> None:
     assert projection_v2["external_evidence_target"] is False
     assert projection_v2["independent_external_evidence"] is False
     milestones = {item["id"]: item for item in status["milestones"]}
-    for number in range(58, 65):
+    for number in range(58, 66):
         assert milestones[f"M{number}"]["status"] == "shipped"
         assert milestones[f"M{number}"]["document"] == "ROADMAP.md"
     assert all(
         milestones[f"M{number}"]["status"] == "planned"
-        for number in range(65, 71)
+        for number in range(66, 71)
     )
 
 
@@ -437,9 +437,9 @@ def test_baseline_rejects_changed_milestone_status() -> None:
 def test_baseline_rejects_stale_message_gap_count() -> None:
     baseline = _baseline().replace(
         "11 IDs use version-selected payload schemas; "
-        "17 missing positive fixtures",
+        "0 missing positive fixtures",
         "11 IDs use version-selected payload schemas; "
-        "16 missing positive fixtures",
+        "1 missing positive fixtures",
         1,
     )
     assert VALIDATOR._baseline_generated_errors(_status(), baseline)
@@ -447,7 +447,7 @@ def test_baseline_rejects_stale_message_gap_count() -> None:
 
 def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
     roadmap = _roadmap().replace(
-        "| M65 | Planned |", "| M65 | Shipped |", 1
+        "| M66 | Planned |", "| M66 | Shipped |", 1
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), roadmap, _backlog()
@@ -457,21 +457,21 @@ def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
 
 def test_backlog_visible_status_must_match_marker_and_json() -> None:
     backlog = _backlog().replace(
-        "<!-- milestone-status: M65 planned -->\n- **Status:** Planned.",
-        "<!-- milestone-status: M65 planned -->\n- **Status:** Shipped.",
+        "<!-- milestone-status: M66 planned -->\n- **Status:** Planned.",
+        "<!-- milestone-status: M66 planned -->\n- **Status:** Shipped.",
         1,
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), _roadmap(), backlog
     )
-    assert any("M65: visible status" in error for error in errors)
+    assert any("M66: visible status" in error for error in errors)
 
 
 def test_future_milestone_document_must_resolve() -> None:
     status = _status()
     next(
         milestone for milestone in status["milestones"]
-        if milestone["id"] == "M64"
+        if milestone["id"] == "M66"
     )["document"] = "docs/process/DOES_NOT_EXIST.md"
     errors = VALIDATOR._milestone_errors(
         ROOT, status, _roadmap(), _backlog()
@@ -691,15 +691,11 @@ def test_message_surface_rejects_aggregate_mismatch() -> None:
     assert any("summary must be derived" in error for error in errors)
 
 
-def test_message_surface_rejects_false_complete_gap_status() -> None:
+def test_message_surface_rejects_false_gap_status() -> None:
     surface = copy.deepcopy(_status()["message_surface"])
-    gap = next(
-        entry
-        for entry in surface["entries"]
-        if entry["coverage_status"] == "missing_positive_fixture"
-    )
-    gap["coverage_status"] = "complete"
-    gap["gap_milestone"] = None
+    complete = next(entry for entry in surface["entries"] if entry["positive_fixtures"])
+    complete["coverage_status"] = "missing_positive_fixture"
+    complete["gap_milestone"] = "M65"
     errors = VALIDATOR._message_surface_errors(ROOT, surface)
     assert any("coverage status is false" in error for error in errors)
 

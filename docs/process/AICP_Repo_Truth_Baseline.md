@@ -14,7 +14,7 @@ Refresh the structured status and all generated sections with
 `python scripts/repo_truth.py --write`; `scripts/validate_planning_docs.py` compares tracked
 generated content byte-for-byte with the machine companion.
 
-Recomputed on 2026-07-27 from repository catalogs and the commands listed in
+Recomputed on 2026-08-25 from repository catalogs and the commands listed in
 [Verification basis](#verification-basis). “Shipped” below means present in the repository;
 it does not mean externally adopted, independently interoperable, certified, or production
 mature.
@@ -50,7 +50,7 @@ mature.
 | Reachable external capability marks | 1 | evidence target registry and TCK provenance |
 | Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
 | External binding targets | 2 | `conformance/evidence/targets.json` |
-| Reachable external binding marks | 2 | evidence target registry and AICP-EVIDENCE-TCK-1.8.0 provenance |
+| Reachable external binding marks | 2 | evidence target registry and AICP-EVIDENCE-TCK-1.9.0 provenance |
 | Externally demonstrated bindings | 0 | eligible binding-specific `computed_binding_marks` only |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
 | Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability/binding evidence |
@@ -60,9 +60,9 @@ mature.
 | Live binding paths | 2: `BIND-HTTP@0.1`, `BIND-MCP@0.1` | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
-| Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 17 missing positive fixtures | `message_surface.entries` |
+| Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 0 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
-| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.8.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.9.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
@@ -76,7 +76,7 @@ mature.
 | M62 | shipped | Generalized External Evidence Framework | `ROADMAP.md` |
 | M63 | shipped | Tier-1 External Profile TCK | `ROADMAP.md` |
 | M64 | shipped | Live Transport and Binding Interoperability | `ROADMAP.md` |
-| M65 | planned | Registered Message Surface Completion | `AICP_Backlog` |
+| M65 | shipped | Registered Message Surface Completion | `ROADMAP.md` |
 | M66 | planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
 | M67 | planned | Security Coverage Closure | `AICP_Backlog` |
 | M68 | planned | Governance and Standard Maturity | `AICP_Backlog` |
@@ -94,7 +94,7 @@ mature.
 | Bindings | 25 static cases; 2 external targets; 4 live role paths; 2 reachable marks | 0 externally demonstrated bindings; reference evidence is not external evidence | M70 |
 | Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
-| Message surface | 132 machine-mapped entries; 17 positive-fixture gaps | Aggregates are derived from entries | M65 |
+| Message surface | 132 machine-mapped entries; 0 positive-fixture gaps | Aggregates are derived from entries | None (M65 shipped) |
 | Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | Deferred |
 | Release | `release-candidate-with-unreleased-post-rc-changes` | Repository metadata is not external adoption or GA evidence | M69 |
 <!-- END GENERATED REPO-TRUTH FACTS -->
@@ -111,19 +111,17 @@ mature.
    composition, but it does not award component marks or provide generalized external
    composition evidence. That external target remains deferred.
 4. **External evidence breadth:** two of 16 registered profiles have full external-IUT
-   targets, and three Tier-1 profiles have generalized report-2.1 targets. M62 added one
-   projection-v1 capability target; M63's corrected current release is
-   `AICP-EVIDENCE-TCK-1.4.0`. Exact 1.1.0 projection reports remain strong-eligible, while
-   frozen 1.0.0, 1.2.0, and 1.3.0 cannot support a strong claim for their documented defects.
-5. **Transport evidence:** binding suites validate static case artifacts, not live endpoints.
-   Routed to M64.
-6. **Registered message surface:** the following experimental registered types have no
-   positive conformance-referenced fixture:
-   `AGENDA_DECLARE`, `AGENDA_UPDATE`, `AGENT_MIGRATION`, `ARBITRATION_REQUEST`,
-   `ARBITRATION_RESULT`, `AWARD_DECLINE`, `BID_UPDATE`, `BID_WITHDRAW`, `CLAIM_BREACH`,
-   `DELEGATION_REVOKE`, `KEY_REVOKE`, `PARTICIPANT_LEAVE`, `POLICY_DECISION_ATTEST`,
-   `RESPONSIBILITY_REVOKE`, `RUN_CANCEL`, `SUBJECT_BINDING_REVOKE`, and `TURN_REVOKE`.
-   Routed to M65; no lifecycle semantics are added here.
+   targets, and three Tier-1 profiles have generalized report-2.2 targets. M62 added one
+   projection-v1 capability target; M65's current generalized release is
+   `AICP-EVIDENCE-TCK-1.9.0`. Exact 1.1.0, 1.4.0, and 1.8.0 reports remain strong-eligible,
+   while frozen 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, and 1.7.0 cannot support a strong claim
+   for their documented defects.
+5. **Transport evidence:** M64 ships repository-owned live loopback HTTP/SSE/WebSocket/WSS
+   and MCP stdio evidence. No real independent external binding submission is present.
+6. **Registered message surface:** M65 closes the previously recorded 17-type gap. All 132
+   registered messages now have actual, positive, suite-referenced fixture bytes and
+   executable owner conformance; this does not promote extension stability or create an
+   external evidence target.
 7. **Pairwise evidence:** publication is intentionally unavailable until one joint-run format
    binds builds, directions, and consumed artifacts. Routed to M66.
 8. **Security:** the repository contains self-review and partial threat coverage, not an
