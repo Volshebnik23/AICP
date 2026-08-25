@@ -71,13 +71,14 @@ from live_bindings.live_mcp_transport import (  # noqa: E402
 )
 from live_bindings.live_public_scenarios import public_scenario_projection  # noqa: E402
 from live_bindings.live_tls import (  # noqa: E402
+    challenge_server_ssl_context,
     generate_ephemeral_tls_material,
     server_ssl_context,
 )
 
 
 READY_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_endpoint_descriptor_v2.schema.json"
-TRACE_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_binding_trace_v3.schema.json"
+TRACE_SCHEMA_PATH = EVIDENCE_DIR / "live_bindings/live_binding_trace_v4.schema.json"
 PUBLIC_SCENARIO_SCHEMA_PATH = (
     EVIDENCE_DIR / "live_bindings/live_public_scenario_v1.schema.json"
 )
@@ -280,7 +281,7 @@ def _run_http_client_role(
     )
     untrusted_server, _untrusted_state, untrusted_thread = start_http_server(
         bearer,
-        ssl_context=server_ssl_context(wrong_material),
+        ssl_context=challenge_server_ssl_context(wrong_material),
         state=state,
         tls_observation=untrusted_observation,
     )

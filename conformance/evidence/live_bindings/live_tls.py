@@ -77,3 +77,11 @@ def server_ssl_context(material: EphemeralTlsMaterial) -> ssl.SSLContext:
     context.minimum_version = ssl.TLSVersion.TLSv1_2
     context.load_cert_chain(str(material.cert_file), str(material.key_file))
     return context
+
+
+def challenge_server_ssl_context(material: EphemeralTlsMaterial) -> ssl.SSLContext:
+    context = server_ssl_context(material)
+    # TLS 1.2 provides a stable peer certificate-rejection alert to the
+    # repository observer across the supported Python/OpenSSL runtimes.
+    context.maximum_version = ssl.TLSVersion.TLSv1_2
+    return context

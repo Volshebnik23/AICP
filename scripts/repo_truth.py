@@ -783,6 +783,16 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
     live_bindings = sorted(
         item["id"] for item in bindings if item.get("live_test_paths")
     )
+    binding_tck_releases = {
+        str(item.get("current_evidence_tck_release"))
+        for item in bindings
+        if item.get("external_evidence_target")
+    }
+    binding_tck = (
+        next(iter(binding_tck_releases))
+        if len(binding_tck_releases) == 1
+        else "mixed"
+    )
 
     lines = [
         "## Machine-bound repository facts",
@@ -799,7 +809,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Reachable external capability marks | {capability_summary['reachable_external_capability_marks']} | evidence target registry and TCK provenance |",
         f"| Externally demonstrated capabilities | {capability_summary['externally_demonstrated_capabilities']} | eligible capability-specific `eligible_targets` only |",
         f"| External binding targets | {binding_summary['external_binding_targets']} | `conformance/evidence/targets.json` |",
-        f"| Reachable external binding marks | {binding_summary['reachable_external_binding_marks']} | evidence target registry and TCK 1.7 provenance |",
+        f"| Reachable external binding marks | {binding_summary['reachable_external_binding_marks']} | evidence target registry and {binding_tck} provenance |",
         f"| Externally demonstrated bindings | {binding_summary['externally_demonstrated_bindings']} | eligible binding-specific `computed_binding_marks` only |",
         f"| Real submission packages | {interop['real_submission_package_count']} | `interop/interop_matrix.json` |",
         f"| Eligible external submissions | {interop['eligible_external_submission_count']} | public interop eligibility plus typed computed profile/capability/binding evidence |",

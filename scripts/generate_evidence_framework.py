@@ -31,6 +31,8 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_5_REGISTRY_SNAPSHOT_DIGEST,
     FROZEN_TCK_1_6_RECORD_DIGEST,
     FROZEN_TCK_1_6_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_7_RECORD_DIGEST,
+    FROZEN_TCK_1_7_REGISTRY_SNAPSHOT_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_RELEASE_REGISTRY_DIGEST,
     HISTORICAL_TARGET_SCHEMA_DIGEST,
@@ -43,6 +45,7 @@ from target_catalog import (  # noqa: E402
     TCK_1_4_RELEASE_ID,
     TCK_1_5_RELEASE_ID,
     TCK_1_6_RELEASE_ID,
+    TCK_1_7_RELEASE_ID,
     PROFILE_TARGET_KEYS,
     REPORT_SCHEMA_PATH,
     REPORT_SCHEMA_V21_PATH,
@@ -121,7 +124,7 @@ BINDING_CONFIGS = (
         "target_id": "BIND-HTTP",
         "canonical_binding_id": "BIND-HTTP-0.1",
         "suite_path": "conformance/bindings/TB_HTTP_WS_0.1.json",
-        "catalog_path": "conformance/evidence/live_bindings/http_v01_target_v3.json",
+        "catalog_path": "conformance/evidence/live_bindings/http_v01_target_v4.json",
         "scenario_path": "conformance/evidence/live_bindings/http_v01_scenarios.json",
         "spec_path": "docs/bindings/RFC_BIND_HTTP_WS.md",
         "expected_mark": "AICP-BIND-HTTP-0.1",
@@ -131,7 +134,7 @@ BINDING_CONFIGS = (
         "target_id": "BIND-MCP",
         "canonical_binding_id": "BIND-MCP-0.1",
         "suite_path": "conformance/bindings/TB_MCP_0.1.json",
-        "catalog_path": "conformance/evidence/live_bindings/mcp_v01_target_v3.json",
+        "catalog_path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json",
         "scenario_path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
         "spec_path": "docs/bindings/RFC_BIND_MCP.md",
         "expected_mark": "AICP-BIND-MCP-0.1",
@@ -557,7 +560,7 @@ def binding_target_catalog_payload(config: dict[str, str]) -> dict[str, Any]:
     suite = load_json(ROOT / config["suite_path"])
     scenario_path = ROOT / config["scenario_path"]
     scenario_schema_path = EVIDENCE_DIR / "live_bindings/live_binding_scenario.schema.json"
-    trace_schema_path = EVIDENCE_DIR / "live_bindings/live_binding_trace_v3.schema.json"
+    trace_schema_path = EVIDENCE_DIR / "live_bindings/live_binding_trace_v4.schema.json"
     endpoint_schema_path = EVIDENCE_DIR / "live_bindings/live_endpoint_descriptor_v2.schema.json"
     scenarios = load_json(scenario_path)
     expected_target = {
@@ -686,6 +689,10 @@ def release_registry_payload(
         TCK_1_6_RELEASE_ID,
         FROZEN_TCK_1_6_RECORD_DIGEST,
     )
+    frozen_1_7_release = _frozen_release(
+        TCK_1_7_RELEASE_ID,
+        FROZEN_TCK_1_7_RECORD_DIGEST,
+    )
     projection_handler = resolve_handler("projection_v1")
     product_handler = resolve_handler("product_profile_v01")
     binding_handler = resolve_handler("live_binding_v01")
@@ -795,7 +802,7 @@ def release_registry_payload(
             }
         )
     return {
-        "registry_version": "1.7",
+        "registry_version": "1.8",
         "supersessions": [
             {
                 "release_id": HISTORICAL_TCK_RELEASE_ID,
@@ -868,13 +875,22 @@ def release_registry_payload(
                 ),
             },
             {
+                "release_id": TCK_1_7_RELEASE_ID,
+                "lifecycle": "historical",
+                "strong_eligible": False,
+                "reason": (
+                    "MCP continuation evidence could reuse a cursor exposed before "
+                    "poll-1, and WSS client evidence did not distinguish certificate "
+                    "rejection from a TCP-only/non-TLS probe."
+                ),
+            },
+            {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "lifecycle": "current",
                 "strong_eligible": True,
                 "reason": (
-                    "Adds opaque runtime response challenges, sequential client "
-                    "causality, repository-observed WSS certificate challenges, "
-                    "and isolated public scenario controls."
+                    "Requires first-seen MCP poll continuation evidence and "
+                    "repository-observed TLS certificate-rejection classification."
                 ),
             },
         ],
@@ -886,6 +902,7 @@ def release_registry_payload(
             frozen_1_4_release,
             frozen_1_5_release,
             frozen_1_6_release,
+            frozen_1_7_release,
             {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "status": "experimental",
@@ -1016,6 +1033,15 @@ def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, A
     ):
         raise ValueError("evidence TCK 1.6.0 registry snapshot changed")
 
+    frozen_1_7_path = RELEASE_SNAPSHOT_DIR / f"{TCK_1_7_RELEASE_ID}.json"
+    if not frozen_1_7_path.is_file():
+        raise ValueError("frozen evidence TCK 1.7.0 registry snapshot is missing")
+    frozen_1_7 = load_json(frozen_1_7_path)
+    if digest_bytes(render(frozen_1_7).encode("utf-8")) != (
+        FROZEN_TCK_1_7_REGISTRY_SNAPSHOT_DIGEST
+    ):
+        raise ValueError("evidence TCK 1.7.0 registry snapshot changed")
+
     return {
         TCK_RELEASE_ID: frozen_1_1,
         PROFILE_TCK_RELEASE_ID: frozen_1_2,
@@ -1023,6 +1049,7 @@ def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, A
         TCK_1_4_RELEASE_ID: frozen_1_4,
         TCK_1_5_RELEASE_ID: frozen_1_5,
         TCK_1_6_RELEASE_ID: frozen_1_6,
+        TCK_1_7_RELEASE_ID: frozen_1_7,
         CURRENT_TCK_RELEASE_ID: releases,
     }
 
@@ -1058,6 +1085,7 @@ def main() -> int:
                 TCK_1_4_RELEASE_ID,
                 TCK_1_5_RELEASE_ID,
                 TCK_1_6_RELEASE_ID,
+                TCK_1_7_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -1078,6 +1106,7 @@ def main() -> int:
                 TCK_1_4_RELEASE_ID,
                 TCK_1_5_RELEASE_ID,
                 TCK_1_6_RELEASE_ID,
+                TCK_1_7_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -1152,8 +1181,8 @@ def main() -> int:
         f"{consumer_count} consumers, {CURRENT_TCK_RELEASE_ID}; "
         f"{HISTORICAL_TCK_RELEASE_ID}, {TCK_RELEASE_ID}, "
         f"{PROFILE_TCK_RELEASE_ID}, {PREVIOUS_TCK_RELEASE_ID}, and "
-        f"{TCK_1_4_RELEASE_ID}, {TCK_1_5_RELEASE_ID}, and "
-        f"{TCK_1_6_RELEASE_ID} retained; "
+        f"{TCK_1_4_RELEASE_ID}, {TCK_1_5_RELEASE_ID}, "
+        f"{TCK_1_6_RELEASE_ID}, and {TCK_1_7_RELEASE_ID} retained; "
         "two live binding targets registered."
     )
     return 0

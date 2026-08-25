@@ -99,8 +99,19 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_6_TARGET_CATALOG_DIGESTS,
     FROZEN_TCK_1_6_TARGET_REGISTRY_DIGEST,
     FROZEN_TCK_1_6_TARGET_REGISTRY_SCHEMA_DIGEST,
+    FROZEN_TCK_1_7_BUNDLE_MANIFEST_DIGEST,
+    FROZEN_TCK_1_7_LIVE_TRACE_SCHEMA_DIGEST,
+    FROZEN_TCK_1_7_PUBLIC_SCENARIO_SCHEMA_DIGEST,
+    FROZEN_TCK_1_7_RECORD_DIGEST,
+    FROZEN_TCK_1_7_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_7_REPORT_SCHEMA_DIGEST,
+    FROZEN_TCK_1_7_RUNNER_BUNDLE_DIGEST,
+    FROZEN_TCK_1_7_TARGET_CATALOG_DIGESTS,
+    FROZEN_TCK_1_7_TARGET_REGISTRY_DIGEST,
+    FROZEN_TCK_1_7_TARGET_REGISTRY_SCHEMA_DIGEST,
     TCK_1_5_RELEASE_ID,
     TCK_1_6_RELEASE_ID,
+    TCK_1_7_RELEASE_ID,
     TCK_1_4_RELEASE_ID,
     canonical_digest as target_canonical_digest,
     file_digest,
@@ -199,9 +210,9 @@ def _set_fact(report: dict, scenario_id: str, name: str, value: object) -> None:
     _recompute_trace(report)
 
 
-def test_exact_binding_targets_and_tck_17_registry() -> None:
+def test_exact_binding_targets_and_tck_18_registry() -> None:
     assert BINDING_TARGET_KEYS == ("BIND-HTTP@0.1", "BIND-MCP@0.1")
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.7.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.8.0"
     assert validate_target_registry() == []
     assert validate_release_registry() == []
     for key, mark in EXPECTED_MARKS.items():
@@ -329,6 +340,34 @@ def test_tck_16_is_byte_frozen_and_explicitly_ineligible() -> None:
     assert file_digest(LIVE_DIR / "live_binding_trace_v2.schema.json") == FROZEN_TCK_1_6_LIVE_TRACE_SCHEMA_DIGEST
     assert file_digest(LIVE_DIR / "live_endpoint_descriptor_v2.schema.json") == FROZEN_TCK_1_6_ENDPOINT_DESCRIPTOR_SCHEMA_DIGEST
     assert release_policy(TCK_1_6_RELEASE_ID)["strong_eligible"] is False
+
+
+def test_zero_real_external_submissions_and_no_tck_17_adoption() -> None:
+    matrix = json.loads((ROOT / "interop/interop_matrix.json").read_text(encoding="utf-8"))
+    assert matrix["real_submissions"] == []
+    references: list[str] = []
+    for path in (ROOT / "interop/submissions").iterdir():
+        if not path.is_dir() or path.name in {"examples", "templates"} or path.name.startswith("dryrun-"):
+            continue
+        for candidate in path.rglob("*.json"):
+            if TCK_1_7_RELEASE_ID in candidate.read_text(encoding="utf-8"):
+                references.append(candidate.relative_to(ROOT).as_posix())
+    assert references == []
+
+
+def test_tck_17_is_byte_frozen_and_explicitly_ineligible() -> None:
+    release = release_record(TCK_1_7_RELEASE_ID)
+    assert target_canonical_digest(release) == FROZEN_TCK_1_7_RECORD_DIGEST
+    assert release_snapshot_digest(TCK_1_7_RELEASE_ID) == FROZEN_TCK_1_7_REGISTRY_SNAPSHOT_DIGEST
+    assert file_digest(EVIDENCE_DIR / "evidence_runner_bundle_v1_7.json") == FROZEN_TCK_1_7_BUNDLE_MANIFEST_DIGEST
+    assert release["runner_bundle"]["digest"] == FROZEN_TCK_1_7_RUNNER_BUNDLE_DIGEST
+    assert release["report_schema"]["content_digest"] == FROZEN_TCK_1_7_REPORT_SCHEMA_DIGEST
+    assert release["target_registry"]["content_digest"] == FROZEN_TCK_1_7_TARGET_REGISTRY_DIGEST
+    assert release["target_registry"]["schema_digest"] == FROZEN_TCK_1_7_TARGET_REGISTRY_SCHEMA_DIGEST
+    assert {item["target_key"]: item["target_catalog"]["content_digest"] for item in release["targets"]} == FROZEN_TCK_1_7_TARGET_CATALOG_DIGESTS
+    assert file_digest(LIVE_DIR / "live_binding_trace_v3.schema.json") == FROZEN_TCK_1_7_LIVE_TRACE_SCHEMA_DIGEST
+    assert file_digest(LIVE_DIR / "live_public_scenario_v1.schema.json") == FROZEN_TCK_1_7_PUBLIC_SCENARIO_SCHEMA_DIGEST
+    assert release_policy(TCK_1_7_RELEASE_ID)["strong_eligible"] is False
 
 
 def test_tck_16_bundle_closes_over_live_binding_package_imports() -> None:
@@ -633,20 +672,24 @@ def test_wss_client_challenge_is_repository_observed(
             {
                 "endpoint_class": "untrusted",
                 "connection_attempted": True,
+                "tls_failure_class": "certificate_rejected",
                 "tls_handshake_completed": False,
                 "websocket_application_handshake_observed": False,
                 "connection_order": 1,
+                "tls_failure_order": 2,
                 "tls_handshake_order": None,
                 "websocket_application_handshake_order": None,
             },
             {
                 "endpoint_class": "trusted",
                 "connection_attempted": True,
+                "tls_failure_class": "tls_handshake_completed",
                 "tls_handshake_completed": True,
                 "websocket_application_handshake_observed": True,
-                "connection_order": 2,
-                "tls_handshake_order": 3,
-                "websocket_application_handshake_order": 4,
+                "connection_order": 3,
+                "tls_failure_order": None,
+                "tls_handshake_order": 4,
+                "websocket_application_handshake_order": 5,
             },
         ]
 
@@ -660,6 +703,10 @@ def test_wss_client_challenge_is_repository_observed(
         "remove_trusted_success",
         "swap_endpoint_classes",
         "change_role_binding",
+        "raw_tcp_failure_class",
+        "plaintext_failure_class",
+        "pre_certificate_abort",
+        "missing_failure_order",
     ],
 )
 def test_wss_challenge_mutations_are_rejected(
@@ -680,6 +727,14 @@ def test_wss_challenge_mutations_are_rejected(
         elif mutation == "swap_endpoint_classes":
             challenges[0]["endpoint_class"] = "trusted"
             challenges[1]["endpoint_class"] = "untrusted"
+        elif mutation == "raw_tcp_failure_class":
+            challenges[0]["tls_failure_class"] = "no_tls_handshake"
+        elif mutation == "plaintext_failure_class":
+            challenges[0]["tls_failure_class"] = "non_tls_protocol"
+        elif mutation == "pre_certificate_abort":
+            challenges[0]["tls_failure_class"] = "tls_pre_certificate_abort"
+        elif mutation == "missing_failure_order":
+            challenges[0]["tls_failure_order"] = None
         else:
             interaction["role"] = "server_under_test"
     _recompute_trace(report)
@@ -930,7 +985,7 @@ def test_trace_schema_structurally_rejects_secret_fields(
 ) -> None:
     from jsonschema import Draft202012Validator
 
-    schema = json.loads((LIVE_DIR / "live_binding_trace_v3.schema.json").read_text(encoding="utf-8"))
+    schema = json.loads((LIVE_DIR / "live_binding_trace_v4.schema.json").read_text(encoding="utf-8"))
     artifact = copy.deepcopy(external_reports["http"]["generated_artifacts"][0])
     artifact["content"]["runs"][0]["interactions"][0]["observations"] = [
         {"name": "authorization", "value": "Bearer forbidden"}

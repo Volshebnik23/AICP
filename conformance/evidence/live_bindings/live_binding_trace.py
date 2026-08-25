@@ -124,7 +124,7 @@ def build_trace_artifact(
     first_digest = semantic_digest(runs[0])
     repeat_digest = semantic_digest(runs[1])
     content = {
-        "trace_version": "aicp.live_binding_trace.v3",
+        "trace_version": "aicp.live_binding_trace.v4",
         "binding": {
             "binding_id": binding_id,
             "binding_version": "0.1",
@@ -286,6 +286,7 @@ def evaluate_live_binding_trace(
     if isinstance(content, dict) and content.get("trace_version") in {
         "aicp.live_binding_trace.v2",
         "aicp.live_binding_trace.v3",
+        "aicp.live_binding_trace.v4",
     }:
         return evaluate_v2_trace(
             artifact,
