@@ -2,14 +2,14 @@
   "aicp_version": "0.1",
   "profile_id": "AICP-AGENT-MEDIA",
   "profile_version": "0.1",
-  "timestamp": "2026-07-22T17:05:03.974769+00:00",
+  "timestamp": "2026-08-25T20:17:34.601555+00:00",
   "passed": true,
   "suite_reports": [
     {
       "aicp_version": "0.1",
       "suite_id": "CT-CORE-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-07-22T17:05:03.909511+00:00",
+      "timestamp": "2026-08-25T20:17:34.563673+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -23,7 +23,7 @@
       "aicp_version": "0.1",
       "suite_id": "CH-CHANNELS-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-07-22T17:05:03.928662+00:00",
+      "timestamp": "2026-08-25T20:17:34.575417+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -37,7 +37,7 @@
       "aicp_version": "0.1",
       "suite_id": "SB-SUBSCRIPTIONS-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-07-22T17:05:03.950248+00:00",
+      "timestamp": "2026-08-25T20:17:34.587506+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
@@ -51,7 +51,7 @@
       "aicp_version": "0.1",
       "suite_id": "PB-PUBLICATIONS-0.1",
       "suite_version": "0.1.0-dev",
-      "timestamp": "2026-07-22T17:05:03.974769+00:00",
+      "timestamp": "2026-08-25T20:17:34.601555+00:00",
       "passed": true,
       "failures": [],
       "compatibility_marks": [
