@@ -51,6 +51,26 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "IL-04",
+      "path": "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "AGENT_MIGRATION"
+      ]
+    },
+    {
+      "id": "IL-05",
+      "path": "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "KEY_REVOKE"
+      ]
     }
   ],
   "checks": [
@@ -66,7 +86,8 @@
     {"test_id": "ID-AID-01", "description": "aid_ref.object_hash must match recomputed object_hash('aid', aid_ref.object)"},
     {"test_id": "ID-ANN-01", "description": "IDENTITY_ANNOUNCE aid_hash must match aid_ref.object_hash when aid_ref is present"},
     {"test_id": "ID-ROT-01", "description": "KEY_ROTATION cross-signature hashes and signatures must be valid"},
-    {"test_id": "ID-REVOKE-01", "description": "revoked kid must not be used for subsequent contract-changing operations"}
+    {"test_id": "ID-REVOKE-01", "description": "KEY_REVOKE targets a known key and revoked kid must not be reused for contract-changing operations"},
+    {"test_id": "ID-MIGRATE-01", "description": "AGENT_MIGRATION binds to a previously announced updated AID"}
   ],
   "compatibility_mark": "AICP-EXT-IDENTITY-LC-0.1"
 }

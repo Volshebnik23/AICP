@@ -73,6 +73,16 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "DL-05",
+      "path": "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "DELEGATION_GRANT",
+        "DELEGATION_REVOKE"
+      ]
     }
   ],
   "checks": [
@@ -119,6 +129,10 @@
     {
       "test_id": "DL-SCOPE-01",
       "description": "Child delegation scope must be subset of parent delegation scope"
+    },
+    {
+      "test_id": "DL-REVOKE-01",
+      "description": "DELEGATION_REVOKE must target a prior active delegation"
     }
   ],
   "compatibility_mark": "AICP-EXT-DELEGATION-0.1"

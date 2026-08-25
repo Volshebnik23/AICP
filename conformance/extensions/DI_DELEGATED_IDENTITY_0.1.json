@@ -64,6 +64,18 @@
       ],
       "expect_pass": false,
       "expected_failures": [{"test_id": "DI-SIGNED-01", "min_count": 1}]
+    },
+    {
+      "id": "DI-05",
+      "path": "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "IDENTITY_ANNOUNCE",
+        "IDENTITY_ANNOUNCE",
+        "SUBJECT_BINDING_ISSUE",
+        "SUBJECT_BINDING_REVOKE"
+      ]
     }
   ],
   "checks": [
@@ -81,7 +93,7 @@
     {"test_id": "DI-SIGNED-01", "description": "SUBJECT_BINDING_ISSUE and SUBJECT_BINDING_REVOKE must be signed"},
     {"test_id": "DI-ACT-01", "description": "ext.subject_binding_hash must reference a prior binding whose agent_id equals sender"},
     {"test_id": "DI-EXPIRY-01", "description": "ext.subject_binding_hash must not be used after binding expires"},
-    {"test_id": "DI-REVOKE-01", "description": "ext.subject_binding_hash must not be used at/after effective revocation"}
+    {"test_id": "DI-REVOKE-01", "description": "revocation must target a prior binding and that binding must not be used at/after effective revocation"}
   ],
   "compatibility_mark": "AICP-EXT-DELEGATED-IDENTITY-0.1"
 }

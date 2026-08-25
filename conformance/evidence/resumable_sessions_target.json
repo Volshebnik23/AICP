@@ -350,7 +350,7 @@
     },
     {
       "path": "conformance/evidence/product_profile_consumer_expectations.json",
-      "content_digest": "sha256:4b665168d1bb7ef1e5dcb82019a59d61b736a342c148138c9b8b5fd9d7634845"
+      "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
     },
     {
       "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
@@ -366,7 +366,7 @@
     },
     {
       "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
-      "content_digest": "sha256:a61d207e412a87c5d58f3003530925d3726ab250b1f5c2a817ab775a47bf43ea"
+      "content_digest": "sha256:a0fd761b4c7e96a1ff0e26d59539cd723d42400450c706c49d120ce3dbc34dfb"
     },
     {
       "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
@@ -374,7 +374,7 @@
     },
     {
       "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
-      "content_digest": "sha256:a8e371c8b98043a6c1d78493f4052cf4fd963dad328b02228fe482c94fde58d1"
+      "content_digest": "sha256:c22c6c840c33a011542db791877f0df95391e329b65147c5ad94ae4e73282edf"
     },
     {
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
@@ -382,7 +382,7 @@
     },
     {
       "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-      "content_digest": "sha256:f3968c6c245e8676b3b3ac175f3433c0420f5fe48c2fcc7937496d885bdee091"
+      "content_digest": "sha256:e60a3dd1281a463e3b6f264bb95efedb8cc17df9ac1bd478365e4c0de8523dea"
     },
     {
       "path": "conformance/extensions/RS_RESUME_0.1.json",

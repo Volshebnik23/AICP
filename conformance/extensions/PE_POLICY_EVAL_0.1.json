@@ -33,6 +33,16 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "PE-05",
+      "path": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
+      "expected_message_types": [
+        "POLICY_EVAL_REQUEST",
+        "POLICY_EVAL_RESULT",
+        "ATTEST_ACTION",
+        "POLICY_DECISION_ATTEST"
+      ]
     }
   ],
   "checks": [
@@ -71,6 +81,10 @@
     {
       "test_id": "PE-CONTEXT-HASH-01",
       "description": "evaluation_context.context_hash must recompute under object_type evaluation_context"
+    },
+    {
+      "test_id": "PE-ATTEST-01",
+      "description": "POLICY_DECISION_ATTEST binds a prior evaluation decision to prior action evidence"
     }
   ],
   "compatibility_mark": "AICP-EXT-POLICY-EVAL-0.1",

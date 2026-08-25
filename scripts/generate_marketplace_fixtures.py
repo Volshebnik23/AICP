@@ -28,8 +28,13 @@ def finalize(rows: list[dict]) -> list[dict]:
 
 
 def write_jsonl(path: Path, rows: list[dict]) -> None:
+    rendered = "\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n"
+    if "--check" in sys.argv:
+        if not path.is_file() or path.read_text(encoding="utf-8") != rendered:
+            raise SystemExit(f"stale generated fixture: {path.relative_to(ROOT)}")
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(json.dumps(r, separators=(",", ":"), ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    path.write_text(rendered, encoding="utf-8")
 
 
 def mp01() -> list[dict]:
@@ -154,6 +159,25 @@ def mp09() -> list[dict]:
     ])
 
 
+def mp10() -> list[dict]:
+    return finalize([
+        {"session_id":"smp-10","message_id":"m1","timestamp":"2026-03-22T10:30:00Z","sender":"agent:host","message_type":"RFW_POST","contract_id":"c-mp-10",
+         "payload":{"rfw_id":"rfw-10","work_spec_ref":"work:lifecycle","policy_ref":"policy:market:v1","deadline":"2026-03-23T10:30:00Z"}},
+        {"session_id":"smp-10","message_id":"m2","timestamp":"2026-03-22T10:30:01Z","sender":"agent:bidder-a","message_type":"BID_SUBMIT","contract_id":"c-mp-10",
+         "payload":{"bid_id":"bid-10a","rfw_id":"rfw-10","offer_terms":{"price_hint":"fixed:40","sla_hint":"p95<4s"}}},
+        {"session_id":"smp-10","message_id":"m3","timestamp":"2026-03-22T10:30:02Z","sender":"agent:bidder-a","message_type":"BID_UPDATE","contract_id":"c-mp-10",
+         "payload":{"bid_id":"bid-10a","rfw_id":"rfw-10","offer_terms":{"price_hint":"fixed:35","sla_hint":"p95<3s"}}},
+        {"session_id":"smp-10","message_id":"m4","timestamp":"2026-03-22T10:30:03Z","sender":"agent:bidder-a","message_type":"BID_WITHDRAW","contract_id":"c-mp-10",
+         "payload":{"bid_id":"bid-10a","rfw_id":"rfw-10","reason_code":"vendor:capacity_change"}},
+        {"session_id":"smp-10","message_id":"m5","timestamp":"2026-03-22T10:30:04Z","sender":"agent:bidder-b","message_type":"BID_SUBMIT","contract_id":"c-mp-10",
+         "payload":{"bid_id":"bid-10b","rfw_id":"rfw-10","offer_terms":{"price_hint":"fixed:45","sla_hint":"p95<2s"}}},
+        {"session_id":"smp-10","message_id":"m6","timestamp":"2026-03-22T10:30:05Z","sender":"agent:host","message_type":"AWARD_ISSUE","contract_id":"c-mp-10",
+         "payload":{"award_id":"award-10","rfw_id":"rfw-10","bid_id":"bid-10b","work_order":{"work_order_id":"wo-10","workflow_ref":"workflow:market:10"}}},
+        {"session_id":"smp-10","message_id":"m7","timestamp":"2026-03-22T10:30:06Z","sender":"agent:bidder-b","message_type":"AWARD_DECLINE","contract_id":"c-mp-10",
+         "payload":{"award_id":"award-10","rfw_id":"rfw-10","reason_code":"vendor:schedule_conflict"}},
+    ])
+
+
 def main() -> int:
     fixtures = {
         "MP-01_rfw_bid_award_workflow_pass.jsonl": mp01(),
@@ -165,6 +189,7 @@ def main() -> int:
         "MP-07_subchat_without_required_admission_expected_fail.jsonl": mp07(),
         "MP-08_invalid_auction_mode_expected_fail.jsonl": mp08(),
         "MP-09_award_accept_rfw_mismatch_expected_fail.jsonl": mp09(),
+        "MP-10_bid_update_withdraw_award_decline_pass.jsonl": mp10(),
     }
     for name, rows in fixtures.items():
         path = OUT_DIR / name

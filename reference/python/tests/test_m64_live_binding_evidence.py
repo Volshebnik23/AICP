@@ -210,9 +210,9 @@ def _set_fact(report: dict, scenario_id: str, name: str, value: object) -> None:
     _recompute_trace(report)
 
 
-def test_exact_binding_targets_and_tck_18_registry() -> None:
+def test_exact_binding_targets_and_current_tck_registry() -> None:
     assert BINDING_TARGET_KEYS == ("BIND-HTTP@0.1", "BIND-MCP@0.1")
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.8.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.9.0"
     assert validate_target_registry() == []
     assert validate_release_registry() == []
     for key, mark in EXPECTED_MARKS.items():
@@ -292,6 +292,11 @@ def test_exact_tck_11_and_tck_14_reports_remain_eligible() -> None:
     ]
     tck_14_report["required_suites"] = entry["required_suites"]
     tck_14_report["input_artifacts"] = entry["required_input_artifacts"]
+    tck_14_report["case_results"] = [
+        item
+        for item in tck_14_report["case_results"]
+        if item["case_id"] in set(entry["mandatory_case_ids"])
+    ]
     assert evaluate_report(
         tck_14_report,
         expected_implementation_id="test-only-product-profile-external",
