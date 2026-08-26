@@ -63,6 +63,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_applicable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -120,6 +123,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_applicable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -191,6 +197,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_promotable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -254,6 +263,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_applicable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -294,6 +306,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_applicable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -337,6 +352,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_applicable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -380,6 +398,9 @@
       "computed_capability_marks": [],
       "computed_binding_marks": [],
       "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_applicable",
       "evidence_validation_status": "not_promotable",
       "errors": [],
       "warnings": [
@@ -390,8 +411,77 @@
       ],
       "valid": true,
       "matrix_status": "INSTRUCTIONAL"
+    },
+    {
+      "folder": "pairwise_submission",
+      "submission_id": "replace-pairwise-submission-id",
+      "implementation_id": "replace-primary-implementation",
+      "implementation": {
+        "implementation_id": "replace-primary-implementation",
+        "implementation_version": "replace-primary-version",
+        "peer_implementation_id": "replace-peer-implementation",
+        "claim_type": "pairwise_interop",
+        "claim_scope": "pairwise",
+        "evidence_status": "template"
+      },
+      "peer_implementation_id": "replace-peer-implementation",
+      "artifact_kind": "template",
+      "evidence_status": "template",
+      "claim_type": "pairwise_interop",
+      "claim_scope": "pairwise",
+      "profile_ids": [
+        "AICP-BASE"
+      ],
+      "capability_refs": [],
+      "binding_refs": [
+        {
+          "binding_id": "BIND-MCP",
+          "binding_version": "0.1"
+        }
+      ],
+      "reports": [],
+      "compatibility_marks": [],
+      "computed_marks": [],
+      "computed_profile_marks": [],
+      "computed_capability_marks": [],
+      "computed_binding_marks": [],
+      "eligible_targets": [],
+      "eligible_pairwise_relations": [],
+      "computed_pairwise_relations": [],
+      "pairwise_validation_status": "not_promotable",
+      "evidence_validation_status": "not_promotable",
+      "errors": [],
+      "warnings": [
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/primary-profile.json"
+        },
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/primary-binding.json"
+        },
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/peer-profile.json"
+        },
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/peer-binding.json"
+        },
+        {
+          "warning_code": "TEMPLATE_PLACEHOLDER_REF",
+          "warning_message": "template placeholder report_refs target not yet replaced: reports/pairwise-joint.json"
+        }
+      ],
+      "valid": true,
+      "matrix_status": "INSTRUCTIONAL"
     }
   ],
+  "pairwise_publication_available": true,
+  "registered_pairwise_targets": 1,
+  "reachable_pairwise_targets": 1,
+  "pairwise_demonstrated_relations": 0,
+  "computed_pairwise_relations": [],
   "note": "No real external submissions are currently present; only rehearsal/instructional artifacts were found.",
   "notes": [
     "Dry-run artifacts are listed separately from real external submissions and from instructional examples/templates.",
@@ -403,6 +493,7 @@
     "Capability marks are computed separately from product-profile marks and never prove a profile.",
     "Only independently validated full-capability report v2 evidence produces computed capability marks.",
     "Binding marks are computed separately from profile and capability marks and never prove either family.",
-    "Only independently validated two-role full-binding live report v2.2 evidence produces computed binding marks."
+    "Only independently validated two-role full-binding live report v2.2 evidence produces computed binding marks.",
+    "Pairwise interoperability is an orientation-independent typed relation between two exact builds; it never produces a compatibility mark."
   ]
 }

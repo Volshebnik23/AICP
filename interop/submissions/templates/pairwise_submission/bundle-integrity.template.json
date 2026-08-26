@@ -1,0 +1,14 @@
+{
+  "submission_id": "replace-pairwise-submission-id",
+  "manifest_version": "1.0",
+  "generated_at": "2026-08-26T00:00:00Z",
+  "digest_alg": "sha256",
+  "files": [
+    {"path": "submission.json", "digest": "sha256:replace-after-packaging"},
+    {"path": "reports/primary-profile.json", "digest": "sha256:replace-after-packaging"},
+    {"path": "reports/primary-binding.json", "digest": "sha256:replace-after-packaging"},
+    {"path": "reports/peer-profile.json", "digest": "sha256:replace-after-packaging"},
+    {"path": "reports/peer-binding.json", "digest": "sha256:replace-after-packaging"},
+    {"path": "reports/pairwise-joint.json", "digest": "sha256:replace-after-packaging"}
+  ]
+}

@@ -27,10 +27,10 @@
   "claim_type": "pairwise_interop",
   "claim_scope": "pairwise",
   "generated_at": "2026-03-20T00:00:00Z",
-  "notes": "Instructional-only package showing reserved pairwise manifest vocabulary; it does not contain joint-execution proof.",
+  "notes": "Instructional-only pre-M66 package; it does not contain the exact Base/MCP side evidence or joint-execution proof required for publication.",
   "disclosures": [
     "Example artifact only; not a real external implementation submission.",
-    "The peer implementation identifier is fictional and used only to demonstrate reserved manifest fields.",
-    "Real pairwise publication fails closed until a shared bidirectional joint-execution format exists."
+    "The peer implementation identifier is fictional and used only to demonstrate manifest fields.",
+    "This example is not the supported AICP-BASE@0.1+BIND-MCP@0.1 target and cannot yield an eligible relation."
   ]
 }

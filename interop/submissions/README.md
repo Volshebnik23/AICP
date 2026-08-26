@@ -31,9 +31,11 @@ Real public submissions must add `profile_refs` with exact `profile_id` and
 `profile_version` values. Reproducible implementation/compatibility claims must include an
 eligible, full-profile, passed, non-degraded external-IUT v1 report whose execution subject,
 complete mandatory case set, and registered TCK digests match the manifest. Smoke and legacy
-reports are migration errors for this strong claim. Real `pairwise_interop` publication is
-currently rejected with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; two independent IUT reports or a
-summary are not joint proof. Examples,
+reports are migration errors for this strong claim. Real `pairwise_interop` publication
+requires exact Base and MCP side reports for two distinct builds plus one eligible
+`AICP-PAIRWISE-TCK-1.0.0` joint report; two independent IUT reports or a summary are not
+joint proof. Missing or invalid joint evidence returns
+`PAIRWISE_JOINT_EVIDENCE_REQUIRED`. Examples,
 templates, and repo-owned dry runs remain instructional and cannot substantiate an external
 claim.
 

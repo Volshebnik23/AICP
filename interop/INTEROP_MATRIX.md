@@ -19,6 +19,7 @@ Generated from `interop/submissions/` using `interop/tools/interop_matrix.py`.
 - Only independently validated full-capability report v2 evidence produces computed capability marks.
 - Binding marks are computed separately from profile and capability marks and never prove either family.
 - Only independently validated two-role full-binding live report v2.2 evidence produces computed binding marks.
+- Pairwise interoperability is an orientation-independent typed relation between two exact builds; it never produces a compatibility mark.
 
 ## Real submissions
 
@@ -26,20 +27,21 @@ No real submission folders are currently present.
 
 ## Dry-run artifacts
 
-| Folder | Implementation | Artifact kind | Peer | Evidence status | Claim type | Claim scope | Profiles | Capabilities | Bindings | Reported marks | Eligible profile marks | Eligible capability marks | Eligible binding marks | Eligible targets | Matrix status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| dryrun-reviewed-base | dryrun-impl-a | dry_run | — | reproducible | implements_profile | self_attested | AICP-BASE | — | — | AICP-Core-0.1, AICP-Profile-BASE-0.1 | — | — | — | — | REHEARSAL |
+| Folder | Implementation | Artifact kind | Peer | Evidence status | Claim type | Claim scope | Profiles | Capabilities | Bindings | Reported marks | Eligible profile marks | Eligible capability marks | Eligible binding marks | Eligible targets | Eligible pairwise relations | Matrix status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| dryrun-reviewed-base | dryrun-impl-a | dry_run | — | reproducible | implements_profile | self_attested | AICP-BASE | — | — | AICP-Core-0.1, AICP-Profile-BASE-0.1 | — | — | — | — | — | REHEARSAL |
 
 ## Instructional artifacts
 
-| Folder | Implementation | Artifact kind | Evidence status | Claim type | Claim scope | Profiles | Capabilities | Bindings | Reported marks | Eligible profile marks | Eligible capability marks | Eligible binding marks | Eligible targets | Matrix status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| capability_claim | example-projection-v1-implementation | example | example | implements_capability | self_attested | — | aicp.session_state_projection@v1 | — | AICP-Evidence-SESSION-STATE-PROJECTION-v1 | — | — | — | — | INSTRUCTIONAL |
-| pairwise_profile_interop | example-impl-a | example | example | pairwise_interop | pairwise | AICP-MEDIATED-BLOCKING | — | — | AICP-EXT-ENFORCEMENT-0.1, AICP-Profile-MEDIATED-BLOCKING-0.1 | — | — | — | — | INSTRUCTIONAL |
-| single_profile_claim | example-impl-a | example | example | implements_profile | self_attested | AICP-BASE | — | — | AICP-Core-0.1, AICP-Profile-BASE-0.1 | — | — | — | — | INSTRUCTIONAL |
-| basic_submission | replace-with-implementation-id | template | template | compatible_with_profile | self_attested | AICP-BASE | — | — | — | — | — | — | — | INSTRUCTIONAL |
-| binding_submission | replace-implementation-id | template | template | implements_binding | self_attested | — | — | BIND-HTTP@0.1 | — | — | — | — | — | INSTRUCTIONAL |
-| capability_submission | replace-implementation-id | template | template | implements_capability | self_attested | — | aicp.session_state_projection@v1 | — | — | — | — | — | — | INSTRUCTIONAL |
+| Folder | Implementation | Artifact kind | Evidence status | Claim type | Claim scope | Profiles | Capabilities | Bindings | Reported marks | Eligible profile marks | Eligible capability marks | Eligible binding marks | Eligible targets | Eligible pairwise relations | Matrix status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| capability_claim | example-projection-v1-implementation | example | example | implements_capability | self_attested | — | aicp.session_state_projection@v1 | — | AICP-Evidence-SESSION-STATE-PROJECTION-v1 | — | — | — | — | — | INSTRUCTIONAL |
+| pairwise_profile_interop | example-impl-a | example | example | pairwise_interop | pairwise | AICP-MEDIATED-BLOCKING | — | — | AICP-EXT-ENFORCEMENT-0.1, AICP-Profile-MEDIATED-BLOCKING-0.1 | — | — | — | — | — | INSTRUCTIONAL |
+| single_profile_claim | example-impl-a | example | example | implements_profile | self_attested | AICP-BASE | — | — | AICP-Core-0.1, AICP-Profile-BASE-0.1 | — | — | — | — | — | INSTRUCTIONAL |
+| basic_submission | replace-with-implementation-id | template | template | compatible_with_profile | self_attested | AICP-BASE | — | — | — | — | — | — | — | — | INSTRUCTIONAL |
+| binding_submission | replace-implementation-id | template | template | implements_binding | self_attested | — | — | BIND-HTTP@0.1 | — | — | — | — | — | — | INSTRUCTIONAL |
+| capability_submission | replace-implementation-id | template | template | implements_capability | self_attested | — | aicp.session_state_projection@v1 | — | — | — | — | — | — | — | INSTRUCTIONAL |
+| pairwise_submission | replace-primary-implementation | template | template | pairwise_interop | pairwise | AICP-BASE | — | BIND-MCP@0.1 | — | — | — | — | — | — | INSTRUCTIONAL |
 
 ## Parsing notes
 
@@ -51,3 +53,4 @@ No real submission folders are currently present.
 - `replace-with-submission-id`: TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/replace-with-profile-report.json
 - `replace-binding-submission-id`: TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/replace-with-full-binding-report-v2.2.json
 - `replace-capability-submission-id`: TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/replace-with-full-capability-report.json
+- `replace-pairwise-submission-id`: TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/primary-profile.json; TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/primary-binding.json; TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/peer-profile.json; TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/peer-binding.json; TEMPLATE_PLACEHOLDER_REF: template placeholder report_refs target not yet replaced: reports/pairwise-joint.json

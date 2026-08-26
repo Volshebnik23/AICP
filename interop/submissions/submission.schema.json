@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aicp.dev/interop/submissions/submission.schema.json",
   "title": "AICP Public Interop Submission Manifest",
-  "$comment": "pairwise_interop vocabulary is reserved for examples and future migration; real pairwise submissions fail closed until a dedicated joint-execution format is implemented",
+  "$comment": "pairwise_interop is a typed relation backed by one eligible joint report plus exact full-profile and full-binding side reports; it never creates a compatibility mark",
   "type": "object",
   "required": [
     "submission_id",
@@ -25,6 +25,11 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._-]*$"
     },
+    "implementation_digest": {
+      "type": "string",
+      "minLength": 1,
+      "not": { "const": "unknown" }
+    },
     "peer_implementation_id": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._-]*$"
@@ -32,6 +37,11 @@
     "peer_implementation_version": {
       "type": "string",
       "minLength": 1
+    },
+    "peer_implementation_digest": {
+      "type": "string",
+      "minLength": 1,
+      "not": { "const": "unknown" }
     },
     "implementation_version": {
       "type": "string",
@@ -113,13 +123,14 @@
           "binding_report",
           "golden_transcript",
           "pairwise_transcript",
-          "human_summary"
+          "human_summary",
+          "pairwise_report"
         ]
       }
     },
     "evidence_status": {
       "type": "string",
-      "description": "Packaging status. pairwise is reserved and is not currently publication-eligible.",
+      "description": "Packaging status. pairwise is eligible only through the dedicated joint-report evaluator.",
       "enum": [
         "example",
         "template",
@@ -135,6 +146,9 @@
         "$ref": "#/$defs/relativePath"
       }
     },
+    "joint_report_ref": {
+      "$ref": "#/$defs/relativePath"
+    },
     "suite_refs": {
       "type": "array",
       "minItems": 1,
@@ -146,7 +160,7 @@
     },
     "claim_type": {
       "type": "string",
-      "description": "Claim category. pairwise_interop is currently instructional/reserved and real submissions fail closed.",
+      "description": "Claim category. pairwise_interop records a relation between two exact builds for one registered pairwise target.",
       "enum": [
         "implements_profile",
         "implements_capability",
@@ -256,7 +270,7 @@
       "if": {
         "properties": {
           "claim_type": {
-            "enum": ["implements_profile", "compatible_with_profile", "pairwise_interop"]
+            "enum": ["implements_profile", "compatible_with_profile"]
           }
         },
         "required": ["claim_type"]
@@ -303,9 +317,63 @@
         }
       },
       "then": {
+        "required": [
+          "implementation_digest",
+          "peer_implementation_id",
+          "peer_implementation_version",
+          "peer_implementation_digest",
+          "profile_ids",
+          "profile_refs",
+          "binding_refs",
+          "joint_report_ref"
+        ],
         "properties": {
           "claim_type": {
             "const": "pairwise_interop"
+          },
+          "profile_ids": {
+            "prefixItems": [{ "const": "AICP-BASE" }],
+            "items": false
+          },
+          "profile_refs": {
+            "prefixItems": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["profile_id", "profile_version"],
+                "properties": {
+                  "profile_id": { "const": "AICP-BASE" },
+                  "profile_version": { "const": "0.1" }
+                }
+              }
+            ],
+            "items": false
+          },
+          "binding_refs": {
+            "prefixItems": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["binding_id", "binding_version"],
+                "properties": {
+                  "binding_id": { "const": "BIND-MCP" },
+                  "binding_version": { "const": "0.1" }
+                }
+              }
+            ],
+            "items": false
+          },
+          "evidence_types": {
+            "allOf": [
+              { "contains": { "const": "profile_report" } },
+              { "contains": { "const": "binding_report" } },
+              { "contains": { "const": "pairwise_report" } }
+            ]
+          },
+          "report_refs": {
+            "minItems": 5,
+            "maxItems": 5,
+            "uniqueItems": true
           }
         }
       }

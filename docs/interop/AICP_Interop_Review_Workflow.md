@@ -105,10 +105,11 @@ Maintainers should verify:
 
 ### `pairwise`
 
-Real pairwise submissions are not publication-eligible in this release. The validator must
-return `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; maintainers must not waive this using two
-single-IUT reports, co-conformance, or a summary. Examples/templates remain instructional.
-A future review path requires a dedicated joint run binding both builds and exchanged
+Real pairwise submissions are publication-eligible only for the registered M66 Base/MCP
+target and only when the independent joint evaluator returns one exact-build relation.
+Missing or invalid joint evidence returns `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; maintainers
+must not waive this using two single-IUT reports, co-conformance, raw marks, or a summary.
+Examples/templates remain instructional. Review requires the dedicated joint run binding both builds and exchanged
 artifacts in every required direction.
 
 ## Required maintainer checklist

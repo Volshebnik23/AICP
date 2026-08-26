@@ -92,6 +92,9 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
         "computed_capability_marks": [],
         "computed_binding_marks": [],
         "eligible_targets": [],
+        "eligible_pairwise_relations": [],
+        "computed_pairwise_relations": [],
+        "pairwise_validation_status": "not_applicable",
         "evidence_validation_status": "not_evaluated",
         "errors": [],
         "warnings": [],
@@ -156,6 +159,8 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
     if artifact_kind == "submission":
         evaluation = evaluate_strong_report_evidence(submission_path, manifest)
         entry["evidence_validation_status"] = evaluation.status
+        if manifest.get("claim_type") == "pairwise_interop":
+            entry["pairwise_validation_status"] = evaluation.status
         for message in evaluation.errors:
             _add_error(entry, "STRONG_EVIDENCE_INELIGIBLE", message)
         if entry["valid"] and evaluation.status == "eligible":
@@ -177,8 +182,16 @@ def _manifest_entry(submission_dir: Path) -> dict[str, Any]:
                 }
                 for kind, target_id, target_version in evaluation.eligible_targets
             ]
+            entry["eligible_pairwise_relations"] = list(
+                evaluation.eligible_pairwise_relations
+            )
+            entry["computed_pairwise_relations"] = list(
+                evaluation.eligible_pairwise_relations
+            )
     else:
         entry["evidence_validation_status"] = "not_promotable"
+        if manifest.get("claim_type") == "pairwise_interop":
+            entry["pairwise_validation_status"] = "not_promotable"
         if marks:
             _add_warning(
                 entry,
@@ -210,6 +223,9 @@ def _legacy_entry(submission_dir: Path) -> dict[str, Any]:
         "computed_capability_marks": [],
         "computed_binding_marks": [],
         "eligible_targets": [],
+        "eligible_pairwise_relations": [],
+        "computed_pairwise_relations": [],
+        "pairwise_validation_status": "not_applicable",
         "evidence_validation_status": "not_promotable",
         "errors": [],
         "warnings": [],
@@ -310,6 +326,19 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
         note = "No submissions found."
     elif not real_entries:
         note = "No real external submissions are currently present; only rehearsal/instructional artifacts were found."
+    relation_values = {
+        json.dumps(relation, sort_keys=True, separators=(",", ":"))
+        for entry in real_entries
+        if entry.get("artifact_kind") == "submission"
+        and entry.get("valid") is True
+        and entry.get("pairwise_validation_status") == "eligible"
+        for relation in entry.get("computed_pairwise_relations", [])
+        if isinstance(relation, dict)
+    }
+    target_registry = load_json(ROOT / "interop" / "pairwise" / "targets.json")
+    registered_pairwise_targets = len(
+        [item for item in target_registry.get("targets", []) if isinstance(item, dict)]
+    )
     return {
         "submissions_dir": submissions_dir.as_posix(),
         "columns": LEGACY_MARK_COLUMNS,
@@ -317,6 +346,11 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
         "real_submissions": real_entries,
         "dry_run_artifacts": dry_run_entries,
         "instructional_artifacts": instructional_entries,
+        "pairwise_publication_available": True,
+        "registered_pairwise_targets": registered_pairwise_targets,
+        "reachable_pairwise_targets": registered_pairwise_targets,
+        "pairwise_demonstrated_relations": len(relation_values),
+        "computed_pairwise_relations": [json.loads(value) for value in sorted(relation_values)],
         "note": note,
         "notes": [
             "Dry-run artifacts are listed separately from real external submissions and from instructional examples/templates.",
@@ -329,6 +363,7 @@ def build_matrix(submissions_dir: Path) -> dict[str, Any]:
             "Only independently validated full-capability report v2 evidence produces computed capability marks.",
             "Binding marks are computed separately from profile and capability marks and never prove either family.",
             "Only independently validated two-role full-binding live report v2.2 evidence produces computed binding marks.",
+            "Pairwise interoperability is an orientation-independent typed relation between two exact builds; it never produces a compatibility mark.",
         ],
     }
 
@@ -362,6 +397,7 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
             "Eligible capability marks",
             "Eligible binding marks",
             "Eligible targets",
+            "Eligible pairwise relations",
             "Matrix status",
         ]
     )
@@ -409,6 +445,20 @@ def _render_rows(entries: list[dict[str, Any]], *, include_peer: bool) -> list[s
                             f"{item.get('target_version')}"
                         )
                         for item in entry.get("eligible_targets", [])
+                        if isinstance(item, dict)
+                    ]
+                ),
+                _fmt_marks(
+                    [
+                        (
+                            f"{item.get('target_id')}:"
+                            + " ↔ ".join(
+                                str(endpoint.get("implementation_id"))
+                                for endpoint in item.get("endpoints", [])
+                                if isinstance(endpoint, dict)
+                            )
+                        )
+                        for item in entry.get("computed_pairwise_relations", [])
                         if isinstance(item, dict)
                     ]
                 ),
