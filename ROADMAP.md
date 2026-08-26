@@ -152,7 +152,7 @@ _Last updated: 2026-08-25_
 - **Compatibility boundary:** product-profile IUT v1 and projection report 2.0 remain
   valid; Evidence TCK 1.0, 1.1, 1.2, and 1.3 records are frozen. No target is added for other
   profiles, composition, live bindings, or pairwise interoperability.
-- **Next concrete step:** M64 and M65 are now shipped; M66 remains planned.
+- **Next concrete step:** M64, M65, and M66 are now shipped; M67 remains planned.
 
 ### ✅ M64 — Live Transport and Binding Interoperability
 <!-- milestone-status: M64 shipped -->
@@ -179,7 +179,8 @@ _Last updated: 2026-08-25_
   first-seen MCP poll continuations, and repository-observed TLS failure classification so
   TCP/plaintext probes cannot stand in for certificate rejection. TCK 1.7 is frozen and
   historical/ineligible; no binding, Core, CAPNEG, projection, or profile wire semantics change.
-- **Next concrete step:** M65 completes the registered message surface; M66 remains planned.
+- **Next concrete step:** M65 completes the registered message surface and M66 completes the
+  first clean-room pairwise target; M67 remains planned.
 
 ### ✅ M65 — Registered Message Surface Completion
 <!-- milestone-status: M65 shipped -->
@@ -201,8 +202,28 @@ _Last updated: 2026-08-25_
   report 2.2, trace v4, and the same six targets with the exact Tier-1 consumer corpus
   expanded from 25/16/28 to 26/16/31. Product-IUT report v1,
   IUT TCK 1.1, its targets, and marks are unchanged.
-- **Next concrete step:** M66 remains planned for clean-room pairwise interoperability;
+- **Next concrete step:** M66 supplies clean-room pairwise interoperability evidence;
   M65 does not claim external adoption or pairwise demonstration.
+
+### ✅ M66 — Clean-Room Pairwise Interop Harness
+<!-- milestone-status: M66 shipped -->
+- **Status:** Shipped.
+- **Problem:** two unrelated conformance reports could not prove one bound, bidirectional
+  execution between exact implementation builds.
+- **Scope:** add `AICP-PAIRWISE-TCK-1.0.0`, a versioned joint-report schema, one exact
+  `AICP-BASE@0.1` over `BIND-MCP@0.1` target, two separately implemented clean-room peers,
+  and a fail-closed independent evaluator and public-submission path.
+- **Completion evidence:** two fresh runs execute A→B and B→A over child-process MCP JSON-RPC
+  stdio, bind exact distinct source/build digests and four independently eligible side
+  reports, prove first-seen cross-consumption and causal message chains, and independently
+  normalize to the same semantic digest. Mutation controls produce no eligible relation.
+- **Evidence boundary:** the peers are repository-owned test implementations, so the matrix
+  records zero real external pairwise demonstrations. Examples, templates, dry runs, raw
+  marks, summaries, and unrelated strong reports remain non-promotable.
+- **Compatibility boundary:** no AICP wire, profile, or binding semantics change and no
+  pairwise compatibility mark is introduced. Evidence TCK 1.10 remains frozen; pairwise
+  provenance is governed separately by Pairwise TCK 1.0.
+- **Next concrete step:** M67–M70 remain planned; M67 has not started.
 
 ## Planned milestones
 
@@ -212,7 +233,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M66 | Planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
 | M67 | Planned | Security Coverage Closure | `AICP_Backlog` |
 | M68 | Planned | Governance and Standard Maturity | `AICP_Backlog` |
 | M69 | Planned | Release Engineering and RC Repackaging | `AICP_Backlog` |

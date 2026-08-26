@@ -142,12 +142,12 @@ def test_current_m64_profile_capability_binding_and_milestone_truth() -> None:
     assert projection_v2["external_evidence_target"] is False
     assert projection_v2["independent_external_evidence"] is False
     milestones = {item["id"]: item for item in status["milestones"]}
-    for number in range(58, 66):
+    for number in range(58, 67):
         assert milestones[f"M{number}"]["status"] == "shipped"
         assert milestones[f"M{number}"]["document"] == "ROADMAP.md"
     assert all(
         milestones[f"M{number}"]["status"] == "planned"
-        for number in range(66, 71)
+        for number in range(67, 71)
     )
 
 
@@ -362,7 +362,9 @@ def test_rejected_pairwise_row_cannot_enable_pairwise_status() -> None:
             claim_type="pairwise_interop",
             claim_scope="pairwise",
             evidence_validation_status="rejected",
-            joint_evidence_validation_status="rejected",
+            pairwise_validation_status="rejected",
+            computed_marks=[],
+            computed_pairwise_relations=[],
         ),
         pairwise=True,
     )
@@ -370,25 +372,35 @@ def test_rejected_pairwise_row_cannot_enable_pairwise_status() -> None:
     assert evidence["pairwise_demonstrated"] is False
 
 
-def test_future_eligible_joint_pairwise_row_shape_is_supported() -> None:
+def test_eligible_typed_pairwise_relation_is_supported_and_counted_once() -> None:
     evidence, _flags = _derive(
         _row(
             claim_type="pairwise_interop",
             claim_scope="pairwise",
-            joint_evidence_validation_status="eligible",
+            pairwise_validation_status="eligible",
+            computed_marks=[],
+            computed_profile_marks=[],
+            computed_pairwise_relations=[
+                {
+                    "relation_kind": "pairwise_interop",
+                    "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
+                    "endpoints": ["build-a", "build-b"],
+                }
+            ],
         ),
         pairwise=True,
     )
     assert evidence["pairwise_publication_available"] is True
     assert evidence["pairwise_demonstrated"] is True
+    assert evidence["pairwise_demonstrated_relations"] == 1
 
 
-def test_current_pairwise_fail_closed_status_is_enforced() -> None:
+def test_pairwise_demonstrated_status_requires_an_eligible_matrix_relation() -> None:
     status = _status()
     status["interop_evidence"]["pairwise_publication_available"] = True
     status["interop_evidence"]["pairwise_demonstrated"] = True
     errors = VALIDATOR._evidence_claim_errors(ROOT, status)
-    assert any("must remain false" in error for error in errors)
+    assert any("interop evidence status does not match" in error for error in errors)
 
 
 def test_baseline_rejects_changed_profile_count() -> None:
@@ -411,8 +423,8 @@ def test_baseline_rejects_changed_external_iut_count() -> None:
 
 def test_baseline_rejects_false_pairwise_demonstrated_row() -> None:
     baseline = _baseline().replace(
-        "| Pairwise publication / demonstration | No / No |",
-        "| Pairwise publication / demonstration | No / Yes |",
+        "| Pairwise publication / demonstration | Yes / No |",
+        "| Pairwise publication / demonstration | Yes / Yes |",
         1,
     )
     assert VALIDATOR._baseline_generated_errors(_status(), baseline)
@@ -447,7 +459,7 @@ def test_baseline_rejects_stale_message_gap_count() -> None:
 
 def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
     roadmap = _roadmap().replace(
-        "| M66 | Planned |", "| M66 | Shipped |", 1
+        "| M67 | Planned |", "| M67 | Shipped |", 1
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), roadmap, _backlog()
@@ -457,21 +469,21 @@ def test_roadmap_planned_table_rejects_false_shipped_row() -> None:
 
 def test_backlog_visible_status_must_match_marker_and_json() -> None:
     backlog = _backlog().replace(
-        "<!-- milestone-status: M66 planned -->\n- **Status:** Planned.",
-        "<!-- milestone-status: M66 planned -->\n- **Status:** Shipped.",
+        "<!-- milestone-status: M67 planned -->\n- **Status:** Planned.",
+        "<!-- milestone-status: M67 planned -->\n- **Status:** Shipped.",
         1,
     )
     errors = VALIDATOR._milestone_errors(
         ROOT, _status(), _roadmap(), backlog
     )
-    assert any("M66: visible status" in error for error in errors)
+    assert any("M67: visible status" in error for error in errors)
 
 
 def test_future_milestone_document_must_resolve() -> None:
     status = _status()
     next(
         milestone for milestone in status["milestones"]
-        if milestone["id"] == "M66"
+        if milestone["id"] == "M67"
     )["document"] = "docs/process/DOES_NOT_EXIST.md"
     errors = VALIDATOR._milestone_errors(
         ROOT, status, _roadmap(), _backlog()

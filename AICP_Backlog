@@ -13,22 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M66 — Clean-Room Pairwise Interop Harness
-
-<!-- milestone-status: M66 planned -->
-- **Status:** Planned.
-- **Problem statement:** real pairwise publication is fail-closed because two independent
-  conformance reports do not prove one bound bidirectional run.
-- **Scope:** define a joint-execution format that binds two exact builds, shared run identity,
-  cross-consumed artifacts, directionality, digests, and required verification material.
-- **Explicit non-goals:** no waiver based on human summaries or two unrelated reports and no
-  counting repository examples as independent implementations.
-- **Principal evidence gap:** no joint pairwise execution artifact or validator.
-- **Dependencies:** M62 and M64.
-- **Completion criterion:** two clean-room test implementations can complete one bound run,
-  the validator proves required cross-consumption, and incomplete/one-sided evidence fails
-  closed.
-
 ## M67 — Security Coverage Closure
 
 <!-- milestone-status: M67 planned -->

@@ -21,6 +21,8 @@ MESSAGE_REGISTRY_PATH = "registry/message_types.json"
 EXTENSION_REGISTRY_PATH = "registry/extension_ids.json"
 INTEROP_MATRIX_PATH = "interop/interop_matrix.json"
 PAIRWISE_VALIDATOR_PATH = "scripts/interop_submission_validation.py"
+PAIRWISE_TARGETS_PATH = "interop/pairwise/targets.json"
+PAIRWISE_RELEASES_PATH = "interop/pairwise/tck_releases.json"
 CORE_SUITE_PATH = "conformance/core/CT_CORE_0.1.json"
 IUT_CASES_PATH = "conformance/iut/cases.json"
 EVIDENCE_TARGETS_PATH = "conformance/evidence/targets.json"
@@ -521,6 +523,23 @@ def _eligible_binding_targets(
     }
 
 
+def _eligible_pairwise_relations(row: dict[str, Any]) -> set[str]:
+    if (
+        row.get("artifact_kind") != "submission"
+        or row.get("valid") is not True
+        or row.get("pairwise_validation_status") != "eligible"
+    ):
+        return set()
+    relations = row.get("computed_pairwise_relations")
+    if not isinstance(relations, list):
+        return set()
+    return {
+        json.dumps(item, sort_keys=True, separators=(",", ":"))
+        for item in relations
+        if isinstance(item, dict)
+    }
+
+
 def derive_interop_evidence(
     matrix: dict[str, Any],
     profiles: list[dict[str, Any]],
@@ -556,11 +575,13 @@ def derive_interop_evidence(
             set[str],
             set[tuple[str, str]],
             set[tuple[str, str]],
+            set[str],
         ]
     ] = []
     demonstrated: set[str] = set()
     demonstrated_capabilities: set[tuple[str, str]] = set()
     demonstrated_bindings: set[tuple[str, str]] = set()
+    demonstrated_pairwise_relations: set[str] = set()
     for row in real_rows:
         if not isinstance(row, dict):
             continue
@@ -570,20 +591,30 @@ def derive_interop_evidence(
             expected_capabilities,
         )
         bindings = _eligible_binding_targets(row, expected_bindings)
-        if not marks and not capabilities and not bindings:
+        pairwise_relations = _eligible_pairwise_relations(row)
+        if not marks and not capabilities and not bindings and not pairwise_relations:
             continue
-        eligible_rows.append((row, marks, capabilities, bindings))
+        eligible_rows.append((row, marks, capabilities, bindings, pairwise_relations))
         demonstrated.update(mark_to_profile[mark] for mark in marks)
         demonstrated_capabilities.update(capabilities)
         demonstrated_bindings.update(bindings)
+        demonstrated_pairwise_relations.update(pairwise_relations)
 
-    pairwise_demonstrated = (
-        pairwise_publication_available
-        and any(
-            row.get("claim_type") == "pairwise_interop"
-            and row.get("joint_evidence_validation_status") == "eligible"
-            for row, _marks, _capabilities, _bindings in eligible_rows
-        )
+    pairwise_targets = load_json(ROOT, PAIRWISE_TARGETS_PATH).get("targets", [])
+    pairwise_releases = load_json(ROOT, PAIRWISE_RELEASES_PATH).get("releases", [])
+    registered_pairwise_targets = len(
+        [item for item in pairwise_targets if isinstance(item, dict)]
+    )
+    current_pairwise_tck = (
+        pairwise_releases[-1].get("release_id")
+        if pairwise_releases and isinstance(pairwise_releases[-1], dict)
+        else None
+    )
+    reachable_pairwise_targets = (
+        registered_pairwise_targets if pairwise_publication_available else 0
+    )
+    pairwise_demonstrated = bool(
+        pairwise_publication_available and demonstrated_pairwise_relations
     )
     flags = {item["id"]: item["id"] in demonstrated for item in profiles}
     evidence = {
@@ -605,6 +636,11 @@ def derive_interop_evidence(
             for binding_id, binding_version in sorted(demonstrated_bindings)
         ],
         "pairwise_publication_available": pairwise_publication_available,
+        "pairwise_tck_family_available": bool(pairwise_releases),
+        "pairwise_current_tck": current_pairwise_tck,
+        "registered_pairwise_targets": registered_pairwise_targets,
+        "reachable_pairwise_targets": reachable_pairwise_targets,
+        "pairwise_demonstrated_relations": len(demonstrated_pairwise_relations),
         "pairwise_demonstrated": pairwise_demonstrated,
         "dry_run_count": len(matrix.get("dry_run_artifacts", [])),
         "instructional_artifact_count": len(
@@ -827,6 +863,8 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Rejected/ineligible real packages | {interop['rejected_real_submission_count']} | `interop/interop_matrix.json` |",
         f"| Externally demonstrated profiles | {len(demonstrated)}: {_code_list(demonstrated)} | eligible profile-specific `computed_profile_marks` only |",
         f"| Pairwise publication / demonstration | {_human_bool(interop['pairwise_publication_available'])} / {_human_bool(interop['pairwise_demonstrated'])} | joint-evidence validator status |",
+        f"| Pairwise TCK / target reachability | `{interop['pairwise_current_tck']}`; {interop['registered_pairwise_targets']} registered / {interop['reachable_pairwise_targets']} reachable | `interop/pairwise/tck_releases.json`, `interop/pairwise/targets.json` |",
+        f"| Pairwise demonstrated relations | {interop['pairwise_demonstrated_relations']} | eligible orientation-independent `computed_pairwise_relations` only |",
         f"| Live binding paths | {len(live_bindings)}: {_code_list(live_bindings)} | binding evidence map |",
         f"| Independent external security review | {_human_bool(security['external_independent_review_completed'])} | `{security['artifact_contract']}` |",
         f"| Governance model / maturity | `{governance['current_model']}` / `{governance['standard_maturity']}` | `GOVERNANCE.md` |",
@@ -856,7 +894,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             f"| Profiles | {summary['registered']} shipped catalogs; {summary['external_profile_targets']} external targets ({summary['external_iut_targets']} `profile_iut_v1`, {summary['generalized_profile_targets']} `generalized_evidence_v2_1`) | {summary['externally_demonstrated']} externally demonstrated profiles | M70 |",
             f"| Capability evidence | {capability_summary['external_capability_targets']} external targets; {capability_summary['reachable_external_capability_marks']} reachable marks | {capability_summary['externally_demonstrated_capabilities']} externally demonstrated capabilities | M70 |",
             f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |",
-            f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, demonstrated={str(interop['pairwise_demonstrated']).lower()} | A valid eligible joint-execution result is required | M66 |",
+            f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, TCK=`{interop['pairwise_current_tck']}`, targets={interop['registered_pairwise_targets']} registered/{interop['reachable_pairwise_targets']} reachable | {interop['pairwise_demonstrated_relations']} externally demonstrated relations; clean-room repository peers do not count | None (M66 shipped) |",
             f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {binding_summary['external_binding_targets']} external targets; {binding_summary['live_role_paths']} live role paths; {binding_summary['reachable_external_binding_marks']} reachable marks | {binding_summary['externally_demonstrated_bindings']} externally demonstrated bindings; reference evidence is not external evidence | M70 |",
             f"| Security review | internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support completion | M67 |",
             f"| Governance | `{governance['current_model']}` | No external standards body is recorded | M68 |",
@@ -972,7 +1010,12 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         )
 
     pairwise_source = (root / PAIRWISE_VALIDATOR_PATH).read_text(encoding="utf-8")
-    pairwise_fail_closed = "PAIRWISE_JOINT_EVIDENCE_REQUIRED" in pairwise_source
+    pairwise_framework_available = (
+        "evaluate_pairwise_report" in pairwise_source
+        and (root / "interop/pairwise/pairwise_report_evaluator.py").is_file()
+        and (root / PAIRWISE_TARGETS_PATH).is_file()
+        and (root / PAIRWISE_RELEASES_PATH).is_file()
+    )
     requested_pairwise_availability = bool(
         status.get("interop_evidence", {}).get("pairwise_publication_available")
     )
@@ -980,7 +1023,7 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
         load_json(root, INTEROP_MATRIX_PATH),
         profiles,
         pairwise_publication_available=(
-            requested_pairwise_availability and not pairwise_fail_closed
+            requested_pairwise_availability and pairwise_framework_available
         ),
     )
     for profile in profiles:
