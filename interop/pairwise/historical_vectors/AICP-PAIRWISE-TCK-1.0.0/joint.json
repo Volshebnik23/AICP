@@ -1,0 +1,2359 @@
+{
+  "report_format_version": "1.0",
+  "report_type": "aicp.pairwise_joint_execution",
+  "pairwise_tck_release": {
+    "release_id": "AICP-PAIRWISE-TCK-1.0.0",
+    "registry_digest": "sha256:4d8ca895e8848f4171b2c48952840d0e383a6cd1e43d966a6bd9582051d2182a",
+    "runner_bundle_digest": "sha256:86eda6ccb0e7dac0d9ee7eb5a9c668a1a722a7656d08c0c3b4f31606dc7a1781",
+    "report_schema_digest": "sha256:bccfe9710747ab8703ef262c0b86f452c36a65bfee26202a4d220adea202cdf9",
+    "evaluator_digest": "sha256:fb8ca05a000f3ee372039d208436a0bdf9e79feb2c029f0ce7ac40eaeceec43b",
+    "normalizer_digest": "sha256:b6f36f883dc71722a6b9b6833d59f76e527bc9ff96bc71a2175fe4e2fe261edf"
+  },
+  "target": {
+    "profile_id": "AICP-BASE",
+    "profile_version": "0.1",
+    "binding_id": "BIND-MCP",
+    "binding_version": "0.1",
+    "target_catalog_digest": "sha256:4d638cbf22e206f2f39c4f252797dbfeead6b99de8f33938551b58698f33c8f4"
+  },
+  "scenario": {
+    "scenario_id": "PAIRWISE-MCP-CROSS-CONSUMPTION-01",
+    "scenario_catalog_digest": "sha256:baa3530ad3d277da265ebd0b5156e4da65590ad0dcc5794c37f59bc8a86ab46c",
+    "scenario_schema_digest": "sha256:7c18b40e0a16d66015c2057d54777e0deecc4a7326d260a9f78248d4d77efe38"
+  },
+  "participants": [
+    {
+      "side": "A",
+      "implementation_kind": "external_implementation",
+      "implementation_id": "aicp-cleanroom-python-a",
+      "implementation_version": "1.0.0-test",
+      "implementation_digest": "sha256:9db54a0fcd97439d39ed7037523323efcfd0ccc8df97f5a0eb86affe5870b59c",
+      "profile_report": {
+        "path": "a-profile.json",
+        "content_digest": "sha256:7cc170b17c63265190f4f35614017779218db52fbfe6d63d1279be6a3d72c00c"
+      },
+      "binding_report": {
+        "path": "a-binding.json",
+        "content_digest": "sha256:51510ba72bbffe85ddaeb569323be800457746ad93f54efd512dafe0c7f2d26c"
+      },
+      "descriptor_evidence": {
+        "request": {
+          "control_version": "aicp.pairwise_control.v1",
+          "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A-describe",
+          "operation": "describe"
+        },
+        "response": {
+          "control_version": "aicp.pairwise_control.v1",
+          "operation": "describe",
+          "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A-describe",
+          "result": {
+            "implementation_digest": "sha256:9db54a0fcd97439d39ed7037523323efcfd0ccc8df97f5a0eb86affe5870b59c",
+            "implementation_id": "aicp-cleanroom-python-a",
+            "implementation_kind": "external_implementation",
+            "implementation_version": "1.0.0-test",
+            "supported_target": "AICP-BASE@0.1+BIND-MCP@0.1"
+          },
+          "success": true
+        }
+      }
+    },
+    {
+      "side": "B",
+      "implementation_kind": "external_implementation",
+      "implementation_id": "aicp-cleanroom-node-b",
+      "implementation_version": "1.0.0-test",
+      "implementation_digest": "sha256:c4ecc4880a1cea9d865f664968300cca7062b1aab50ca84d80d8f56f44dfc00b",
+      "profile_report": {
+        "path": "b-profile.json",
+        "content_digest": "sha256:e522df291ca0491ec62f6ffc4abc883adde7fa69c6d1542e14082f82eb5e9513"
+      },
+      "binding_report": {
+        "path": "b-binding.json",
+        "content_digest": "sha256:0a41f407ebc8d17000c28e3a63e203f8204d779a83a2aab2ff0121027f74389d"
+      },
+      "descriptor_evidence": {
+        "request": {
+          "control_version": "aicp.pairwise_control.v1",
+          "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B-describe",
+          "operation": "describe"
+        },
+        "response": {
+          "control_version": "aicp.pairwise_control.v1",
+          "operation": "describe",
+          "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B-describe",
+          "result": {
+            "implementation_digest": "sha256:c4ecc4880a1cea9d865f664968300cca7062b1aab50ca84d80d8f56f44dfc00b",
+            "implementation_id": "aicp-cleanroom-node-b",
+            "implementation_kind": "external_implementation",
+            "implementation_version": "1.0.0-test",
+            "supported_target": "AICP-BASE@0.1+BIND-MCP@0.1"
+          },
+          "success": true
+        }
+      }
+    }
+  ],
+  "side_evidence": [
+    {
+      "side": "A",
+      "profile_report": {
+        "path": "a-profile.json",
+        "content_digest": "sha256:7cc170b17c63265190f4f35614017779218db52fbfe6d63d1279be6a3d72c00c"
+      },
+      "binding_report": {
+        "path": "a-binding.json",
+        "content_digest": "sha256:51510ba72bbffe85ddaeb569323be800457746ad93f54efd512dafe0c7f2d26c"
+      }
+    },
+    {
+      "side": "B",
+      "profile_report": {
+        "path": "b-profile.json",
+        "content_digest": "sha256:e522df291ca0491ec62f6ffc4abc883adde7fa69c6d1542e14082f82eb5e9513"
+      },
+      "binding_report": {
+        "path": "b-binding.json",
+        "content_digest": "sha256:0a41f407ebc8d17000c28e3a63e203f8204d779a83a2aab2ff0121027f74389d"
+      }
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+      "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+      "semantic_digest": "sha256:27e6986f2b3b3f306341bfab7cb848bf042a10e87641010c9c538d01a5e5de8e",
+      "directions": [
+        {
+          "direction": "A_TO_B",
+          "producer_side": "A",
+          "consumer_side": "B",
+          "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+          "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+          "messages": [
+            {
+              "sequence": 1,
+              "sender_side": "A",
+              "constructed_by": "A",
+              "consumed_by": "B",
+              "message": {
+                "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                "message_id": "m-9549681e2e385f6b76f0ebc5",
+                "message_type": "CONTRACT_PROPOSE",
+                "payload": {
+                  "contract": {
+                    "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                    "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                    "roles": [
+                      "initiator",
+                      "responder"
+                    ]
+                  },
+                  "contract_hash": "sha256:6bd6DMJWz2QPQKDzfbzMYs1IEkJz6-C5XsxekihplVs"
+                },
+                "sender": "aicp-cleanroom-python-a",
+                "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                "timestamp": "2026-06-01T00:00:01Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-propose",
+                "operation": "construct",
+                "input": {
+                  "phase": "propose",
+                  "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+                  "side": "A",
+                  "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                  "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                  "message_id": "m-9549681e2e385f6b76f0ebc5",
+                  "timestamp": "2026-06-01T00:00:01Z",
+                  "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                  "visible_message_hashes": []
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-propose",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                    "message_id": "m-9549681e2e385f6b76f0ebc5",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:6bd6DMJWz2QPQKDzfbzMYs1IEkJz6-C5XsxekihplVs"
+                    },
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                    "timestamp": "2026-06-01T00:00:01Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-1-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                        "message_id": "m-9549681e2e385f6b76f0ebc5",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                            "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:6bd6DMJWz2QPQKDzfbzMYs1IEkJz6-C5XsxekihplVs"
+                        },
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                        "timestamp": "2026-06-01T00:00:01Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-1-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                    "message_id": "m-9549681e2e385f6b76f0ebc5"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-1-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-1-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                        "message_id": "m-9549681e2e385f6b76f0ebc5",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                            "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:6bd6DMJWz2QPQKDzfbzMYs1IEkJz6-C5XsxekihplVs"
+                        },
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                        "timestamp": "2026-06-01T00:00:01Z"
+                      }
+                    ],
+                    "next_cursor": "c1-795701f86b2a8332"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg"
+                ]
+              }
+            },
+            {
+              "sequence": 2,
+              "sender_side": "B",
+              "constructed_by": "B",
+              "consumed_by": "A",
+              "message": {
+                "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                "message_id": "m-fc0b21d5186f05564b23a011",
+                "message_type": "CONTRACT_ACCEPT",
+                "payload": {
+                  "accepted": true
+                },
+                "prev_msg_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                "sender": "aicp-cleanroom-node-b",
+                "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                "timestamp": "2026-06-01T00:00:02Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-accept",
+                "operation": "construct",
+                "input": {
+                  "phase": "accept",
+                  "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+                  "side": "B",
+                  "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                  "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                  "message_id": "m-fc0b21d5186f05564b23a011",
+                  "timestamp": "2026-06-01T00:00:02Z",
+                  "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                  "visible_message_hashes": [
+                    "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                    "message_id": "m-9549681e2e385f6b76f0ebc5",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:6bd6DMJWz2QPQKDzfbzMYs1IEkJz6-C5XsxekihplVs"
+                    },
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                    "timestamp": "2026-06-01T00:00:01Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-accept",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                    "message_id": "m-fc0b21d5186f05564b23a011",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                    "timestamp": "2026-06-01T00:00:02Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-2-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                        "message_id": "m-fc0b21d5186f05564b23a011",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                        "timestamp": "2026-06-01T00:00:02Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-2-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                    "message_id": "m-fc0b21d5186f05564b23a011"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-2-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-2-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                        "message_id": "m-fc0b21d5186f05564b23a011",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                        "timestamp": "2026-06-01T00:00:02Z"
+                      }
+                    ],
+                    "next_cursor": "c1-795701f86b2a8332"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o"
+                ]
+              }
+            },
+            {
+              "sequence": 3,
+              "sender_side": "A",
+              "constructed_by": "A",
+              "consumed_by": "B",
+              "message": {
+                "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:o0ByPIXFvqzf-JHOg_dtVSlax1e4FYyyPeySxM2OvOE",
+                "message_id": "m-176402db1f71106ba02c78b6",
+                "message_type": "ATTEST_ACTION",
+                "payload": {
+                  "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:A:final",
+                  "action_type": "pairwise_cross_consumption",
+                  "result_hash": "sha256:V5c2anLAfVUmBdOwIHmM-LwT3JC_BsMt5EmIuK_qtLM"
+                },
+                "prev_msg_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                "sender": "aicp-cleanroom-python-a",
+                "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                "timestamp": "2026-06-01T00:00:03Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-attest",
+                "operation": "construct",
+                "input": {
+                  "phase": "attest",
+                  "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+                  "side": "A",
+                  "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                  "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                  "message_id": "m-176402db1f71106ba02c78b6",
+                  "timestamp": "2026-06-01T00:00:03Z",
+                  "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                  "visible_message_hashes": [
+                    "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                    "message_id": "m-fc0b21d5186f05564b23a011",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                    "timestamp": "2026-06-01T00:00:02Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-attest",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:o0ByPIXFvqzf-JHOg_dtVSlax1e4FYyyPeySxM2OvOE",
+                    "message_id": "m-176402db1f71106ba02c78b6",
+                    "message_type": "ATTEST_ACTION",
+                    "payload": {
+                      "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:A:final",
+                      "action_type": "pairwise_cross_consumption",
+                      "result_hash": "sha256:V5c2anLAfVUmBdOwIHmM-LwT3JC_BsMt5EmIuK_qtLM"
+                    },
+                    "prev_msg_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                    "timestamp": "2026-06-01T00:00:03Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-3-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:o0ByPIXFvqzf-JHOg_dtVSlax1e4FYyyPeySxM2OvOE",
+                        "message_id": "m-176402db1f71106ba02c78b6",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:A:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:V5c2anLAfVUmBdOwIHmM-LwT3JC_BsMt5EmIuK_qtLM"
+                        },
+                        "prev_msg_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                        "timestamp": "2026-06-01T00:00:03Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-3-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:o0ByPIXFvqzf-JHOg_dtVSlax1e4FYyyPeySxM2OvOE",
+                    "message_id": "m-176402db1f71106ba02c78b6"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-3-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                      "after_cursor": "c1-795701f86b2a8332",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-A_TO_B-3-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-1-a_to_b-8c228c38cb487b1f60851975cbfaccbc",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:o0ByPIXFvqzf-JHOg_dtVSlax1e4FYyyPeySxM2OvOE",
+                        "message_id": "m-176402db1f71106ba02c78b6",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:A:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:V5c2anLAfVUmBdOwIHmM-LwT3JC_BsMt5EmIuK_qtLM"
+                        },
+                        "prev_msg_hash": "sha256:aVYKXTms-Kyzu9Hm6oxE2IUto0qiO_UYWHMJN1tQ71o",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-1-a_to_b-4dee41c2a192eccdaf2015637492b31d",
+                        "timestamp": "2026-06-01T00:00:03Z"
+                      }
+                    ],
+                    "next_cursor": "c2-3259e4394b0c5a46"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [
+                  "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg"
+                ],
+                "visible_hashes_after": [
+                  "sha256:fG4E0p4LTjrkz1p_kQpXXGD77qfI5Ig3GrVFey49dIg",
+                  "sha256:o0ByPIXFvqzf-JHOg_dtVSlax1e4FYyyPeySxM2OvOE"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "direction": "B_TO_A",
+          "producer_side": "B",
+          "consumer_side": "A",
+          "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+          "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+          "messages": [
+            {
+              "sequence": 1,
+              "sender_side": "B",
+              "constructed_by": "B",
+              "consumed_by": "A",
+              "message": {
+                "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                "message_id": "m-8469bd50b9bd2c981f7476b8",
+                "message_type": "CONTRACT_PROPOSE",
+                "payload": {
+                  "contract": {
+                    "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                    "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                    "roles": [
+                      "initiator",
+                      "responder"
+                    ]
+                  },
+                  "contract_hash": "sha256:XQA7LOHRCQm9OsBUL6vWd8FRwyN2tQPw-2rrwaoB5bs"
+                },
+                "sender": "aicp-cleanroom-node-b",
+                "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                "timestamp": "2026-06-01T00:00:01Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-propose",
+                "operation": "construct",
+                "input": {
+                  "phase": "propose",
+                  "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+                  "side": "B",
+                  "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                  "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                  "message_id": "m-8469bd50b9bd2c981f7476b8",
+                  "timestamp": "2026-06-01T00:00:01Z",
+                  "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                  "visible_message_hashes": []
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-propose",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                    "message_id": "m-8469bd50b9bd2c981f7476b8",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:XQA7LOHRCQm9OsBUL6vWd8FRwyN2tQPw-2rrwaoB5bs"
+                    },
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                    "timestamp": "2026-06-01T00:00:01Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-1-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                        "message_id": "m-8469bd50b9bd2c981f7476b8",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                            "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:XQA7LOHRCQm9OsBUL6vWd8FRwyN2tQPw-2rrwaoB5bs"
+                        },
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                        "timestamp": "2026-06-01T00:00:01Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-1-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                    "message_id": "m-8469bd50b9bd2c981f7476b8"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-1-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-1-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                        "message_id": "m-8469bd50b9bd2c981f7476b8",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                            "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:XQA7LOHRCQm9OsBUL6vWd8FRwyN2tQPw-2rrwaoB5bs"
+                        },
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                        "timestamp": "2026-06-01T00:00:01Z"
+                      }
+                    ],
+                    "next_cursor": "c1-e5eb2fa0f659828b"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI"
+                ]
+              }
+            },
+            {
+              "sequence": 2,
+              "sender_side": "A",
+              "constructed_by": "A",
+              "consumed_by": "B",
+              "message": {
+                "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                "message_id": "m-8cd7e4c6407720d0bda766bd",
+                "message_type": "CONTRACT_ACCEPT",
+                "payload": {
+                  "accepted": true
+                },
+                "prev_msg_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                "sender": "aicp-cleanroom-python-a",
+                "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                "timestamp": "2026-06-01T00:00:02Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-accept",
+                "operation": "construct",
+                "input": {
+                  "phase": "accept",
+                  "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+                  "side": "A",
+                  "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                  "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                  "message_id": "m-8cd7e4c6407720d0bda766bd",
+                  "timestamp": "2026-06-01T00:00:02Z",
+                  "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                  "visible_message_hashes": [
+                    "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                    "message_id": "m-8469bd50b9bd2c981f7476b8",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "goal": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:XQA7LOHRCQm9OsBUL6vWd8FRwyN2tQPw-2rrwaoB5bs"
+                    },
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                    "timestamp": "2026-06-01T00:00:01Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-accept",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                    "message_id": "m-8cd7e4c6407720d0bda766bd",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                    "timestamp": "2026-06-01T00:00:02Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-2-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                        "message_id": "m-8cd7e4c6407720d0bda766bd",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                        "timestamp": "2026-06-01T00:00:02Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-2-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                    "message_id": "m-8cd7e4c6407720d0bda766bd"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-2-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-2-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                        "message_id": "m-8cd7e4c6407720d0bda766bd",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                        "timestamp": "2026-06-01T00:00:02Z"
+                      }
+                    ],
+                    "next_cursor": "c1-e5eb2fa0f659828b"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc"
+                ]
+              }
+            },
+            {
+              "sequence": 3,
+              "sender_side": "B",
+              "constructed_by": "B",
+              "consumed_by": "A",
+              "message": {
+                "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:okvqohc1n2pGUmRXA2EWZc22WLMH23sQn2HBJoAvF6o",
+                "message_id": "m-4675af81503572ddd4340f04",
+                "message_type": "ATTEST_ACTION",
+                "payload": {
+                  "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:B:final",
+                  "action_type": "pairwise_cross_consumption",
+                  "result_hash": "sha256:moNmmxWBSYYQmr_lWbPE9nKQjDA1GK_uIPSG0dhIXvo"
+                },
+                "prev_msg_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                "sender": "aicp-cleanroom-node-b",
+                "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                "timestamp": "2026-06-01T00:00:03Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-attest",
+                "operation": "construct",
+                "input": {
+                  "phase": "attest",
+                  "run_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c",
+                  "side": "B",
+                  "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                  "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                  "message_id": "m-4675af81503572ddd4340f04",
+                  "timestamp": "2026-06-01T00:00:03Z",
+                  "challenge": "challenge-1-528f16586362da9c9dac4d06c047dcc4ad071d50faaf72732b47e786275664c5",
+                  "visible_message_hashes": [
+                    "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                    "message_id": "m-8cd7e4c6407720d0bda766bd",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                    "timestamp": "2026-06-01T00:00:02Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-attest",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:okvqohc1n2pGUmRXA2EWZc22WLMH23sQn2HBJoAvF6o",
+                    "message_id": "m-4675af81503572ddd4340f04",
+                    "message_type": "ATTEST_ACTION",
+                    "payload": {
+                      "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:B:final",
+                      "action_type": "pairwise_cross_consumption",
+                      "result_hash": "sha256:moNmmxWBSYYQmr_lWbPE9nKQjDA1GK_uIPSG0dhIXvo"
+                    },
+                    "prev_msg_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                    "timestamp": "2026-06-01T00:00:03Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-3-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:okvqohc1n2pGUmRXA2EWZc22WLMH23sQn2HBJoAvF6o",
+                        "message_id": "m-4675af81503572ddd4340f04",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:B:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:moNmmxWBSYYQmr_lWbPE9nKQjDA1GK_uIPSG0dhIXvo"
+                        },
+                        "prev_msg_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                        "timestamp": "2026-06-01T00:00:03Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-3-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:okvqohc1n2pGUmRXA2EWZc22WLMH23sQn2HBJoAvF6o",
+                    "message_id": "m-4675af81503572ddd4340f04"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-3-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                      "after_cursor": "c1-e5eb2fa0f659828b",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c-B_TO_A-3-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-1-b_to_a-5e66c4cca68a353c0ad8e2e60262998e",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:okvqohc1n2pGUmRXA2EWZc22WLMH23sQn2HBJoAvF6o",
+                        "message_id": "m-4675af81503572ddd4340f04",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-1-343dc8473b5105bf5adaa8e3ce725b7c:B:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:moNmmxWBSYYQmr_lWbPE9nKQjDA1GK_uIPSG0dhIXvo"
+                        },
+                        "prev_msg_hash": "sha256:pzf5Go_aNYIcsUQ6YRP9_Wm-ulzy4DZ8CjRM4M733cc",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-1-b_to_a-d42670903a61f613101bbf9656ede3a8",
+                        "timestamp": "2026-06-01T00:00:03Z"
+                      }
+                    ],
+                    "next_cursor": "c2-45a18bc2cc25ff17"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [
+                  "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI"
+                ],
+                "visible_hashes_after": [
+                  "sha256:2Ur0LO1e7RwyWQ7RFg2Kqhg5jLnv5nfh94V22uIrAtI",
+                  "sha256:okvqohc1n2pGUmRXA2EWZc22WLMH23sQn2HBJoAvF6o"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+      "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+      "semantic_digest": "sha256:27e6986f2b3b3f306341bfab7cb848bf042a10e87641010c9c538d01a5e5de8e",
+      "directions": [
+        {
+          "direction": "A_TO_B",
+          "producer_side": "A",
+          "consumer_side": "B",
+          "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+          "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+          "messages": [
+            {
+              "sequence": 1,
+              "sender_side": "A",
+              "constructed_by": "A",
+              "consumed_by": "B",
+              "message": {
+                "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                "message_id": "m-4b6ee737ae424e326d7b2d7a",
+                "message_type": "CONTRACT_PROPOSE",
+                "payload": {
+                  "contract": {
+                    "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                    "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                    "roles": [
+                      "initiator",
+                      "responder"
+                    ]
+                  },
+                  "contract_hash": "sha256:mc7F8VDuaTttDXEioKGwN860NQ2lqT1oSfTrIHo3kIY"
+                },
+                "sender": "aicp-cleanroom-python-a",
+                "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                "timestamp": "2026-06-02T00:00:01Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-propose",
+                "operation": "construct",
+                "input": {
+                  "phase": "propose",
+                  "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+                  "side": "A",
+                  "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                  "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                  "message_id": "m-4b6ee737ae424e326d7b2d7a",
+                  "timestamp": "2026-06-02T00:00:01Z",
+                  "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                  "visible_message_hashes": []
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-propose",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                    "message_id": "m-4b6ee737ae424e326d7b2d7a",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:mc7F8VDuaTttDXEioKGwN860NQ2lqT1oSfTrIHo3kIY"
+                    },
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                    "timestamp": "2026-06-02T00:00:01Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-1-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                        "message_id": "m-4b6ee737ae424e326d7b2d7a",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                            "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:mc7F8VDuaTttDXEioKGwN860NQ2lqT1oSfTrIHo3kIY"
+                        },
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                        "timestamp": "2026-06-02T00:00:01Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-1-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                    "message_id": "m-4b6ee737ae424e326d7b2d7a"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-1-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-1-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                        "message_id": "m-4b6ee737ae424e326d7b2d7a",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                            "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:mc7F8VDuaTttDXEioKGwN860NQ2lqT1oSfTrIHo3kIY"
+                        },
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                        "timestamp": "2026-06-02T00:00:01Z"
+                      }
+                    ],
+                    "next_cursor": "c1-0223ea52c64ffa01"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys"
+                ]
+              }
+            },
+            {
+              "sequence": 2,
+              "sender_side": "B",
+              "constructed_by": "B",
+              "consumed_by": "A",
+              "message": {
+                "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                "message_id": "m-033d80af67806da9e30af596",
+                "message_type": "CONTRACT_ACCEPT",
+                "payload": {
+                  "accepted": true
+                },
+                "prev_msg_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                "sender": "aicp-cleanroom-node-b",
+                "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                "timestamp": "2026-06-02T00:00:02Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-accept",
+                "operation": "construct",
+                "input": {
+                  "phase": "accept",
+                  "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+                  "side": "B",
+                  "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                  "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                  "message_id": "m-033d80af67806da9e30af596",
+                  "timestamp": "2026-06-02T00:00:02Z",
+                  "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                  "visible_message_hashes": [
+                    "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                    "message_id": "m-4b6ee737ae424e326d7b2d7a",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:mc7F8VDuaTttDXEioKGwN860NQ2lqT1oSfTrIHo3kIY"
+                    },
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                    "timestamp": "2026-06-02T00:00:01Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-accept",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                    "message_id": "m-033d80af67806da9e30af596",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                    "timestamp": "2026-06-02T00:00:02Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-2-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                        "message_id": "m-033d80af67806da9e30af596",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                        "timestamp": "2026-06-02T00:00:02Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-2-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                    "message_id": "m-033d80af67806da9e30af596"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-2-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-2-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                        "message_id": "m-033d80af67806da9e30af596",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                        "timestamp": "2026-06-02T00:00:02Z"
+                      }
+                    ],
+                    "next_cursor": "c1-0223ea52c64ffa01"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY"
+                ]
+              }
+            },
+            {
+              "sequence": 3,
+              "sender_side": "A",
+              "constructed_by": "A",
+              "consumed_by": "B",
+              "message": {
+                "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:5hDTnhmAxu9cKOl0AS2nlnNmtepJL2O3TtQMkmxDqGQ",
+                "message_id": "m-da5d8d56759e3988f62617c3",
+                "message_type": "ATTEST_ACTION",
+                "payload": {
+                  "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:A:final",
+                  "action_type": "pairwise_cross_consumption",
+                  "result_hash": "sha256:fk7Le8j0eAWSxyT0NFw0Zya2UjiIUz7V948AcSxEftQ"
+                },
+                "prev_msg_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                "sender": "aicp-cleanroom-python-a",
+                "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                "timestamp": "2026-06-02T00:00:03Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-attest",
+                "operation": "construct",
+                "input": {
+                  "phase": "attest",
+                  "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+                  "side": "A",
+                  "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                  "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                  "message_id": "m-da5d8d56759e3988f62617c3",
+                  "timestamp": "2026-06-02T00:00:03Z",
+                  "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                  "visible_message_hashes": [
+                    "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                    "message_id": "m-033d80af67806da9e30af596",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                    "timestamp": "2026-06-02T00:00:02Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-attest",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:5hDTnhmAxu9cKOl0AS2nlnNmtepJL2O3TtQMkmxDqGQ",
+                    "message_id": "m-da5d8d56759e3988f62617c3",
+                    "message_type": "ATTEST_ACTION",
+                    "payload": {
+                      "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:A:final",
+                      "action_type": "pairwise_cross_consumption",
+                      "result_hash": "sha256:fk7Le8j0eAWSxyT0NFw0Zya2UjiIUz7V948AcSxEftQ"
+                    },
+                    "prev_msg_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                    "timestamp": "2026-06-02T00:00:03Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-3-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:5hDTnhmAxu9cKOl0AS2nlnNmtepJL2O3TtQMkmxDqGQ",
+                        "message_id": "m-da5d8d56759e3988f62617c3",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:A:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:fk7Le8j0eAWSxyT0NFw0Zya2UjiIUz7V948AcSxEftQ"
+                        },
+                        "prev_msg_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                        "timestamp": "2026-06-02T00:00:03Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-3-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:5hDTnhmAxu9cKOl0AS2nlnNmtepJL2O3TtQMkmxDqGQ",
+                    "message_id": "m-da5d8d56759e3988f62617c3"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-3-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                      "after_cursor": "c1-0223ea52c64ffa01",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-A_TO_B-3-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-2-a_to_b-7db14e8ec566fb8421c0ebfd584e586f",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:5hDTnhmAxu9cKOl0AS2nlnNmtepJL2O3TtQMkmxDqGQ",
+                        "message_id": "m-da5d8d56759e3988f62617c3",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:A:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:fk7Le8j0eAWSxyT0NFw0Zya2UjiIUz7V948AcSxEftQ"
+                        },
+                        "prev_msg_hash": "sha256:KxDIUNy4d0ahmFt-UH_1_v2UKWmiS2n3XsvEKmXqLxY",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-2-a_to_b-15dfdabcf1f250e9294c5cf4e2b8078e",
+                        "timestamp": "2026-06-02T00:00:03Z"
+                      }
+                    ],
+                    "next_cursor": "c2-3b2844f81e78ca07"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [
+                  "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys"
+                ],
+                "visible_hashes_after": [
+                  "sha256:EY3DhDMZJSgxwO6QQbr9ReZhnx2H9DZO_PfvpVb3fys",
+                  "sha256:5hDTnhmAxu9cKOl0AS2nlnNmtepJL2O3TtQMkmxDqGQ"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "direction": "B_TO_A",
+          "producer_side": "B",
+          "consumer_side": "A",
+          "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+          "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+          "messages": [
+            {
+              "sequence": 1,
+              "sender_side": "B",
+              "constructed_by": "B",
+              "consumed_by": "A",
+              "message": {
+                "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                "message_id": "m-84b0a58eca39c011ea7f8bd1",
+                "message_type": "CONTRACT_PROPOSE",
+                "payload": {
+                  "contract": {
+                    "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                    "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                    "roles": [
+                      "initiator",
+                      "responder"
+                    ]
+                  },
+                  "contract_hash": "sha256:RWufhVB3H0jASS8gJl2QcliMfb71cf9zUJ7CZnBuhPE"
+                },
+                "sender": "aicp-cleanroom-node-b",
+                "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                "timestamp": "2026-06-02T00:00:01Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-propose",
+                "operation": "construct",
+                "input": {
+                  "phase": "propose",
+                  "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+                  "side": "B",
+                  "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                  "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                  "message_id": "m-84b0a58eca39c011ea7f8bd1",
+                  "timestamp": "2026-06-02T00:00:01Z",
+                  "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                  "visible_message_hashes": []
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-propose",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                    "message_id": "m-84b0a58eca39c011ea7f8bd1",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:RWufhVB3H0jASS8gJl2QcliMfb71cf9zUJ7CZnBuhPE"
+                    },
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                    "timestamp": "2026-06-02T00:00:01Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-1-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                        "message_id": "m-84b0a58eca39c011ea7f8bd1",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                            "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:RWufhVB3H0jASS8gJl2QcliMfb71cf9zUJ7CZnBuhPE"
+                        },
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                        "timestamp": "2026-06-02T00:00:01Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-1-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                    "message_id": "m-84b0a58eca39c011ea7f8bd1"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-1-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-1-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                        "message_id": "m-84b0a58eca39c011ea7f8bd1",
+                        "message_type": "CONTRACT_PROPOSE",
+                        "payload": {
+                          "contract": {
+                            "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                            "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          },
+                          "contract_hash": "sha256:RWufhVB3H0jASS8gJl2QcliMfb71cf9zUJ7CZnBuhPE"
+                        },
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                        "timestamp": "2026-06-02T00:00:01Z"
+                      }
+                    ],
+                    "next_cursor": "c1-052d489bb0827732"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ"
+                ]
+              }
+            },
+            {
+              "sequence": 2,
+              "sender_side": "A",
+              "constructed_by": "A",
+              "consumed_by": "B",
+              "message": {
+                "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                "message_id": "m-fad5d35dc02b651c06fc8316",
+                "message_type": "CONTRACT_ACCEPT",
+                "payload": {
+                  "accepted": true
+                },
+                "prev_msg_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                "sender": "aicp-cleanroom-python-a",
+                "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                "timestamp": "2026-06-02T00:00:02Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-accept",
+                "operation": "construct",
+                "input": {
+                  "phase": "accept",
+                  "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+                  "side": "A",
+                  "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                  "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                  "message_id": "m-fad5d35dc02b651c06fc8316",
+                  "timestamp": "2026-06-02T00:00:02Z",
+                  "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                  "visible_message_hashes": [
+                    "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                    "message_id": "m-84b0a58eca39c011ea7f8bd1",
+                    "message_type": "CONTRACT_PROPOSE",
+                    "payload": {
+                      "contract": {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "goal": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                        "roles": [
+                          "initiator",
+                          "responder"
+                        ]
+                      },
+                      "contract_hash": "sha256:RWufhVB3H0jASS8gJl2QcliMfb71cf9zUJ7CZnBuhPE"
+                    },
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                    "timestamp": "2026-06-02T00:00:01Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-accept",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                    "message_id": "m-fad5d35dc02b651c06fc8316",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                    "timestamp": "2026-06-02T00:00:02Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-2-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                        "message_id": "m-fad5d35dc02b651c06fc8316",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                        "timestamp": "2026-06-02T00:00:02Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-2-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                    "message_id": "m-fad5d35dc02b651c06fc8316"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-2-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                      "after_cursor": "c0",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-2-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                        "message_id": "m-fad5d35dc02b651c06fc8316",
+                        "message_type": "CONTRACT_ACCEPT",
+                        "payload": {
+                          "accepted": true
+                        },
+                        "prev_msg_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                        "sender": "aicp-cleanroom-python-a",
+                        "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                        "timestamp": "2026-06-02T00:00:02Z"
+                      }
+                    ],
+                    "next_cursor": "c1-052d489bb0827732"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [],
+                "visible_hashes_after": [
+                  "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M"
+                ]
+              }
+            },
+            {
+              "sequence": 3,
+              "sender_side": "B",
+              "constructed_by": "B",
+              "consumed_by": "A",
+              "message": {
+                "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                "contract_ref": {
+                  "base_version": "v1",
+                  "branch_id": "main",
+                  "head_version": "v1"
+                },
+                "message_hash": "sha256:hIKAnMNsrzQrexlvMTovrfjt6MW5x4ZqXXfuYQhw-QY",
+                "message_id": "m-5559fc50b7c9605325eb0ab8",
+                "message_type": "ATTEST_ACTION",
+                "payload": {
+                  "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:B:final",
+                  "action_type": "pairwise_cross_consumption",
+                  "result_hash": "sha256:dCjxL-yQmcWuMWErKhtwSvPc3TwHxqLWfUyTV_BeUdE"
+                },
+                "prev_msg_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                "sender": "aicp-cleanroom-node-b",
+                "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                "timestamp": "2026-06-02T00:00:03Z"
+              },
+              "control_request": {
+                "control_version": "aicp.pairwise_control.v1",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-attest",
+                "operation": "construct",
+                "input": {
+                  "phase": "attest",
+                  "run_id": "run-2-4c2d6b513932c13b0cfa5389bf935002",
+                  "side": "B",
+                  "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                  "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                  "message_id": "m-5559fc50b7c9605325eb0ab8",
+                  "timestamp": "2026-06-02T00:00:03Z",
+                  "challenge": "challenge-2-4f18df335464cd54d0f7802c4ff50b49b6ac39dde9e3933bb9e3c2e73a58e75d",
+                  "visible_message_hashes": [
+                    "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M"
+                  ],
+                  "peer_message": {
+                    "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                    "message_id": "m-fad5d35dc02b651c06fc8316",
+                    "message_type": "CONTRACT_ACCEPT",
+                    "payload": {
+                      "accepted": true
+                    },
+                    "prev_msg_hash": "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                    "sender": "aicp-cleanroom-python-a",
+                    "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                    "timestamp": "2026-06-02T00:00:02Z"
+                  }
+                }
+              },
+              "control_response": {
+                "control_version": "aicp.pairwise_control.v1",
+                "operation": "construct",
+                "request_id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-attest",
+                "result": {
+                  "message": {
+                    "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                    "contract_ref": {
+                      "base_version": "v1",
+                      "branch_id": "main",
+                      "head_version": "v1"
+                    },
+                    "message_hash": "sha256:hIKAnMNsrzQrexlvMTovrfjt6MW5x4ZqXXfuYQhw-QY",
+                    "message_id": "m-5559fc50b7c9605325eb0ab8",
+                    "message_type": "ATTEST_ACTION",
+                    "payload": {
+                      "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:B:final",
+                      "action_type": "pairwise_cross_consumption",
+                      "result_hash": "sha256:dCjxL-yQmcWuMWErKhtwSvPc3TwHxqLWfUyTV_BeUdE"
+                    },
+                    "prev_msg_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                    "sender": "aicp-cleanroom-node-b",
+                    "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                    "timestamp": "2026-06-02T00:00:03Z"
+                  }
+                },
+                "success": true
+              },
+              "mcp_send": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-3-send",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.sendMessage",
+                    "arguments": {
+                      "message": {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:hIKAnMNsrzQrexlvMTovrfjt6MW5x4ZqXXfuYQhw-QY",
+                        "message_id": "m-5559fc50b7c9605325eb0ab8",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:B:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:dCjxL-yQmcWuMWErKhtwSvPc3TwHxqLWfUyTV_BeUdE"
+                        },
+                        "prev_msg_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                        "timestamp": "2026-06-02T00:00:03Z"
+                      }
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-3-send",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "accepted": true,
+                    "message_hash": "sha256:hIKAnMNsrzQrexlvMTovrfjt6MW5x4ZqXXfuYQhw-QY",
+                    "message_id": "m-5559fc50b7c9605325eb0ab8"
+                  }
+                }
+              },
+              "mcp_poll": {
+                "request": {
+                  "jsonrpc": "2.0",
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-3-poll",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "aicp.pollMessages",
+                    "arguments": {
+                      "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                      "after_cursor": "c1-052d489bb0827732",
+                      "limit": 1
+                    }
+                  }
+                },
+                "response": {
+                  "id": "run-2-4c2d6b513932c13b0cfa5389bf935002-B_TO_A-3-poll",
+                  "jsonrpc": "2.0",
+                  "result": {
+                    "messages": [
+                      {
+                        "contract_id": "contract-2-b_to_a-588a5ae0f09d7273fb0efd0741440f1a",
+                        "contract_ref": {
+                          "base_version": "v1",
+                          "branch_id": "main",
+                          "head_version": "v1"
+                        },
+                        "message_hash": "sha256:hIKAnMNsrzQrexlvMTovrfjt6MW5x4ZqXXfuYQhw-QY",
+                        "message_id": "m-5559fc50b7c9605325eb0ab8",
+                        "message_type": "ATTEST_ACTION",
+                        "payload": {
+                          "action_id": "run-2-4c2d6b513932c13b0cfa5389bf935002:B:final",
+                          "action_type": "pairwise_cross_consumption",
+                          "result_hash": "sha256:dCjxL-yQmcWuMWErKhtwSvPc3TwHxqLWfUyTV_BeUdE"
+                        },
+                        "prev_msg_hash": "sha256:4JnIYvOWYu9hNyXxvr_w3c5hr0L6CgJsfyMHz55N58M",
+                        "sender": "aicp-cleanroom-node-b",
+                        "session_id": "session-2-b_to_a-c23261cc9c114a0aa63e9c36ada82a68",
+                        "timestamp": "2026-06-02T00:00:03Z"
+                      }
+                    ],
+                    "next_cursor": "c2-541eb79d21a50655"
+                  }
+                }
+              },
+              "first_seen": {
+                "visible_hashes_before": [
+                  "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ"
+                ],
+                "visible_hashes_after": [
+                  "sha256:xLCA6ZEnDBJl_DfZENlpOoOnxawhMyilUJdoK7IcYOQ",
+                  "sha256:hIKAnMNsrzQrexlvMTovrfjt6MW5x4ZqXXfuYQhw-QY"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true,
+  "failures": [],
+  "degraded": false,
+  "degraded_reasons": [],
+  "skipped_checks": [],
+  "compatibility_marks": [],
+  "generated_at": "2026-08-26T19:31:12.957047Z"
+}

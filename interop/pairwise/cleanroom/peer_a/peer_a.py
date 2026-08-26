@@ -455,6 +455,12 @@ def _construct(control: dict[str, Any], behavior: str) -> dict[str, Any]:
     peer = input_obj.get("peer_message")
     if phase == "propose":
         payload = {"contract": {"contract_id": contract, "goal": str(input_obj["challenge"]), "roles": ["initiator", "responder"]}}
+        if behavior == "missing_contract_goal":
+            payload["contract"].pop("goal")
+        elif behavior in {"ignore_challenge", "prebuilt_proposal"}:
+            payload["contract"]["goal"] = "static-prebuilt-pairwise-goal"
+        elif behavior == "previous_run_challenge":
+            payload["contract"]["goal"] = "challenge-from-a-previous-run"
         payload["contract_hash"] = _object_hash("contract", payload["contract"])
         previous = None
         message_type = "CONTRACT_PROPOSE"
@@ -489,6 +495,15 @@ def _construct(control: dict[str, Any], behavior: str) -> dict[str, Any]:
         message["message_hash"] = _message_hash(message)
     if behavior == "wrong_contract" and phase != "propose":
         message["contract_id"] = "wrong-contract"
+        message["message_hash"] = _message_hash(message)
+    if behavior == "malformed_contract_ref" and phase == "propose":
+        message["contract_ref"] = {"branch_id": "main"}
+        message["message_hash"] = _message_hash(message)
+    if behavior == "invalid_contract_accept_payload" and phase == "accept":
+        message["payload"] = {"accepted": True, "unexpected": "not-in-Core-v0.1"}
+        message["message_hash"] = _message_hash(message)
+    if behavior == "invalid_attest_action_payload" and phase == "attest":
+        message["payload"]["unexpected"] = "not-in-Core-v0.1"
         message["message_hash"] = _message_hash(message)
     return message
 
