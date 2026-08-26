@@ -19,15 +19,15 @@ RELEASE_DIR = PAIRWISE / "release_artifacts" / RELEASE_1_1
 AUTHORITY_ROOT = RELEASE_DIR / "authority_root"
 HISTORICAL_VECTOR = PAIRWISE / "historical_vectors" / RELEASE_1_0
 
-FROZEN_1_0_RAW_SHA256 = {
-    "interop/pairwise/tck_releases.schema.json": "95387107f76c512dd32140f1fe325d52ec8738aac1da4d94d97887ff74e101f7",
-    "interop/pairwise/release_registry_snapshots/AICP-PAIRWISE-TCK-1.0.0.json": "2e2ac076dd45b2ad9d429bd4fe35d027380bc883c81e068ce22c57f7c84ce2c3",
-    "interop/pairwise/pairwise_joint_report_v1.schema.json": "1e2e2770b0ae28830f733407b4ad915eab155d8143598e30d686705a80583665",
-    "interop/pairwise/aicp_pairwise_runner.py": "734e6239b02fd8149382340579ce714341178f962636f6f2f1a1101023253a93",
-    "interop/pairwise/pairwise_report_evaluator.py": "4768911768c16f28bece5737f51e50e019451dd69f691f2a7b30ebe6aad75530",
-    "interop/pairwise/pairwise_semantic_normalizer.py": "aab5cefc5533516a07ad71018adc8772075bc8928fb310e986877fbdde457197",
-    "interop/pairwise/pairwise_runner_bundle_v1_0.json": "da36073dda1331807cbb057a65397b874a4f19c118c4ceeb495a8f6b0b68c16b",
-    "interop/pairwise/pairwise_process.py": "56ce4e6dec39cfecafd58c823e897945a2d34ab984327466b959e73b709b8eb3",
+FROZEN_1_0_REPOSITORY_SHA256 = {
+    "interop/pairwise/tck_releases.schema.json": "620cd734ab23b63d2a35648baf8f063b8085d8c11a5cc7a03d2d8f18f5a42905",
+    "interop/pairwise/release_registry_snapshots/AICP-PAIRWISE-TCK-1.0.0.json": "4d8ca895e8848f4171b2c48952840d0e383a6cd1e43d966a6bd9582051d2182a",
+    "interop/pairwise/pairwise_joint_report_v1.schema.json": "bccfe9710747ab8703ef262c0b86f452c36a65bfee26202a4d220adea202cdf9",
+    "interop/pairwise/aicp_pairwise_runner.py": "496678529639f69c8fc437e0889e40a7f1b4d9f592ade5ac65dffc21ade58eec",
+    "interop/pairwise/pairwise_report_evaluator.py": "fb8ca05a000f3ee372039d208436a0bdf9e79feb2c029f0ce7ac40eaeceec43b",
+    "interop/pairwise/pairwise_semantic_normalizer.py": "b6f36f883dc71722a6b9b6833d59f76e527bc9ff96bc71a2175fe4e2fe261edf",
+    "interop/pairwise/pairwise_runner_bundle_v1_0.json": "86eda6ccb0e7dac0d9ee7eb5a9c668a1a722a7656d08c0c3b4f31606dc7a1781",
+    "interop/pairwise/pairwise_process.py": "6a71ab9c3ac60692084fb614b5017f054de424ae7e15e6f6287295708656c242",
 }
 
 IMPORT_ROOTS = (
@@ -58,8 +58,10 @@ def digest(path: Path) -> str:
     return "sha256:" + hashlib.sha256(normalized_bytes(path)).hexdigest()
 
 
-def raw_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def repository_sha256(path: Path) -> str:
+    """Hash Git-canonical text bytes independently of checkout EOL conversion."""
+
+    return hashlib.sha256(normalized_bytes(path)).hexdigest()
 
 
 def encoded_json(value: Any) -> bytes:
@@ -338,11 +340,11 @@ def main() -> int:
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     frozen_errors = []
-    for ref, expected_hash in FROZEN_1_0_RAW_SHA256.items():
+    for ref, expected_hash in FROZEN_1_0_REPOSITORY_SHA256.items():
         path = ROOT / ref
-        actual = raw_sha256(path) if path.is_file() else "missing"
+        actual = repository_sha256(path) if path.is_file() else "missing"
         if actual != expected_hash:
-            frozen_errors.append(f"{ref}: expected raw sha256 {expected_hash}, got {actual}")
+            frozen_errors.append(f"{ref}: expected repository sha256 {expected_hash}, got {actual}")
     if frozen_errors:
         raise RuntimeError("Pairwise TCK 1.0 byte freeze failed: " + "; ".join(frozen_errors))
 

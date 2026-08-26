@@ -21,9 +21,9 @@ for path in (PAIRWISE, ROOT / "scripts", ROOT / "reference" / "python"):
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from generate_pairwise_tck import (  # noqa: E402
-    FROZEN_1_0_RAW_SHA256,
+    FROZEN_1_0_REPOSITORY_SHA256,
     discover_import_closure,
-    raw_sha256,
+    repository_sha256,
 )
 from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402
 from pairwise_side_report_evaluator_v1_1 import (  # noqa: E402
@@ -115,8 +115,8 @@ def _dispatch_isolated(isolated_root: Path, isolated_pairwise: Path) -> dict[str
 
 
 def test_pairwise_1_0_byte_freeze_and_historical_policy() -> None:
-    for relative, expected in FROZEN_1_0_RAW_SHA256.items():
-        assert raw_sha256(ROOT / relative) == expected
+    for relative, expected in FROZEN_1_0_REPOSITORY_SHA256.items():
+        assert repository_sha256(ROOT / relative) == expected
     report = _load(HISTORICAL_VECTOR / "joint.json")
     result = evaluate_pairwise_report(report, base_dir=HISTORICAL_VECTOR)
     assert result["status"] == "ineligible"

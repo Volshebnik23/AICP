@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from generate_pairwise_tck import FROZEN_1_0_RAW_SHA256, raw_sha256
+from generate_pairwise_tck import FROZEN_1_0_REPOSITORY_SHA256, repository_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 PAIRWISE = ROOT / "interop" / "pairwise"
@@ -164,11 +164,11 @@ def main() -> int:
         errors.append("Pairwise TCK 1.0 must be explicitly historical and strong-ineligible")
     if current_policy.get("lifecycle") != "current" or current_policy.get("strong_eligible") is not True:
         errors.append("Pairwise TCK 1.1 must be explicitly current and strong-eligible")
-    for relative, expected in FROZEN_1_0_RAW_SHA256.items():
+    for relative, expected in FROZEN_1_0_REPOSITORY_SHA256.items():
         path = ROOT / relative
-        actual = raw_sha256(path) if path.is_file() else "missing"
+        actual = repository_sha256(path) if path.is_file() else "missing"
         if actual != expected:
-            errors.append(f"Pairwise TCK 1.0 raw-byte drift: {relative}")
+            errors.append(f"Pairwise TCK 1.0 repository-byte drift: {relative}")
 
     if isinstance(current_release, dict):
         if current_release.get("registry_schema_digest") != digest(PAIRWISE / "tck_releases_v2.schema.json"):
