@@ -366,7 +366,7 @@
     },
     {
       "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
-      "content_digest": "sha256:a0fd761b4c7e96a1ff0e26d59539cd723d42400450c706c49d120ce3dbc34dfb"
+      "content_digest": "sha256:7a28d12febf6036124f74923993ce2da58dddbb1417283f26038d723d61cce3f"
     },
     {
       "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
@@ -374,7 +374,7 @@
     },
     {
       "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
-      "content_digest": "sha256:c22c6c840c33a011542db791877f0df95391e329b65147c5ad94ae4e73282edf"
+      "content_digest": "sha256:1ae63ca6976a1cc8fe79da837ee2a3205d6c3328296c588488ec5aeccb626bec"
     },
     {
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
@@ -382,7 +382,7 @@
     },
     {
       "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-      "content_digest": "sha256:e60a3dd1281a463e3b6f264bb95efedb8cc17df9ac1bd478365e4c0de8523dea"
+      "content_digest": "sha256:486a86b7cb0c3f8bc6b0fecc6c20dc853fd8e0a68bd334b6319839459739b0f6"
     },
     {
       "path": "conformance/extensions/RS_RESUME_0.1.json",

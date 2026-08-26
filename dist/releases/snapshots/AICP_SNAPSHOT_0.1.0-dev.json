@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "ddb5f575f7cf2ea2555eb90621f2930237c5517e758bdf6ec043622d723fd789",
+      "combined_sha256": "c4d816bf3764d7a87b29a7fca4caefa79c4bbdafbd33208e6dbf7d4b187645d4",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -41,11 +41,15 @@
         },
         {
           "path": "conformance/evidence/delegated_identity_target.json",
-          "sha256": "feb39f645b84ab6eb07164d5c5e5d548b2f121347b478fa6fa9407645c4523dc"
+          "sha256": "67876256e416ed4edfb4ceff16e736d28b6fba94fb00dda8fc5c69dd188de1c8"
         },
         {
           "path": "conformance/evidence/evidence_runner_bundle.json",
           "sha256": "a1505f9a8e2519009a3d18dd7c1c114c2752f6e942432cd6846137640504d2d0"
+        },
+        {
+          "path": "conformance/evidence/evidence_runner_bundle_v1_10.json",
+          "sha256": "c61e9f4a1e384bcd435765d1457223b2cae1035c62686fedaa7101681d19919b"
         },
         {
           "path": "conformance/evidence/evidence_runner_bundle_v1_2.json",
@@ -81,7 +85,7 @@
         },
         {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "6a5151d9997e121fe911600f98e8b8eef599b78d7ad8ff15ffffdf71cc9fd4b6"
+          "sha256": "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -94,6 +98,10 @@
         {
           "path": "conformance/evidence/external_evidence_report_v2_2.schema.json",
           "sha256": "5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+        },
+        {
+          "path": "conformance/evidence/historical_reports/AICP-EVIDENCE-TCK-1.8.0-session-state-projection.json",
+          "sha256": "8569bd2f403740a785ee6963f8aa8d6e507f5a11c0b8044c62cdf8021344b6d1"
         },
         {
           "path": "conformance/evidence/live_bindings/http_v01_scenarios.json",
@@ -173,7 +181,7 @@
         },
         {
           "path": "conformance/evidence/mediated_blocking_target.json",
-          "sha256": "8fb426b9952294815fc5d41477b9338ad95bb29670ba04a0536d445c8bfadf7c"
+          "sha256": "b05ee4fdc5779e7c41710d7cee4c8912e6dbe03cd57c270027f7ddb8c6ef007c"
         },
         {
           "path": "conformance/evidence/product_profile_consumer_expectations.json",
@@ -202,6 +210,10 @@
         {
           "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.1.0.json",
           "sha256": "b480aceb911e7f284352f157f3e04914788bdbdaa95d4c1857ea3ab8ac810426"
+        },
+        {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.10.0.json",
+          "sha256": "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
         },
         {
           "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.2.0.json",
@@ -241,7 +253,7 @@
         },
         {
           "path": "conformance/evidence/resumable_sessions_target.json",
-          "sha256": "1565182e521f747044019b09b45320f74ffa6245521f8ddaec98340473fc725b"
+          "sha256": "a433771d9f56ed915d95e36e7f92f121e9d19c31817dd6f131194f725114fe36"
         },
         {
           "path": "conformance/evidence/session_state_projection_v1_target.json",
@@ -253,7 +265,7 @@
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "775ff6d7d9c247d151180efbb1143fe45ece0906ad77e493390e1a5b3a1e9818"
+          "sha256": "6aaa954733282583cd32311956af00ef6599f984af99e09f7d330c479f50924b"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
@@ -289,15 +301,15 @@
         },
         {
           "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
-          "sha256": "a0fd761b4c7e96a1ff0e26d59539cd723d42400450c706c49d120ce3dbc34dfb"
+          "sha256": "7a28d12febf6036124f74923993ce2da58dddbb1417283f26038d723d61cce3f"
         },
         {
           "path": "conformance/extensions/DL_DELEGATION_0.1.json",
-          "sha256": "549746384eb86f1a91a45380bfb6529d310cac38c4cef1dcef333bd9db05e476"
+          "sha256": "8a41f195d3b365c4e037ec26ff433566648608c5fa9ea98b8c35da3838c12c0e"
         },
         {
           "path": "conformance/extensions/DS_DISPUTES_0.1.json",
-          "sha256": "a174f63e7d917d63b2e59ca0aa7b3c7d3c2e58fa2fa841c2a32156e42e5a8a22"
+          "sha256": "d955461b04185d2e22a36aaff8491e2d5decaab4ba874193f281e440c7cc6523"
         },
         {
           "path": "conformance/extensions/EB_ENTERPRISE_BINDINGS_0.1.json",
@@ -341,11 +353,11 @@
         },
         {
           "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
-          "sha256": "c22c6c840c33a011542db791877f0df95391e329b65147c5ad94ae4e73282edf"
+          "sha256": "1ae63ca6976a1cc8fe79da837ee2a3205d6c3328296c588488ec5aeccb626bec"
         },
         {
           "path": "conformance/extensions/MP_MARKETPLACE_0.1.json",
-          "sha256": "a49b35dfc52f4e37ee37fbe9b8cd9870dee6ccff811bdeb4c51584804d375805"
+          "sha256": "836f21ca670505f20229e1c180be4ef6af907f65eae266dcc860c6d86ee0f22a"
         },
         {
           "path": "conformance/extensions/OB_OBSERVABILITY_0.1.json",
@@ -365,7 +377,7 @@
         },
         {
           "path": "conformance/extensions/PA_PARTICIPANTS_0.1.json",
-          "sha256": "63af0e53bf38bb65c102f91a23ffefba7e157c05bbdf0dfbf33f6e714f758f6c"
+          "sha256": "9c63fc0cc589472a282a12e0bc1b9f6a0fcc14cc428c246662d14a9c14ae6e64"
         },
         {
           "path": "conformance/extensions/PB_PUBLICATIONS_0.1.json",
@@ -373,7 +385,7 @@
         },
         {
           "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-          "sha256": "e60a3dd1281a463e3b6f264bb95efedb8cc17df9ac1bd478365e4c0de8523dea"
+          "sha256": "486a86b7cb0c3f8bc6b0fecc6c20dc853fd8e0a68bd334b6319839459739b0f6"
         },
         {
           "path": "conformance/extensions/PE_PROFILE_ABAC_RBAC_0.1.json",
