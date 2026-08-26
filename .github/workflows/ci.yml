@@ -27,6 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install jsonschema pytest cryptography
 
+      - name: Set up Node for clean-room peer B
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Run make validate
         run: make validate
 
@@ -42,6 +47,14 @@ jobs:
           make live-binding-http-full-external-test
           make live-binding-mcp-full-reference
           make live-binding-mcp-full-external-test
+
+      - name: Run M66 pairwise target and real child-process MCP gates
+        run: |
+          make pairwise-targets-validate
+          make pairwise-base-mcp-cleanroom
+          make pairwise-base-mcp-external-test
+          make pairwise-negative
+          make pairwise-submission-examples
 
       - name: Run deterministic reference IUT smoke
         run: make conformance-iut-smoke

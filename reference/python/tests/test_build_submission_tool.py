@@ -212,7 +212,7 @@ def test_build_submission_tool_emits_typed_binding_claim(tmp_path: Path) -> None
     assert "capability_refs" not in manifest
 
 
-def test_build_submission_tool_pairwise_package_with_integrity_fails_closed(tmp_path: Path) -> None:
+def test_build_submission_tool_rejects_incomplete_pairwise_package(tmp_path: Path) -> None:
     report_one = _write_json(
         tmp_path / "inputs" / "pair_a.json",
         {"profile_id": "AICP-MEDIATED-BLOCKING", "passed": True, "compatibility_marks": ["AICP-Profile-MEDIATED-BLOCKING-0.1"]},
@@ -259,19 +259,9 @@ def test_build_submission_tool_pairwise_package_with_integrity_fails_closed(tmp_
     )
 
     assert result.returncode == 1, result.stderr
-    assert "PAIRWISE_JOINT_EVIDENCE_REQUIRED" in result.stdout
+    assert "exactly five evidence reports including --joint-report-path" in result.stdout
     package_dir = out_root / "fictional-pairwise"
-    manifest = json.loads((package_dir / "submission.json").read_text(encoding="utf-8"))
-
-    assert manifest["peer_implementation_id"] == "fictional-impl-b"
-    assert manifest["peer_implementation_version"] == "2.0.0"
-    assert manifest["claim_type"] == "pairwise_interop"
-    assert manifest["evidence_status"] == "pairwise"
-    assert manifest["report_refs"] == ["reports/pair_a.json", "reports/pair_b.json"]
-    assert manifest["evidence_types"] == ["profile_report"]
-    errors, integrity_status = _validate_package(package_dir)
-    assert errors == []
-    assert integrity_status == "valid"
+    assert not package_dir.exists()
 
 
 def test_validate_bundle_integrity_detects_tampering(tmp_path: Path) -> None:

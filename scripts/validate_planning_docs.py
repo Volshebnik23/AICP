@@ -385,7 +385,12 @@ def _evidence_claim_errors(root: Path, status: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     matrix = _json(root, INTEROP_MATRIX)
     pairwise_source = _text(root, PAIRWISE_VALIDATOR)
-    pairwise_fail_closed = "PAIRWISE_JOINT_EVIDENCE_REQUIRED" in pairwise_source
+    pairwise_framework_available = (
+        "evaluate_pairwise_report" in pairwise_source
+        and (root / "interop/pairwise/pairwise_report_evaluator.py").is_file()
+        and (root / "interop/pairwise/targets.json").is_file()
+        and (root / "interop/pairwise/tck_releases.json").is_file()
+    )
     interop = status.get("interop_evidence", {})
     try:
         expected_interop, profile_flags = derive_interop_evidence(
@@ -393,7 +398,7 @@ def _evidence_claim_errors(root: Path, status: dict[str, Any]) -> list[str]:
             status.get("profiles", []),
             pairwise_publication_available=(
                 bool(interop.get("pairwise_publication_available"))
-                and not pairwise_fail_closed
+                and pairwise_framework_available
             ),
         )
     except ValueError as exc:
@@ -404,13 +409,13 @@ def _evidence_claim_errors(root: Path, status: dict[str, Any]) -> list[str]:
             "interop evidence status does not match eligible profile-specific "
             f"computed evidence: expected {json.dumps(expected_interop, sort_keys=True)}"
         )
-    if pairwise_fail_closed and (
+    if not pairwise_framework_available and (
         interop.get("pairwise_publication_available")
         or interop.get("pairwise_demonstrated")
     ):
         errors.append(
-            "pairwise publication and demonstration must remain false while "
-            "PAIRWISE_JOINT_EVIDENCE_REQUIRED fails closed"
+            "pairwise publication and demonstration must remain false until the "
+            "dedicated target registry, TCK, and joint evaluator are available"
         )
     for profile in status.get("profiles", []):
         profile_id = profile.get("id")

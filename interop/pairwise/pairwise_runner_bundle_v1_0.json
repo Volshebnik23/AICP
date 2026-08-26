@@ -1,0 +1,16 @@
+{
+  "manifest_version": "1.0",
+  "release_id": "AICP-PAIRWISE-TCK-1.0.0",
+  "entries": [
+    {
+      "path": "interop/pairwise/aicp_pairwise_runner.py",
+      "role": "runner",
+      "digest": "sha256:496678529639f69c8fc437e0889e40a7f1b4d9f592ade5ac65dffc21ade58eec"
+    },
+    {
+      "path": "interop/pairwise/pairwise_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:6a71ab9c3ac60692084fb614b5017f054de424ae7e15e6f6287295708656c242"
+    }
+  ]
+}

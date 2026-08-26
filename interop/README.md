@@ -58,9 +58,10 @@ python interop/tools/build_submission.py \
   --validate
 ```
 
-The following command is an instructional example of the reserved pairwise vocabulary. It
-is expected to fail its `--validate` step with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; real
-pairwise publication is disabled until a joint-execution evidence format exists:
+The checked-in pairwise example below remains instructional and cannot pass the M66
+publication path: it targets the wrong profile, has no exact build digests, no MCP side
+reports, and no eligible joint report. Use the five-file pairwise template and
+`interop/pairwise/README.md` for a real package:
 
 ```bash
 python interop/tools/build_submission.py \
@@ -85,8 +86,10 @@ python interop/tools/build_submission.py \
 
 For single-implementation claims, the builder copies supplied reports into
 `<out-root>/<submission-id>/reports/`, writes `submission.json`, and can produce
-`bundle-integrity.json`. For the pairwise example, the deterministic validation failure is
-intentional: two independent reports do not establish a shared bidirectional run.
+`bundle-integrity.json`. For the old pairwise example, deterministic validation failure is
+intentional: two independent reports do not establish a shared bidirectional run. A real
+M66 package requires four eligible side reports plus one `AICP-PAIRWISE-TCK-1.0.0` joint
+report and never receives a pairwise compatibility mark.
 
 The command above demonstrates package assembly with fictional instructional reports; it
 does not create publication-eligible profile evidence. A real `implements_profile` or

@@ -4,6 +4,7 @@ This package is a **fictional vocabulary and folder-shape example**. It does not
 joint execution between the two fictional implementations.
 
 It is not a real vendor submission and must not be used as public proof of external
-interoperability. Real `pairwise_interop` validation fails closed with
-`PAIRWISE_JOINT_EVIDENCE_REQUIRED` until a dedicated joint-execution format binds one shared
-run, both named builds, and artifacts consumed in every required direction.
+interoperability. It predates the M66 target and deliberately lacks the exact build digests,
+Base/MCP side reports, and `AICP-PAIRWISE-TCK-1.0.0` joint report required for publication.
+It therefore remains instructional and non-promotable; missing joint evidence fails closed
+with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.

@@ -56,7 +56,9 @@ mature.
 | Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability/binding evidence |
 | Rejected/ineligible real packages | 0 | `interop/interop_matrix.json` |
 | Externally demonstrated profiles | 0: None | eligible profile-specific `computed_profile_marks` only |
-| Pairwise publication / demonstration | No / No | joint-evidence validator status |
+| Pairwise publication / demonstration | Yes / No | joint-evidence validator status |
+| Pairwise TCK / target reachability | `AICP-PAIRWISE-TCK-1.0.0`; 1 registered / 1 reachable | `interop/pairwise/tck_releases.json`, `interop/pairwise/targets.json` |
+| Pairwise demonstrated relations | 0 | eligible orientation-independent `computed_pairwise_relations` only |
 | Live binding paths | 2: `BIND-HTTP@0.1`, `BIND-MCP@0.1` | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
@@ -77,7 +79,7 @@ mature.
 | M63 | shipped | Tier-1 External Profile TCK | `ROADMAP.md` |
 | M64 | shipped | Live Transport and Binding Interoperability | `ROADMAP.md` |
 | M65 | shipped | Registered Message Surface Completion | `ROADMAP.md` |
-| M66 | planned | Clean-Room Pairwise Interop Harness | `AICP_Backlog` |
+| M66 | shipped | Clean-Room Pairwise Interop Harness | `ROADMAP.md` |
 | M67 | planned | Security Coverage Closure | `AICP_Backlog` |
 | M68 | planned | Governance and Standard Maturity | `AICP_Backlog` |
 | M69 | planned | Release Engineering and RC Repackaging | `AICP_Backlog` |
@@ -90,7 +92,7 @@ mature.
 | Profiles | 16 shipped catalogs; 5 external targets (2 `profile_iut_v1`, 3 `generalized_evidence_v2_1`) | 0 externally demonstrated profiles | M70 |
 | Capability evidence | 1 external targets; 1 reachable marks | 0 externally demonstrated capabilities | M70 |
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |
-| Pairwise | publication=false, demonstrated=false | A valid eligible joint-execution result is required | M66 |
+| Pairwise | publication=true, TCK=`AICP-PAIRWISE-TCK-1.0.0`, targets=1 registered/1 reachable | 0 externally demonstrated relations; clean-room repository peers do not count | None (M66 shipped) |
 | Bindings | 25 static cases; 2 external targets; 4 live role paths; 2 reachable marks | 0 externally demonstrated bindings; reference evidence is not external evidence | M70 |
 | Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
@@ -122,8 +124,9 @@ mature.
    registered messages now have actual, positive, suite-referenced fixture bytes and
    executable owner conformance; this does not promote extension stability or create an
    external evidence target.
-7. **Pairwise evidence:** publication is intentionally unavailable until one joint-run format
-   binds builds, directions, and consumed artifacts. Routed to M66.
+7. **Pairwise evidence:** M66 publishes one frozen Base/MCP joint-run format that binds
+   exact builds, directions, side evidence, and cross-consumed artifacts. No genuine
+   external relation is present; repository clean-room peers do not count as adoption.
 8. **Security:** the repository contains self-review and partial threat coverage, not an
    independent external review. Routed to M67.
 9. **Governance and release engineering:** current lightweight governance and RC tooling are

@@ -62,6 +62,7 @@ ALLOWED_EVIDENCE_TYPES = {
     "golden_transcript",
     "pairwise_transcript",
     "human_summary",
+    "pairwise_report",
 }
 PAIRWISE_JOINT_EVIDENCE_ERROR = (
     "PAIRWISE_JOINT_EVIDENCE_REQUIRED: real pairwise_interop publication is disabled until "
@@ -94,6 +95,7 @@ class StrongEvidenceEvaluation:
     eligible_capability_marks: tuple[str, ...] = ()
     eligible_binding_marks: tuple[str, ...] = ()
     eligible_targets: tuple[tuple[str, str, str], ...] = ()
+    eligible_pairwise_relations: tuple[dict[str, Any], ...] = ()
 
 
 def load_json(path: Path) -> Any:
@@ -198,7 +200,14 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
         if value is not None and not isinstance(value, str):
             errors.append(f"{field} must be a string")
 
-    optional_string_fields = ["peer_implementation_id", "peer_implementation_version", "notes"]
+    optional_string_fields = [
+        "implementation_digest",
+        "peer_implementation_id",
+        "peer_implementation_version",
+        "peer_implementation_digest",
+        "joint_report_ref",
+        "notes",
+    ]
     for field in optional_string_fields:
         value = manifest.get(field)
         if value is not None and not isinstance(value, str):
@@ -320,6 +329,36 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
         report_refs = manifest.get("report_refs")
         if isinstance(report_refs, list) and len(report_refs) < 2:
             errors.append("pairwise_interop claims require at least two report_refs")
+        if evidence_status == "pairwise":
+            for field in (
+                "implementation_digest",
+                "peer_implementation_digest",
+                "joint_report_ref",
+            ):
+                if not isinstance(manifest.get(field), str) or not manifest.get(field):
+                    errors.append(f"{field} is required for real pairwise_interop claims")
+            if manifest.get("implementation_digest") == "unknown" or manifest.get("peer_implementation_digest") == "unknown":
+                errors.append("pairwise implementation digests must identify exact builds")
+            if manifest.get("implementation_id") == manifest.get("peer_implementation_id"):
+                errors.append("pairwise_interop requires two distinct implementation IDs")
+            if manifest.get("implementation_digest") == manifest.get("peer_implementation_digest"):
+                errors.append("pairwise_interop requires two distinct build digests")
+            if profile_refs != [{"profile_id": "AICP-BASE", "profile_version": "0.1"}]:
+                errors.append("pairwise_interop profile_refs must be exactly AICP-BASE@0.1")
+            if binding_refs != [{"binding_id": "BIND-MCP", "binding_version": "0.1"}]:
+                errors.append("pairwise_interop binding_refs must be exactly BIND-MCP@0.1")
+            evidence_types = set(manifest.get("evidence_types") or [])
+            if not {"profile_report", "binding_report", "pairwise_report"}.issubset(evidence_types):
+                errors.append("pairwise_interop requires profile_report, binding_report, and pairwise_report evidence")
+            if (
+                not isinstance(report_refs, list)
+                or len(report_refs) != 5
+                or not all(isinstance(item, str) for item in report_refs)
+                or len(set(item for item in report_refs if isinstance(item, str))) != 5
+            ):
+                errors.append("pairwise_interop requires exactly five distinct report_refs")
+            if isinstance(report_refs, list) and manifest.get("joint_report_ref") not in report_refs:
+                errors.append("joint_report_ref must identify one of the five report_refs")
     if claim_type == "implements_capability":
         if not capability_refs:
             errors.append(
@@ -346,15 +385,15 @@ def fallback_schema_errors(manifest: dict[str, Any]) -> list[str]:
             errors.append("binding claims must not mix profile or capability claim fields")
         if "binding_report" not in (manifest.get("evidence_types") or []):
             errors.append("implements_binding claims require binding_report evidence")
-    else:
+    elif claim_type in {"implements_profile", "compatible_with_profile"}:
         if not manifest.get("profile_ids"):
-            errors.append("profile and pairwise claims require profile_ids")
+            errors.append("profile claims require profile_ids")
         if capability_refs is not None:
-            errors.append(
-                "profile and pairwise claims must not include capability_refs"
-            )
+            errors.append("profile claims must not include capability_refs")
         if binding_refs is not None:
-            errors.append("profile and pairwise claims must not include binding_refs")
+            errors.append("profile claims must not include binding_refs")
+    elif claim_type == "pairwise_interop" and capability_refs is not None:
+        errors.append("pairwise claims must not include capability_refs")
 
     return errors
 
@@ -603,15 +642,26 @@ def validate_common_rules(
             errors.append("implements_binding requires exact binding_refs")
         if "binding_report" not in set(manifest.get("evidence_types", [])):
             errors.append("implements_binding requires binding_report evidence")
-    else:
+    elif claim_type in {"implements_profile", "compatible_with_profile"}:
         if capability_refs is not None:
-            errors.append(
-                "profile and pairwise claim families must not include capability_refs"
-            )
+            errors.append("profile claim families must not include capability_refs")
         if binding_refs is not None:
-            errors.append(
-                "profile and pairwise claim families must not include binding_refs"
-            )
+            errors.append("profile claim families must not include binding_refs")
+    elif claim_type == "pairwise_interop":
+        if capability_refs is not None:
+            errors.append("pairwise claim family must not include capability_refs")
+        if evidence_status == "pairwise":
+            if profile_refs != [{"profile_id": "AICP-BASE", "profile_version": "0.1"}]:
+                errors.append("pairwise profile target must be exactly AICP-BASE@0.1")
+            if binding_refs != [{"binding_id": "BIND-MCP", "binding_version": "0.1"}]:
+                errors.append("pairwise binding target must be exactly BIND-MCP@0.1")
+            if manifest.get("profile_ids") != ["AICP-BASE"]:
+                errors.append("pairwise profile_ids must be exactly ['AICP-BASE']")
+            if set(manifest.get("suite_refs", [])) != {
+                "conformance/core/CT_CORE_0.1.json",
+                "conformance/bindings/TB_MCP_0.1.json",
+            }:
+                errors.append("pairwise suite_refs must exactly bind the Base and MCP suites")
 
     if kind == "example":
         if evidence_status != "example":
@@ -631,8 +681,8 @@ def validate_common_rules(
 
     if evidence_status == "pairwise" and claim_type != "pairwise_interop":
         errors.append("evidence_status='pairwise' requires claim_type='pairwise_interop'")
-    if claim_type == "pairwise_interop" and evidence_status not in {"example", "pairwise"}:
-        errors.append("pairwise_interop claims must use evidence_status='pairwise' (or 'example' for instructional examples)")
+    if claim_type == "pairwise_interop" and evidence_status not in {"example", "template", "pairwise"}:
+        errors.append("pairwise_interop claims must use evidence_status='pairwise' (or 'example'/'template' for instructional artifacts)")
     if evidence_status == "reproducible":
         evidence_types = set(item for item in manifest.get("evidence_types", []) if isinstance(item, str))
         if not (
@@ -1078,10 +1128,119 @@ def evaluate_strong_report_evidence(
                 "rejected",
             )
     elif claim_type == "pairwise_interop":
+        if manifest.get("evidence_status") != "pairwise":
+            return StrongEvidenceEvaluation(
+                (PAIRWISE_JOINT_EVIDENCE_ERROR,),
+                (),
+                "rejected",
+            )
+        exact_profile = [{"profile_id": "AICP-BASE", "profile_version": "0.1"}]
+        exact_binding = [{"binding_id": "BIND-MCP", "binding_version": "0.1"}]
+        required_types = {"profile_report", "binding_report", "pairwise_report"}
+        report_refs = manifest.get("report_refs")
+        joint_ref = manifest.get("joint_report_ref")
+        if not isinstance(joint_ref, str) or not isinstance(report_refs, list) or joint_ref not in report_refs:
+            return StrongEvidenceEvaluation(
+                (PAIRWISE_JOINT_EVIDENCE_ERROR,),
+                (),
+                "rejected",
+            )
+        pairwise_manifest_errors: list[str] = []
+        if manifest.get("profile_refs") != exact_profile or manifest.get("profile_ids") != ["AICP-BASE"]:
+            pairwise_manifest_errors.append("pairwise target must bind exactly AICP-BASE@0.1")
+        if manifest.get("binding_refs") != exact_binding:
+            pairwise_manifest_errors.append("pairwise target must bind exactly BIND-MCP@0.1")
+        if not required_types.issubset(set(manifest.get("evidence_types") or [])):
+            pairwise_manifest_errors.append("pairwise evidence types must include profile_report, binding_report, and pairwise_report")
+        if not isinstance(report_refs, list) or len(report_refs) != 5 or not all(isinstance(item, str) for item in report_refs) or len(set(report_refs)) != 5:
+            pairwise_manifest_errors.append("pairwise publication requires exactly five distinct report_refs")
+        identity_fields = (
+            "implementation_id",
+            "implementation_version",
+            "implementation_digest",
+            "peer_implementation_id",
+            "peer_implementation_version",
+            "peer_implementation_digest",
+        )
+        if any(not isinstance(manifest.get(field), str) or not manifest.get(field) or manifest.get(field) == "unknown" for field in identity_fields):
+            pairwise_manifest_errors.append("pairwise endpoints require exact IDs, versions, and build digests")
+        if manifest.get("implementation_id") == manifest.get("peer_implementation_id") or manifest.get("implementation_digest") == manifest.get("peer_implementation_digest"):
+            pairwise_manifest_errors.append("pairwise endpoints must have distinct implementation IDs and build digests")
+        if pairwise_manifest_errors:
+            return StrongEvidenceEvaluation(tuple(pairwise_manifest_errors), (), "rejected")
+        assert isinstance(joint_ref, str)
+        joint_path = path.parent / joint_ref
+        try:
+            joint_report = load_json(joint_path)
+        except Exception as exc:
+            return StrongEvidenceEvaluation((f"{PAIRWISE_JOINT_EVIDENCE_ERROR}: {exc}",), (), "rejected")
+        side_refs: set[str] = set()
+        joint_parent = Path(joint_ref).parent
+        for participant in joint_report.get("participants", []) if isinstance(joint_report, dict) else []:
+            if not isinstance(participant, dict):
+                continue
+            for kind in ("profile_report", "binding_report"):
+                ref = participant.get(kind)
+                if isinstance(ref, dict) and isinstance(ref.get("path"), str):
+                    side_refs.add((joint_parent / ref["path"]).as_posix())
+        if side_refs | {joint_ref} != set(report_refs):
+            return StrongEvidenceEvaluation(
+                ("joint report side-report references must exactly equal the four non-joint report_refs",),
+                (),
+                "rejected",
+            )
+        pairwise_dir = ROOT / "interop" / "pairwise"
+        if str(pairwise_dir) not in sys.path:
+            sys.path.insert(0, str(pairwise_dir))
+        from pairwise_report_evaluator import evaluate_pairwise_report  # noqa: E402, PLC0415
+
+        evaluation = evaluate_pairwise_report(joint_report, base_dir=joint_path.parent)
+        if evaluation.get("status") != "eligible":
+            details = tuple(
+                f"{item.get('code')}: {item.get('message')}" if isinstance(item, dict) else str(item)
+                for item in evaluation.get("errors", [])
+            )
+            return StrongEvidenceEvaluation(details or (PAIRWISE_JOINT_EVIDENCE_ERROR,), (), "rejected")
+        relations = evaluation.get("eligible_pairwise_relations", [])
+        expected_endpoints = sorted(
+            [
+                {
+                    "implementation_id": manifest["implementation_id"],
+                    "implementation_version": manifest["implementation_version"],
+                    "implementation_digest": manifest["implementation_digest"],
+                },
+                {
+                    "implementation_id": manifest["peer_implementation_id"],
+                    "implementation_version": manifest["peer_implementation_version"],
+                    "implementation_digest": manifest["peer_implementation_digest"],
+                },
+            ],
+            key=lambda item: (item["implementation_id"], item["implementation_version"], item["implementation_digest"]),
+        )
+        exact_relation = {
+            "relation_kind": "pairwise_interop",
+            "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
+            "endpoints": expected_endpoints,
+            "profile_ref": {"profile_id": "AICP-BASE", "profile_version": "0.1"},
+            "binding_ref": {"binding_id": "BIND-MCP", "binding_version": "0.1"},
+            "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.0.0",
+            "joint_report_digest": "sha256:"
+            + hashlib.sha256(
+                json.dumps(
+                    joint_report,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest(),
+        }
+        if relations != [exact_relation] or evaluation.get("eligible_marks") != []:
+            return StrongEvidenceEvaluation(("joint evaluator relation does not exactly match the manifest endpoints",), (), "rejected")
         return StrongEvidenceEvaluation(
-            (PAIRWISE_JOINT_EVIDENCE_ERROR,),
             (),
-            "rejected",
+            (),
+            "eligible",
+            eligible_pairwise_relations=(exact_relation,),
         )
     elif claim_type == "implements_capability":
         capability_claims = _capability_claims(manifest)

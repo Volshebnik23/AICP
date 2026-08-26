@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate message-surface-complete interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate message-surface-complete interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples pairwise-targets-validate pairwise-base-mcp-cleanroom pairwise-base-mcp-external-test pairwise-negative pairwise-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -15,6 +15,7 @@ validate:
 	$(PYTHON) scripts/validate_conformance_catalog.py
 	$(PYTHON) scripts/validate_interop_submission_examples.py
 	$(PYTHON) scripts/validate_interop_submissions.py
+	$(PYTHON) scripts/validate_pairwise_targets.py
 	$(PYTHON) scripts/validate_productization_coverage.py
 	$(PYTHON) scripts/validate_errata.py
 	$(PYTHON) scripts/validate_planning_docs.py
@@ -25,6 +26,7 @@ validate:
 	$(PYTHON) scripts/generate_profile_composition_registry.py --check
 	$(PYTHON) scripts/generate_capneg_v02_fixtures.py --check
 	$(PYTHON) scripts/generate_evidence_framework.py --check
+	$(PYTHON) scripts/generate_pairwise_tck.py --check
 	$(PYTHON) scripts/generate_evidence_submission_example.py --check
 	@if [ "$$AICP_SKIP_SNAPSHOT" = "1" ]; then \
 		echo "[WARN] skipping snapshot validation because AICP_SKIP_SNAPSHOT=1"; \
@@ -166,6 +168,22 @@ evidence-binding-examples:
 evidence-submission-examples:
 	$(PYTHON) scripts/generate_evidence_submission_example.py --check
 	$(PYTHON) scripts/validate_interop_submission_examples.py
+
+pairwise-targets-validate:
+	$(PYTHON) scripts/validate_pairwise_targets.py
+
+pairwise-base-mcp-cleanroom:
+	$(PYTHON) scripts/run_pairwise_cleanroom.py --side-only
+
+pairwise-base-mcp-external-test:
+	$(PYTHON) scripts/run_pairwise_cleanroom.py
+
+pairwise-negative:
+	$(PYTHON) -m pytest reference/python/tests/test_pairwise_m66.py -q
+
+pairwise-submission-examples:
+	$(PYTHON) scripts/validate_interop_submission_examples.py
+	$(PYTHON) -m pytest reference/python/tests/test_pairwise_m66.py -q -k "public_pairwise or missing_joint"
 
 interop-validate:
 	$(PYTHON) scripts/validate_interop_submission_examples.py

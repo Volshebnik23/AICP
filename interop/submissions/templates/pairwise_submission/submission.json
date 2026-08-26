@@ -1,0 +1,37 @@
+{
+  "submission_id": "replace-pairwise-submission-id",
+  "implementation_id": "replace-primary-implementation",
+  "implementation_version": "replace-primary-version",
+  "implementation_digest": "replace-primary-build-digest",
+  "peer_implementation_id": "replace-peer-implementation",
+  "peer_implementation_version": "replace-peer-version",
+  "peer_implementation_digest": "replace-peer-build-digest",
+  "profile_ids": ["AICP-BASE"],
+  "profile_refs": [
+    {"profile_id": "AICP-BASE", "profile_version": "0.1"}
+  ],
+  "binding_refs": [
+    {"binding_id": "BIND-MCP", "binding_version": "0.1"}
+  ],
+  "evidence_types": ["profile_report", "binding_report", "pairwise_report"],
+  "evidence_status": "template",
+  "report_refs": [
+    "reports/primary-profile.json",
+    "reports/primary-binding.json",
+    "reports/peer-profile.json",
+    "reports/peer-binding.json",
+    "reports/pairwise-joint.json"
+  ],
+  "joint_report_ref": "reports/pairwise-joint.json",
+  "suite_refs": [
+    "conformance/core/CT_CORE_0.1.json",
+    "conformance/bindings/TB_MCP_0.1.json"
+  ],
+  "claim_type": "pairwise_interop",
+  "claim_scope": "pairwise",
+  "generated_at": "2026-08-26T00:00:00Z",
+  "notes": "Replace every placeholder and generate bundle-integrity.json after all five reports are copied.",
+  "disclosures": [
+    "Replace with truthful ownership, execution-environment, privacy, and limitation disclosures."
+  ]
+}

@@ -491,10 +491,15 @@
     "externally_demonstrated_profiles": [],
     "externally_demonstrated_capabilities": [],
     "externally_demonstrated_bindings": [],
-    "pairwise_publication_available": false,
+    "pairwise_publication_available": true,
+    "pairwise_tck_family_available": true,
+    "pairwise_current_tck": "AICP-PAIRWISE-TCK-1.0.0",
+    "registered_pairwise_targets": 1,
+    "reachable_pairwise_targets": 1,
+    "pairwise_demonstrated_relations": 0,
     "pairwise_demonstrated": false,
     "dry_run_count": 1,
-    "instructional_artifact_count": 6
+    "instructional_artifact_count": 7
   },
   "security_review": {
     "internal_self_review_completed": true,
@@ -4281,8 +4286,8 @@
     {
       "id": "M66",
       "title": "Clean-Room Pairwise Interop Harness",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M67",

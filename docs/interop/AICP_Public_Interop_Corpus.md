@@ -18,7 +18,8 @@ The corpus is intentionally conservative. It is for evidence packaging and trans
 The generated matrix currently contains zero real external submissions and therefore zero
 externally demonstrated profiles or capabilities. It contains one repo-owned dry run plus
 examples/templates, all explicitly
-non-promotable. Real pairwise publication is unavailable and fails closed. See
+non-promotable. The M66 pairwise publication mechanism is available, but no genuine external
+pairwise relation has been submitted; demonstrated relations remain zero. See
 `interop/interop_matrix.json` and `docs/process/AICP_Repo_Truth_Baseline.md`.
 
 ## Scope
@@ -197,9 +198,10 @@ Typical shape:
 - `claim_scope` of `pairwise`,
 - example/template evidence illustrating the reserved packaging vocabulary.
 
-Real pairwise publication currently fails closed with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
-Two independent reports and a summary are insufficient. A later dedicated joint path must
-prove one shared run, both exact builds, cross-consumption in every required direction,
+Real pairwise publication supports exactly `AICP-BASE@0.1+BIND-MCP@0.1` through
+`AICP-PAIRWISE-TCK-1.0.0`. Missing or invalid joint evidence fails closed with
+`PAIRWISE_JOINT_EVIDENCE_REQUIRED`. Two independent reports and a summary are insufficient.
+The dedicated joint path proves one shared report, both exact builds, cross-consumption in every required direction,
 artifact/transcript digests, authenticated-profile verification material, and no degraded or
 skipped mandatory checks.
 

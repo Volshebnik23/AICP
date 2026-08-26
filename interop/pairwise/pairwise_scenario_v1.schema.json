@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/pairwise_scenario_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenario_version", "scenario_id", "target_id", "message_flow", "freshness"],
+  "properties": {
+    "scenario_version": { "const": "1.0" },
+    "scenario_id": { "const": "PAIRWISE-MCP-CROSS-CONSUMPTION-01" },
+    "target_id": { "const": "AICP-BASE@0.1+BIND-MCP@0.1" },
+    "message_flow": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "CONTRACT_PROPOSE" },
+        { "const": "CONTRACT_ACCEPT" },
+        { "const": "ATTEST_ACTION" }
+      ],
+      "items": false
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_count", "fresh_fields", "semantic_equivalence_required"],
+      "properties": {
+        "run_count": { "const": 2 },
+        "fresh_fields": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "run_id" },
+            { "const": "challenge" },
+            { "const": "session_id" },
+            { "const": "contract_id" },
+            { "const": "message_id" }
+          ],
+          "items": false
+        },
+        "semantic_equivalence_required": { "const": true }
+      }
+    }
+  }
+}

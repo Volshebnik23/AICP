@@ -11,7 +11,7 @@ It is an onboarding guide for packaging evidence that already exists. It is not 
 This playbook covers:
 - who should submit,
 - what a minimal real submission package contains,
-- how to package single-implementation claims and interpret the reserved pairwise vocabulary,
+- how to package single-implementation claims and M66 pairwise relations,
 - what disclosures to include,
 - how the repo validators and matrix treat submission records and placeholder templates,
 - how examples/templates differ from real external submissions.
@@ -63,8 +63,8 @@ Use the small controlled vocabulary in `submission.json:evidence_status`.
 - `self_attested` — migration/informational packaging status for submitter-published
   material; it cannot support an ordinary profile mark or a strong profile claim.
 - `reproducible` — real submission where the package includes reproducible repo-style conformance/profile report evidence for the stated profile claim.
-- `pairwise` — reserved vocabulary for a future joint-execution evidence format. Real
-  submissions using it currently fail closed with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
+- `pairwise` — real relation evidence for the exact M66 Base/MCP target; missing or invalid
+  joint execution fails closed with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
 
 This vocabulary is packaging-oriented. It does **not** imply maintainer endorsement.
 
@@ -97,8 +97,8 @@ The M63 generalized targets are exactly `AICP-MEDIATED-BLOCKING@0.1`,
 Frozen 1.2.0 and 1.3.0 releases are historical and strong-ineligible.
 One report proves one exact profile. Reference and test-only adapters are verification
 fixtures, not external implementations. No real Tier-1 submission is currently present;
-multi-profile composition, live binding interoperability, and pairwise publication remain
-separate work.
+multi-profile composition and live binding interoperability remain separate work. Pairwise
+publication is available, while genuine external pairwise demonstrations remain zero.
 
 ### Capability claim
 
@@ -125,18 +125,19 @@ completed projection response. The implementation must derive message hashes, ev
 references, canonical fields, and the projection hash. Evidence TCK 1.0.0 is historical,
 superseded, and ineligible for a current reproducible claim.
 
-## Pairwise vocabulary is currently instructional only
+## Pairwise publication
 
-The manifest schema reserves `pairwise_interop`, `pairwise`, and peer identity fields so
-examples and future migration work have a stable vocabulary. They are not currently a
-publication path. The validator rejects every real pairwise submission with
+The manifest schema uses `pairwise_interop`, `pairwise`, and exact primary/peer build fields.
+For `AICP-BASE@0.1+BIND-MCP@0.1`, a real package contains two eligible Base full-profile
+reports, two eligible MCP full-binding reports, and one eligible
+`AICP-PAIRWISE-TCK-1.0.0` joint report. Invalid or missing joint evidence returns
 `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
 
 Two independent IUT reports, a co-conformance statement, or a human summary cannot prove
 that one shared run named both exact builds and exercised artifacts consumed in every
-required direction. A future pairwise format must bind those facts before maintainers can
-enable real pairwise publication. The shipped pairwise package is therefore a shape example
-only and must not be presented as interoperability evidence.
+required direction. The M66 report binds and independently evaluates those facts. The older
+checked-in Mediated Blocking pairwise package remains a shape example only and must not be
+presented as interoperability evidence.
 
 ## Required disclosures
 
@@ -269,10 +270,11 @@ python interop/tools/build_submission.py \
   --validate
 ```
 
-The pairwise command demonstrates the reserved manifest vocabulary. Its `--validate` step is
-expected to fail with `PAIRWISE_JOINT_EVIDENCE_REQUIRED`; that failure is the current safety
-contract, not a package-authoring error. The builder still refuses incomplete peer metadata
-instead of guessing it.
+The legacy pairwise command demonstrates the pre-M66 instructional package and is expected
+to fail because it lacks the exact target, build digests, four side reports, and joint report.
+For a real package use `--implementation-digest`, `--peer-implementation-digest`, exact
+`--profile-ref AICP-BASE@0.1`, `--binding-ref BIND-MCP@0.1`, four `--report-path` values,
+and `--joint-report-path`. The builder refuses incomplete peer metadata instead of guessing it.
 
 ## Optional bundle integrity manifest
 
