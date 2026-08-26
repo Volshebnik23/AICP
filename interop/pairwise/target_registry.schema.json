@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/target_registry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_version", "targets"],
+  "properties": {
+    "registry_version": { "const": "1.0" },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_id", "base_profile", "binding", "required_suites", "scenario_catalog", "required_side_evidence", "required_runs", "required_directions", "pairwise_tck_release", "relation_kind"],
+        "properties": {
+          "target_id": { "const": "AICP-BASE@0.1+BIND-MCP@0.1" },
+          "base_profile": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["profile_id", "profile_version", "status", "profile_catalog", "compatibility_mark", "execution_mode"],
+            "properties": {
+              "profile_id": { "const": "AICP-BASE" },
+              "profile_version": { "const": "0.1" },
+              "status": { "const": "stable" },
+              "profile_catalog": { "const": "conformance/profiles/PF_AICP_BASE_0.1.json" },
+              "compatibility_mark": { "const": "AICP-Profile-BASE-0.1" },
+              "execution_mode": { "const": "full-profile" }
+            }
+          },
+          "binding": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["binding_id", "binding_version", "registry_id", "status", "deprecated", "compatibility_mark", "execution_mode", "transport"],
+            "properties": {
+              "binding_id": { "const": "BIND-MCP" },
+              "binding_version": { "const": "0.1" },
+              "registry_id": { "const": "BIND-MCP-0.1" },
+              "status": { "const": "stable" },
+              "deprecated": { "const": false },
+              "compatibility_mark": { "const": "AICP-BIND-MCP-0.1" },
+              "execution_mode": { "const": "full-binding" },
+              "transport": { "const": "mcp_stdio" }
+            }
+          },
+          "required_suites": {
+            "type": "array",
+            "prefixItems": [
+              { "const": "conformance/core/CT_CORE_0.1.json" },
+              { "const": "conformance/bindings/TB_MCP_0.1.json" }
+            ],
+            "items": false
+          },
+          "scenario_catalog": { "const": "interop/pairwise/scenarios.json" },
+          "required_side_evidence": {
+            "type": "array",
+            "prefixItems": [
+              { "const": "AICP-BASE@0.1/full-profile" },
+              { "const": "BIND-MCP@0.1/full-binding" }
+            ],
+            "items": false
+          },
+          "required_runs": { "const": 2 },
+          "required_directions": {
+            "type": "array",
+            "prefixItems": [{ "const": "A_TO_B" }, { "const": "B_TO_A" }],
+            "items": false
+          },
+          "pairwise_tck_release": { "const": "AICP-PAIRWISE-TCK-1.0.0" },
+          "relation_kind": { "const": "pairwise_interop" }
+        }
+      }
+    }
+  }
+}

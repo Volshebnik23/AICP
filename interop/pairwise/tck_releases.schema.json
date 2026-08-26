@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/tck_releases.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_version", "releases"],
+  "properties": {
+    "registry_version": { "const": "1.0" },
+    "releases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["release_id", "status", "registry_schema_digest", "runner_bundle", "report_schema", "evaluator", "normalizer", "target_registry", "scenario_catalog", "mandatory_execution", "underlying_authorities"],
+        "properties": {
+          "release_id": { "const": "AICP-PAIRWISE-TCK-1.0.0" },
+          "status": { "const": "publication-eligible" },
+          "registry_schema_digest": { "$ref": "#/$defs/digest" },
+          "runner_bundle": { "$ref": "#/$defs/artifactWithDigest" },
+          "report_schema": { "$ref": "#/$defs/artifact" },
+          "evaluator": { "$ref": "#/$defs/artifact" },
+          "normalizer": { "$ref": "#/$defs/artifact" },
+          "target_registry": { "$ref": "#/$defs/artifactWithSchema" },
+          "scenario_catalog": { "$ref": "#/$defs/artifactWithSchema" },
+          "mandatory_execution": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["target_id", "scenario_id", "directions", "clean_run_count", "side_evidence"],
+            "properties": {
+              "target_id": { "const": "AICP-BASE@0.1+BIND-MCP@0.1" },
+              "scenario_id": { "const": "PAIRWISE-MCP-CROSS-CONSUMPTION-01" },
+              "directions": {
+                "type": "array",
+                "prefixItems": [{ "const": "A_TO_B" }, { "const": "B_TO_A" }],
+                "items": false
+              },
+              "clean_run_count": { "const": 2 },
+              "side_evidence": {
+                "type": "array",
+                "prefixItems": [
+                  { "const": "AICP-BASE@0.1/full-profile" },
+                  { "const": "BIND-MCP@0.1/full-binding" }
+                ],
+                "items": false
+              }
+            }
+          },
+          "underlying_authorities": {
+            "type": "array",
+            "minItems": 10,
+            "items": { "$ref": "#/$defs/artifact" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "path": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\./).+" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "content_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifactWithDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifactWithSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_digest", "schema_path", "schema_digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "content_digest": { "$ref": "#/$defs/digest" },
+        "schema_path": { "$ref": "#/$defs/path" },
+        "schema_digest": { "$ref": "#/$defs/digest" }
+      }
+    }
+  }
+}

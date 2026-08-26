@@ -1,0 +1,109 @@
+{
+  "registry_version": "1.0",
+  "releases": [
+    {
+      "release_id": "AICP-PAIRWISE-TCK-1.0.0",
+      "status": "publication-eligible",
+      "registry_schema_digest": "sha256:620cd734ab23b63d2a35648baf8f063b8085d8c11a5cc7a03d2d8f18f5a42905",
+      "runner_bundle": {
+        "path": "interop/pairwise/pairwise_runner_bundle_v1_0.json",
+        "digest": "sha256:703198a04937be4735589df12a72b8fa4a5e71d088a70a02a5b1a1fdf5112db3"
+      },
+      "report_schema": {
+        "path": "interop/pairwise/pairwise_joint_report_v1.schema.json",
+        "content_digest": "sha256:bccfe9710747ab8703ef262c0b86f452c36a65bfee26202a4d220adea202cdf9"
+      },
+      "evaluator": {
+        "path": "interop/pairwise/pairwise_report_evaluator.py",
+        "content_digest": "sha256:0f70c0a033ef7183fdd082be25f8fdd55a34c5633baee3bb12a274361f59dd92"
+      },
+      "normalizer": {
+        "path": "interop/pairwise/pairwise_semantic_normalizer.py",
+        "content_digest": "sha256:b6f36f883dc71722a6b9b6833d59f76e527bc9ff96bc71a2175fe4e2fe261edf"
+      },
+      "target_registry": {
+        "path": "interop/pairwise/targets.json",
+        "content_digest": "sha256:4d638cbf22e206f2f39c4f252797dbfeead6b99de8f33938551b58698f33c8f4",
+        "schema_path": "interop/pairwise/target_registry.schema.json",
+        "schema_digest": "sha256:30f8232085f4b68e379fb16da252f27c3af79248192aed69ec4c9b83e0c444ea"
+      },
+      "scenario_catalog": {
+        "path": "interop/pairwise/scenarios.json",
+        "content_digest": "sha256:baa3530ad3d277da265ebd0b5156e4da65590ad0dcc5794c37f59bc8a86ab46c",
+        "schema_path": "interop/pairwise/pairwise_scenario_v1.schema.json",
+        "schema_digest": "sha256:7c18b40e0a16d66015c2057d54777e0deecc4a7326d260a9f78248d4d77efe38"
+      },
+      "mandatory_execution": {
+        "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
+        "scenario_id": "PAIRWISE-MCP-CROSS-CONSUMPTION-01",
+        "directions": [
+          "A_TO_B",
+          "B_TO_A"
+        ],
+        "clean_run_count": 2,
+        "side_evidence": [
+          "AICP-BASE@0.1/full-profile",
+          "BIND-MCP@0.1/full-binding"
+        ]
+      },
+      "underlying_authorities": [
+        {
+          "path": "conformance/iut/tck_releases.json",
+          "content_digest": "sha256:f41e319667a6f9a537eeed993a950621bd7d45ac37bcd8a1aac76044e9bf7b2e"
+        },
+        {
+          "path": "conformance/iut/cases.json",
+          "content_digest": "sha256:e0552d67e600af994a2d80d8d048d9316ecd9c29ebd510a62899bc1b7d0107b4"
+        },
+        {
+          "path": "conformance/iut/iut_report_v1.schema.json",
+          "content_digest": "sha256:b34464432d7a0d5d5d87af6016315ab6117b2f0457f41dcac688ec9e60b755de"
+        },
+        {
+          "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
+          "content_digest": "sha256:1a641ccc0eb2dfde04aeee0db83331659e5173e15107b5db0ab61754b77bd7a5"
+        },
+        {
+          "path": "conformance/core/CT_CORE_0.1.json",
+          "content_digest": "sha256:439ba0cc2f077a36d4fd866568bc727a066435b0bd711640a0bb572fb0393264"
+        },
+        {
+          "path": "conformance/evidence/evidence_tck_releases.json",
+          "content_digest": "sha256:e4da967d3a15bc2716d03536c25764b46a3f716cdff858cd6eaed4b84f6efa9d"
+        },
+        {
+          "path": "conformance/evidence/external_evidence_report_v2_2.schema.json",
+          "content_digest": "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+        },
+        {
+          "path": "conformance/evidence/targets.json",
+          "content_digest": "sha256:7b40494f1e82c227f73a2492a3064318651087a6fa3b91e96f86858b6747afb9"
+        },
+        {
+          "path": "conformance/evidence/target_registry.schema.json",
+          "content_digest": "sha256:2ce885d972041e631fc67d7a39fa8dbe54d04e123e6277ead6a4accc3b63020f"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+          "content_digest": "sha256:a30283a97be9874a4d3dd7db3d076cf33e9cad36a4218c10134018fc94226ed2"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+          "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+        },
+        {
+          "path": "conformance/bindings/TB_MCP_0.1.json",
+          "content_digest": "sha256:4233919a6b0f725badfee0fd2d935d671a112c2deeb314dc78efbb73ad82c70c"
+        },
+        {
+          "path": "registry/aicp_profiles.json",
+          "content_digest": "sha256:ec750a0e068b64ab9a3ebdafebc528b97d3c495dc4d09b7df6b3f1e965236db4"
+        },
+        {
+          "path": "registry/transport_bindings.json",
+          "content_digest": "sha256:a27c9bc3cdb0930a1c7f0ccfc050076cb14785ba8818b506138998db6fe34c57"
+        }
+      ]
+    }
+  ]
+}
