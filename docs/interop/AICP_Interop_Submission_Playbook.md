@@ -130,7 +130,7 @@ superseded, and ineligible for a current reproducible claim.
 The manifest schema uses `pairwise_interop`, `pairwise`, and exact primary/peer build fields.
 For `AICP-BASE@0.1+BIND-MCP@0.1`, a real package contains two eligible Base full-profile
 reports, two eligible MCP full-binding reports, and one eligible
-`AICP-PAIRWISE-TCK-1.0.0` joint report. Invalid or missing joint evidence returns
+`AICP-PAIRWISE-TCK-1.1.0` joint report. TCK 1.0 is historical/strong-ineligible. Invalid or missing joint evidence returns
 `PAIRWISE_JOINT_EVIDENCE_REQUIRED`.
 
 Two independent IUT reports, a co-conformance statement, or a human summary cannot prove
