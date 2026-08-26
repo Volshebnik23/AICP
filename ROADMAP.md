@@ -188,15 +188,18 @@ _Last updated: 2026-08-25_
   suite ownership but no positive suite-referenced fixture whose actual bytes contained
   the type.
 - **Scope:** make positive coverage byte-backed, reuse and strengthen five orphan fixtures,
-  add six deterministic lifecycle fixtures, and execute existing or narrowly added RFC-
-  grounded semantic checks without changing registered IDs, wire schemas, or marks.
+  add six deterministic lifecycle fixtures, and keep compatibility rejection within the
+  existing normative RFC boundary through one canonical runner without changing
+  registered IDs, wire schemas, or marks.
 - **Completion evidence:** repo truth and `message-surface-complete` derive 132 registered,
   132 payload-mapped, 132 suite-owned, and 132 actual-positive-covered types with zero
-  gaps and 11 version-selected IDs. Hash-valid mutation controls prove the load-bearing
-  lifecycle relations independently of schema/hash failures.
+  gaps and 11 version-selected IDs. Hash-valid mutation and non-overreach controls prove
+  retained normative lifecycle relations and the compatibility boundary independently of
+  schema/hash failures.
 - **Evidence boundary:** TCK 1.8 is byte-frozen and remains historical/strong-eligible;
-  current TCK 1.9 retains report 2.2, trace v4, and the same six targets while expanding
-  the exact Tier-1 consumer corpus from 25/16/28 to 26/16/31. Product-IUT report v1,
+  TCK 1.9 is byte-frozen historical/strong-ineligible, while current TCK 1.10 retains
+  report 2.2, trace v4, and the same six targets with the exact Tier-1 consumer corpus
+  expanded from 25/16/28 to 26/16/31. Product-IUT report v1,
   IUT TCK 1.1, its targets, and marks are unchanged.
 - **Next concrete step:** M66 remains planned for clean-room pairwise interoperability;
   M65 does not claim external adoption or pairwise demonstration.

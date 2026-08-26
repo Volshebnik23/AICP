@@ -21,6 +21,102 @@
     "SUBJECT_BINDING_REVOKE",
     "TURN_REVOKE"
   ],
+  "audit_model": {
+    "positive_coverage": "Records how fixture bytes close the historical 17-type coverage gap; example ordering does not create a compatibility rule.",
+    "normative_semantics": "Records only compatibility-rejecting behavior required by the existing AICP 0.1 RFC surface and executed by the canonical conformance runner. Ambiguous or silent RFC text does not justify rejection."
+  },
+  "semantic_change_audit": [
+    {
+      "suite": "ID-IDENTITY-LC-0.1",
+      "check_id": "ID-MIGRATE-01",
+      "pre_m65_behavior": "No transcript-local prior-announcement requirement for AGENT_MIGRATION.aid_hash.",
+      "m65_behavior": "Rejected AGENT_MIGRATION unless aid_hash matched an earlier IDENTITY_ANNOUNCE in the captured transcript.",
+      "exact_normative_rfc_clause": "RFC_EXT_IDENTITY_LIFECYCLE.md sections 14.2-14.3 register AGENT_MIGRATION and require migration_id plus aid_hash; they do not require a prior same-transcript IDENTITY_ANNOUNCE.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Removed ID-MIGRATE-01 from the suite and all evidence enforcement; retained IL-04 as a positive example."
+    },
+    {
+      "suite": "ID-IDENTITY-LC-0.1",
+      "check_id": "ID-REVOKE-01",
+      "pre_m65_behavior": "Rejected later contract-changing operations signed by a kid after its KEY_REVOKE became known.",
+      "m65_behavior": "Also rejected KEY_REVOKE unless its target key or AID was announced earlier in the captured transcript.",
+      "exact_normative_rfc_clause": "RFC_EXT_IDENTITY_LIFECYCLE.md section 14.4 requires rejection of later contract-changing operations signed by a revoked kid; section 14.3 permits target_kid or target_aid_hash and does not require local introduction.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Restored ID-REVOKE-01 to post-revocation contract-changing use only; retained IL-03 and IL-05."
+    },
+    {
+      "suite": "DS-DISPUTES-0.1",
+      "check_id": "DS-EVIDENCE-01",
+      "pre_m65_behavior": "Required non-empty evidence_refs for CHALLENGE_ASSERTION.",
+      "m65_behavior": "The second engine widened the check to CLAIM_BREACH, ARBITRATION_REQUEST, and ARBITRATION_RESULT.",
+      "exact_normative_rfc_clause": "RFC_EXT_DISPUTES.md section 15.3.2 defines CHALLENGE_ASSERTION evidence_refs as MUST/non-empty, CLAIM_BREACH evidence_refs as SHOULD, and sections 15.3.5-15.3.6 define no arbitration payload relation.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Restored the canonical CHALLENGE_ASSERTION scope."
+    },
+    {
+      "suite": "DS-DISPUTES-0.1",
+      "check_id": "DS-EVIDENCE-RESOLVE-01",
+      "pre_m65_behavior": "Required a resolvable evidence reference for CHALLENGE_ASSERTION.",
+      "m65_behavior": "The second engine widened resolvability rejection to CLAIM_BREACH and both arbitration messages.",
+      "exact_normative_rfc_clause": "RFC_EXT_DISPUTES.md section 15.3.2 states the resolvable-reference conformance rule adjacent to CHALLENGE_ASSERTION and CLAIM_BREACH; sections 15.3.5-15.3.6 contain no arbitration payload requirements. The pre-M65 suite and canonical implementation scope this check to CHALLENGE_ASSERTION.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Restored the canonical CHALLENGE_ASSERTION scope and its original suite description."
+    },
+    {
+      "suite": "DS-DISPUTES-0.1",
+      "check_id": "DS-ARBITRATION-01",
+      "pre_m65_behavior": "No exact transcript-local challenge-to-request or request-to-result linkage rule.",
+      "m65_behavior": "Required ARBITRATION_REQUEST to reference a prior local challenge and ARBITRATION_RESULT to reference a prior local request.",
+      "exact_normative_rfc_clause": "RFC_EXT_DISPUTES.md sections 15.3.5-15.3.6 are headings without an exact local-linkage algorithm.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Removed DS-ARBITRATION-01; retained DS-04 as a coherent example."
+    },
+    {
+      "suite": "DL-DELEGATION-0.1",
+      "check_id": "DL-REVOKE-01",
+      "pre_m65_behavior": "No requirement that a revoked delegation be granted in the captured transcript.",
+      "m65_behavior": "Rejected DELEGATION_REVOKE without a prior active local DELEGATION_GRANT.",
+      "exact_normative_rfc_clause": "RFC_EXT_DELEGATION.md sections 15.2.1-15.2.2 register DELEGATION_REVOKE and require delegation_id plus effective_at; they do not require a prior same-transcript grant.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Removed DL-REVOKE-01; retained DL-04 as a positive example."
+    },
+    {
+      "suite": "MP-MARKETPLACE-0.1",
+      "check_id": "MP-BID-01",
+      "pre_m65_behavior": "Required bid messages to link to a prior RFW with coherent required offer terms.",
+      "m65_behavior": "Also required BID_UPDATE/BID_WITHDRAW to reference a prior local bid, preserve its local RFW association, and never reuse a locally withdrawn bid.",
+      "exact_normative_rfc_clause": "RFC_EXT_MARKETPLACE.md sections 4.2 and 9 require bid fields and bid linkage to a prior RFW; they do not define a mandatory transcript-local bid state machine.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Restored MP-BID-01 to prior-RFW and offer-term scope; retained MP-AWARD-01 unchanged."
+    },
+    {
+      "suite": "PA-PARTICIPANTS-0.1",
+      "check_id": "PA-MEM-01",
+      "pre_m65_behavior": "Gated participant traffic before acceptance and prohibited traffic after leave.",
+      "m65_behavior": "Also required every PARTICIPANT_LEAVE to have a prior local join and payload.participant_id equal envelope.sender.",
+      "exact_normative_rfc_clause": "RFC_EXT_PARTICIPANTS.md section 3.3 requires participant_id in the leave payload; section 4 gates participants appearing in PARTICIPANT_JOIN and prohibits later sender traffic after leave. Neither clause states the two M65 additions.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Restored membership gating and post-leave enforcement without the M65-only leave predicates."
+    },
+    {
+      "suite": "PE-POLICY-EVAL-0.1",
+      "check_id": "PE-ATTEST-01",
+      "pre_m65_behavior": "No exact mandatory POLICY_DECISION_ATTEST equality/linkage algorithm.",
+      "m65_behavior": "Required an exact prior POLICY_EVAL_RESULT hash and prior local action or attestation reference.",
+      "exact_normative_rfc_clause": "RFC_EXT_POLICY_EVAL.md section 12.2 says POLICY_DECISION_ATTEST MAY bind a decision to ATTEST_ACTION; it does not define the equality algorithm implemented by M65.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Removed PE-ATTEST-01; retained reason-code, context-hash, registry, schema, and signature behavior."
+    },
+    {
+      "suite": "DI-DELEGATED-IDENTITY-0.1",
+      "check_id": "DI-REVOKE-01",
+      "pre_m65_behavior": "Rejected use of ext.subject_binding_hash at or after an effective revocation.",
+      "m65_behavior": "Also rejected SUBJECT_BINDING_REVOKE itself unless ISSUE appeared earlier in the captured transcript.",
+      "exact_normative_rfc_clause": "RFC_EXT_DELEGATED_IDENTITY.md section 5 item 5 governs messages using ext.subject_binding_hash and their prior issue/expiry/revocation state; it does not require REVOKE itself to follow a local ISSUE.",
+      "compatibility_rejection_justified": false,
+      "final_action": "Restored use-at/after-revocation scope; retained signed ISSUE/REVOKE, object, issuer, expiry, and use checks."
+    }
+  ],
   "entries": [
     {
       "message_type": "AGENDA_DECLARE",
@@ -34,8 +130,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": [],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl", "suite_case": "FA-02", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01", "CT-SEQUENCE-01"]},
-      "negative_accounting": {"classification": "no_separate_negative_norm_defined", "rfc_rule": "message registration only; no agenda relation MUST is defined", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl", "suite_case": "FA-02", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01", "CT-SEQUENCE-01"]},
+      "negative_accounting": {"classification": "no_separate_negative_norm_defined", "rfc_basis": "Message registration and payload shape only; no agenda relation MUST is defined.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "AGENDA_UPDATE",
@@ -49,8 +145,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": [],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl", "suite_case": "FA-02", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01", "CT-SEQUENCE-01"]},
-      "negative_accounting": {"classification": "no_separate_negative_norm_defined", "rfc_rule": "message registration only; no agenda relation MUST is defined", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl", "suite_case": "FA-02", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01", "CT-SEQUENCE-01"]},
+      "negative_accounting": {"classification": "no_separate_negative_norm_defined", "rfc_basis": "Message registration and payload shape only; no agenda relation MUST is defined.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "TURN_REVOKE",
@@ -64,8 +160,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": [],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl", "suite_case": "FA-02", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01", "CT-SEQUENCE-01"]},
-      "negative_accounting": {"classification": "no_separate_negative_norm_defined", "rfc_rule": "turn grants SHOULD precede content; no revoke relation MUST is defined", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/facilitation/FA-02_agenda_and_turn_revoke_pass.jsonl", "suite_case": "FA-02", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01", "CT-SEQUENCE-01"]},
+      "negative_accounting": {"classification": "no_separate_negative_norm_defined", "rfc_basis": "Turn grants SHOULD precede content; no revoke relation MUST is defined.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "AGENT_MIGRATION",
@@ -79,8 +175,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["ID-AID-01", "ID-ANN-01"],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl", "suite_case": "IL-04", "generator": "scripts/generate_identity_lc_fixtures.py", "semantic_checks": ["ID-AID-01", "ID-ANN-01", "ID-MIGRATE-01"]},
-      "negative_accounting": {"classification": "mutation_control", "rfc_rule": "14.2-14.3 migration records the updated AID hash", "check": "ID-MIGRATE-01", "fixture": null}
+      "positive_coverage": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl", "suite_case": "IL-04", "generator": "scripts/generate_identity_lc_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01"]},
+      "negative_accounting": {"classification": "no_extra_lifecycle_rejection_normatively_defined", "rfc_basis": "Sections 14.2-14.3 require migration_id and aid_hash but no same-transcript prior announcement.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "KEY_REVOKE",
@@ -94,8 +190,8 @@
       "candidate_generator_before": "scripts/generate_identity_lc_fixtures.py",
       "existing_semantic_checks_before": ["ID-REVOKE-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl", "suite_case": "IL-05", "generator": "scripts/generate_identity_lc_fixtures.py", "semantic_checks": ["ID-REVOKE-01"]},
-      "negative_accounting": {"classification": "existing_negative_sufficient", "rfc_rule": "14.4 revoked kid cannot sign later contract-changing operations", "check": "ID-REVOKE-01", "fixture": "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl", "suite_case": "IL-05", "generator": "scripts/generate_identity_lc_fixtures.py", "semantic_checks": ["ID-REVOKE-01"]},
+      "negative_accounting": {"classification": "existing_negative_sufficient", "rfc_basis": "Section 14.4 rejects later contract-changing operations signed by a revoked kid.", "check": "ID-REVOKE-01", "fixture": "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl"}
     },
     {
       "message_type": "CLAIM_BREACH",
@@ -109,8 +205,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl"],
-      "remediation": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl", "suite_case": "DS-04", "generator": "scripts/generate_disputes_fixtures.py", "semantic_checks": ["DS-CLAIMTYPE-01", "DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01"]},
-      "negative_accounting": {"classification": "existing_family_negative_plus_common_schema", "rfc_rule": "15.3.2 requires non-empty resolvable evidence", "check": "DS-EVIDENCE-RESOLVE-01", "fixture": "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl", "suite_case": "DS-04", "generator": "scripts/generate_disputes_fixtures.py", "semantic_checks": ["DS-CLAIMTYPE-01"]},
+      "negative_accounting": {"classification": "existing_family_claim_type_negative", "rfc_basis": "Section 15.3.2 requires breach_type to be registered; evidence_refs on CLAIM_BREACH is SHOULD and does not create the widened M65 evidence rejection.", "check": "DS-CLAIMTYPE-01", "fixture": "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl"}
     },
     {
       "message_type": "ARBITRATION_REQUEST",
@@ -124,8 +220,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01"],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl", "suite_case": "DS-04", "generator": "scripts/generate_disputes_fixtures.py", "semantic_checks": ["DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01", "DS-ARBITRATION-01"]},
-      "negative_accounting": {"classification": "mutation_control", "rfc_rule": "15.3.5 related_challenge_id identifies the challenged dispute", "check": "DS-ARBITRATION-01", "fixture": null}
+      "positive_coverage": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl", "suite_case": "DS-04", "generator": "scripts/generate_disputes_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01"]},
+      "negative_accounting": {"classification": "no_extra_lifecycle_rejection_normatively_defined", "rfc_basis": "Section 15.3.5 does not define exact prior-local challenge linkage.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "ARBITRATION_RESULT",
@@ -139,8 +235,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01"],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl", "suite_case": "DS-04", "generator": "scripts/generate_disputes_fixtures.py", "semantic_checks": ["DS-EVIDENCE-01", "DS-EVIDENCE-RESOLVE-01", "DS-ARBITRATION-01"]},
-      "negative_accounting": {"classification": "mutation_control", "rfc_rule": "15.3.6 result carries the arbitration_id of the requested arbitration", "check": "DS-ARBITRATION-01", "fixture": null}
+      "positive_coverage": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl", "suite_case": "DS-04", "generator": "scripts/generate_disputes_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01"]},
+      "negative_accounting": {"classification": "no_extra_lifecycle_rejection_normatively_defined", "rfc_basis": "Section 15.3.6 does not define exact prior-local arbitration-request linkage.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "BID_UPDATE",
@@ -154,8 +250,8 @@
       "candidate_generator_before": "scripts/generate_marketplace_fixtures.py",
       "existing_semantic_checks_before": ["MP-BID-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl", "suite_case": "MP-10", "generator": "scripts/generate_marketplace_fixtures.py", "semantic_checks": ["MP-BID-01"]},
-      "negative_accounting": {"classification": "existing_family_negative_plus_mutation", "rfc_rule": "4.2 and section 9 require bid linkage to the prior RFW/bid lifecycle", "check": "MP-BID-01", "fixture": "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl", "suite_case": "MP-10", "generator": "scripts/generate_marketplace_fixtures.py", "semantic_checks": ["MP-BID-01"]},
+      "negative_accounting": {"classification": "existing_prior_rfw_negative", "rfc_basis": "Sections 4.2 and 9 require bid fields and linkage to a prior RFW, not a prior same-transcript bid state machine.", "check": "MP-BID-01", "fixture": "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl"}
     },
     {
       "message_type": "BID_WITHDRAW",
@@ -169,8 +265,8 @@
       "candidate_generator_before": "scripts/generate_marketplace_fixtures.py",
       "existing_semantic_checks_before": ["MP-BID-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl", "suite_case": "MP-10", "generator": "scripts/generate_marketplace_fixtures.py", "semantic_checks": ["MP-BID-01"]},
-      "negative_accounting": {"classification": "existing_family_negative_plus_mutation", "rfc_rule": "4.2 and section 9 require bid linkage to the prior RFW/bid lifecycle", "check": "MP-BID-01", "fixture": "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl", "suite_case": "MP-10", "generator": "scripts/generate_marketplace_fixtures.py", "semantic_checks": ["MP-BID-01"]},
+      "negative_accounting": {"classification": "existing_prior_rfw_negative", "rfc_basis": "Sections 4.2 and 9 require bid fields and linkage to a prior RFW, not a prior same-transcript bid state machine.", "check": "MP-BID-01", "fixture": "fixtures/extensions/marketplace/MP-05_bid_without_valid_rfw_expected_fail.jsonl"}
     },
     {
       "message_type": "AWARD_DECLINE",
@@ -184,8 +280,8 @@
       "candidate_generator_before": "scripts/generate_marketplace_fixtures.py",
       "existing_semantic_checks_before": ["MP-AWARD-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl", "suite_case": "MP-10", "generator": "scripts/generate_marketplace_fixtures.py", "semantic_checks": ["MP-AWARD-01"]},
-      "negative_accounting": {"classification": "existing_family_negative_plus_mutation", "rfc_rule": "4.3 requires award_id/rfw_id binding to the issued award", "check": "MP-AWARD-01", "fixture": "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl", "suite_case": "MP-10", "generator": "scripts/generate_marketplace_fixtures.py", "semantic_checks": ["MP-AWARD-01"]},
+      "negative_accounting": {"classification": "existing_award_linkage_negative", "rfc_basis": "Sections 4.3 and 9 require award linkage to the prior bid and RFW.", "check": "MP-AWARD-01", "fixture": "fixtures/extensions/marketplace/MP-09_award_accept_rfw_mismatch_expected_fail.jsonl"}
     },
     {
       "message_type": "DELEGATION_REVOKE",
@@ -199,8 +295,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["DL-EXPIRY-01", "DL-DEPTH-01", "DL-BIND-01", "DL-SCOPE-01"],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "reused", "fixture": "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl", "suite_case": "DL-05", "generator": "scripts/generate_delegation_fixtures.py", "semantic_checks": ["DL-REVOKE-01"]},
-      "negative_accounting": {"classification": "mutation_control", "rfc_rule": "15.2.1-15.2.2 revoke identifies the delegation being revoked", "check": "DL-REVOKE-01", "fixture": null}
+      "positive_coverage": {"kind": "reused", "fixture": "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl", "suite_case": "DL-05", "generator": "scripts/generate_delegation_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01"]},
+      "negative_accounting": {"classification": "no_extra_lifecycle_rejection_normatively_defined", "rfc_basis": "Sections 15.2.1-15.2.2 require delegation_id and effective_at but no prior same-transcript grant.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "PARTICIPANT_LEAVE",
@@ -214,8 +310,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01", "PA-MODEL-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl"],
-      "remediation": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl", "suite_case": "PA-04", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01"]},
-      "negative_accounting": {"classification": "existing_family_negative_plus_mutation", "rfc_rule": "sections 3.3-4 bind leave to participant membership and prohibit later messages", "check": "PA-MEM-01", "fixture": "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl", "suite_case": "PA-04", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["PA-JOIN-01", "PA-ACCEPT-01", "PA-MEM-01", "PA-AUTH-01"]},
+      "negative_accounting": {"classification": "existing_membership_gating_negative", "rfc_basis": "Sections 3.3-4 require participant_id and prohibit gated pre-accept/post-leave traffic; they do not require prior local join or sender equality for the leave message itself.", "check": "PA-MEM-01", "fixture": "fixtures/extensions/participants/PA-03_message_before_accept_expected_fail.jsonl"}
     },
     {
       "message_type": "POLICY_DECISION_ATTEST",
@@ -229,8 +325,8 @@
       "candidate_generator_before": null,
       "existing_semantic_checks_before": ["PE-REASON-CODES-01", "PE-CONTEXT-HASH-01"],
       "existing_negative_coverage_before": [],
-      "remediation": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl", "suite_case": "PE-05", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["PE-CONTEXT-HASH-01", "PE-ATTEST-01"]},
-      "negative_accounting": {"classification": "mutation_control", "rfc_rule": "12.2 binds a policy decision to ATTEST_ACTION", "check": "PE-ATTEST-01", "fixture": null}
+      "positive_coverage": {"kind": "reused_strengthened", "fixture": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl", "suite_case": "PE-05", "generator": "scripts/generate_m65_message_surface_fixtures.py", "semantic_checks": ["CN-PAYLOAD-SCHEMA-01"]},
+      "negative_accounting": {"classification": "no_extra_lifecycle_rejection_normatively_defined", "rfc_basis": "Section 12.2 makes attestation optional and provides no exact prior-message equality algorithm.", "check": "CN-PAYLOAD-SCHEMA-01", "fixture": null}
     },
     {
       "message_type": "RESPONSIBILITY_REVOKE",
@@ -244,8 +340,8 @@
       "candidate_generator_before": "scripts/generate_responsibility_fixtures.py",
       "existing_semantic_checks_before": ["RS-ASSIGN-01", "RS-ACCEPT-01", "RS-LIFECYCLE-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/responsibility/RP-02_accept_without_assign_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/responsibility/RP-06_assign_revoke_pass.jsonl", "suite_case": "RP-06", "generator": "scripts/generate_responsibility_fixtures.py", "semantic_checks": ["RS-ACCEPT-01", "RS-LIFECYCLE-01"]},
-      "negative_accounting": {"classification": "existing_family_negative_plus_mutation", "rfc_rule": "3.3 revoke transfer_id references a prior assignment", "check": "RS-ACCEPT-01", "fixture": "fixtures/extensions/responsibility/RP-02_accept_without_assign_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/responsibility/RP-06_assign_revoke_pass.jsonl", "suite_case": "RP-06", "generator": "scripts/generate_responsibility_fixtures.py", "semantic_checks": ["RS-ACCEPT-01", "RS-LIFECYCLE-01"]},
+      "negative_accounting": {"classification": "existing_responsibility_lifecycle_negative", "rfc_basis": "Section 3.3 defines revocation of a responsibility transfer identified by transfer_id.", "check": "RS-ACCEPT-01", "fixture": "fixtures/extensions/responsibility/RP-02_accept_without_assign_expected_fail.jsonl"}
     },
     {
       "message_type": "RUN_CANCEL",
@@ -259,8 +355,8 @@
       "candidate_generator_before": "scripts/generate_execution_lifecycle_fixtures.py",
       "existing_semantic_checks_before": ["EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/execution_lifecycle/EX-08_active_run_cancel_pass.jsonl", "suite_case": "EX-08", "generator": "scripts/generate_execution_lifecycle_fixtures.py", "semantic_checks": ["EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01"]},
-      "negative_accounting": {"classification": "existing_negative_sufficient", "rfc_rule": "5.1 cancel is terminal and later run mutation must fail", "check": "EX-RUN-TERMINAL-01", "fixture": "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/execution_lifecycle/EX-08_active_run_cancel_pass.jsonl", "suite_case": "EX-08", "generator": "scripts/generate_execution_lifecycle_fixtures.py", "semantic_checks": ["EX-RUN-REF-01", "EX-RUN-TRANSITION-01", "EX-RUN-TERMINAL-01"]},
+      "negative_accounting": {"classification": "existing_negative_sufficient", "rfc_basis": "Section 5.1 makes RUN_CANCEL terminal and prohibits later run mutation.", "check": "EX-RUN-TERMINAL-01", "fixture": "fixtures/extensions/execution_lifecycle/EX-05_post_terminal_mutation_expected_fail.jsonl"}
     },
     {
       "message_type": "SUBJECT_BINDING_REVOKE",
@@ -274,8 +370,8 @@
       "candidate_generator_before": "scripts/generate_delegated_identity_fixtures.py",
       "existing_semantic_checks_before": ["DI-OBJ-01", "DI-ISSUE-01", "DI-SIGNED-01", "DI-REVOKE-01"],
       "existing_negative_coverage_before": ["fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl"],
-      "remediation": {"kind": "new", "fixture": "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl", "suite_case": "DI-05", "generator": "scripts/generate_delegated_identity_fixtures.py", "semantic_checks": ["DI-OBJ-01", "DI-ISSUE-01", "DI-SIGNED-01", "DI-REVOKE-01"]},
-      "negative_accounting": {"classification": "existing_negative_sufficient", "rfc_rule": "section 5 forbids binding use at or after effective revocation", "check": "DI-REVOKE-01", "fixture": "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl"}
+      "positive_coverage": {"kind": "new", "fixture": "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl", "suite_case": "DI-05", "generator": "scripts/generate_delegated_identity_fixtures.py", "semantic_checks": ["DI-OBJ-01", "DI-ISSUE-01", "DI-SIGNED-01", "DI-REVOKE-01"]},
+      "negative_accounting": {"classification": "existing_negative_sufficient", "rfc_basis": "Section 5 forbids binding use at or after effective revocation.", "check": "DI-REVOKE-01", "fixture": "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl"}
     }
   ]
 }

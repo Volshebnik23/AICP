@@ -11,7 +11,7 @@ target kind:     capability
 execution mode:  full-capability
 eligible mark:   AICP-Evidence-SESSION-STATE-PROJECTION-v1
 historical TCK:  AICP-EVIDENCE-TCK-1.1.0 (strong-eligible exact reports)
-current TCK:     AICP-EVIDENCE-TCK-1.9.0
+current TCK:     AICP-EVIDENCE-TCK-1.10.0
 ```
 
 M63 adds exactly three product-profile targets:
@@ -23,7 +23,7 @@ AICP-DELEGATED-IDENTITY@0.1 -> AICP-Profile-DELEGATED-IDENTITY-0.1
 ```
 
 They use report 2.2 for new executions, `full-profile`, `product_profile_v01`, and current
-`AICP-EVIDENCE-TCK-1.9.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
+`AICP-EVIDENCE-TCK-1.10.0`. Frozen 1.2.0 and 1.3.0 releases are historical and
 strong-ineligible. The 1.2.0 producer evaluator did not close every required-suite check
 and its report evaluator did not enforce exact generated-artifact multiplicity. The
 1.3.0 evaluator did not close generated messages over their exact owner payload schemas
@@ -47,7 +47,7 @@ BIND-MCP@0.1  -> AICP-BIND-MCP-0.1
 ```
 
 They use report 2.2, `full-binding`, `live_binding_v01`, and current Evidence TCK
-1.9. A full run launches the same implementation build in both roles and repeats both
+1.10. A full run launches the same implementation build in both roles and repeats both
 from clean state. HTTP uses real literal-loopback HTTP, SSE, WebSocket, and verified WSS traffic; MCP
 uses JSON-RPC over child-process stdio. Optional SSE/WebSocket scenarios run exactly when
 the role descriptor declares them. A WSS declaration additionally requires an executed
@@ -108,11 +108,14 @@ plaintext-on-TLS, pre-certificate abort, certificate rejection, and completed TL
 recording HTTP Upgrade independently. Skipping the negative endpoint, probing it without
 TLS, or disabling certificate verification fails. MCP client evidence omits optional
 sendMessage cursors and proves that poll-1 first discloses the opaque continuation consumed
-by the later poll-2. Release records 1.0.0 through 1.8.0 are byte-frozen. Release-specific registry
+by the later poll-2. Release records 1.0.0 through 1.9.0 are byte-frozen. Release-specific registry
 snapshots make `tck_release.registry_digest` immutable: 1.1.0 remains strong-eligible for
 its exact projection reports, while 1.4.0 and 1.8.0 remain strong-eligible for their exact reports.
-Releases 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, and 1.7.0 are explicitly strong-ineligible for their
-documented evidence defects. Repository inspection finds zero real external submission
+Releases 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, 1.7.0, and 1.9.0 are explicitly
+strong-ineligible for their documented evidence defects. TCK 1.9 is ineligible because
+its M65 semantics were split across two authorities and exceeded the normative 0.1 RFC
+surface; this is an evidence/conformance defect, not a claimed security vulnerability.
+Repository inspection finds zero real external submission
 folders; examples, templates, reference reports, and test adapters are not adoption.
 Regenerate and check with:
 
@@ -199,8 +202,13 @@ complete TCK 1.8 report. A raw
   because MCP poll continuation could be disclosed by an earlier send response and its WSS
   challenge could be satisfied by a non-TLS probe. TCK 1.8 introduced report 2.2 trace v4
   with first-seen MCP continuation and normalized TLS rejection evidence and is now frozen
-  historical/eligible. New TCK 1.9 executions retain report 2.2 and trace v4 while binding
-  the expanded M65 conformance corpus.
+  historical/eligible. TCK 1.9 added the expanded M65 corpus but is frozen
+  historical/ineligible due to the corrected semantic-authority defect. New TCK 1.10
+  executions retain report 2.2, trace v4, six targets, and the 132/132 corpus while using
+  only canonical normative semantics. The frozen historical projection report at
+  `historical_reports/AICP-EVIDENCE-TCK-1.8.0-session-state-projection.json` was reproduced
+  from commit `110c950ce069f323e084e02a13ce04b23f0c5fa3`; its normalized repository-byte digest is
+  `sha256:8569bd2f403740a785ee6963f8aa8d6e507f5a11c0b8044c62cdf8021344b6d1`.
 - A capability mark is not a product-profile mark, certification, endorsement, aggregate
   composition mark, or pairwise interoperability result.
 - A profile report covers one exact profile. Component-suite marks do not become separate
