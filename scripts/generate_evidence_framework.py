@@ -35,6 +35,8 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_7_REGISTRY_SNAPSHOT_DIGEST,
     FROZEN_TCK_1_8_RECORD_DIGEST,
     FROZEN_TCK_1_8_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_9_RECORD_DIGEST,
+    FROZEN_TCK_1_9_REGISTRY_SNAPSHOT_DIGEST,
     HISTORICAL_RELEASE_RECORD_DIGEST,
     HISTORICAL_RELEASE_REGISTRY_DIGEST,
     HISTORICAL_TARGET_SCHEMA_DIGEST,
@@ -49,6 +51,7 @@ from target_catalog import (  # noqa: E402
     TCK_1_6_RELEASE_ID,
     TCK_1_7_RELEASE_ID,
     TCK_1_8_RELEASE_ID,
+    TCK_1_9_RELEASE_ID,
     PROFILE_TARGET_KEYS,
     REPORT_SCHEMA_PATH,
     REPORT_SCHEMA_V21_PATH,
@@ -700,6 +703,10 @@ def release_registry_payload(
         TCK_1_8_RELEASE_ID,
         FROZEN_TCK_1_8_RECORD_DIGEST,
     )
+    frozen_1_9_release = _frozen_release(
+        TCK_1_9_RELEASE_ID,
+        FROZEN_TCK_1_9_RECORD_DIGEST,
+    )
     projection_handler = resolve_handler("projection_v1")
     product_handler = resolve_handler("product_profile_v01")
     binding_handler = resolve_handler("live_binding_v01")
@@ -809,7 +816,7 @@ def release_registry_payload(
             }
         )
     return {
-        "registry_version": "1.9",
+        "registry_version": "1.10",
         "supersessions": [
             {
                 "release_id": HISTORICAL_TCK_RELEASE_ID,
@@ -901,12 +908,22 @@ def release_registry_payload(
                 ),
             },
             {
+                "release_id": TCK_1_9_RELEASE_ID,
+                "lifecycle": "historical",
+                "strong_eligible": False,
+                "reason": (
+                    "The release carried M65 compatibility semantics that were not "
+                    "uniformly executed by the canonical suite/profile path and included "
+                    "rejection rules stronger than the existing normative RFC surface."
+                ),
+            },
+            {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "lifecycle": "current",
                 "strong_eligible": True,
                 "reason": (
-                    "Completes actual positive-fixture coverage for every registered "
-                    "message type and binds the expanded corpus into evidence targets."
+                    "Retains complete positive-fixture coverage while restoring the "
+                    "canonical conformance runner as the sole normative authority."
                 ),
             },
         ],
@@ -920,6 +937,7 @@ def release_registry_payload(
             frozen_1_6_release,
             frozen_1_7_release,
             frozen_1_8_release,
+            frozen_1_9_release,
             {
                 "release_id": CURRENT_TCK_RELEASE_ID,
                 "status": "experimental",
@@ -1068,6 +1086,15 @@ def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, A
     ):
         raise ValueError("evidence TCK 1.8.0 registry snapshot changed")
 
+    frozen_1_9_path = RELEASE_SNAPSHOT_DIR / f"{TCK_1_9_RELEASE_ID}.json"
+    if not frozen_1_9_path.is_file():
+        raise ValueError("frozen evidence TCK 1.9.0 registry snapshot is missing")
+    frozen_1_9 = load_json(frozen_1_9_path)
+    if digest_bytes(render(frozen_1_9).encode("utf-8")) != (
+        FROZEN_TCK_1_9_REGISTRY_SNAPSHOT_DIGEST
+    ):
+        raise ValueError("evidence TCK 1.9.0 registry snapshot changed")
+
     return {
         TCK_RELEASE_ID: frozen_1_1,
         PROFILE_TCK_RELEASE_ID: frozen_1_2,
@@ -1077,6 +1104,7 @@ def release_snapshot_payloads(releases: dict[str, Any]) -> dict[str, dict[str, A
         TCK_1_6_RELEASE_ID: frozen_1_6,
         TCK_1_7_RELEASE_ID: frozen_1_7,
         TCK_1_8_RELEASE_ID: frozen_1_8,
+        TCK_1_9_RELEASE_ID: frozen_1_9,
         CURRENT_TCK_RELEASE_ID: releases,
     }
 
@@ -1114,6 +1142,7 @@ def main() -> int:
                 TCK_1_6_RELEASE_ID,
                 TCK_1_7_RELEASE_ID,
                 TCK_1_8_RELEASE_ID,
+                TCK_1_9_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -1136,6 +1165,7 @@ def main() -> int:
                 TCK_1_6_RELEASE_ID,
                 TCK_1_7_RELEASE_ID,
                 TCK_1_8_RELEASE_ID,
+                TCK_1_9_RELEASE_ID,
                 CURRENT_TCK_RELEASE_ID,
             )
         ],
@@ -1211,8 +1241,8 @@ def main() -> int:
         f"{HISTORICAL_TCK_RELEASE_ID}, {TCK_RELEASE_ID}, "
         f"{PROFILE_TCK_RELEASE_ID}, {PREVIOUS_TCK_RELEASE_ID}, and "
         f"{TCK_1_4_RELEASE_ID}, {TCK_1_5_RELEASE_ID}, "
-        f"{TCK_1_6_RELEASE_ID}, {TCK_1_7_RELEASE_ID}, and "
-        f"{TCK_1_8_RELEASE_ID} retained; "
+        f"{TCK_1_6_RELEASE_ID}, {TCK_1_7_RELEASE_ID}, "
+        f"{TCK_1_8_RELEASE_ID}, and {TCK_1_9_RELEASE_ID} retained; "
         "two live binding targets registered."
     )
     return 0

@@ -19,7 +19,6 @@ validate:
 	$(PYTHON) scripts/validate_errata.py
 	$(PYTHON) scripts/validate_planning_docs.py
 	$(PYTHON) scripts/validate_message_surface_completion.py
-	$(PYTHON) scripts/validate_m65_extension_semantics.py
 	$(PYTHON) scripts/validate_verification_gate_alignment.py
 	$(PYTHON) scripts/validate_shipped_extension_coverage.py
 	$(PYTHON) scripts/generate_core_v02_fixtures.py --check
@@ -38,7 +37,6 @@ validate:
 
 message-surface-complete:
 	$(PYTHON) scripts/validate_message_surface_completion.py
-	$(PYTHON) scripts/validate_m65_extension_semantics.py
 
 snapshot:
 	$(PYTHON) scripts/generate_snapshot_manifest.py
@@ -59,7 +57,6 @@ conformance-core:
 
 conformance-ext:
 	$(PYTHON) conformance/runner/aicp_batch_runner.py --catalog extensions
-	$(PYTHON) scripts/validate_m65_extension_semantics.py
 	$(MAKE) conformance-capneg-v02
 	$(MAKE) conformance-session-state-projection-v2
 

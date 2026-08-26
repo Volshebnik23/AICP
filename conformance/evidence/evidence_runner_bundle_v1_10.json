@@ -1,0 +1,161 @@
+{
+  "manifest_version": "1.0",
+  "entries": [
+    {
+      "path": "conformance/evidence/adapter_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:e60858148f45edbde78dd8500de13fbab082f4cd8e767beac8068d983ca77deb"
+    },
+    {
+      "path": "conformance/evidence/aicp_external_evidence_runner.py",
+      "role": "runner",
+      "digest": "sha256:cf0c952e4a5b58afcbb6dfe25441db07d0341304c178d4325997cf4dccbbe5da"
+    },
+    {
+      "path": "conformance/evidence/aicp_live_binding_runner.py",
+      "role": "live_binding_runner",
+      "digest": "sha256:3fde97a846412e41d3deebf12a058330c27279dcc93110c70bd865d812b9c819"
+    },
+    {
+      "path": "conformance/evidence/evidence_identifier_rules.py",
+      "role": "identifier_semantics",
+      "digest": "sha256:33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/__init__.py",
+      "role": "package_initialization",
+      "digest": "sha256:b3a3d9fabbb92233c16d80e81d741a380723325a44d852296b73c2d229490b71"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:c9d533c5df08f30a044e24a10e53999fc8dbee4dc78b374097688bd61deadffa"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_process.py",
+      "role": "process_supervision",
+      "digest": "sha256:5be6125134e996f17e13b54c54d41ad41b7451a06cfd15e1888a430f5ebfb557"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_trace.py",
+      "role": "live_trace_evaluation",
+      "digest": "sha256:66b5d0fc136e53debaea7163a2a34eda103b699975763c0bf91e7c90a409bfee"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_http_capture.py",
+      "role": "transport_capture",
+      "digest": "sha256:1af9c33f3c9d1d40cecf6f59e72bdb2584f46c3af1c792ab8ee23ce703581a79"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_http_transport.py",
+      "role": "live_http_transport",
+      "digest": "sha256:edeecf14e633be8db78aa8ef3c15c489b6ea54d1672a3ac855773004237a351b"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_mcp_capture.py",
+      "role": "transport_capture",
+      "digest": "sha256:8ac8f0dda867a3d775d6b7c647652e2b7ce763711130a9d0cb05e491ec32f0a5"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_mcp_transport.py",
+      "role": "live_mcp_transport",
+      "digest": "sha256:d375904d4e7e90c399b34a756db2ba42fcc350d835a8ded0cb132805bb572b29"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_public_scenarios.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:1cc9125b9932da0948fcdea1ad520c4e3241f0c2b156ba72c00fe8d58ca36b49"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_tls.py",
+      "role": "tls_runtime",
+      "digest": "sha256:abcb781a7de4ff9e0dfc5a34f642f43324db1b8a051086f9b7e0ca41984effd3"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_evaluator.py",
+      "role": "live_trace_evaluation",
+      "digest": "sha256:280f06ea318a469c534a710c7c425b39e50058c1d9c38ee8fc21360aac2a55de"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_normalization.py",
+      "role": "semantic_normalization",
+      "digest": "sha256:2166d29481b39c8955b815fd0438e03e0509547ec1eddf4853447cd4c3ae10ea"
+    },
+    {
+      "path": "conformance/evidence/producer_payload_schema_router.py",
+      "role": "payload_schema_routing",
+      "digest": "sha256:779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
+    },
+    {
+      "path": "conformance/evidence/producer_suite_semantics.py",
+      "role": "producer_semantic_dispatch",
+      "digest": "sha256:ebf2682a870a6613ce42af1df516238b86594236688ffecff287ea2e4cdf48a1"
+    },
+    {
+      "path": "conformance/evidence/product_profile_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:78d2bb44a78c45515ce7d7ccd7ad0ba665e8bd9935d2de4833d5a93cb41ff341"
+    },
+    {
+      "path": "conformance/evidence/profile_transcript_evaluator.py",
+      "role": "transcript_validation",
+      "digest": "sha256:3bb13ff04e06b3238583247e8ff6b36b99df261d81455e11027a29bc42507608"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_handler.py",
+      "role": "target_handler",
+      "digest": "sha256:a61ca62ca6c0a5337d08c85e1adfa71b80a3d3863016ed2902faa15dcff246c9"
+    },
+    {
+      "path": "conformance/evidence/report_evaluator.py",
+      "role": "evaluator",
+      "digest": "sha256:f463835242ee48d58482b6086d54c884e09069f8802db68b700a03d25098f64e"
+    },
+    {
+      "path": "conformance/evidence/target_catalog.py",
+      "role": "target_dispatch",
+      "digest": "sha256:2c502ec1a3c116943c53044101de072c70aa782145472e15b633154fbefaea40"
+    },
+    {
+      "path": "conformance/evidence/target_handlers.py",
+      "role": "target_dispatch",
+      "digest": "sha256:d9ce1b2fa30bf72ccf332037cd23605c19324541980304f794ae03d5e217589c"
+    },
+    {
+      "path": "conformance/runner/_runner_context.py",
+      "role": "report_schema_support",
+      "digest": "sha256:302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "reference/python/aicp_ref/__init__.py",
+      "role": "package_initialization",
+      "digest": "sha256:d463f315e8571772889691718d2791e10a674f9fcb07e147ef8ba5b22731b6c0"
+    },
+    {
+      "path": "reference/python/aicp_ref/chain.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "reference/python/aicp_ref/hashing.py",
+      "role": "canonicalization",
+      "digest": "sha256:0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "reference/python/aicp_ref/jcs.py",
+      "role": "canonicalization",
+      "digest": "sha256:ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "reference/python/aicp_ref/signatures.py",
+      "role": "dependency_probe",
+      "digest": "sha256:7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "reference/python/aicp_ref/validate.py",
+      "role": "runtime_dependency",
+      "digest": "sha256:5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    }
+  ],
+  "bundle_digest": "sha256:77498e0b1801a2fdc94ebc7947fe3f9df5395332ef272f49ce7cecb6050ceed0"
+}

@@ -360,7 +360,6 @@ def evaluate_profile_transcript(
 
     keyring = _baseline_keyring()
     revoked_kids: set[str] = set()
-    announced_aid_hashes: set[str] = set()
     crypto_available = signature_verifier_available() and not simulate_no_crypto
     signature_required_types = {"SUBJECT_BINDING_ISSUE", "SUBJECT_BINDING_REVOKE"}
     for message in messages:
@@ -392,10 +391,6 @@ def evaluate_profile_transcript(
                         and isinstance(public_key, str)
                     ):
                         keyring.setdefault(agent_id, {})[kid] = public_key
-            aid_hash = payload.get("aid_hash")
-            if isinstance(aid_hash, str) and aid_hash:
-                announced_aid_hashes.add(aid_hash)
-
         if message_type == "KEY_ROTATION":
             sender = message.get("sender")
             old_kid = payload.get("old_kid")
@@ -444,31 +439,20 @@ def evaluate_profile_transcript(
 
         if message_type == "KEY_REVOKE":
             target_kid = payload.get("target_kid")
-            target_aid_hash = payload.get("target_aid_hash")
-            if "ID-REVOKE-01" in enabled:
-                known_kids = {
-                    kid for sender_keys in keyring.values() for kid in sender_keys
-                }
-                if not (
-                    isinstance(target_kid, str) and target_kid in known_kids
-                ) and not (
-                    isinstance(target_aid_hash, str)
-                    and target_aid_hash in announced_aid_hashes
-                ):
-                    add("ID-REVOKE-01", "key revocation targets no announced key or AID")
             if isinstance(target_kid, str):
                 revoked_kids.add(target_kid)
-        elif isinstance(signatures, list):
+        elif message_type in {
+            "CONTRACT_PROPOSE",
+            "CONTRACT_ACCEPT",
+            "CONTEXT_AMEND",
+            "RESOLVE_CONFLICT",
+        } and isinstance(signatures, list):
             if any(
                 isinstance(signature, dict)
                 and signature.get("kid") in revoked_kids
                 for signature in signatures
             ):
                 add("ID-REVOKE-01", "a revoked identity key was reused")
-
-        if message_type == "AGENT_MIGRATION" and "ID-MIGRATE-01" in enabled:
-            if payload.get("aid_hash") not in announced_aid_hashes:
-                add("ID-MIGRATE-01", "migration AID was not announced earlier")
 
         if message_type in signature_required_types and (
             not isinstance(signatures, list) or not signatures
@@ -501,16 +485,12 @@ def evaluate_profile_transcript(
                 if object_hash(object_type, value) != digest:
                     add("OR-OBJECT-HASH-01", "object reference hash mismatch")
 
-    if {"PE-REASON-CODES-01", "PE-CONTEXT-HASH-01", "PE-ATTEST-01"} & enabled:
+    if "PE-REASON-CODES-01" in enabled or "PE-CONTEXT-HASH-01" in enabled:
         reason_codes = {
             str(item.get("id"))
             for item in _load_json(ROOT / "registry/policy_reason_codes.json")
             if isinstance(item, dict)
         }
-        eval_result_index: dict[str, str] = {}
-        action_ids: set[str] = set()
-        prior_message_ids: set[str] = set()
-        prior_message_hashes: set[str] = set()
         for message in messages:
             payload = message.get("payload") if isinstance(message.get("payload"), dict) else {}
             if (
@@ -535,41 +515,6 @@ def evaluate_profile_transcript(
                     raw.pop("context_hash", None)
                     if stored != object_hash("evaluation_context", raw):
                         add("PE-CONTEXT-HASH-01", "policy evaluation context hash mismatch")
-            if message.get("message_type") == "POLICY_EVAL_RESULT":
-                eval_id = payload.get("eval_id")
-                message_hash = message.get("message_hash")
-                if isinstance(eval_id, str) and isinstance(message_hash, str):
-                    eval_result_index[eval_id] = message_hash
-            elif message.get("message_type") == "ATTEST_ACTION":
-                action_id = payload.get("action_id")
-                if isinstance(action_id, str) and action_id:
-                    action_ids.add(action_id)
-            elif message.get("message_type") == "POLICY_DECISION_ATTEST" and "PE-ATTEST-01" in enabled:
-                eval_id = payload.get("eval_id")
-                if payload.get("policy_decision_ref") != eval_result_index.get(eval_id):
-                    add("PE-ATTEST-01", "policy decision attestation does not bind the prior result")
-                related_action_id = payload.get("related_action_id")
-                attestation_ref = payload.get("attestation_ref")
-                ref_bound = isinstance(attestation_ref, str) and (
-                    attestation_ref in prior_message_ids
-                    or attestation_ref in prior_message_hashes
-                    or (
-                        attestation_ref.startswith("msgid:")
-                        and attestation_ref[6:] in prior_message_ids
-                    )
-                    or (
-                        attestation_ref.startswith("msghash:")
-                        and attestation_ref[8:] in prior_message_hashes
-                    )
-                )
-                if related_action_id not in action_ids and not ref_bound:
-                    add("PE-ATTEST-01", "policy decision attestation has no prior action evidence")
-            message_id = message.get("message_id")
-            message_hash = message.get("message_hash")
-            if isinstance(message_id, str):
-                prior_message_ids.add(message_id)
-            if isinstance(message_hash, str):
-                prior_message_hashes.add(message_hash)
 
     _validate_capneg(messages, enabled, registered_profiles, add)
     _validate_resume(messages, enabled, add)
@@ -1008,8 +953,6 @@ def _validate_delegated_identity(
         elif message_type == "SUBJECT_BINDING_REVOKE":
             effective = _parse_datetime(payload.get("effective_at"))
             binding_hash = payload.get("binding_hash")
-            if "DI-REVOKE-01" in enabled and binding_hash not in issued:
-                add("DI-REVOKE-01", "binding revocation references no prior binding")
             if isinstance(binding_hash, str) and effective is not None:
                 revoked[binding_hash] = effective
 

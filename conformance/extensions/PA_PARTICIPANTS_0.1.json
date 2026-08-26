@@ -106,7 +106,7 @@
     },
     {
       "test_id": "PA-MEM-01",
-      "description": "Participants must join before leaving and cannot send gated messages before acceptance or after leave"
+      "description": "Participants cannot send gated messages before acceptance or after leave"
     },
     {
       "test_id": "PA-AUTH-01",

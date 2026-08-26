@@ -422,8 +422,8 @@ def test_semantic_parity_inventory_covers_all_current_suite_rows() -> None:
     scenarios = tier1_scenarios()
     inventory = producer_check_inventory(scenarios)
     parity = semantic_parity_inventory()
-    assert len(inventory) == 97
-    assert len(parity) == 19
+    assert len(inventory) == 95
+    assert len(parity) == 18
     assert suite_coverage_errors(scenarios) == []
     assert all(item["parity_evidence"] for item in inventory)
     assert {
@@ -437,7 +437,6 @@ def test_semantic_parity_inventory_covers_all_current_suite_rows() -> None:
         "capneg_channel_properties",
         "policy_reason_codes",
         "policy_context_hash",
-        "policy_attestation",
         "enforcement_sanctions",
         "enforcement_gate_authorization",
         "resume_semantics",
@@ -674,7 +673,7 @@ def test_tck_1_3_is_frozen_and_tck_1_4_is_current(
     ) == FROZEN_TCK_1_3_BUNDLE_MANIFEST_DIGEST
     assert release_policy(PREVIOUS_TCK_RELEASE_ID)["strong_eligible"] is False
     assert release_policy(CURRENT_TCK_RELEASE_ID)["strong_eligible"] is True
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.9.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.10.0"
     for report in external_reports.values():
         assert report["tck_release"]["release_id"] == CURRENT_TCK_RELEASE_ID
         assert _evaluate_report(report)["status"] == "eligible"

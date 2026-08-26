@@ -14,7 +14,7 @@ Refresh the structured status and all generated sections with
 `python scripts/repo_truth.py --write`; `scripts/validate_planning_docs.py` compares tracked
 generated content byte-for-byte with the machine companion.
 
-Recomputed on 2026-08-25 from repository catalogs and the commands listed in
+Recomputed on 2026-08-26 from repository catalogs and the commands listed in
 [Verification basis](#verification-basis). “Shipped” below means present in the repository;
 it does not mean externally adopted, independently interoperable, certified, or production
 mature.
@@ -50,7 +50,7 @@ mature.
 | Reachable external capability marks | 1 | evidence target registry and TCK provenance |
 | Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
 | External binding targets | 2 | `conformance/evidence/targets.json` |
-| Reachable external binding marks | 2 | evidence target registry and AICP-EVIDENCE-TCK-1.9.0 provenance |
+| Reachable external binding marks | 2 | evidence target registry and AICP-EVIDENCE-TCK-1.10.0 provenance |
 | Externally demonstrated bindings | 0 | eligible binding-specific `computed_binding_marks` only |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
 | Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability/binding evidence |
@@ -62,7 +62,7 @@ mature.
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
 | Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 0 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
-| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.9.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.10.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
@@ -112,10 +112,10 @@ mature.
    composition evidence. That external target remains deferred.
 4. **External evidence breadth:** two of 16 registered profiles have full external-IUT
    targets, and three Tier-1 profiles have generalized report-2.2 targets. M62 added one
-   projection-v1 capability target; M65's current generalized release is
-   `AICP-EVIDENCE-TCK-1.9.0`. Exact 1.1.0, 1.4.0, and 1.8.0 reports remain strong-eligible,
-   while frozen 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, and 1.7.0 cannot support a strong claim
-   for their documented defects.
+   projection-v1 capability target; M65's corrected current generalized release is
+   `AICP-EVIDENCE-TCK-1.10.0`. Exact 1.1.0, 1.4.0, and 1.8.0 reports remain strong-eligible,
+   while frozen 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, 1.7.0, and 1.9.0 cannot support a strong
+   claim for their documented defects.
 5. **Transport evidence:** M64 ships repository-owned live loopback HTTP/SSE/WebSocket/WSS
    and MCP stdio evidence. No real independent external binding submission is present.
 6. **Registered message surface:** M65 closes the previously recorded 17-type gap. All 132

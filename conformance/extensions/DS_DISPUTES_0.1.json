@@ -113,11 +113,7 @@
     },
     {
       "test_id": "DS-EVIDENCE-RESOLVE-01",
-      "description": "Dispute evidence_refs must include at least one resolvable msgid:/msghash:/objhash: reference"
-    },
-    {
-      "test_id": "DS-ARBITRATION-01",
-      "description": "Arbitration request/result identifiers bind to the prior challenge and request"
+      "description": "CHALLENGE_ASSERTION evidence_refs must include at least one resolvable msgid:/msghash:/objhash: reference"
     }
   ],
   "compatibility_mark": "AICP-EXT-DISPUTES-0.1"

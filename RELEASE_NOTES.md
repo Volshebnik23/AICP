@@ -85,8 +85,11 @@ tag, package publication, GA declaration, or final RC repackaging.
   have one owner, one canonical payload mapping, owning suite coverage, and an actual
   positive suite-referenced fixture. Five orphan paths were reused and strengthened, six
   positive fixtures were newly added, and no new negative fixture, message ID, protocol
-  mark, or external target was introduced. Evidence TCK 1.8 is frozen historical/eligible;
-  TCK 1.9 is current with report 2.2, trace v4, and Tier-1 consumer counts 26/16/31.
+  mark, or external target was introduced. The correction removes the separate M65
+  semantic engine and non-normative prior-local-state rejections; suite, batch, profile,
+  and generalized evidence paths now share the canonical 0.1 semantic boundary. Evidence
+  TCK 1.8 remains frozen historical/eligible, TCK 1.9 is frozen historical/ineligible,
+  and TCK 1.10 is current with report 2.2, trace v4, and Tier-1 consumer counts 26/16/31.
   Product-IUT v1, IUT TCK 1.1, its targets, case sets, and marks remain unchanged.
 
 ### Current evidence limits

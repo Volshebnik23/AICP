@@ -58,14 +58,17 @@ All notable repo-backed release metadata changes should be recorded here.
   2.2, trace v4, and the exact `BIND-HTTP@0.1` and `BIND-MCP@0.1` external targets.
 - Completed M65 with byte-backed positive-fixture accounting for all 132 registered
   messages. Five existing orphan fixture paths were promoted and strengthened, six new
-  deterministic positive lifecycle fixtures were added, four focused semantic check IDs
-  were introduced, and existing semantic families were extended with hash-valid mutation
-  controls. No new negative fixture, registered message ID, compatibility mark, or external
-  target was added.
-- Froze `AICP-EVIDENCE-TCK-1.8.0` as historical/strong-eligible and registered current
-  `AICP-EVIDENCE-TCK-1.9.0` for the expanded conformance corpus. Report 2.2 and trace v4
-  remain unchanged; Tier-1 consumer counts are now 26 mediated, 16 resumable, and 31
-  delegated.
+  deterministic positive lifecycle fixtures were added, and the correction restored
+  `aicp_conformance_runner.run_suite` as the single suite/batch/profile semantic authority.
+  M65-only prior-local-state rejection rules not imposed by the existing 0.1 RFCs were
+  removed while all pre-existing normative lifecycle checks remained canonical. No new
+  negative fixture, registered message ID, compatibility mark, or external target was added.
+- Froze `AICP-EVIDENCE-TCK-1.8.0` as historical/strong-eligible and
+  `AICP-EVIDENCE-TCK-1.9.0` as historical/strong-ineligible, then registered current
+  `AICP-EVIDENCE-TCK-1.10.0` for the corrected 132/132 corpus. Report 2.2, trace v4, and
+  six target identities remain unchanged; Tier-1 consumer counts are 26 mediated,
+  16 resumable, and 31 delegated. An exact TCK 1.8 report vector reproduced at
+  `110c950ce069f323e084e02a13ce04b23f0c5fa3` is frozen for evaluator regression.
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
   wording so repository presence/internal conformance is not presented as independent
