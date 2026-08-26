@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -407,7 +408,7 @@ def _manifest_for(report: dict) -> dict:
 
 
 def _validate_report(tmp_path: Path, report: dict, manifest: dict | None = None) -> list[str]:
-    package = tmp_path / f"package-{time.time_ns()}"
+    package = Path(tempfile.mkdtemp(prefix="package-", dir=tmp_path))
     reports = package / "reports"
     reports.mkdir(parents=True)
     (reports / "iut.json").write_text(json.dumps(report), encoding="utf-8")
