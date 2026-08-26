@@ -212,7 +212,7 @@ def _set_fact(report: dict, scenario_id: str, name: str, value: object) -> None:
 
 def test_exact_binding_targets_and_current_tck_registry() -> None:
     assert BINDING_TARGET_KEYS == ("BIND-HTTP@0.1", "BIND-MCP@0.1")
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.9.0"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.10.0"
     assert validate_target_registry() == []
     assert validate_release_registry() == []
     for key, mark in EXPECTED_MARKS.items():

@@ -15,8 +15,7 @@ sys.path.insert(0, str(ROOT / "conformance/runner"))
 sys.path.insert(0, str(ROOT / "conformance/evidence"))
 sys.path.insert(0, str(ROOT / "reference/python"))
 
-from aicp_external_evidence_runner import run_evidence  # noqa: E402
-from m65_extension_semantics import run_suite  # noqa: E402
+from aicp_conformance_runner import run_suite  # noqa: E402
 from aicp_ref.hashing import message_hash_from_body  # noqa: E402
 from report_evaluator import evaluate_report  # noqa: E402
 from target_catalog import (  # noqa: E402
@@ -33,15 +32,23 @@ from target_catalog import (  # noqa: E402
     FROZEN_TCK_1_8_TARGET_CATALOG_DIGESTS,
     FROZEN_TCK_1_8_TARGET_REGISTRY_DIGEST,
     FROZEN_TCK_1_8_TARGET_REGISTRY_SCHEMA_DIGEST,
+    FROZEN_TCK_1_9_BUNDLE_MANIFEST_DIGEST,
+    FROZEN_TCK_1_9_RECORD_DIGEST,
+    FROZEN_TCK_1_9_REGISTRY_SNAPSHOT_DIGEST,
+    FROZEN_TCK_1_9_REPORT_SCHEMA_DIGEST,
+    FROZEN_TCK_1_9_RUNNER_BUNDLE_DIGEST,
+    FROZEN_TCK_1_9_TARGET_CATALOG_DIGESTS,
+    FROZEN_TCK_1_9_TARGET_REGISTRY_DIGEST,
+    FROZEN_TCK_1_9_TARGET_REGISTRY_SCHEMA_DIGEST,
     TCK_1_4_RELEASE_ID,
     TCK_1_8_RELEASE_ID,
+    TCK_1_9_RELEASE_ID,
     TCK_RELEASE_ID,
     canonical_digest,
     file_digest,
     release_policy,
     release_record,
     release_snapshot_digest,
-    release_target_entry,
     validate_release_registry,
 )  # noqa: E402
 from validate_message_surface_completion import completion_errors  # noqa: E402
@@ -211,62 +218,10 @@ def _mutate_payload(message_type: str, field: str, value: str):
     ("suite", "fixture", "mutate", "expected_check"),
     [
         (
-            "conformance/extensions/ID_IDENTITY_LC_0.1.json",
-            "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl",
-            _mutate_payload("AGENT_MIGRATION", "aid_hash", "sha256:unknown-aid"),
-            "ID-MIGRATE-01",
-        ),
-        (
-            "conformance/extensions/ID_IDENTITY_LC_0.1.json",
-            "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl",
-            _mutate_payload("KEY_REVOKE", "target_kid", "UNKNOWN-KID"),
-            "ID-REVOKE-01",
-        ),
-        (
-            "conformance/extensions/DS_DISPUTES_0.1.json",
-            "fixtures/extensions/disputes/DS-04_claim_and_arbitration_pass.jsonl",
-            _mutate_payload("ARBITRATION_RESULT", "arbitration_id", "ARB-UNKNOWN"),
-            "DS-ARBITRATION-01",
-        ),
-        (
-            "conformance/extensions/DL_DELEGATION_0.1.json",
-            "fixtures/extensions/delegation/DL-04_delegation_revoke_presence.jsonl",
-            _mutate_payload("DELEGATION_REVOKE", "delegation_id", "D-UNKNOWN"),
-            "DL-REVOKE-01",
-        ),
-        (
-            "conformance/extensions/MP_MARKETPLACE_0.1.json",
-            "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl",
-            _mutate_payload("BID_UPDATE", "bid_id", "bid-unknown"),
-            "MP-BID-01",
-        ),
-        (
             "conformance/extensions/MP_MARKETPLACE_0.1.json",
             "fixtures/extensions/marketplace/MP-10_bid_update_withdraw_award_decline_pass.jsonl",
             _mutate_payload("AWARD_DECLINE", "award_id", "award-unknown"),
             "MP-AWARD-01",
-        ),
-        (
-            "conformance/extensions/PE_POLICY_EVAL_0.1.json",
-            "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
-            _mutate_payload(
-                "POLICY_DECISION_ATTEST", "policy_decision_ref", "sha256:unknown"
-            ),
-            "PE-ATTEST-01",
-        ),
-        (
-            "conformance/extensions/PA_PARTICIPANTS_0.1.json",
-            "fixtures/extensions/participants/PA-04_participant_leave_pass.jsonl",
-            _mutate_payload("PARTICIPANT_LEAVE", "participant_id", "user:unknown"),
-            "PA-MEM-01",
-        ),
-        (
-            "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
-            "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
-            _mutate_payload(
-                "SUBJECT_BINDING_REVOKE", "binding_hash", "sha256:unknown-binding"
-            ),
-            "DI-REVOKE-01",
         ),
         (
             "conformance/extensions/RP_RESPONSIBILITY_0.1.json",
@@ -317,14 +272,6 @@ def test_final_registered_message_surface_is_exactly_complete() -> None:
     assert completion_errors(ROOT) == []
 
 
-def test_m65_extension_semantics_gate_is_green() -> None:
-    from m65_extension_semantics import M65_SUITE_PATHS, extension_semantic_failures
-
-    assert {
-        suite: extension_semantic_failures(ROOT / suite) for suite in M65_SUITE_PATHS
-    } == {suite: [] for suite in M65_SUITE_PATHS}
-
-
 def test_m65_audit_inventory_matches_mechanical_repo_truth() -> None:
     audit = json.loads(
         (ROOT / "docs/process/M65_Message_Surface_Audit.json").read_text(
@@ -364,32 +311,53 @@ def test_m65_audit_inventory_matches_mechanical_repo_truth() -> None:
         assert item["payload_schema_file"] == derived["payload_schema"]["file"]
         assert item["payload_schema_pointer"] == derived["payload_schema"]["pointer"]
         assert item["owning_suite"] in derived["suites"]
-        assert item["remediation"]["fixture"] in derived["positive_fixtures"]
+        assert item["positive_coverage"]["fixture"] in derived["positive_fixtures"]
         assert (ROOT / item["normative_rfc"]).is_file()
-        assert (ROOT / item["remediation"]["generator"]).is_file()
+        assert (ROOT / item["positive_coverage"]["generator"]).is_file()
         for candidate in item["candidate_fixtures_before"]:
             assert (ROOT / candidate).is_file()
         suite = json.loads((ROOT / item["owning_suite"]).read_text(encoding="utf-8"))
         checks = {check["test_id"] for check in suite["checks"]}
-        assert set(item["remediation"]["semantic_checks"]).issubset(checks)
-        assert item["negative_accounting"]["rfc_rule"]
+        assert set(item["positive_coverage"]["semantic_checks"]).issubset(checks)
+        assert item["negative_accounting"]["rfc_basis"]
         assert item["negative_accounting"]["check"] in checks
 
+    audited_changes = {
+        (item["suite"], item["check_id"])
+        for item in audit["semantic_change_audit"]
+    }
+    assert audited_changes == {
+        ("ID-IDENTITY-LC-0.1", "ID-MIGRATE-01"),
+        ("ID-IDENTITY-LC-0.1", "ID-REVOKE-01"),
+        ("DS-DISPUTES-0.1", "DS-EVIDENCE-01"),
+        ("DS-DISPUTES-0.1", "DS-EVIDENCE-RESOLVE-01"),
+        ("DS-DISPUTES-0.1", "DS-ARBITRATION-01"),
+        ("DL-DELEGATION-0.1", "DL-REVOKE-01"),
+        ("MP-MARKETPLACE-0.1", "MP-BID-01"),
+        ("PA-PARTICIPANTS-0.1", "PA-MEM-01"),
+        ("PE-POLICY-EVAL-0.1", "PE-ATTEST-01"),
+        ("DI-DELEGATED-IDENTITY-0.1", "DI-REVOKE-01"),
+    }
+    assert all(
+        item["compatibility_rejection_justified"] is False
+        for item in audit["semantic_change_audit"]
+    )
+
     new_fixtures = {
-        item["remediation"]["fixture"]
+        item["positive_coverage"]["fixture"]
         for item in audit["entries"]
-        if item["remediation"]["kind"] == "new"
+        if item["positive_coverage"]["kind"] == "new"
     }
     reused_fixtures = {
-        item["remediation"]["fixture"]
+        item["positive_coverage"]["fixture"]
         for item in audit["entries"]
-        if item["remediation"]["kind"].startswith("reused")
+        if item["positive_coverage"]["kind"].startswith("reused")
     }
     assert len(new_fixtures) == 6
     assert len(reused_fixtures) == 5
 
 
-def test_tck_18_is_frozen_and_tck_19_is_current() -> None:
+def test_tck_18_and_19_are_frozen_and_tck_110_is_current() -> None:
     frozen = release_record(TCK_1_8_RELEASE_ID)
     assert canonical_digest(frozen) == FROZEN_TCK_1_8_RECORD_DIGEST
     assert (
@@ -423,9 +391,27 @@ def test_tck_18_is_frozen_and_tck_19_is_current() -> None:
         ROOT / "conformance/evidence/live_bindings/live_public_scenario_v1.schema.json"
     ) == FROZEN_TCK_1_8_PUBLIC_SCENARIO_SCHEMA_DIGEST
 
+    frozen_19 = release_record(TCK_1_9_RELEASE_ID)
+    assert canonical_digest(frozen_19) == FROZEN_TCK_1_9_RECORD_DIGEST
+    assert (
+        release_snapshot_digest(TCK_1_9_RELEASE_ID)
+        == FROZEN_TCK_1_9_REGISTRY_SNAPSHOT_DIGEST
+    )
+    assert file_digest(
+        ROOT / "conformance/evidence/evidence_runner_bundle_v1_9.json"
+    ) == FROZEN_TCK_1_9_BUNDLE_MANIFEST_DIGEST
+    assert frozen_19["runner_bundle"]["digest"] == FROZEN_TCK_1_9_RUNNER_BUNDLE_DIGEST
+    assert frozen_19["report_schema"]["content_digest"] == FROZEN_TCK_1_9_REPORT_SCHEMA_DIGEST
+    assert frozen_19["target_registry"]["content_digest"] == FROZEN_TCK_1_9_TARGET_REGISTRY_DIGEST
+    assert frozen_19["target_registry"]["schema_digest"] == FROZEN_TCK_1_9_TARGET_REGISTRY_SCHEMA_DIGEST
+    assert {
+        item["target_key"]: item["target_catalog"]["content_digest"]
+        for item in frozen_19["targets"]
+    } == FROZEN_TCK_1_9_TARGET_CATALOG_DIGESTS
+
     current = release_record(CURRENT_TCK_RELEASE_ID)
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.9.0"
-    assert BUNDLE_MANIFEST_PATH.name == "evidence_runner_bundle_v1_9.json"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.10.0"
+    assert BUNDLE_MANIFEST_PATH.name == "evidence_runner_bundle_v1_10.json"
     assert current["report_schema"]["path"].endswith(
         "external_evidence_report_v2_2.schema.json"
     )
@@ -436,6 +422,7 @@ def test_tck_18_is_frozen_and_tck_19_is_current() -> None:
     assert release_policy(TCK_RELEASE_ID)["strong_eligible"] is True
     assert release_policy(TCK_1_4_RELEASE_ID)["strong_eligible"] is True
     assert release_policy(TCK_1_8_RELEASE_ID)["strong_eligible"] is True
+    assert release_policy(TCK_1_9_RELEASE_ID)["strong_eligible"] is False
     assert release_policy(CURRENT_TCK_RELEASE_ID)["strong_eligible"] is True
 
 
@@ -459,43 +446,18 @@ def test_tier1_catalogs_expand_only_by_new_required_positive_cases() -> None:
     )
 
 
-def test_exact_tck_18_profile_report_remains_eligible() -> None:
-    report = run_evidence(
-        [
-            sys.executable,
-            "conformance/evidence/product_profile_fake_adapters.py",
-            "--mode",
-            "external_good",
-        ],
-        target="AICP-MEDIATED-BLOCKING@0.1",
-        mode="full-profile",
-        timestamp="2026-08-25T00:00:00Z",
+def test_exact_historical_tck_18_report_bytes_remain_eligible() -> None:
+    path = (
+        ROOT
+        / "conformance/evidence/historical_reports/AICP-EVIDENCE-TCK-1.8.0-session-state-projection.json"
     )
-    release = release_record(TCK_1_8_RELEASE_ID)
-    entry = release_target_entry(release, "AICP-MEDIATED-BLOCKING@0.1")
-    report["case_results"] = [
-        item
-        for item in report["case_results"]
-        if item["case_id"] in set(entry["mandatory_case_ids"])
-    ]
-    report["runner"]["source_revision"] = release["runner_bundle"]["digest"]
-    report["tck_release"] = {
-        "release_id": release["release_id"],
-        "registry_digest": release_snapshot_digest(release["release_id"]),
-        "target_registry_digest": release["target_registry"]["content_digest"],
-        "target_registry_schema_digest": release["target_registry"]["schema_digest"],
-        "target_catalog_digest": entry["target_catalog"]["content_digest"],
-        "report_schema_digest": release["report_schema"]["content_digest"],
-        "runner_bundle_digest": release["runner_bundle"]["digest"],
-    }
-    report["target"]["target_catalog_digest"] = entry["target_catalog"][
-        "content_digest"
-    ]
-    report["required_suites"] = entry["required_suites"]
-    report["input_artifacts"] = entry["required_input_artifacts"]
+    assert file_digest(path) == (
+        "sha256:8569bd2f403740a785ee6963f8aa8d6e507f5a11c0b8044c62cdf8021344b6d1"
+    )
+    report = json.loads(path.read_text(encoding="utf-8"))
     evaluation = evaluate_report(
         report,
-        expected_implementation_id="test-only-product-profile-external",
-        expected_implementation_version="1.0.0",
+        expected_implementation_id="fictional-projection-v1-test-adapter",
+        expected_implementation_version="1.0.0-test",
     )
     assert evaluation["status"] == "eligible", evaluation
