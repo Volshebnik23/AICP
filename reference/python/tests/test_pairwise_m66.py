@@ -24,7 +24,7 @@ from interop_submission_validation import (  # noqa: E402
     evaluate_strong_report_evidence,
 )
 from pairwise_process import MAX_STDERR_BYTES, JsonLineProcess, ProcessBoundaryError, allowlisted_environment  # noqa: E402
-from pairwise_report_evaluator import evaluate_pairwise_report  # noqa: E402
+from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402
 
 
 def _run(command: list[str]) -> None:
@@ -73,7 +73,7 @@ def pairwise_artifacts(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Pa
             "--mode", "full-binding", "--out", str(paths[f"{side}_binding"]),
         ])
     _run([
-        sys.executable, "interop/pairwise/aicp_pairwise_runner.py",
+        sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_1.py",
         "--peer-a-control-cmd-json", _command_json([sys.executable, str(python_peer), "pairwise-control"]),
         "--peer-a-server-cmd-json", _command_json([sys.executable, str(python_peer), "pairwise-server"]),
         "--peer-a-profile-report", str(paths["a_profile"]), "--peer-a-binding-report", str(paths["a_binding"]),
@@ -216,6 +216,16 @@ def test_public_pairwise_evaluator_and_reciprocal_identity(pairwise_artifacts: d
     assert forward.status == reverse.status == "eligible"
     assert forward.eligible_pairwise_relations == reverse.eligible_pairwise_relations
     assert forward.eligible_marks == reverse.eligible_marks == ()
+
+
+def test_public_pairwise_1_0_report_is_historical_strong_ineligible() -> None:
+    vector = PAIRWISE / "historical_vectors" / "AICP-PAIRWISE-TCK-1.0.0"
+    report = _load(vector / "joint.json")
+    result = evaluate_strong_report_evidence(vector / "submission.json", _manifest(report))
+    assert result.status == "rejected"
+    assert result.eligible_pairwise_relations == ()
+    assert result.eligible_marks == ()
+    assert any("PAIRWISE_RELEASE_HISTORICAL_INELIGIBLE" in error for error in result.errors)
 
 
 def test_builder_creates_and_validates_five_report_pairwise_package(

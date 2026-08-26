@@ -199,7 +199,7 @@ Typical shape:
 - example/template evidence illustrating the reserved packaging vocabulary.
 
 Real pairwise publication supports exactly `AICP-BASE@0.1+BIND-MCP@0.1` through
-`AICP-PAIRWISE-TCK-1.0.0`. Missing or invalid joint evidence fails closed with
+`AICP-PAIRWISE-TCK-1.1.0`; TCK 1.0 is historical/strong-ineligible. Missing or invalid joint evidence fails closed with
 `PAIRWISE_JOINT_EVIDENCE_REQUIRED`. Two independent reports and a summary are insufficient.
 The dedicated joint path proves one shared report, both exact builds, cross-consumption in every required direction,
 artifact/transcript digests, authenticated-profile verification material, and no degraded or

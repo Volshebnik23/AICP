@@ -1,0 +1,2310 @@
+{
+  "authority_format_version": "1.0",
+  "profile": {
+    "report_schema_path": "conformance/iut/iut_report_v1.schema.json",
+    "report_format_version": "1.0",
+    "report_type": "aicp.external_iut",
+    "execution_mode": "full-profile",
+    "runner": {
+      "name": "aicp-iut-runner",
+      "version": "1.1",
+      "source_revision": "sha256:6921d8f4a0a7577973e35a4dce4f892894a28c371316568dea89ca034d701673"
+    },
+    "tck_release": {
+      "release_id": "AICP-IUT-TCK-1.1.0",
+      "registry_digest": "sha256:f89c7dc476041f79558157bb6d0178d7b43158913a2dbe5ee0191d017903a25e",
+      "runner_bundle_digest": "sha256:6921d8f4a0a7577973e35a4dce4f892894a28c371316568dea89ca034d701673",
+      "case_catalog_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+    },
+    "required_suites": [
+      {
+        "suite_id": "CT-CORE-0.1",
+        "suite_version": "0.1.0-dev",
+        "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+      }
+    ],
+    "input_artifacts": [
+      {
+        "artifact_id": "CT_CORE_0.1",
+        "path": "conformance/core/CT_CORE_0.1.json",
+        "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+      },
+      {
+        "artifact_id": "adapter_protocol.schema",
+        "path": "conformance/iut/adapter_protocol.schema.json",
+        "content_digest": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
+      },
+      {
+        "artifact_id": "cases",
+        "path": "conformance/iut/cases.json",
+        "content_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+      },
+      {
+        "artifact_id": "iut_report_v1.schema",
+        "path": "conformance/iut/iut_report_v1.schema.json",
+        "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+      },
+      {
+        "artifact_id": "PF_AICP_BASE_0.1",
+        "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
+        "content_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
+      },
+      {
+        "artifact_id": "unicode_codepoint_key_order",
+        "path": "conformance/vectors/unicode_codepoint_key_order.json",
+        "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+      },
+      {
+        "artifact_id": "GT-01_happy_path_signed",
+        "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+        "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+      },
+      {
+        "artifact_id": "GT-02_conflict_choose_signed",
+        "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+        "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+      },
+      {
+        "artifact_id": "GT-04_consent_required_and_grant",
+        "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+        "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+      },
+      {
+        "artifact_id": "GT-05_consent_revoke",
+        "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+        "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+      },
+      {
+        "artifact_id": "GT-06_unknown_base_and_resync",
+        "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+        "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+      },
+      {
+        "artifact_id": "GT-07_invalid_signature_reject",
+        "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+        "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+      },
+      {
+        "artifact_id": "GT-08_error_minimal",
+        "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+        "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+      },
+      {
+        "artifact_id": "GT-08_replay_duplicate_message_id",
+        "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+        "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+      },
+      {
+        "artifact_id": "GT-09_missing_prev_msg_hash_expected_fail",
+        "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+        "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+      },
+      {
+        "artifact_id": "GT-11_empty_contract_id_expected_fail",
+        "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+        "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+      },
+      {
+        "artifact_id": "GT_public_keys",
+        "path": "fixtures/keys/GT_public_keys.json",
+        "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+      }
+    ],
+    "compatibility_marks": [
+      "AICP-Profile-BASE-0.1"
+    ],
+    "case_ids": [
+      "IUT-CATALOG-COVERAGE-01",
+      "IUT-DESCRIBE-01",
+      "AICP-JCS-UNICODE-KEY-ORDER-01",
+      "BASE-PRODUCER-HAPPY",
+      "BASE-PRODUCER-CONFLICT",
+      "BASE-PRODUCER-CONSENT-GRANT",
+      "BASE-PRODUCER-CONSENT-REVOKE",
+      "BASE-PRODUCER-RECOVERY",
+      "BASE-PRODUCER-ERROR",
+      "BASE-CORE-GT-01",
+      "BASE-CORE-GT-02",
+      "BASE-CORE-GT-04",
+      "BASE-CORE-GT-05",
+      "BASE-CORE-GT-06",
+      "BASE-CORE-GT-07",
+      "BASE-CORE-GT-08",
+      "BASE-CORE-GT-09",
+      "BASE-CORE-GT-10",
+      "BASE-CORE-GT-11",
+      "IUT-DESCRIBE-STABILITY-01",
+      "IUT-PROFILE-SUPPORT-01"
+    ],
+    "generated_artifact_ids": [
+      "BASE-PRODUCER-HAPPY",
+      "BASE-PRODUCER-CONFLICT",
+      "BASE-PRODUCER-CONSENT-GRANT",
+      "BASE-PRODUCER-CONSENT-REVOKE",
+      "BASE-PRODUCER-RECOVERY",
+      "BASE-PRODUCER-ERROR"
+    ],
+    "resolved_release_id": "AICP-IUT-TCK-1.1.0",
+    "release_record": {
+      "release_id": "AICP-IUT-TCK-1.1.0",
+      "status": "experimental-post-uat",
+      "case_catalog": {
+        "path": "conformance/iut/cases.json",
+        "content_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+      },
+      "runner_bundle": {
+        "paths": [
+          "conformance/iut/_iut_evaluator.py",
+          "conformance/iut/aicp_iut_catalog.py",
+          "conformance/iut/aicp_iut_runner.py",
+          "conformance/runner/_runner_alert_checks.py",
+          "conformance/runner/_runner_context.py",
+          "conformance/runner/_runner_core_checks.py",
+          "conformance/runner/_runner_enforcement_checks.py",
+          "conformance/runner/_runner_execution_checks.py",
+          "conformance/runner/_runner_io.py",
+          "conformance/runner/_runner_media_checks.py",
+          "conformance/runner/_runner_provenance.py",
+          "conformance/runner/_runner_reporting.py",
+          "conformance/runner/_runner_state_projection_checks.py",
+          "conformance/runner/_suite_catalog.py",
+          "conformance/runner/aicp_batch_runner.py",
+          "conformance/runner/aicp_conformance_runner.py",
+          "conformance/runner/aicp_profile_runner.py",
+          "reference/python/aicp_ref/__init__.py",
+          "reference/python/aicp_ref/chain.py",
+          "reference/python/aicp_ref/hashing.py",
+          "reference/python/aicp_ref/jcs.py",
+          "reference/python/aicp_ref/session_state.py",
+          "reference/python/aicp_ref/signatures.py",
+          "reference/python/aicp_ref/validate.py"
+        ],
+        "digest": "sha256:6921d8f4a0a7577973e35a4dce4f892894a28c371316568dea89ca034d701673"
+      },
+      "profiles": {
+        "AICP-BASE@0.1": {
+          "profile_catalog": {
+            "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
+            "content_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/iut/adapter_protocol.schema.json",
+              "content_digest": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
+            },
+            {
+              "path": "conformance/iut/cases.json",
+              "content_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+            },
+            {
+              "path": "conformance/iut/iut_report_v1.schema.json",
+              "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+            },
+            {
+              "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
+              "content_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
+            },
+            {
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+              "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+              "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+              "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+              "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+              "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+              "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+              "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+              "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+              "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+              "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+            },
+            {
+              "path": "fixtures/keys/GT_public_keys.json",
+              "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+            }
+          ]
+        },
+        "AICP-AUTHENTICATED-BASE@0.1": {
+          "profile_catalog": {
+            "path": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",
+            "content_digest": "sha256:1bb2ed7493f7cd2bc5356a27ed7222e9747af119d1f8c7df569bf3e54f909152"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json",
+              "content_digest": "sha256:b24849f465ea3690e99a8e1cb99ea5a1c893ef0239ca8f40d326c3d608f5f0a4"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/iut/adapter_protocol.schema.json",
+              "content_digest": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
+            },
+            {
+              "path": "conformance/iut/cases.json",
+              "content_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+            },
+            {
+              "path": "conformance/iut/iut_report_v1.schema.json",
+              "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+            },
+            {
+              "path": "conformance/profiles/PF_AICP_AUTHENTICATED_BASE_0.1.json",
+              "content_digest": "sha256:1bb2ed7493f7cd2bc5356a27ed7222e9747af119d1f8c7df569bf3e54f909152"
+            },
+            {
+              "path": "conformance/security/AUTH_AUTHENTICATED_MESSAGES_0.1.json",
+              "content_digest": "sha256:b24849f465ea3690e99a8e1cb99ea5a1c893ef0239ca8f40d326c3d608f5f0a4"
+            },
+            {
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            },
+            {
+              "path": "fixtures/keys/GT_public_keys.json",
+              "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-01_valid_sender_signed.jsonl",
+              "content_digest": "sha256:9e4981057f50a505c0698a2f45a1c059961bf894099662990bb5091d94f3ac0b"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-02_valid_multiple_signatures.jsonl",
+              "content_digest": "sha256:d75516ba0174605c6bd7767a55443cd60b87ebb68a9964afe5ee71f069ef0eb3"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-03_unsigned_expected_fail.jsonl",
+              "content_digest": "sha256:f63f0fde3af449c89644766f20c9358180f579e3a931610a7bc5a1f188cff88e"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-04_empty_signatures_expected_fail.jsonl",
+              "content_digest": "sha256:d19b7fd26538e46a106d8356ed26c17cc98828d76994f7d57b7d131d442161eb"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-05_missing_message_hash_expected_fail.jsonl",
+              "content_digest": "sha256:97d897e66e947f9ca97fc03126af4b9052362ebc3502146a8c9b7a4b492a5274"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-06_stale_message_hash_expected_fail.jsonl",
+              "content_digest": "sha256:5f26f88cca39265e004651a36631aa95fc235d675e21948863352b6ab3e2c2cc"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-07_signature_object_hash_mismatch_expected_fail.jsonl",
+              "content_digest": "sha256:0cfbc9501f188f0e405fce5a42b33a583e136505d3e23652603e1998d9a51933"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-08_signature_object_type_expected_fail.jsonl",
+              "content_digest": "sha256:eed31078fe639985534d5c1ea9d49a5cba6f242c67e1aa445e9b92ea67da893b"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-09_no_sender_signature_expected_fail.jsonl",
+              "content_digest": "sha256:30fa48424217d4ec59a4fd3639fbf666b6ab04a9fe91d3087b83fdbd8c092652"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-10_kid_mismatch_expected_fail.jsonl",
+              "content_digest": "sha256:38aac4ebb16a6f194b38eaabda672de8954e391d060823e874e501ae62199524"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-11_unknown_signer_key_expected_fail.jsonl",
+              "content_digest": "sha256:a6cc5225f19ce248ef3364dd396a6e5a039651f805f5d100c908265bcce636e9"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl",
+              "content_digest": "sha256:60f179309bfe21cfa22069e85208193f0d1ea56f7d5f55ad4a184bab91853166"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl",
+              "content_digest": "sha256:4137d86993f37dfed2bd9209afe97d32c75ecaa812c261434eda0394a7e73ab7"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl",
+              "content_digest": "sha256:36e8f52bfa3aa27704235cbf6304122f2bf2bb9921984371ab38ba9f0a194395"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-01.jsonl",
+              "content_digest": "sha256:9e4981057f50a505c0698a2f45a1c059961bf894099662990bb5091d94f3ac0b"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-02.jsonl",
+              "content_digest": "sha256:980e58d6d3d3cbf6b83344578c94ad1107aad20088fa951f05ca2f737252679a"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-04.jsonl",
+              "content_digest": "sha256:fdb0fdc3c17c573d101eacd428bb77471ef389ee600969c4bb8ce42558ab1084"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-05.jsonl",
+              "content_digest": "sha256:e219e0073504b7bd3eb043649aeaa2729a54f173e26108447620325a5e45178d"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-06.jsonl",
+              "content_digest": "sha256:d313da93eb439a95144cccda76d0cd1920d73be1f71d27f3b34142202517289a"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-07.jsonl",
+              "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-08.jsonl",
+              "content_digest": "sha256:8b2a7424f3c4ed419a89b56c3e3040191825eafbd778a0647d2862526ca07dee"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-09.jsonl",
+              "content_digest": "sha256:a90064303bd084a604f36f8e454c2d79a0d6bfc8b4f9779406644f5743fda6a9"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-10.jsonl",
+              "content_digest": "sha256:ab74ff57f3be352e0964434e26b4af634be7fd1cb059da76380cefa01eb7969f"
+            },
+            {
+              "path": "fixtures/security/authenticated_base/core/AB-CORE-GT-11.jsonl",
+              "content_digest": "sha256:6c1ca50810f7f5e2cfff561500f2e1f3bab3686a5297cacd1c2d2f3123599ed4"
+            }
+          ]
+        }
+      }
+    },
+    "suite": {
+      "suite_id": "AICP-IUT-TCK",
+      "suite_version": "1.1.0-experimental",
+      "suite_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+    },
+    "profile": {
+      "profile_id": "AICP-BASE",
+      "profile_version": "0.1",
+      "profile_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
+    },
+    "consumer_observations": {
+      "BASE-CORE-GT-01": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-02": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-04": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-05": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-06": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-07": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-08": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-09": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-10": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      },
+      "BASE-CORE-GT-11": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    }
+  },
+  "binding": {
+    "report_schema_path": "conformance/evidence/external_evidence_report_v2_2.schema.json",
+    "report_format_version": "2.2",
+    "report_type": "aicp.external_evidence",
+    "execution_mode": "full-binding",
+    "runner": {
+      "name": "aicp-external-evidence-runner",
+      "version": "2.2",
+      "source_revision": "sha256:77498e0b1801a2fdc94ebc7947fe3f9df5395332ef272f49ce7cecb6050ceed0"
+    },
+    "tck_release": {
+      "release_id": "AICP-EVIDENCE-TCK-1.10.0",
+      "registry_digest": "sha256:7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc",
+      "target_registry_digest": "sha256:6aaa954733282583cd32311956af00ef6599f984af99e09f7d330c479f50924b",
+      "target_registry_schema_digest": "sha256:2ce885d972041e631fc67d7a39fa8dbe54d04e123e6277ead6a4accc3b63020f",
+      "target_catalog_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651",
+      "report_schema_digest": "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28",
+      "runner_bundle_digest": "sha256:77498e0b1801a2fdc94ebc7947fe3f9df5395332ef272f49ce7cecb6050ceed0"
+    },
+    "required_suites": [
+      {
+        "suite_id": "TB-MCP-0.1",
+        "suite_version": "0.1.0-dev",
+        "path": "conformance/bindings/TB_MCP_0.1.json",
+        "suite_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+      }
+    ],
+    "input_artifacts": [
+      {
+        "path": "conformance/bindings/TB_MCP_0.1.json",
+        "content_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+      },
+      {
+        "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+        "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+      },
+      {
+        "path": "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+        "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+      },
+      {
+        "path": "conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+        "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+      },
+      {
+        "path": "conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+        "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+      },
+      {
+        "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+        "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+      },
+      {
+        "path": "docs/bindings/RFC_BIND_MCP.md",
+        "content_digest": "sha256:2fe13f35093df8397f55cc98cae02a84a684d576b3ffa60fcf2f74e00b67a180"
+      },
+      {
+        "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
+        "content_digest": "sha256:ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
+      },
+      {
+        "path": "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
+        "content_digest": "sha256:a3ce2f2e8a8b54279f90b504762c762dcaff4f0640767b490fdd7a27fb52c3d8"
+      },
+      {
+        "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
+        "content_digest": "sha256:b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+      },
+      {
+        "path": "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json",
+        "content_digest": "sha256:dc57a4f1bda6ac5328cccff10c2e1327bc6fc26db26bb348c1c4d6383e47d8eb"
+      },
+      {
+        "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+        "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+      },
+      {
+        "path": "registry/message_types.json",
+        "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+      },
+      {
+        "path": "registry/transport_bindings.json",
+        "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+      },
+      {
+        "path": "schemas/bindings/bind-mcp.schema.json",
+        "content_digest": "sha256:938816c333cc849c9ce0da866b30a27bb6b65e47bc0afd17dbc3f9be6b241220"
+      },
+      {
+        "path": "schemas/core/aicp-core-message.schema.json",
+        "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+      }
+    ],
+    "compatibility_marks": [
+      "AICP-BIND-MCP-0.1"
+    ],
+    "case_ids": [
+      "EVIDENCE-TARGET-CATALOG-01",
+      "EVIDENCE-TCK-PROVENANCE-01",
+      "EVIDENCE-RUNNER-WORKTREE-01",
+      "EVIDENCE-LIVE-SERVER-ROLE-01",
+      "EVIDENCE-LIVE-CLIENT-ROLE-01",
+      "EVIDENCE-LIVE-SUBJECT-01",
+      "EVIDENCE-LIVE-TRACE-SCHEMA-01",
+      "EVIDENCE-LIVE-TRACE-EVALUATION-01",
+      "EVIDENCE-LIVE-DETERMINISM-01",
+      "EVIDENCE-TARGET-SUPPORT-01"
+    ],
+    "generated_artifact_ids": [
+      "LIVE-BINDING-TRACE-BIND-MCP-0.1"
+    ],
+    "resolved_release_id": "AICP-EVIDENCE-TCK-1.10.0",
+    "release_snapshot_digest": "sha256:7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc",
+    "release_record": {
+      "release_id": "AICP-EVIDENCE-TCK-1.10.0",
+      "status": "experimental",
+      "report_schema": {
+        "path": "conformance/evidence/external_evidence_report_v2_2.schema.json",
+        "content_digest": "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+      },
+      "target_registry": {
+        "path": "conformance/evidence/targets.json",
+        "schema_path": "conformance/evidence/target_registry.schema.json",
+        "schema_digest": "sha256:2ce885d972041e631fc67d7a39fa8dbe54d04e123e6277ead6a4accc3b63020f",
+        "content_digest": "sha256:6aaa954733282583cd32311956af00ef6599f984af99e09f7d330c479f50924b"
+      },
+      "runner_bundle": {
+        "manifest_path": "conformance/evidence/evidence_runner_bundle_v1_10.json",
+        "manifest_digest": "sha256:c61e9f4a1e384bcd435765d1457223b2cae1035c62686fedaa7101681d19919b",
+        "paths": [
+          "conformance/evidence/adapter_process.py",
+          "conformance/evidence/aicp_external_evidence_runner.py",
+          "conformance/evidence/aicp_live_binding_runner.py",
+          "conformance/evidence/evidence_identifier_rules.py",
+          "conformance/evidence/live_bindings/__init__.py",
+          "conformance/evidence/live_bindings/live_binding_handler.py",
+          "conformance/evidence/live_bindings/live_binding_process.py",
+          "conformance/evidence/live_bindings/live_binding_trace.py",
+          "conformance/evidence/live_bindings/live_http_capture.py",
+          "conformance/evidence/live_bindings/live_http_transport.py",
+          "conformance/evidence/live_bindings/live_mcp_capture.py",
+          "conformance/evidence/live_bindings/live_mcp_transport.py",
+          "conformance/evidence/live_bindings/live_public_scenarios.py",
+          "conformance/evidence/live_bindings/live_tls.py",
+          "conformance/evidence/live_bindings/live_trace_evaluator.py",
+          "conformance/evidence/live_bindings/live_trace_normalization.py",
+          "conformance/evidence/producer_payload_schema_router.py",
+          "conformance/evidence/producer_suite_semantics.py",
+          "conformance/evidence/product_profile_handler.py",
+          "conformance/evidence/profile_transcript_evaluator.py",
+          "conformance/evidence/projection_v1_handler.py",
+          "conformance/evidence/report_evaluator.py",
+          "conformance/evidence/target_catalog.py",
+          "conformance/evidence/target_handlers.py",
+          "conformance/runner/_runner_context.py",
+          "reference/python/aicp_ref/__init__.py",
+          "reference/python/aicp_ref/chain.py",
+          "reference/python/aicp_ref/hashing.py",
+          "reference/python/aicp_ref/jcs.py",
+          "reference/python/aicp_ref/signatures.py",
+          "reference/python/aicp_ref/validate.py"
+        ],
+        "digest": "sha256:77498e0b1801a2fdc94ebc7947fe3f9df5395332ef272f49ce7cecb6050ceed0"
+      },
+      "targets": [
+        {
+          "target_key": "aicp.session_state_projection@v1",
+          "handler_id": "projection_v1",
+          "expected_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
+          "target_catalog": {
+            "path": "conformance/evidence/session_state_projection_v1_target.json",
+            "content_digest": "sha256:b1674c1d1a6f211e115d9c0f6a2e43eaf03e3b7e3c6130682342ff31c451ab20"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+              "suite_id": "OR-SESSION-STATE-PROJECTION-V1",
+              "suite_version": "1.0.0-experimental",
+              "suite_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/evidence/projection_v1_expectations.json",
+              "content_digest": "sha256:e75d8a325f587add0bd9b6883edd8f12308676c9f4cf1c280dcda18077fc628a"
+            },
+            {
+              "path": "conformance/evidence/projection_v1_producer_scenario.json",
+              "content_digest": "sha256:07aa03727c5653b8f54ede45a1b562dde977678f581d8868bb71f0b35f152d99"
+            },
+            {
+              "path": "conformance/evidence/projection_v1_producer_scenario.schema.json",
+              "content_digest": "sha256:7be1ee597e6ce67e80df0e926897ff31f72b6e18f6fecd053e0739ea8134054a"
+            },
+            {
+              "path": "conformance/evidence/projection_v1_producer_transcript.json",
+              "content_digest": "sha256:4839e2f89a891cc64ac8b3329c76feff6375caadd2d3e95a6e32412980679394"
+            },
+            {
+              "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
+              "content_digest": "sha256:9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8"
+            },
+            {
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
+              "content_digest": "sha256:e9945fbdcadad69868677efae3b7d68fc8e491086df8e80a824222c392c8049c"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-02_session_mismatch_expected_fail.jsonl",
+              "content_digest": "sha256:6fdd749cc8486ad5d6c4a4ab0c1aa3390cd04ee913ef418004e8a483b2dd5d6a"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-03_contract_mismatch_expected_fail.jsonl",
+              "content_digest": "sha256:2dc99fb36ac8b0e29e0e0a6ac2092474ace8adbfde220b88333dd877282c0baf"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-04_projection_hash_mismatch_expected_fail.jsonl",
+              "content_digest": "sha256:ca1f7f7aa31be5813f1f8d2b0784964fe6642827462a0a7eb4e9b7fc86e9da5c"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-05_malformed_contract_ref_expected_fail.jsonl",
+              "content_digest": "sha256:eebe285116043e2d5ca891db0a984212cc7a4091c43f5cd8308f412c66a9e80d"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-06_unregistered_profile_expected_fail.jsonl",
+              "content_digest": "sha256:9de12d57aa7cdc5080df275b8d64f6e9b00276347a9affb112fc3f6e02dd6e72"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-07_invalid_extension_expected_fail.jsonl",
+              "content_digest": "sha256:03d5442c9d3baa5354a1b72d4e68ac9d4677b6868c2b113065737c04d5686456"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-08_active_head_mismatch_expected_fail.jsonl",
+              "content_digest": "sha256:a17819ff0042f35e59e601d5bfcfde89371008fc5ba1427062327ebc8a1507ae"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-09_invalid_evidence_ref_expected_fail.jsonl",
+              "content_digest": "sha256:def41a834567cedd8aa92482d1e495efda87394eadd9ebc95a98e78349a533bc"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-10_contradictory_state_expected_fail.jsonl",
+              "content_digest": "sha256:bd75a8bd1181772dfeef2f8b967efc18e50ab42f99106b4ef707509439cc8d06"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-11_unbound_as_of_expected_fail.jsonl",
+              "content_digest": "sha256:d7cf6f83229e0544590d6657cef39dd9e16021833a94bba7480d44c0941e9acb"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/state_projection_v1/SP-12_malformed_as_of_expected_fail.jsonl",
+              "content_digest": "sha256:4154326a7a1e7b598239b04a06802b3a9d684df320f73a629bd533fd17354d28"
+            },
+            {
+              "path": "registry/aicp_profiles.json",
+              "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+            },
+            {
+              "path": "registry/extension_ids.json",
+              "content_digest": "sha256:665f107066bb9a4c47e493cc0b3d9d07747d15e7cdab76a3b8b9177b0256f10a"
+            },
+            {
+              "path": "schemas/core/aicp-core-message.schema.json",
+              "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+            },
+            {
+              "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+              "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+            }
+          ],
+          "canonicalization_vectors": [
+            {
+              "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            }
+          ],
+          "mandatory_producer_ids": [
+            "EVIDENCE-PRODUCER-SP-01"
+          ],
+          "mandatory_consumer_ids": [
+            "EVIDENCE-CONSUMER-SP-01",
+            "EVIDENCE-CONSUMER-SP-02",
+            "EVIDENCE-CONSUMER-SP-03",
+            "EVIDENCE-CONSUMER-SP-04",
+            "EVIDENCE-CONSUMER-SP-05",
+            "EVIDENCE-CONSUMER-SP-06",
+            "EVIDENCE-CONSUMER-SP-07",
+            "EVIDENCE-CONSUMER-SP-08",
+            "EVIDENCE-CONSUMER-SP-09",
+            "EVIDENCE-CONSUMER-SP-10",
+            "EVIDENCE-CONSUMER-SP-11",
+            "EVIDENCE-CONSUMER-SP-12"
+          ],
+          "mandatory_case_ids": [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-RUNNER-WORKTREE-01",
+            "EVIDENCE-DESCRIBE-START-01",
+            "AICP-JCS-UNICODE-KEY-ORDER-01",
+            "EVIDENCE-PRODUCER-SP-01",
+            "EVIDENCE-CONSUMER-SP-01",
+            "EVIDENCE-CONSUMER-SP-02",
+            "EVIDENCE-CONSUMER-SP-03",
+            "EVIDENCE-CONSUMER-SP-04",
+            "EVIDENCE-CONSUMER-SP-05",
+            "EVIDENCE-CONSUMER-SP-06",
+            "EVIDENCE-CONSUMER-SP-07",
+            "EVIDENCE-CONSUMER-SP-08",
+            "EVIDENCE-CONSUMER-SP-09",
+            "EVIDENCE-CONSUMER-SP-10",
+            "EVIDENCE-CONSUMER-SP-11",
+            "EVIDENCE-CONSUMER-SP-12",
+            "EVIDENCE-DESCRIBE-STABILITY-01",
+            "EVIDENCE-TARGET-SUPPORT-01"
+          ]
+        },
+        {
+          "target_key": "AICP-MEDIATED-BLOCKING@0.1",
+          "handler_id": "product_profile_v01",
+          "expected_mark": "AICP-Profile-MEDIATED-BLOCKING-0.1",
+          "target_catalog": {
+            "path": "conformance/evidence/mediated_blocking_target.json",
+            "content_digest": "sha256:b05ee4fdc5779e7c41710d7cee4c8912e6dbe03cd57c270027f7ddb8c6ef007c"
+          },
+          "profile_catalog": {
+            "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json",
+            "content_digest": "sha256:6cee6100ed6fb358d83cd1e04b5242da0aeb43239d50ecbf21db7b685fee3fca"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "suite_id": "CT-CORE-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+              "suite_id": "CN-CAPNEG-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+            },
+            {
+              "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+              "suite_id": "PE-POLICY-EVAL-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:486a86b7cb0c3f8bc6b0fecc6c20dc853fd8e0a68bd334b6319839459739b0f6"
+            },
+            {
+              "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+              "suite_id": "ENF-ENFORCEMENT-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/evidence/delegated_identity_producer_scenarios.json",
+              "content_digest": "sha256:2e9a8ef25c2f4c59f7400785b2ef37311653a93878df1848df0eb1afaae523d5"
+            },
+            {
+              "path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
+              "content_digest": "sha256:28d2e19bc0d9962be955ae60b69eecfc97e7123b50da8b2afc3a7395bc3868d0"
+            },
+            {
+              "path": "conformance/evidence/product_profile_consumer_expectations.json",
+              "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
+            },
+            {
+              "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
+              "content_digest": "sha256:44ce01841f4a07431c5638e84e59d1d4f3e7f3b70386bacc7f789b0e71418ace"
+            },
+            {
+              "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
+              "content_digest": "sha256:2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
+            },
+            {
+              "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+              "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+            },
+            {
+              "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+              "content_digest": "sha256:7a28d12febf6036124f74923993ce2da58dddbb1417283f26038d723d61cce3f"
+            },
+            {
+              "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+              "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+            },
+            {
+              "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+              "content_digest": "sha256:1ae63ca6976a1cc8fe79da837ee2a3205d6c3328296c588488ec5aeccb626bec"
+            },
+            {
+              "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+              "content_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+            },
+            {
+              "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+              "content_digest": "sha256:486a86b7cb0c3f8bc6b0fecc6c20dc853fd8e0a68bd334b6319839459739b0f6"
+            },
+            {
+              "path": "conformance/extensions/RS_RESUME_0.1.json",
+              "content_digest": "sha256:513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
+            },
+            {
+              "path": "conformance/profiles/PF_AICP_MEDIATED_BLOCKING_0.1.json",
+              "content_digest": "sha256:6cee6100ed6fb358d83cd1e04b5242da0aeb43239d50ecbf21db7b685fee3fca"
+            },
+            {
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
+              "content_digest": "sha256:da612d4ccbc99b97344a5b85836ef7466c661275428cf1f03ca93a6a2c75259e"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
+              "content_digest": "sha256:1fb4d08f16a51338fc727efc6ea62bde74d2495c9d5bf3c4363b9d153778ec39"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+              "content_digest": "sha256:0e858fa9f4da695760e92da55a0e28826d30a893ac51ab083ba4eb8eb29222aa"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+              "content_digest": "sha256:d702ba121282838448a6dbd0b26fb422b426eb888e6e680654600f326fab5e58"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+              "content_digest": "sha256:b980293a3f6d13b1ef1621fa160c81daf8d04ffc974cef84db2e1cb6484a238e"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+              "content_digest": "sha256:1541b934996b73a4047568ab22ba9a128ae983d02a5437805ae829a086c69fe9"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+              "content_digest": "sha256:250bc11684fa3b1c3cedef0930c464b82574397debd46ab86518ad90ab5c4f03"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+              "content_digest": "sha256:64698a10d7e0072a186c39b496eb583f120da606f85de366c5e84cab492c6e67"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+              "content_digest": "sha256:f44fe65e0ebcea59b053fd4bbde5ab451eb43a7b82ecbcc9d8fe1f36052ee6cf"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+              "content_digest": "sha256:07248a142b50ca9b1b712f9a3b15da541bc0855da5dfd7fefb659ed997a5d7f4"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+              "content_digest": "sha256:6e81f3e1c6151784016ff415efe74bf0599ef0e28ecd8a366b5802c49493ec21"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+              "content_digest": "sha256:b90917a8c87d1f4279bb46b47fa75d60644aaa402296eeae4a92ef514c9c354a"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+              "content_digest": "sha256:f5625a5237ab3b7680552e38dc1af142b6bcaccc8a16267019f5b6992b68d1f4"
+            },
+            {
+              "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+              "content_digest": "sha256:23735f224687a44494a10027a658a42e2149fe056533959ffb96a93a019828f3"
+            },
+            {
+              "path": "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+              "content_digest": "sha256:1372f1adea3d4b8ddaf3fc12eed808ab1b9151812542867a0b74e5fa6da6e9bb"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+              "content_digest": "sha256:e6be4e2afe58d90128a9adb6791ba3103d70b3c751afd9540330babecc4f61f8"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+              "content_digest": "sha256:c2087a457e2932bc794f6e33249f786d889ad531747dd67ebaddf52b4f049923"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl",
+              "content_digest": "sha256:918eef8ed333ca029f6af017b1a53765ec160179f87b4c40e8c72269128dc492"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
+              "content_digest": "sha256:1e26faebdf27ce00d555554afd913b65d8281dda4803e57d60ec8f73b4982dfd"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
+              "content_digest": "sha256:05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+            },
+            {
+              "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+              "content_digest": "sha256:d89b1505c9e831a95a9594e4b3d14ab76b0905a643b6de8e95c55cdd89dba9d0"
+            },
+            {
+              "path": "fixtures/extensions/policy_eval/PE-02_unknown_reason_code_expected_fail.jsonl",
+              "content_digest": "sha256:b51a0daee7409dc4ee915e92e1672eacd88272ed68ea07196d33632135f5bc0a"
+            },
+            {
+              "path": "fixtures/extensions/policy_eval/PE-05_policy_decision_attest_presence.jsonl",
+              "content_digest": "sha256:37b542ccf743b485f07fae9fb7531d98f28e41a6f3a662ec295aad4b173fcfe2"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+              "content_digest": "sha256:c98c62d03ed26e7b44443f3ae6982a579ce333b9bf93f0103d18d3e910c24543"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+              "content_digest": "sha256:b3fea03ac976dcdd32efbb3df7e1849ebec6ebdeba5826516562222c7250afb1"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+              "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+              "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+              "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+              "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+              "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+              "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+              "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+              "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+              "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+              "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+            },
+            {
+              "path": "fixtures/keys/GT_public_keys.json",
+              "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+            },
+            {
+              "path": "registry/aicp_profiles.json",
+              "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+            },
+            {
+              "path": "registry/crypto_profiles.json",
+              "content_digest": "sha256:b9289040aba693cfcb2c67a1aa1896a2247b00dcb92913dc7912d92d5ff44722"
+            },
+            {
+              "path": "registry/message_types.json",
+              "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+            },
+            {
+              "path": "registry/policy_reason_codes.json",
+              "content_digest": "sha256:5876f9a466ecb29116a6043f7c48a8cf424a4f19cc8987c2ac1a3848903fcca2"
+            },
+            {
+              "path": "schemas/core/aicp-core-message.schema.json",
+              "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+            },
+            {
+              "path": "schemas/core/aicp-core-payloads.schema.json",
+              "content_digest": "sha256:55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
+            },
+            {
+              "path": "schemas/extensions/ext-capneg-payloads.schema.json",
+              "content_digest": "sha256:a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
+            },
+            {
+              "path": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+              "content_digest": "sha256:107b14337f6cc39559422874e49a88ba8ff9c0ae34e0b7ff1d21cc0cbf25a30c"
+            },
+            {
+              "path": "schemas/extensions/ext-enforcement-payloads.schema.json",
+              "content_digest": "sha256:7b16e9ea1db9eeaebfaf378581afebf31c5e71fc050d856fcce6599c896a8353"
+            },
+            {
+              "path": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+              "content_digest": "sha256:4b1272eb2afb5b550cce53fa3b1c1a7288fbf6a5d9f434d8ef1087d644cbcac3"
+            },
+            {
+              "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+              "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+            },
+            {
+              "path": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+              "content_digest": "sha256:613ffa2166457bdd91ea3f5a58079cba29f10ae46149be6024218ea6837483ee"
+            },
+            {
+              "path": "schemas/extensions/ext-resume-payloads.schema.json",
+              "content_digest": "sha256:c5c73fa6442541b42f61e3d974db4d53228b714230edbc595e1b5f03edce094e"
+            }
+          ],
+          "canonicalization_vectors": [
+            {
+              "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            }
+          ],
+          "mandatory_producer_ids": [
+            "EVIDENCE-PRODUCER-MB-CORE-CONTRACT-ACTION",
+            "EVIDENCE-PRODUCER-MB-CORE-CONFLICT-CHOOSE",
+            "EVIDENCE-PRODUCER-MB-CORE-CONSENT-GRANT",
+            "EVIDENCE-PRODUCER-MB-CORE-CONSENT-REVOKE",
+            "EVIDENCE-PRODUCER-MB-CORE-RESYNC",
+            "EVIDENCE-PRODUCER-MB-CORE-ERROR",
+            "EVIDENCE-PRODUCER-MB-CAPNEG-ACCEPT-CONTRACT",
+            "EVIDENCE-PRODUCER-MB-CAPNEG-REJECT",
+            "EVIDENCE-PRODUCER-MB-POLICY-ALLOW-DELIVERY",
+            "EVIDENCE-PRODUCER-MB-POLICY-DENY-BLOCK"
+          ],
+          "mandatory_consumer_ids": [
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-01",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-02",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-04",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-05",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-06",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-07",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-08",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-09",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-10",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-11",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-01",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-02",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-NEG-01",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-05",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-06",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-07",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-08",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-09",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-10",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-11",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-12",
+            "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-01",
+            "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-02",
+            "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-05",
+            "EVIDENCE-CONSUMER-MB-ENF-ENFORCEMENT-0-1-ENF-01",
+            "EVIDENCE-CONSUMER-MB-ENF-ENFORCEMENT-0-1-ENF-02"
+          ],
+          "mandatory_case_ids": [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-RUNNER-WORKTREE-01",
+            "EVIDENCE-DESCRIBE-START-01",
+            "AICP-JCS-UNICODE-KEY-ORDER-01",
+            "EVIDENCE-PRODUCER-MB-CORE-CONTRACT-ACTION",
+            "EVIDENCE-PRODUCER-MB-CORE-CONFLICT-CHOOSE",
+            "EVIDENCE-PRODUCER-MB-CORE-CONSENT-GRANT",
+            "EVIDENCE-PRODUCER-MB-CORE-CONSENT-REVOKE",
+            "EVIDENCE-PRODUCER-MB-CORE-RESYNC",
+            "EVIDENCE-PRODUCER-MB-CORE-ERROR",
+            "EVIDENCE-PRODUCER-MB-CAPNEG-ACCEPT-CONTRACT",
+            "EVIDENCE-PRODUCER-MB-CAPNEG-REJECT",
+            "EVIDENCE-PRODUCER-MB-POLICY-ALLOW-DELIVERY",
+            "EVIDENCE-PRODUCER-MB-POLICY-DENY-BLOCK",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-01",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-02",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-04",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-05",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-06",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-07",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-08",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-09",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-10",
+            "EVIDENCE-CONSUMER-MB-CT-CORE-0-1-GT-11",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-01",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-02",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-NEG-01",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-05",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-06",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-07",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-08",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-09",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-10",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-11",
+            "EVIDENCE-CONSUMER-MB-CN-CAPNEG-0-1-CN-12",
+            "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-01",
+            "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-02",
+            "EVIDENCE-CONSUMER-MB-PE-POLICY-EVAL-0-1-PE-05",
+            "EVIDENCE-CONSUMER-MB-ENF-ENFORCEMENT-0-1-ENF-01",
+            "EVIDENCE-CONSUMER-MB-ENF-ENFORCEMENT-0-1-ENF-02",
+            "EVIDENCE-DESCRIBE-STABILITY-01",
+            "EVIDENCE-TARGET-SUPPORT-01"
+          ]
+        },
+        {
+          "target_key": "AICP-RESUMABLE-SESSIONS@0.1",
+          "handler_id": "product_profile_v01",
+          "expected_mark": "AICP-Profile-RESUMABLE-SESSIONS-0.1",
+          "target_catalog": {
+            "path": "conformance/evidence/resumable_sessions_target.json",
+            "content_digest": "sha256:a433771d9f56ed915d95e36e7f92f121e9d19c31817dd6f131194f725114fe36"
+          },
+          "profile_catalog": {
+            "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
+            "content_digest": "sha256:2c62ed75c09ddc2a7c5a707fbc9ff055dfb616edbb76b18482d1ed9c1de0da6a"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "suite_id": "CT-CORE-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/extensions/RS_RESUME_0.1.json",
+              "suite_id": "RS-RESUME-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
+            },
+            {
+              "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+              "suite_id": "OR-OBJECT-RESYNC-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/evidence/delegated_identity_producer_scenarios.json",
+              "content_digest": "sha256:2e9a8ef25c2f4c59f7400785b2ef37311653a93878df1848df0eb1afaae523d5"
+            },
+            {
+              "path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
+              "content_digest": "sha256:28d2e19bc0d9962be955ae60b69eecfc97e7123b50da8b2afc3a7395bc3868d0"
+            },
+            {
+              "path": "conformance/evidence/product_profile_consumer_expectations.json",
+              "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
+            },
+            {
+              "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
+              "content_digest": "sha256:44ce01841f4a07431c5638e84e59d1d4f3e7f3b70386bacc7f789b0e71418ace"
+            },
+            {
+              "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
+              "content_digest": "sha256:2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
+            },
+            {
+              "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+              "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+            },
+            {
+              "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+              "content_digest": "sha256:7a28d12febf6036124f74923993ce2da58dddbb1417283f26038d723d61cce3f"
+            },
+            {
+              "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+              "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+            },
+            {
+              "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+              "content_digest": "sha256:1ae63ca6976a1cc8fe79da837ee2a3205d6c3328296c588488ec5aeccb626bec"
+            },
+            {
+              "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+              "content_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+            },
+            {
+              "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+              "content_digest": "sha256:486a86b7cb0c3f8bc6b0fecc6c20dc853fd8e0a68bd334b6319839459739b0f6"
+            },
+            {
+              "path": "conformance/extensions/RS_RESUME_0.1.json",
+              "content_digest": "sha256:513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
+            },
+            {
+              "path": "conformance/profiles/PF_AICP_RESUMABLE_SESSIONS_0.1.json",
+              "content_digest": "sha256:2c62ed75c09ddc2a7c5a707fbc9ff055dfb616edbb76b18482d1ed9c1de0da6a"
+            },
+            {
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
+              "content_digest": "sha256:1fb4d08f16a51338fc727efc6ea62bde74d2495c9d5bf3c4363b9d153778ec39"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+              "content_digest": "sha256:b980293a3f6d13b1ef1621fa160c81daf8d04ffc974cef84db2e1cb6484a238e"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+              "content_digest": "sha256:b90917a8c87d1f4279bb46b47fa75d60644aaa402296eeae4a92ef514c9c354a"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+              "content_digest": "sha256:f5625a5237ab3b7680552e38dc1af142b6bcaccc8a16267019f5b6992b68d1f4"
+            },
+            {
+              "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+              "content_digest": "sha256:23735f224687a44494a10027a658a42e2149fe056533959ffb96a93a019828f3"
+            },
+            {
+              "path": "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+              "content_digest": "sha256:1372f1adea3d4b8ddaf3fc12eed808ab1b9151812542867a0b74e5fa6da6e9bb"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+              "content_digest": "sha256:e6be4e2afe58d90128a9adb6791ba3103d70b3c751afd9540330babecc4f61f8"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+              "content_digest": "sha256:c2087a457e2932bc794f6e33249f786d889ad531747dd67ebaddf52b4f049923"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl",
+              "content_digest": "sha256:918eef8ed333ca029f6af017b1a53765ec160179f87b4c40e8c72269128dc492"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
+              "content_digest": "sha256:1e26faebdf27ce00d555554afd913b65d8281dda4803e57d60ec8f73b4982dfd"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
+              "content_digest": "sha256:05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+            },
+            {
+              "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+              "content_digest": "sha256:d89b1505c9e831a95a9594e4b3d14ab76b0905a643b6de8e95c55cdd89dba9d0"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+              "content_digest": "sha256:c98c62d03ed26e7b44443f3ae6982a579ce333b9bf93f0103d18d3e910c24543"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+              "content_digest": "sha256:b3fea03ac976dcdd32efbb3df7e1849ebec6ebdeba5826516562222c7250afb1"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
+              "content_digest": "sha256:e5623cdcad58e30d19b9efb3d0b7f7199c756e70e0b4780c4db46ff9cc00e490"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
+              "content_digest": "sha256:e15b9948130f5e48a9f1e3d89bcfabccd9e497557d9282e188314780d5a9e9d8"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+              "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+              "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+              "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+              "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+              "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+              "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+              "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+              "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+              "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+              "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+            },
+            {
+              "path": "fixtures/keys/GT_public_keys.json",
+              "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+            },
+            {
+              "path": "registry/aicp_profiles.json",
+              "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+            },
+            {
+              "path": "registry/crypto_profiles.json",
+              "content_digest": "sha256:b9289040aba693cfcb2c67a1aa1896a2247b00dcb92913dc7912d92d5ff44722"
+            },
+            {
+              "path": "registry/message_types.json",
+              "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+            },
+            {
+              "path": "registry/policy_reason_codes.json",
+              "content_digest": "sha256:5876f9a466ecb29116a6043f7c48a8cf424a4f19cc8987c2ac1a3848903fcca2"
+            },
+            {
+              "path": "schemas/core/aicp-core-message.schema.json",
+              "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+            },
+            {
+              "path": "schemas/core/aicp-core-payloads.schema.json",
+              "content_digest": "sha256:55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
+            },
+            {
+              "path": "schemas/extensions/ext-capneg-payloads.schema.json",
+              "content_digest": "sha256:a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
+            },
+            {
+              "path": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+              "content_digest": "sha256:107b14337f6cc39559422874e49a88ba8ff9c0ae34e0b7ff1d21cc0cbf25a30c"
+            },
+            {
+              "path": "schemas/extensions/ext-enforcement-payloads.schema.json",
+              "content_digest": "sha256:7b16e9ea1db9eeaebfaf378581afebf31c5e71fc050d856fcce6599c896a8353"
+            },
+            {
+              "path": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+              "content_digest": "sha256:4b1272eb2afb5b550cce53fa3b1c1a7288fbf6a5d9f434d8ef1087d644cbcac3"
+            },
+            {
+              "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+              "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+            },
+            {
+              "path": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+              "content_digest": "sha256:613ffa2166457bdd91ea3f5a58079cba29f10ae46149be6024218ea6837483ee"
+            },
+            {
+              "path": "schemas/extensions/ext-resume-payloads.schema.json",
+              "content_digest": "sha256:c5c73fa6442541b42f61e3d974db4d53228b714230edbc595e1b5f03edce094e"
+            }
+          ],
+          "canonicalization_vectors": [
+            {
+              "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            }
+          ],
+          "mandatory_producer_ids": [
+            "EVIDENCE-PRODUCER-RS-CORE-CONTRACT-ACTION",
+            "EVIDENCE-PRODUCER-RS-CORE-CONFLICT-CHOOSE",
+            "EVIDENCE-PRODUCER-RS-CORE-CONSENT-GRANT",
+            "EVIDENCE-PRODUCER-RS-CORE-CONSENT-REVOKE",
+            "EVIDENCE-PRODUCER-RS-CORE-RESYNC",
+            "EVIDENCE-PRODUCER-RS-CORE-ERROR",
+            "EVIDENCE-PRODUCER-RS-RESUME-IN-SYNC",
+            "EVIDENCE-PRODUCER-RS-RESUME-NEEDS-RESYNC",
+            "EVIDENCE-PRODUCER-RS-OBJECT-RETRIEVAL"
+          ],
+          "mandatory_consumer_ids": [
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-01",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-02",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-04",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-05",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-06",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-07",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-08",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-09",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-10",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-11",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-01",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-02",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-03",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-NEG-01",
+            "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-01",
+            "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-02"
+          ],
+          "mandatory_case_ids": [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-RUNNER-WORKTREE-01",
+            "EVIDENCE-DESCRIBE-START-01",
+            "AICP-JCS-UNICODE-KEY-ORDER-01",
+            "EVIDENCE-PRODUCER-RS-CORE-CONTRACT-ACTION",
+            "EVIDENCE-PRODUCER-RS-CORE-CONFLICT-CHOOSE",
+            "EVIDENCE-PRODUCER-RS-CORE-CONSENT-GRANT",
+            "EVIDENCE-PRODUCER-RS-CORE-CONSENT-REVOKE",
+            "EVIDENCE-PRODUCER-RS-CORE-RESYNC",
+            "EVIDENCE-PRODUCER-RS-CORE-ERROR",
+            "EVIDENCE-PRODUCER-RS-RESUME-IN-SYNC",
+            "EVIDENCE-PRODUCER-RS-RESUME-NEEDS-RESYNC",
+            "EVIDENCE-PRODUCER-RS-OBJECT-RETRIEVAL",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-01",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-02",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-04",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-05",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-06",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-07",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-08",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-09",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-10",
+            "EVIDENCE-CONSUMER-RS-CT-CORE-0-1-GT-11",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-01",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-02",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-03",
+            "EVIDENCE-CONSUMER-RS-RS-RESUME-0-1-RS-NEG-01",
+            "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-01",
+            "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-02",
+            "EVIDENCE-DESCRIBE-STABILITY-01",
+            "EVIDENCE-TARGET-SUPPORT-01"
+          ]
+        },
+        {
+          "target_key": "AICP-DELEGATED-IDENTITY@0.1",
+          "handler_id": "product_profile_v01",
+          "expected_mark": "AICP-Profile-DELEGATED-IDENTITY-0.1",
+          "target_catalog": {
+            "path": "conformance/evidence/delegated_identity_target.json",
+            "content_digest": "sha256:67876256e416ed4edfb4ceff16e736d28b6fba94fb00dda8fc5c69dd188de1c8"
+          },
+          "profile_catalog": {
+            "path": "conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json",
+            "content_digest": "sha256:ad57d03ff4d07624dfd0fb5112be1280a5176789e3f5927226bddf8387136765"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "suite_id": "CT-CORE-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+              "suite_id": "CN-CAPNEG-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+            },
+            {
+              "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+              "suite_id": "ID-IDENTITY-LC-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:1ae63ca6976a1cc8fe79da837ee2a3205d6c3328296c588488ec5aeccb626bec"
+            },
+            {
+              "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+              "suite_id": "DI-DELEGATED-IDENTITY-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:7a28d12febf6036124f74923993ce2da58dddbb1417283f26038d723d61cce3f"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/core/CT_CORE_0.1.json",
+              "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+            },
+            {
+              "path": "conformance/evidence/delegated_identity_producer_scenarios.json",
+              "content_digest": "sha256:2e9a8ef25c2f4c59f7400785b2ef37311653a93878df1848df0eb1afaae523d5"
+            },
+            {
+              "path": "conformance/evidence/mediated_blocking_producer_scenarios.json",
+              "content_digest": "sha256:28d2e19bc0d9962be955ae60b69eecfc97e7123b50da8b2afc3a7395bc3868d0"
+            },
+            {
+              "path": "conformance/evidence/product_profile_consumer_expectations.json",
+              "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
+            },
+            {
+              "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
+              "content_digest": "sha256:44ce01841f4a07431c5638e84e59d1d4f3e7f3b70386bacc7f789b0e71418ace"
+            },
+            {
+              "path": "conformance/evidence/resumable_sessions_producer_scenarios.json",
+              "content_digest": "sha256:2ca5adeeb7f4f269276fd557a5711febc6f109437e77fadbe2afd3351c12b8d2"
+            },
+            {
+              "path": "conformance/extensions/CN_CAPNEG_0.1.json",
+              "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+            },
+            {
+              "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
+              "content_digest": "sha256:7a28d12febf6036124f74923993ce2da58dddbb1417283f26038d723d61cce3f"
+            },
+            {
+              "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+              "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+            },
+            {
+              "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
+              "content_digest": "sha256:1ae63ca6976a1cc8fe79da837ee2a3205d6c3328296c588488ec5aeccb626bec"
+            },
+            {
+              "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+              "content_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+            },
+            {
+              "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
+              "content_digest": "sha256:486a86b7cb0c3f8bc6b0fecc6c20dc853fd8e0a68bd334b6319839459739b0f6"
+            },
+            {
+              "path": "conformance/extensions/RS_RESUME_0.1.json",
+              "content_digest": "sha256:513eb3614ffea74def0a8e7dd9e8625849e61966e082ccf777658f450205ecaa"
+            },
+            {
+              "path": "conformance/profiles/PF_AICP_DELEGATED_IDENTITY_0.1.json",
+              "content_digest": "sha256:ad57d03ff4d07624dfd0fb5112be1280a5176789e3f5927226bddf8387136765"
+            },
+            {
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
+              "content_digest": "sha256:da612d4ccbc99b97344a5b85836ef7466c661275428cf1f03ca93a6a2c75259e"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-02_reject_incompatible_profile.jsonl",
+              "content_digest": "sha256:1fb4d08f16a51338fc727efc6ea62bde74d2495c9d5bf3c4363b9d153778ec39"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-05_profile_agree_mediated_blocking_pass.jsonl",
+              "content_digest": "sha256:0e858fa9f4da695760e92da55a0e28826d30a893ac51ab083ba4eb8eb29222aa"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-06_profile_downgrade_attempt_expected_fail.jsonl",
+              "content_digest": "sha256:d702ba121282838448a6dbd0b26fb422b426eb888e6e680654600f326fab5e58"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-07_negotiation_bound_into_contract_pass.jsonl",
+              "content_digest": "sha256:b980293a3f6d13b1ef1621fa160c81daf8d04ffc974cef84db2e1cb6484a238e"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
+              "content_digest": "sha256:1541b934996b73a4047568ab22ba9a128ae983d02a5437805ae829a086c69fe9"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-09_channel_properties_negotiation_pass.jsonl",
+              "content_digest": "sha256:250bc11684fa3b1c3cedef0930c464b82574397debd46ab86518ad90ab5c4f03"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
+              "content_digest": "sha256:64698a10d7e0072a186c39b496eb583f120da606f85de366c5e84cab492c6e67"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-11_authenticated_base_crypto_pass.jsonl",
+              "content_digest": "sha256:f44fe65e0ebcea59b053fd4bbde5ab451eb43a7b82ecbcc9d8fe1f36052ee6cf"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+              "content_digest": "sha256:07248a142b50ca9b1b712f9a3b15da541bc0855da5dfd7fefb659ed997a5d7f4"
+            },
+            {
+              "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+              "content_digest": "sha256:6e81f3e1c6151784016ff415efe74bf0599ef0e28ecd8a366b5802c49493ec21"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-01_issue_and_use_binding_pass.jsonl",
+              "content_digest": "sha256:b90917a8c87d1f4279bb46b47fa75d60644aaa402296eeae4a92ef514c9c354a"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-02_revoke_then_use_expected_fail.jsonl",
+              "content_digest": "sha256:f5625a5237ab3b7680552e38dc1af142b6bcaccc8a16267019f5b6992b68d1f4"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-03_expired_binding_expected_fail.jsonl",
+              "content_digest": "sha256:5440ca05e0951a3e72dd901cf1c1ef37e8f78313f85ce82c083ab1ac1f427423"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-04_issue_not_signed_expected_fail.jsonl",
+              "content_digest": "sha256:3f3492e16efaec99ea1fb2f1bbd17ec6aa1f6bb2ad2ed9b9850089db6be90774"
+            },
+            {
+              "path": "fixtures/extensions/delegated_identity/DI-05_issue_and_revoke_binding_pass.jsonl",
+              "content_digest": "sha256:62a05f78960e08c90600479a8eccc0391013c641f6e0dd060595b4d61ef7ae6c"
+            },
+            {
+              "path": "fixtures/extensions/enforcement/EF-01_allow_and_deliver.jsonl",
+              "content_digest": "sha256:23735f224687a44494a10027a658a42e2149fe056533959ffb96a93a019828f3"
+            },
+            {
+              "path": "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+              "content_digest": "sha256:1372f1adea3d4b8ddaf3fc12eed808ab1b9151812542867a0b74e5fa6da6e9bb"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-01_announce_and_verify_session_local_key.jsonl",
+              "content_digest": "sha256:e6be4e2afe58d90128a9adb6791ba3103d70b3c751afd9540330babecc4f61f8"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-02_rotation_cross_sign_and_use_new_key.jsonl",
+              "content_digest": "sha256:c2087a457e2932bc794f6e33249f786d889ad531747dd67ebaddf52b4f049923"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-03_revoke_then_use_revoked_key_expected_fail.jsonl",
+              "content_digest": "sha256:918eef8ed333ca029f6af017b1a53765ec160179f87b4c40e8c72269128dc492"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-04_agent_migration_presence.jsonl",
+              "content_digest": "sha256:7fe25cfc7a7fdd4d7f7bbe0e0547fe2c6230740ce5d5b22f97f2f10b28a6399b"
+            },
+            {
+              "path": "fixtures/extensions/identity_lc/IL-05_valid_key_revoke_pass.jsonl",
+              "content_digest": "sha256:809b62ead9c6c037483cf793b92456f04eb0f6c44e31eca93afa9d092b97470e"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
+              "content_digest": "sha256:1e26faebdf27ce00d555554afd913b65d8281dda4803e57d60ec8f73b4982dfd"
+            },
+            {
+              "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
+              "content_digest": "sha256:05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+            },
+            {
+              "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",
+              "content_digest": "sha256:d89b1505c9e831a95a9594e4b3d14ab76b0905a643b6de8e95c55cdd89dba9d0"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-01_ok_in_sync.jsonl",
+              "content_digest": "sha256:c98c62d03ed26e7b44443f3ae6982a579ce333b9bf93f0103d18d3e910c24543"
+            },
+            {
+              "path": "fixtures/extensions/resume/RS-02_needs_resync.jsonl",
+              "content_digest": "sha256:b3fea03ac976dcdd32efbb3df7e1849ebec6ebdeba5826516562222c7250afb1"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+              "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+              "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+              "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+              "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+              "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+              "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+              "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+              "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+              "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+              "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+            },
+            {
+              "path": "fixtures/keys/GT_public_keys.json",
+              "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+            },
+            {
+              "path": "registry/aicp_profiles.json",
+              "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
+            },
+            {
+              "path": "registry/crypto_profiles.json",
+              "content_digest": "sha256:b9289040aba693cfcb2c67a1aa1896a2247b00dcb92913dc7912d92d5ff44722"
+            },
+            {
+              "path": "registry/message_types.json",
+              "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+            },
+            {
+              "path": "registry/policy_reason_codes.json",
+              "content_digest": "sha256:5876f9a466ecb29116a6043f7c48a8cf424a4f19cc8987c2ac1a3848903fcca2"
+            },
+            {
+              "path": "schemas/core/aicp-core-message.schema.json",
+              "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+            },
+            {
+              "path": "schemas/core/aicp-core-payloads.schema.json",
+              "content_digest": "sha256:55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
+            },
+            {
+              "path": "schemas/extensions/ext-capneg-payloads.schema.json",
+              "content_digest": "sha256:a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598"
+            },
+            {
+              "path": "schemas/extensions/ext-delegated-identity-payloads.schema.json",
+              "content_digest": "sha256:107b14337f6cc39559422874e49a88ba8ff9c0ae34e0b7ff1d21cc0cbf25a30c"
+            },
+            {
+              "path": "schemas/extensions/ext-enforcement-payloads.schema.json",
+              "content_digest": "sha256:7b16e9ea1db9eeaebfaf378581afebf31c5e71fc050d856fcce6599c896a8353"
+            },
+            {
+              "path": "schemas/extensions/ext-identity-lc-payloads.schema.json",
+              "content_digest": "sha256:4b1272eb2afb5b550cce53fa3b1c1a7288fbf6a5d9f434d8ef1087d644cbcac3"
+            },
+            {
+              "path": "schemas/extensions/ext-object-resync-payloads.schema.json",
+              "content_digest": "sha256:32acb8993fc71c86c1d0afb3550887e3ce303ece027698b47115ccf2c19078c7"
+            },
+            {
+              "path": "schemas/extensions/ext-policy-eval-payloads.schema.json",
+              "content_digest": "sha256:613ffa2166457bdd91ea3f5a58079cba29f10ae46149be6024218ea6837483ee"
+            },
+            {
+              "path": "schemas/extensions/ext-resume-payloads.schema.json",
+              "content_digest": "sha256:c5c73fa6442541b42f61e3d974db4d53228b714230edbc595e1b5f03edce094e"
+            }
+          ],
+          "canonicalization_vectors": [
+            {
+              "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+              "path": "conformance/vectors/unicode_codepoint_key_order.json",
+              "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+            }
+          ],
+          "mandatory_producer_ids": [
+            "EVIDENCE-PRODUCER-DI-CORE-CONTRACT-ACTION",
+            "EVIDENCE-PRODUCER-DI-CORE-CONFLICT-CHOOSE",
+            "EVIDENCE-PRODUCER-DI-CORE-CONSENT-GRANT",
+            "EVIDENCE-PRODUCER-DI-CORE-CONSENT-REVOKE",
+            "EVIDENCE-PRODUCER-DI-CORE-RESYNC",
+            "EVIDENCE-PRODUCER-DI-CORE-ERROR",
+            "EVIDENCE-PRODUCER-DI-CAPNEG-ACCEPT-CONTRACT",
+            "EVIDENCE-PRODUCER-DI-CAPNEG-REJECT",
+            "EVIDENCE-PRODUCER-DI-IDENTITY-ANNOUNCE-USE",
+            "EVIDENCE-PRODUCER-DI-IDENTITY-ROTATE-USE",
+            "EVIDENCE-PRODUCER-DI-IDENTITY-REVOKE-CLEAN",
+            "EVIDENCE-PRODUCER-DI-BINDING-ISSUE-USE",
+            "EVIDENCE-PRODUCER-DI-BINDING-REVOKE-CLEAN"
+          ],
+          "mandatory_consumer_ids": [
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-01",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-02",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-04",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-05",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-06",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-07",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-08",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-09",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-10",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-11",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-01",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-02",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-NEG-01",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-05",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-06",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-07",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-08",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-09",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-10",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-11",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-12",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-01",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-02",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-03",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-04",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-05",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-01",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-02",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-03",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-04",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-05"
+          ],
+          "mandatory_case_ids": [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-RUNNER-WORKTREE-01",
+            "EVIDENCE-DESCRIBE-START-01",
+            "AICP-JCS-UNICODE-KEY-ORDER-01",
+            "EVIDENCE-PRODUCER-DI-CORE-CONTRACT-ACTION",
+            "EVIDENCE-PRODUCER-DI-CORE-CONFLICT-CHOOSE",
+            "EVIDENCE-PRODUCER-DI-CORE-CONSENT-GRANT",
+            "EVIDENCE-PRODUCER-DI-CORE-CONSENT-REVOKE",
+            "EVIDENCE-PRODUCER-DI-CORE-RESYNC",
+            "EVIDENCE-PRODUCER-DI-CORE-ERROR",
+            "EVIDENCE-PRODUCER-DI-CAPNEG-ACCEPT-CONTRACT",
+            "EVIDENCE-PRODUCER-DI-CAPNEG-REJECT",
+            "EVIDENCE-PRODUCER-DI-IDENTITY-ANNOUNCE-USE",
+            "EVIDENCE-PRODUCER-DI-IDENTITY-ROTATE-USE",
+            "EVIDENCE-PRODUCER-DI-IDENTITY-REVOKE-CLEAN",
+            "EVIDENCE-PRODUCER-DI-BINDING-ISSUE-USE",
+            "EVIDENCE-PRODUCER-DI-BINDING-REVOKE-CLEAN",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-01",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-02",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-04",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-05",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-06",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-07",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-08",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-09",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-10",
+            "EVIDENCE-CONSUMER-DI-CT-CORE-0-1-GT-11",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-01",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-02",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-NEG-01",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-05",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-06",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-07",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-08",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-09",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-10",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-11",
+            "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-12",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-01",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-02",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-03",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-04",
+            "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-05",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-01",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-02",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-03",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-04",
+            "EVIDENCE-CONSUMER-DI-DI-DELEGATED-IDENTITY-0-1-DI-05",
+            "EVIDENCE-DESCRIBE-STABILITY-01",
+            "EVIDENCE-TARGET-SUPPORT-01"
+          ]
+        },
+        {
+          "target_key": "BIND-HTTP@0.1",
+          "handler_id": "live_binding_v01",
+          "expected_mark": "AICP-BIND-HTTP-0.1",
+          "target_catalog": {
+            "path": "conformance/evidence/live_bindings/http_v01_target_v4.json",
+            "content_digest": "sha256:00d440218fb22148ba277b3ebc67beff610cb0dec7bd927409dcd03b0e9cdba3"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
+              "suite_id": "TB-HTTP-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:59eace67163b8ac39bb92f3de6789cb8677e7f545c4953fde97a62077ebb5d66"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
+              "content_digest": "sha256:59eace67163b8ac39bb92f3de6789cb8677e7f545c4953fde97a62077ebb5d66"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/http_v01_scenarios.json",
+              "content_digest": "sha256:ae778ee15932a8628ff60ca5c8e269b3136276e9c5fa32f3a5cbbbd7b976949f"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+              "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+              "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+              "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+              "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+            },
+            {
+              "path": "docs/bindings/RFC_BIND_HTTP_WS.md",
+              "content_digest": "sha256:af66297ee36f4c0608f549d55e001303246c2efc4e318dc9f2a84ba1e63faf3e"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
+              "content_digest": "sha256:3bcfda51a1ca05cf074a1e61cf55cf40d729c1935e5ee8f7d3c7b18ad58e5151"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-02_pollMessages.json",
+              "content_digest": "sha256:9ed83ec4c04323b27052feefe68f8f69304ec832d4608af0d77e644ff894b67f"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-03_getHead.json",
+              "content_digest": "sha256:1b8d1ea19cbbfaa7ed177d2e58a0c1172591bd4beaa88474ca713e2a28f1df94"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-04_overload.json",
+              "content_digest": "sha256:120b92c89a0d51fa38d6bc6d25e3fe8890bf3d8e5dd02b97616b7ea292360269"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-05_ackCursor.json",
+              "content_digest": "sha256:1db6c056e193d9fc736fcb172ee170dff6eafc68cec630ae437c46c045de9cf8"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-06_pollCursorExpired.json",
+              "content_digest": "sha256:16a26a450e49e41ad70eee80e9187825dbb87231bdca17c5141d8693a9743c3c"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-07_wsStreamMessages.json",
+              "content_digest": "sha256:d77461f1940cad77a780befe9a0cb4e7829bd9f6750046b402f0e9f283f98652"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-08_wsOverloadFrame.json",
+              "content_digest": "sha256:39eb607c04b7e1d3cb19090ebda3d5b91eb130e2bf426ee06da200b6e0f743b6"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-09_wsPullMessages_chunked.json",
+              "content_digest": "sha256:794bac74478ccff3a27265412006c49e3981cca6e6996b697d7aa613e0c0cbc5"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-10_pollMessages_atLeastOnce_duplicates.json",
+              "content_digest": "sha256:1d0fcf151d39b02be3b96f0580edc2aa7a61425d87da7cf9c1c008b9db6f1b63"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-12_ssePullMessages_chunked.json",
+              "content_digest": "sha256:080ee0b9ca5f9bcef94b4fa6121e6458712b16c8bd161fad5833bcac88d94a2b"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-13_sseOverloadEvent.json",
+              "content_digest": "sha256:769d904e8bc2e5534dbae298b884aa01b630ebc497568a91c7e0f7050c9d2ab2"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-14_sendMessage_replay.json",
+              "content_digest": "sha256:fafb10730ae1cd08ed95c0a6a5e7b0a404cc9a59c2c355e5ac328f180b8c94d1"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-15_createSession.json",
+              "content_digest": "sha256:322ce7d1dee4fc33b70c340f5838bab8236b6082e39842b76cd6f41a64c437f2"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-16_closeSession.json",
+              "content_digest": "sha256:0c110d95983172b1319112e24c5768a43cbcbce0baa5703dd1890a928753d000"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-17_ssePullMessages_reconnect.json",
+              "content_digest": "sha256:0712036b3022139b2101afce5e5189508c5aeb1a3cc3a61ae82c31ff10ee952b"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-18_sendMessage_replay_window.json",
+              "content_digest": "sha256:1864cbb51d134f60b6e070b85854333a6ca90f1e42c27d6732a4c0ac2024ad97"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-19_createSession_secondary.json",
+              "content_digest": "sha256:2d6418501b32559a0f08f98923e9f24623249d4fb097135bb065ff13d0f0ccf9"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-20_sendMessage_session2_collision_scope.json",
+              "content_digest": "sha256:b6809cf85c9ba7f9dd284ab2ab274e06ea6c5c551cad896d640bebd89965b83a"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-21_sendMessage_replay_session2.json",
+              "content_digest": "sha256:f7b7e76bb67f9487c903430513df18d68ea5185683a26e1a85be0ec33f6787b2"
+            },
+            {
+              "path": "fixtures/bindings/http-ws/TB-HTTP-22_ssePullMessages_reconnect_churn.json",
+              "content_digest": "sha256:61c499cb324eedddcd55f944d7c274d2d67d3d61238120cf62f8f607cf623fe6"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+              "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+            },
+            {
+              "path": "registry/message_types.json",
+              "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+            },
+            {
+              "path": "registry/transport_bindings.json",
+              "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+            },
+            {
+              "path": "schemas/bindings/bind-http-ws.schema.json",
+              "content_digest": "sha256:4efbbb52bdf10fa5d2e09f474d55474b2411715dd8bd2bdbf71c9b884d2f7817"
+            },
+            {
+              "path": "schemas/core/aicp-core-message.schema.json",
+              "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+            }
+          ],
+          "mandatory_case_ids": [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-RUNNER-WORKTREE-01",
+            "EVIDENCE-LIVE-SERVER-ROLE-01",
+            "EVIDENCE-LIVE-CLIENT-ROLE-01",
+            "EVIDENCE-LIVE-SUBJECT-01",
+            "EVIDENCE-LIVE-TRACE-SCHEMA-01",
+            "EVIDENCE-LIVE-TRACE-EVALUATION-01",
+            "EVIDENCE-LIVE-DETERMINISM-01",
+            "EVIDENCE-TARGET-SUPPORT-01"
+          ]
+        },
+        {
+          "target_key": "BIND-MCP@0.1",
+          "handler_id": "live_binding_v01",
+          "expected_mark": "AICP-BIND-MCP-0.1",
+          "target_catalog": {
+            "path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+            "content_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+          },
+          "required_suites": [
+            {
+              "path": "conformance/bindings/TB_MCP_0.1.json",
+              "suite_id": "TB-MCP-0.1",
+              "suite_version": "0.1.0-dev",
+              "suite_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+            }
+          ],
+          "required_input_artifacts": [
+            {
+              "path": "conformance/bindings/TB_MCP_0.1.json",
+              "content_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+              "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+              "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+              "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+              "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+            },
+            {
+              "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+              "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+            },
+            {
+              "path": "docs/bindings/RFC_BIND_MCP.md",
+              "content_digest": "sha256:2fe13f35093df8397f55cc98cae02a84a684d576b3ffa60fcf2f74e00b67a180"
+            },
+            {
+              "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
+              "content_digest": "sha256:ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
+            },
+            {
+              "path": "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
+              "content_digest": "sha256:a3ce2f2e8a8b54279f90b504762c762dcaff4f0640767b490fdd7a27fb52c3d8"
+            },
+            {
+              "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
+              "content_digest": "sha256:b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+            },
+            {
+              "path": "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json",
+              "content_digest": "sha256:dc57a4f1bda6ac5328cccff10c2e1327bc6fc26db26bb348c1c4d6383e47d8eb"
+            },
+            {
+              "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+              "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+            },
+            {
+              "path": "registry/message_types.json",
+              "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+            },
+            {
+              "path": "registry/transport_bindings.json",
+              "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+            },
+            {
+              "path": "schemas/bindings/bind-mcp.schema.json",
+              "content_digest": "sha256:938816c333cc849c9ce0da866b30a27bb6b65e47bc0afd17dbc3f9be6b241220"
+            },
+            {
+              "path": "schemas/core/aicp-core-message.schema.json",
+              "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+            }
+          ],
+          "mandatory_case_ids": [
+            "EVIDENCE-TARGET-CATALOG-01",
+            "EVIDENCE-TCK-PROVENANCE-01",
+            "EVIDENCE-RUNNER-WORKTREE-01",
+            "EVIDENCE-LIVE-SERVER-ROLE-01",
+            "EVIDENCE-LIVE-CLIENT-ROLE-01",
+            "EVIDENCE-LIVE-SUBJECT-01",
+            "EVIDENCE-LIVE-TRACE-SCHEMA-01",
+            "EVIDENCE-LIVE-TRACE-EVALUATION-01",
+            "EVIDENCE-LIVE-DETERMINISM-01",
+            "EVIDENCE-TARGET-SUPPORT-01"
+          ]
+        }
+      ]
+    },
+    "target_release_record": {
+      "target_key": "BIND-MCP@0.1",
+      "handler_id": "live_binding_v01",
+      "expected_mark": "AICP-BIND-MCP-0.1",
+      "target_catalog": {
+        "path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+        "content_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+      },
+      "required_suites": [
+        {
+          "path": "conformance/bindings/TB_MCP_0.1.json",
+          "suite_id": "TB-MCP-0.1",
+          "suite_version": "0.1.0-dev",
+          "suite_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+        }
+      ],
+      "required_input_artifacts": [
+        {
+          "path": "conformance/bindings/TB_MCP_0.1.json",
+          "content_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+          "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+          "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+          "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+          "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+        },
+        {
+          "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+          "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+        },
+        {
+          "path": "docs/bindings/RFC_BIND_MCP.md",
+          "content_digest": "sha256:2fe13f35093df8397f55cc98cae02a84a684d576b3ffa60fcf2f74e00b67a180"
+        },
+        {
+          "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
+          "content_digest": "sha256:ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
+        },
+        {
+          "path": "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
+          "content_digest": "sha256:a3ce2f2e8a8b54279f90b504762c762dcaff4f0640767b490fdd7a27fb52c3d8"
+        },
+        {
+          "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
+          "content_digest": "sha256:b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+        },
+        {
+          "path": "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json",
+          "content_digest": "sha256:dc57a4f1bda6ac5328cccff10c2e1327bc6fc26db26bb348c1c4d6383e47d8eb"
+        },
+        {
+          "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+        },
+        {
+          "path": "registry/message_types.json",
+          "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+        },
+        {
+          "path": "registry/transport_bindings.json",
+          "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+        },
+        {
+          "path": "schemas/bindings/bind-mcp.schema.json",
+          "content_digest": "sha256:938816c333cc849c9ce0da866b30a27bb6b65e47bc0afd17dbc3f9be6b241220"
+        },
+        {
+          "path": "schemas/core/aicp-core-message.schema.json",
+          "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+        }
+      ],
+      "mandatory_case_ids": [
+        "EVIDENCE-TARGET-CATALOG-01",
+        "EVIDENCE-TCK-PROVENANCE-01",
+        "EVIDENCE-RUNNER-WORKTREE-01",
+        "EVIDENCE-LIVE-SERVER-ROLE-01",
+        "EVIDENCE-LIVE-CLIENT-ROLE-01",
+        "EVIDENCE-LIVE-SUBJECT-01",
+        "EVIDENCE-LIVE-TRACE-SCHEMA-01",
+        "EVIDENCE-LIVE-TRACE-EVALUATION-01",
+        "EVIDENCE-LIVE-DETERMINISM-01",
+        "EVIDENCE-TARGET-SUPPORT-01"
+      ]
+    },
+    "target": {
+      "kind": "binding",
+      "target_id": "BIND-MCP",
+      "target_version": "0.1",
+      "target_catalog_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+    },
+    "target_catalog_path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json"
+  }
+}

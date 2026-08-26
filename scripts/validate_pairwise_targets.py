@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the M66 target registry and immutable Pairwise TCK release."""
+"""Validate the M66 target and immutable Pairwise TCK 1.0/1.1 releases."""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+
+from generate_pairwise_tck import FROZEN_1_0_REPOSITORY_SHA256, repository_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 PAIRWISE = ROOT / "interop" / "pairwise"
@@ -43,10 +45,27 @@ def validate_schema(value: Any, schema_path: Path) -> list[str]:
     ]
 
 
+def validate_artifact(ref: dict[str, Any], label: str, errors: list[str]) -> None:
+    path = ROOT / str(ref.get("path", ""))
+    if not path.is_file() or ref.get("content_digest") != digest(path):
+        errors.append(f"{label} digest drift: {ref.get('path')}")
+
+
+def validate_bundle(ref: dict[str, Any], label: str, errors: list[str]) -> None:
+    path = ROOT / str(ref.get("path", ""))
+    if not path.is_file() or ref.get("digest") != digest(path):
+        errors.append(f"{label} manifest drift")
+        return
+    for entry in load(path).get("entries", []):
+        entry_path = ROOT / str(entry.get("path", ""))
+        if not entry_path.is_file() or entry.get("digest") != digest(entry_path):
+            errors.append(f"{label} closure drift: {entry.get('path')}")
+
+
 def main() -> int:
     errors: list[str] = []
     targets = load(PAIRWISE / "targets.json")
-    errors.extend(validate_schema(targets, PAIRWISE / "target_registry.schema.json"))
+    errors.extend(validate_schema(targets, PAIRWISE / "target_registry_v1_1.schema.json"))
     records = [item for item in targets.get("targets", []) if isinstance(item, dict)]
     target_ids = [str(item.get("target_id")) for item in records]
     semantic_ids = [
@@ -113,35 +132,78 @@ def main() -> int:
                 errors.append(f"pairwise required suite does not resolve: {suite}")
 
     scenario = load(PAIRWISE / "scenarios.json")
-    errors.extend(validate_schema(scenario, PAIRWISE / "pairwise_scenario_v1.schema.json"))
+    errors.extend(validate_schema(scenario, PAIRWISE / "pairwise_scenario_v1_1.schema.json"))
     releases = load(PAIRWISE / "tck_releases.json")
-    errors.extend(validate_schema(releases, PAIRWISE / "tck_releases.schema.json"))
-    release = releases.get("releases", [None])[0]
-    snapshot_path = PAIRWISE / "release_registry_snapshots" / "AICP-PAIRWISE-TCK-1.0.0.json"
-    snapshot = load(snapshot_path)
-    if snapshot.get("releases", [None])[0] != release:
-        errors.append("Pairwise TCK current record differs from its immutable 1.0.0 snapshot")
-    if isinstance(release, dict):
-        if release.get("registry_schema_digest") != digest(PAIRWISE / "tck_releases.schema.json"):
-            errors.append("Pairwise TCK registry schema digest drift")
+    errors.extend(validate_schema(releases, PAIRWISE / "tck_releases_v2.schema.json"))
+    by_release = {
+        item.get("release_id"): item
+        for item in releases.get("releases", [])
+        if isinstance(item, dict)
+    }
+    old_release = by_release.get("AICP-PAIRWISE-TCK-1.0.0")
+    current_release = by_release.get("AICP-PAIRWISE-TCK-1.1.0")
+    old_snapshot = load(
+        PAIRWISE / "release_registry_snapshots" / "AICP-PAIRWISE-TCK-1.0.0.json"
+    ).get("releases", [None])[0]
+    current_snapshot = load(
+        PAIRWISE / "release_registry_snapshots" / "AICP-PAIRWISE-TCK-1.1.0.json"
+    ).get("releases", [None])[0]
+    if old_release != old_snapshot:
+        errors.append("Pairwise TCK 1.0 release object differs from its immutable snapshot")
+    if current_release != current_snapshot:
+        errors.append("Pairwise TCK 1.1 release object differs from its immutable snapshot")
+
+    policies = {
+        item.get("release_id"): item
+        for item in releases.get("release_policies", [])
+        if isinstance(item, dict)
+    }
+    old_policy = policies.get("AICP-PAIRWISE-TCK-1.0.0", {})
+    current_policy = policies.get("AICP-PAIRWISE-TCK-1.1.0", {})
+    if old_policy.get("lifecycle") != "historical" or old_policy.get("strong_eligible") is not False:
+        errors.append("Pairwise TCK 1.0 must be explicitly historical and strong-ineligible")
+    if current_policy.get("lifecycle") != "current" or current_policy.get("strong_eligible") is not True:
+        errors.append("Pairwise TCK 1.1 must be explicitly current and strong-eligible")
+    for relative, expected in FROZEN_1_0_REPOSITORY_SHA256.items():
+        path = ROOT / relative
+        actual = repository_sha256(path) if path.is_file() else "missing"
+        if actual != expected:
+            errors.append(f"Pairwise TCK 1.0 repository-byte drift: {relative}")
+
+    if isinstance(current_release, dict):
+        if current_release.get("registry_schema_digest") != digest(PAIRWISE / "tck_releases_v2.schema.json"):
+            errors.append("Pairwise TCK 1.1 registry schema digest drift")
         for field in ("report_schema", "evaluator", "normalizer", "target_registry", "scenario_catalog"):
-            artifact = release.get(field, {})
-            path = ROOT / str(artifact.get("path", ""))
-            if not path.is_file() or artifact.get("content_digest") != digest(path):
-                errors.append(f"Pairwise TCK {field} digest drift")
-        bundle_ref = release.get("runner_bundle", {})
-        bundle_path = ROOT / str(bundle_ref.get("path", ""))
-        if not bundle_path.is_file() or bundle_ref.get("digest") != digest(bundle_path):
-            errors.append("Pairwise runner bundle manifest drift")
-        else:
-            for entry in load(bundle_path).get("entries", []):
-                path = ROOT / str(entry.get("path", ""))
-                if not path.is_file() or entry.get("digest") != digest(path):
-                    errors.append(f"Pairwise runner import-closure drift: {entry.get('path')}")
-        for authority in release.get("underlying_authorities", []):
-            path = ROOT / str(authority.get("path", ""))
-            if not path.is_file() or authority.get("content_digest") != digest(path):
-                errors.append(f"Pairwise underlying authority drift: {authority.get('path')}")
+            artifact = current_release.get(field, {})
+            validate_artifact(artifact, f"Pairwise TCK 1.1 {field}", errors)
+            if field in {"target_registry", "scenario_catalog"}:
+                schema_path = ROOT / str(artifact.get("schema_path", ""))
+                if not schema_path.is_file() or artifact.get("schema_digest") != digest(schema_path):
+                    errors.append(f"Pairwise TCK 1.1 {field} schema digest drift")
+        validate_bundle(current_release.get("runner_bundle", {}), "Pairwise runner bundle", errors)
+        validate_bundle(current_release.get("evaluator_bundle", {}), "Pairwise evaluator bundle", errors)
+        for authority in current_release.get("underlying_authorities", []):
+            validate_artifact(authority, "Pairwise immutable underlying authority", errors)
+        forbidden = (
+            "conformance/evidence/evidence_tck_releases.json",
+            "conformance/evidence/targets.json",
+            "conformance/iut/tck_releases.json",
+        )
+        authority_paths = {item.get("path") for item in current_release.get("underlying_authorities", [])}
+        for path in forbidden:
+            if path in authority_paths:
+                errors.append(f"Pairwise TCK 1.1 depends on mutable current authority: {path}")
+        authority_spec = load(
+            PAIRWISE
+            / "release_artifacts"
+            / "AICP-PAIRWISE-TCK-1.1.0"
+            / "authority_root"
+            / "pairwise_side_authorities.json"
+        )
+        if authority_spec.get("profile", {}).get("resolved_release_id") != "AICP-IUT-TCK-1.1.0":
+            errors.append("Pairwise profile authority does not resolve exact IUT TCK 1.1")
+        if authority_spec.get("binding", {}).get("resolved_release_id") != "AICP-EVIDENCE-TCK-1.10.0":
+            errors.append("Pairwise binding authority does not resolve exact Evidence TCK 1.10")
 
     evidence_registry_path = ROOT / "conformance" / "evidence" / "evidence_tck_releases.json"
     evidence_snapshot_path = ROOT / "conformance" / "evidence" / "release_registry_snapshots" / "AICP-EVIDENCE-TCK-1.10.0.json"
@@ -161,7 +223,11 @@ def main() -> int:
         for message in errors:
             print(f"[ERROR] {message}")
         return 1
-    print("Pairwise target/TCK validation passed: registered=1; reachable=1; Evidence TCK 1.10 frozen")
+    print(
+        "Pairwise target/TCK validation passed: registered=1; reachable=1; "
+        "current=AICP-PAIRWISE-TCK-1.1.0; historical-strong-ineligible=1; "
+        "Evidence TCK 1.10 frozen"
+    )
     return 0
 
 

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/conformance-report-1.0.json",
+  "title": "AICP Provenance Conformance Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_format_version",
+    "execution_subject",
+    "runner",
+    "suite",
+    "input_artifacts",
+    "generated_artifacts",
+    "aicp_version",
+    "suite_id",
+    "suite_version",
+    "timestamp",
+    "passed",
+    "failures",
+    "compatibility_marks",
+    "degraded",
+    "degraded_reasons",
+    "skipped_checks"
+  ],
+  "properties": {
+    "report_format_version": {"const": "1.0"},
+    "execution_subject": {"$ref": "#/$defs/ExecutionSubject"},
+    "runner": {"$ref": "#/$defs/Runner"},
+    "suite": {"$ref": "#/$defs/Suite"},
+    "input_artifacts": {"$ref": "#/$defs/Artifacts"},
+    "generated_artifacts": {"$ref": "#/$defs/Artifacts"},
+    "aicp_version": {"type": "string", "minLength": 1},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_version": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "passed": {"type": "boolean"},
+    "failures": {"type": "array", "items": {"$ref": "#/$defs/Failure"}},
+    "compatibility_marks": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "degraded": {"type": "boolean"},
+    "degraded_reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "skipped_checks": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "ExecutionSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "implementation_id", "implementation_version", "implementation_digest"],
+      "properties": {
+        "kind": {"enum": ["reference_corpus", "external_implementation"]},
+        "implementation_id": {"type": "string", "minLength": 1},
+        "implementation_version": {"type": "string", "minLength": 1},
+        "implementation_digest": {"type": "string", "minLength": 1}
+      }
+    },
+    "Runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source_revision"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "source_revision": {"type": "string", "minLength": 1}
+      }
+    },
+    "Suite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suite_id", "suite_version", "suite_digest"],
+      "properties": {
+        "suite_id": {"type": "string", "minLength": 1},
+        "suite_version": {"type": "string", "minLength": 1},
+        "suite_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "Artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "path", "content_digest"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "path": {"type": "string"},
+        "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "Artifacts": {"type": "array", "items": {"$ref": "#/$defs/Artifact"}},
+    "Failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["test_id", "message", "file", "line"],
+      "properties": {
+        "test_id": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1},
+        "file": {"type": "string"},
+        "line": {"type": ["integer", "null"], "minimum": 1}
+      }
+    }
+  }
+}

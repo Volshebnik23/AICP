@@ -1,0 +1,893 @@
+{
+  "report_format_version": "1.0",
+  "report_type": "aicp.external_iut",
+  "execution_mode": "full-profile",
+  "execution_subject": {
+    "kind": "external_implementation",
+    "implementation_id": "aicp-cleanroom-node-b",
+    "implementation_version": "1.0.0-test",
+    "implementation_digest": "sha256:b92c086c2da0b589174f3f8f612dd72c0e7f5f7239e1341d2dbf0a5f2fb6d82a"
+  },
+  "runner": {
+    "name": "aicp-iut-runner",
+    "version": "1.1",
+    "source_revision": "sha256:6921d8f4a0a7577973e35a4dce4f892894a28c371316568dea89ca034d701673"
+  },
+  "tck_release": {
+    "release_id": "AICP-IUT-TCK-1.1.0",
+    "registry_digest": "sha256:f89c7dc476041f79558157bb6d0178d7b43158913a2dbe5ee0191d017903a25e",
+    "runner_bundle_digest": "sha256:6921d8f4a0a7577973e35a4dce4f892894a28c371316568dea89ca034d701673",
+    "case_catalog_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+  },
+  "suite": {
+    "suite_id": "AICP-IUT-TCK",
+    "suite_version": "1.1.0-experimental",
+    "suite_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+  },
+  "required_suites": [
+    {
+      "suite_id": "CT-CORE-0.1",
+      "suite_version": "0.1.0-dev",
+      "suite_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+    }
+  ],
+  "profile": {
+    "profile_id": "AICP-BASE",
+    "profile_version": "0.1",
+    "profile_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
+  },
+  "input_artifacts": [
+    {
+      "artifact_id": "CT_CORE_0.1",
+      "path": "conformance/core/CT_CORE_0.1.json",
+      "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
+    },
+    {
+      "artifact_id": "adapter_protocol.schema",
+      "path": "conformance/iut/adapter_protocol.schema.json",
+      "content_digest": "sha256:6cc75fbed08796385a59a934dd85ffd88f0be308ffd1645c337e5bbb122b0186"
+    },
+    {
+      "artifact_id": "cases",
+      "path": "conformance/iut/cases.json",
+      "content_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
+    },
+    {
+      "artifact_id": "iut_report_v1.schema",
+      "path": "conformance/iut/iut_report_v1.schema.json",
+      "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+    },
+    {
+      "artifact_id": "PF_AICP_BASE_0.1",
+      "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
+      "content_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
+    },
+    {
+      "artifact_id": "unicode_codepoint_key_order",
+      "path": "conformance/vectors/unicode_codepoint_key_order.json",
+      "content_digest": "sha256:369fd3088374e1894be308c22c42a90e4fe5652a38cc5ec6016860a4f77aefed"
+    },
+    {
+      "artifact_id": "GT-01_happy_path_signed",
+      "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+      "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+    },
+    {
+      "artifact_id": "GT-02_conflict_choose_signed",
+      "path": "fixtures/golden_transcripts/GT-02_conflict_choose_signed.jsonl",
+      "content_digest": "sha256:5e45840d7d38e8358034530f6746a62fa7189392741ad006836de475e6bcac30"
+    },
+    {
+      "artifact_id": "GT-04_consent_required_and_grant",
+      "path": "fixtures/golden_transcripts/GT-04_consent_required_and_grant.jsonl",
+      "content_digest": "sha256:c51b9e98242bde50958a57662f46d7e8b554629023215ddc079581bdb2267c47"
+    },
+    {
+      "artifact_id": "GT-05_consent_revoke",
+      "path": "fixtures/golden_transcripts/GT-05_consent_revoke.jsonl",
+      "content_digest": "sha256:b3a17d98cbb8b19cf39833993c27a8f8bf92374775cd375c696c920b10c71333"
+    },
+    {
+      "artifact_id": "GT-06_unknown_base_and_resync",
+      "path": "fixtures/golden_transcripts/GT-06_unknown_base_and_resync.jsonl",
+      "content_digest": "sha256:6031ea69eb5c680cdaf434f0b92cf9f8838fb6855078ace938210f3b80c03b7b"
+    },
+    {
+      "artifact_id": "GT-07_invalid_signature_reject",
+      "path": "fixtures/golden_transcripts/GT-07_invalid_signature_reject.jsonl",
+      "content_digest": "sha256:390a9ab376fc06ccf6e41b0dd4af06daabf40e4b33acc6903def5410eda36eff"
+    },
+    {
+      "artifact_id": "GT-08_error_minimal",
+      "path": "fixtures/golden_transcripts/GT-08_error_minimal.jsonl",
+      "content_digest": "sha256:a90750ba0adcf7c48d288f0a74b59a7b32abcc752cbd6710053d410c252f55e7"
+    },
+    {
+      "artifact_id": "GT-08_replay_duplicate_message_id",
+      "path": "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+      "content_digest": "sha256:1d1c6b003945175836127e066eaa7200ab141fd4a98c032f7b757ecc7382c612"
+    },
+    {
+      "artifact_id": "GT-09_missing_prev_msg_hash_expected_fail",
+      "path": "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl",
+      "content_digest": "sha256:22b33be97a56de1613f5d1cdd0f57aaaab792a483f742628af7a4297cedc91b4"
+    },
+    {
+      "artifact_id": "GT-11_empty_contract_id_expected_fail",
+      "path": "fixtures/golden_transcripts/GT-11_empty_contract_id_expected_fail.jsonl",
+      "content_digest": "sha256:08983c7cd566d6140d546fc3a5e7a26ba870ec524fc91ec279a1dff6c0ef1d71"
+    },
+    {
+      "artifact_id": "GT_public_keys",
+      "path": "fixtures/keys/GT_public_keys.json",
+      "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+    }
+  ],
+  "generated_artifacts": [
+    {
+      "artifact_id": "BASE-PRODUCER-HAPPY",
+      "content_digest": "sha256:c8c66006ee1e9cac985585ed145d76972cdd92d74beec6dc48416321c6a7fe99",
+      "content": [
+        {
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:T6ItvxSeD9FvdnOgxTxGChTedZ1dqvHI83MJ4mfgH1U",
+          "message_id": "m1",
+          "message_type": "CONTRACT_PROPOSE",
+          "payload": {
+            "contract": {
+              "contract_id": "cGT1",
+              "goal": "base-happy-v1",
+              "roles": [
+                "agent:A",
+                "agent:B"
+              ]
+            },
+            "contract_hash": "sha256:37vhYuXq4qsIi_ZaKQTos5qC3-tvKGQ7Hpqz-sC6YOQ"
+          },
+          "sender": "agent:A",
+          "session_id": "sGT1",
+          "timestamp": "2026-01-01T00:00:01Z"
+        },
+        {
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:3v3-qbSKtD-z6o9TYGmixrYIagMjB0Uo0qV_yv2stFw",
+          "message_id": "m2",
+          "message_type": "CONTRACT_ACCEPT",
+          "payload": {
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:T6ItvxSeD9FvdnOgxTxGChTedZ1dqvHI83MJ4mfgH1U",
+          "sender": "agent:B",
+          "session_id": "sGT1",
+          "timestamp": "2026-01-01T00:00:02Z"
+        },
+        {
+          "contract_id": "cGT1",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:CM4efhMut92KhNJf5nZfw2qh4OpvXvycX0jIJKttKN4",
+          "message_id": "m3",
+          "message_type": "ATTEST_ACTION",
+          "payload": {
+            "action_id": "act-a",
+            "action_type": "tools/call",
+            "result_hash": "sha256:FyC_Vsw8p_5ax7Q7BaTXFA3h9AhNAzrYb0dKZENTBAU"
+          },
+          "prev_msg_hash": "sha256:3v3-qbSKtD-z6o9TYGmixrYIagMjB0Uo0qV_yv2stFw",
+          "sender": "agent:A",
+          "session_id": "sGT1",
+          "timestamp": "2026-01-01T00:00:03Z"
+        }
+      ],
+      "repeat_content_digest": "sha256:c8c66006ee1e9cac985585ed145d76972cdd92d74beec6dc48416321c6a7fe99"
+    },
+    {
+      "artifact_id": "BASE-PRODUCER-CONFLICT",
+      "content_digest": "sha256:63231fd0ac932267c5739a7390f93ec5ea0d2e2b06adc2dc5cfb13f49cb6efc0",
+      "content": [
+        {
+          "contract_id": "cGT2",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:tn0ukoHPWX0EAGAGfz174Y5azfF17Hc9GlkJ-XsZi1o",
+          "message_id": "m1",
+          "message_type": "CONTRACT_PROPOSE",
+          "payload": {
+            "contract": {
+              "contract_id": "cGT2",
+              "goal": "base-conflict-v1",
+              "roles": [
+                "agent:A",
+                "agent:B"
+              ]
+            },
+            "contract_hash": "sha256:H9hjW39exyclpmSZFYDVbXYZS2ms8Kzcvm9nMJ0M8sE"
+          },
+          "sender": "agent:A",
+          "session_id": "sGT2",
+          "timestamp": "2026-01-01T00:00:01Z"
+        },
+        {
+          "contract_id": "cGT2",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:oJBctsrh7tvAwfnhB7EE3-9yOeMGazZ_Fk3u550UCwA",
+          "message_id": "m2",
+          "message_type": "CONTRACT_ACCEPT",
+          "payload": {
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:tn0ukoHPWX0EAGAGfz174Y5azfF17Hc9GlkJ-XsZi1o",
+          "sender": "agent:B",
+          "session_id": "sGT2",
+          "timestamp": "2026-01-01T00:00:02Z"
+        },
+        {
+          "contract_id": "cGT2",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:ln_WhZGJhMC-h1ZASCgvmsDpRXYszwYXTRl0FoJI2do",
+          "message_id": "m3",
+          "message_type": "CONTEXT_AMEND",
+          "payload": {
+            "amendment": {
+              "amend_id": "a3",
+              "base_version": "v1",
+              "changes": {
+                "choice": 3
+              }
+            }
+          },
+          "prev_msg_hash": "sha256:oJBctsrh7tvAwfnhB7EE3-9yOeMGazZ_Fk3u550UCwA",
+          "sender": "agent:A",
+          "session_id": "sGT2",
+          "timestamp": "2026-01-01T00:00:03Z"
+        },
+        {
+          "contract_id": "cGT2",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:ySr_oZSPC39RjGp6iiL3z5MRRrdYDcIO-bITO-J-FCc",
+          "message_id": "m4",
+          "message_type": "CONTEXT_AMEND",
+          "payload": {
+            "amendment": {
+              "amend_id": "a4",
+              "base_version": "v1",
+              "changes": {
+                "choice": 4
+              }
+            }
+          },
+          "prev_msg_hash": "sha256:ln_WhZGJhMC-h1ZASCgvmsDpRXYszwYXTRl0FoJI2do",
+          "sender": "agent:B",
+          "session_id": "sGT2",
+          "timestamp": "2026-01-01T00:00:04Z"
+        },
+        {
+          "contract_id": "cGT2",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:-uXV9KSFQg9k-_9JJDHG9qahtYLf9UAtGU-AWViaf2k",
+          "message_id": "m5",
+          "message_type": "RESOLVE_CONFLICT",
+          "payload": {
+            "candidates": [
+              {
+                "message_hash": "sha256:ln_WhZGJhMC-h1ZASCgvmsDpRXYszwYXTRl0FoJI2do",
+                "message_id": "m3"
+              },
+              {
+                "message_hash": "sha256:ySr_oZSPC39RjGp6iiL3z5MRRrdYDcIO-bITO-J-FCc",
+                "message_id": "m4"
+              }
+            ],
+            "conflict_class": "CONCURRENT_AMEND",
+            "conflict_id": "conflict-a",
+            "resolution": {
+              "chosen_message_hash": "sha256:ln_WhZGJhMC-h1ZASCgvmsDpRXYszwYXTRl0FoJI2do",
+              "chosen_message_id": "m3",
+              "type": "CHOOSE"
+            }
+          },
+          "prev_msg_hash": "sha256:ySr_oZSPC39RjGp6iiL3z5MRRrdYDcIO-bITO-J-FCc",
+          "sender": "agent:A",
+          "session_id": "sGT2",
+          "timestamp": "2026-01-01T00:00:05Z"
+        }
+      ],
+      "repeat_content_digest": "sha256:63231fd0ac932267c5739a7390f93ec5ea0d2e2b06adc2dc5cfb13f49cb6efc0"
+    },
+    {
+      "artifact_id": "BASE-PRODUCER-CONSENT-GRANT",
+      "content_digest": "sha256:17e3de6ca685455310966f0c12e311d9e13086fad8d00b1ec596e891ebfda1fd",
+      "content": [
+        {
+          "contract_id": "cGT4",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:jiH3M_1LVSx92YVv5JgHD205gcRvGZMMwQCZD11pYtc",
+          "message_id": "m1",
+          "message_type": "CONTRACT_PROPOSE",
+          "payload": {
+            "contract": {
+              "contract_id": "cGT4",
+              "goal": "base-consent-grant-v1",
+              "policies": [
+                {
+                  "category": "user_consent",
+                  "parameters": {
+                    "required": true,
+                    "scope": "share_profile"
+                  },
+                  "policy_id": "consent",
+                  "status": "active"
+                }
+              ],
+              "roles": [
+                "agent:A",
+                "agent:B"
+              ]
+            },
+            "contract_hash": "sha256:0REz9cxlejqGd1DUndKxyYjdGARoanZnqQL0f7uYYdw"
+          },
+          "sender": "agent:A",
+          "session_id": "sGT4",
+          "timestamp": "2026-01-01T00:00:01Z"
+        },
+        {
+          "contract_id": "cGT4",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:zqc-0JJdQMtrAydOZ8TPYJyQeKj5UflDMtt10xvuzi4",
+          "message_id": "m2",
+          "message_type": "CONTRACT_ACCEPT",
+          "payload": {
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:jiH3M_1LVSx92YVv5JgHD205gcRvGZMMwQCZD11pYtc",
+          "sender": "agent:B",
+          "session_id": "sGT4",
+          "timestamp": "2026-01-01T00:00:02Z"
+        },
+        {
+          "contract_id": "cGT4",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:P11rm9Av7co9oRCD-Hh_YCLbw8870V4yIMVYvGZEPE0",
+          "message_id": "m3",
+          "message_type": "CONTEXT_AMEND",
+          "payload": {
+            "amendment": {
+              "consent_ref": "consent:a",
+              "consent_scope": "share_profile",
+              "consent_status": "granted"
+            }
+          },
+          "prev_msg_hash": "sha256:zqc-0JJdQMtrAydOZ8TPYJyQeKj5UflDMtt10xvuzi4",
+          "sender": "agent:A",
+          "session_id": "sGT4",
+          "timestamp": "2026-01-01T00:00:03Z"
+        },
+        {
+          "contract_id": "cGT4",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:bZclktXZIJ2RRktCURBNFwwICBkxlf7HMm9dK4-pe48",
+          "message_id": "m4",
+          "message_type": "ATTEST_ACTION",
+          "payload": {
+            "action_id": "act-a",
+            "action_type": "share_profile",
+            "consent_ref": "consent:a"
+          },
+          "prev_msg_hash": "sha256:P11rm9Av7co9oRCD-Hh_YCLbw8870V4yIMVYvGZEPE0",
+          "sender": "agent:B",
+          "session_id": "sGT4",
+          "timestamp": "2026-01-01T00:00:04Z"
+        }
+      ],
+      "repeat_content_digest": "sha256:17e3de6ca685455310966f0c12e311d9e13086fad8d00b1ec596e891ebfda1fd"
+    },
+    {
+      "artifact_id": "BASE-PRODUCER-CONSENT-REVOKE",
+      "content_digest": "sha256:87da56d390d8553788229b0b2eb266a51aacaca4fa11b8020ca018511ee85fbc",
+      "content": [
+        {
+          "contract_id": "cGT5",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:T5hoFK9l2CDE6SwJvuyOpcqccI2Wxp--S6LW_MbWKvY",
+          "message_id": "m1",
+          "message_type": "CONTRACT_PROPOSE",
+          "payload": {
+            "contract": {
+              "contract_id": "cGT5",
+              "goal": "base-consent-revoke-v1",
+              "policies": [
+                {
+                  "category": "user_consent",
+                  "parameters": {
+                    "required": true,
+                    "scope": "payments"
+                  },
+                  "policy_id": "consent",
+                  "status": "active"
+                }
+              ],
+              "roles": [
+                "agent:A",
+                "agent:B"
+              ]
+            },
+            "contract_hash": "sha256:jcKC7Uc4-gqEmHKubvCTIe-4QaUGk58G5gbtjR0AEQ0"
+          },
+          "sender": "agent:A",
+          "session_id": "sGT5",
+          "timestamp": "2026-01-01T00:00:01Z"
+        },
+        {
+          "contract_id": "cGT5",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:nP_jlLq2iYLeLwIfWZ2VD-C-QigytFM6zFS8ogxVFl4",
+          "message_id": "m2",
+          "message_type": "CONTRACT_ACCEPT",
+          "payload": {
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:T5hoFK9l2CDE6SwJvuyOpcqccI2Wxp--S6LW_MbWKvY",
+          "sender": "agent:B",
+          "session_id": "sGT5",
+          "timestamp": "2026-01-01T00:00:02Z"
+        },
+        {
+          "contract_id": "cGT5",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:j3aP3qxah1EfAhR6g3EuVsyrTv7Ok4r90Yxp5ua_jaA",
+          "message_id": "m3",
+          "message_type": "CONTEXT_AMEND",
+          "payload": {
+            "amendment": {
+              "consent_ref": "consent:a",
+              "consent_scope": "payments",
+              "consent_status": "granted"
+            }
+          },
+          "prev_msg_hash": "sha256:nP_jlLq2iYLeLwIfWZ2VD-C-QigytFM6zFS8ogxVFl4",
+          "sender": "agent:A",
+          "session_id": "sGT5",
+          "timestamp": "2026-01-01T00:00:03Z"
+        },
+        {
+          "contract_id": "cGT5",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:ARIf_dw562NoI8lxq3lKdl1OmJZk0N8BOGG1NnBEihc",
+          "message_id": "m4",
+          "message_type": "CONTEXT_AMEND",
+          "payload": {
+            "amendment": {
+              "consent_ref": "consent:a",
+              "consent_status": "revoked",
+              "reason": "user_revoked"
+            }
+          },
+          "prev_msg_hash": "sha256:j3aP3qxah1EfAhR6g3EuVsyrTv7Ok4r90Yxp5ua_jaA",
+          "sender": "agent:B",
+          "session_id": "sGT5",
+          "timestamp": "2026-01-01T00:00:04Z"
+        },
+        {
+          "contract_id": "cGT5",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:GpDfc4akjdAGMQddS_CNeeaYAyqeve7rGIkx_eMw3hQ",
+          "message_id": "m5",
+          "message_type": "ATTEST_ACTION",
+          "payload": {
+            "action_id": "act-a",
+            "action_type": "payment_attempt",
+            "consent_ref": "consent:a"
+          },
+          "prev_msg_hash": "sha256:ARIf_dw562NoI8lxq3lKdl1OmJZk0N8BOGG1NnBEihc",
+          "sender": "agent:A",
+          "session_id": "sGT5",
+          "timestamp": "2026-01-01T00:00:05Z"
+        }
+      ],
+      "repeat_content_digest": "sha256:87da56d390d8553788229b0b2eb266a51aacaca4fa11b8020ca018511ee85fbc"
+    },
+    {
+      "artifact_id": "BASE-PRODUCER-RECOVERY",
+      "content_digest": "sha256:e783030f3fba25499a11382d5d7c010c3c861317bf980ebe187471ff3d7f7d5c",
+      "content": [
+        {
+          "contract_id": "cGT6",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:3a2CD4XUYY5SvWMSSqvhEn076SvQ3ZfFVaHNLnuE5eE",
+          "message_id": "m1",
+          "message_type": "CONTRACT_PROPOSE",
+          "payload": {
+            "contract": {
+              "contract_id": "cGT6",
+              "goal": "base-recovery-v1",
+              "roles": [
+                "agent:A",
+                "agent:B"
+              ]
+            },
+            "contract_hash": "sha256:gBOOv6Cnz9BvY4rE9llTMQSfHrza7CPGvGl04WYi52s"
+          },
+          "sender": "agent:A",
+          "session_id": "sGT6",
+          "timestamp": "2026-01-01T00:00:01Z"
+        },
+        {
+          "contract_id": "cGT6",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:4CbMQjfn7IbvTnW8JdZrK7T9kNniR_cRRoir_KUxTwM",
+          "message_id": "m2",
+          "message_type": "CONTRACT_ACCEPT",
+          "payload": {
+            "accepted": true
+          },
+          "prev_msg_hash": "sha256:3a2CD4XUYY5SvWMSSqvhEn076SvQ3ZfFVaHNLnuE5eE",
+          "sender": "agent:B",
+          "session_id": "sGT6",
+          "timestamp": "2026-01-01T00:00:02Z"
+        },
+        {
+          "contract_id": "cGT6",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:gVaNerQ5A_MxDYz0PrF-xk7H3_wdhnULHHfF7Ts5ZB0",
+          "message_id": "m3",
+          "message_type": "STATE_SYNC_REQUEST",
+          "payload": {
+            "known_heads": [
+              "v999"
+            ],
+            "request_id": "sync-a"
+          },
+          "prev_msg_hash": "sha256:4CbMQjfn7IbvTnW8JdZrK7T9kNniR_cRRoir_KUxTwM",
+          "sender": "agent:A",
+          "session_id": "sGT6",
+          "timestamp": "2026-01-01T00:00:03Z"
+        },
+        {
+          "contract_id": "cGT6",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:TWji5jX2GMpageBkFGnVE7LwRae1a12nKtXxFtGU3cI",
+          "message_id": "m4",
+          "message_type": "STATE_SYNC_RESPONSE",
+          "payload": {
+            "active_head_version": "v1",
+            "branch_heads": [
+              "v1"
+            ],
+            "request_id": "sync-a",
+            "session_state": "active"
+          },
+          "prev_msg_hash": "sha256:gVaNerQ5A_MxDYz0PrF-xk7H3_wdhnULHHfF7Ts5ZB0",
+          "sender": "agent:B",
+          "session_id": "sGT6",
+          "timestamp": "2026-01-01T00:00:04Z"
+        },
+        {
+          "contract_id": "cGT6",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:E2dVkxZMSSMHGEg1jxEcCNkPkDT3xAfltFHOqw9gaHk",
+          "message_id": "m5",
+          "message_type": "CONTEXT_AMEND",
+          "payload": {
+            "amendment": {
+              "amend_id": "a5",
+              "base_version": "v1",
+              "changes": {
+                "choice": 5
+              }
+            }
+          },
+          "prev_msg_hash": "sha256:TWji5jX2GMpageBkFGnVE7LwRae1a12nKtXxFtGU3cI",
+          "sender": "agent:A",
+          "session_id": "sGT6",
+          "timestamp": "2026-01-01T00:00:05Z"
+        }
+      ],
+      "repeat_content_digest": "sha256:e783030f3fba25499a11382d5d7c010c3c861317bf980ebe187471ff3d7f7d5c"
+    },
+    {
+      "artifact_id": "BASE-PRODUCER-ERROR",
+      "content_digest": "sha256:e82d195b69ce703ac3b53bc72e9f4dfb46694f4ef3fd6a2aec99b97a27debdaa",
+      "content": [
+        {
+          "contract_id": "cGT10",
+          "contract_ref": {
+            "base_version": "v1",
+            "branch_id": "main",
+            "head_version": "v1"
+          },
+          "message_hash": "sha256:o2pxlXuxnHbVtEpeBtZcXjDYOMZjhEvrlKzomHVj4F4",
+          "message_id": "m1",
+          "message_type": "ERROR",
+          "payload": {
+            "applies_to": {
+              "message_id": "none"
+            },
+            "disposition": "REJECTED",
+            "error_class": "VALIDATION",
+            "error_code": "TEST_ERROR",
+            "severity": "low"
+          },
+          "sender": "agent:A",
+          "session_id": "sGT10",
+          "timestamp": "2026-01-01T00:00:01Z"
+        }
+      ],
+      "repeat_content_digest": "sha256:e82d195b69ce703ac3b53bc72e9f4dfb46694f4ef3fd6a2aec99b97a27debdaa"
+    }
+  ],
+  "timestamp": "2026-08-26T19:49:48.271802+00:00",
+  "passed": true,
+  "case_results": [
+    {
+      "case_id": "IUT-CATALOG-COVERAGE-01",
+      "passed": true,
+      "message": "full-profile catalog covers every required suite case and positive Core producer type"
+    },
+    {
+      "case_id": "IUT-DESCRIBE-01",
+      "passed": true,
+      "message": "metadata complete"
+    },
+    {
+      "case_id": "AICP-JCS-UNICODE-KEY-ORDER-01",
+      "passed": true,
+      "message": "canonical bytes/hash match"
+    },
+    {
+      "case_id": "BASE-PRODUCER-HAPPY",
+      "passed": true,
+      "message": "generated transcript satisfies the bound neutral scenario and required suites; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "BASE-PRODUCER-CONFLICT",
+      "passed": true,
+      "message": "generated transcript satisfies the bound neutral scenario and required suites; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "BASE-PRODUCER-CONSENT-GRANT",
+      "passed": true,
+      "message": "generated transcript satisfies the bound neutral scenario and required suites; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "BASE-PRODUCER-CONSENT-REVOKE",
+      "passed": true,
+      "message": "generated transcript satisfies the bound neutral scenario and required suites; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "BASE-PRODUCER-RECOVERY",
+      "passed": true,
+      "message": "generated transcript satisfies the bound neutral scenario and required suites; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "BASE-PRODUCER-ERROR",
+      "passed": true,
+      "message": "generated transcript satisfies the bound neutral scenario and required suites; deterministic repeat digest matched"
+    },
+    {
+      "case_id": "BASE-CORE-GT-01",
+      "passed": true,
+      "message": "consumer accepted=True; expected=True; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-02",
+      "passed": true,
+      "message": "consumer accepted=True; expected=True; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-04",
+      "passed": true,
+      "message": "consumer accepted=True; expected=True; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-05",
+      "passed": true,
+      "message": "consumer accepted=True; expected=True; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-06",
+      "passed": true,
+      "message": "consumer accepted=True; expected=True; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-07",
+      "passed": true,
+      "message": "consumer accepted=False; expected=False; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-08",
+      "passed": true,
+      "message": "consumer accepted=False; expected=False; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-09",
+      "passed": true,
+      "message": "consumer accepted=False; expected=False; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-10",
+      "passed": true,
+      "message": "consumer accepted=True; expected=True; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": true,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "BASE-CORE-GT-11",
+      "passed": true,
+      "message": "consumer accepted=False; expected=False; scope=normal; degraded=False; degraded_reasons=[]; skipped_checks=[]",
+      "execution_observation": {
+        "scope": "normal",
+        "accepted": false,
+        "degraded": false,
+        "degraded_reasons": [],
+        "skipped_checks": []
+      }
+    },
+    {
+      "case_id": "IUT-DESCRIBE-STABILITY-01",
+      "passed": true,
+      "message": "implementation metadata stable"
+    },
+    {
+      "case_id": "IUT-PROFILE-SUPPORT-01",
+      "passed": true,
+      "message": "adapter declares support for AICP-BASE@0.1"
+    }
+  ],
+  "failures": [],
+  "degraded": false,
+  "degraded_reasons": [],
+  "skipped_checks": [],
+  "compatibility_marks": [
+    "AICP-Profile-BASE-0.1"
+  ],
+  "adapter_stderr": ""
+}

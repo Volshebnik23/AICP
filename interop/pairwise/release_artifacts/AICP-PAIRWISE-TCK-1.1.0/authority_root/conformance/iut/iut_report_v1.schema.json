@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/iut-report-1.0.json",
+  "title": "AICP External IUT Conformance Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_format_version",
+    "report_type",
+    "execution_mode",
+    "execution_subject",
+    "runner",
+    "tck_release",
+    "suite",
+    "required_suites",
+    "profile",
+    "input_artifacts",
+    "generated_artifacts",
+    "timestamp",
+    "passed",
+    "case_results",
+    "failures",
+    "degraded",
+    "degraded_reasons",
+    "skipped_checks",
+    "compatibility_marks",
+    "adapter_stderr"
+  ],
+  "properties": {
+    "report_format_version": {"const": "1.0"},
+    "report_type": {"const": "aicp.external_iut"},
+    "execution_mode": {"enum": ["smoke", "full-profile"]},
+    "execution_subject": {"$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/ExecutionSubject"},
+    "runner": {"$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Runner"},
+    "tck_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_id", "registry_digest", "runner_bundle_digest", "case_catalog_digest"],
+      "properties": {
+        "release_id": {"type": "string", "minLength": 1},
+        "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "runner_bundle_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "case_catalog_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "suite": {"$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Suite"},
+    "required_suites": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Suite"}
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version", "profile_digest"],
+      "properties": {
+        "profile_id": {"type": "string", "minLength": 1},
+        "profile_version": {"type": "string", "minLength": 1},
+        "profile_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "input_artifacts": {"$ref": "https://aicp.dev/schemas/conformance-report-1.0.json#/$defs/Artifacts"},
+    "generated_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "content_digest", "content"],
+        "properties": {
+          "artifact_id": {"type": "string", "minLength": 1},
+          "content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "repeat_content_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "content": {}
+        }
+      }
+    },
+    "timestamp": {"type": "string", "format": "date-time"},
+    "passed": {"type": "boolean"},
+    "case_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "passed", "message"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "passed": {"type": "boolean"},
+          "message": {"type": "string"},
+          "execution_observation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope",
+              "accepted",
+              "degraded",
+              "degraded_reasons",
+              "skipped_checks"
+            ],
+            "properties": {
+              "scope": {"enum": ["normal", "case_local_expected"]},
+              "accepted": {"type": "boolean"},
+              "degraded": {"type": "boolean"},
+              "degraded_reasons": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "skipped_checks": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        }
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["test_id", "message"],
+        "properties": {
+          "test_id": {"type": "string", "minLength": 1},
+          "message": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "degraded": {"type": "boolean"},
+    "degraded_reasons": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "skipped_checks": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "compatibility_marks": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "adapter_stderr": {"type": "string"}
+  }
+}

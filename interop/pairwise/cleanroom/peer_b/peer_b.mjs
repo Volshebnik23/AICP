@@ -377,6 +377,9 @@ function pairwiseMessage(request, behavior) {
   let type;
   if (input.phase === "propose") {
     const contract = { contract_id: String(input.contract_id), goal: String(input.challenge), roles: ["initiator", "responder"] };
+    if (behavior === "missing_contract_goal") delete contract.goal;
+    else if (["ignore_challenge", "prebuilt_proposal"].includes(behavior)) contract.goal = "static-prebuilt-pairwise-goal";
+    else if (behavior === "previous_run_challenge") contract.goal = "challenge-from-a-previous-run";
     payload = { contract, contract_hash: typedHash("contract", contract) };
     type = "CONTRACT_PROPOSE";
   } else if (input.phase === "accept") {
@@ -398,6 +401,18 @@ function pairwiseMessage(request, behavior) {
   }
   if (behavior === "wrong_contract" && input.phase !== "propose") {
     message.contract_id = "wrong-contract";
+    message.message_hash = envelopeHash(message);
+  }
+  if (behavior === "malformed_contract_ref" && input.phase === "propose") {
+    message.contract_ref = { branch_id: "main" };
+    message.message_hash = envelopeHash(message);
+  }
+  if (behavior === "invalid_contract_accept_payload" && input.phase === "accept") {
+    message.payload = { accepted: true, unexpected: "not-in-Core-v0.1" };
+    message.message_hash = envelopeHash(message);
+  }
+  if (behavior === "invalid_attest_action_payload" && input.phase === "attest") {
+    message.payload.unexpected = "not-in-Core-v0.1";
     message.message_hash = envelopeHash(message);
   }
   return message;

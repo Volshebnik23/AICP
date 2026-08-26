@@ -1,0 +1,33 @@
+{
+  "vector_format_version": "1.0",
+  "source_commit": "fe9f57dc57286665ac1820673c9cc63c780325fc",
+  "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.0.0",
+  "classification": "repository-owned-historical-clean-room-test-vector",
+  "files": [
+    {
+      "path": "a-binding.json",
+      "sha256": "513ea630a2ec018a79158749c971cd59f01f74eb73722e41c3effeea2e21c672"
+    },
+    {
+      "path": "a-profile.json",
+      "sha256": "eccc4f0b0d5d3b11dfd8ab776569a289a8a71968d3fd02c681756f484a039b63"
+    },
+    {
+      "path": "b-binding.json",
+      "sha256": "cf76b4497eb43bc01e60f491bbacff83a060a738b419220176d38ad88b00930a"
+    },
+    {
+      "path": "b-profile.json",
+      "sha256": "2c952eb1559a217ef1753a13a356a7481bd39717d600772f0c48be0e8b023f0a"
+    },
+    {
+      "path": "joint.json",
+      "sha256": "024fe1e1140b46540f13ad9717b5a8a090ffd34338592135d1942bf118bda70d"
+    }
+  ],
+  "notes": [
+    "Generated once with the unmodified Pairwise TCK 1.0 runner at the reviewed M66 merge commit.",
+    "This vector is test evidence, not a genuine external interoperability submission.",
+    "The joint report and its four side reports retain their original TCK fields and exact bytes."
+  ]
+}

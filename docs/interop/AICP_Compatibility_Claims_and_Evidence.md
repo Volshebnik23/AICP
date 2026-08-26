@@ -120,11 +120,12 @@ nor a capability.
 Use this only when the evidence is specifically about interoperability between two named implementations for a named shipped profile.
 
 M66 enables real publication for exactly `AICP-BASE@0.1+BIND-MCP@0.1`. Eligibility requires
-four independently eligible side reports and one `AICP-PAIRWISE-TCK-1.0.0` joint report for
+four independently eligible side reports and one `AICP-PAIRWISE-TCK-1.1.0` joint report for
 two distinct exact builds. Missing or invalid joint evidence returns
 `PAIRWISE_JOINT_EVIDENCE_REQUIRED`. Two independent single-IUT reports, co-conformance, or a
 prose/JSON summary still do not establish that the named implementations exchanged and
-consumed each other's artifacts. The result is a typed relation, never a compatibility mark.
+consumed each other's artifacts. TCK 1.0 reports are known historical evidence but are
+strong-ineligible. The result is a typed relation, never a compatibility mark.
 
 A future dedicated joint runner must bind one shared run ID, exact profile/version, both
 implementation IDs/versions/build digests, A-to-B and (where bidirectional) B-to-A artifact

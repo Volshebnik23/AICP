@@ -1,0 +1,17 @@
+{
+  "vector_format_version": "1.0",
+  "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.1.0",
+  "classification": "repository-owned-current-clean-room-test-vector",
+  "files": [
+    { "path": "a-binding.json", "sha256": "961e12af4c75ce69bb49c1651d4bfae596b331ad9d30d5ec12536e8b01d80e7c" },
+    { "path": "a-profile.json", "sha256": "2112480d5e5aeef3b4917cc71ef90e69384104bd51cba477056ffaff83a7f557" },
+    { "path": "b-binding.json", "sha256": "326cbee017a2467ed1c6d156840243363f1774a2f88f08de7c07d03135e60aac" },
+    { "path": "b-profile.json", "sha256": "9d4bfb009526965d021021a258b6fda22990a7b14b340860dbc9ce63edbc6cbe" },
+    { "path": "joint.json", "sha256": "fe855bd2a5afc166b665977b20799ff256627f144bebbe4255f0f541a4ed58ac" }
+  ],
+  "notes": [
+    "Generated with Pairwise TCK 1.1 from the repository-owned Python and Node clean-room peers.",
+    "This vector is reproducible test evidence, not genuine external adoption.",
+    "The five report bytes are frozen for historical-stability and release-dispatch regressions."
+  ]
+}

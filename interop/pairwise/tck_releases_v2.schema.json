@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/tck_releases_v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_version", "release_policies", "releases"],
+  "properties": {
+    "registry_version": { "const": "2.0" },
+    "release_policies": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["release_id", "lifecycle", "strong_eligible", "reason"],
+        "properties": {
+          "release_id": { "type": "string", "pattern": "^AICP-PAIRWISE-TCK-[0-9]+\\.[0-9]+\\.[0-9]+$" },
+          "lifecycle": { "enum": ["historical", "current"] },
+          "strong_eligible": { "type": "boolean" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "releases": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/release" }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "path": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\./).+" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "content_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifactWithSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_digest", "schema_path", "schema_digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "content_digest": { "$ref": "#/$defs/digest" },
+        "schema_path": { "$ref": "#/$defs/path" },
+        "schema_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "mandatoryExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "scenario_id", "directions", "clean_run_count", "side_evidence"],
+      "properties": {
+        "target_id": { "const": "AICP-BASE@0.1+BIND-MCP@0.1" },
+        "scenario_id": { "const": "PAIRWISE-MCP-CROSS-CONSUMPTION-01" },
+        "directions": {
+          "type": "array",
+          "prefixItems": [{ "const": "A_TO_B" }, { "const": "B_TO_A" }],
+          "items": false
+        },
+        "clean_run_count": { "const": 2 },
+        "side_evidence": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "AICP-BASE@0.1/full-profile" },
+            { "const": "BIND-MCP@0.1/full-binding" }
+          ],
+          "items": false
+        }
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_id", "status", "registry_schema_digest", "runner_bundle",
+        "report_schema", "evaluator", "normalizer", "target_registry",
+        "scenario_catalog", "mandatory_execution", "underlying_authorities"
+      ],
+      "properties": {
+        "release_id": { "type": "string" },
+        "status": { "type": "string", "minLength": 1 },
+        "registry_schema_digest": { "$ref": "#/$defs/digest" },
+        "runner_bundle": { "$ref": "#/$defs/bundle" },
+        "evaluator_bundle": { "$ref": "#/$defs/bundle" },
+        "report_schema": { "$ref": "#/$defs/artifact" },
+        "evaluator": { "$ref": "#/$defs/artifact" },
+        "normalizer": { "$ref": "#/$defs/artifact" },
+        "target_registry": { "$ref": "#/$defs/artifactWithSchema" },
+        "scenario_catalog": { "$ref": "#/$defs/artifactWithSchema" },
+        "mandatory_execution": { "$ref": "#/$defs/mandatoryExecution" },
+        "underlying_authorities": {
+          "type": "array",
+          "minItems": 5,
+          "items": { "$ref": "#/$defs/artifact" }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "release_id": { "const": "AICP-PAIRWISE-TCK-1.1.0" } } },
+          "then": { "required": ["evaluator_bundle"] }
+        }
+      ]
+    }
+  }
+}

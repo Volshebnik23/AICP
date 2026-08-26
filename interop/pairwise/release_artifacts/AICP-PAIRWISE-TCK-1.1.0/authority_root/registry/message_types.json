@@ -1,0 +1,1196 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ACTION_APPROVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ACTION_ESCROW.md#message-types-normative",
+    "security_considerations": "ACTION_APPROVE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ACTION_COMMIT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ACTION_ESCROW.md#message-types-normative",
+    "security_considerations": "ACTION_COMMIT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ACTION_PREPARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ACTION_ESCROW.md#message-types-normative",
+    "security_considerations": "ACTION_PREPARE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ADMISSION_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#message-types-normative",
+    "security_considerations": "ADMISSION_ACCEPT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ADMISSION_OFFER",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#message-types-normative",
+    "security_considerations": "ADMISSION_OFFER payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ADMISSION_REJECT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#message-types-normative",
+    "security_considerations": "ADMISSION_REJECT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ADMISSION_RENEW",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#message-types-normative",
+    "security_considerations": "ADMISSION_RENEW payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ADMISSION_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#message-types-normative",
+    "security_considerations": "ADMISSION_REQUEST payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ADMISSION_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ADMISSION.md#message-types-normative",
+    "security_considerations": "ADMISSION_REVOKE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AGENDA_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "AGENDA_DECLARE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AGENDA_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "AGENDA_UPDATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "AGENT_MIGRATION",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Migration claims should be attested to prevent impersonation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ALERTS.md#3-message-type-and-payload-binding-normative",
+    "security_considerations": "Alert payloads should be authenticated and minimally disclosive."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "APPROVAL_CHALLENGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#1-message-types-normative",
+    "security_considerations": "Approval challenge must bind target, approver, scope, and expiry for deterministic enforcement."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "APPROVAL_DENY",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#3-approval_grant-and-approval_deny-payloads-normative-minimum",
+    "security_considerations": "Approval denials must be signer-bound and linked to the challenged action for auditable rejection."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "APPROVAL_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#3-approval_grant-and-approval_deny-payloads-normative-minimum",
+    "security_considerations": "Approval grants must be signer-bound to challenge context and expiry to prevent replay/substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ARBITRATION_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Arbitration requests should identify challenge linkage and designated arbitrator."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ARBITRATION_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Arbitration outcomes should include auditable remedy/evidence references."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ATTEST_ACTION",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Attestations should bind actions, authorities, and result hashes for auditability.",
+    "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AUCTION_CLOSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "AUCTION_CLOSE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AUCTION_OPEN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "AUCTION_OPEN payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AWARD_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "AWARD_ACCEPT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AWARD_DECLINE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "AWARD_DECLINE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "AWARD_ISSUE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "AWARD_ISSUE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BID_SUBMIT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BID_SUBMIT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BID_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BID_UPDATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BID_WITHDRAW",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BID_WITHDRAW payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BLACKBOARD_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BLACKBOARD_DECLARE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BLACKBOARD_POST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BLACKBOARD_POST payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BLACKBOARD_REMOVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BLACKBOARD_REMOVE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "BLACKBOARD_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "BLACKBOARD_UPDATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Accepted profile should be bound to signed context."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Capability declarations are inputs to security-sensitive negotiation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CAPABILITIES_PROPOSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Proposals must resist downgrade and spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "CAPABILITIES_REJECT",
+    "spec_ref": "docs/extensions/RFC_EXT_CAPNEG.md#101-message-types-normative",
+    "security_considerations": "Reject reasons must be machine-readable and non-leaky."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHAIN_FAILURE_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "CHAIN_FAILURE_ATTEST payloads should include reproducible reason/evidence references and be authenticated."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHALLENGE_ASSERTION",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Challenge evidence must be verifiable and tamper-evident."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHANNEL_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CHANNELS.md#message-types-normative",
+    "security_considerations": "CHANNEL_DECLARE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHANNEL_DEPRECATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CHANNELS.md#message-types-normative",
+    "security_considerations": "CHANNEL_DEPRECATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CHANNEL_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_CHANNELS.md#message-types-normative",
+    "security_considerations": "CHANNEL_UPDATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CLAIM_BREACH",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DISPUTES.md#1531-message-types-normative",
+    "security_considerations": "Breach claims should bind delegation/obligation context and evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_DELIVER",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#42-blocking-rule-normative",
+    "security_considerations": "Delivery wrappers must bind original and verdict references to preserve auditability."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_MESSAGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
+    "security_considerations": "Content payloads should be mediated to avoid bypassing enforcement in blocking mode."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTENT_REDACTED",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#1-message-type-normative",
+    "security_considerations": "Redaction payloads should include policy and proof bindings and avoid inline plaintext PII."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTEXT_AMEND",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Amendments must reference an explicit base version to prevent ambiguous forks.",
+    "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTRACT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Acceptances must bind to the exact proposed contract head/hash.",
+    "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "CONTRACT_PROPOSE",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Contract proposals must be hash-bound and explicitly version-referenced.",
+    "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Acceptance should be authenticated to bind delegatee commitment."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Delegation scope and expiry must be enforced."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_RESULT_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Result attestations must bind to delegation_id and contract head to remain auditable."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DELEGATION_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATION.md#1521-message-types-normative",
+    "security_considerations": "Revocations should be honored promptly to avoid stale delegated authority."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DIGEST_DELIVER",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "DIGEST_DELIVER payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "DIGEST_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "DIGEST_REQUEST payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ECONOMICS_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ECONOMICS.md#message-types-normative",
+    "security_considerations": "ECONOMICS_VERDICT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ENFORCEMENT_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ENFORCEMENT.md#41-mandatory-message-pattern-blocking-mode",
+    "security_considerations": "Verdicts are enforcement-critical and should be authenticated to prevent spoofing."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ERROR",
+    "type": "message_types",
+    "spec_ref": "docs/rfc/RFC_Error_Model_and_Recovery.md#92-error-message-core-v01-should",
+    "security_considerations": "Error payloads must avoid leaking secrets/PII.",
+    "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXTERNAL_TX_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#3-message-types-normative",
+    "security_considerations": "Declaration linkage must prevent replay or substitution of external transaction intent."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "EXTERNAL_TX_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXTERNAL_TRANSACTION.md#3-message-types-normative",
+    "security_considerations": "Result payload must bind declaration, external transaction id, and receipt digest evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "HEAD_EXCHANGE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "HEAD_EXCHANGE payloads should carry auditable session/head bindings and source metadata."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "IDENTITY_ANNOUNCE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Identity metadata must be authenticated before trust update."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INBOX_ACK",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#message-types-normative",
+    "security_considerations": "INBOX_ACK payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INBOX_ENQUEUE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#message-types-normative",
+    "security_considerations": "INBOX_ENQUEUE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INBOX_LEASE_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#message-types-normative",
+    "security_considerations": "INBOX_LEASE_GRANT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INBOX_ROUTE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_INBOX.md#message-types-normative",
+    "security_considerations": "INBOX_ROUTE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INCLUSION_PROOF_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "INCLUSION_PROOF_DECLARE payloads should be hash-bound to known checkpoint and target message context."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INTERVENTION_COMPLETE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#4-intervention-bridge-normative-minimum",
+    "security_considerations": "Intervention completion must bind to a prior requirement and matching handle to prevent false unblocking."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "INTERVENTION_REQUIRED",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_HUMAN_APPROVAL.md#4-intervention-bridge-normative-minimum",
+    "security_considerations": "Intervention requests must carry reason, provider hint, expiry, and stable handle for deterministic gating."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "KEY_REVOKE",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Revocations alter trust and must be authenticated and timely."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "KEY_ROTATION",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_IDENTITY_LIFECYCLE.md#142-message-types-normative",
+    "security_considerations": "Cross-signatures are required to prevent key substitution."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "MODERATOR_DIRECTIVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "MODERATOR_DIRECTIVE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBJECT_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "Requests can leak object existence and amplify traffic."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBJECT_RESPONSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "Responses must preserve object hash integrity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OBS_SIGNAL",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_OBSERVABILITY.md#3-message-surface-normative",
+    "security_considerations": "OBS_SIGNAL payloads must remain transport-neutral and correlate to verifiable transcript targets."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "OVERLOAD_SIGNAL",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "OVERLOAD_SIGNAL payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PAID_MESSAGE_DELIVER",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ECONOMICS.md#message-types-normative",
+    "security_considerations": "PAID_MESSAGE_DELIVER payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PAID_MESSAGE_SUBMIT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ECONOMICS.md#message-types-normative",
+    "security_considerations": "PAID_MESSAGE_SUBMIT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#32-participant_accept-semantics-normative",
+    "security_considerations": "Acceptance authority should be constrained to trusted acceptors to prevent role escalation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_JOIN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#31-participant_join-semantics-normative",
+    "security_considerations": "Join requests should be authenticated to prevent spoofed participant admission."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PARTICIPANT_LEAVE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PARTICIPANTS.md#33-participant_leave-semantics-normative",
+    "security_considerations": "Leave/removal events should be authenticated to avoid unauthorized eviction or stale membership use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PAYMENT_PROOF_SUBMIT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_ECONOMICS.md#message-types-normative",
+    "security_considerations": "PAYMENT_PROOF_SUBMIT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_DECISION_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Attestation references must bind policy decisions to verifiable artifacts/actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_EVAL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Evaluation context may contain sensitive policy inputs."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "POLICY_EVAL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_POLICY_EVAL.md#122-message-types-and-payloads-normative",
+    "security_considerations": "Decisions should be signed when enforcement-relevant."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PROVENANCE_APPEND",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PROVENANCE.md#message-types-normative",
+    "security_considerations": "PROVENANCE_APPEND payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PROVENANCE_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PROVENANCE.md#message-types-normative",
+    "security_considerations": "PROVENANCE_DECLARE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PUBLICATION_PUBLISH",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PUBLICATIONS.md#message-types-normative",
+    "security_considerations": "PUBLICATION_PUBLISH payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PUBLICATION_RETRACT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PUBLICATIONS.md#message-types-normative",
+    "security_considerations": "PUBLICATION_RETRACT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "PUBLICATION_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_PUBLICATIONS.md#message-types-normative",
+    "security_considerations": "PUBLICATION_UPDATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "QUEUE_ACK",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "QUEUE_ACK payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "QUEUE_ENQUEUE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "QUEUE_ENQUEUE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "QUEUE_LEASE_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "QUEUE_LEASE_GRANT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "QUEUE_NACK",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "QUEUE_NACK payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "QUEUE_RELEASE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "QUEUE_RELEASE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "stable",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESOLVE_CONFLICT",
+    "type": "message_types",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#4-message-model-and-core-message-types-core-v01",
+    "security_considerations": "Conflict resolution must be quorum-signed and reference full conflict context.",
+    "compatibility_notes": "Stable entry; backward-compatible changes require explicit migration notes and conformance evidence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESPONSIBILITY_ACCEPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "RESPONSIBILITY_ACCEPT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESPONSIBILITY_ASSIGN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "RESPONSIBILITY_ASSIGN payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESPONSIBILITY_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESPONSIBILITY.md#message-types-normative",
+    "security_considerations": "RESPONSIBILITY_REVOKE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESUME_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
+    "security_considerations": "Resume requests should bind session and last_seen hash to prevent ambiguity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RESUME_RESPONSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_RESUME.md#4-message-types-and-payloads-normative",
+    "security_considerations": "Resume responses should accurately signal sync status and safe recovery actions."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RFW_POST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "RFW_POST payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "ROUTING_DECISION_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "ROUTING_DECISION_ATTEST payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_CANCEL",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_CANCEL payloads should mark terminal cancellation and prevent post-terminal mutation."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_COMPLETE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_COMPLETE payloads should mark terminal completion with hash-bound result/store references."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_CREATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_CREATE payloads should initialize run lifecycle with portable run/thread/store references only."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "RUN_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "RUN_UPDATE payloads should mutate only pre-terminal run state and preserve run/thread binding coherence."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SECURITY_ALERT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_SECURITY_ALERTS.md#1541-message-types-normative",
+    "security_considerations": "Alerts should avoid exposing sensitive incident details beyond policy."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "STATE_SYNC_REQUEST",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "State sync requests should minimize information leakage."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "type": "message_types",
+    "id": "STATE_SYNC_RESPONSE",
+    "spec_ref": "docs/extensions/RFC_EXT_OBJECT_RESYNC.md#131-message-types-normative",
+    "security_considerations": "State sync responses must avoid disclosing unauthorized state details."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBCHAT_CREATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "SUBCHAT_CREATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBCHAT_INVITE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "SUBCHAT_INVITE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBCHAT_JOIN",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_MARKETPLACE.md#3-message-types-normative",
+    "security_considerations": "SUBCHAT_JOIN payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBJECT_BINDING_ISSUE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md#3-message-types-normative",
+    "security_considerations": "Issue events must be signed by the declared issuer and hash-bind the delegated subject object."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBJECT_BINDING_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_DELEGATED_IDENTITY.md#3-message-types-normative",
+    "security_considerations": "Revocations require signed, time-bounded effectivity to prevent stale delegated authority use."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBSCRIBE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md#message-types-normative",
+    "security_considerations": "SUBSCRIBE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "SUBSCRIPTION_STATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md#message-types-normative",
+    "security_considerations": "SUBSCRIPTION_STATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THREAD_APPEND",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "THREAD_APPEND payloads should append only to open threads and preserve declared run/thread bindings."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THREAD_CLOSE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "THREAD_CLOSE payloads should mark terminal thread close and reject further append/close mutations."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THREAD_CREATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_EXECUTION_LIFECYCLE.md#message-types-normative",
+    "security_considerations": "THREAD_CREATE payloads should initialize thread lifecycle with optional run binding metadata."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "THROTTLE_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_QUEUE_LEASES.md#message-types-normative",
+    "security_considerations": "THROTTLE_UPDATE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Attestations should be authenticated and bind to request/result hashes to prevent replay spoofing."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Tool requests may carry sensitive intent; constrain scope and validate sender authorization."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_RESULT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Results without valid bindings can bypass policy; enforce request/verdict linkage rules."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TOOL_CALL_VERDICT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TOOL_GATING.md#3-message-types-normative",
+    "security_considerations": "Verdicts are authorization-critical and must be authenticated and hash-bound to requests."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TURN_GRANT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "TURN_GRANT payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TURN_REQUEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "TURN_REQUEST payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "TURN_REVOKE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_FACILITATION.md#message-types-normative",
+    "security_considerations": "TURN_REVOKE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "UNSUBSCRIBE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_SUBSCRIPTIONS.md#message-types-normative",
+    "security_considerations": "UNSUBSCRIBE payloads should be authenticated and hash-bound for replay-safe verification."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WITNESS_RECEIPT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "WITNESS_RECEIPT payloads should bind to prior witness submissions and authenticated witness identity."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WITNESS_SUBMIT",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_TRANSCRIPT_WITNESS.md#message-types-normative",
+    "security_considerations": "WITNESS_SUBMIT payloads should include deterministic checkpoint commitments over transcript head state."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_DECLARE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Workflow artifacts must be hash-bound to contract head."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_STEP_ATTEST",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Step attestations should bind step outputs and contract head for auditability."
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "WORKFLOW_UPDATE",
+    "type": "message_types",
+    "spec_ref": "docs/extensions/RFC_EXT_WORKFLOW_SYNC.md#1511-message-types-normative",
+    "security_considerations": "Workflow updates should bind to prior workflow hash/version to prevent drift or replay."
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/schemas/live-endpoint-descriptor-v2.json",
+  "title": "AICP Live Endpoint Test Descriptor v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "binding_id", "binding_version", "role", "implementation_kind", "implementation_id", "implementation_version", "implementation_digest", "declared_features"],
+  "properties": {
+    "protocol": {"const": "aicp.live_endpoint_descriptor.v2"},
+    "binding_id": {"enum": ["BIND-HTTP", "BIND-MCP"]},
+    "binding_version": {"const": "0.1"},
+    "role": {"enum": ["server_under_test", "client_under_test"]},
+    "implementation_kind": {"enum": ["external_implementation", "reference_corpus"]},
+    "implementation_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "implementation_version": {"type": "string", "minLength": 1, "maxLength": 64},
+    "implementation_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "declared_features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_response", "sse", "websocket", "wss"],
+      "properties": {
+        "request_response": {"type": "boolean"},
+        "sse": {"type": "boolean"},
+        "websocket": {"type": "boolean"},
+        "wss": {"type": "boolean"}
+      }
+    },
+    "base_url": {"type": "string", "pattern": "^http://(127\\.0\\.0\\.1|\\[::1\\]):[1-9][0-9]{0,4}$"},
+    "websocket_url": {"type": "string", "pattern": "^wss?://(127\\.0\\.0\\.1|\\[::1\\]):[1-9][0-9]{0,4}$"},
+    "transport": {"const": "stdio"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"binding_id": {"const": "BIND-HTTP"}, "role": {"const": "server_under_test"}}, "required": ["binding_id", "role"]},
+      "then": {"required": ["base_url"]}
+    },
+    {
+      "if": {"properties": {"binding_id": {"const": "BIND-MCP"}}, "required": ["binding_id"]},
+      "then": {"required": ["transport"]}
+    },
+    {
+      "if": {"properties": {"binding_id": {"const": "BIND-HTTP"}, "role": {"const": "server_under_test"}, "declared_features": {"properties": {"websocket": {"const": true}}, "required": ["websocket"]}}, "required": ["binding_id", "role", "declared_features"]},
+      "then": {"required": ["websocket_url"]}
+    },
+    {
+      "if": {"properties": {"declared_features": {"properties": {"wss": {"const": true}}, "required": ["wss"]}}, "required": ["declared_features"]},
+      "then": {"properties": {"declared_features": {"properties": {"websocket": {"const": true}}}, "websocket_url": {"pattern": "^wss://"}}}
+    }
+  ]
+}
