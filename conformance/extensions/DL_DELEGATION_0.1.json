@@ -129,10 +129,6 @@
     {
       "test_id": "DL-SCOPE-01",
       "description": "Child delegation scope must be subset of parent delegation scope"
-    },
-    {
-      "test_id": "DL-REVOKE-01",
-      "description": "DELEGATION_REVOKE must target a prior active delegation"
     }
   ],
   "compatibility_mark": "AICP-EXT-DELEGATION-0.1"

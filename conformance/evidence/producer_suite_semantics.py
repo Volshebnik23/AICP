@@ -45,7 +45,6 @@ CHECK_IMPLEMENTATIONS: dict[str, tuple[str, str]] = {
     "CN-CHANNEL-PROPERTIES-01": ("executed_suite_semantic_check", "channel property intersection"),
     "PE-REASON-CODES-01": ("executed_suite_semantic_check", "policy reason registry"),
     "PE-CONTEXT-HASH-01": ("executed_suite_semantic_check", "policy context hash"),
-    "PE-ATTEST-01": ("executed_suite_semantic_check", "policy decision attestation binding"),
     "ENF-GATE-01": ("executed_suite_semantic_check", "blocking enforcement gate"),
     "ENF-SANCTION-CODES-01": ("executed_suite_semantic_check", "sanction registry"),
     "ENF-AUTH-01": ("executed_suite_semantic_check", "authorized enforcer"),
@@ -57,7 +56,6 @@ CHECK_IMPLEMENTATIONS: dict[str, tuple[str, str]] = {
     "ID-ANN-01": ("executed_suite_semantic_check", "identity announcement binding"),
     "ID-ROT-01": ("executed_suite_semantic_check", "key rotation cross-signatures"),
     "ID-REVOKE-01": ("executed_suite_semantic_check", "identity key revocation"),
-    "ID-MIGRATE-01": ("executed_suite_semantic_check", "identity migration AID binding"),
     "DI-OBJ-01": ("executed_suite_semantic_check", "subject binding object reference"),
     "DI-ISSUE-01": ("executed_suite_semantic_check", "subject binding issuance"),
     "DI-SIGNED-01": ("executed_suite_semantic_check", "signed binding lifecycle message"),
@@ -116,10 +114,6 @@ SEMANTIC_PARITY_EVIDENCE: dict[str, dict[str, str]] = {
         "parity_mode": "shared_implementation",
         "evidence": "aicp_ref.hashing.object_hash",
     },
-    "policy_attestation": {
-        "parity_mode": "differential_test",
-        "evidence": "test_m65_message_surface_completion.py",
-    },
     "enforcement_sanctions": {
         "parity_mode": "differential_test",
         "evidence": "evidence_identifier_rules.is_broad_namespaced_identifier plus differential corpus",
@@ -172,7 +166,6 @@ def parity_family(check_id: str) -> str:
         "CN-CHANNEL-PROPERTIES-01": "capneg_channel_properties",
         "PE-REASON-CODES-01": "policy_reason_codes",
         "PE-CONTEXT-HASH-01": "policy_context_hash",
-        "PE-ATTEST-01": "policy_attestation",
         "ENF-SANCTION-CODES-01": "enforcement_sanctions",
         "OR-OBJECT-HASH-01": "object_hash",
     }

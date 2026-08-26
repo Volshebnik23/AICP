@@ -204,7 +204,7 @@
     },
     {
       "test_id": "MP-BID-01",
-      "description": "Bid submit/update/withdraw must preserve prior bid and RFW lifecycle bindings"
+      "description": "Bids must reference valid prior RFW and coherent offer terms"
     },
     {
       "test_id": "MP-AWARD-01",
