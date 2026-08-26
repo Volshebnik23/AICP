@@ -337,3 +337,91 @@ def test_pairwise_interop_fails_closed_without_joint_execution(tmp_path: Path) -
         "a dedicated joint-execution format binds one shared run, both named builds, and "
         "artifacts consumed in every required direction"
     ]
+
+
+@pytest.mark.parametrize("evidence_type", ["human_summary", "pairwise_transcript"])
+def test_pairwise_summary_or_transcript_alone_cannot_satisfy_joint_evidence(
+    tmp_path: Path, evidence_type: str
+) -> None:
+    package = tmp_path / evidence_type
+    reports_dir = package / "reports"
+    reports_dir.mkdir(parents=True)
+    artifact = reports_dir / "artifact.json"
+    artifact.write_text(
+        json.dumps(
+            {
+                "artifact_type": evidence_type,
+                "participants": ["external-a", "external-b"],
+                "passed": True,
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = {
+        "implementation_id": "external-a",
+        "implementation_version": "1.0.0",
+        "peer_implementation_id": "external-b",
+        "peer_implementation_version": "2.0.0",
+        "profile_refs": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}],
+        "report_refs": ["reports/artifact.json"],
+        "evidence_types": [evidence_type],
+        "claim_type": "pairwise_interop",
+        "claim_scope": "pairwise",
+        "evidence_status": "pairwise",
+    }
+
+    errors = _validate_strong_report_evidence(package / "submission.json", manifest)
+    assert len(errors) == 1
+    assert errors[0].startswith("PAIRWISE_JOINT_EVIDENCE_REQUIRED:")
+
+
+def test_two_unrelated_passing_reports_cannot_satisfy_pairwise_evidence(
+    tmp_path: Path,
+) -> None:
+    package = tmp_path / "unrelated-reports"
+    reports_dir = package / "reports"
+    reports_dir.mkdir(parents=True)
+    for side in ("a", "b"):
+        (reports_dir / f"{side}.json").write_text(
+            json.dumps(
+                {
+                    "execution_subject": {
+                        "implementation_id": f"external-{side}",
+                        "implementation_version": "1.0.0",
+                    },
+                    "profile": {"profile_id": "AICP-BASE", "profile_version": "0.1"},
+                    "passed": True,
+                    "compatibility_marks": ["AICP-Profile-BASE-0.1"],
+                }
+            ),
+            encoding="utf-8",
+        )
+    manifest = {
+        "implementation_id": "external-a",
+        "implementation_version": "1.0.0",
+        "peer_implementation_id": "external-b",
+        "peer_implementation_version": "1.0.0",
+        "profile_refs": [{"profile_id": "AICP-BASE", "profile_version": "0.1"}],
+        "report_refs": ["reports/a.json", "reports/b.json"],
+        "evidence_types": ["profile_report"],
+        "claim_type": "pairwise_interop",
+        "claim_scope": "pairwise",
+        "evidence_status": "pairwise",
+    }
+
+    errors = _validate_strong_report_evidence(package / "submission.json", manifest)
+    assert len(errors) == 1
+    assert errors[0].startswith("PAIRWISE_JOINT_EVIDENCE_REQUIRED:")
+
+
+def test_pairwise_example_remains_instructional_and_non_promotable() -> None:
+    manifest = json.loads(
+        (
+            ROOT
+            / "interop/submissions/examples/pairwise_profile_interop/submission.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert manifest["claim_type"] == "pairwise_interop"
+    assert manifest["evidence_status"] == "example"
+    assert "joint_report_ref" not in manifest
