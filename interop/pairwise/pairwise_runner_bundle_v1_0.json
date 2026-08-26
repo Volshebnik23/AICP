@@ -5,7 +5,7 @@
     {
       "path": "interop/pairwise/aicp_pairwise_runner.py",
       "role": "runner",
-      "digest": "sha256:48af078a00b98925baa984d2f25af6141069873bf0bf1d29d81b83b232ecd872"
+      "digest": "sha256:496678529639f69c8fc437e0889e40a7f1b4d9f592ade5ac65dffc21ade58eec"
     },
     {
       "path": "interop/pairwise/pairwise_process.py",

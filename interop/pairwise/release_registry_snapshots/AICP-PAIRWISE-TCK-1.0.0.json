@@ -7,7 +7,7 @@
       "registry_schema_digest": "sha256:620cd734ab23b63d2a35648baf8f063b8085d8c11a5cc7a03d2d8f18f5a42905",
       "runner_bundle": {
         "path": "interop/pairwise/pairwise_runner_bundle_v1_0.json",
-        "digest": "sha256:703198a04937be4735589df12a72b8fa4a5e71d088a70a02a5b1a1fdf5112db3"
+        "digest": "sha256:86eda6ccb0e7dac0d9ee7eb5a9c668a1a722a7656d08c0c3b4f31606dc7a1781"
       },
       "report_schema": {
         "path": "interop/pairwise/pairwise_joint_report_v1.schema.json",
@@ -15,7 +15,7 @@
       },
       "evaluator": {
         "path": "interop/pairwise/pairwise_report_evaluator.py",
-        "content_digest": "sha256:0f70c0a033ef7183fdd082be25f8fdd55a34c5633baee3bb12a274361f59dd92"
+        "content_digest": "sha256:fb8ca05a000f3ee372039d208436a0bdf9e79feb2c029f0ce7ac40eaeceec43b"
       },
       "normalizer": {
         "path": "interop/pairwise/pairwise_semantic_normalizer.py",
@@ -49,27 +49,27 @@
       "underlying_authorities": [
         {
           "path": "conformance/iut/tck_releases.json",
-          "content_digest": "sha256:f41e319667a6f9a537eeed993a950621bd7d45ac37bcd8a1aac76044e9bf7b2e"
+          "content_digest": "sha256:f89c7dc476041f79558157bb6d0178d7b43158913a2dbe5ee0191d017903a25e"
         },
         {
           "path": "conformance/iut/cases.json",
-          "content_digest": "sha256:e0552d67e600af994a2d80d8d048d9316ecd9c29ebd510a62899bc1b7d0107b4"
+          "content_digest": "sha256:6b033ce91eee939f637df6efda2ea7c2f011b752b6b09c810d51dbe83bf637fe"
         },
         {
           "path": "conformance/iut/iut_report_v1.schema.json",
-          "content_digest": "sha256:b34464432d7a0d5d5d87af6016315ab6117b2f0457f41dcac688ec9e60b755de"
+          "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
         },
         {
           "path": "conformance/profiles/PF_AICP_BASE_0.1.json",
-          "content_digest": "sha256:1a641ccc0eb2dfde04aeee0db83331659e5173e15107b5db0ab61754b77bd7a5"
+          "content_digest": "sha256:3a0a68426ff468e6d674fcd87b4449437f28f3d03d5660de92021ac8caf99938"
         },
         {
           "path": "conformance/core/CT_CORE_0.1.json",
-          "content_digest": "sha256:439ba0cc2f077a36d4fd866568bc727a066435b0bd711640a0bb572fb0393264"
+          "content_digest": "sha256:51272d58c2f284db18a8b8b2a4c7b3bc616ae597b0e6286e39a696d1a316816a"
         },
         {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "content_digest": "sha256:e4da967d3a15bc2716d03536c25764b46a3f716cdff858cd6eaed4b84f6efa9d"
+          "content_digest": "sha256:7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2_2.schema.json",
@@ -77,7 +77,7 @@
         },
         {
           "path": "conformance/evidence/targets.json",
-          "content_digest": "sha256:7b40494f1e82c227f73a2492a3064318651087a6fa3b91e96f86858b6747afb9"
+          "content_digest": "sha256:6aaa954733282583cd32311956af00ef6599f984af99e09f7d330c479f50924b"
         },
         {
           "path": "conformance/evidence/target_registry.schema.json",
@@ -85,7 +85,7 @@
         },
         {
           "path": "conformance/evidence/live_bindings/mcp_v01_target_v4.json",
-          "content_digest": "sha256:a30283a97be9874a4d3dd7db3d076cf33e9cad36a4218c10134018fc94226ed2"
+          "content_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
         },
         {
           "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
@@ -93,15 +93,15 @@
         },
         {
           "path": "conformance/bindings/TB_MCP_0.1.json",
-          "content_digest": "sha256:4233919a6b0f725badfee0fd2d935d671a112c2deeb314dc78efbb73ad82c70c"
+          "content_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
         },
         {
           "path": "registry/aicp_profiles.json",
-          "content_digest": "sha256:ec750a0e068b64ab9a3ebdafebc528b97d3c495dc4d09b7df6b3f1e965236db4"
+          "content_digest": "sha256:b84877475ffc4b97614ac796d631a52b026fa3559180669f032fda7352cd4e00"
         },
         {
           "path": "registry/transport_bindings.json",
-          "content_digest": "sha256:a27c9bc3cdb0930a1c7f0ccfc050076cb14785ba8818b506138998db6fe34c57"
+          "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
         }
       ]
     }

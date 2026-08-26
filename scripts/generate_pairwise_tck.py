@@ -15,7 +15,10 @@ RELEASE_ID = "AICP-PAIRWISE-TCK-1.0.0"
 
 
 def digest(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+    data = path.read_bytes()
+    if path.suffix.lower() in {".json", ".jsonl", ".md", ".py", ".ts", ".mjs", ".yml", ".yaml"}:
+        data = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return "sha256:" + hashlib.sha256(data).hexdigest()
 
 
 def artifact(relative: str) -> dict[str, str]:
