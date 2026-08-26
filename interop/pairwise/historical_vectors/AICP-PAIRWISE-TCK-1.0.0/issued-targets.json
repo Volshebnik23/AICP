@@ -1,5 +1,5 @@
 {
-  "registry_version": "1.1",
+  "registry_version": "1.0",
   "targets": [
     {
       "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
@@ -25,14 +25,14 @@
         "conformance/core/CT_CORE_0.1.json",
         "conformance/bindings/TB_MCP_0.1.json"
       ],
-      "scenario_catalog": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/scenarios.json",
+      "scenario_catalog": "interop/pairwise/scenarios.json",
       "required_side_evidence": [
         "AICP-BASE@0.1/full-profile",
         "BIND-MCP@0.1/full-binding"
       ],
       "required_runs": 2,
       "required_directions": ["A_TO_B", "B_TO_A"],
-      "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.1.0",
+      "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.0.0",
       "relation_kind": "pairwise_interop"
     }
   ]

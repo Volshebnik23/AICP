@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/pairwise_joint_report_v1_1.schema.json",
+  "title": "AICP Pairwise Joint Report v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["report_format_version", "report_type", "pairwise_tck_release", "target", "scenario", "participants", "side_evidence", "runs", "passed", "failures", "degraded", "degraded_reasons", "skipped_checks", "compatibility_marks", "generated_at"],
+  "properties": {
+    "report_format_version": { "const": "1.1" },
+    "report_type": { "const": "aicp.pairwise_joint_execution" },
+    "pairwise_tck_release": { "$ref": "#/$defs/tck" },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version", "binding_id", "binding_version", "target_catalog_digest"],
+      "properties": {
+        "profile_id": { "const": "AICP-BASE" },
+        "profile_version": { "const": "0.1" },
+        "binding_id": { "const": "BIND-MCP" },
+        "binding_version": { "const": "0.1" },
+        "target_catalog_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario_id", "scenario_catalog_digest", "scenario_schema_digest"],
+      "properties": {
+        "scenario_id": { "const": "PAIRWISE-MCP-CROSS-CONSUMPTION-01" },
+        "scenario_catalog_digest": { "$ref": "#/$defs/digest" },
+        "scenario_schema_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/participant" }
+    },
+    "side_evidence": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["side", "profile_report", "binding_report"],
+        "properties": {
+          "side": { "enum": ["A", "B"] },
+          "profile_report": { "$ref": "#/$defs/reportRef" },
+          "binding_report": { "$ref": "#/$defs/reportRef" }
+        }
+      }
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/run" }
+    },
+    "passed": { "type": "boolean" },
+    "failures": { "type": "array", "items": { "type": "string" } },
+    "degraded": { "type": "boolean" },
+    "degraded_reasons": { "type": "array", "items": { "type": "string" } },
+    "skipped_checks": { "type": "array", "items": { "type": "string" } },
+    "compatibility_marks": { "type": "array", "maxItems": 0 },
+    "generated_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[A-Fa-f0-9]{64}$" },
+    "relativePath": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\./).+" },
+    "tck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_id", "registry_digest", "runner_bundle_digest", "report_schema_digest", "evaluator_digest", "normalizer_digest"],
+      "properties": {
+        "release_id": { "const": "AICP-PAIRWISE-TCK-1.1.0" },
+        "registry_digest": { "$ref": "#/$defs/digest" },
+        "runner_bundle_digest": { "$ref": "#/$defs/digest" },
+        "report_schema_digest": { "$ref": "#/$defs/digest" },
+        "evaluator_digest": { "$ref": "#/$defs/digest" },
+        "normalizer_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["side", "implementation_kind", "implementation_id", "implementation_version", "implementation_digest", "profile_report", "binding_report", "descriptor_evidence"],
+      "properties": {
+        "side": { "enum": ["A", "B"] },
+        "implementation_kind": { "const": "external_implementation" },
+        "implementation_id": { "type": "string", "minLength": 1 },
+        "implementation_version": { "type": "string", "minLength": 1 },
+        "implementation_digest": { "type": "string", "minLength": 1, "not": { "const": "unknown" } },
+        "profile_report": { "$ref": "#/$defs/reportRef" },
+        "binding_report": { "$ref": "#/$defs/reportRef" }
+        ,"descriptor_evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["request", "response"],
+          "properties": {
+            "request": { "type": "object" },
+            "response": { "type": "object" }
+          }
+        }
+      }
+    },
+    "reportRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_digest"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "content_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "challenge", "semantic_digest", "directions"],
+      "properties": {
+        "run_id": { "type": "string", "minLength": 16 },
+        "challenge": { "type": "string", "minLength": 16 },
+        "semantic_digest": { "$ref": "#/$defs/digest" },
+        "directions": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "$ref": "#/$defs/direction" }
+        }
+      }
+    },
+    "direction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["direction", "producer_side", "consumer_side", "session_id", "contract_id", "messages"],
+      "properties": {
+        "direction": { "enum": ["A_TO_B", "B_TO_A"] },
+        "producer_side": { "enum": ["A", "B"] },
+        "consumer_side": { "enum": ["A", "B"] },
+        "session_id": { "type": "string", "minLength": 16 },
+        "contract_id": { "type": "string", "minLength": 16 },
+        "messages": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/messageEvidence" }
+        }
+      }
+    },
+    "messageEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "sender_side", "constructed_by", "consumed_by", "message", "control_request", "control_response", "mcp_send", "mcp_poll", "first_seen"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "sender_side": { "enum": ["A", "B"] },
+        "constructed_by": { "enum": ["A", "B"] },
+        "consumed_by": { "enum": ["A", "B"] },
+        "message": { "type": "object" },
+        "control_request": { "type": "object" },
+        "control_response": { "type": "object" },
+        "mcp_send": { "$ref": "#/$defs/exchange" },
+        "mcp_poll": { "$ref": "#/$defs/exchange" },
+        "first_seen": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["visible_hashes_before", "visible_hashes_after"],
+          "properties": {
+            "visible_hashes_before": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "visible_hashes_after": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          }
+        }
+      }
+    },
+    "exchange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request", "response"],
+      "properties": {
+        "request": { "type": "object" },
+        "response": { "type": "object" }
+      }
+    }
+  }
+}

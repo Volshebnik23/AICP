@@ -61,7 +61,7 @@ def main() -> int:
             print("Clean-room side evidence passed: 2 full-profile + 2 full-binding reports")
             return 0
         run([
-            sys.executable, "interop/pairwise/aicp_pairwise_runner.py",
+            sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_1.py",
             "--peer-a-control-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-control"]),
             "--peer-a-server-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-server"]),
             "--peer-a-profile-report", str(reports["a_profile"]), "--peer-a-binding-report", str(reports["a_binding"]),
@@ -70,7 +70,7 @@ def main() -> int:
             "--peer-b-profile-report", str(reports["b_profile"]), "--peer-b-binding-report", str(reports["b_binding"]),
             "--out", str(reports["joint"]),
         ])
-        run([sys.executable, "interop/pairwise/pairwise_report_evaluator.py", str(reports["joint"])])
+        run([sys.executable, "interop/pairwise/pairwise_report_dispatcher.py", str(reports["joint"])])
     print("Clean-room pairwise external-kind test passed; temporary evidence removed")
     return 0
 

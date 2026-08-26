@@ -1,0 +1,156 @@
+[
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "agent_authority",
+    "type": "policy_categories",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Prevents unauthorized agent actions."
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Artifact constraints reduce malicious payload and attachment abuse.",
+    "id": "artifact_constraints"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Requires traceable policy/evidence artifacts for third-party verification.",
+    "id": "auditability"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Prevents crossing tenant/system/process boundaries without explicit authority.",
+    "id": "boundaries"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Content budget policies bound per-actor spend and volume envelopes.",
+    "id": "content_budgets"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Distribution policy constrains feed routing, filtering, and fan-out.",
+    "id": "distribution"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Facilitation policy controls moderator and turn-taking authority.",
+    "id": "facilitation"
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "iam_bridge",
+    "type": "policy_categories",
+    "spec_ref": "docs/extensions/RFC_EXT_IAM_BRIDGE.md#5-contract-policy-object-normative",
+    "security_considerations": "IAM bridge policy category should be scoped to deterministic claim-to-authority mappings and step-up checks."
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Orchestration policy governs multi-party award/work-order sequencing.",
+    "id": "orchestration"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Applies privacy controls to collection, processing, and disclosure of PII.",
+    "id": "pii_handling"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/extensions/RFC_EXT_REDACTION.md#4-contract-retention-policy-normative",
+    "security_considerations": "Retention/deletion policy controls bound lifecycle handling and deletion semantics for redactable transcript artifacts.",
+    "id": "retention_deletion"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Constrains actions/data to explicitly approved scope references.",
+    "id": "scope"
+  },
+  {
+    "status": "deprecated",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "scope_boundaries",
+    "type": "policy_categories",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Legacy combined category; use scope + boundaries for new contracts.",
+    "deprecation_notes": "Deprecated; use the documented replacement and plan migration before removal."
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Controls which tools/actions may be executed and under what constraints.",
+    "id": "tool_access"
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/profiles/AICP_Profiles.md",
+    "security_considerations": "Traffic shaping rules prevent flood conditions while preserving deterministic fairness.",
+    "id": "traffic_shaping"
+  },
+  {
+    "status": "experimental",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "id": "user_consent",
+    "type": "policy_categories",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Ensures user-approved actions only."
+  },
+  {
+    "type": "policy_categories",
+    "introduced_in": "0.1.0-dev",
+    "maintainer": "AICP Working Group",
+    "status": "experimental",
+    "spec_ref": "docs/suite/AICP_Suite_Overview_and_Skeleton_v0.1.21_EN.md#5-policy-core-core-v01",
+    "security_considerations": "Covers consent requirements tied to authenticated user context and proof of authorization.",
+    "id": "user_consent_auth"
+  }
+]

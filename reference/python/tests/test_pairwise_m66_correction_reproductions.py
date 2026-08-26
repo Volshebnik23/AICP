@@ -131,10 +131,19 @@ def _historical_joint(
 def test_historical_1_0_reproduces_actual_traffic_bypasses(
     behavior: str,
     correction_side_reports: dict[str, Any],
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
 ) -> None:
     joint_path = correction_side_reports["output"] / f"{behavior}.json"
     joint = _historical_joint(correction_side_reports, behavior=behavior, output=joint_path)
-    result = historical_evaluator.evaluate_pairwise_report(joint, base_dir=joint_path.parent)
+    copied_root, copied_pairwise = _copy_historical_authority(tmp_path)
+    monkeypatch.setattr(historical_evaluator, "ROOT", copied_root)
+    monkeypatch.setattr(historical_evaluator, "HERE", copied_pairwise)
+    result = historical_evaluator.evaluate_pairwise_report(
+        joint,
+        base_dir=joint_path.parent,
+        profile_validator=lambda *args, **kwargs: [],
+    )
     assert result["status"] == "eligible", (behavior, result["errors"])
     proposal = joint["runs"][0]["directions"][0]["messages"][0]["message"]
     if behavior == "missing_contract_goal":
@@ -149,6 +158,9 @@ def _copy_historical_authority(destination: Path) -> tuple[Path, Path]:
     copied_root = destination / "repo"
     copied_pairwise = copied_root / "interop" / "pairwise"
     shutil.copytree(PAIRWISE, copied_pairwise)
+    vector = PAIRWISE / "historical_vectors" / "AICP-PAIRWISE-TCK-1.0.0"
+    shutil.copy2(vector / "issued-targets.json", copied_pairwise / "targets.json")
+    shutil.copy2(vector / "issued-scenarios.json", copied_pairwise / "scenarios.json")
     snapshot = _load(PAIRWISE / "release_registry_snapshots" / "AICP-PAIRWISE-TCK-1.0.0.json")
     release = snapshot["releases"][0]
     refs = [item["path"] for item in release["underlying_authorities"]]

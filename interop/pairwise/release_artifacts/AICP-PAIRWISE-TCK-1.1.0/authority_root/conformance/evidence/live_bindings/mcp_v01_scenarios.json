@@ -1,0 +1,118 @@
+{
+  "catalog_version": "1.0",
+  "target": {
+    "kind": "binding",
+    "target_id": "BIND-MCP",
+    "target_version": "0.1"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "LIVE-MCP-SERVER-SEND",
+      "tested_role": "server_under_test",
+      "semantic_family": "send_message",
+      "deterministic_inputs": {"seed": 6471, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-MCP-01", "CT-MESSAGE-TYPE-REGISTRY-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-SERVER-DUPLICATE",
+      "tested_role": "server_under_test",
+      "semantic_family": "duplicate_send",
+      "deterministic_inputs": {"seed": 6472, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-MCP-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-SERVER-POLL",
+      "tested_role": "server_under_test",
+      "semantic_family": "poll_messages",
+      "deterministic_inputs": {"seed": 6473, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-MCP-04"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-SERVER-HEAD",
+      "tested_role": "server_under_test",
+      "semantic_family": "get_head",
+      "deterministic_inputs": {"seed": 6474, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-MCP-02"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-SERVER-OBJECT",
+      "tested_role": "server_under_test",
+      "semantic_family": "get_object",
+      "deterministic_inputs": {"seed": 6475, "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"},
+      "required_static_suite_checks": ["TB-MCP-03"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-SERVER-INTEGRITY",
+      "tested_role": "server_under_test",
+      "semantic_family": "jsonrpc_integrity",
+      "deterministic_inputs": {"seed": 6476, "session_label": "primary"},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-CLIENT-SEND",
+      "tested_role": "client_under_test",
+      "semantic_family": "send_message",
+      "deterministic_inputs": {"seed": 6481, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-MCP-01", "CT-MESSAGE-TYPE-REGISTRY-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-CLIENT-DUPLICATE",
+      "tested_role": "client_under_test",
+      "semantic_family": "duplicate_send",
+      "deterministic_inputs": {"seed": 6482, "session_label": "primary", "message_fixture": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"},
+      "required_static_suite_checks": ["TB-MCP-01"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-CLIENT-POLL",
+      "tested_role": "client_under_test",
+      "semantic_family": "poll_messages",
+      "deterministic_inputs": {"seed": 6483, "session_label": "primary", "limit": 2},
+      "required_static_suite_checks": ["TB-MCP-04"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-CLIENT-HEAD",
+      "tested_role": "client_under_test",
+      "semantic_family": "get_head",
+      "deterministic_inputs": {"seed": 6484, "session_label": "primary"},
+      "required_static_suite_checks": ["TB-MCP-02"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-CLIENT-OBJECT",
+      "tested_role": "client_under_test",
+      "semantic_family": "get_object",
+      "deterministic_inputs": {"seed": 6485, "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"},
+      "required_static_suite_checks": ["TB-MCP-03"],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    },
+    {
+      "scenario_id": "LIVE-MCP-CLIENT-INTEGRITY",
+      "tested_role": "client_under_test",
+      "semantic_family": "jsonrpc_integrity",
+      "deterministic_inputs": {"seed": 6486, "session_label": "primary"},
+      "required_static_suite_checks": [],
+      "normative_source_refs": ["docs/bindings/RFC_BIND_MCP.md"],
+      "optional_feature_requirements": []
+    }
+  ]
+}
