@@ -1223,7 +1223,7 @@ def evaluate_strong_report_evidence(
             "endpoints": expected_endpoints,
             "profile_ref": {"profile_id": "AICP-BASE", "profile_version": "0.1"},
             "binding_ref": {"binding_id": "BIND-MCP", "binding_version": "0.1"},
-            "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.1.0",
+            "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.2.0",
             "joint_report_digest": "sha256:"
             + hashlib.sha256(
                 json.dumps(

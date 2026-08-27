@@ -16,6 +16,9 @@ from typing import Any
 
 
 CONTROL_VERSION = "aicp.pairwise_control.v1"
+CLIENT_CONTROL_VERSION = "aicp.pairwise_client_control.v1"
+PAIRWISE_DESCRIPTOR_VERSION = "aicp.pairwise_role_descriptor.v1"
+PAIRWISE_TARGET = "AICP-BASE@0.1+BIND-MCP@0.1"
 ADAPTER_VERSION = "1.1"
 IMPLEMENTATION_ID = "aicp-cleanroom-python-a"
 IMPLEMENTATION_VERSION = "1.0.0-test"
@@ -90,6 +93,46 @@ def _write_ready(role: str) -> None:
     temporary.replace(target)
 
 
+def _pairwise_descriptor(role: str, behavior: str) -> dict[str, Any]:
+    side = os.environ.get("AICP_PAIRWISE_SIDE")
+    target = os.environ.get("AICP_PAIRWISE_TARGET")
+    declared_role = os.environ.get("AICP_PAIRWISE_ROLE")
+    if side not in {"A", "B"} or target != PAIRWISE_TARGET or declared_role != role:
+        raise ValueError("strict Pairwise role environment is required")
+    descriptor: dict[str, Any] = {
+        "protocol": PAIRWISE_DESCRIPTOR_VERSION,
+        "side": side,
+        "role": role,
+        "target_id": target,
+        "implementation_kind": "external_implementation",
+        "implementation_id": IMPLEMENTATION_ID,
+        "implementation_version": IMPLEMENTATION_VERSION,
+        "implementation_digest": _source_digest(),
+        "transport": "stdio",
+    }
+    if behavior in {"server_report_identity_mismatch", "client_server_identity_mismatch", "wrong_implementation_id"}:
+        descriptor["implementation_id"] = IMPLEMENTATION_ID + "-mismatch"
+    elif behavior == "wrong_implementation_version":
+        descriptor["implementation_version"] = "wrong-version"
+    elif behavior == "wrong_implementation_digest":
+        descriptor["implementation_digest"] = "sha256:" + "0" * 64
+    elif behavior in {"wrong_server_target", "wrong_client_target"}:
+        descriptor["target_id"] = "BIND-WRONG@9.9"
+    return descriptor
+
+
+def _write_pairwise_ready(behavior: str) -> None:
+    if behavior == "missing_server_descriptor" or "AICP_PAIRWISE_READY_FILE" not in os.environ:
+        return
+    target = Path(os.environ["AICP_PAIRWISE_READY_FILE"])
+    temporary = target.with_suffix(".tmp")
+    if behavior == "malformed_server_descriptor":
+        temporary.write_text("{malformed", encoding="utf-8")
+    else:
+        temporary.write_text(_canonical(_pairwise_descriptor("server", behavior)), encoding="utf-8")
+    temporary.replace(target)
+
+
 def _rpc_result(request_id: Any, value: dict[str, Any]) -> dict[str, Any]:
     return {"jsonrpc": "2.0", "id": request_id, "result": value}
 
@@ -99,7 +142,8 @@ def _rpc_error(request_id: Any, code: int, message: str) -> dict[str, Any]:
 
 
 class MessageStore:
-    def __init__(self) -> None:
+    def __init__(self, behavior: str = "good") -> None:
+        self.behavior = behavior
         self.messages: dict[str, list[dict[str, Any]]] = {}
         self.ids: dict[tuple[str, str], dict[str, Any]] = {}
         self.cursors: dict[str, dict[str, int]] = {}
@@ -140,6 +184,8 @@ class MessageStore:
                 return _rpc_error(request_id, -32602, "conflicting duplicate message id")
             if prior is None:
                 stored = copy.deepcopy(message)
+                if self.behavior == "server_rewrites_message":
+                    stored["sender"] = "rewritten-by-server"
                 self.ids[key] = stored
                 self.messages.setdefault(session, []).append(stored)
             return _rpc_result(
@@ -164,6 +210,8 @@ class MessageStore:
                 return _rpc_error(request_id, -32602, "invalid limit")
             start = values[after]
             selected = copy.deepcopy(self.messages.get(session, [])[start : start + limit])
+            if self.behavior == "server_returns_another_session_message" and selected:
+                selected[0]["session_id"] = "another-session"
             return _rpc_result(
                 request_id,
                 {"messages": selected, "next_cursor": self._cursor(session, start + len(selected))},
@@ -196,8 +244,8 @@ class MessageStore:
         return _rpc_error(request_id, -32601, "tool not found")
 
 
-def _server_loop() -> int:
-    store = MessageStore()
+def _server_loop(behavior: str = "good") -> int:
+    store = MessageStore(behavior)
     for index, raw in enumerate(sys.stdin.buffer, start=1):
         if index > 256 or len(raw) > 1_048_576:
             return 2
@@ -538,9 +586,200 @@ def _control_loop(behavior: str) -> int:
     return 0
 
 
+def _client_control_response(request: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "control_version": CLIENT_CONTROL_VERSION,
+        "request_id": request.get("request_id"),
+        "operation": request.get("operation"),
+        "success": True,
+        "result": result,
+    }
+
+
+def _pairwise_client_loop(behavior: str) -> int:
+    sessions: dict[str, dict[str, Any]] = {}
+    pending: dict[str, dict[str, Any]] = {}
+    counter = 0
+    for raw in sys.stdin:
+        if not raw.strip():
+            continue
+        request: dict[str, Any] = {}
+        try:
+            request = json.loads(raw)
+            if request.get("control_version") != CLIENT_CONTROL_VERSION:
+                raise ValueError("unsupported Pairwise client control version")
+            operation = request.get("operation")
+            input_obj = request.get("input") or {}
+            if operation == "describe":
+                result = _pairwise_descriptor("client", behavior)
+            elif operation == "begin_phase":
+                counter += 1
+                phase = str(input_obj.get("phase"))
+                session = str(input_obj["session_id"])
+                state = sessions.setdefault(
+                    session,
+                    {
+                        "cursor": "c0",
+                        "visible": [],
+                        "proposal": None,
+                        "acceptance": None,
+                        "attestation": None,
+                        "challenge": None,
+                    },
+                )
+                if "preseed_challenge" in input_obj:
+                    state["challenge"] = input_obj["preseed_challenge"]
+                if isinstance(input_obj.get("preseed_peer_message"), dict):
+                    preseed = copy.deepcopy(input_obj["preseed_peer_message"])
+                    if preseed.get("message_type") == "CONTRACT_PROPOSE":
+                        state["proposal"] = preseed
+                    elif preseed.get("message_type") == "CONTRACT_ACCEPT":
+                        state["acceptance"] = preseed
+                if phase == "propose":
+                    state["challenge"] = input_obj["challenge"]
+                    message_input = dict(input_obj)
+                    message_input["peer_message"] = None
+                    message = _construct({"input": message_input}, behavior)
+                    tool = "aicp.sendMessage"
+                    arguments = {"message": message}
+                    expected_type = None
+                elif phase in {"accept", "attest"}:
+                    peer_key = "proposal" if phase == "accept" else "acceptance"
+                    peer = state.get(peer_key)
+                    if not isinstance(peer, dict):
+                        raise ValueError(f"{phase} requires a peer artifact learned by this client")
+                    message_input = dict(input_obj)
+                    message_input["challenge"] = state.get("challenge") or "not-preseeded"
+                    message_input["peer_message"] = copy.deepcopy(peer)
+                    peer_behavior = "hardcoded_hash" if behavior == "hardcoded_peer_hash" else behavior
+                    message = _construct({"input": message_input}, peer_behavior)
+                    if behavior in {"stale_peer_hash", "previous_run_peer_hash", "wrong_prev_msg_hash"}:
+                        suffix = {
+                            "stale_peer_hash": "B",
+                            "previous_run_peer_hash": "C",
+                            "wrong_prev_msg_hash": "D",
+                        }[behavior]
+                        message["prev_msg_hash"] = "sha256:" + suffix * 43
+                        message["message_hash"] = _message_hash(message)
+                    tool = "aicp.sendMessage"
+                    arguments = {"message": message}
+                    expected_type = None
+                elif phase in {"poll_proposal", "poll_acceptance", "poll_attestation"}:
+                    message = None
+                    tool = "aicp.pollMessages"
+                    arguments = {
+                        "session_id": session,
+                        "after_cursor": state["cursor"],
+                        "limit": 1,
+                    }
+                    expected_type = {
+                        "poll_proposal": "CONTRACT_PROPOSE",
+                        "poll_acceptance": "CONTRACT_ACCEPT",
+                        "poll_attestation": "ATTEST_ACTION",
+                    }[phase]
+                else:
+                    raise ValueError("unsupported Pairwise client phase")
+                rpc_id = "rpc-" + hashlib.sha256(
+                    f"{request.get('request_id')}:{counter}:{tool}".encode("utf-8")
+                ).hexdigest()[:24]
+                mcp_request = _rpc_request(rpc_id, tool, arguments)
+                exchange_id = "exchange-" + hashlib.sha256(
+                    f"{request.get('request_id')}:{counter}".encode("utf-8")
+                ).hexdigest()[:24]
+                pending[exchange_id] = {
+                    "phase": phase,
+                    "session": session,
+                    "destination_side": str(input_obj["destination_side"]),
+                    "request": copy.deepcopy(mcp_request),
+                    "message": copy.deepcopy(message),
+                    "expected_type": expected_type,
+                }
+                result = {
+                    "event": "mcp_request",
+                    "phase": phase,
+                    "exchange_id": exchange_id,
+                    "destination_side": str(input_obj["destination_side"]),
+                    "request": mcp_request,
+                    "request_json": _canonical(mcp_request),
+                    "client_visible_hashes_before": list(state["visible"]),
+                }
+            elif operation == "mcp_response":
+                exchange_id = str(input_obj.get("exchange_id"))
+                item = pending.pop(exchange_id, None)
+                if not isinstance(item, dict):
+                    raise ValueError("unknown Pairwise client exchange")
+                if input_obj.get("source_side") != item["destination_side"]:
+                    raise ValueError("MCP response came from the wrong server side")
+                response_json = input_obj.get("response_json")
+                if not isinstance(response_json, str):
+                    raise ValueError("exact MCP response JSON is required")
+                response = json.loads(response_json)
+                if not isinstance(response, dict) or response.get("jsonrpc") != "2.0":
+                    raise ValueError("invalid MCP response")
+                if response.get("id") != item["request"].get("id") or "error" in response:
+                    raise ValueError("MCP response correlation failed")
+                response_result = response.get("result")
+                if not isinstance(response_result, dict):
+                    raise ValueError("MCP response result is required")
+                state = sessions[item["session"]]
+                phase = item["phase"]
+                if item["request"]["params"]["name"] == "aicp.sendMessage":
+                    message = item["message"]
+                    if response_result.get("accepted") is not True or response_result.get("message_hash") != message.get("message_hash"):
+                        raise ValueError("server did not accept the exact client-authored message")
+                    result = {"event": "phase_complete", "phase": phase, "message": message}
+                else:
+                    messages = response_result.get("messages")
+                    if not isinstance(messages, list) or len(messages) != 1 or not isinstance(messages[0], dict):
+                        raise ValueError("client poll must consume exactly one peer message")
+                    observed = copy.deepcopy(messages[0])
+                    if observed.get("message_type") != item["expected_type"]:
+                        raise ValueError("client poll returned the wrong message type")
+                    if observed.get("session_id") != item["session"] or _message_hash(observed) != observed.get("message_hash"):
+                        raise ValueError("client poll returned an invalid peer message")
+                    before = list(state["visible"])
+                    state["visible"].append(observed["message_hash"])
+                    state["cursor"] = response_result.get("next_cursor")
+                    if not isinstance(state["cursor"], str) or not state["cursor"]:
+                        raise ValueError("client poll returned no continuation cursor")
+                    key = {
+                        "CONTRACT_PROPOSE": "proposal",
+                        "CONTRACT_ACCEPT": "acceptance",
+                        "ATTEST_ACTION": "attestation",
+                    }[observed["message_type"]]
+                    stored = copy.deepcopy(observed)
+                    if behavior == "rewritten_peer_message" and key in {"proposal", "acceptance"}:
+                        stored["sender"] = "client-local-rewrite"
+                        stored["message_hash"] = _message_hash(stored)
+                    state[key] = stored
+                    if key == "proposal":
+                        state["challenge"] = observed.get("payload", {}).get("contract", {}).get("goal")
+                    result = {
+                        "event": "phase_complete",
+                        "phase": phase,
+                        "observed_message": observed,
+                        "client_visible_hashes_before": before,
+                        "client_visible_hashes_after": list(state["visible"]),
+                    }
+            else:
+                raise ValueError("unsupported Pairwise client operation")
+            response = _client_control_response(request, result)
+        except Exception as exc:
+            response = {
+                "control_version": CLIENT_CONTROL_VERSION,
+                "request_id": request.get("request_id"),
+                "operation": request.get("operation"),
+                "success": False,
+                "error": {"code": "pairwise_client_error", "message": str(exc)},
+            }
+        sys.stdout.write(_canonical(response) + "\n")
+        sys.stdout.flush()
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("iut", "binding-server", "binding-client", "pairwise-server", "pairwise-control", "self-test"))
+    parser.add_argument("mode", choices=("iut", "binding-server", "binding-client", "pairwise-server", "pairwise-client", "pairwise-control", "self-test"))
     parser.add_argument("--behavior", default="good")
     args = parser.parse_args()
     if args.mode == "iut":
@@ -552,7 +791,10 @@ def main() -> int:
         _write_ready("client_under_test")
         return _binding_client_loop()
     if args.mode == "pairwise-server":
-        return _server_loop()
+        _write_pairwise_ready(args.behavior)
+        return _server_loop(args.behavior)
+    if args.mode == "pairwise-client":
+        return _pairwise_client_loop(args.behavior)
     if args.mode == "pairwise-control":
         return _control_loop(args.behavior)
     assert _object_hash("contract", OBJECT_VALUE) == "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"

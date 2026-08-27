@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/pairwise_scenario_v1_2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenario_version", "scenario_id", "target_id", "message_flow", "transport_roles", "mcp_flow", "freshness", "challenge_binding", "final_consumption_required"],
+  "properties": {
+    "scenario_version": { "const": "1.2" },
+    "scenario_id": { "const": "PAIRWISE-MCP-ROLE-BOUND-CROSS-CONSUMPTION-02" },
+    "target_id": { "const": "AICP-BASE@0.1+BIND-MCP@0.1" },
+    "message_flow": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "CONTRACT_PROPOSE" },
+        { "const": "CONTRACT_ACCEPT" },
+        { "const": "ATTEST_ACTION" }
+      ],
+      "items": false
+    },
+    "transport_roles": {
+      "type": "array",
+      "prefixItems": [{ "const": "client" }, { "const": "server" }],
+      "items": false
+    },
+    "mcp_flow": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "producer_client_send_to_consumer_server" },
+        { "const": "consumer_client_poll_consumer_server" },
+        { "const": "consumer_client_send_to_producer_server" },
+        { "const": "producer_client_poll_producer_server" },
+        { "const": "producer_client_send_to_consumer_server" },
+        { "const": "consumer_client_final_poll_consumer_server" }
+      ],
+      "items": false
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_count", "fresh_fields", "semantic_equivalence_required"],
+      "properties": {
+        "run_count": { "const": 2 },
+        "fresh_fields": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "run_id" },
+            { "const": "challenge" },
+            { "const": "session_id" },
+            { "const": "contract_id" },
+            { "const": "message_id" },
+            { "const": "jsonrpc_id" },
+            { "const": "process_instance_id" },
+            { "const": "cursor" }
+          ],
+          "items": false
+        },
+        "semantic_equivalence_required": { "const": true }
+      }
+    },
+    "challenge_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposal_contract_goal", "consumer_discovery", "acceptance_peer_message", "attestation_peer_message"],
+      "properties": {
+        "proposal_contract_goal": { "const": "direction.challenge" },
+        "consumer_discovery": { "const": "participant_client_poll_response_only" },
+        "acceptance_peer_message": { "const": "client_consumed_proposal" },
+        "attestation_peer_message": { "const": "client_consumed_acceptance" }
+      }
+    },
+    "final_consumption_required": { "const": true }
+  }
+}

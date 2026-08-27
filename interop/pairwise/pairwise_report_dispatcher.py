@@ -10,10 +10,23 @@ from typing import Any
 
 
 HERE = Path(__file__).resolve().parent
-HISTORICAL_REASON = (
+HISTORICAL_1_0_REASON = (
     "Pairwise TCK 1.0 is historical and strong-ineligible because its evidence provenance "
     "bound mutable authorities, actual joint traffic lacked complete Core validation, and "
     "the runtime challenge was not load-bearing."
+)
+HISTORICAL_1_1_POLICY_REASON = (
+    "Joint MCP requests were repository-harness generated and Pairwise server processes "
+    "were not bound to the exact participant builds."
+)
+HISTORICAL_1_1_REASON = (
+    "Pairwise TCK 1.1 is historical and strong-ineligible because joint MCP requests "
+    "were repository-harness generated and Pairwise server processes were not bound "
+    "to the exact participant builds."
+)
+CURRENT_1_2_POLICY_REASON = (
+    "Participant-authored MCP requests, bound client/server role descriptors, "
+    "transport-first causality, and final consumer polling are complete."
 )
 
 
@@ -50,18 +63,29 @@ def evaluate_pairwise_report(report: dict[str, Any], *, base_dir: Path) -> dict[
             "reason": "Mutable-authority provenance, incomplete actual-Core validation, and a non-load-bearing runtime challenge make this evidence release strong-ineligible.",
         }:
             return _empty("rejected", "PAIRWISE_RELEASE_POLICY_INVALID", release_id)
-        return _empty("ineligible", "PAIRWISE_RELEASE_HISTORICAL_INELIGIBLE", HISTORICAL_REASON)
+        return _empty("ineligible", "PAIRWISE_RELEASE_HISTORICAL_INELIGIBLE", HISTORICAL_1_0_REASON)
     if release_id == "AICP-PAIRWISE-TCK-1.1.0":
         policy = _policy(release_id)
-        if (
-            not isinstance(policy, dict)
-            or policy.get("lifecycle") not in {"current", "historical"}
-            or policy.get("strong_eligible") is not True
-        ):
+        if policy != {
+            "release_id": release_id,
+            "lifecycle": "historical",
+            "strong_eligible": False,
+            "reason": HISTORICAL_1_1_POLICY_REASON,
+        }:
             return _empty("rejected", "PAIRWISE_RELEASE_POLICY_INVALID", release_id)
-        from pairwise_report_evaluator_v1_1 import evaluate_pairwise_report as evaluate_v1_1
+        return _empty("ineligible", "PAIRWISE_RELEASE_HISTORICAL_INELIGIBLE", HISTORICAL_1_1_REASON)
+    if release_id == "AICP-PAIRWISE-TCK-1.2.0":
+        policy = _policy(release_id)
+        if policy != {
+            "release_id": release_id,
+            "lifecycle": "current",
+            "strong_eligible": True,
+            "reason": CURRENT_1_2_POLICY_REASON,
+        }:
+            return _empty("rejected", "PAIRWISE_RELEASE_POLICY_INVALID", release_id)
+        from pairwise_report_evaluator_v1_2 import evaluate_pairwise_report as evaluate_v1_2
 
-        return evaluate_v1_1(report, base_dir=base_dir)
+        return evaluate_v1_2(report, base_dir=base_dir)
     return _empty("rejected", "PAIRWISE_TCK_RELEASE_UNKNOWN", str(release_id))
 
 

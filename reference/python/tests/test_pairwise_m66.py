@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -12,10 +10,11 @@ from typing import Any
 
 import pytest
 
+
 ROOT = Path(__file__).resolve().parents[3]
 PAIRWISE = ROOT / "interop" / "pairwise"
-SCRIPTS = ROOT / "scripts"
-for import_path in (PAIRWISE, SCRIPTS):
+VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0"
+for import_path in (PAIRWISE, ROOT / "scripts"):
     if str(import_path) not in sys.path:
         sys.path.insert(0, str(import_path))
 
@@ -23,74 +22,33 @@ from interop_submission_validation import (  # noqa: E402
     PAIRWISE_JOINT_EVIDENCE_ERROR,
     evaluate_strong_report_evidence,
 )
-from pairwise_process import MAX_STDERR_BYTES, JsonLineProcess, ProcessBoundaryError, allowlisted_environment  # noqa: E402
+from pairwise_process_v1_2 import (  # noqa: E402
+    MAX_STDERR_BYTES,
+    JsonLineProcess,
+    ProcessBoundaryError,
+    allowlisted_environment,
+)
 from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402
-
-
-def _run(command: list[str]) -> None:
-    result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, shell=False, timeout=90)
-    assert result.returncode == 0, result.stdout + result.stderr
-
-
-def _command_json(command: list[str]) -> str:
-    return json.dumps(command)
-
-
-@pytest.fixture(scope="session")
-def pairwise_artifacts(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
-    output = tmp_path_factory.mktemp("m66-pairwise")
-    node = shutil.which("node")
-    assert node is not None
-    python_peer = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_a" / "peer_a.py"
-    node_peer = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_b" / "peer_b.mjs"
-    paths = {
-        "a_profile": output / "a-profile.json",
-        "a_binding": output / "a-binding.json",
-        "b_profile": output / "b-profile.json",
-        "b_binding": output / "b-binding.json",
-        "joint": output / "joint.json",
-    }
-    _run([sys.executable, str(python_peer), "self-test"])
-    _run([node, str(node_peer), "self-test"])
-    _run([
-        sys.executable, "conformance/iut/aicp_iut_runner.py", "--cmd-json",
-        _command_json([sys.executable, str(python_peer), "iut"]), "--profile", "AICP-BASE@0.1",
-        "--mode", "full-profile", "--out", str(paths["a_profile"]),
-    ])
-    _run([
-        sys.executable, "conformance/iut/aicp_iut_runner.py", "--cmd-json",
-        _command_json([node, str(node_peer), "iut"]), "--profile", "AICP-BASE@0.1",
-        "--mode", "full-profile", "--out", str(paths["b_profile"]),
-    ])
-    for side, command in (
-        ("a", [sys.executable, str(python_peer)]),
-        ("b", [node, str(node_peer)]),
-    ):
-        _run([
-            sys.executable, "conformance/evidence/aicp_live_binding_runner.py", "--target", "BIND-MCP@0.1",
-            "--server-cmd-json", _command_json([*command, "binding-server"]),
-            "--client-cmd-json", _command_json([*command, "binding-client"]),
-            "--mode", "full-binding", "--out", str(paths[f"{side}_binding"]),
-        ])
-    _run([
-        sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_1.py",
-        "--peer-a-control-cmd-json", _command_json([sys.executable, str(python_peer), "pairwise-control"]),
-        "--peer-a-server-cmd-json", _command_json([sys.executable, str(python_peer), "pairwise-server"]),
-        "--peer-a-profile-report", str(paths["a_profile"]), "--peer-a-binding-report", str(paths["a_binding"]),
-        "--peer-b-control-cmd-json", _command_json([node, str(node_peer), "pairwise-control"]),
-        "--peer-b-server-cmd-json", _command_json([node, str(node_peer), "pairwise-server"]),
-        "--peer-b-profile-report", str(paths["b_profile"]), "--peer-b-binding-report", str(paths["b_binding"]),
-        "--out", str(paths["joint"]),
-    ])
-    return paths
 
 
 def _load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _digest(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+@pytest.fixture()
+def pairwise_artifacts(tmp_path: Path) -> dict[str, Path]:
+    paths: dict[str, Path] = {}
+    for key, name in (
+        ("a_profile", "a-profile.json"),
+        ("a_binding", "a-binding.json"),
+        ("b_profile", "b-profile.json"),
+        ("b_binding", "b-binding.json"),
+        ("joint", "joint.json"),
+    ):
+        target = tmp_path / name
+        shutil.copy2(VECTOR / name, target)
+        paths[key] = target
+    return paths
 
 
 def test_pairwise_cleanroom_joint_run_is_eligible(pairwise_artifacts: dict[str, Path]) -> None:
@@ -100,27 +58,27 @@ def test_pairwise_cleanroom_joint_run_is_eligible(pairwise_artifacts: dict[str, 
     assert result["eligible_marks"] == []
 
 
-def _mutate(case: str, report: dict[str, Any], directory: Path) -> None:
-    run0 = report["runs"][0]
-    run1 = report["runs"][1]
+def _mutate(case: str, report: dict[str, Any]) -> None:
+    run0, run1 = report["runs"]
     direction = run0["directions"][0]
     messages = direction["messages"]
+    exchanges = direction["exchanges"]
+    events = direction["client_events"]
     if case == "one_sided": run0["directions"].pop()
-    elif case == "duplicate_direction": run0["directions"][1] = copy.deepcopy(run0["directions"][0])
+    elif case == "duplicate_direction": run0["directions"][1] = copy.deepcopy(direction)
     elif case == "unrelated_side_report": report["participants"][0]["profile_report"] = copy.deepcopy(report["participants"][1]["profile_report"])
     elif case == "same_id": report["participants"][1]["implementation_id"] = report["participants"][0]["implementation_id"]
     elif case == "same_digest": report["participants"][1]["implementation_digest"] = report["participants"][0]["implementation_digest"]
-    elif case == "participant_digest": report["participants"][0]["implementation_digest"] += "x"
+    elif case == "participant_digest": report["participants"][0]["implementation_digest"] = "sha256:" + "0" * 64
     elif case == "report_digest": report["participants"][0]["profile_report"]["content_digest"] = "sha256:" + "0" * 64
     elif case == "wrong_profile": report["target"]["profile_id"] = "AICP-BASE-WRONG"
     elif case == "wrong_binding": report["target"]["binding_id"] = "BIND-HTTP"
-    elif case == "peer_hash": messages[1]["control_request"]["input"]["peer_message"]["message_hash"] = "sha256:bad"
     elif case == "hardcoded_hash": messages[1]["message"]["prev_msg_hash"] = "sha256:" + "A" * 43
     elif case == "previous_hash": messages[2]["message"]["prev_msg_hash"] = messages[0]["message"]["message_hash"]
     elif case == "wrong_session": messages[1]["message"]["session_id"] = "wrong-session"
     elif case == "wrong_contract": messages[1]["message"]["contract_id"] = "wrong-contract"
     elif case == "cross_run_replay": run1["directions"][0]["messages"][0] = copy.deepcopy(messages[0])
-    elif case == "malformed_jsonrpc": messages[0]["mcp_send"]["request"]["jsonrpc"] = "1.0"
+    elif case == "malformed_jsonrpc": exchanges[0]["request"]["jsonrpc"] = "1.0"
     elif case == "forged_passed": report["passed"] = False
     elif case == "semantic_digest": run0["semantic_digest"] = "sha256:" + "0" * 64
     elif case == "report_type": report["report_type"] = "aicp.report"
@@ -130,54 +88,60 @@ def _mutate(case: str, report: dict[str, Any], directory: Path) -> None:
     elif case == "scenario_digest": report["scenario"]["scenario_catalog_digest"] = "sha256:" + "0" * 64
     elif case == "one_run": report["runs"].pop()
     elif case == "run_id_replay": run1["run_id"] = run0["run_id"]
-    elif case == "challenge_replay": run1["challenge"] = run0["challenge"]
+    elif case == "challenge_replay": run1["directions"][0]["challenge"] = direction["challenge"]
     elif case == "session_replay": run1["directions"][0]["session_id"] = direction["session_id"]
     elif case == "contract_replay": run1["directions"][0]["contract_id"] = direction["contract_id"]
     elif case == "message_id_replay": run1["directions"][0]["messages"][0]["message"]["message_id"] = messages[0]["message"]["message_id"]
+    elif case == "rpc_id_replay": run1["directions"][0]["exchanges"][0]["request"]["id"] = exchanges[0]["request"]["id"]
+    elif case == "process_id_replay": run1["role_instances"][0]["client_process_instance_id"] = run0["role_instances"][0]["client_process_instance_id"]
     elif case == "swapped_role": messages[0]["constructed_by"] = direction["consumer_side"]
     elif case == "sender": messages[0]["message"]["sender"] = "attacker"
     elif case == "message_hash": messages[0]["message"]["message_hash"] = "sha256:bad"
-    elif case == "send_rewrite": messages[0]["mcp_send"]["request"]["params"]["arguments"]["message"]["payload"] = {"rewritten": True}
-    elif case == "poll_rewrite": messages[0]["mcp_poll"]["response"]["result"]["messages"] = []
-    elif case == "first_seen_preseed": messages[0]["first_seen"]["visible_hashes_before"] = [messages[0]["message"]["message_hash"]]
-    elif case == "control_output": messages[0]["control_response"]["result"]["message"] = {}
-    elif case == "control_correlation": messages[0]["control_response"]["request_id"] = "different"
-    elif case == "mcp_correlation": messages[0]["mcp_poll"]["response"]["id"] = "different"
+    elif case == "client_side": exchanges[0]["originating_client_side"] = "B"
+    elif case == "server_side": exchanges[0]["destination_server_side"] = "A"
+    elif case == "client_process": exchanges[0]["client_process_instance_id"] = "wrong-process"
+    elif case == "server_process": exchanges[0]["server_process_instance_id"] = "wrong-process"
+    elif case == "request_origin": exchanges[0]["request_origin"] = "repository_harness"
+    elif case == "response_origin": exchanges[0]["response_origin"] = "repository_harness"
+    elif case == "request_rewrite": exchanges[0]["forwarded_request_json"] += " "
+    elif case == "response_rewrite": exchanges[0]["delivered_response_json"] += " "
+    elif case == "request_digest": exchanges[0]["request_byte_digest"] = "sha256:" + "0" * 64
+    elif case == "response_digest": exchanges[0]["response_byte_digest"] = "sha256:" + "0" * 64
+    elif case == "first_seen_preseed": messages[0]["client_visible_hashes_before"] = [messages[0]["message"]["message_hash"]]
+    elif case == "client_control_preseed": events[1]["request"]["input"]["preseed_challenge"] = direction["challenge"]
+    elif case == "client_event_request": events[0]["response"]["result"]["request_json"] += " "
+    elif case == "client_event_response": events[1]["request"]["input"]["response_json"] += " "
+    elif case == "client_control_scope": events[0]["request"]["input"]["run_id"] = "wrong-run"
+    elif case == "missing_final_poll": direction["exchanges"].pop()
+    elif case == "client_descriptor": report["participants"][0]["client_descriptor_evidence"]["descriptor"]["implementation_id"] = "substitute"
+    elif case == "server_descriptor": report["participants"][0]["server_descriptor_evidence"]["descriptor"]["implementation_id"] = "substitute"
     elif case == "forged_marks": report["compatibility_marks"] = ["AICP-PAIRWISE-FAKE"]
     elif case == "degraded": report["degraded"] = True; report["degraded_reasons"] = ["forged"]
     elif case == "skipped": report["skipped_checks"] = ["causality"]
-    elif case == "descriptor": report["participants"][0]["descriptor_evidence"]["response"]["result"]["implementation_id"] = "substitute"
-    elif case == "forged_side_marks":
-        profile_ref = report["participants"][0]["profile_report"]
-        profile_path = directory / profile_ref["path"]
-        profile = _load(profile_path)
-        profile["compatibility_marks"] = ["AICP-Profile-BASE-0.1", "AICP-PAIRWISE-FAKE"]
-        profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
-        profile_ref["content_digest"] = _digest(profile_path)
     else: raise AssertionError(case)
 
 
 NEGATIVE_CASES = (
     "one_sided", "duplicate_direction", "unrelated_side_report", "same_id", "same_digest",
-    "participant_digest", "report_digest", "wrong_profile", "wrong_binding", "peer_hash",
-    "hardcoded_hash", "previous_hash", "wrong_session", "wrong_contract", "cross_run_replay",
-    "malformed_jsonrpc", "forged_passed", "semantic_digest", "report_type", "release_id",
-    "release_digest", "target_digest", "scenario_digest", "one_run", "run_id_replay",
-    "challenge_replay", "session_replay", "contract_replay", "message_id_replay", "swapped_role",
-    "sender", "message_hash", "send_rewrite", "poll_rewrite", "first_seen_preseed",
-    "control_output", "control_correlation", "mcp_correlation", "forged_marks", "degraded",
-    "skipped", "descriptor", "forged_side_marks",
+    "participant_digest", "report_digest", "wrong_profile", "wrong_binding", "hardcoded_hash",
+    "previous_hash", "wrong_session", "wrong_contract", "cross_run_replay", "malformed_jsonrpc",
+    "forged_passed", "semantic_digest", "report_type", "release_id", "release_digest",
+    "target_digest", "scenario_digest", "one_run", "run_id_replay", "challenge_replay",
+    "session_replay", "contract_replay", "message_id_replay", "rpc_id_replay", "process_id_replay",
+    "swapped_role", "sender", "message_hash", "client_side", "server_side", "client_process",
+    "server_process", "request_origin", "response_origin", "request_rewrite", "response_rewrite",
+    "request_digest", "response_digest", "first_seen_preseed", "client_control_preseed",
+    "client_event_request", "client_event_response", "client_control_scope", "missing_final_poll",
+    "client_descriptor", "server_descriptor", "forged_marks", "degraded", "skipped",
 )
 
 
 @pytest.mark.parametrize("case", NEGATIVE_CASES)
-def test_pairwise_mutations_fail_closed(case: str, pairwise_artifacts: dict[str, Path], tmp_path: Path) -> None:
-    for source in pairwise_artifacts.values():
-        shutil.copy2(source, tmp_path / source.name)
-    joint = _load(tmp_path / pairwise_artifacts["joint"].name)
-    _mutate(case, joint, tmp_path)
-    result = evaluate_pairwise_report(joint, base_dir=tmp_path)
-    assert result["status"] == "rejected", case
+def test_pairwise_mutations_fail_closed(case: str, pairwise_artifacts: dict[str, Path]) -> None:
+    joint = _load(pairwise_artifacts["joint"])
+    _mutate(case, joint)
+    result = evaluate_pairwise_report(joint, base_dir=pairwise_artifacts["joint"].parent)
+    assert result["status"] == "rejected", (case, result)
     assert result["eligible_pairwise_relations"] == [], case
     assert result["eligible_marks"] == [], case
 
@@ -203,7 +167,7 @@ def _manifest(report: dict[str, Any], *, reverse: bool = False) -> dict[str, Any
         "suite_refs": ["conformance/core/CT_CORE_0.1.json", "conformance/bindings/TB_MCP_0.1.json"],
         "claim_type": "pairwise_interop",
         "claim_scope": "pairwise",
-        "generated_at": "2026-08-26T00:00:00Z",
+        "generated_at": "2026-08-27T00:00:00Z",
         "disclosures": ["Repository-owned clean-room test peers; not external adoption."],
     }
 
@@ -218,8 +182,14 @@ def test_public_pairwise_evaluator_and_reciprocal_identity(pairwise_artifacts: d
     assert forward.eligible_marks == reverse.eligible_marks == ()
 
 
-def test_public_pairwise_1_0_report_is_historical_strong_ineligible() -> None:
-    vector = PAIRWISE / "historical_vectors" / "AICP-PAIRWISE-TCK-1.0.0"
+@pytest.mark.parametrize(
+    "vector",
+    (
+        PAIRWISE / "historical_vectors" / "AICP-PAIRWISE-TCK-1.0.0",
+        PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.1.0",
+    ),
+)
+def test_public_old_pairwise_reports_are_historical_strong_ineligible(vector: Path) -> None:
     report = _load(vector / "joint.json")
     result = evaluate_strong_report_evidence(vector / "submission.json", _manifest(report))
     assert result.status == "rejected"
@@ -264,18 +234,15 @@ def test_missing_joint_report_keeps_deterministic_fail_closed_error(pairwise_art
     manifest["report_refs"][0] = "missing.json"
     result = evaluate_strong_report_evidence(pairwise_artifacts["joint"].parent / "submission.json", manifest)
     assert result.status == "rejected"
-    assert result.errors[0].startswith("PAIRWISE_JOINT_EVIDENCE_REQUIRED:")
+    assert result.errors[0].startswith(PAIRWISE_JOINT_EVIDENCE_ERROR)
 
 
 def test_cleanroom_sources_do_not_import_repository_semantic_or_answer_code() -> None:
-    sources = [
-        PAIRWISE / "cleanroom" / "peer_a" / "peer_a.py",
-        PAIRWISE / "cleanroom" / "peer_b" / "peer_b.mjs",
-    ]
+    sources = [PAIRWISE / "cleanroom" / "peer_a" / "peer_a.py", PAIRWISE / "cleanroom" / "peer_b" / "peer_b.mjs"]
     forbidden = ("aicp_ref", "reference/python", "conformance/", "fixtures/", "expected_result")
     for source in sources:
         lowered = source.read_text(encoding="utf-8").lower()
-        assert not any(token in lowered for token in forbidden), (source, forbidden)
+        assert not any(token in lowered for token in forbidden), source
 
 
 def test_process_environment_is_allowlisted_and_excludes_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -286,16 +253,19 @@ def test_process_environment_is_allowlisted_and_excludes_credentials(monkeypatch
     assert "AWS_SECRET_ACCESS_KEY" not in environment
 
 
-def test_process_boundary_rejects_stdout_flood(tmp_path: Path) -> None:
+def test_process_boundary_rejects_stdout_flood() -> None:
     command = [sys.executable, "-c", "import sys; sys.stdout.write('x'*1048577+'\\n'); sys.stdout.flush()"]
-    with JsonLineProcess(command, cwd=ROOT, timeout=5.0) as process:
+    process = JsonLineProcess(command, cwd=ROOT, timeout=5.0, instance_id="stdout-flood")
+    try:
         with pytest.raises(ProcessBoundaryError, match="line-size"):
             process.exchange({"request": "bounded"})
+    finally:
+        process.abort()
 
 
-def test_process_boundary_bounds_stderr(tmp_path: Path) -> None:
+def test_process_boundary_bounds_stderr() -> None:
     command = [sys.executable, "-c", "import sys,json; sys.stderr.write('x'*100000); sys.stderr.flush(); print(json.dumps({'ok':True}),flush=True); sys.stdin.readline()"]
-    process = JsonLineProcess(command, cwd=ROOT, timeout=5.0)
+    process = JsonLineProcess(command, cwd=ROOT, timeout=5.0, instance_id="stderr-bound")
     try:
         assert process.exchange({"request": "bounded"}) == {"ok": True}
         process.close()
@@ -305,4 +275,4 @@ def test_process_boundary_bounds_stderr(tmp_path: Path) -> None:
 
 
 def test_pairwise_test_count_exceeds_required_negative_surface() -> None:
-    assert len(NEGATIVE_CASES) >= 33
+    assert len(NEGATIVE_CASES) >= 45

@@ -8,6 +8,9 @@ import { fileURLToPath } from "node:url";
 import readline from "node:readline";
 
 const CONTROL = "aicp.pairwise_control.v1";
+const CLIENT_CONTROL = "aicp.pairwise_client_control.v1";
+const PAIRWISE_DESCRIPTOR = "aicp.pairwise_role_descriptor.v1";
+const PAIRWISE_TARGET = "AICP-BASE@0.1+BIND-MCP@0.1";
 const ADAPTER = "1.1";
 const ID = "aicp-cleanroom-node-b";
 const VERSION = "1.0.0-test";
@@ -121,6 +124,42 @@ function publishReady(role) {
   renameSync(temporary, destination);
 }
 
+function pairwiseDescriptor(role, behavior) {
+  const side = process.env.AICP_PAIRWISE_SIDE;
+  const target = process.env.AICP_PAIRWISE_TARGET;
+  if (!["A", "B"].includes(side) || target !== PAIRWISE_TARGET || process.env.AICP_PAIRWISE_ROLE !== role) {
+    throw new Error("strict Pairwise role environment is required");
+  }
+  const descriptor = {
+    protocol: PAIRWISE_DESCRIPTOR,
+    side,
+    role,
+    target_id: target,
+    implementation_kind: "external_implementation",
+    implementation_id: ID,
+    implementation_version: VERSION,
+    implementation_digest: sourceDigest(),
+    transport: "stdio",
+  };
+  if (["server_report_identity_mismatch", "client_server_identity_mismatch", "wrong_implementation_id"].includes(behavior)) descriptor.implementation_id = `${ID}-mismatch`;
+  else if (behavior === "wrong_implementation_version") descriptor.implementation_version = "wrong-version";
+  else if (behavior === "wrong_implementation_digest") descriptor.implementation_digest = `sha256:${"0".repeat(64)}`;
+  else if (["wrong_server_target", "wrong_client_target"].includes(behavior)) descriptor.target_id = "BIND-WRONG@9.9";
+  return descriptor;
+}
+
+function publishPairwiseReady(behavior) {
+  if (behavior === "missing_server_descriptor" || !process.env.AICP_PAIRWISE_READY_FILE) return;
+  const destination = process.env.AICP_PAIRWISE_READY_FILE;
+  const temporary = `${destination}.tmp`;
+  writeFileSync(
+    temporary,
+    behavior === "malformed_server_descriptor" ? "{malformed" : canonical(pairwiseDescriptor("server", behavior)),
+    { encoding: "utf8" },
+  );
+  renameSync(temporary, destination);
+}
+
 function rpcResult(id, result) {
   return { jsonrpc: "2.0", id, result };
 }
@@ -130,7 +169,8 @@ function rpcError(id, code, message) {
 }
 
 class Mailbox {
-  constructor() {
+  constructor(behavior = "good") {
+    this.behavior = behavior;
     this.bySession = new Map();
     this.byId = new Map();
     this.cursorOffsets = new Map();
@@ -163,6 +203,7 @@ class Mailbox {
       if (prior && canonical(prior) !== canonical(message)) return rpcError(requestId, -32602, "conflicting duplicate message id");
       if (!prior) {
         const stored = clone(message);
+        if (this.behavior === "server_rewrites_message") stored.sender = "rewritten-by-server";
         this.byId.set(key, stored);
         if (!this.bySession.has(message.session_id)) this.bySession.set(message.session_id, []);
         this.bySession.get(message.session_id).push(stored);
@@ -177,6 +218,7 @@ class Mailbox {
       const limit = Math.max(0, Math.min(Number.isSafeInteger(args.limit) ? args.limit : 1000, 1000));
       const offset = cursors.get(args.after_cursor);
       const selected = clone((this.bySession.get(args.session_id) ?? []).slice(offset, offset + limit));
+      if (this.behavior === "server_returns_another_session_message" && selected.length) selected[0].session_id = "another-session";
       return rpcResult(requestId, { messages: selected, next_cursor: this.cursor(args.session_id, offset + selected.length) });
     }
     if (tool === "aicp.getHead") {
@@ -216,8 +258,8 @@ async function lineLoop(handler) {
   }
 }
 
-async function serverLoop() {
-  const mailbox = new Mailbox();
+async function serverLoop(behavior = "good") {
+  const mailbox = new Mailbox(behavior);
   await lineLoop((request) => mailbox.dispatch(request));
 }
 
@@ -430,6 +472,141 @@ function controlResponse(request, behavior) {
   return { control_version: CONTROL, request_id: request.request_id, operation: request.operation, success: true, result };
 }
 
+function clientControlResponse(request, result) {
+  return {
+    control_version: CLIENT_CONTROL,
+    request_id: request.request_id,
+    operation: request.operation,
+    success: true,
+    result,
+  };
+}
+
+async function pairwiseClientLoop(behavior) {
+  const sessions = new Map();
+  const pending = new Map();
+  let counter = 0;
+  await lineLoop((request) => {
+    try {
+      if (request.control_version !== CLIENT_CONTROL) throw new Error("unsupported Pairwise client control version");
+      const input = request.input ?? {};
+      let result;
+      if (request.operation === "describe") {
+        result = pairwiseDescriptor("client", behavior);
+      } else if (request.operation === "begin_phase") {
+        counter += 1;
+        const phase = String(input.phase);
+        const session = String(input.session_id);
+        if (!sessions.has(session)) sessions.set(session, {
+          cursor: "c0", visible: [], proposal: null, acceptance: null, attestation: null, challenge: null,
+        });
+        const state = sessions.get(session);
+        if (Object.hasOwn(input, "preseed_challenge")) state.challenge = input.preseed_challenge;
+        if (input.preseed_peer_message && typeof input.preseed_peer_message === "object") {
+          const preseed = clone(input.preseed_peer_message);
+          if (preseed.message_type === "CONTRACT_PROPOSE") state.proposal = preseed;
+          else if (preseed.message_type === "CONTRACT_ACCEPT") state.acceptance = preseed;
+        }
+        let message = null;
+        let tool;
+        let args;
+        let expectedType = null;
+        if (phase === "propose") {
+          state.challenge = input.challenge;
+          message = pairwiseMessage({ input: { ...input, peer_message: null } }, behavior);
+          tool = "aicp.sendMessage";
+          args = { message };
+        } else if (["accept", "attest"].includes(phase)) {
+          const peer = phase === "accept" ? state.proposal : state.acceptance;
+          if (!peer) throw new Error(`${phase} requires a peer artifact learned by this client`);
+          const mappedBehavior = behavior === "hardcoded_peer_hash" ? "hardcoded_hash" : behavior;
+          message = pairwiseMessage({ input: { ...input, challenge: state.challenge ?? "not-preseeded", peer_message: clone(peer) } }, mappedBehavior);
+          if (["stale_peer_hash", "previous_run_peer_hash", "wrong_prev_msg_hash"].includes(behavior)) {
+            const suffix = { stale_peer_hash: "B", previous_run_peer_hash: "C", wrong_prev_msg_hash: "D" }[behavior];
+            message.prev_msg_hash = `sha256:${suffix.repeat(43)}`;
+            message.message_hash = envelopeHash(message);
+          }
+          tool = "aicp.sendMessage";
+          args = { message };
+        } else if (["poll_proposal", "poll_acceptance", "poll_attestation"].includes(phase)) {
+          tool = "aicp.pollMessages";
+          args = { session_id: session, after_cursor: state.cursor, limit: 1 };
+          expectedType = {
+            poll_proposal: "CONTRACT_PROPOSE",
+            poll_acceptance: "CONTRACT_ACCEPT",
+            poll_attestation: "ATTEST_ACTION",
+          }[phase];
+        } else throw new Error("unsupported Pairwise client phase");
+        const rpcId = `rpc-${createHash("sha256").update(`${request.request_id}:${counter}:${tool}`).digest("hex").slice(0, 24)}`;
+        const mcpRequest = call(rpcId, tool, args);
+        const exchangeId = `exchange-${createHash("sha256").update(`${request.request_id}:${counter}`).digest("hex").slice(0, 24)}`;
+        pending.set(exchangeId, {
+          phase, session, destinationSide: String(input.destination_side), request: clone(mcpRequest), message: clone(message), expectedType,
+        });
+        result = {
+          event: "mcp_request",
+          phase,
+          exchange_id: exchangeId,
+          destination_side: String(input.destination_side),
+          request: mcpRequest,
+          request_json: canonical(mcpRequest),
+          client_visible_hashes_before: [...state.visible],
+        };
+      } else if (request.operation === "mcp_response") {
+        const exchangeId = String(input.exchange_id);
+        const item = pending.get(exchangeId);
+        pending.delete(exchangeId);
+        if (!item) throw new Error("unknown Pairwise client exchange");
+        if (input.source_side !== item.destinationSide) throw new Error("MCP response came from the wrong server side");
+        if (typeof input.response_json !== "string") throw new Error("exact MCP response JSON is required");
+        const response = JSON.parse(input.response_json);
+        if (response?.jsonrpc !== "2.0" || response.id !== item.request.id || response.error || typeof response.result !== "object" || response.result === null) {
+          throw new Error("MCP response correlation failed");
+        }
+        const state = sessions.get(item.session);
+        if (item.request.params.name === "aicp.sendMessage") {
+          if (response.result.accepted !== true || response.result.message_hash !== item.message.message_hash) throw new Error("server did not accept the exact client-authored message");
+          result = { event: "phase_complete", phase: item.phase, message: item.message };
+        } else {
+          const messages = response.result.messages;
+          if (!Array.isArray(messages) || messages.length !== 1 || typeof messages[0] !== "object" || messages[0] === null) throw new Error("client poll must consume exactly one peer message");
+          const observed = clone(messages[0]);
+          if (observed.message_type !== item.expectedType) throw new Error("client poll returned the wrong message type");
+          if (observed.session_id !== item.session || envelopeHash(observed) !== observed.message_hash) throw new Error("client poll returned an invalid peer message");
+          const before = [...state.visible];
+          state.visible.push(observed.message_hash);
+          if (typeof response.result.next_cursor !== "string" || !response.result.next_cursor) throw new Error("client poll returned no continuation cursor");
+          state.cursor = response.result.next_cursor;
+          const key = { CONTRACT_PROPOSE: "proposal", CONTRACT_ACCEPT: "acceptance", ATTEST_ACTION: "attestation" }[observed.message_type];
+          const stored = clone(observed);
+          if (behavior === "rewritten_peer_message" && ["proposal", "acceptance"].includes(key)) {
+            stored.sender = "client-local-rewrite";
+            stored.message_hash = envelopeHash(stored);
+          }
+          state[key] = stored;
+          if (key === "proposal") state.challenge = observed.payload?.contract?.goal;
+          result = {
+            event: "phase_complete",
+            phase: item.phase,
+            observed_message: observed,
+            client_visible_hashes_before: before,
+            client_visible_hashes_after: [...state.visible],
+          };
+        }
+      } else throw new Error("unsupported Pairwise client operation");
+      return clientControlResponse(request, result);
+    } catch (error) {
+      return {
+        control_version: CLIENT_CONTROL,
+        request_id: request?.request_id,
+        operation: request?.operation,
+        success: false,
+        error: { code: "pairwise_client_error", message: String(error.message) },
+      };
+    }
+  });
+}
+
 async function adapterLoop(kind, behavior = "good") {
   await lineLoop((request) => {
     try {
@@ -449,12 +626,13 @@ async function main() {
   if (mode === "iut") await adapterLoop("iut");
   else if (mode === "binding-server") { publishReady("server_under_test"); await serverLoop(); }
   else if (mode === "binding-client") { publishReady("client_under_test"); await bindingClient(); }
-  else if (mode === "pairwise-server") await serverLoop();
+  else if (mode === "pairwise-server") { publishPairwiseReady(behavior); await serverLoop(behavior); }
+  else if (mode === "pairwise-client") await pairwiseClientLoop(behavior);
   else if (mode === "pairwise-control") await adapterLoop("control", behavior);
   else if (mode === "self-test") {
     if (typedHash("contract", CONTRACT_OBJECT) !== "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4") throw new Error("canonical hashing self-test failed");
     process.stdout.write("peer B self-test passed\n");
-  } else throw new Error("expected iut, binding-server, binding-client, pairwise-server, pairwise-control, or self-test");
+  } else throw new Error("expected iut, binding-server, binding-client, pairwise-server, pairwise-client, pairwise-control, or self-test");
 }
 
 await main();

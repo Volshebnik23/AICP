@@ -18,7 +18,7 @@ for path in (PAIRWISE, ROOT / "scripts", ROOT / "reference" / "python"):
         sys.path.insert(0, str(path))
 
 import aicp_pairwise_runner_v1_1 as issued_runner  # noqa: E402
-from pairwise_report_evaluator_v1_1 import evaluate_pairwise_report as evaluate_issued_report  # noqa: E402
+import pairwise_report_evaluator_v1_1 as issued_evaluator  # noqa: E402
 
 
 def _command_json(command: list[str]) -> str:
@@ -172,14 +172,30 @@ def test_issued_1_1_runner_is_the_actual_mcp_client_and_starts_no_peer_clients(
 
 def test_issued_1_1_accepts_peer_a_server_substituted_for_peer_b(
     role_reproduction_side_reports: dict[str, Any],
+    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
     args = _issued_args(role_reproduction_side_reports, tmp_path, substitute_b_server=True)
     report = issued_runner.run(args)
-    result = evaluate_issued_report(report, base_dir=tmp_path)
+    issued_root = tmp_path / "issued-repository"
+    issued_pairwise = issued_root / "interop" / "pairwise"
+    shutil.copytree(PAIRWISE, issued_pairwise, ignore=shutil.ignore_patterns("__pycache__"))
+    frozen_dispatcher = (
+        issued_pairwise
+        / "release_artifacts"
+        / "AICP-PAIRWISE-TCK-1.1.0"
+        / "authority_root"
+        / "interop"
+        / "pairwise"
+        / "pairwise_report_dispatcher.py"
+    )
+    shutil.copy2(frozen_dispatcher, issued_pairwise / "pairwise_report_dispatcher.py")
+    monkeypatch.setattr(issued_evaluator, "HERE", issued_pairwise)
+    monkeypatch.setattr(issued_evaluator, "ROOT", issued_root)
+    result = issued_evaluator.evaluate_pairwise_report(report, base_dir=tmp_path)
 
     assert report["participants"][0]["implementation_id"] == "aicp-cleanroom-python-a"
     assert report["participants"][1]["implementation_id"] == "aicp-cleanroom-node-b"
-    assert result["status"] == "eligible"
+    assert result["status"] == "eligible", result
     assert len(result["eligible_pairwise_relations"]) == 1
     assert result["eligible_marks"] == []

@@ -1,0 +1,17 @@
+{
+  "vector_format_version": "1.0",
+  "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.2.0",
+  "classification": "repository-owned-current-clean-room-test-vector",
+  "files": [
+    { "path": "a-binding.json", "sha256": "2bace7487461adf0cd251aeab0d96bd9367d8bbc4deaded2e663360cea326d5e" },
+    { "path": "a-profile.json", "sha256": "ccac80b58485235821ab948a72e108d21ff3829cb0bbe493015e435b91a5f647" },
+    { "path": "b-binding.json", "sha256": "ceb33f63cdcf2adadb8cf5142c488e4693d923998d2addbeb663e9dcb610ca73" },
+    { "path": "b-profile.json", "sha256": "4fda8bb40b2bc08adc7caee71f7dd5c64c87cdcd2ec2a7f0b6bc994965a9ff2f" },
+    { "path": "joint.json", "sha256": "ababb509bd063ce81755b4266b26b128716df1d8b8d696619717f873edd8d7c6" }
+  ],
+  "notes": [
+    "Generated with Pairwise TCK 1.2 from the repository-owned Python and Node clean-room peers.",
+    "The joint report records participant-authored MCP requests, bound client/server role descriptors, and final consumer polls.",
+    "This vector is reproducible test evidence, not genuine external adoption."
+  ]
+}

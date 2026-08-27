@@ -601,14 +601,26 @@ def derive_interop_evidence(
         demonstrated_pairwise_relations.update(pairwise_relations)
 
     pairwise_targets = load_json(ROOT, PAIRWISE_TARGETS_PATH).get("targets", [])
-    pairwise_releases = load_json(ROOT, PAIRWISE_RELEASES_PATH).get("releases", [])
+    pairwise_registry = load_json(ROOT, PAIRWISE_RELEASES_PATH)
+    pairwise_releases = pairwise_registry.get("releases", [])
+    pairwise_policies = pairwise_registry.get("release_policies", [])
     registered_pairwise_targets = len(
         [item for item in pairwise_targets if isinstance(item, dict)]
     )
-    current_pairwise_tck = (
-        pairwise_releases[-1].get("release_id")
-        if pairwise_releases and isinstance(pairwise_releases[-1], dict)
-        else None
+    current_pairwise = [
+        item
+        for item in pairwise_policies
+        if isinstance(item, dict)
+        and item.get("lifecycle") == "current"
+        and item.get("strong_eligible") is True
+    ]
+    current_pairwise_tck = current_pairwise[0].get("release_id") if len(current_pairwise) == 1 else None
+    historical_ineligible_pairwise_tcks = sorted(
+        str(item.get("release_id"))
+        for item in pairwise_policies
+        if isinstance(item, dict)
+        and item.get("lifecycle") == "historical"
+        and item.get("strong_eligible") is False
     )
     reachable_pairwise_targets = (
         registered_pairwise_targets if pairwise_publication_available else 0
@@ -638,6 +650,7 @@ def derive_interop_evidence(
         "pairwise_publication_available": pairwise_publication_available,
         "pairwise_tck_family_available": bool(pairwise_releases),
         "pairwise_current_tck": current_pairwise_tck,
+        "pairwise_historical_ineligible_tcks": historical_ineligible_pairwise_tcks,
         "registered_pairwise_targets": registered_pairwise_targets,
         "reachable_pairwise_targets": reachable_pairwise_targets,
         "pairwise_demonstrated_relations": len(demonstrated_pairwise_relations),
@@ -863,7 +876,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Rejected/ineligible real packages | {interop['rejected_real_submission_count']} | `interop/interop_matrix.json` |",
         f"| Externally demonstrated profiles | {len(demonstrated)}: {_code_list(demonstrated)} | eligible profile-specific `computed_profile_marks` only |",
         f"| Pairwise publication / demonstration | {_human_bool(interop['pairwise_publication_available'])} / {_human_bool(interop['pairwise_demonstrated'])} | joint-evidence validator status |",
-        f"| Pairwise TCK / target reachability | `{interop['pairwise_current_tck']}`; {interop['registered_pairwise_targets']} registered / {interop['reachable_pairwise_targets']} reachable | `interop/pairwise/tck_releases.json`, `interop/pairwise/targets.json` |",
+        f"| Pairwise TCK / target reachability | current `{interop['pairwise_current_tck']}`; historical/ineligible {_code_list(interop['pairwise_historical_ineligible_tcks'])}; {interop['registered_pairwise_targets']} registered / {interop['reachable_pairwise_targets']} reachable | `interop/pairwise/tck_releases.json`, `interop/pairwise/targets.json` |",
         f"| Pairwise demonstrated relations | {interop['pairwise_demonstrated_relations']} | eligible orientation-independent `computed_pairwise_relations` only |",
         f"| Live binding paths | {len(live_bindings)}: {_code_list(live_bindings)} | binding evidence map |",
         f"| Independent external security review | {_human_bool(security['external_independent_review_completed'])} | `{security['artifact_contract']}` |",
