@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "c4d816bf3764d7a87b29a7fca4caefa79c4bbdafbd33208e6dbf7d4b187645d4",
+      "combined_sha256": "f0213ff209672f993fdde03090515f952894f0f884212b8261bac4816920f3e4",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -41,7 +41,7 @@
         },
         {
           "path": "conformance/evidence/delegated_identity_target.json",
-          "sha256": "67876256e416ed4edfb4ceff16e736d28b6fba94fb00dda8fc5c69dd188de1c8"
+          "sha256": "f145db6817e3395c1d4f8eacfc75751c441f9e8a14660020e9da03315b6c1d6a"
         },
         {
           "path": "conformance/evidence/evidence_runner_bundle.json",
@@ -50,6 +50,10 @@
         {
           "path": "conformance/evidence/evidence_runner_bundle_v1_10.json",
           "sha256": "c61e9f4a1e384bcd435765d1457223b2cae1035c62686fedaa7101681d19919b"
+        },
+        {
+          "path": "conformance/evidence/evidence_runner_bundle_v1_11.json",
+          "sha256": "7620f68e010550ca5332fa15b59e9ed4f6336b3749cd73ef121989a2d854a9ec"
         },
         {
           "path": "conformance/evidence/evidence_runner_bundle_v1_2.json",
@@ -85,7 +89,7 @@
         },
         {
           "path": "conformance/evidence/evidence_tck_releases.json",
-          "sha256": "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
+          "sha256": "50f1a62998dd7d110d72462b4cb72fd2a64a3c5bbad07fffe37e0cbe161b799b"
         },
         {
           "path": "conformance/evidence/external_evidence_report_v2.schema.json",
@@ -181,11 +185,11 @@
         },
         {
           "path": "conformance/evidence/mediated_blocking_target.json",
-          "sha256": "b05ee4fdc5779e7c41710d7cee4c8912e6dbe03cd57c270027f7ddb8c6ef007c"
+          "sha256": "31210e907d0f9b251222cc45491ab9d44cc8ab7c2794c86b083a86f600507b1b"
         },
         {
           "path": "conformance/evidence/product_profile_consumer_expectations.json",
-          "sha256": "b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
+          "sha256": "961bb7c606cad69d3073c0a462044ce3d8dfb74f709c6d9d975f2599c702f624"
         },
         {
           "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
@@ -214,6 +218,10 @@
         {
           "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.10.0.json",
           "sha256": "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
+        },
+        {
+          "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.11.0.json",
+          "sha256": "50f1a62998dd7d110d72462b4cb72fd2a64a3c5bbad07fffe37e0cbe161b799b"
         },
         {
           "path": "conformance/evidence/release_registry_snapshots/AICP-EVIDENCE-TCK-1.2.0.json",
@@ -253,7 +261,7 @@
         },
         {
           "path": "conformance/evidence/resumable_sessions_target.json",
-          "sha256": "a433771d9f56ed915d95e36e7f92f121e9d19c31817dd6f131194f725114fe36"
+          "sha256": "7636a26a52461f8ae964bdbb876279df4327815d5dbf5084bced682b8deb40f1"
         },
         {
           "path": "conformance/evidence/session_state_projection_v1_target.json",
@@ -265,7 +273,7 @@
         },
         {
           "path": "conformance/evidence/targets.json",
-          "sha256": "6aaa954733282583cd32311956af00ef6599f984af99e09f7d330c479f50924b"
+          "sha256": "b4fbcfbc48b75eb786014c55d9e3c532120dcf4ab555ada7a204c5745a156910"
         },
         {
           "path": "conformance/extensions/AD_ADMISSION_0.1.json",
@@ -293,7 +301,7 @@
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-          "sha256": "ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+          "sha256": "95e79c9c290a7e0aab835cb2530ec25a3d992c11dcd852cfc9bddfc2ade748c2"
         },
         {
           "path": "conformance/extensions/CN_CAPNEG_0.2.json",
@@ -321,7 +329,7 @@
         },
         {
           "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
-          "sha256": "51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+          "sha256": "ee73e5ee56ab92054074a5803cb4ff43352030f8ccdc800ed8c205092e214a4d"
         },
         {
           "path": "conformance/extensions/ES_ACTION_ESCROW_0.1.json",
@@ -365,7 +373,7 @@
         },
         {
           "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
-          "sha256": "24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+          "sha256": "0d40690e760275a74cb1a0c8f7a8cf872e5e71ded089903763695cdd15dc20da"
         },
         {
           "path": "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json",
@@ -545,7 +553,7 @@
         },
         {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
-          "sha256": "17730f7c9a6c3be9ae3e388495c4f350f54dc3a1f05ad9fd2f554ff64ec4ff28"
+          "sha256": "168ac33c66569c69fad960206fc34aab1e0bd80886de4de3550aaab5d95089f0"
         },
         {
           "path": "conformance/vectors/rfc8785_float64_vectors.json",
@@ -558,7 +566,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "875aa2375831b93f7c9c6f18b1a169532aef631b34aeef90168bc3fedaeb3d98",
+      "combined_sha256": "b34b2926b56c043a6f074dc44a1d6da89f58f32e2406a6787748d447f9a73609",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -1005,6 +1013,10 @@
           "sha256": "07248a142b50ca9b1b712f9a3b15da541bc0855da5dfd7fefb659ed997a5d7f4"
         },
         {
+          "path": "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
+          "sha256": "0796c9a5e8c49fe98279f99d31396c1f8b047128d413f2ddf9ed16d5371a8083"
+        },
+        {
           "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
           "sha256": "6e81f3e1c6151784016ff415efe74bf0599ef0e28ecd8a366b5802c49493ec21"
         },
@@ -1155,6 +1167,14 @@
         {
           "path": "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
           "sha256": "1372f1adea3d4b8ddaf3fc12eed808ab1b9151812542867a0b74e5fa6da6e9bb"
+        },
+        {
+          "path": "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+          "sha256": "5222df69a118388e2cb3443b711c6b2abd27bff47bbd3224d863aaaa08ca4e56"
+        },
+        {
+          "path": "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
+          "sha256": "bd5754305741e68c0c9bac7b06ef6eab9ab26c62e1726b05ccec93a0006f19f1"
         },
         {
           "path": "fixtures/extensions/enterprise_bindings/EB-01_openapi_tool_binding_pass.jsonl",
@@ -1419,6 +1439,22 @@
         {
           "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
           "sha256": "05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/OR-03_access_denied.jsonl",
+          "sha256": "4aed70a414faecf82a1955f692173ee6d6f81289f3f92b98308c581c3914cb4b"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/OR-04_too_large.jsonl",
+          "sha256": "d27cad32a56cb1c491de58f3823b056f7e74bd47936631ed05c84fa1655b65b2"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/OR-05_redacted.jsonl",
+          "sha256": "ef5c7d79cda227d518992d798d6511c06ebb5ea15829971dfdb7475c99ea0079"
+        },
+        {
+          "path": "fixtures/extensions/object_resync/OR-06_found_hash_mismatch_expected_fail.jsonl",
+          "sha256": "af9b3066709674edde4407eefe878ca1ab6da786ede9fabb700abae68e78ebb3"
         },
         {
           "path": "fixtures/extensions/object_resync/state_projection_v1/SP-01_valid.jsonl",
@@ -2035,6 +2071,10 @@
         {
           "path": "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.template.jsonl",
           "sha256": "5a9662d9a76782010496dc090b9f22ec67d4918ea898d85a33bf84cede2cc786"
+        },
+        {
+          "path": "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+          "sha256": "e389832f39227116c6a65aebac629685541473d0fd8134c53bd3ff03cc9f1b8f"
         }
       ]
     },

@@ -26,6 +26,7 @@ PAIRWISE_RELEASES_PATH = "interop/pairwise/tck_releases.json"
 CORE_SUITE_PATH = "conformance/core/CT_CORE_0.1.json"
 IUT_CASES_PATH = "conformance/iut/cases.json"
 EVIDENCE_TARGETS_PATH = "conformance/evidence/targets.json"
+SECURITY_COVERAGE_PATH = "security_review/threat_coverage.json"
 
 BASELINE_BEGIN = "<!-- BEGIN GENERATED REPO-TRUTH FACTS -->"
 BASELINE_END = "<!-- END GENERATED REPO-TRUTH FACTS -->"
@@ -880,6 +881,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
         f"| Pairwise demonstrated relations | {interop['pairwise_demonstrated_relations']} | eligible orientation-independent `computed_pairwise_relations` only |",
         f"| Live binding paths | {len(live_bindings)}: {_code_list(live_bindings)} | binding evidence map |",
         f"| Independent external security review | {_human_bool(security['external_independent_review_completed'])} | `{security['artifact_contract']}` |",
+        f"| Security threat coverage | {security['coverage_map_rows']} components: {security['covered_coverage_rows']} covered, {security['deferred_coverage_rows']} deferred, {security['partial_coverage_rows']} partial | `security_review/threat_coverage.json` |",
         f"| Governance model / maturity | `{governance['current_model']}` / `{governance['standard_maturity']}` | `GOVERNANCE.md` |",
         f"| Registered message surface | {message_summary['registered_count']} entries; {version_selected_messages} IDs use version-selected payload schemas; {len(message_summary['missing_positive_fixture_types'])} missing positive fixtures | `message_surface.entries` |",
         f"| CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence={str(status['capneg_v0_2']['composition_external_evidence']).lower()} | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |",
@@ -909,7 +911,7 @@ def render_baseline_facts(status: dict[str, Any]) -> str:
             f"| External submissions | {interop['real_submission_package_count']} real packages; {interop['eligible_external_submission_count']} eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |",
             f"| Pairwise | publication={str(interop['pairwise_publication_available']).lower()}, TCK=`{interop['pairwise_current_tck']}`, targets={interop['registered_pairwise_targets']} registered/{interop['reachable_pairwise_targets']} reachable | {interop['pairwise_demonstrated_relations']} externally demonstrated relations; clean-room repository peers do not count | None (M66 shipped) |",
             f"| Bindings | {sum(item['static_case_count'] for item in bindings)} static cases; {binding_summary['external_binding_targets']} external targets; {binding_summary['live_role_paths']} live role paths; {binding_summary['reachable_external_binding_marks']} reachable marks | {binding_summary['externally_demonstrated_bindings']} externally demonstrated bindings; reference evidence is not external evidence | M70 |",
-            f"| Security review | internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support completion | M67 |",
+            f"| Security review | {security['coverage_map_rows']} threat components ({security['covered_coverage_rows']} covered/{security['deferred_coverage_rows']} deferred/{security['partial_coverage_rows']} partial); internal self-review={str(security['internal_self_review_completed']).lower()}, external completed={str(security['external_independent_review_completed']).lower()} | Only contracted artifacts under `{security['artifact_location']}` may support external-review completion | None (M67 shipped) |",
             f"| Governance | `{governance['current_model']}` | No external standards body is recorded | M68 |",
             f"| Message surface | {message_summary['registered_count']} machine-mapped entries; {len(message_summary['missing_positive_fixture_types'])} positive-fixture gaps | Aggregates are derived from entries | {'M65' if message_summary['missing_positive_fixture_types'] else 'None (M65 shipped)'} |",
             "| Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | Deferred |",
@@ -1208,20 +1210,13 @@ def sync_status(root: Path, status: dict[str, Any]) -> dict[str, Any]:
     security["artifact_location"] = (
         "security_review/external_reviews/completed/"
     )
-    coverage_text = (
-        root / "security_review/COVERAGE_MAP.md"
-    ).read_text(encoding="utf-8")
-    coverage_rows = [
-        line
-        for line in coverage_text.splitlines()
-        if line.startswith("|")
-        and re.search(r"\|\s*(?:Strong|Partial|Doc-only)\s*\|", line)
-    ]
-    security["coverage_map_rows"] = len(coverage_rows)
-    security["partial_coverage_rows"] = sum(
-        bool(re.search(r"\|\s*Partial\s*\|", line))
-        for line in coverage_rows
-    )
+    coverage = load_json(root, SECURITY_COVERAGE_PATH)
+    threats = [item for item in coverage.get("threats", []) if isinstance(item, dict)]
+    statuses = [item.get("status") for item in threats]
+    security["coverage_map_rows"] = len(threats)
+    security["covered_coverage_rows"] = statuses.count("covered")
+    security["deferred_coverage_rows"] = statuses.count("deferred")
+    security["partial_coverage_rows"] = statuses.count("partial")
     return status
 
 

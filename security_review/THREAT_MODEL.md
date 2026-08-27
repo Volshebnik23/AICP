@@ -1,54 +1,56 @@
 # AICP Threat Model (Protocol Scope)
 
-## 1) Scope and non-scope
-Scope:
-- AICP protocol artifacts: message formats, hash chain semantics, signatures, registries, and conformance behavior.
+The canonical per-threat status, evidence, deferral rationale, and residual boundary are in
+[`threat_coverage.json`](threat_coverage.json). This document describes the model; it does not
+override that manifest.
 
-Non-scope:
-- Hosted platform operations, centralized chat/enforcer products, IAM replacement, endpoint hardening internals.
+## Scope
 
-## 2) Assets
-- Transcript integrity (hash-chain consistency).
-- Identity authenticity (signature/key binding correctness).
-- Policy/enforcement decision integrity.
-- Auditability and reproducibility of conformance outcomes.
+AICP protocol scope includes registered messages and schemas, transcript hashing and
+signatures, exact-contract agreement, profile negotiation and composition, enforcement and
+alerts, object resynchronization and resume flows, identity delegation, live-transport
+evidence, pairwise clean-room evidence, and the tooling that evaluates those artifacts.
 
-## 3) Actors
-- Honest participant.
-- Buggy implementation.
-- Malicious participant.
-- Malicious mediator.
-- Passive/active observer.
+Hosted service operations, endpoint hardening, model behavior, secure key custody, tenant
+isolation, traffic shaping, and the honesty or policy correctness of participants remain
+deployment or ecosystem responsibilities unless a specific protocol-observable invariant is
+defined and tested.
 
-## 4) Trust boundaries
-- Mediator-controlled channels are not equivalent to end-to-end trust.
-- AICP provides verifiable evidence structures; deployment trust and isolation remain platform concerns.
+## Protected assets
 
-## 5) Attack surfaces
-- Canonicalization pitfalls (Unicode normalization, numeric edge cases, object ordering assumptions).
-- Hash-chain manipulation, replay, and truncation.
-- Spoofed enforcement verdicts or spoofed operational alerts.
-- CAPNEG downgrade or capability spoofing.
-- OBJECT_RESYNC leakage/amplification or DoS patterns.
-- RESUME abuse (session probing, amplification, forced resync loops).
+- canonical transcript and hash-chain integrity;
+- signer, delegated-identity, and enforcement-authority binding;
+- exact proposal, contract, profile, context, verdict, and object references;
+- deterministic conformance and evidence-release interpretation;
+- confidentiality of secrets excluded from public evidence schemas;
+- accurate separation of internal evidence, external evidence, and adoption claims.
 
-## 6) Mitigations: AICP vs platform responsibilities
-AICP provides:
-- Hash-chain and message-hash verification semantics.
-- Registry-governed IDs/codes for interoperable validation.
-- Conformance suites for repeatable behavior checks.
+## Adversaries and failure modes
 
-Platforms should additionally provide (deployment controls):
-- Transport/session hardening, abuse-rate controls, anti-amplification guardrails.
-- Identity lifecycle operations and secure key custody.
-- Operational monitoring, alerting policy, and incident response procedures.
+The model includes buggy or malicious participants, mediators, enforcers, evidence producers,
+and observers. Relevant failures include replay or truncation, stale/future/cross-contract
+substitution, negotiation rollback, profile-composition downgrade, spoofed or mis-targeted
+verdicts, unauthorized enforcement, resync existence leakage or amplification, resume
+probing/loops, misleading evidence provenance, and accidental secret publication.
 
-## 7) Residual risks and recommended platform controls
-Residual protocol-adjacent risks:
-- Valid-but-malicious inputs that are syntactically correct.
-- Privacy leakage via overly verbose operational messages.
+## Trust boundaries
 
-Recommended platform-side controls (optional deployment controls):
-- Strict rate limiting and replay detection.
-- Minimize sensitive payload details; prefer machine-readable codes.
-- Segmented trust zones for mediator and policy components.
+- A mediated channel is not automatically end-to-end trusted.
+- A valid signature proves control of the corresponding signing key under the selected
+  profile; it does not prove participant honesty, authority, or uncompromised key custody.
+- Conformance demonstrates the named executable behavior only. It is not certification,
+  product assurance, ecosystem adoption, or an independent review.
+- Public evidence schemas exclude known test-control secret fields, but arbitrary secret
+  classification and redaction remain an operator responsibility.
+- Positive OBJECT_RESYNC statuses expose protocol mechanisms; they do not establish a
+  universal size, rate, authorization, or redaction policy.
+
+## Mitigation classes
+
+Protocol-observable mitigations are linked from covered manifest rows to exact suites, check
+IDs, case IDs, and fixtures. Deployment and ecosystem risks are deferred with an explicit
+class and rationale. Operator guidance appears in
+[`OPS_HARDENING_GUIDE.md`](OPS_HARDENING_GUIDE.md) and is not converted into a protocol MUST.
+
+The generated [`COVERAGE_MAP.md`](COVERAGE_MAP.md) is the review index for the complete set of
+36 components and their residual boundaries.
