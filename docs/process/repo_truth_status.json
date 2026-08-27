@@ -493,7 +493,11 @@
     "externally_demonstrated_bindings": [],
     "pairwise_publication_available": true,
     "pairwise_tck_family_available": true,
-    "pairwise_current_tck": "AICP-PAIRWISE-TCK-1.1.0",
+    "pairwise_current_tck": "AICP-PAIRWISE-TCK-1.2.0",
+    "pairwise_historical_ineligible_tcks": [
+      "AICP-PAIRWISE-TCK-1.0.0",
+      "AICP-PAIRWISE-TCK-1.1.0"
+    ],
     "registered_pairwise_targets": 1,
     "reachable_pairwise_targets": 1,
     "pairwise_demonstrated_relations": 0,

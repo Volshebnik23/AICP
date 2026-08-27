@@ -213,20 +213,22 @@ _Last updated: 2026-08-26_
 - **Scope:** add the Pairwise TCK family, a versioned joint-report schema, one exact
   `AICP-BASE@0.1` over `BIND-MCP@0.1` target, two separately implemented clean-room peers,
   and a fail-closed independent evaluator and public-submission path.
-- **Completion evidence:** current `AICP-PAIRWISE-TCK-1.1.0` uses release-frozen target,
-  scenario, side-evidence, Core, canonicalization, and evaluator authorities. Two fresh runs
-  execute A→B and B→A over child-process MCP JSON-RPC
-  stdio, bind exact distinct source/build digests and four independently eligible side
-  reports, validate the actual three-message traffic as Core v0.1, bind each construct request
-  and proposal goal to the runtime challenge, prove first-seen causal cross-consumption, and
-  independently normalize to the same semantic digest. Mutation controls produce no eligible
-  relation. Issued TCK 1.0 bytes remain frozen and policy-classified historical/strong-ineligible.
+- **Completion evidence:** current `AICP-PAIRWISE-TCK-1.2.0` uses a release-local registry,
+  target, scenario, report schema, runner/evaluator closures, and the exact frozen 1.1
+  IUT/Core/Evidence authorities. Two fresh runs execute A→B and B→A through exact participant
+  client→peer server processes over MCP JSON-RPC stdio. Client and server descriptors equal
+  each side-report subject; the client authors requests, consumes peer poll responses, builds
+  the Core v0.1 reply chain from first-seen artifacts, and performs the final consumer poll.
+  The relay preserves exact request/response JSON, process IDs make role routing load-bearing,
+  and both runs normalize to the same semantic digest. Substitution, preseed, stale-hash,
+  no-poll, Core, and relay-tampering controls produce no eligible relation. Issued TCK 1.0
+  and 1.1 bytes remain frozen and policy-classified historical/strong-ineligible.
 - **Evidence boundary:** the peers are repository-owned test implementations, so the matrix
   records zero real external pairwise demonstrations. Examples, templates, dry runs, raw
   marks, summaries, and unrelated strong reports remain non-promotable.
 - **Compatibility boundary:** no AICP wire, profile, or binding semantics change and no
   pairwise compatibility mark is introduced. Evidence TCK 1.10 remains frozen; pairwise
-  provenance is governed separately by Pairwise TCK 1.1.
+  provenance is governed separately by Pairwise TCK 1.2.
 - **Next concrete step:** M67–M70 remain planned; M67 has not started.
 
 ## Planned milestones

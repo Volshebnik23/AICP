@@ -120,7 +120,7 @@ nor a capability.
 Use this only when the evidence is specifically about interoperability between two named implementations for a named shipped profile.
 
 M66 enables real publication for exactly `AICP-BASE@0.1+BIND-MCP@0.1`. Eligibility requires
-four independently eligible side reports and one `AICP-PAIRWISE-TCK-1.1.0` joint report for
+four independently eligible side reports and one `AICP-PAIRWISE-TCK-1.2.0` joint report for
 two distinct exact builds. Missing or invalid joint evidence returns
 `PAIRWISE_JOINT_EVIDENCE_REQUIRED`. Two independent single-IUT reports, co-conformance, or a
 prose/JSON summary still do not establish that the named implementations exchanged and

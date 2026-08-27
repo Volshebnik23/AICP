@@ -1,0 +1,2492 @@
+{
+  "report_format_version": "2.2",
+  "report_type": "aicp.external_evidence",
+  "execution_mode": "full-binding",
+  "execution_subject": {
+    "kind": "external_implementation",
+    "implementation_id": "aicp-cleanroom-node-b",
+    "implementation_version": "1.0.0-test",
+    "implementation_digest": "sha256:b96b98e341fec4bad03028b3855e661699f7e8b45c083c8421d540b54863e80c"
+  },
+  "runner": {
+    "name": "aicp-external-evidence-runner",
+    "version": "2.2",
+    "source_revision": "sha256:77498e0b1801a2fdc94ebc7947fe3f9df5395332ef272f49ce7cecb6050ceed0"
+  },
+  "tck_release": {
+    "release_id": "AICP-EVIDENCE-TCK-1.10.0",
+    "registry_digest": "sha256:7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc",
+    "target_registry_digest": "sha256:6aaa954733282583cd32311956af00ef6599f984af99e09f7d330c479f50924b",
+    "target_registry_schema_digest": "sha256:2ce885d972041e631fc67d7a39fa8dbe54d04e123e6277ead6a4accc3b63020f",
+    "target_catalog_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651",
+    "report_schema_digest": "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28",
+    "runner_bundle_digest": "sha256:77498e0b1801a2fdc94ebc7947fe3f9df5395332ef272f49ce7cecb6050ceed0"
+  },
+  "target": {
+    "kind": "binding",
+    "target_id": "BIND-MCP",
+    "target_version": "0.1",
+    "target_catalog_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+  },
+  "required_suites": [
+    {
+      "suite_id": "TB-MCP-0.1",
+      "suite_version": "0.1.0-dev",
+      "path": "conformance/bindings/TB_MCP_0.1.json",
+      "suite_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+    }
+  ],
+  "input_artifacts": [
+    {
+      "path": "conformance/bindings/TB_MCP_0.1.json",
+      "content_digest": "sha256:7b345b95ef11c13b01a58315b0f53bc44690d94289b61d18d43c9e8432570113"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+      "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+      "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+      "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+      "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+      "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+    },
+    {
+      "path": "docs/bindings/RFC_BIND_MCP.md",
+      "content_digest": "sha256:2fe13f35093df8397f55cc98cae02a84a684d576b3ffa60fcf2f74e00b67a180"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-01_sendMessage.json",
+      "content_digest": "sha256:ba38d172229e4ae867666e64314e20262bdc084e683e4e0fba95f08cb5440c6c"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-02_getHead.json",
+      "content_digest": "sha256:a3ce2f2e8a8b54279f90b504762c762dcaff4f0640767b490fdd7a27fb52c3d8"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-03_getObject.json",
+      "content_digest": "sha256:b59d0750b9529d638d2245d4a36b54bae1d104f763641ef381c18d528f0c1798"
+    },
+    {
+      "path": "fixtures/bindings/mcp/TB-MCP-04_pollMessages.json",
+      "content_digest": "sha256:dc57a4f1bda6ac5328cccff10c2e1327bc6fc26db26bb348c1c4d6383e47d8eb"
+    },
+    {
+      "path": "fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+      "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+    },
+    {
+      "path": "registry/message_types.json",
+      "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+    },
+    {
+      "path": "registry/transport_bindings.json",
+      "content_digest": "sha256:a7692530a22dac07b64bba1c2fc0f8eb52ca08115132561293c38115f6bd621b"
+    },
+    {
+      "path": "schemas/bindings/bind-mcp.schema.json",
+      "content_digest": "sha256:938816c333cc849c9ce0da866b30a27bb6b65e47bc0afd17dbc3f9be6b241220"
+    },
+    {
+      "path": "schemas/core/aicp-core-message.schema.json",
+      "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+    }
+  ],
+  "generated_artifacts": [
+    {
+      "artifact_id": "LIVE-BINDING-TRACE-BIND-MCP-0.1",
+      "artifact_kind": "live_binding_trace",
+      "content_digest": "sha256:c4187d15d735115476da407878caac82aa7da20931677f14f90f7c4bb9d6df79",
+      "repeat_content_digest": "sha256:c4187d15d735115476da407878caac82aa7da20931677f14f90f7c4bb9d6df79",
+      "content": {
+        "trace_version": "aicp.live_binding_trace.v4",
+        "binding": {
+          "binding_id": "BIND-MCP",
+          "binding_version": "0.1"
+        },
+        "roles": {
+          "server_under_test": {
+            "role": "server_under_test",
+            "implementation_kind": "external_implementation",
+            "implementation_id": "aicp-cleanroom-node-b",
+            "implementation_version": "1.0.0-test",
+            "implementation_digest": "sha256:b96b98e341fec4bad03028b3855e661699f7e8b45c083c8421d540b54863e80c",
+            "declared_features": {
+              "request_response": true,
+              "sse": false,
+              "websocket": false,
+              "wss": false
+            }
+          },
+          "client_under_test": {
+            "role": "client_under_test",
+            "implementation_kind": "external_implementation",
+            "implementation_id": "aicp-cleanroom-node-b",
+            "implementation_version": "1.0.0-test",
+            "implementation_digest": "sha256:b96b98e341fec4bad03028b3855e661699f7e8b45c083c8421d540b54863e80c",
+            "declared_features": {
+              "request_response": true,
+              "sse": false,
+              "websocket": false,
+              "wss": false
+            }
+          }
+        },
+        "feature_coverage": {
+          "request_response": true,
+          "sse": false,
+          "websocket": false,
+          "wss": false
+        },
+        "runs": [
+          {
+            "run_index": 1,
+            "interactions": [
+              {
+                "interaction_id": "live-mcp-server-send",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-SEND",
+                "transport": "mcp_stdio",
+                "operation": "send_message",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-duplicate",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-DUPLICATE",
+                "transport": "mcp_stdio",
+                "operation": "duplicate_send",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-poll",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-POLL",
+                "transport": "mcp_stdio",
+                "operation": "poll_messages",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c1-e9b36148d66fb1fa",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c1-e9b36148d66fb1fa",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c2-7d3729e7c09b4391",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-head",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-HEAD",
+                "transport": "mcp_stdio",
+                "operation": "get_head",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-object",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-OBJECT",
+                "transport": "mcp_stdio",
+                "operation": "get_object",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-integrity",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-INTEGRITY",
+                "transport": "mcp_stdio",
+                "operation": "jsonrpc_integrity",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m2",
+                            "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                            "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                            "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m2",
+                          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c1-e9b36148d66fb1fa",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c1-e9b36148d66fb1fa",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c2-7d3729e7c09b4391",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "malformed_message": true
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "outcome": "error",
+                        "error_code": -32602
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-send",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-SEND",
+                "transport": "mcp_stdio",
+                "operation": "send_message",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-duplicate",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-DUPLICATE",
+                "transport": "mcp_stdio",
+                "operation": "duplicate_send",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-poll",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-POLL",
+                "transport": "mcp_stdio",
+                "operation": "poll_messages",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m2",
+                            "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                            "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                            "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m2",
+                          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:N8E5wdwPfrD14cs4Uaee9_G0f9iISsPA",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-head",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-HEAD",
+                "transport": "mcp_stdio",
+                "operation": "get_head",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-object",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-OBJECT",
+                "transport": "mcp_stdio",
+                "operation": "get_object",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-integrity",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-INTEGRITY",
+                "transport": "mcp_stdio",
+                "operation": "jsonrpc_integrity",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m2",
+                            "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                            "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                            "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m2",
+                          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:N8E5wdwPfrD14cs4Uaee9_G0f9iISsPA",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "malformed_message": true
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "outcome": "error",
+                        "error_code": -32602
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "run_index": 2,
+            "interactions": [
+              {
+                "interaction_id": "live-mcp-server-send",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-SEND",
+                "transport": "mcp_stdio",
+                "operation": "send_message",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-duplicate",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-DUPLICATE",
+                "transport": "mcp_stdio",
+                "operation": "duplicate_send",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-poll",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-POLL",
+                "transport": "mcp_stdio",
+                "operation": "poll_messages",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c1-e9b36148d66fb1fa",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c1-e9b36148d66fb1fa",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c2-7d3729e7c09b4391",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-head",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-HEAD",
+                "transport": "mcp_stdio",
+                "operation": "get_head",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-object",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-OBJECT",
+                "transport": "mcp_stdio",
+                "operation": "get_object",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-server-integrity",
+                "role": "server_under_test",
+                "scenario_id": "LIVE-MCP-SERVER-INTEGRITY",
+                "transport": "mcp_stdio",
+                "operation": "jsonrpc_integrity",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "server_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m2",
+                            "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                            "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                            "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m2",
+                          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c1-e9b36148d66fb1fa",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c1-e9b36148d66fb1fa",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "c2-7d3729e7c09b4391",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "malformed_message": true
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "outcome": "error",
+                        "error_code": -32602
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-send",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-SEND",
+                "transport": "mcp_stdio",
+                "operation": "send_message",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-duplicate",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-DUPLICATE",
+                "transport": "mcp_stdio",
+                "operation": "duplicate_send",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-poll",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-POLL",
+                "transport": "mcp_stdio",
+                "operation": "poll_messages",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m2",
+                            "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                            "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                            "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m2",
+                          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:Ut4xLohj31LmjmATKCfKR42pnhb8OYmq",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-head",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-HEAD",
+                "transport": "mcp_stdio",
+                "operation": "get_head",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-object",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-OBJECT",
+                "transport": "mcp_stdio",
+                "operation": "get_object",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "interaction_id": "live-mcp-client-integrity",
+                "role": "client_under_test",
+                "scenario_id": "LIVE-MCP-CLIENT-INTEGRITY",
+                "transport": "mcp_stdio",
+                "operation": "jsonrpc_integrity",
+                "transport_evidence": {
+                  "kind": "mcp_stdio",
+                  "boundary": {
+                    "kind": "child_process_stdio",
+                    "transport_kind": "stdio",
+                    "child_process_role": "client_under_test"
+                  },
+                  "exchanges": [
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-1",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m1",
+                            "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                            "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-2",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m1",
+                          "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "message_ref": {
+                            "session_id": "sGT1",
+                            "message_id": "m2",
+                            "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                            "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                            "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                          }
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-send-3",
+                        "outcome": "result",
+                        "result": {
+                          "message_id": "m2",
+                          "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                          "accepted": true
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "c0",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-1",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m1",
+                              "message_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw",
+                              "canonical_digest": "sha256:9c4941c21f24ad70a94f9b89a686847010dccd0948fb9d3f0518214ca4a2de4b"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "method": "tools/call",
+                        "tool": "aicp.pollMessages",
+                        "arguments": {
+                          "session_id": "sGT1",
+                          "after_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
+                          "limit": 1
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-poll-2",
+                        "outcome": "result",
+                        "result": {
+                          "next_cursor": "cursor:Ut4xLohj31LmjmATKCfKR42pnhb8OYmq",
+                          "message_refs": [
+                            {
+                              "session_id": "sGT1",
+                              "message_id": "m2",
+                              "message_hash": "sha256:pjm7MSV6mn9MZpCJr7HGfL7yFteSvpCPM2RvRL-LjmI",
+                              "canonical_digest": "sha256:09abbccde43d8ee56b38353c14552f3a625c4da7a417936329be7d99d4429127",
+                              "prev_msg_hash": "sha256:p9cBy1U2rzEkfWkoRQtY_Yd1bx8DFra3az8u3pxtlhw"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getHead",
+                        "arguments": {
+                          "session_id": "sGT1"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-head-1",
+                        "outcome": "result",
+                        "result": {
+                          "session_id": "sGT1"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:wKY_CpI6-HtaTMTpufl-eTjXYQXv8Igzv7DFBjdDkS4"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-1",
+                        "outcome": "result",
+                        "result": {
+                          "status": "FOUND",
+                          "object_type": "contract",
+                          "object_content": {
+                            "contract_id": "cGT1",
+                            "goal": "golden_demo",
+                            "roles": [
+                              "initiator",
+                              "responder"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "method": "tools/call",
+                        "tool": "aicp.getObject",
+                        "arguments": {
+                          "object_hash": "sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-object-2",
+                        "outcome": "result",
+                        "result": {
+                          "status": "NOT_FOUND"
+                        }
+                      }
+                    },
+                    {
+                      "request": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "method": "tools/call",
+                        "tool": "aicp.sendMessage",
+                        "arguments": {
+                          "malformed_message": true
+                        }
+                      },
+                      "response": {
+                        "jsonrpc": "2.0",
+                        "id": "rpc-invalid-1",
+                        "outcome": "error",
+                        "error_code": -32602
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "semantic_digest": "sha256:40dfda9966c298a51cf3506d72b73aebd60516e5ad89d423def6e7e0ff6e299a",
+        "repeat_semantic_digest": "sha256:40dfda9966c298a51cf3506d72b73aebd60516e5ad89d423def6e7e0ff6e299a"
+      }
+    }
+  ],
+  "timestamp": "2026-08-27T00:04:14.307612+00:00",
+  "passed": true,
+  "case_results": [
+    {
+      "case_id": "EVIDENCE-TARGET-CATALOG-01",
+      "passed": true,
+      "message": "binding target registry and neutral scenario catalog are complete"
+    },
+    {
+      "case_id": "EVIDENCE-TCK-PROVENANCE-01",
+      "passed": true,
+      "message": "evidence TCK provenance and import-closed bundle match current bytes"
+    },
+    {
+      "case_id": "EVIDENCE-RUNNER-WORKTREE-01",
+      "passed": true,
+      "message": "actual runtime import closure matches TCK 1.7"
+    },
+    {
+      "case_id": "EVIDENCE-LIVE-SERVER-ROLE-01",
+      "passed": true,
+      "message": "server_under_test completed two clean real-transport runs"
+    },
+    {
+      "case_id": "EVIDENCE-LIVE-CLIENT-ROLE-01",
+      "passed": true,
+      "message": "client_under_test completed two clean real-transport runs"
+    },
+    {
+      "case_id": "EVIDENCE-LIVE-SUBJECT-01",
+      "passed": true,
+      "message": "all executed roles identify one exact implementation build"
+    },
+    {
+      "case_id": "EVIDENCE-LIVE-TRACE-SCHEMA-01",
+      "passed": true,
+      "message": "sanitized live trace matches its strict schema"
+    },
+    {
+      "case_id": "EVIDENCE-LIVE-TRACE-EVALUATION-01",
+      "passed": true,
+      "message": "independent live evaluator recomputed every mandatory semantic family"
+    },
+    {
+      "case_id": "EVIDENCE-LIVE-DETERMINISM-01",
+      "passed": true,
+      "message": "two normalized semantic digests recompute and match"
+    },
+    {
+      "case_id": "EVIDENCE-TARGET-SUPPORT-01",
+      "passed": true,
+      "message": "implementation descriptors declare the exact registered binding"
+    }
+  ],
+  "failures": [],
+  "degraded": false,
+  "degraded_reasons": [],
+  "skipped_checks": [],
+  "compatibility_marks": [
+    "AICP-BIND-MCP-0.1"
+  ],
+  "adapter_stderr": ""
+}

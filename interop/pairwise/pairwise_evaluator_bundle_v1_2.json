@@ -1,0 +1,277 @@
+{
+  "manifest_version": "1.2",
+  "release_id": "AICP-PAIRWISE-TCK-1.2.0",
+  "closure_discovery": "transitive-python-ast-imports-fail-closed",
+  "entries": [
+    {
+      "path": "conformance/evidence/evidence_identifier_rules.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_handler.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:c9d533c5df08f30a044e24a10e53999fc8dbee4dc78b374097688bd61deadffa"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_trace.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:66b5d0fc136e53debaea7163a2a34eda103b699975763c0bf91e7c90a409bfee"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_http_capture.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:1af9c33f3c9d1d40cecf6f59e72bdb2584f46c3af1c792ab8ee23ce703581a79"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_evaluator.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:280f06ea318a469c534a710c7c425b39e50058c1d9c38ee8fc21360aac2a55de"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_normalization.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:2166d29481b39c8955b815fd0438e03e0509547ec1eddf4853447cd4c3ae10ea"
+    },
+    {
+      "path": "conformance/evidence/producer_payload_schema_router.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
+    },
+    {
+      "path": "conformance/evidence/producer_suite_semantics.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:ebf2682a870a6613ce42af1df516238b86594236688ffecff287ea2e4cdf48a1"
+    },
+    {
+      "path": "conformance/evidence/product_profile_handler.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:78d2bb44a78c45515ce7d7ccd7ad0ba665e8bd9935d2de4833d5a93cb41ff341"
+    },
+    {
+      "path": "conformance/evidence/profile_transcript_evaluator.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:3bb13ff04e06b3238583247e8ff6b36b99df261d81455e11027a29bc42507608"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_handler.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:a61ca62ca6c0a5337d08c85e1adfa71b80a3d3863016ed2902faa15dcff246c9"
+    },
+    {
+      "path": "conformance/evidence/target_catalog.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:2c502ec1a3c116943c53044101de072c70aa782145472e15b633154fbefaea40"
+    },
+    {
+      "path": "conformance/evidence/target_handlers.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:d9ce1b2fa30bf72ccf332037cd23605c19324541980304f794ae03d5e217589c"
+    },
+    {
+      "path": "conformance/runner/_runner_context.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "conformance/runner/_runner_core_checks.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:8f1a74eca923b6fcb0d4e400978144c2abe0acfce7b51b05270f7887edb6833b"
+    },
+    {
+      "path": "conformance/runner/_runner_provenance.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:c25b5f6683eec9012bf7ccb493785b9a820785c781a181d2b3faad4b411ed181"
+    },
+    {
+      "path": "interop/pairwise/pairwise_authority_bridge_v1_1.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:62117d0650564c09cb9a25fadb0d08ca501aec3cc7610146b1f72ccf11ddea52"
+    },
+    {
+      "path": "interop/pairwise/pairwise_core_validator_v1_1.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:036d4fc6563339312eac636841cb1b7917b96c8b134ea41dd239e94d3ad7bc9f"
+    },
+    {
+      "path": "interop/pairwise/pairwise_report_dispatcher.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:168e3f42fbda7a97ba36cf9e6b0039368acdcaeb90c769d662d649093b28102c"
+    },
+    {
+      "path": "interop/pairwise/pairwise_report_evaluator_v1_2.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:baac8a9a5b17574793139f7b3c285c2dc153b1b42f8ce14c1a1c39b997710b93"
+    },
+    {
+      "path": "interop/pairwise/pairwise_semantic_normalizer_v1_2.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:499f5e36ab93c87bf2aec82e478591097a95d53e2cf7fd87b5fb65f66c620054"
+    },
+    {
+      "path": "interop/pairwise/pairwise_side_report_evaluator_v1_1.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:00ce66e8fb3e1436e328d54dc50c05cfffbc02a61ade4fb837029e6f82c018be"
+    },
+    {
+      "path": "reference/python/aicp_ref/chain.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "reference/python/aicp_ref/hashing.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "reference/python/aicp_ref/jcs.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "reference/python/aicp_ref/signatures.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "reference/python/aicp_ref/validate.py",
+      "role": "generated_import_closure",
+      "digest": "sha256:5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/evidence_identifier_rules.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_handler.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:c9d533c5df08f30a044e24a10e53999fc8dbee4dc78b374097688bd61deadffa"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_trace.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:66b5d0fc136e53debaea7163a2a34eda103b699975763c0bf91e7c90a409bfee"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_http_capture.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:1af9c33f3c9d1d40cecf6f59e72bdb2584f46c3af1c792ab8ee23ce703581a79"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_trace_evaluator.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:280f06ea318a469c534a710c7c425b39e50058c1d9c38ee8fc21360aac2a55de"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_trace_normalization.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:2166d29481b39c8955b815fd0438e03e0509547ec1eddf4853447cd4c3ae10ea"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/producer_payload_schema_router.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/producer_suite_semantics.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:ebf2682a870a6613ce42af1df516238b86594236688ffecff287ea2e4cdf48a1"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/product_profile_handler.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:78d2bb44a78c45515ce7d7ccd7ad0ba665e8bd9935d2de4833d5a93cb41ff341"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/profile_transcript_evaluator.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:3bb13ff04e06b3238583247e8ff6b36b99df261d81455e11027a29bc42507608"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/projection_v1_handler.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:a61ca62ca6c0a5337d08c85e1adfa71b80a3d3863016ed2902faa15dcff246c9"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/target_catalog.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:2c502ec1a3c116943c53044101de072c70aa782145472e15b633154fbefaea40"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/target_handlers.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:d9ce1b2fa30bf72ccf332037cd23605c19324541980304f794ae03d5e217589c"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/runner/_runner_context.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/runner/_runner_core_checks.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:8f1a74eca923b6fcb0d4e400978144c2abe0acfce7b51b05270f7887edb6833b"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/runner/_runner_provenance.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:c25b5f6683eec9012bf7ccb493785b9a820785c781a181d2b3faad4b411ed181"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_authority_bridge_v1_1.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:62117d0650564c09cb9a25fadb0d08ca501aec3cc7610146b1f72ccf11ddea52"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_core_validator_v1_1.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:036d4fc6563339312eac636841cb1b7917b96c8b134ea41dd239e94d3ad7bc9f"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_report_dispatcher.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:2481f83c3dd3f81f9a9dbb20c3cd70708bacf834ca660c000c66e81399b95be5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_report_evaluator_v1_1.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:8f6154039495dcce2e9b03e07e87c7f1ec0555edbc82009d0d6f7e071ef5d4ea"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_semantic_normalizer_v1_1.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:bfef849eecc57fd7dd0fa86b398643b22d715d93bd7de310655b3597b5302d21"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_side_report_evaluator_v1_1.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:00ce66e8fb3e1436e328d54dc50c05cfffbc02a61ade4fb837029e6f82c018be"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/chain.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/hashing.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/jcs.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/signatures.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/validate.py",
+      "role": "shared_frozen_1_1_authority",
+      "digest": "sha256:5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    }
+  ]
+}

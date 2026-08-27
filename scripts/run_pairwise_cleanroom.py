@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise the repository-owned Python/Node peers without retaining reports."""
+"""Exercise the repository-owned Python/Node peers through Pairwise TCK 1.2."""
 
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ def command_json(command: list[str]) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--side-only", action="store_true")
+    parser.add_argument("--output-dir", help="retain the exact five reports in this directory")
     args = parser.parse_args()
     node = shutil.which("node")
     if node is None:
@@ -37,8 +38,14 @@ def main() -> int:
     peer_b = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_b" / "peer_b.mjs"
     run([sys.executable, str(peer_a), "self-test"])
     run([node, str(peer_b), "self-test"])
-    with tempfile.TemporaryDirectory(prefix="aicp-pairwise-") as temporary:
-        output = Path(temporary)
+    temporary_context = None
+    if args.output_dir:
+        output = Path(args.output_dir).resolve()
+        output.mkdir(parents=True, exist_ok=True)
+    else:
+        temporary_context = tempfile.TemporaryDirectory(prefix="aicp-pairwise-")
+        output = Path(temporary_context.name)
+    try:
         reports = {
             "a_profile": output / "a-profile.json",
             "a_binding": output / "a-binding.json",
@@ -61,17 +68,23 @@ def main() -> int:
             print("Clean-room side evidence passed: 2 full-profile + 2 full-binding reports")
             return 0
         run([
-            sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_1.py",
-            "--peer-a-control-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-control"]),
+            sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_2.py",
+            "--peer-a-client-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-client"]),
             "--peer-a-server-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-server"]),
             "--peer-a-profile-report", str(reports["a_profile"]), "--peer-a-binding-report", str(reports["a_binding"]),
-            "--peer-b-control-cmd-json", command_json([node, str(peer_b), "pairwise-control"]),
+            "--peer-b-client-cmd-json", command_json([node, str(peer_b), "pairwise-client"]),
             "--peer-b-server-cmd-json", command_json([node, str(peer_b), "pairwise-server"]),
             "--peer-b-profile-report", str(reports["b_profile"]), "--peer-b-binding-report", str(reports["b_binding"]),
             "--out", str(reports["joint"]),
         ])
         run([sys.executable, "interop/pairwise/pairwise_report_dispatcher.py", str(reports["joint"])])
-    print("Clean-room pairwise external-kind test passed; temporary evidence removed")
+    finally:
+        if temporary_context is not None:
+            temporary_context.cleanup()
+    if args.output_dir:
+        print(f"Clean-room pairwise external-kind test passed; exact evidence retained at {output}")
+    else:
+        print("Clean-room pairwise external-kind test passed; temporary evidence removed")
     return 0
 
 

@@ -1,5 +1,5 @@
 {
-  "registry_version": "2.0",
+  "registry_version": "3.0",
   "release_policies": [
     {
       "release_id": "AICP-PAIRWISE-TCK-1.0.0",
@@ -9,9 +9,15 @@
     },
     {
       "release_id": "AICP-PAIRWISE-TCK-1.1.0",
+      "lifecycle": "historical",
+      "strong_eligible": false,
+      "reason": "Joint MCP requests were repository-harness generated and Pairwise server processes were not bound to the exact participant builds."
+    },
+    {
+      "release_id": "AICP-PAIRWISE-TCK-1.2.0",
       "lifecycle": "current",
       "strong_eligible": true,
-      "reason": "Release-specific immutable authorities, exact Core v0.1 transcript validation, and load-bearing runtime challenge binding are complete."
+      "reason": "Participant-authored MCP requests, bound client/server role descriptors, transport-first causality, and final consumer polling are complete."
     }
   ],
   "releases": [
@@ -163,6 +169,134 @@
           "B_TO_A"
         ],
         "clean_run_count": 2,
+        "side_evidence": [
+          "AICP-BASE@0.1/full-profile",
+          "BIND-MCP@0.1/full-binding"
+        ]
+      },
+      "underlying_authorities": [
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/conformance_report_v1.schema.json",
+          "content_digest": "sha256:9c9ede824217f15c95af3d84bb8e4aa86c33bfe5dedf9066f5b224f7cb965fdb"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/external_evidence_report_v2_2.schema.json",
+          "content_digest": "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+          "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+          "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+          "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+          "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+          "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+          "content_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/iut/iut_report_v1.schema.json",
+          "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/fixtures/keys/GT_public_keys.json",
+          "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/pairwise_side_authorities.json",
+          "content_digest": "sha256:7af665a8ad44487ea64c660f1e18fc0d31efa5f82261ea7d6dcfc62995a83bb2"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/registry/message_types.json",
+          "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/registry/policy_categories.json",
+          "content_digest": "sha256:c7bcc0fc8c58bd093d2c908bf736911718732699b96cf1f1fef12438861c4c21"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-contract.schema.json",
+          "content_digest": "sha256:68cdae7d538706b8297634b48ec50c7f20edb9b2296f8c013eb4cdd950accbc7"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-message.schema.json",
+          "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-payloads.schema.json",
+          "content_digest": "sha256:55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
+        }
+      ]
+    },
+    {
+      "release_id": "AICP-PAIRWISE-TCK-1.2.0",
+      "status": "publication-eligible",
+      "registry_schema_digest": "sha256:a34163491b0c0a66d0f29d40fc4392b796feeb47ea967e3a4bdd66bb7536b8c6",
+      "registry_schema": {
+        "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/tck_releases_v3.schema.json",
+        "content_digest": "sha256:a34163491b0c0a66d0f29d40fc4392b796feeb47ea967e3a4bdd66bb7536b8c6"
+      },
+      "runner_bundle": {
+        "path": "interop/pairwise/pairwise_runner_bundle_v1_2.json",
+        "digest": "sha256:e6c7ff08324398e318e7a22d4a16e94e7e5a6a94f9de9c0183c05f1e9fd78582"
+      },
+      "evaluator_bundle": {
+        "path": "interop/pairwise/pairwise_evaluator_bundle_v1_2.json",
+        "digest": "sha256:f6ef1dc52fbef0f77afcd81b2f100633d6d8e07d88096e5a25cd9a2d1d238dce"
+      },
+      "report_schema": {
+        "path": "interop/pairwise/pairwise_joint_report_v1_2.schema.json",
+        "content_digest": "sha256:be8f68e8aa890ff3a1f63398da6df809f62e3294f5cb8218b2db8106f86f73a1"
+      },
+      "evaluator": {
+        "path": "interop/pairwise/pairwise_report_evaluator_v1_2.py",
+        "content_digest": "sha256:baac8a9a5b17574793139f7b3c285c2dc153b1b42f8ce14c1a1c39b997710b93"
+      },
+      "normalizer": {
+        "path": "interop/pairwise/pairwise_semantic_normalizer_v1_2.py",
+        "content_digest": "sha256:499f5e36ab93c87bf2aec82e478591097a95d53e2cf7fd87b5fb65f66c620054"
+      },
+      "target_registry": {
+        "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/targets.json",
+        "content_digest": "sha256:73751a335e132a11dc2d1e36b7bd7e4bf9e7854319700cef7b1affd7147178c5",
+        "schema_path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/target_registry.schema.json",
+        "schema_digest": "sha256:cad18e7c27c70f99bcc58c42d26482f5937ddc200dee460e60e6c8e797fcd0ac"
+      },
+      "scenario_catalog": {
+        "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/scenarios.json",
+        "content_digest": "sha256:cef49577ccfc76bae36c237bbece1dad6a97ed4213db2af7db4a290ef1940405",
+        "schema_path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/pairwise_scenario_v1_2.schema.json",
+        "schema_digest": "sha256:c0b9dcc99a130609aa183741d22177631e01d800a2e6be34e0d67022ef2e99b9"
+      },
+      "mandatory_execution": {
+        "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
+        "scenario_id": "PAIRWISE-MCP-ROLE-BOUND-CROSS-CONSUMPTION-02",
+        "directions": [
+          "A_TO_B",
+          "B_TO_A"
+        ],
+        "clean_run_count": 2,
+        "transport_roles": [
+          "client",
+          "server"
+        ],
         "side_evidence": [
           "AICP-BASE@0.1/full-profile",
           "BIND-MCP@0.1/full-binding"
