@@ -1192,7 +1192,7 @@ def evaluate_strong_report_evidence(
         pairwise_dir = ROOT / "interop" / "pairwise"
         if str(pairwise_dir) not in sys.path:
             sys.path.insert(0, str(pairwise_dir))
-        from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402, PLC0415
+        from pairwise_release_router import evaluate_pairwise_report  # noqa: E402, PLC0415
 
         evaluation = evaluate_pairwise_report(joint_report, base_dir=joint_path.parent)
         if evaluation.get("status") != "eligible":
@@ -1223,7 +1223,7 @@ def evaluate_strong_report_evidence(
             "endpoints": expected_endpoints,
             "profile_ref": {"profile_id": "AICP-BASE", "profile_version": "0.1"},
             "binding_ref": {"binding_id": "BIND-MCP", "binding_version": "0.1"},
-            "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.2.0",
+            "pairwise_tck_release": joint_report.get("pairwise_tck_release", {}).get("release_id"),
             "joint_report_digest": "sha256:"
             + hashlib.sha256(
                 json.dumps(

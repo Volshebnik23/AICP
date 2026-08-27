@@ -1,12 +1,13 @@
 # AICP Pairwise TCK
 
 M66 publishes one exact target: `AICP-BASE@0.1+BIND-MCP@0.1`. The current
-release is `AICP-PAIRWISE-TCK-1.2.0`; its immutable target/scenario, release-local
+release is `AICP-PAIRWISE-TCK-1.3.0`; its immutable target/scenario, release-local
 registry schema, strict joint schema, runner/evaluator import closures, semantic
 normalizer, Core validator, and independent evaluator are digest-bound under this
 directory. It reuses the exact frozen 1.1 authority artifacts by digest. Issued
-`AICP-PAIRWISE-TCK-1.0.0` and `AICP-PAIRWISE-TCK-1.1.0` bytes remain frozen and both
-releases are historical and strong-ineligible.
+`AICP-PAIRWISE-TCK-1.0.0`, `AICP-PAIRWISE-TCK-1.1.0`, and
+`AICP-PAIRWISE-TCK-1.2.0` bytes remain frozen and all three releases are historical and
+strong-ineligible.
 
 The test peers under `cleanroom/` are repository-owned and deliberately use
 different runtimes and separate semantic implementations. They are not public
@@ -29,8 +30,15 @@ Atomic server-ready descriptors and client describe responses bind both process 
 the exact side-report identity. The evaluator independently validates TCK provenance,
 all four side reports through frozen authorities, exact process/build identity, both
 directions, actual Core v0.1 transcript validity, normative AICP hashes,
-runtime-challenge isolation, hash-chain causality, client-first-seen visibility, the final
-consumer poll, replay resistance, and cross-run semantic equivalence.
+runtime-challenge isolation, run-global hash/challenge first-seen visibility, exact MCP
+cursor progression, the final consumer poll, replay resistance, and cross-run semantic
+equivalence. Raw client describe exchanges and server-ready descriptors are independently
+authoritative for every run; summaries must equal the derived raw identity.
+
+The mutable registry router is deliberately outside every release evaluator bundle. A
+strong-eligible release remains routable when it becomes historical, while the in-process
+evaluator closure and the reused content-addressed 1.1 side-authority subprocess closure are
+verified separately.
 
 An eligible joint report yields `eligible_pairwise_relations`; it always yields
 an empty `eligible_marks`. Public packages need exactly five report files and

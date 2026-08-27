@@ -1,5 +1,5 @@
 {
-  "registry_version": "3.0",
+  "registry_version": "4.0",
   "release_policies": [
     {
       "release_id": "AICP-PAIRWISE-TCK-1.0.0",
@@ -15,9 +15,15 @@
     },
     {
       "release_id": "AICP-PAIRWISE-TCK-1.2.0",
+      "lifecycle": "historical",
+      "strong_eligible": false,
+      "reason": "Per-run role identity was not independently derived from raw role evidence, first-seen causality was direction-local, and historical eligibility depended on mutable dispatcher/current-source provenance."
+    },
+    {
+      "release_id": "AICP-PAIRWISE-TCK-1.3.0",
       "lifecycle": "current",
       "strong_eligible": true,
-      "reason": "Participant-authored MCP requests, bound client/server role descriptors, transport-first causality, and final consumer polling are complete."
+      "reason": "Raw per-run roles, run-global first-seen causality, exact cursor progression, and release-stable execution provenance are independently enforced."
     }
   ],
   "releases": [
@@ -288,6 +294,139 @@
       "mandatory_execution": {
         "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
         "scenario_id": "PAIRWISE-MCP-ROLE-BOUND-CROSS-CONSUMPTION-02",
+        "directions": [
+          "A_TO_B",
+          "B_TO_A"
+        ],
+        "clean_run_count": 2,
+        "transport_roles": [
+          "client",
+          "server"
+        ],
+        "side_evidence": [
+          "AICP-BASE@0.1/full-profile",
+          "BIND-MCP@0.1/full-binding"
+        ]
+      },
+      "underlying_authorities": [
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/conformance_report_v1.schema.json",
+          "content_digest": "sha256:9c9ede824217f15c95af3d84bb8e4aa86c33bfe5dedf9066f5b224f7cb965fdb"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/external_evidence_report_v2_2.schema.json",
+          "content_digest": "sha256:5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+          "content_digest": "sha256:b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+          "content_digest": "sha256:50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+          "content_digest": "sha256:a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+          "content_digest": "sha256:f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+          "content_digest": "sha256:ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+          "content_digest": "sha256:1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/iut/iut_report_v1.schema.json",
+          "content_digest": "sha256:728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+          "content_digest": "sha256:fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/fixtures/keys/GT_public_keys.json",
+          "content_digest": "sha256:10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/pairwise_side_authorities.json",
+          "content_digest": "sha256:7af665a8ad44487ea64c660f1e18fc0d31efa5f82261ea7d6dcfc62995a83bb2"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/registry/message_types.json",
+          "content_digest": "sha256:5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/registry/policy_categories.json",
+          "content_digest": "sha256:c7bcc0fc8c58bd093d2c908bf736911718732699b96cf1f1fef12438861c4c21"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-contract.schema.json",
+          "content_digest": "sha256:68cdae7d538706b8297634b48ec50c7f20edb9b2296f8c013eb4cdd950accbc7"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-message.schema.json",
+          "content_digest": "sha256:55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+        },
+        {
+          "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-payloads.schema.json",
+          "content_digest": "sha256:55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
+        }
+      ]
+    },
+    {
+      "release_id": "AICP-PAIRWISE-TCK-1.3.0",
+      "status": "publication-eligible",
+      "registry_schema_digest": "sha256:b80f96e7455096875b15471117a2db2791a17a860b1e6f39d73e336210b119c4",
+      "registry_schema": {
+        "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.3.0/tck_releases_v4.schema.json",
+        "content_digest": "sha256:b80f96e7455096875b15471117a2db2791a17a860b1e6f39d73e336210b119c4"
+      },
+      "runner_bundle": {
+        "path": "interop/pairwise/pairwise_runner_bundle_v1_3.json",
+        "digest": "sha256:39c3ad528029de5c01bcd9f120e9e414dacbe774f5d5c731a4122752c50555c5"
+      },
+      "evaluator_bundle": {
+        "path": "interop/pairwise/pairwise_evaluator_bundle_v1_3.json",
+        "digest": "sha256:c7aeb6bfb845cfc3f1dc33787d9eddbff98b134d974a5b52189e7e5402f14d75"
+      },
+      "side_authority_bundle": {
+        "path": "interop/pairwise/pairwise_side_authority_bundle_v1_3.json",
+        "digest": "sha256:eaca1f276ef9b80a8826b5cd83708375d25ef4289e99a0048ec333a182e5729d"
+      },
+      "report_schema": {
+        "path": "interop/pairwise/pairwise_joint_report_v1_3.schema.json",
+        "content_digest": "sha256:593c0138f605c77a237eb83a1842c6eb171e48682756d38e7dabf2cb388d704b"
+      },
+      "evaluator": {
+        "path": "interop/pairwise/pairwise_report_evaluator_v1_3.py",
+        "content_digest": "sha256:c42544f4aba59274974d17772c3962367d1548714c79b35fba8984ab85388b9d"
+      },
+      "evaluator_api": "evaluate_pairwise_report.v1",
+      "normalizer": {
+        "path": "interop/pairwise/pairwise_semantic_normalizer_v1_3.py",
+        "content_digest": "sha256:52e8919aea1f1a31ae307a844bc3c800657e66aeb216a7755309374ecb7715e4"
+      },
+      "target_registry": {
+        "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.3.0/targets.json",
+        "content_digest": "sha256:c0e6e455c205d4aa5695538755c412c64c30e87d83c00511ef6ddf981af5da18",
+        "schema_path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.3.0/target_registry.schema.json",
+        "schema_digest": "sha256:aaefdc0afc39ebe5f609c31b632620b8238123b1c4cd2c2d11558cda2136ba09"
+      },
+      "scenario_catalog": {
+        "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.3.0/scenarios.json",
+        "content_digest": "sha256:8eaa9ed49b10f931c51968dc02fcac1555e4a30158881e72e8c4338785244622",
+        "schema_path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.3.0/pairwise_scenario_v1_3.schema.json",
+        "schema_digest": "sha256:f40397a858edd7fd5093fc80c15539e6872260714fd968d2cdd0e0b38c2fb8bf"
+      },
+      "mandatory_execution": {
+        "target_id": "AICP-BASE@0.1+BIND-MCP@0.1",
+        "scenario_id": "PAIRWISE-MCP-RAW-ROLE-GLOBAL-CAUSALITY-03",
         "directions": [
           "A_TO_B",
           "B_TO_A"

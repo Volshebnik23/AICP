@@ -1,0 +1,27 @@
+{
+  "manifest_version": "1.3",
+  "release_id": "AICP-PAIRWISE-TCK-1.3.0",
+  "closure_discovery": "transitive-python-ast-imports-from-runner-process-root",
+  "entries": [
+    {
+      "path": "interop/pairwise/aicp_pairwise_runner_v1_3.py",
+      "role": "in_process_runner_import_closure",
+      "digest": "sha256:29ce2f22e04dfc9172714d060b7ba86ffb391f44f696ab1366d04b86ac2ba5b7"
+    },
+    {
+      "path": "interop/pairwise/pairwise_process_v1_2.py",
+      "role": "in_process_runner_import_closure",
+      "digest": "sha256:2f05f6febf7a6be74a7cda4e39b46d4a33ef63efd8b42df2c83dd4af1549c279"
+    },
+    {
+      "path": "interop/pairwise/pairwise_semantic_normalizer_v1_3.py",
+      "role": "in_process_runner_import_closure",
+      "digest": "sha256:52e8919aea1f1a31ae307a844bc3c800657e66aeb216a7755309374ecb7715e4"
+    },
+    {
+      "path": "interop/pairwise/pairwise_side_authority_client_v1_3.py",
+      "role": "in_process_runner_import_closure",
+      "digest": "sha256:e6e579b4e9685f27b39f8d61cbd1d6103be44986777e3a6ce2e1fc82a3671f2a"
+    }
+  ]
+}

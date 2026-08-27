@@ -1,0 +1,371 @@
+{
+  "freeze_format_version": "1.0",
+  "release_id": "AICP-PAIRWISE-TCK-1.2.0",
+  "source_merge_commit": "0b8679dfa384585857d562ddd9b678389feff515",
+  "files": [
+    {
+      "path": "conformance/evidence/evidence_identifier_rules.py",
+      "repository_sha256": "33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_handler.py",
+      "repository_sha256": "c9d533c5df08f30a044e24a10e53999fc8dbee4dc78b374097688bd61deadffa"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_binding_trace.py",
+      "repository_sha256": "66b5d0fc136e53debaea7163a2a34eda103b699975763c0bf91e7c90a409bfee"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_http_capture.py",
+      "repository_sha256": "1af9c33f3c9d1d40cecf6f59e72bdb2584f46c3af1c792ab8ee23ce703581a79"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_evaluator.py",
+      "repository_sha256": "280f06ea318a469c534a710c7c425b39e50058c1d9c38ee8fc21360aac2a55de"
+    },
+    {
+      "path": "conformance/evidence/live_bindings/live_trace_normalization.py",
+      "repository_sha256": "2166d29481b39c8955b815fd0438e03e0509547ec1eddf4853447cd4c3ae10ea"
+    },
+    {
+      "path": "conformance/evidence/producer_payload_schema_router.py",
+      "repository_sha256": "779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
+    },
+    {
+      "path": "conformance/evidence/producer_suite_semantics.py",
+      "repository_sha256": "ebf2682a870a6613ce42af1df516238b86594236688ffecff287ea2e4cdf48a1"
+    },
+    {
+      "path": "conformance/evidence/product_profile_handler.py",
+      "repository_sha256": "78d2bb44a78c45515ce7d7ccd7ad0ba665e8bd9935d2de4833d5a93cb41ff341"
+    },
+    {
+      "path": "conformance/evidence/profile_transcript_evaluator.py",
+      "repository_sha256": "3bb13ff04e06b3238583247e8ff6b36b99df261d81455e11027a29bc42507608"
+    },
+    {
+      "path": "conformance/evidence/projection_v1_handler.py",
+      "repository_sha256": "a61ca62ca6c0a5337d08c85e1adfa71b80a3d3863016ed2902faa15dcff246c9"
+    },
+    {
+      "path": "conformance/evidence/target_catalog.py",
+      "repository_sha256": "2c502ec1a3c116943c53044101de072c70aa782145472e15b633154fbefaea40"
+    },
+    {
+      "path": "conformance/evidence/target_handlers.py",
+      "repository_sha256": "d9ce1b2fa30bf72ccf332037cd23605c19324541980304f794ae03d5e217589c"
+    },
+    {
+      "path": "conformance/runner/_runner_context.py",
+      "repository_sha256": "302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "conformance/runner/_runner_core_checks.py",
+      "repository_sha256": "8f1a74eca923b6fcb0d4e400978144c2abe0acfce7b51b05270f7887edb6833b"
+    },
+    {
+      "path": "conformance/runner/_runner_provenance.py",
+      "repository_sha256": "c25b5f6683eec9012bf7ccb493785b9a820785c781a181d2b3faad4b411ed181"
+    },
+    {
+      "path": "interop/pairwise/aicp_pairwise_runner_v1_2.py",
+      "repository_sha256": "f9011b96712211d3601b248a628915339dbf8f230f771900c6697aa7c10c260d"
+    },
+    {
+      "path": "interop/pairwise/current_vectors/AICP-PAIRWISE-TCK-1.2.0/a-binding.json",
+      "repository_sha256": "541c23545d45e8c91f06d20c8bb7cd6053afd0bc05fa3231889588fdd55846b8"
+    },
+    {
+      "path": "interop/pairwise/current_vectors/AICP-PAIRWISE-TCK-1.2.0/a-profile.json",
+      "repository_sha256": "226ffd2e4ac00c0facccce61528d3d7328fd985c94d45bbb7c1b5b22c5783cce"
+    },
+    {
+      "path": "interop/pairwise/current_vectors/AICP-PAIRWISE-TCK-1.2.0/b-binding.json",
+      "repository_sha256": "069b799d8fff1ba8920ef0de671bed61e5f41c861f92905e52281a0f7444b7c9"
+    },
+    {
+      "path": "interop/pairwise/current_vectors/AICP-PAIRWISE-TCK-1.2.0/b-profile.json",
+      "repository_sha256": "2b0b48541eaa0da4a6ae5347b37ee71d8b739066c244288848bd8d6d3a4974b8"
+    },
+    {
+      "path": "interop/pairwise/current_vectors/AICP-PAIRWISE-TCK-1.2.0/joint.json",
+      "repository_sha256": "bd50d46a6a1361af262e873a87b5fb59ac869f0b50345d3ea98eacec4e587ccc"
+    },
+    {
+      "path": "interop/pairwise/current_vectors/AICP-PAIRWISE-TCK-1.2.0/manifest.json",
+      "repository_sha256": "67f51e694ec945aa2a80d335e48d02b2010034369ce18c1f12dfe73f6c4ff0ba"
+    },
+    {
+      "path": "interop/pairwise/pairwise_authority_bridge_v1_1.py",
+      "repository_sha256": "62117d0650564c09cb9a25fadb0d08ca501aec3cc7610146b1f72ccf11ddea52"
+    },
+    {
+      "path": "interop/pairwise/pairwise_core_validator_v1_1.py",
+      "repository_sha256": "036d4fc6563339312eac636841cb1b7917b96c8b134ea41dd239e94d3ad7bc9f"
+    },
+    {
+      "path": "interop/pairwise/pairwise_evaluator_bundle_v1_2.json",
+      "repository_sha256": "f6ef1dc52fbef0f77afcd81b2f100633d6d8e07d88096e5a25cd9a2d1d238dce"
+    },
+    {
+      "path": "interop/pairwise/pairwise_joint_report_v1_2.schema.json",
+      "repository_sha256": "be8f68e8aa890ff3a1f63398da6df809f62e3294f5cb8218b2db8106f86f73a1"
+    },
+    {
+      "path": "interop/pairwise/pairwise_process_v1_2.py",
+      "repository_sha256": "2f05f6febf7a6be74a7cda4e39b46d4a33ef63efd8b42df2c83dd4af1549c279"
+    },
+    {
+      "path": "interop/pairwise/pairwise_report_dispatcher.py",
+      "repository_sha256": "168e3f42fbda7a97ba36cf9e6b0039368acdcaeb90c769d662d649093b28102c"
+    },
+    {
+      "path": "interop/pairwise/pairwise_report_evaluator_v1_2.py",
+      "repository_sha256": "baac8a9a5b17574793139f7b3c285c2dc153b1b42f8ce14c1a1c39b997710b93"
+    },
+    {
+      "path": "interop/pairwise/pairwise_runner_bundle_v1_2.json",
+      "repository_sha256": "e6c7ff08324398e318e7a22d4a16e94e7e5a6a94f9de9c0183c05f1e9fd78582"
+    },
+    {
+      "path": "interop/pairwise/pairwise_scenario_v1_2.schema.json",
+      "repository_sha256": "c0b9dcc99a130609aa183741d22177631e01d800a2e6be34e0d67022ef2e99b9"
+    },
+    {
+      "path": "interop/pairwise/pairwise_semantic_normalizer_v1_2.py",
+      "repository_sha256": "499f5e36ab93c87bf2aec82e478591097a95d53e2cf7fd87b5fb65f66c620054"
+    },
+    {
+      "path": "interop/pairwise/pairwise_side_report_evaluator_v1_1.py",
+      "repository_sha256": "00ce66e8fb3e1436e328d54dc50c05cfffbc02a61ade4fb837029e6f82c018be"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/conformance_report_v1.schema.json",
+      "repository_sha256": "9c9ede824217f15c95af3d84bb8e4aa86c33bfe5dedf9066f5b224f7cb965fdb"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/evidence_identifier_rules.py",
+      "repository_sha256": "33dd38f7cd928ad0e25dd7cbfdc6a4f3fedb70d9a4d879e38bd08d0476108512"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/external_evidence_report_v2_2.schema.json",
+      "repository_sha256": "5a2a5ce0c3b12a2c5f7224508bffc47635e20b85526ac8148721b9fe78df6e28"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_handler.py",
+      "repository_sha256": "c9d533c5df08f30a044e24a10e53999fc8dbee4dc78b374097688bd61deadffa"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_scenario.schema.json",
+      "repository_sha256": "b0cc67c5cdce33de1c5f31ddfb9423ee71e1e72230aa6112e3eaf7be83b0eab1"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_trace.py",
+      "repository_sha256": "66b5d0fc136e53debaea7163a2a34eda103b699975763c0bf91e7c90a409bfee"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+      "repository_sha256": "50f2213f90b139a06259d89ef9de40eedba9aee3f3cbb8ed76fbad9bc1fc8030"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+      "repository_sha256": "a51f1869d59d6d771e6420bad8b8082606d064af4754c6c25c440ab8c47814d9"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_http_capture.py",
+      "repository_sha256": "1af9c33f3c9d1d40cecf6f59e72bdb2584f46c3af1c792ab8ee23ce703581a79"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_public_scenario_v1.schema.json",
+      "repository_sha256": "f4de154a2cba5994981b47dce89a658afb77a777d8c553938323337387b14c71"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_trace_evaluator.py",
+      "repository_sha256": "280f06ea318a469c534a710c7c425b39e50058c1d9c38ee8fc21360aac2a55de"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/live_trace_normalization.py",
+      "repository_sha256": "2166d29481b39c8955b815fd0438e03e0509547ec1eddf4853447cd4c3ae10ea"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/mcp_v01_scenarios.json",
+      "repository_sha256": "ac9fb6cb965ea3d0679f38e1a98872e6f379fd1046675b960cf100bf7ba48bc1"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/live_bindings/mcp_v01_target_v4.json",
+      "repository_sha256": "1fa9fd9b3c30758e9561f771c30aba5be608ac2bfe07629fd36297430b67d651"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/producer_payload_schema_router.py",
+      "repository_sha256": "779df07d03af6a93f3937fb53c71fd0a1b5b647d123a2c270ddd8ff1f2ff2ed9"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/producer_suite_semantics.py",
+      "repository_sha256": "ebf2682a870a6613ce42af1df516238b86594236688ffecff287ea2e4cdf48a1"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/product_profile_handler.py",
+      "repository_sha256": "78d2bb44a78c45515ce7d7ccd7ad0ba665e8bd9935d2de4833d5a93cb41ff341"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/profile_transcript_evaluator.py",
+      "repository_sha256": "3bb13ff04e06b3238583247e8ff6b36b99df261d81455e11027a29bc42507608"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/projection_v1_handler.py",
+      "repository_sha256": "a61ca62ca6c0a5337d08c85e1adfa71b80a3d3863016ed2902faa15dcff246c9"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/target_catalog.py",
+      "repository_sha256": "2c502ec1a3c116943c53044101de072c70aa782145472e15b633154fbefaea40"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/evidence/target_handlers.py",
+      "repository_sha256": "d9ce1b2fa30bf72ccf332037cd23605c19324541980304f794ae03d5e217589c"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/iut/iut_report_v1.schema.json",
+      "repository_sha256": "728cc512439c162327412570576754d07244da694aceb90e681cb7fa15ba0ee4"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/runner/_runner_context.py",
+      "repository_sha256": "302386f47c4d88a39ef6c8118e587c9e2a7459170379c90fdacd6db6a40acfdd"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/runner/_runner_core_checks.py",
+      "repository_sha256": "8f1a74eca923b6fcb0d4e400978144c2abe0acfce7b51b05270f7887edb6833b"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/conformance/runner/_runner_provenance.py",
+      "repository_sha256": "c25b5f6683eec9012bf7ccb493785b9a820785c781a181d2b3faad4b411ed181"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl",
+      "repository_sha256": "fd110495227b1636fccbd295b5b87be0b16d4a3776e9c1e0dd29ccacab5ad74d"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/fixtures/keys/GT_public_keys.json",
+      "repository_sha256": "10ac1103b33fc31cbce3f73de57791a816b124c28cf8eef795158a15ddbaa9a5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_authority_bridge_v1_1.py",
+      "repository_sha256": "62117d0650564c09cb9a25fadb0d08ca501aec3cc7610146b1f72ccf11ddea52"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_core_validator_v1_1.py",
+      "repository_sha256": "036d4fc6563339312eac636841cb1b7917b96c8b134ea41dd239e94d3ad7bc9f"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_report_dispatcher.py",
+      "repository_sha256": "2481f83c3dd3f81f9a9dbb20c3cd70708bacf834ca660c000c66e81399b95be5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_report_evaluator_v1_1.py",
+      "repository_sha256": "8f6154039495dcce2e9b03e07e87c7f1ec0555edbc82009d0d6f7e071ef5d4ea"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_semantic_normalizer_v1_1.py",
+      "repository_sha256": "bfef849eecc57fd7dd0fa86b398643b22d715d93bd7de310655b3597b5302d21"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/interop/pairwise/pairwise_side_report_evaluator_v1_1.py",
+      "repository_sha256": "00ce66e8fb3e1436e328d54dc50c05cfffbc02a61ade4fb837029e6f82c018be"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/pairwise_side_authorities.json",
+      "repository_sha256": "7af665a8ad44487ea64c660f1e18fc0d31efa5f82261ea7d6dcfc62995a83bb2"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/chain.py",
+      "repository_sha256": "e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/hashing.py",
+      "repository_sha256": "0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/jcs.py",
+      "repository_sha256": "ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/signatures.py",
+      "repository_sha256": "7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/reference/python/aicp_ref/validate.py",
+      "repository_sha256": "5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/registry/message_types.json",
+      "repository_sha256": "5f7fe4533a1c0f78c2569549002ba45895997be4b5ddd54190b2f3faafc9e963"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/registry/policy_categories.json",
+      "repository_sha256": "c7bcc0fc8c58bd093d2c908bf736911718732699b96cf1f1fef12438861c4c21"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-contract.schema.json",
+      "repository_sha256": "68cdae7d538706b8297634b48ec50c7f20edb9b2296f8c013eb4cdd950accbc7"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-message.schema.json",
+      "repository_sha256": "55fcf0b9e32028deaea132787aa4237fd5e941c5fecf9b5d03f9dbaf8731716c"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/schemas/core/aicp-core-payloads.schema.json",
+      "repository_sha256": "55c119e338fd06abc9d00ed16fa6f7aea3e92fa75ca6b302a08c7f5d509076d5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/pairwise_scenario_v1_2.schema.json",
+      "repository_sha256": "c0b9dcc99a130609aa183741d22177631e01d800a2e6be34e0d67022ef2e99b9"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/scenarios.json",
+      "repository_sha256": "cef49577ccfc76bae36c237bbece1dad6a97ed4213db2af7db4a290ef1940405"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/target_registry.schema.json",
+      "repository_sha256": "cad18e7c27c70f99bcc58c42d26482f5937ddc200dee460e60e6c8e797fcd0ac"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/targets.json",
+      "repository_sha256": "73751a335e132a11dc2d1e36b7bd7e4bf9e7854319700cef7b1affd7147178c5"
+    },
+    {
+      "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/tck_releases_v3.schema.json",
+      "repository_sha256": "a34163491b0c0a66d0f29d40fc4392b796feeb47ea967e3a4bdd66bb7536b8c6"
+    },
+    {
+      "path": "interop/pairwise/release_registry_snapshots/AICP-PAIRWISE-TCK-1.2.0.json",
+      "repository_sha256": "54ad25743c938a0875ec217db9628ce6cf62da1cb5330be8a9091b9959cf22e4"
+    },
+    {
+      "path": "interop/pairwise/target_registry_v1_2.schema.json",
+      "repository_sha256": "cad18e7c27c70f99bcc58c42d26482f5937ddc200dee460e60e6c8e797fcd0ac"
+    },
+    {
+      "path": "interop/pairwise/tck_releases_v3.schema.json",
+      "repository_sha256": "a34163491b0c0a66d0f29d40fc4392b796feeb47ea967e3a4bdd66bb7536b8c6"
+    },
+    {
+      "path": "reference/python/aicp_ref/chain.py",
+      "repository_sha256": "e84451d09fcd22442e2d4053caf299557dfdcdea48dadc0f2a772e25545d7406"
+    },
+    {
+      "path": "reference/python/aicp_ref/hashing.py",
+      "repository_sha256": "0a67a3d906408c3e18ed28ec1bdadcb0943d8eac8880e487eba1ec65c188d2c7"
+    },
+    {
+      "path": "reference/python/aicp_ref/jcs.py",
+      "repository_sha256": "ed146a0b038e68fc1dca4ac257cf1b58944e6bcf1a07146a8ed43a00261f3c9d"
+    },
+    {
+      "path": "reference/python/aicp_ref/signatures.py",
+      "repository_sha256": "7e94d71c394a1f879ac447f327a0f4aa3f072dcd913fcca38e5c3b7755a99037"
+    },
+    {
+      "path": "reference/python/aicp_ref/validate.py",
+      "repository_sha256": "5bb6300c5bc26c90ccd2090eb40af7c2a1964891994707454b529750cffd79f5"
+    }
+  ]
+}

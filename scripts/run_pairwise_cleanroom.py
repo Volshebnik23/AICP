@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Exercise the repository-owned Python/Node peers through Pairwise TCK 1.2."""
+"""Exercise the repository-owned Python/Node peers through Pairwise TCK 1.3."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -30,12 +31,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--side-only", action="store_true")
     parser.add_argument("--output-dir", help="retain the exact five reports in this directory")
+    parser.add_argument("--vector-manifest", action="store_true", help="write the repository vector manifest")
     args = parser.parse_args()
     node = shutil.which("node")
     if node is None:
         raise RuntimeError("Node.js is required for clean-room peer B")
-    peer_a = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_a" / "peer_a.py"
-    peer_b = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_b" / "peer_b.mjs"
+    peer_a = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_a" / "peer_a_v1_3.py"
+    peer_b = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_b" / "peer_b_v1_3.mjs"
     run([sys.executable, str(peer_a), "self-test"])
     run([node, str(peer_b), "self-test"])
     temporary_context = None
@@ -68,7 +70,7 @@ def main() -> int:
             print("Clean-room side evidence passed: 2 full-profile + 2 full-binding reports")
             return 0
         run([
-            sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_2.py",
+            sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_3.py",
             "--peer-a-client-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-client"]),
             "--peer-a-server-cmd-json", command_json([sys.executable, str(peer_a), "pairwise-server"]),
             "--peer-a-profile-report", str(reports["a_profile"]), "--peer-a-binding-report", str(reports["a_binding"]),
@@ -77,7 +79,32 @@ def main() -> int:
             "--peer-b-profile-report", str(reports["b_profile"]), "--peer-b-binding-report", str(reports["b_binding"]),
             "--out", str(reports["joint"]),
         ])
-        run([sys.executable, "interop/pairwise/pairwise_report_dispatcher.py", str(reports["joint"])])
+        run([sys.executable, "interop/pairwise/pairwise_release_router.py", str(reports["joint"])])
+        if args.vector_manifest:
+            files = []
+            for name in sorted(path.name for path in reports.values()):
+                content = (output / name).read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+                files.append(
+                    {
+                        "path": name,
+                        "sha256": hashlib.sha256(content).hexdigest(),
+                    }
+                )
+            manifest = {
+                "vector_format_version": "1.0",
+                "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.3.0",
+                "classification": "repository-owned-current-clean-room-test-vector",
+                "files": files,
+                "notes": [
+                    "Generated with Pairwise TCK 1.3 from the repository-owned Python and Node clean-room peers.",
+                    "Raw per-run roles, run-global causality, and exact continuation cursors are independently evaluated.",
+                    "This vector is reproducible test evidence, not genuine external adoption.",
+                ],
+            }
+            (output / "manifest.json").write_text(
+                json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
     finally:
         if temporary_context is not None:
             temporary_context.cleanup()

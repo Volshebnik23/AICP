@@ -2,7 +2,7 @@
 
 This non-promotable template shows the five-file M66 package: one Base
 full-profile report and one MCP full-binding report for each exact build, plus
-one joint report issued under `AICP-PAIRWISE-TCK-1.2.0`.
+one joint report issued under `AICP-PAIRWISE-TCK-1.3.0`.
 
 Replace every identity and digest placeholder. The joint report's four side
 references must resolve beside the joint report and must match the same exact

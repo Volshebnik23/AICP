@@ -12,16 +12,16 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 PAIRWISE = ROOT / "interop" / "pairwise"
-VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0"
-PEER_A = PAIRWISE / "cleanroom" / "peer_a" / "peer_a.py"
-PEER_B = PAIRWISE / "cleanroom" / "peer_b" / "peer_b.mjs"
+VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.3.0"
+PEER_A = PAIRWISE / "cleanroom" / "peer_a" / "peer_a_v1_3.py"
+PEER_B = PAIRWISE / "cleanroom" / "peer_b" / "peer_b_v1_3.mjs"
 for path in (PAIRWISE, ROOT / "scripts"):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from aicp_pairwise_runner_v1_2 import verify_runner_bundle  # noqa: E402
+from aicp_pairwise_runner_v1_3 import verify_runner_bundle  # noqa: E402
 from pairwise_process_v1_2 import ProcessBoundaryError  # noqa: E402
-from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402
+from pairwise_release_router import evaluate_pairwise_report  # noqa: E402
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -68,7 +68,7 @@ def _run_pairwise(
     joint = destination / "joint.json"
     command = [
         sys.executable,
-        "interop/pairwise/aicp_pairwise_runner_v1_2.py",
+        "interop/pairwise/aicp_pairwise_runner_v1_3.py",
         "--peer-a-client-cmd-json", _command_json(a_client or _peer("A", "pairwise-client")),
         "--peer-a-server-cmd-json", _command_json(a_server or _peer("A", "pairwise-server")),
         "--peer-a-profile-report", str(reports["a_profile"]),
@@ -236,6 +236,12 @@ def test_relay_and_causality_negative_modes_have_no_relation(behavior: str, tmp_
         "ignore_challenge",
         "previous_run_challenge",
         "prebuilt_proposal",
+        "stale_final_poll_cursor",
+        "hardcoded_c0_final_poll",
+        "unrelated_cursor",
+        "missing_poll_limit",
+        "wrong_poll_limit",
+        "wrong_poll_session",
     ),
 )
 def test_real_client_core_and_challenge_adversaries_have_no_relation(behavior: str, tmp_path: Path) -> None:
@@ -271,9 +277,9 @@ def test_invalid_side_report_prevalidation_spawns_no_peer_process(tmp_path: Path
 
 
 def test_runtime_runner_bundle_mutation_fails_closed(tmp_path: Path) -> None:
-    bundle = _load(PAIRWISE / "pairwise_runner_bundle_v1_2.json")
+    bundle = _load(PAIRWISE / "pairwise_runner_bundle_v1_3.json")
     bundle["entries"][0]["digest"] = "sha256:" + "0" * 64
-    mutated = tmp_path / "pairwise_runner_bundle_v1_2.json"
+    mutated = tmp_path / "pairwise_runner_bundle_v1_3.json"
     mutated.write_text(json.dumps(bundle, indent=2) + "\n", encoding="utf-8")
     with pytest.raises(ProcessBoundaryError, match="import closure differs"):
         verify_runner_bundle(bundle_path=mutated)

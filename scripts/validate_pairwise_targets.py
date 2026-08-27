@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the single Pairwise target and immutable TCK 1.0/1.1/1.2 releases."""
+"""Validate one Pairwise target, issued freezes, and current TCK 1.3."""
 
 from __future__ import annotations
 
@@ -12,6 +12,8 @@ from generate_pairwise_tck import (
     FROZEN_1_0_REPOSITORY_SHA256,
     FROZEN_1_1_MANIFEST_SHA256,
     FROZEN_1_1_REPOSITORY_SHA256,
+    FROZEN_1_2_MANIFEST_SHA256,
+    FROZEN_1_2_REPOSITORY_SHA256,
     repository_sha256,
 )
 
@@ -22,6 +24,7 @@ RELEASE_IDS = (
     "AICP-PAIRWISE-TCK-1.0.0",
     "AICP-PAIRWISE-TCK-1.1.0",
     "AICP-PAIRWISE-TCK-1.2.0",
+    "AICP-PAIRWISE-TCK-1.3.0",
 )
 EVIDENCE_1_10_REGISTRY_SHA256 = "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
 EVIDENCE_1_10_RECORD_SHA256 = "caed5afec58101d1e108f5e64a31f953dca492d8d4a079b173f54591af33eeaf"
@@ -73,7 +76,7 @@ def validate_bundle(ref: Any, label: str, errors: list[str]) -> None:
 
 def validate_target(errors: list[str]) -> None:
     targets = load(PAIRWISE / "targets.json")
-    errors.extend(validate_schema(targets, PAIRWISE / "target_registry_v1_2.schema.json"))
+    errors.extend(validate_schema(targets, PAIRWISE / "target_registry_v1_3.schema.json"))
     records = [item for item in targets.get("targets", []) if isinstance(item, dict)]
     if len(records) != 1:
         errors.append("M66 must register exactly one Pairwise target")
@@ -81,8 +84,8 @@ def validate_target(errors: list[str]) -> None:
     record = records[0]
     if record.get("target_id") != "AICP-BASE@0.1+BIND-MCP@0.1":
         errors.append("the exact Base+MCP Pairwise target is not registered")
-    if record.get("pairwise_tck_release") != RELEASE_IDS[2]:
-        errors.append("the Pairwise target does not resolve current TCK 1.2")
+    if record.get("pairwise_tck_release") != RELEASE_IDS[3]:
+        errors.append("the Pairwise target does not resolve current TCK 1.3")
     if record.get("required_transport_roles") != ["client", "server"]:
         errors.append("the Pairwise target does not require both transport roles")
     if record.get("required_runs") != 2 or record.get("required_directions") != ["A_TO_B", "B_TO_A"]:
@@ -105,14 +108,14 @@ def validate_target(errors: list[str]) -> None:
         if not (ROOT / suite).is_file():
             errors.append(f"Pairwise required suite does not resolve: {suite}")
     scenario = load(PAIRWISE / "scenarios.json")
-    errors.extend(validate_schema(scenario, PAIRWISE / "pairwise_scenario_v1_2.schema.json"))
-    if scenario.get("scenario_id") != "PAIRWISE-MCP-ROLE-BOUND-CROSS-CONSUMPTION-02":
-        errors.append("the current Pairwise scenario is not role-bound scenario 02")
+    errors.extend(validate_schema(scenario, PAIRWISE / "pairwise_scenario_v1_3.schema.json"))
+    if scenario.get("scenario_id") != "PAIRWISE-MCP-RAW-ROLE-GLOBAL-CAUSALITY-03":
+        errors.append("the current Pairwise scenario is not raw-role/global-causality scenario 03")
 
 
 def validate_releases(errors: list[str]) -> None:
     registry = load(PAIRWISE / "tck_releases.json")
-    schema_path = PAIRWISE / "tck_releases_v3.schema.json"
+    schema_path = PAIRWISE / "tck_releases_v4.schema.json"
     errors.extend(validate_schema(registry, schema_path))
     releases = {
         item.get("release_id"): item
@@ -127,10 +130,11 @@ def validate_releases(errors: list[str]) -> None:
     expected_policy = {
         RELEASE_IDS[0]: ("historical", False),
         RELEASE_IDS[1]: ("historical", False),
-        RELEASE_IDS[2]: ("current", True),
+        RELEASE_IDS[2]: ("historical", False),
+        RELEASE_IDS[3]: ("current", True),
     }
     if set(releases) != set(RELEASE_IDS) or set(policies) != set(RELEASE_IDS):
-        errors.append("Pairwise registry must contain exactly releases and policies 1.0/1.1/1.2")
+        errors.append("Pairwise registry must contain exactly releases and policies 1.0/1.1/1.2/1.3")
     for release_id, (lifecycle, eligible) in expected_policy.items():
         policy = policies.get(release_id, {})
         if policy.get("lifecycle") != lifecycle or policy.get("strong_eligible") is not eligible:
@@ -140,24 +144,29 @@ def validate_releases(errors: list[str]) -> None:
         if releases.get(release_id) != snapshot_release:
             errors.append(f"{release_id} release object differs from its immutable snapshot")
 
-    current = releases.get(RELEASE_IDS[2])
+    if sum(policy.get("lifecycle") == "current" for policy in policies.values()) != 1:
+        errors.append("Pairwise registry must contain exactly one current release")
+    current = releases.get(RELEASE_IDS[3])
     if not isinstance(current, dict):
-        errors.append("Pairwise TCK 1.2 release missing")
+        errors.append("Pairwise TCK 1.3 release missing")
         return
-    snapshot_path = PAIRWISE / "release_registry_snapshots" / f"{RELEASE_IDS[2]}.json"
+    snapshot_path = PAIRWISE / "release_registry_snapshots" / f"{RELEASE_IDS[3]}.json"
     release_schema = ROOT / current["registry_schema"]["path"]
     errors.extend(validate_schema(load(snapshot_path), release_schema))
     if current.get("registry_schema_digest") != digest(release_schema):
-        errors.append("Pairwise TCK 1.2 release-local registry schema digest drift")
+        errors.append("Pairwise TCK 1.3 release-local registry schema digest drift")
     for field in ("registry_schema", "report_schema", "evaluator", "normalizer", "target_registry", "scenario_catalog"):
         artifact = current.get(field)
-        validate_artifact(artifact, f"Pairwise TCK 1.2 {field}", errors)
+        validate_artifact(artifact, f"Pairwise TCK 1.3 {field}", errors)
         if field in {"target_registry", "scenario_catalog"} and isinstance(artifact, dict):
             schema = ROOT / str(artifact.get("schema_path", ""))
             if not schema.is_file() or artifact.get("schema_digest") != digest(schema):
-                errors.append(f"Pairwise TCK 1.2 {field} schema digest drift")
-    validate_bundle(current.get("runner_bundle"), "Pairwise 1.2 runner bundle", errors)
-    validate_bundle(current.get("evaluator_bundle"), "Pairwise 1.2 evaluator bundle", errors)
+                errors.append(f"Pairwise TCK 1.3 {field} schema digest drift")
+    validate_bundle(current.get("runner_bundle"), "Pairwise 1.3 runner bundle", errors)
+    validate_bundle(current.get("evaluator_bundle"), "Pairwise 1.3 evaluator bundle", errors)
+    validate_bundle(current.get("side_authority_bundle"), "Pairwise 1.3 side-authority bundle", errors)
+    if current.get("evaluator_api") != "evaluate_pairwise_report.v1":
+        errors.append("Pairwise TCK 1.3 evaluator API is not registered")
     for authority in current.get("underlying_authorities", []):
         validate_artifact(authority, "Pairwise immutable underlying authority", errors)
     authority_spec = load(
@@ -167,18 +176,34 @@ def validate_releases(errors: list[str]) -> None:
         errors.append("Pairwise profile authority does not resolve frozen IUT TCK 1.1")
     if authority_spec.get("binding", {}).get("resolved_release_id") != "AICP-EVIDENCE-TCK-1.10.0":
         errors.append("Pairwise binding authority does not resolve frozen Evidence TCK 1.10")
-    old = releases.get(RELEASE_IDS[1], {})
+    old = releases.get(RELEASE_IDS[2], {})
     if current.get("underlying_authorities") != old.get("underlying_authorities"):
-        errors.append("Pairwise TCK 1.2 did not reuse the exact frozen 1.1 authority set")
+        errors.append("Pairwise TCK 1.3 did not reuse the exact frozen authority set")
+    evaluator_entries = load(ROOT / current["evaluator_bundle"]["path"]).get("entries", [])
+    evaluator_paths = {item.get("path") for item in evaluator_entries if isinstance(item, dict)}
+    if "interop/pairwise/pairwise_release_router.py" in evaluator_paths or any(
+        path == "interop/pairwise/pairwise_report_dispatcher.py" for path in evaluator_paths
+    ):
+        errors.append("mutable Pairwise routing is frozen into the 1.3 evaluator closure")
+    if any(
+        isinstance(path, str)
+        and (path.startswith("conformance/") or path.startswith("reference/"))
+        for path in evaluator_paths
+    ):
+        errors.append("Pairwise 1.3 evaluator closure contains mutable current authorities")
 
 
 def validate_frozen_bytes(errors: list[str]) -> None:
     freeze_path = PAIRWISE / "release_freezes" / f"{RELEASE_IDS[1]}.json"
     if repository_sha256(freeze_path) != FROZEN_1_1_MANIFEST_SHA256:
         errors.append("Pairwise TCK 1.1 freeze manifest changed")
+    freeze_1_2_path = PAIRWISE / "release_freezes" / f"{RELEASE_IDS[2]}.json"
+    if repository_sha256(freeze_1_2_path) != FROZEN_1_2_MANIFEST_SHA256:
+        errors.append("Pairwise TCK 1.2 freeze manifest changed")
     for release_id, frozen in (
         (RELEASE_IDS[0], FROZEN_1_0_REPOSITORY_SHA256),
         (RELEASE_IDS[1], FROZEN_1_1_REPOSITORY_SHA256),
+        (RELEASE_IDS[2], FROZEN_1_2_REPOSITORY_SHA256),
     ):
         for relative, expected in frozen.items():
             path = ROOT / relative
@@ -204,7 +229,7 @@ def validate_evidence_freeze(errors: list[str]) -> None:
 
 
 def validate_current_vector(errors: list[str]) -> None:
-    root = PAIRWISE / "current_vectors" / RELEASE_IDS[2]
+    root = PAIRWISE / "current_vectors" / RELEASE_IDS[3]
     expected_names = {
         "a-profile.json",
         "a-binding.json",
@@ -215,19 +240,19 @@ def validate_current_vector(errors: list[str]) -> None:
     }
     actual_names = {path.name for path in root.iterdir() if path.is_file()} if root.is_dir() else set()
     if actual_names != expected_names:
-        errors.append(f"Pairwise TCK 1.2 vector file set mismatch: {sorted(actual_names)}")
+        errors.append(f"Pairwise TCK 1.3 vector file set mismatch: {sorted(actual_names)}")
         return
     manifest = load(root / "manifest.json")
-    if manifest.get("pairwise_tck_release") != RELEASE_IDS[2]:
-        errors.append("Pairwise TCK 1.2 vector manifest release mismatch")
+    if manifest.get("pairwise_tck_release") != RELEASE_IDS[3]:
+        errors.append("Pairwise TCK 1.3 vector manifest release mismatch")
     entries = manifest.get("files", [])
     if {item.get("path") for item in entries if isinstance(item, dict)} != expected_names - {"manifest.json"}:
-        errors.append("Pairwise TCK 1.2 vector manifest report set mismatch")
+        errors.append("Pairwise TCK 1.3 vector manifest report set mismatch")
     for item in entries:
         path = root / str(item.get("path", ""))
         actual = repository_sha256(path) if path.is_file() else "missing"
         if actual != item.get("sha256"):
-            errors.append(f"Pairwise TCK 1.2 vector digest drift: {item.get('path')}")
+            errors.append(f"Pairwise TCK 1.3 vector digest drift: {item.get('path')}")
 
 
 def main() -> int:
@@ -243,7 +268,7 @@ def main() -> int:
         return 1
     print(
         "Pairwise target/TCK validation passed: registered=1; reachable=1; "
-        "current=AICP-PAIRWISE-TCK-1.2.0; historical-strong-ineligible=2; "
+        "current=AICP-PAIRWISE-TCK-1.3.0; historical-strong-ineligible=3; "
         "real-pairwise-submissions=0; Evidence-TCK-1.10=frozen"
     )
     return 0
