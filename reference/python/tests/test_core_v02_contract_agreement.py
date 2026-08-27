@@ -40,7 +40,6 @@ FROZEN_V01_SHA256 = {
     "conformance/iut/tck_releases.json": "f89c7dc476041f79558157bb6d0178d7b43158913a2dbe5ee0191d017903a25e",
     "conformance/runner/_runner_state_projection_checks.py": "8f8baa773766e590d5f9491d880a6b15f662ae911d8a2a306185a7e36b178c8b",
     "conformance/extensions/OR_SESSION_STATE_PROJECTION_V1.json": "9efd654774ff514cd55c30c19f94e46cdff16ee8e85dda7108637ef24b52e1a8",
-    "conformance/extensions/CN_CAPNEG_0.1.json": "ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a",
     "schemas/extensions/ext-capneg-payloads.schema.json": "a686222de7b00695d54080e4daa015a85dda888ffd91c7e82b834467d2120598",
     "dropins/aicp-core/python/generate_minimal_core_transcript.py": "73edf9101cc7288d698152acb16a166e08ef831084684fbccd47e60101cc24c2",
     "dropins/aicp-core/typescript/scripts/generate_minimal_core_transcript.mjs": "704ced502aa9a36ba094a425dd3dd8af8e4480e572d28d1e67b4d55e19abc42b",

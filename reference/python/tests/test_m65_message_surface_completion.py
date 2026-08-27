@@ -43,6 +43,7 @@ from target_catalog import (  # noqa: E402
     TCK_1_4_RELEASE_ID,
     TCK_1_8_RELEASE_ID,
     TCK_1_9_RELEASE_ID,
+    TCK_1_10_RELEASE_ID,
     TCK_RELEASE_ID,
     canonical_digest,
     file_digest,
@@ -410,8 +411,8 @@ def test_tck_18_and_19_are_frozen_and_tck_110_is_current() -> None:
     } == FROZEN_TCK_1_9_TARGET_CATALOG_DIGESTS
 
     current = release_record(CURRENT_TCK_RELEASE_ID)
-    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.10.0"
-    assert BUNDLE_MANIFEST_PATH.name == "evidence_runner_bundle_v1_10.json"
+    assert CURRENT_TCK_RELEASE_ID == "AICP-EVIDENCE-TCK-1.11.0"
+    assert BUNDLE_MANIFEST_PATH.name == "evidence_runner_bundle_v1_11.json"
     assert current["report_schema"]["path"].endswith(
         "external_evidence_report_v2_2.schema.json"
     )
@@ -423,14 +424,15 @@ def test_tck_18_and_19_are_frozen_and_tck_110_is_current() -> None:
     assert release_policy(TCK_1_4_RELEASE_ID)["strong_eligible"] is True
     assert release_policy(TCK_1_8_RELEASE_ID)["strong_eligible"] is True
     assert release_policy(TCK_1_9_RELEASE_ID)["strong_eligible"] is False
+    assert release_policy(TCK_1_10_RELEASE_ID)["strong_eligible"] is True
     assert release_policy(CURRENT_TCK_RELEASE_ID)["strong_eligible"] is True
 
 
-def test_tier1_catalogs_expand_only_by_new_required_positive_cases() -> None:
+def test_tier1_catalogs_include_current_required_consumer_cases() -> None:
     expected = {
-        "mediated_blocking_target.json": 26,
-        "resumable_sessions_target.json": 16,
-        "delegated_identity_target.json": 31,
+        "mediated_blocking_target.json": 30,
+        "resumable_sessions_target.json": 20,
+        "delegated_identity_target.json": 32,
     }
     for name, count in expected.items():
         catalog = json.loads(

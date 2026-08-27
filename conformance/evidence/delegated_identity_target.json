@@ -36,7 +36,7 @@
       "path": "conformance/extensions/CN_CAPNEG_0.1.json",
       "suite_id": "CN-CAPNEG-0.1",
       "suite_version": "0.1.0-dev",
-      "suite_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+      "suite_digest": "sha256:95e79c9c290a7e0aab835cb2530ec25a3d992c11dcd852cfc9bddfc2ade748c2"
     },
     {
       "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -445,6 +445,24 @@
       "expected_skipped_checks": []
     },
     {
+      "case_id": "EVIDENCE-CONSUMER-DI-CN-CAPNEG-0-1-CN-13",
+      "source_suite_id": "CN-CAPNEG-0.1",
+      "source_case_id": "CN-13",
+      "fixture": "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
+      "input_digest": "sha256:0796c9a5e8c49fe98279f99d31396c1f8b047128d413f2ddf9ed16d5371a8083",
+      "accepted": false,
+      "expected_error_observations": [
+        {
+          "code": "CN-AICP-PROFILE-NEGOTIATION-01",
+          "exact_count": 1,
+          "check_scope": "CAPNEG most-recent declaration selection"
+        }
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
       "case_id": "EVIDENCE-CONSUMER-DI-ID-IDENTITY-LC-0-1-IL-01",
       "source_suite_id": "ID-IDENTITY-LC-0.1",
       "source_case_id": "IL-01",
@@ -604,7 +622,7 @@
     },
     {
       "path": "conformance/evidence/product_profile_consumer_expectations.json",
-      "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
+      "content_digest": "sha256:961bb7c606cad69d3073c0a462044ce3d8dfb74f709c6d9d975f2599c702f624"
     },
     {
       "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
@@ -616,7 +634,7 @@
     },
     {
       "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-      "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+      "content_digest": "sha256:95e79c9c290a7e0aab835cb2530ec25a3d992c11dcd852cfc9bddfc2ade748c2"
     },
     {
       "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -624,7 +642,7 @@
     },
     {
       "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
-      "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+      "content_digest": "sha256:ee73e5ee56ab92054074a5803cb4ff43352030f8ccdc800ed8c205092e214a4d"
     },
     {
       "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -632,7 +650,7 @@
     },
     {
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
-      "content_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+      "content_digest": "sha256:0d40690e760275a74cb1a0c8f7a8cf872e5e71ded089903763695cdd15dc20da"
     },
     {
       "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
@@ -689,6 +707,10 @@
     {
       "path": "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
       "content_digest": "sha256:07248a142b50ca9b1b712f9a3b15da541bc0855da5dfd7fefb659ed997a5d7f4"
+    },
+    {
+      "path": "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
+      "content_digest": "sha256:0796c9a5e8c49fe98279f99d31396c1f8b047128d413f2ddf9ed16d5371a8083"
     },
     {
       "path": "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
