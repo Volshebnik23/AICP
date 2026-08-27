@@ -250,6 +250,12 @@ _Last updated: 2026-08-27_
   partial final state, and unsupported external-review or adoption claims. New cases
   `SP-03`, `CN-13`, `ENF-03` through `ENF-05`, and `OR-03` through `OR-06` have exact
   ordinary-conformance and Tier-1 evidence parity.
+- **Load-bearing correction:** threat schema 1.1 replaces parallel suite/check/case/fixture
+  arrays with exact suite-case relations and resolves direct evidence to real top-level pytest
+  functions. `AL-03` independently proves recommended-action registration, `SP-04`
+  independently proves selected-path ALERT signature rejection, and every former multi-check
+  record was re-audited. Exact pre-M67 Mediated and Resumable Evidence 1.10 reports remain
+  eligible under the current generalized evaluator.
 - **Evidence boundary:** current strong-eligible `AICP-EVIDENCE-TCK-1.11.0` retains report
   2.2, trace v4, and six targets while expanding consumers to 30 mediated, 20 resumable,
   and 32 delegated cases. Exact Evidence TCK 1.10 remains frozen historical/strong-eligible.
