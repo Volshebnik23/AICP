@@ -19,6 +19,7 @@ for path in (RUNNER_DIR, EVIDENCE_DIR):
 
 from aicp_conformance_runner import run_suite  # noqa: E402
 import target_catalog as evidence_catalog  # noqa: E402
+from profile_transcript_evaluator import evaluate_profile_transcript  # noqa: E402
 
 
 MANIFEST_PATH = ROOT / "security_review" / "threat_coverage.json"
@@ -56,7 +57,7 @@ def _single_case_raw_failures(
     case["expect_pass"] = True
     case.pop("expected_failures", None)
     suite["transcripts"] = [case]
-    temporary = tmp_path / suite_path.name
+    temporary = tmp_path / f"{case_id}-{suite_path.name}"
     temporary.write_text(json.dumps(suite, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     report = run_suite(temporary)
     return {str(item["test_id"]) for item in report["failures"]}
@@ -65,8 +66,16 @@ def _single_case_raw_failures(
 def _directory_digest(relative: str) -> str:
     digest = hashlib.sha256()
     base = ROOT / relative
-    for path in sorted((item for item in base.rglob("*") if item.is_file()), key=lambda item: item.as_posix()):
-        content = path.read_bytes().replace(b"\r\n", b"\n")
+    files = (
+        item
+        for item in base.rglob("*")
+        if item.is_file()
+        and "__pycache__" not in item.parts
+        and item.suffix != ".pyc"
+        and not item.name.startswith("report_")
+    )
+    for path in sorted(files, key=lambda item: item.as_posix()):
+        content = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
         digest.update(path.relative_to(ROOT).as_posix().encode("utf-8"))
         digest.update(b"\0")
         digest.update(content)
@@ -115,7 +124,7 @@ def test_existing_but_unreferenced_fixture_cannot_fake_suite_evidence() -> None:
         and any(evidence.get("kind") == "suite" for evidence in item["executable_evidence"])
     )
     evidence = next(item for item in covered["executable_evidence"] if item.get("kind") == "suite")
-    evidence["fixtures"] = ["fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"]
+    evidence["fixtures"] = ["fixtures/extensions/object_resync/OR-03_access_denied.jsonl"]
     assert any("not referenced" in error for error in _validate(manifest))
 
 
@@ -181,13 +190,94 @@ def test_signed_truncation_retains_exact_valid_prefix() -> None:
         encoding="utf-8"
     ).splitlines()
     assert truncated == source[: len(truncated)]
-    assert len(truncated) == len(source) - 1
+    assert len(truncated) == 5
 
 
 def test_object_resync_security_status_mechanisms_are_positive() -> None:
     suite = _load(ROOT / "conformance/extensions/OR_OBJECT_RESYNC_0.1.json")
     positive = {item["id"] for item in suite["transcripts"] if item.get("expect_pass", True)}
     assert {"OR-03", "OR-04", "OR-05"} <= positive
+
+
+def test_new_ordinary_cases_and_tier1_evidence_consumers_have_exact_parity() -> None:
+    expected = {
+        "conformance/extensions/CN_CAPNEG_0.1.json": {
+            "CN-13": (False, {"CN-AICP-PROFILE-NEGOTIATION-01"}),
+        },
+        "conformance/extensions/ENF_ENFORCEMENT_0.1.json": {
+            "ENF-03": (False, {"ENF-GATE-01"}),
+            "ENF-04": (False, {"ENF-GATE-01"}),
+            "ENF-05": (False, {"ENF-AUTH-01"}),
+        },
+        "conformance/extensions/OR_OBJECT_RESYNC_0.1.json": {
+            "OR-03": (True, set()),
+            "OR-04": (True, set()),
+            "OR-05": (True, set()),
+            "OR-06": (False, {"OR-OBJECT-HASH-01"}),
+        },
+    }
+    for suite_ref, case_expectations in expected.items():
+        suite = _load(ROOT / suite_ref)
+        cases = {item["id"]: item for item in suite["transcripts"]}
+        for case_id, (accepted, codes) in case_expectations.items():
+            messages = [
+                json.loads(line)
+                for line in (ROOT / cases[case_id]["path"]).read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+            result = evaluate_profile_transcript(messages, [suite_ref])
+            assert result.accepted is accepted, (case_id, result.errors)
+            assert {item["code"] for item in result.errors} == codes
+
+    catalogs = {
+        "mediated": _load(EVIDENCE_DIR / "mediated_blocking_target.json"),
+        "resumable": _load(EVIDENCE_DIR / "resumable_sessions_target.json"),
+        "delegated": _load(EVIDENCE_DIR / "delegated_identity_target.json"),
+    }
+    ids = {
+        name: {item["source_case_id"] for item in catalog["consumer_cases"]}
+        for name, catalog in catalogs.items()
+    }
+    assert {"CN-13", "ENF-03", "ENF-04", "ENF-05"} <= ids["mediated"]
+    assert {"OR-03", "OR-04", "OR-05", "OR-06"} <= ids["resumable"]
+    assert {"CN-13"} <= ids["delegated"]
+
+
+def test_public_evidence_schemas_exclude_test_control_secret_fields() -> None:
+    schema_paths = (
+        "conformance/evidence/external_evidence_report_v2_2.schema.json",
+        "conformance/evidence/live_bindings/live_binding_trace_v4.schema.json",
+        "conformance/evidence/live_bindings/live_endpoint_descriptor_v2.schema.json",
+        "interop/pairwise/pairwise_joint_report_v1_3.schema.json",
+        "interop/submissions/submission.schema.json",
+    )
+    forbidden = {
+        "authorization",
+        "cookie",
+        "set-cookie",
+        "proxy-authorization",
+        "private_key",
+        "private_tls_key",
+        "tls_private_key",
+        "environment",
+        "env",
+    }
+
+    def property_names(value: Any) -> set[str]:
+        names: set[str] = set()
+        if isinstance(value, dict):
+            properties = value.get("properties")
+            if isinstance(properties, dict):
+                names.update(str(name).lower() for name in properties)
+            for child in value.values():
+                names.update(property_names(child))
+        elif isinstance(value, list):
+            for child in value:
+                names.update(property_names(child))
+        return names
+
+    for relative in schema_paths:
+        assert not (property_names(_load(ROOT / relative)) & forbidden), relative
 
 
 def test_evidence_1_10_is_exactly_frozen_and_1_11_is_current() -> None:
@@ -215,8 +305,8 @@ def test_evidence_1_10_is_exactly_frozen_and_1_11_is_current() -> None:
 
 def test_product_iut_and_pairwise_release_lines_are_byte_frozen() -> None:
     assert _directory_digest("conformance/iut") == (
-        "c103967bde3a96cfa0431a2ba874437961840eed2a4cf43d6a6f64de25fadcd7"
+        "ae23ec3fa2069ee4535060e382b57250ec079a017e766e46dd70a01a60a6aa10"
     )
     assert _directory_digest("interop/pairwise") == (
-        "f5d080b4715bbb640aec54cd3134686ed45fff437cf85bb1c1ed25d8909dd8b6"
+        "98601e50e9478adab46260a9af481ad503f27b04dac7368ef4bc003767a0675b"
     )

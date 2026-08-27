@@ -147,6 +147,24 @@
       "expected_message_types": ["CAPABILITIES_DECLARE", "CAPABILITIES_DECLARE", "CAPABILITIES_PROPOSE", "CAPABILITIES_ACCEPT"],
       "expect_pass": false,
       "expected_failures": [{"test_id": "CN-AUTHENTICATED-CRYPTO-01"}]
+    },
+    {
+      "id": "CN-13",
+      "path": "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
+      "expected_message_types": [
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_DECLARE",
+        "CAPABILITIES_PROPOSE",
+        "CAPABILITIES_ACCEPT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CN-AICP-PROFILE-NEGOTIATION-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [

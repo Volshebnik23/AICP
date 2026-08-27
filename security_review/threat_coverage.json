@@ -1,0 +1,668 @@
+{
+  "schema_version": "1.0",
+  "review_scope": "AICP protocol repository at the M67 security-coverage boundary",
+  "generated_map": "security_review/COVERAGE_MAP.md",
+  "repository_truth": {
+    "external_independent_review_completed": false,
+    "external_review_artifacts": [],
+    "pairwise_demonstrated_relations": 0
+  },
+  "threats": [
+    {
+      "threat_id": "SEC-001",
+      "title": "Canonicalization edge cases",
+      "description": "Different JSON spellings, Unicode ordering, or canonical byte construction could produce inconsistent hashes or signatures.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/core/AICP_Core_v0.1_Normative.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/core/CT_CORE_0.1.json",
+          "check_ids": ["CT-MESSAGE-HASH-01", "CT-SIGNATURE-HASH-01"],
+          "fixtures": ["fixtures/golden_transcripts/GT-01_happy_path_signed.jsonl"],
+          "case_ids": ["GT-01"]
+        }
+      ],
+      "residual_boundary": "The evidence covers AICP's registered JCS/hash domains; it does not attest arbitrary non-AICP serialization code.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-002",
+      "title": "Hash-chain and replay manipulation",
+      "description": "Messages could be replayed, duplicated, or detached from their declared predecessor chain.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/core/AICP_Core_v0.1_Normative.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/core/CT_CORE_0.1.json",
+          "check_ids": ["CT-HASH-CHAIN-01", "CT-INVARIANTS-01", "CT-PREV-MSG-REQUIRED-01"],
+          "fixtures": [
+            "fixtures/golden_transcripts/GT-08_replay_duplicate_message_id.jsonl",
+            "fixtures/golden_transcripts/GT-09_missing_prev_msg_hash_expected_fail.jsonl"
+          ],
+          "case_ids": ["GT-08", "GT-09"]
+        }
+      ],
+      "residual_boundary": "The checks reject transcript-local replay and chain inconsistency; durable storage and cross-deployment replay windows remain deployment concerns.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-003",
+      "title": "Required signed-flow truncation",
+      "description": "A required mediated signed security flow could be presented only as a valid signed prefix.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ENFORCEMENT.md", "docs/extensions/RFC_EXT_ALERTS.md", "docs/extensions/RFC_EXT_RESUME.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
+          "check_ids": ["CT-SEQUENCE-01"],
+          "fixtures": ["fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"],
+          "case_ids": ["SP-03"]
+        }
+      ],
+      "residual_boundary": "Only truncation of this suite-declared required security flow is rejected; a generic valid transcript prefix is not made invalid.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-004",
+      "title": "Core v0.2 contract, proposal, and active-head substitution",
+      "description": "An acceptance or subsequent action could be rebound to a stale, future, cross-contract, or substituted proposal, contract, context, conflict candidate, or active head.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/core/AICP_Core_v0.2_Normative.md", "docs/architecture/ADR_Core_v0.2_Exact_Contract_Agreement.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/core/CT_CORE_0.2.json",
+          "check_ids": ["CT2-CONTRACT-HASH-01", "CT2-PROPOSAL-BINDING-01", "CT2-ACCEPT-BINDING-01", "CT2-ACTIVE-HEAD-01", "CT2-CONTEXT-BINDING-01", "CT2-CONFLICT-BINDING-01"],
+          "fixtures": ["fixtures/core_v0_2/exact_contract_agreement/negative/03_incorrect_contract_hash_expected_fail.jsonl"],
+          "case_ids": ["CT2-NEG-03"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_core_v02_contract_agreement.py",
+          "test_ids": ["test_invalid_conflict_does_not_advance_the_active_head", "test_runner_invalid_acceptance_index_cannot_activate_a_head"]
+        }
+      ],
+      "residual_boundary": "The corpus proves deterministic exact-agreement state transitions, not endpoint honesty or local-policy correctness.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-005",
+      "title": "Signature and signed-path integrity",
+      "description": "A signed security-path message could carry a stale object hash, invalid signature, or signer mismatch.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/core/AICP_Core_v0.1_Normative.md", "docs/extensions/RFC_EXT_ENFORCEMENT.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
+          "check_ids": ["CT-SIGNATURE-HASH-01", "CT-SIGNATURE-VERIFY-01"],
+          "fixtures": ["fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"],
+          "case_ids": ["SP-02"]
+        }
+      ],
+      "residual_boundary": "This covers paths that select signed-message requirements; it does not make signatures mandatory for every extension message.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-006",
+      "title": "Enforcement sender spoofing",
+      "description": "A sender outside the contract's ext.enforcement.enforcers set could issue a verdict.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ENFORCEMENT.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "check_ids": ["ENF-AUTH-01"],
+          "fixtures": ["fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl"],
+          "case_ids": ["ENF-05"]
+        }
+      ],
+      "residual_boundary": "Authorization is checked against the negotiated contract; cryptographic sender authentication is separately profile-dependent.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-007",
+      "title": "Enforcement gate, target, and verdict-reference substitution",
+      "description": "Delivery could follow DENY, bind ALLOW to a different target hash, or cite an unresolved verdict message.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ENFORCEMENT.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "check_ids": ["ENF-GATE-01"],
+          "fixtures": [
+            "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+            "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+            "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl"
+          ],
+          "case_ids": ["ENF-02", "ENF-03", "ENF-04"]
+        }
+      ],
+      "residual_boundary": "The check enforces exact blocking-mode bindings and does not introduce a universal verdict-signature MUST.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-008",
+      "title": "Alert registry and action integrity",
+      "description": "An ALERT could use an unregistered code or recommended action while appearing protocol-valid.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ALERTS.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/AL_ALERTS_0.1.json",
+          "check_ids": ["AL-ALERT-CODES-01", "AL-ALERT-ACTIONS-01"],
+          "fixtures": ["fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl"],
+          "case_ids": ["AL-02"]
+        }
+      ],
+      "residual_boundary": "Registry integrity does not authenticate the sender; EXT-ALERTS permits any sender to emit ALERT.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-009",
+      "title": "Generic EXT-ALERTS sender authenticity",
+      "description": "A receiver may want proof that a generic ALERT came from an authorized or authenticated alerting principal.",
+      "scope_class": "future_version",
+      "status": "deferred",
+      "normative_refs": ["docs/extensions/RFC_EXT_ALERTS.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Generic EXT-ALERTS has no universal authorized-sender set; deployments or selected authenticated profiles must supply that policy.",
+      "remediation_ref": null,
+      "defer_class": "requires_future_versioned_semantics",
+      "defer_reason": "Current EXT-ALERTS explicitly permits any sender to emit ALERT, so a universal sender-authentication rejection rule would strengthen the protocol incompatibly."
+    },
+    {
+      "threat_id": "SEC-010",
+      "title": "Signed ALERT authenticity on selected signed paths",
+      "description": "An ALERT on a suite-selected signed security path could be modified or signed with invalid key material.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ALERTS.md", "docs/core/AICP_Core_v0.1_Normative.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
+          "check_ids": ["CT-SIGNATURE-HASH-01", "CT-SIGNATURE-VERIFY-01", "AL-ALERT-CODES-01"],
+          "fixtures": ["fixtures/security/signed_paths/SP-01_mediated_blocking_signed.jsonl"],
+          "case_ids": ["SP-01"]
+        }
+      ],
+      "residual_boundary": "Authenticity is established only where the selected security path actually requires and verifies signatures.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-011",
+      "title": "CAPNEG v0.1 downgrade and stale-declaration rollback",
+      "description": "A proposal could select a profile outside a participant's most recent exact declaration or unilaterally downgrade an accepted result.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_CAPNEG.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/CN_CAPNEG_0.1.json",
+          "check_ids": ["CN-DOWNGRADE-01", "CN-AICP-PROFILE-NEGOTIATION-01"],
+          "fixtures": [
+            "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
+            "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl"
+          ],
+          "case_ids": ["CN-NEG-01", "CN-13"]
+        }
+      ],
+      "residual_boundary": "The check uses exact latest-declaration semantics and does not rank profiles by an invented implementation-independent security strength.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-012",
+      "title": "CAPNEG v0.2 composition downgrade and substitution",
+      "description": "A composed profile set could be omitted, injected, mixed across Core families, rolled back, partially accepted, or rebound to substituted hashes, contracts, declarations, or projections.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_CAPNEG_v0.2.md", "docs/security/CAPNEG_v0.2_Threat_Model.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/CN_CAPNEG_0.2.json",
+          "check_ids": ["CN2-COMPOSITION-01", "CN2-DECLARATION-01", "CN2-PROPOSAL-REVISION-01", "CN2-FULL-ACCEPTANCE-01", "CN2-CONTRACT-BINDING-01", "CN2-PROJECTION-V2-01"],
+          "fixtures": ["fixtures/extensions/capneg_v0_2/negative_cases.json"],
+          "case_ids": ["CN2-NEGATIVE"]
+        }
+      ],
+      "residual_boundary": "Declaration authority, participant truthfulness, off-transcript consensus, transport security, and external organizational trust remain outside exact transcript composition checks.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-013",
+      "title": "OBJECT_RESYNC integrity and explicit security-status mechanisms",
+      "description": "A FOUND response could misbind object type/content/hash, while ACCESS_DENIED, TOO_LARGE, and REDACTED mechanisms could lack interoperable coverage.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_OBJECT_RESYNC.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
+          "check_ids": ["OR-OBJECT-HASH-01", "CN-PAYLOAD-SCHEMA-01"],
+          "fixtures": [
+            "fixtures/extensions/object_resync/OR-03_access_denied.jsonl",
+            "fixtures/extensions/object_resync/OR-04_too_large.jsonl",
+            "fixtures/extensions/object_resync/OR-05_redacted.jsonl",
+            "fixtures/extensions/object_resync/OR-06_found_hash_mismatch_expected_fail.jsonl"
+          ],
+          "case_ids": ["OR-03", "OR-04", "OR-05", "OR-06"]
+        }
+      ],
+      "residual_boundary": "The suite proves exact mechanisms and FOUND integrity, not that one response status or numeric cap is universally mandatory.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-014",
+      "title": "OBJECT_RESYNC object-existence concealment",
+      "description": "NOT_FOUND may disclose whether an object exists when a deployment would prefer ACCESS_DENIED.",
+      "scope_class": "policy_dependent",
+      "status": "deferred",
+      "normative_refs": ["docs/extensions/RFC_EXT_OBJECT_RESYNC.md"],
+      "executable_evidence": [],
+      "residual_boundary": "The protocol represents ACCESS_DENIED, but the choice between ACCESS_DENIED and NOT_FOUND remains the responder's selected local policy.",
+      "remediation_ref": null,
+      "defer_class": "local_policy",
+      "defer_reason": "EXT-OBJECT-RESYNC permits ACCESS_DENIED instead of NOT_FOUND based on policy; making concealment universal would reject currently conformant implementations."
+    },
+    {
+      "threat_id": "SEC-015",
+      "title": "OBJECT_RESYNC amplification and resource exhaustion",
+      "description": "Object retrieval can consume bandwidth, storage, CPU, or request capacity at deployment scale.",
+      "scope_class": "deployment_only",
+      "status": "deferred",
+      "normative_refs": ["docs/extensions/RFC_EXT_OBJECT_RESYNC.md", "security_review/OPS_HARDENING_GUIDE.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Deployments must select authentication, quotas, byte budgets, concurrency limits, and rate controls appropriate to their threat environment.",
+      "remediation_ref": null,
+      "defer_class": "deployment_control",
+      "defer_reason": "The RFC's DoS/amplification mitigation is SHOULD-level guidance and defines no universal rate or byte limit that M67 can enforce compatibly."
+    },
+    {
+      "threat_id": "SEC-016",
+      "title": "RESUME probing and forced resynchronization loops",
+      "description": "Repeated UNKNOWN_SESSION probes or NEEDS_RESYNC responses could enumerate sessions or force non-progress loops.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_RESUME.md", "security_review/OPS_HARDENING_GUIDE.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/ops/OPS_HARDENING_0.1.json",
+          "check_ids": ["RS-PROBING-01", "RS-LOOP-01"],
+          "fixtures": ["fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl"],
+          "case_ids": ["OPS-01"]
+        },
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/RS_RESUME_0.1.json",
+          "check_ids": ["RS-LOOP-01"],
+          "fixtures": ["fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl"],
+          "case_ids": ["RS-NEG-01"]
+        }
+      ],
+      "residual_boundary": "The deterministic abuse patterns are detected; deployment-scale throttling remains a local control.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-017",
+      "title": "Operational ALERT verbosity",
+      "description": "Human-readable ALERT content could exceed the repository's explicit minimization and safe-lint bounds.",
+      "scope_class": "mixed",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ALERTS.md", "security_review/OPS_HARDENING_GUIDE.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/ops/OPS_HARDENING_0.1.json",
+          "check_ids": ["AL-VERBOSITY-01"],
+          "fixtures": ["fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl"],
+          "case_ids": ["OPS-03"]
+        }
+      ],
+      "residual_boundary": "The check enforces known length/verbosity mechanics and is not a universal semantic secret classifier.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-018",
+      "title": "Arbitrary semantic secret classification",
+      "description": "Human-readable ALERT, evidence, or application text may contain domain-specific secrets not identifiable from syntax alone.",
+      "scope_class": "policy_dependent",
+      "status": "deferred",
+      "normative_refs": ["docs/extensions/RFC_EXT_ALERTS.md", "security_review/SECURITY_ASSUMPTIONS.md"],
+      "executable_evidence": [],
+      "residual_boundary": "A deployment must select a data-classification and redaction policy for its own business data and secret types.",
+      "remediation_ref": null,
+      "defer_class": "non_machine_decidable_without_policy",
+      "defer_reason": "AICP 0.1 defines no universal taxonomy that can decide whether arbitrary application text is a secret; a global regex would create false protocol claims."
+    },
+    {
+      "threat_id": "SEC-019",
+      "title": "Harness-created bearer and TLS secret leakage",
+      "description": "Known Authorization values, generated bearer controls, TLS private keys, or child environment secrets could enter serialized live-evidence reports.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["conformance/evidence/ADR_Generalized_External_Evidence.md", "docs/bindings/RFC_BIND_HTTP_WS.md", "docs/bindings/RFC_BIND_MCP.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m64_live_binding_evidence.py",
+          "test_ids": ["test_live_child_environment_is_allowlisted_and_actual_child_cannot_see_secrets", "test_secret_reflection_is_classified_and_never_serialized", "test_complete_report_never_contains_bearer_or_test_key_material"]
+        }
+      ],
+      "residual_boundary": "The harness can prove absence of secrets it creates and controls; it does not classify arbitrary user payload data.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-020",
+      "title": "Public evidence schema test-control fields",
+      "description": "Evidence and Pairwise schemas could accidentally require or expose HTTP credentials, private TLS keys, or full process environments.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["conformance/evidence/external_evidence_report_v2_2.schema.json", "interop/pairwise/pairwise_joint_report_v1_3.schema.json"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m67_security_coverage_closure.py",
+          "test_ids": ["test_public_evidence_schemas_exclude_test_control_secret_fields"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m64_live_binding_evidence.py",
+          "test_ids": ["test_trace_schema_structurally_rejects_secret_fields"]
+        }
+      ],
+      "residual_boundary": "The structural audit excludes known harness-control fields and does not scan or reject arbitrary application payload text.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-021",
+      "title": "Mediator delivery after DENY",
+      "description": "A blocking mediator could deliver content after a valid DENY verdict.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["docs/extensions/RFC_EXT_ENFORCEMENT.md"],
+      "executable_evidence": [
+        {
+          "kind": "suite",
+          "suite": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
+          "check_ids": ["ENF-GATE-01"],
+          "fixtures": ["fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl"],
+          "case_ids": ["ENF-02"]
+        }
+      ],
+      "residual_boundary": "The transcript proves deterministic gate behavior, not the integrity of a compromised mediator host.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-022",
+      "title": "Live-binding control and transport abuse",
+      "description": "Live HTTP/MCP evidence could be forged through non-loopback targets, redirects, shell/environment injection, unbounded subprocess IO, bearer reflection, TLS-key leakage, fake certificate rejection, session/cursor confusion, or JSON-RPC/build substitution.",
+      "scope_class": "mixed",
+      "status": "covered",
+      "normative_refs": ["docs/bindings/RFC_BIND_HTTP_WS.md", "docs/bindings/RFC_BIND_MCP.md", "conformance/evidence/ADR_Generalized_External_Evidence.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m64_live_binding_evidence.py",
+          "test_ids": ["test_loopback_policy_and_subprocess_argument_vector_are_load_bearing", "test_actual_wss_verification_and_wrong_ca_failure", "test_direct_http_socket_sse_websocket_and_client_process_capture", "test_direct_mcp_child_process_stdio_and_jsonrpc_correlation", "test_v2_raw_evidence_mutations_are_load_bearing", "test_trace_and_report_forgery_mutations_are_rejected"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m64_continuation_tls_rejection_correction.py",
+          "test_ids": ["test_mcp_poll_continuation_is_first_disclosed_by_poll_response", "test_real_tls_observer_distinguishes_required_outcomes"]
+        }
+      ],
+      "residual_boundary": "Production TLS configuration, IAM, public reachability, DDoS resistance, and organizational identity remain deployment or external-trust concerns.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-023",
+      "title": "Generalized-evidence report, mark, target, and release forgery",
+      "description": "A report could claim an unearned compatibility mark, substitute a target or release, or present stale provenance as current.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["conformance/evidence/ADR_Generalized_External_Evidence.md", "docs/interop/AICP_Compatibility_Claims_and_Evidence.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m62_external_evidence.py",
+          "test_ids": ["test_report_forgery_modes_are_rejected", "test_tck_digests_are_load_bearing", "test_public_capability_claim_and_integrity_binding"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m63_tier1_external_evidence.py",
+          "test_ids": ["test_report_evaluator_does_not_trust_runner_conclusions", "test_profile_evaluator_mutation_controls_are_load_bearing"]
+        }
+      ],
+      "residual_boundary": "The evidence proves consistency and reproducibility of exact artifacts; it is not remote attestation or proof of organizational identity.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-024",
+      "title": "Generalized-evidence artifact multiplicity, answer leakage, and semantic mutation",
+      "description": "Required artifacts could be missing or duplicated, producer requests could reveal oracle answers, or evaluator semantics could be bypassed by mutation.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["conformance/evidence/ADR_Generalized_External_Evidence.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m62_external_evidence.py",
+          "test_ids": ["test_producer_requests_are_answer_isolated_and_repeat_is_opaque", "test_evaluator_mutation_controls_are_load_bearing"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m63_evidence_correction.py",
+          "test_ids": ["test_exact_artifact_counter_rejects_every_cardinality_forgery", "test_required_suite_semantic_mutation_is_rejected"]
+        }
+      ],
+      "residual_boundary": "The controls bind the registered TCK execution; they do not prove that a self-declared implementation is operated by an independent organization.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-025",
+      "title": "Generalized-evidence subject and build substitution",
+      "description": "Evidence produced by one subject or build could be relabeled as another implementation.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["conformance/evidence/ADR_Generalized_External_Evidence.md", "docs/interop/AICP_Interop_Submission_Playbook.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m62_external_evidence.py",
+          "test_ids": ["test_self_attested_wrong_version_and_subject_mismatch_are_rejected"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_m64_live_binding_evidence.py",
+          "test_ids": ["test_public_binding_claim_is_exact_and_typed"]
+        }
+      ],
+      "residual_boundary": "Exact self-declared subject/build binding is checked; no remote hardware attestation is claimed.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-026",
+      "title": "Independent organizational identity and remote attestation",
+      "description": "A repository evidence subject may self-declare build identity without proving independent organizational control or remotely attested hardware state.",
+      "scope_class": "future_version",
+      "status": "deferred",
+      "normative_refs": ["security_review/SECURITY_ASSUMPTIONS.md", "docs/interop/AICP_Compatibility_Claims_and_Evidence.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Consumers must establish organizational identity and hardware/runtime trust through external systems when required.",
+      "remediation_ref": null,
+      "defer_class": "requires_future_versioned_semantics",
+      "defer_reason": "Current AICP evidence binds declared subjects and exact artifacts but defines neither a remote-attestation protocol nor an organizational-independence authority."
+    },
+    {
+      "threat_id": "SEC-027",
+      "title": "Pairwise side-report and peer-build substitution",
+      "description": "Unrelated side reports, contradictory role descriptors, or the same build masquerading as two peers could be combined into a Pairwise claim.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["interop/pairwise/README.md", "docs/interop/AICP_Compatibility_Claims_and_Evidence.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_pairwise_m66_role_binding.py",
+          "test_ids": ["test_server_substitution_fails_before_semantic_execution", "test_client_substitution_fails_before_semantic_execution", "test_separately_valid_side_evidence_does_not_substitute_for_joint_compatibility"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_pairwise_m66_final_correction.py",
+          "test_ids": ["test_raw_role_evidence_is_independently_load_bearing"]
+        }
+      ],
+      "residual_boundary": "The exact builds and independently observed roles are bound within the run; repository clean-room peers do not count as external adoption.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-028",
+      "title": "Pairwise relay and harness injection",
+      "description": "The harness could author MCP requests or responses, rewrite relay bytes, route to the wrong server, or execute only one side.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["interop/pairwise/README.md"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_pairwise_m66_role_binding.py",
+          "test_ids": ["test_actual_peer_client_server_joint_execution_and_process_accounting", "test_relay_and_causality_negative_modes_have_no_relation", "test_real_client_core_and_challenge_adversaries_have_no_relation"]
+        }
+      ],
+      "residual_boundary": "The tests establish repository harness causality for the registered pairwise target, not internet-scale network-path integrity.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-029",
+      "title": "Pairwise first-seen, replay, and release provenance",
+      "description": "Peer hashes or challenges could be pre-seeded, a stale/cross-run transcript replayed, final poll omitted, or Pairwise release authority substituted.",
+      "scope_class": "protocol_observable",
+      "status": "covered",
+      "normative_refs": ["interop/pairwise/README.md", "interop/pairwise/tck_releases.json"],
+      "executable_evidence": [
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_pairwise_m66_final_correction.py",
+          "test_ids": ["test_cross_direction_future_value_preseed_is_rejected_by_run_global_ledger", "test_exact_poll_cursor_progression_rejects_mutations", "test_actual_frozen_authority_mutation_invalidates_1_3", "test_all_issued_pairwise_release_bytes_remain_frozen"]
+        },
+        {
+          "kind": "direct_test",
+          "test_file": "reference/python/tests/test_pairwise_m66.py",
+          "test_ids": ["test_pairwise_mutations_fail_closed"]
+        }
+      ],
+      "residual_boundary": "Pairwise TCK 1.3 proves exact registered run causality and provenance; it does not create a real external relationship.",
+      "remediation_ref": null
+    },
+    {
+      "threat_id": "SEC-030",
+      "title": "Endpoint, key-custody, and host compromise",
+      "description": "A compromised endpoint, stolen signing key, or hostile host/runtime can act with the authority available to that component.",
+      "scope_class": "deployment_only",
+      "status": "deferred",
+      "normative_refs": ["security_review/SECURITY_ASSUMPTIONS.md", "docs/security/SECURITY_BEST_PRACTICES.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Deployments remain responsible for endpoint hardening, runtime isolation, key custody, rotation, and incident response.",
+      "remediation_ref": null,
+      "defer_class": "deployment_control",
+      "defer_reason": "Protocol signatures and exact bindings cannot guarantee that endpoints, private keys, or their host runtime are uncompromised."
+    },
+    {
+      "threat_id": "SEC-031",
+      "title": "Production DDoS resistance and universal rate limiting",
+      "description": "Protocol endpoints can be exhausted by transport-scale or application-scale request volume.",
+      "scope_class": "deployment_only",
+      "status": "deferred",
+      "normative_refs": ["security_review/SECURITY_ASSUMPTIONS.md", "security_review/OPS_HARDENING_GUIDE.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Operators must select network controls, quotas, authentication, autoscaling, circuit breakers, and rate limits for their environment.",
+      "remediation_ref": null,
+      "defer_class": "deployment_control",
+      "defer_reason": "AICP defines no universal traffic budget and does not guarantee internet-scale DDoS resistance."
+    },
+    {
+      "threat_id": "SEC-032",
+      "title": "Correctness of arbitrary local policy",
+      "description": "A conformant implementation may select a local authorization, privacy, or enforcement policy that is unsuitable for its deployment.",
+      "scope_class": "policy_dependent",
+      "status": "deferred",
+      "normative_refs": ["security_review/SECURITY_ASSUMPTIONS.md", "docs/security/SECURITY_BEST_PRACTICES.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Policy owners must validate selected rules, data classifications, authorities, and exception handling against deployment requirements.",
+      "remediation_ref": null,
+      "defer_class": "local_policy",
+      "defer_reason": "Deterministic protocol conformance can validate selected-policy structure and outcomes but cannot decide whether an arbitrary local policy is correct."
+    },
+    {
+      "threat_id": "SEC-033",
+      "title": "Confidentiality of arbitrary application payloads",
+      "description": "Base AICP payloads may contain application data whose confidentiality depends on the selected profile and transport deployment.",
+      "scope_class": "policy_dependent",
+      "status": "deferred",
+      "normative_refs": ["security_review/SECURITY_ASSUMPTIONS.md", "docs/security/SECURITY_BEST_PRACTICES.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Deployments must select appropriate confidentiality profiles, transport protection, access controls, retention, and redaction policy.",
+      "remediation_ref": null,
+      "defer_class": "local_policy",
+      "defer_reason": "The base protocol does not promise confidentiality for arbitrary application payloads without an appropriate selected profile and deployment controls."
+    },
+    {
+      "threat_id": "SEC-034",
+      "title": "Independent external security review",
+      "description": "Internal tests and review artifacts do not substitute for assessment by an independent external reviewer.",
+      "scope_class": "deployment_only",
+      "status": "deferred",
+      "normative_refs": ["security_review/external_reviews/README.md", "SECURITY.md"],
+      "executable_evidence": [],
+      "residual_boundary": "No completed contracted independent-review artifact exists in the repository.",
+      "remediation_ref": null,
+      "defer_class": "independent_external_review",
+      "defer_reason": "Independent review requires a real third-party engagement and contract-complete report; M67 and its internal evidence cannot manufacture that external fact."
+    },
+    {
+      "threat_id": "SEC-035",
+      "title": "Model truthfulness and semantic correctness",
+      "description": "An agent or model can produce false, misleading, or semantically incorrect content in a structurally conformant message.",
+      "scope_class": "policy_dependent",
+      "status": "deferred",
+      "normative_refs": ["security_review/SECURITY_ASSUMPTIONS.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Applications remain responsible for model evaluation, human oversight, source verification, and domain-specific correctness controls.",
+      "remediation_ref": null,
+      "defer_class": "non_machine_decidable_without_policy",
+      "defer_reason": "AICP validates protocol structure and selected deterministic rules; it cannot universally decide whether arbitrary model output is truthful."
+    },
+    {
+      "threat_id": "SEC-036",
+      "title": "CAPNEG declaration authority and truthfulness",
+      "description": "A participant may make a syntactically valid capability declaration that is unauthorized or untruthful about the implementation behind it.",
+      "scope_class": "policy_dependent",
+      "status": "deferred",
+      "normative_refs": ["docs/extensions/RFC_EXT_CAPNEG.md", "docs/extensions/RFC_EXT_CAPNEG_v0.2.md", "security_review/SECURITY_ASSUMPTIONS.md"],
+      "executable_evidence": [],
+      "residual_boundary": "Deployments must authenticate principals and decide which declaration authorities and attestations they trust.",
+      "remediation_ref": null,
+      "defer_class": "local_policy",
+      "defer_reason": "CAPNEG deterministically binds the latest declarations and negotiated result but does not define a universal organizational authority for declaration truthfulness."
+    }
+  ]
+}

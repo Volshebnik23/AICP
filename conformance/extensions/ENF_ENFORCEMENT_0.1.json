@@ -39,6 +39,60 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "ENF-03",
+      "path": "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-GATE-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "ENF-04",
+      "path": "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-GATE-01",
+          "min_count": 1
+        }
+      ]
+    },
+    {
+      "id": "ENF-05",
+      "path": "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "ENF-AUTH-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
