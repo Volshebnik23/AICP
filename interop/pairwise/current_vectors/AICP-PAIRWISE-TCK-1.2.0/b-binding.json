@@ -106,8 +106,8 @@
     {
       "artifact_id": "LIVE-BINDING-TRACE-BIND-MCP-0.1",
       "artifact_kind": "live_binding_trace",
-      "content_digest": "sha256:2fa4c4a35c5b32f71cddeb60d48a33f6ff8e11888a036edfdb421fb7e34f7bd7",
-      "repeat_content_digest": "sha256:2fa4c4a35c5b32f71cddeb60d48a33f6ff8e11888a036edfdb421fb7e34f7bd7",
+      "content_digest": "sha256:c4187d15d735115476da407878caac82aa7da20931677f14f90f7c4bb9d6df79",
+      "repeat_content_digest": "sha256:c4187d15d735115476da407878caac82aa7da20931677f14f90f7c4bb9d6df79",
       "content": {
         "trace_version": "aicp.live_binding_trace.v4",
         "binding": {
@@ -900,7 +900,7 @@
                         "id": "rpc-poll-1",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:Yhf1rri5F8wHZ_ffHXH5plJCa-HhTxWR",
+                          "next_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -920,7 +920,7 @@
                         "tool": "aicp.pollMessages",
                         "arguments": {
                           "session_id": "sGT1",
-                          "after_cursor": "cursor:Yhf1rri5F8wHZ_ffHXH5plJCa-HhTxWR",
+                          "after_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
                           "limit": 1
                         }
                       },
@@ -929,7 +929,7 @@
                         "id": "rpc-poll-2",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:eXfc_qEdY0LLHPlMEfhc8HtYRDZHFusj",
+                          "next_cursor": "cursor:N8E5wdwPfrD14cs4Uaee9_G0f9iISsPA",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -1155,7 +1155,7 @@
                         "id": "rpc-poll-1",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:Yhf1rri5F8wHZ_ffHXH5plJCa-HhTxWR",
+                          "next_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -1175,7 +1175,7 @@
                         "tool": "aicp.pollMessages",
                         "arguments": {
                           "session_id": "sGT1",
-                          "after_cursor": "cursor:Yhf1rri5F8wHZ_ffHXH5plJCa-HhTxWR",
+                          "after_cursor": "cursor:BFHXLqQHKnMvueBvsGXL_uWmYijPZP1L",
                           "limit": 1
                         }
                       },
@@ -1184,7 +1184,7 @@
                         "id": "rpc-poll-2",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:eXfc_qEdY0LLHPlMEfhc8HtYRDZHFusj",
+                          "next_cursor": "cursor:N8E5wdwPfrD14cs4Uaee9_G0f9iISsPA",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -2036,7 +2036,7 @@
                         "id": "rpc-poll-1",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:rmfVnxu5wZRNeW_OYwooL5r7_YjkbmO2",
+                          "next_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -2056,7 +2056,7 @@
                         "tool": "aicp.pollMessages",
                         "arguments": {
                           "session_id": "sGT1",
-                          "after_cursor": "cursor:rmfVnxu5wZRNeW_OYwooL5r7_YjkbmO2",
+                          "after_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
                           "limit": 1
                         }
                       },
@@ -2065,7 +2065,7 @@
                         "id": "rpc-poll-2",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:nnOS4uR_eeQ0ilzv-6mC93NxXyqygZ4H",
+                          "next_cursor": "cursor:Ut4xLohj31LmjmATKCfKR42pnhb8OYmq",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -2291,7 +2291,7 @@
                         "id": "rpc-poll-1",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:rmfVnxu5wZRNeW_OYwooL5r7_YjkbmO2",
+                          "next_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -2311,7 +2311,7 @@
                         "tool": "aicp.pollMessages",
                         "arguments": {
                           "session_id": "sGT1",
-                          "after_cursor": "cursor:rmfVnxu5wZRNeW_OYwooL5r7_YjkbmO2",
+                          "after_cursor": "cursor:ZFyFZ573EOimiuvSvSRavQ0VkugQQjpi",
                           "limit": 1
                         }
                       },
@@ -2320,7 +2320,7 @@
                         "id": "rpc-poll-2",
                         "outcome": "result",
                         "result": {
-                          "next_cursor": "cursor:nnOS4uR_eeQ0ilzv-6mC93NxXyqygZ4H",
+                          "next_cursor": "cursor:Ut4xLohj31LmjmATKCfKR42pnhb8OYmq",
                           "message_refs": [
                             {
                               "session_id": "sGT1",
@@ -2427,7 +2427,7 @@
       }
     }
   ],
-  "timestamp": "2026-08-26T23:59:13.570700+00:00",
+  "timestamp": "2026-08-27T00:04:14.307612+00:00",
   "passed": true,
   "case_results": [
     {

@@ -178,4 +178,3 @@ class JsonLineProcess:
             self.process.wait(timeout=2.0)
         except subprocess.TimeoutExpired:  # pragma: no cover - kill should be terminal
             pass
-

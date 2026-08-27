@@ -11,12 +11,12 @@
     {
       "path": "interop/pairwise/pairwise_process_v1_2.py",
       "role": "generated_import_closure",
-      "digest": "sha256:9609120494998266224e41145391f02f3c5e3e155ba7d631dbc3252f5293c047"
+      "digest": "sha256:2f05f6febf7a6be74a7cda4e39b46d4a33ef63efd8b42df2c83dd4af1549c279"
     },
     {
       "path": "interop/pairwise/pairwise_semantic_normalizer_v1_2.py",
       "role": "generated_import_closure",
-      "digest": "sha256:edfd899636bd5593dc7dc4c6192e0a2679aeac571dab41f6de33189be1a8a94c"
+      "digest": "sha256:499f5e36ab93c87bf2aec82e478591097a95d53e2cf7fd87b5fb65f66c620054"
     },
     {
       "path": "interop/pairwise/pairwise_side_report_evaluator_v1_1.py",

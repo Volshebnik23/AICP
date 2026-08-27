@@ -255,11 +255,11 @@
       },
       "runner_bundle": {
         "path": "interop/pairwise/pairwise_runner_bundle_v1_2.json",
-        "digest": "sha256:7840e5ee444cd4ba5b71248d735d4a9e701ecdf97bc034659f791db7b888e5a3"
+        "digest": "sha256:e6c7ff08324398e318e7a22d4a16e94e7e5a6a94f9de9c0183c05f1e9fd78582"
       },
       "evaluator_bundle": {
         "path": "interop/pairwise/pairwise_evaluator_bundle_v1_2.json",
-        "digest": "sha256:4ef275ac6cecae6dea0f5ae96eccd3b1c9eef5a6caf81255a9badac20c3fc2f8"
+        "digest": "sha256:f6ef1dc52fbef0f77afcd81b2f100633d6d8e07d88096e5a25cd9a2d1d238dce"
       },
       "report_schema": {
         "path": "interop/pairwise/pairwise_joint_report_v1_2.schema.json",
@@ -271,7 +271,7 @@
       },
       "normalizer": {
         "path": "interop/pairwise/pairwise_semantic_normalizer_v1_2.py",
-        "content_digest": "sha256:edfd899636bd5593dc7dc4c6192e0a2679aeac571dab41f6de33189be1a8a94c"
+        "content_digest": "sha256:499f5e36ab93c87bf2aec82e478591097a95d53e2cf7fd87b5fb65f66c620054"
       },
       "target_registry": {
         "path": "interop/pairwise/release_artifacts/AICP-PAIRWISE-TCK-1.2.0/targets.json",

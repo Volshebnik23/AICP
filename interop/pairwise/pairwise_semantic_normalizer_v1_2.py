@@ -116,4 +116,3 @@ def normalized_run(run: dict[str, Any]) -> dict[str, Any]:
 
 def semantic_digest(run: dict[str, Any]) -> str:
     return "sha256:" + hashlib.sha256(_canonical(normalized_run(run))).hexdigest()
-

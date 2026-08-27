@@ -106,7 +106,7 @@
     {
       "path": "interop/pairwise/pairwise_semantic_normalizer_v1_2.py",
       "role": "generated_import_closure",
-      "digest": "sha256:edfd899636bd5593dc7dc4c6192e0a2679aeac571dab41f6de33189be1a8a94c"
+      "digest": "sha256:499f5e36ab93c87bf2aec82e478591097a95d53e2cf7fd87b5fb65f66c620054"
     },
     {
       "path": "interop/pairwise/pairwise_side_report_evaluator_v1_1.py",

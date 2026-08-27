@@ -3,11 +3,11 @@
   "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.2.0",
   "classification": "repository-owned-current-clean-room-test-vector",
   "files": [
-    { "path": "a-binding.json", "sha256": "2bace7487461adf0cd251aeab0d96bd9367d8bbc4deaded2e663360cea326d5e" },
-    { "path": "a-profile.json", "sha256": "ccac80b58485235821ab948a72e108d21ff3829cb0bbe493015e435b91a5f647" },
-    { "path": "b-binding.json", "sha256": "ceb33f63cdcf2adadb8cf5142c488e4693d923998d2addbeb663e9dcb610ca73" },
-    { "path": "b-profile.json", "sha256": "4fda8bb40b2bc08adc7caee71f7dd5c64c87cdcd2ec2a7f0b6bc994965a9ff2f" },
-    { "path": "joint.json", "sha256": "ababb509bd063ce81755b4266b26b128716df1d8b8d696619717f873edd8d7c6" }
+    { "path": "a-binding.json", "sha256": "541c23545d45e8c91f06d20c8bb7cd6053afd0bc05fa3231889588fdd55846b8" },
+    { "path": "a-profile.json", "sha256": "226ffd2e4ac00c0facccce61528d3d7328fd985c94d45bbb7c1b5b22c5783cce" },
+    { "path": "b-binding.json", "sha256": "069b799d8fff1ba8920ef0de671bed61e5f41c861f92905e52281a0f7444b7c9" },
+    { "path": "b-profile.json", "sha256": "2b0b48541eaa0da4a6ae5347b37ee71d8b739066c244288848bd8d6d3a4974b8" },
+    { "path": "joint.json", "sha256": "bd50d46a6a1361af262e873a87b5fb59ac869f0b50345d3ea98eacec4e587ccc" }
   ],
   "notes": [
     "Generated with Pairwise TCK 1.2 from the repository-owned Python and Node clean-room peers.",
