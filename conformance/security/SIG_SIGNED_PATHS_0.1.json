@@ -69,6 +69,27 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "SP-04",
+      "path": "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER",
+        "ALERT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SIGNATURE-VERIFY-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
