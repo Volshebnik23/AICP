@@ -38,6 +38,13 @@ jobs:
       - name: Run make conformance-all
         run: make conformance-all
 
+      - name: Run explicit M67 security closure gates
+        run: |
+          make conformance-security
+          make conformance-ops
+          make security-coverage-validate
+          make security-coverage-test
+
       - name: Run make test
         run: make test
 

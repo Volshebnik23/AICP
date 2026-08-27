@@ -13,8 +13,20 @@ tag, package publication, GA declaration, or final RC repackaging.
 - The canonical repository-truth baseline now distinguishes shipped artifacts, registry
   stability, internal verification, external testability, independent evidence, live
   binding evidence, and remaining milestones.
-- Roadmap and backlog roles are separated: M58–M65 are shipped, while M66–M70 retain
-  the remaining pairwise interop, security, governance, release, and plugfest work.
+- Roadmap and backlog roles are separated: M58–M67 are shipped, while M68–M70 retain
+  the remaining governance, release, and plugfest work.
+- M66's current Pairwise TCK 1.3 binds independent client/server role evidence, run-global
+  causality, exact MCP cursor progression, and two clean executions in both directions.
+  Its peers are repository-owned and establish no external pairwise adoption.
+- M67 replaces the manual threat map with a schema-bound 36-component manifest and generated
+  view: 24 components are covered, 12 are explicitly deferred to deployment/ecosystem scope,
+  and none remain partial. New exact vectors cover signed-flow truncation, stale CAPNEG
+  rollback, enforcement target/reference/authority binding, and OBJECT_RESYNC status/hash
+  behavior. Current Evidence TCK 1.11 retains report 2.2, trace v4, and six targets while
+  expanding Tier-1 consumers to 30/20/32. Evidence TCK 1.10 is frozen historical/eligible;
+  Product-IUT and Pairwise TCK 1.3 are unchanged.
+- The M67 external-review handoff is reproducible preparation, not a completed independent
+  security review or evidence of external adoption.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
 - Experimental post-UAT Core v0.2 adds exact contract artifact and active-head agreement

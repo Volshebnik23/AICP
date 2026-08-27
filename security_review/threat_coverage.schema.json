@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/security_review/threat_coverage.schema.json",
+  "title": "AICP security threat coverage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review_scope",
+    "generated_map",
+    "repository_truth",
+    "threats"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "review_scope": {"type": "string", "minLength": 1},
+    "generated_map": {"const": "security_review/COVERAGE_MAP.md"},
+    "repository_truth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_independent_review_completed",
+        "external_review_artifacts",
+        "pairwise_demonstrated_relations"
+      ],
+      "properties": {
+        "external_independent_review_completed": {"type": "boolean"},
+        "external_review_artifacts": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "pairwise_demonstrated_relations": {"type": "integer", "minimum": 0}
+      }
+    },
+    "threats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/threat"}
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "suite", "check_ids", "fixtures"],
+          "properties": {
+            "kind": {"const": "suite"},
+            "suite": {"type": "string", "minLength": 1},
+            "check_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            },
+            "fixtures": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            },
+            "case_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "test_file", "test_ids"],
+          "properties": {
+            "kind": {"enum": ["direct_test", "freeze_control"]},
+            "test_file": {"type": "string", "minLength": 1},
+            "test_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    },
+    "threat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "threat_id",
+        "title",
+        "description",
+        "scope_class",
+        "status",
+        "normative_refs",
+        "executable_evidence",
+        "residual_boundary",
+        "remediation_ref"
+      ],
+      "properties": {
+        "threat_id": {"type": "string", "pattern": "^SEC-[0-9]{3}$"},
+        "title": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "scope_class": {
+          "enum": [
+            "protocol_observable",
+            "mixed",
+            "deployment_only",
+            "policy_dependent",
+            "future_version"
+          ]
+        },
+        "status": {"enum": ["covered", "deferred", "partial"]},
+        "normative_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "executable_evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "residual_boundary": {"type": "string", "minLength": 1},
+        "remediation_ref": {"type": ["string", "null"]},
+        "defer_class": {
+          "enum": [
+            "deployment_control",
+            "local_policy",
+            "non_machine_decidable_without_policy",
+            "requires_future_versioned_semantics",
+            "independent_external_review"
+          ]
+        },
+        "defer_reason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "deferred"}}},
+          "then": {"required": ["defer_class", "defer_reason"]}
+        }
+      ]
+    }
+  }
+}

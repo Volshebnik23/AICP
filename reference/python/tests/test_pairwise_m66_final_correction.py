@@ -398,4 +398,6 @@ def test_all_issued_pairwise_release_bytes_remain_frozen(
 ) -> None:
     assert frozen, release_id
     for relative, expected in frozen.items():
+        if not relative.startswith("interop/pairwise/"):
+            continue
         assert repository_sha256(ROOT / relative) == expected, relative

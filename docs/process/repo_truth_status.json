@@ -432,7 +432,7 @@
         "externally_testable"
       ],
       "external_test_path": "full-capability",
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.10.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.11.0",
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-Evidence-SESSION-STATE-PROJECTION-v1",
       "external_evidence_mark_reachable": true,
@@ -466,7 +466,7 @@
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-BIND-HTTP-0.1",
       "external_evidence_mark_reachable": true,
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.10.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.11.0",
       "independent_external_evidence": false
     },
     {
@@ -480,7 +480,7 @@
       "external_evidence_target": true,
       "external_evidence_mark": "AICP-BIND-MCP-0.1",
       "external_evidence_mark_reachable": true,
-      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.10.0",
+      "current_evidence_tck_release": "AICP-EVIDENCE-TCK-1.11.0",
       "independent_external_evidence": false
     }
   ],
@@ -510,10 +510,12 @@
     "internal_self_review_completed": true,
     "external_independent_review_completed": false,
     "external_review_artifacts": [],
-    "coverage_map_rows": 11,
-    "partial_coverage_rows": 2,
+    "coverage_map_rows": 36,
+    "partial_coverage_rows": 0,
     "artifact_contract": "security_review/external_reviews/README.md",
-    "artifact_location": "security_review/external_reviews/completed/"
+    "artifact_location": "security_review/external_reviews/completed/",
+    "covered_coverage_rows": 24,
+    "deferred_coverage_rows": 12
   },
   "governance": {
     "current_model": "maintainer_steward",
@@ -526,7 +528,7 @@
       "payload_schema_mapped_count": 132,
       "suite_referenced_count": 132,
       "positive_fixture_referenced_count": 132,
-      "negative_fixture_referenced_count": 84,
+      "negative_fixture_referenced_count": 86,
       "missing_positive_fixture_types": [],
       "gap_milestone": null
     },
@@ -1267,6 +1269,7 @@
         "negative_fixtures": [
           "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
           "fixtures/extensions/capneg_v0_2/negative_cases.json",
           "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
@@ -1346,6 +1349,7 @@
           "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
           "fixtures/extensions/capneg_v0_2/negative_cases.json",
           "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
@@ -1425,6 +1429,7 @@
           "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-10_profile_rejection_reason_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-12_authenticated_base_crypto_missing_expected_fail.jsonl",
+          "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-NEG-01_downgrade_attempt_expected_fail.jsonl",
           "fixtures/extensions/capneg_v0_2/negative_cases.json",
           "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
@@ -1648,8 +1653,11 @@
           "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
           "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -1689,6 +1697,8 @@
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
           "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
           "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
           "fixtures/extensions/redaction/RD-04_missing_original_hash_expected_fail.jsonl",
           "fixtures/extensions/redaction/RD-05_missing_redaction_proof_expected_fail.jsonl",
@@ -1697,7 +1707,8 @@
           "fixtures/extensions/redaction/RD-08_missing_policy_category_expected_fail.jsonl",
           "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
           "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -1956,6 +1967,8 @@
           "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
           "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
           "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl",
@@ -2010,7 +2023,8 @@
           "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
           "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
           "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null,
@@ -2225,6 +2239,8 @@
           "fixtures/extensions/disputes/DS-02_unknown_challenge_type_expected_fail.jsonl",
           "fixtures/extensions/disputes/DS-03_evidence_unresolvable_expected_fail.jsonl",
           "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-05_missing_openapi_operation_ref_expected_fail.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-06_invalid_odata_target_expected_fail.jsonl",
           "fixtures/extensions/enterprise_bindings/EB-07_invalid_policy_kind_expected_fail.jsonl",
@@ -2298,7 +2314,8 @@
           "fixtures/security/authenticated_base/AB-12_invalid_signature_expected_fail.jsonl",
           "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl",
           "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null,
@@ -2473,10 +2490,13 @@
           "fixtures/demos/enforcement_behavioral/06_malicious_mediator_delivers_after_deny_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/extensions/enforcement/EF-02_deny_but_delivered_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-03_allow_target_hash_mismatch_expected_fail.jsonl",
+          "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
           "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
           "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
           "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -2837,9 +2857,14 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl",
-          "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl"
+          "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
+          "fixtures/extensions/object_resync/OR-03_access_denied.jsonl",
+          "fixtures/extensions/object_resync/OR-04_too_large.jsonl",
+          "fixtures/extensions/object_resync/OR-05_redacted.jsonl"
         ],
-        "negative_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/extensions/object_resync/OR-06_found_hash_mismatch_expected_fail.jsonl"
+        ],
         "coverage_status": "complete",
         "gap_milestone": null
       },
@@ -2856,9 +2881,14 @@
         ],
         "positive_fixtures": [
           "fixtures/extensions/execution_lifecycle/EX-03_store_ref_resolved_pass.jsonl",
-          "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl"
+          "fixtures/extensions/object_resync/OR-01_object_request_response.jsonl",
+          "fixtures/extensions/object_resync/OR-03_access_denied.jsonl",
+          "fixtures/extensions/object_resync/OR-04_too_large.jsonl",
+          "fixtures/extensions/object_resync/OR-05_redacted.jsonl"
         ],
-        "negative_fixtures": [],
+        "negative_fixtures": [
+          "fixtures/extensions/object_resync/OR-06_found_hash_mismatch_expected_fail.jsonl"
+        ],
         "coverage_status": "complete",
         "gap_milestone": null
       },
@@ -4297,8 +4327,8 @@
     {
       "id": "M67",
       "title": "Security Coverage Closure",
-      "status": "planned",
-      "document": "AICP_Backlog"
+      "status": "shipped",
+      "document": "ROADMAP.md"
     },
     {
       "id": "M68",

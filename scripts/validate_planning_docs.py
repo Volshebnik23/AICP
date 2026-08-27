@@ -53,6 +53,7 @@ SUITE_CATALOG = "conformance/runner/_suite_catalog.py"
 SNAPSHOT = "dist/releases/snapshots/AICP_SNAPSHOT_0.1.0-dev.json"
 EXTERNAL_REVIEW_CONTRACT = "security_review/external_reviews/README.md"
 EXTERNAL_REVIEW_LOCATION = ("security_review", "external_reviews", "completed")
+SECURITY_COVERAGE = "security_review/threat_coverage.json"
 
 EXPECTED_MILESTONES = {
     "M58": "Repo-Truth Rebaseline",
@@ -436,22 +437,18 @@ def _evidence_claim_errors(root: Path, status: dict[str, Any]) -> list[str]:
 
     security = status.get("security_review", {})
     errors.extend(_external_security_review_errors(root, security))
-    coverage_text = _text(root, "security_review/COVERAGE_MAP.md")
-    coverage_rows = [
-        line
-        for line in coverage_text.splitlines()
-        if line.startswith("|")
-        and re.search(r"\|\s*(?:Strong|Partial|Doc-only)\s*\|", line)
-    ]
-    partial_rows = [
-        line
-        for line in coverage_rows
-        if re.search(r"\|\s*Partial\s*\|", line)
-    ]
-    if security.get("coverage_map_rows") != len(coverage_rows):
-        errors.append("security coverage-map row count is stale")
-    if security.get("partial_coverage_rows") != len(partial_rows):
-        errors.append("security partial-coverage row count is stale")
+    coverage = _json(root, SECURITY_COVERAGE)
+    threats = [item for item in coverage.get("threats", []) if isinstance(item, dict)]
+    statuses = [item.get("status") for item in threats]
+    expected_counts = {
+        "coverage_map_rows": len(threats),
+        "covered_coverage_rows": statuses.count("covered"),
+        "deferred_coverage_rows": statuses.count("deferred"),
+        "partial_coverage_rows": statuses.count("partial"),
+    }
+    for field, expected in expected_counts.items():
+        if security.get(field) != expected:
+            errors.append(f"security {field} count is stale")
     if security.get("internal_self_review_completed") is not (
         root / "security_review/SELF_REVIEW.md"
     ).is_file():

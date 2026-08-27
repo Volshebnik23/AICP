@@ -32,10 +32,13 @@ Resync flows can amplify payload size and mediator work if clients trigger large
 - Cap resync response sizes and require platform pagination/chunking for large state.
 - Require explicit authorization for resync requests in policy (`tool_access` / auditability controls).
 - Prefer `ALERT` with `RESYNC_REQUIRED` over dumping full state when authorization or context is insufficient.
+- Use the registered `ACCESS_DENIED`, `TOO_LARGE`, and `REDACTED` outcomes to expose the
+  deployment decision without implying a universal protocol limit or access policy.
 
 Related references:
 - `docs/extensions/RFC_EXT_OBJECT_RESYNC.md`
 - `conformance/extensions/OR_OBJECT_RESYNC_0.1.json`
+- Positive mechanism cases `OR-03`, `OR-04`, and `OR-05`; integrity-negative case `OR-06`
 
 ## 3) ALERT verbosity leakage
 
@@ -46,6 +49,8 @@ Verbose alert payloads increase leakage risk and can be abused for log flooding.
 - Keep `message` short and operational.
 - Prefer stable codes and action IDs (`registry/alert_codes.json`, `registry/alert_recommended_actions.json`).
 - Never include raw secrets or full protected content in `details`.
+- Treat schema-level exclusion of known test-control secret fields as a minimum guard only;
+  classifying arbitrary secrets in application data remains an operator responsibility.
 
 Related check:
 - `AL-VERBOSITY-01` in `conformance/ops/OPS_HARDENING_0.1.json`
@@ -81,11 +86,16 @@ Conservative operational defaults:
 - max verdicts per `target_message_hash`: **1** (safe preference)  
   (Alternative policy: latest-wins, but only with explicit dedupe and audit log.)
 
+These values are examples for deployment policy and tests. They are not universal AICP
+protocol requirements; a deployment must select and document values appropriate to its
+resource, authorization, and privacy model.
+
 ## Evidence links
 
 - Ops hardening suite: `conformance/ops/OPS_HARDENING_0.1.json` (badge is ops evidence, not a Core compatibility claim)
 - Run: `make conformance-ops`
 - Expected-fail fixtures: `fixtures/ops/`
+- Canonical security boundary: `security_review/threat_coverage.json`
 - Existing extension suites:
   - `conformance/extensions/RS_RESUME_0.1.json`
   - `conformance/extensions/ENF_ENFORCEMENT_0.1.json`

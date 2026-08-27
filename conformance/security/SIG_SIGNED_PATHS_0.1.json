@@ -48,6 +48,27 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "SP-03",
+      "path": "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "CONTENT_MESSAGE",
+        "ENFORCEMENT_VERDICT",
+        "CONTENT_DELIVER",
+        "ALERT",
+        "RESUME_REQUEST",
+        "RESUME_RESPONSE"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "CT-SEQUENCE-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [
@@ -68,6 +89,9 @@
     },
     {
       "test_id": "CT-INVARIANTS-01"
+    },
+    {
+      "test_id": "CT-SEQUENCE-01"
     },
     {
       "test_id": "CT-MESSAGE-HASH-01"

@@ -11,7 +11,7 @@ def _normalized(path: Path) -> bytes:
     return path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
-def _tree_digest(paths: list[str]) -> tuple[int, str]:
+def _tree_digest(paths: list[str], *, exclude: set[str] | None = None) -> tuple[int, str]:
     files: set[Path] = set()
     for relative in paths:
         path = ROOT / relative
@@ -23,6 +23,10 @@ def _tree_digest(paths: list[str]) -> tuple[int, str]:
             )
         else:
             files.add(path)
+    excluded = exclude or set()
+    files = {
+        path for path in files if path.relative_to(ROOT).as_posix() not in excluded
+    }
     digest = hashlib.sha256()
     ordered = sorted(files, key=lambda path: path.relative_to(ROOT).as_posix())
     for path in ordered:
@@ -38,7 +42,12 @@ def test_capneg_v01_normative_artifacts_and_fixtures_are_frozen() -> None:
     ).hexdigest() == (
         "5634659b8bb4af2cd214da8e1264f8aa521ea20e8b46e5539f42c2f7acb8b356"
     )
-    assert _tree_digest(["fixtures/extensions/capneg"]) == (
+    assert _tree_digest(
+        ["fixtures/extensions/capneg"],
+        exclude={
+            "fixtures/extensions/capneg/CN-13_stale_declaration_rollback_expected_fail.jsonl"
+        },
+    ) == (
         11,
         "84e1bc0dacadbf06f3acd2ffb3e2fb79f3b7f6ec626a3c926419ce5e355da6a5",
     )

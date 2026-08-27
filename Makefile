@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: validate message-surface-complete interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples pairwise-targets-validate pairwise-base-mcp-cleanroom pairwise-base-mcp-external-test pairwise-negative pairwise-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
+.PHONY: validate message-surface-complete security-coverage-validate security-coverage-test interop-validate interop-review interop-dryrun interop-build-example snapshot validate-snapshot test conformance conformance-core conformance-ext conformance-capneg-v02 conformance-session-state-projection-v2 conformance-bindings conformance-profiles conformance-demos conformance-ops conformance-security conformance-all conformance-provenance conformance-iut-smoke conformance-iut-full-reference evidence-targets-validate evidence-capability-smoke-reference evidence-capability-full-reference evidence-capability-full-external-test evidence-profile-mediated-smoke-reference evidence-profile-mediated-full-reference evidence-profile-mediated-full-external-test evidence-profile-resumable-smoke-reference evidence-profile-resumable-full-reference evidence-profile-resumable-full-external-test evidence-profile-delegated-smoke-reference evidence-profile-delegated-full-reference evidence-profile-delegated-full-external-test live-binding-http-smoke-reference live-binding-http-full-reference live-binding-http-full-external-test live-binding-mcp-smoke-reference live-binding-mcp-full-reference live-binding-mcp-full-external-test evidence-binding-examples evidence-submission-examples pairwise-targets-validate pairwise-base-mcp-cleanroom pairwise-base-mcp-external-test pairwise-negative pairwise-submission-examples interop-matrix demo-enforcement-behavioral quickstart-ts quickstart-py quickstart-core-v02-py quickstart-core-v02-ts quickstart-capneg-v02-py quickstart-capneg-v02-ts template-smoke uat-check prepr compatibility-gate release-gate lint release-check clean
 
 validate:
 	$(PYTHON) scripts/validate_json.py
@@ -25,6 +25,9 @@ validate:
 	$(PYTHON) scripts/generate_core_v02_fixtures.py --check
 	$(PYTHON) scripts/generate_profile_composition_registry.py --check
 	$(PYTHON) scripts/generate_capneg_v02_fixtures.py --check
+	$(PYTHON) scripts/generate_m67_security_fixtures.py --check
+	$(PYTHON) scripts/generate_security_coverage.py --check
+	$(PYTHON) scripts/validate_security_coverage.py --m67-final
 	$(PYTHON) scripts/generate_evidence_framework.py --check
 	$(PYTHON) scripts/generate_pairwise_tck.py --check
 	$(PYTHON) scripts/generate_evidence_submission_example.py --check
@@ -39,6 +42,14 @@ validate:
 
 message-surface-complete:
 	$(PYTHON) scripts/validate_message_surface_completion.py
+
+security-coverage-validate:
+	$(PYTHON) scripts/generate_m67_security_fixtures.py --check
+	$(PYTHON) scripts/generate_security_coverage.py --check
+	$(PYTHON) scripts/validate_security_coverage.py --m67-final
+
+security-coverage-test:
+	$(PYTHON) -m pytest reference/python/tests/test_m67_security_coverage_closure.py -q
 
 snapshot:
 	$(PYTHON) scripts/generate_snapshot_manifest.py

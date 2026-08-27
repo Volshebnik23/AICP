@@ -7,8 +7,8 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Completed M58 Repo-Truth Rebaseline through M66 Clean-Room Pairwise Interop Harness;
-  M67–M70 remain planned.
+- Completed M58 Repo-Truth Rebaseline through M67 Security Coverage Closure; M68–M70
+  remain planned.
 - Registered current `AICP-PAIRWISE-TCK-1.3.0` with authoritative raw per-run client/server
   role evidence, run-global first-seen causality, exact MCP cursor progression, a generic
   release router outside immutable evaluator bundles, and separate in-process/frozen-side
@@ -74,6 +74,18 @@ All notable repo-backed release metadata changes should be recorded here.
   six target identities remain unchanged; Tier-1 consumer counts are 26 mediated,
   16 resumable, and 31 delegated. An exact TCK 1.8 report vector reproduced at
   `110c950ce069f323e084e02a13ce04b23f0c5fa3` is frozen for evaluator regression.
+- Added M67's schema-bound canonical threat manifest and generated map with 36 components:
+  24 covered, 12 explicitly deferred, and 0 partial. Semantic validation resolves covered
+  suite/check/case/fixture evidence and rejects fake coverage, incomplete deferrals, and
+  unsupported external-review or adoption claims.
+- Added exact signed-flow truncation, stale CAPNEG declaration rollback, enforcement
+  target/reference/authority, and OBJECT_RESYNC status/hash cases with ordinary-conformance
+  and Tier-1 evidence parity. Registered current strong-eligible
+  `AICP-EVIDENCE-TCK-1.11.0` with report 2.2, trace v4, six targets, and 30/20/32 Tier-1
+  consumers. Exact Evidence TCK 1.10 remains frozen historical/strong-eligible; Product-IUT
+  and Pairwise TCK 1.3 remain unchanged.
+- Added a reproducible external-review handoff without claiming a completed external review,
+  reviewer, finding, date, or external adoption.
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
   wording so repository presence/internal conformance is not presented as independent

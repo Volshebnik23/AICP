@@ -196,6 +196,7 @@ def test_issued_1_1_accepts_peer_a_server_substituted_for_peer_b(
 
     assert report["participants"][0]["implementation_id"] == "aicp-cleanroom-python-a"
     assert report["participants"][1]["implementation_id"] == "aicp-cleanroom-node-b"
-    assert result["status"] == "eligible", result
-    assert len(result["eligible_pairwise_relations"]) == 1
+    assert result["status"] == "rejected", result
+    assert result["errors"][0]["code"] == "PAIRWISE_BINDING_REPORT_INELIGIBLE"
+    assert result["eligible_pairwise_relations"] == []
     assert result["eligible_marks"] == []

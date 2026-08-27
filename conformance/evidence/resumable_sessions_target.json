@@ -41,7 +41,7 @@
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
       "suite_id": "OR-OBJECT-RESYNC-0.1",
       "suite_version": "0.1.0-dev",
-      "suite_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+      "suite_digest": "sha256:0d40690e760275a74cb1a0c8f7a8cf872e5e71ded089903763695cdd15dc20da"
     }
   ],
   "canonicalization_vectors": [
@@ -333,6 +333,60 @@
       "expected_degraded": false,
       "expected_degraded_reasons": [],
       "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-03",
+      "source_suite_id": "OR-OBJECT-RESYNC-0.1",
+      "source_case_id": "OR-03",
+      "fixture": "fixtures/extensions/object_resync/OR-03_access_denied.jsonl",
+      "input_digest": "sha256:4aed70a414faecf82a1955f692173ee6d6f81289f3f92b98308c581c3914cb4b",
+      "accepted": true,
+      "expected_error_observations": [],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-04",
+      "source_suite_id": "OR-OBJECT-RESYNC-0.1",
+      "source_case_id": "OR-04",
+      "fixture": "fixtures/extensions/object_resync/OR-04_too_large.jsonl",
+      "input_digest": "sha256:d27cad32a56cb1c491de58f3823b056f7e74bd47936631ed05c84fa1655b65b2",
+      "accepted": true,
+      "expected_error_observations": [],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-05",
+      "source_suite_id": "OR-OBJECT-RESYNC-0.1",
+      "source_case_id": "OR-05",
+      "fixture": "fixtures/extensions/object_resync/OR-05_redacted.jsonl",
+      "input_digest": "sha256:ef5c7d79cda227d518992d798d6511c06ebb5ea15829971dfdb7475c99ea0079",
+      "accepted": true,
+      "expected_error_observations": [],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
+    },
+    {
+      "case_id": "EVIDENCE-CONSUMER-RS-OR-OBJECT-RESYNC-0-1-OR-06",
+      "source_suite_id": "OR-OBJECT-RESYNC-0.1",
+      "source_case_id": "OR-06",
+      "fixture": "fixtures/extensions/object_resync/OR-06_found_hash_mismatch_expected_fail.jsonl",
+      "input_digest": "sha256:af9b3066709674edde4407eefe878ca1ab6da786ede9fabb700abae68e78ebb3",
+      "accepted": false,
+      "expected_error_observations": [
+        {
+          "code": "OR-OBJECT-HASH-01",
+          "exact_count": 1,
+          "check_scope": "OBJECT_RESYNC FOUND object integrity"
+        }
+      ],
+      "expected_degraded": false,
+      "expected_degraded_reasons": [],
+      "expected_skipped_checks": []
     }
   ],
   "required_input_artifacts": [
@@ -350,7 +404,7 @@
     },
     {
       "path": "conformance/evidence/product_profile_consumer_expectations.json",
-      "content_digest": "sha256:b7cc0def043921a56dae942a257a7312da35dd6eba00a9730d5f57c0f5630171"
+      "content_digest": "sha256:961bb7c606cad69d3073c0a462044ce3d8dfb74f709c6d9d975f2599c702f624"
     },
     {
       "path": "conformance/evidence/product_profile_producer_scenario.schema.json",
@@ -362,7 +416,7 @@
     },
     {
       "path": "conformance/extensions/CN_CAPNEG_0.1.json",
-      "content_digest": "sha256:ac1bfb0832eaa9473a37d31f0fd635a11307bea4cc444de6670e917d6d159d1a"
+      "content_digest": "sha256:95e79c9c290a7e0aab835cb2530ec25a3d992c11dcd852cfc9bddfc2ade748c2"
     },
     {
       "path": "conformance/extensions/DI_DELEGATED_IDENTITY_0.1.json",
@@ -370,7 +424,7 @@
     },
     {
       "path": "conformance/extensions/ENF_ENFORCEMENT_0.1.json",
-      "content_digest": "sha256:51cee03c162cecb5cc00fbf07a48028dc885c1fa9fa0abc941619213e349b5d4"
+      "content_digest": "sha256:ee73e5ee56ab92054074a5803cb4ff43352030f8ccdc800ed8c205092e214a4d"
     },
     {
       "path": "conformance/extensions/ID_IDENTITY_LC_0.1.json",
@@ -378,7 +432,7 @@
     },
     {
       "path": "conformance/extensions/OR_OBJECT_RESYNC_0.1.json",
-      "content_digest": "sha256:24147384afa38bb66f0f56da12e2beaaa7f634230222fe1e6bf8427f20e60669"
+      "content_digest": "sha256:0d40690e760275a74cb1a0c8f7a8cf872e5e71ded089903763695cdd15dc20da"
     },
     {
       "path": "conformance/extensions/PE_POLICY_EVAL_0.1.json",
@@ -439,6 +493,22 @@
     {
       "path": "fixtures/extensions/object_resync/OR-02_state_sync.jsonl",
       "content_digest": "sha256:05f5aff3095982a64cf22b6835a3ce5b2baf07a6f2199267b1296a72a1daadca"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/OR-03_access_denied.jsonl",
+      "content_digest": "sha256:4aed70a414faecf82a1955f692173ee6d6f81289f3f92b98308c581c3914cb4b"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/OR-04_too_large.jsonl",
+      "content_digest": "sha256:d27cad32a56cb1c491de58f3823b056f7e74bd47936631ed05c84fa1655b65b2"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/OR-05_redacted.jsonl",
+      "content_digest": "sha256:ef5c7d79cda227d518992d798d6511c06ebb5ea15829971dfdb7475c99ea0079"
+    },
+    {
+      "path": "fixtures/extensions/object_resync/OR-06_found_hash_mismatch_expected_fail.jsonl",
+      "content_digest": "sha256:af9b3066709674edde4407eefe878ca1ab6da786ede9fabb700abae68e78ebb3"
     },
     {
       "path": "fixtures/extensions/policy_eval/PE-01_basic_allow.jsonl",

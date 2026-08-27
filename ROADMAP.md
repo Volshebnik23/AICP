@@ -152,7 +152,7 @@ _Last updated: 2026-08-27_
 - **Compatibility boundary:** product-profile IUT v1 and projection report 2.0 remain
   valid; Evidence TCK 1.0, 1.1, 1.2, and 1.3 records are frozen. No target is added for other
   profiles, composition, live bindings, or pairwise interoperability.
-- **Next concrete step:** M64, M65, and M66 are now shipped; M67 remains planned.
+- **Next concrete step:** M64 through M67 are now shipped; M68 remains planned.
 
 ### ✅ M64 — Live Transport and Binding Interoperability
 <!-- milestone-status: M64 shipped -->
@@ -179,8 +179,7 @@ _Last updated: 2026-08-27_
   first-seen MCP poll continuations, and repository-observed TLS failure classification so
   TCP/plaintext probes cannot stand in for certificate rejection. TCK 1.7 is frozen and
   historical/ineligible; no binding, Core, CAPNEG, projection, or profile wire semantics change.
-- **Next concrete step:** M65 completes the registered message surface and M66 completes the
-  first clean-room pairwise target; M67 remains planned.
+- **Next concrete step:** M65 through M67 are now shipped; M68 remains planned.
 
 ### ✅ M65 — Registered Message Surface Completion
 <!-- milestone-status: M65 shipped -->
@@ -234,7 +233,30 @@ _Last updated: 2026-08-27_
 - **Compatibility boundary:** no AICP wire, profile, or binding semantics change and no
   pairwise compatibility mark is introduced. Evidence TCK 1.10 remains frozen; pairwise
   provenance is governed separately by Pairwise TCK 1.3.
-- **Next concrete step:** M67–M70 remain planned; M67 has not started.
+- **Next concrete step:** M67 is shipped; M68–M70 remain planned.
+
+### ✅ M67 — Security Coverage Closure
+<!-- milestone-status: M67 shipped -->
+- **Status:** Shipped.
+- **Problem:** the hand-maintained security map had 13 rows, including two partial rows,
+  and could not prove that a named check or fixture actually supported a coverage claim.
+- **Scope:** replace it with a schema-bound canonical manifest and generated map; validate
+  check/suite/case/fixture reachability; close protocol-observable gaps with exact
+  truncation, CAPNEG rollback, enforcement binding/authority, and OBJECT_RESYNC vectors;
+  classify deployment/ecosystem deferrals; and prepare a truthful external-review handoff.
+- **Completion evidence:** `security_review/threat_coverage.json` records 36 components:
+  24 covered, 12 deferred, and 0 partial. The validator rejects nonexistent checks,
+  unreferenced fixtures, documentation-only protocol closure, incomplete deferrals,
+  partial final state, and unsupported external-review or adoption claims. New cases
+  `SP-03`, `CN-13`, `ENF-03` through `ENF-05`, and `OR-03` through `OR-06` have exact
+  ordinary-conformance and Tier-1 evidence parity.
+- **Evidence boundary:** current strong-eligible `AICP-EVIDENCE-TCK-1.11.0` retains report
+  2.2, trace v4, and six targets while expanding consumers to 30 mediated, 20 resumable,
+  and 32 delegated cases. Exact Evidence TCK 1.10 remains frozen historical/strong-eligible.
+  Product-IUT and Pairwise TCK 1.3 are unchanged; no Pairwise TCK 1.4 exists.
+- **Independent-review boundary:** the repository records no completed independent external
+  security review and no new external-adoption evidence. The handoff is preparation only.
+- **Next concrete step:** M68–M70 remain planned.
 
 ## Planned milestones
 
@@ -244,7 +266,6 @@ criteria live in `AICP_Backlog`.
 <!-- BEGIN GENERATED PLANNED MILESTONES -->
 | ID | Status | Title | Planning record |
 |---|---|---|---|
-| M67 | Planned | Security Coverage Closure | `AICP_Backlog` |
 | M68 | Planned | Governance and Standard Maturity | `AICP_Backlog` |
 | M69 | Planned | Release Engineering and RC Repackaging | `AICP_Backlog` |
 | M70 | Planned | External Plugfest Readiness | `AICP_Backlog` |

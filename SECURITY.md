@@ -20,11 +20,16 @@ After private reporting and coordinated disclosure timing, remediation tracking 
 
 ### Current review status
 
-The repository contains an internal self-review, automated negative tests, and a coverage
-map with both strong and partial rows. It does not contain a completed independent external
-security review. Do not describe the review scaffolding or `SELF_REVIEW.md` as external
-assurance. Remaining coverage and external-review work is planned under M67; see
-`docs/process/AICP_Repo_Truth_Baseline.md`.
+M67 shipped an internal, machine-validated threat-coverage manifest and generated map with
+36 components: 24 `covered`, 12 `deferred`, and 0 `partial`. Covered rows resolve to named
+executable evidence; deferred rows preserve their deployment or ecosystem boundary and
+rationale. See `security_review/threat_coverage.json`, `security_review/COVERAGE_MAP.md`, and
+`security_review/M67_SECURITY_CLOSURE.md`.
+
+The repository does not contain a completed independent external security-review artifact.
+Do not describe the review scaffolding, `SELF_REVIEW.md`, M67 closure, or repository-generated
+conformance evidence as external assurance. The future handoff and artifact contract are in
+`security_review/EXTERNAL_REVIEW_HANDOFF.md` and `security_review/external_reviews/README.md`.
 
 The experimental CAPNEG v0.2 surface has an explicit threat/negative-vector map in
 `docs/security/CAPNEG_v0.2_Threat_Model.md` and executable coverage in

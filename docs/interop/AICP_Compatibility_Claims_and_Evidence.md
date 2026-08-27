@@ -85,8 +85,8 @@ Minimum expected evidence:
 - independently validated target, TCK, suite/input, producer/determinism, consumer, and
   no-degradation/no-skip provenance.
 
-New executions use `AICP-EVIDENCE-TCK-1.10.0`; exact historical 1.1.0, 1.4.0, and 1.8.0 reports remain
-strong-eligible through their frozen release-registry snapshots. Those releases bind an answer-isolated
+New executions use `AICP-EVIDENCE-TCK-1.11.0`; exact historical 1.1.0, 1.4.0, 1.8.0,
+and 1.10.0 reports remain strong-eligible through their frozen release-registry snapshots. Those releases bind an answer-isolated
 neutral producer scenario, registry schema, registered handler, and import-closed runner
 bundle. Frozen 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, 1.7.0, and 1.9.0 cannot support a strong claim for their documented
 evidence defects.
@@ -165,13 +165,13 @@ The status should stay aligned with the actual package:
 | Compatible with profile X | `evidence_status=reproducible` + exact profile/version + exact required-suite `suite_refs` + eligible full-profile evidence + truthful disclosures |
 | Implements capability X | `evidence_status=reproducible` + exact capability ID/version + eligible target-oriented full-capability report v2 bound to the implementation/build |
 | Implements binding X | `evidence_status=reproducible` + exact binding ID/version + exact owning suite + eligible two-role full-binding report 2.2 bound to one implementation build |
-| Pairwise interoperable with implementation Y on profile X | Not currently publishable; reserved manifest vocabulary and instructional examples fail closed until a dedicated joint-execution runner exists |
+| Pairwise interoperable with implementation Y on profile X | `evidence_status=pairwise` + an eligible Pairwise TCK 1.3 joint report for exact implementation builds, profile/binding target, directions, and clean runs; repository clean-room peers do not establish external adoption |
 
 Repository golden-fixture and profile runs are labelled `reference_corpus`. They verify the
 repository's canonical artifacts but cannot substantiate an external implementation claim.
 Examples, templates, and dry runs may carry those reports only as instructional evidence.
 IUT, generalized profile, and live-binding smoke reports are diagnostic-only and cannot substantiate a
-real profile claim. New generalized profile reports use report 2.1 and TCK 1.4.0; their
+real profile claim. New generalized profile reports use report 2.2 and TCK 1.11.0; their
 `suite_refs` must be the exact required-suite union with no missing, unrelated, or duplicate
 suite. Capability smoke, one-role binding evidence, and every `reference_corpus` report are likewise ineligible.
 Projection v2 remains internal-only and has no external target.

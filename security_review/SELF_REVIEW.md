@@ -1,5 +1,10 @@
 # M9.1 Internal Security Self-Review (Dry-Run)
 
+> Historical snapshot: this file records the M9.1 internal dry run. It is not the M67
+> coverage authority, a current security assessment, or an independent external review.
+> Current status is canonical in [`threat_coverage.json`](threat_coverage.json), its generated
+> [`COVERAGE_MAP.md`](COVERAGE_MAP.md), and [`M67_SECURITY_CLOSURE.md`](M67_SECURITY_CLOSURE.md).
+
 ## A) Purpose
 This document is an internal dry-run of `security_review/REVIEW_CHECKLIST.md` to prepare for external security review.
 
@@ -150,5 +155,6 @@ No concrete bug requiring a new remediation-log entry was identified in this dry
 - Add an explicit “coverage limits” section or artifact mapping test IDs to non-goals.
 - Continue tightening alert/verdict privacy guidance with examples of code-first messaging.
 
-These remaining items are planning inputs to M67 Security Coverage Closure. This document
-remains an internal dry run and is not evidence that an independent external review occurred.
+These observations describe the historical M9.1 snapshot. Their current disposition is in
+the M67 threat-coverage manifest. This document remains an internal dry run and is not
+evidence that an independent external review occurred.

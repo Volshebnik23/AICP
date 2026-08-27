@@ -13,24 +13,6 @@
 Each section below is planned work. No item is shipped merely because its problem statement
 or intended completion criterion is documented here.
 
-## M67 — Security Coverage Closure
-
-<!-- milestone-status: M67 planned -->
-- **Status:** Planned.
-- **Problem statement:** the repository has internal self-review and automated negative tests,
-  but coverage remains partial for resync amplification/existence leakage and evidence
-  privacy, and no independent external review artifact exists.
-- **Scope:** close or explicitly defer threat-map gaps, add missing deterministic tests where
-  protocol-observable, cover negotiation rollback/profile-composition downgrade and
-  contract-substitution risks after their owning milestones, and prepare an external review.
-- **Explicit non-goals:** no claim that platform rate limits or key custody are protocol
-  guarantees and no fabricated external review.
-- **Principal evidence gap:** partial threat rows and absent independent external report.
-- **Dependencies:** M58; M60/M61 for their new threat surfaces.
-- **Completion criterion:** every threat-map row has an accurate covered/partial/deferred
-  status with linked tests or rationale, open remediations are tracked, and any external
-  review claim points to an actual report.
-
 ## M68 — Governance and Standard Maturity
 
 <!-- milestone-status: M68 planned -->

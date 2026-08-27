@@ -1,47 +1,54 @@
 # Security Review Checklist
 
-## Core
-- [ ] Canonicalization behavior is deterministic and documented.
-- [ ] Message hash recomputation matches schema-bound payloads.
-- [ ] Signature inputs and verification paths are unambiguous.
-- [ ] Chain invariants (`prev_msg_hash`) are enforced.
+Use this checklist against an immutable revision captured with
+[`EXTERNAL_REVIEW_HANDOFF.md`](EXTERNAL_REVIEW_HANDOFF.md). Record findings separately; checking
+a box does not change canonical coverage status.
 
-## Error / Alerts
-- [ ] Alert/error payloads avoid unnecessary sensitive leakage.
-- [ ] Replay/idempotency expectations are explicit and tested.
-- [ ] Recommended actions are registry-validated.
+## Repository and authority
 
-## CAPNEG
-- [ ] Negotiation resists downgrade/capability spoofing patterns.
+- [ ] Record the exact commit, worktree state, and validation environment.
+- [ ] Validate `security_review/threat_coverage.json` against its schema and semantic validator.
+- [ ] Confirm `COVERAGE_MAP.md` is generated and current.
+- [ ] Confirm every covered row resolves to existing registered checks, cases, and referenced fixtures.
+- [ ] Confirm every deferred row has a permitted defer class, specific rationale, and owner.
+- [ ] Confirm release registries identify exactly one current authority per TCK family.
 
-## POLICY_EVAL
-- [ ] Decision artifacts bind clearly to evaluated context.
-- [ ] Ambiguous/inconclusive outcomes are handled explicitly.
+## Protocol surfaces
 
-## ENFORCEMENT
-- [ ] Hard-gate delivery semantics are correctly enforced.
-- [ ] Verdict authenticity/spoofing concerns are addressed.
+- [ ] Core canonicalization, hashes, signatures, chain invariants, and truncation boundaries are unambiguous.
+- [ ] Exact-contract proposal, acceptance, active-head, context, and conflict references resist substitution.
+- [ ] CAPNEG rejects stale-declaration rollback and profile-composition downgrade.
+- [ ] POLICY_EVAL binds decisions to their evaluated context and registry codes.
+- [ ] ENFORCEMENT binds authority, target, and verdict references and preserves hard-gate delivery.
+- [ ] ALERT registry validation is separated from deployment-specific privacy classification.
+- [ ] OBJECT_RESYNC validates object hashes and exposes access, size, and redaction mechanisms without claiming universal policy.
+- [ ] RESUME binds request/response state and documents probing and forced-loop boundaries.
+- [ ] Delegated identity and multi-profile composition preserve the named signer and profile constraints.
+- [ ] Live-transport evidence proves the named runtime behavior and rejects invalid TLS/trust paths.
 
-## OBJECT_RESYNC
-- [ ] Object/state sync limits existence leakage.
-- [ ] DoS/amplification considerations are documented.
+## Evidence, privacy, and claims
 
-## RESUME
-- [ ] Resume does not leak session existence beyond intended semantics.
-- [ ] Forced-resync loop and probing risks are considered.
+- [ ] Public evidence schemas exclude test-control secrets and private key material.
+- [ ] Arbitrary application-secret classification is not overstated as schema coverage.
+- [ ] Historical Evidence TCK releases and the current release resolve with their recorded lifecycle and eligibility.
+- [ ] Product-IUT and Pairwise TCK release lines are unchanged unless the reviewed scope explicitly changes them.
+- [ ] Internal/reference evidence is not described as independent external evidence or adoption.
+- [ ] External-review completion, reviewer identity, dates, and findings point to real contracted artifacts.
 
-## Registries
-- [ ] Registry governance/change-control assumptions are explicit.
+## Reproduction
 
-## Conformance tooling
-- [ ] Coverage boundaries are clear (what tests verify vs what remains deployment-side).
-- [ ] Failure modes are deterministic and diagnosable.
+- [ ] `make security-coverage-validate`
+- [ ] `make security-coverage-test`
+- [ ] `make conformance-security`
+- [ ] `make conformance-ops`
+- [ ] `make conformance-all`
+- [ ] `make evidence-target-validate`
+- [ ] `make pairwise-target-validate`
+- [ ] `make validate`
+- [ ] `make test`
+- [ ] TypeScript tests and dependency audit complete under the repository's supported commands.
 
-References:
-- `docs/core/AICP_Core_v0.1_Normative.md`
-- `docs/rfc/RFC_Registries_and_Change_Control.md`
-- `docs/extensions/RFC_EXT_ENFORCEMENT.md`
-- `docs/extensions/RFC_EXT_ALERTS.md`
-- `docs/extensions/RFC_EXT_OBJECT_RESYNC.md`
-- `docs/extensions/RFC_EXT_RESUME.md`
-- `conformance/`
+Primary references: [`threat_coverage.json`](threat_coverage.json),
+[`THREAT_MODEL.md`](THREAT_MODEL.md), [`SECURITY_ASSUMPTIONS.md`](SECURITY_ASSUMPTIONS.md),
+[`../docs/core/AICP_Core_v0.1_Normative.md`](../docs/core/AICP_Core_v0.1_Normative.md), and
+[`../conformance/`](../conformance/).

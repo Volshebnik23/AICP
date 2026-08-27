@@ -44,7 +44,8 @@
       "CN-09": {"accepted": true, "error_observations": []},
       "CN-10": {"accepted": false, "error_observations": [{"code": "CN-AICP-PROFILE-NEGOTIATION-01", "exact_count": 1, "check_scope": "CAPNEG exact profile agreement"}, {"code": "CN-PROFILE-REJECT-SEMANTICS-01", "exact_count": 1, "check_scope": "CAPNEG rejection semantics"}]},
       "CN-11": {"accepted": true, "error_observations": []},
-      "CN-12": {"accepted": false, "error_observations": [{"code": "CN-AUTHENTICATED-CRYPTO-01", "exact_count": 1, "check_scope": "CAPNEG authenticated-profile crypto selection"}]}
+      "CN-12": {"accepted": false, "error_observations": [{"code": "CN-AUTHENTICATED-CRYPTO-01", "exact_count": 1, "check_scope": "CAPNEG authenticated-profile crypto selection"}]},
+      "CN-13": {"accepted": false, "error_observations": [{"code": "CN-AICP-PROFILE-NEGOTIATION-01", "exact_count": 1, "check_scope": "CAPNEG most-recent declaration selection"}]}
     },
     "conformance/extensions/PE_POLICY_EVAL_0.1.json": {
       "PE-01": {"accepted": true, "error_observations": []},
@@ -53,7 +54,10 @@
     },
     "conformance/extensions/ENF_ENFORCEMENT_0.1.json": {
       "ENF-01": {"accepted": true, "error_observations": []},
-      "ENF-02": {"accepted": false, "error_observations": [{"code": "ENF-GATE-01", "exact_count": 1, "check_scope": "Blocking enforcement delivery gate"}]}
+      "ENF-02": {"accepted": false, "error_observations": [{"code": "ENF-GATE-01", "exact_count": 1, "check_scope": "Blocking enforcement delivery gate"}]},
+      "ENF-03": {"accepted": false, "error_observations": [{"code": "ENF-GATE-01", "exact_count": 1, "check_scope": "Blocking enforcement exact target binding"}]},
+      "ENF-04": {"accepted": false, "error_observations": [{"code": "ENF-GATE-01", "exact_count": 1, "check_scope": "Blocking enforcement verdict reference"}]},
+      "ENF-05": {"accepted": false, "error_observations": [{"code": "ENF-AUTH-01", "exact_count": 1, "check_scope": "Contract-authorized enforcement sender"}]}
     },
     "conformance/extensions/RS_RESUME_0.1.json": {
       "RS-01": {"accepted": true, "error_observations": []},
@@ -63,7 +67,11 @@
     },
     "conformance/extensions/OR_OBJECT_RESYNC_0.1.json": {
       "OR-01": {"accepted": true, "error_observations": []},
-      "OR-02": {"accepted": true, "error_observations": []}
+      "OR-02": {"accepted": true, "error_observations": []},
+      "OR-03": {"accepted": true, "error_observations": []},
+      "OR-04": {"accepted": true, "error_observations": []},
+      "OR-05": {"accepted": true, "error_observations": []},
+      "OR-06": {"accepted": false, "error_observations": [{"code": "OR-OBJECT-HASH-01", "exact_count": 1, "check_scope": "OBJECT_RESYNC FOUND object integrity"}]}
     },
     "conformance/extensions/ID_IDENTITY_LC_0.1.json": {
       "IL-01": {"accepted": true, "error_observations": []},

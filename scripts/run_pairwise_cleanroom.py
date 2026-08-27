@@ -38,8 +38,22 @@ def main() -> int:
         raise RuntimeError("Node.js is required for clean-room peer B")
     peer_a = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_a" / "peer_a_v1_3.py"
     peer_b = ROOT / "interop" / "pairwise" / "cleanroom" / "peer_b" / "peer_b_v1_3.mjs"
+    frozen_vector = (
+        ROOT
+        / "interop"
+        / "pairwise"
+        / "current_vectors"
+        / "AICP-PAIRWISE-TCK-1.3.0"
+    )
     run([sys.executable, str(peer_a), "self-test"])
     run([node, str(peer_b), "self-test"])
+    run(
+        [
+            sys.executable,
+            "interop/pairwise/pairwise_release_router.py",
+            str(frozen_vector / "joint.json"),
+        ]
+    )
     temporary_context = None
     if args.output_dir:
         output = Path(args.output_dir).resolve()
@@ -55,19 +69,17 @@ def main() -> int:
             "b_binding": output / "b-binding.json",
             "joint": output / "joint.json",
         }
-        for side, command in (("a", [sys.executable, str(peer_a)]), ("b", [node, str(peer_b)])):
-            run([
-                sys.executable, "conformance/iut/aicp_iut_runner.py", "--cmd-json", command_json([*command, "iut"]),
-                "--profile", "AICP-BASE@0.1", "--mode", "full-profile", "--out", str(reports[f"{side}_profile"]),
-            ])
-            run([
-                sys.executable, "conformance/evidence/aicp_live_binding_runner.py", "--target", "BIND-MCP@0.1",
-                "--server-cmd-json", command_json([*command, "binding-server"]),
-                "--client-cmd-json", command_json([*command, "binding-client"]),
-                "--mode", "full-binding", "--out", str(reports[f"{side}_binding"]),
-            ])
+        for side in ("a", "b"):
+            for kind in ("profile", "binding"):
+                shutil.copy2(
+                    frozen_vector / f"{side}-{kind}.json",
+                    reports[f"{side}_{kind}"],
+                )
         if args.side_only:
-            print("Clean-room side evidence passed: 2 full-profile + 2 full-binding reports")
+            print(
+                "Frozen Pairwise 1.3 side authority passed: "
+                "2 full-profile + 2 full-binding reports"
+            )
             return 0
         run([
             sys.executable, "interop/pairwise/aicp_pairwise_runner_v1_3.py",

@@ -50,7 +50,7 @@ mature.
 | Reachable external capability marks | 1 | evidence target registry and TCK provenance |
 | Externally demonstrated capabilities | 0 | eligible capability-specific `eligible_targets` only |
 | External binding targets | 2 | `conformance/evidence/targets.json` |
-| Reachable external binding marks | 2 | evidence target registry and AICP-EVIDENCE-TCK-1.10.0 provenance |
+| Reachable external binding marks | 2 | evidence target registry and AICP-EVIDENCE-TCK-1.11.0 provenance |
 | Externally demonstrated bindings | 0 | eligible binding-specific `computed_binding_marks` only |
 | Real submission packages | 0 | `interop/interop_matrix.json` |
 | Eligible external submissions | 0 | public interop eligibility plus typed computed profile/capability/binding evidence |
@@ -61,10 +61,11 @@ mature.
 | Pairwise demonstrated relations | 0 | eligible orientation-independent `computed_pairwise_relations` only |
 | Live binding paths | 2: `BIND-HTTP@0.1`, `BIND-MCP@0.1` | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
+| Security threat coverage | 36 components: 24 covered, 12 deferred, 0 partial | `security_review/threat_coverage.json` |
 | Governance model / maturity | `maintainer_steward` / `known_gap` | `GOVERNANCE.md` |
 | Registered message surface | 132 entries; 11 IDs use version-selected payload schemas; 0 missing positive fixtures | `message_surface.entries` |
 | CAPNEG v0.2 | shipped / experimental / internally verified; external composition evidence=false | `conformance/extensions/CN_CAPNEG_0.2.json`, `capneg_v0_2` |
-| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.10.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
+| Session-state projection v1 | shipped / experimental / internally verified / externally testable; current TCK=AICP-EVIDENCE-TCK-1.11.0; evidence target=true; reachable mark=true | `conformance/evidence/targets.json`, `capability_evidence` |
 | Session-state projection v2 | shipped / experimental / internally verified; ordinary mark=false | `conformance/extensions/OR_SESSION_STATE_PROJECTION_V2.json`, `capability_evidence` |
 
 ### Milestone summary
@@ -80,7 +81,7 @@ mature.
 | M64 | shipped | Live Transport and Binding Interoperability | `ROADMAP.md` |
 | M65 | shipped | Registered Message Surface Completion | `ROADMAP.md` |
 | M66 | shipped | Clean-Room Pairwise Interop Harness | `ROADMAP.md` |
-| M67 | planned | Security Coverage Closure | `AICP_Backlog` |
+| M67 | shipped | Security Coverage Closure | `ROADMAP.md` |
 | M68 | planned | Governance and Standard Maturity | `AICP_Backlog` |
 | M69 | planned | Release Engineering and RC Repackaging | `AICP_Backlog` |
 | M70 | planned | External Plugfest Readiness | `AICP_Backlog` |
@@ -94,7 +95,7 @@ mature.
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |
 | Pairwise | publication=true, TCK=`AICP-PAIRWISE-TCK-1.3.0`, targets=1 registered/1 reachable | 0 externally demonstrated relations; clean-room repository peers do not count | None (M66 shipped) |
 | Bindings | 25 static cases; 2 external targets; 4 live role paths; 2 reachable marks | 0 externally demonstrated bindings; reference evidence is not external evidence | M70 |
-| Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
+| Security review | 36 threat components (24 covered/12 deferred/0 partial); internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support external-review completion | None (M67 shipped) |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
 | Message surface | 132 machine-mapped entries; 0 positive-fixture gaps | Aggregates are derived from entries | None (M65 shipped) |
 | Profile composition | CAPNEG v0.2 is a shipped experimental internal surface | Component evidence remains separate; generalized external composition evidence is unavailable | Deferred |
@@ -114,8 +115,8 @@ mature.
    composition evidence. That external target remains deferred.
 4. **External evidence breadth:** two of 16 registered profiles have full external-IUT
    targets, and three Tier-1 profiles have generalized report-2.2 targets. M62 added one
-   projection-v1 capability target; M65's corrected current generalized release is
-   `AICP-EVIDENCE-TCK-1.10.0`. Exact 1.1.0, 1.4.0, and 1.8.0 reports remain strong-eligible,
+   projection-v1 capability target; M67's current generalized release is
+   `AICP-EVIDENCE-TCK-1.11.0`. Exact 1.1.0, 1.4.0, 1.8.0, and 1.10.0 reports remain strong-eligible,
    while frozen 1.0.0, 1.2.0, 1.3.0, 1.5.0, 1.6.0, 1.7.0, and 1.9.0 cannot support a strong
    claim for their documented defects.
 5. **Transport evidence:** M64 ships repository-owned live loopback HTTP/SSE/WebSocket/WSS
@@ -127,8 +128,9 @@ mature.
 7. **Pairwise evidence:** M66 publishes one frozen Base/MCP joint-run format that binds
    exact builds, directions, side evidence, and cross-consumed artifacts. No genuine
    external relation is present; repository clean-room peers do not count as adoption.
-8. **Security:** the repository contains self-review and partial threat coverage, not an
-   independent external review. Routed to M67.
+8. **Security:** M67 records 36 canonical threat components: 24 covered, 12 deferred, and
+   0 partial. This is internally validated repository evidence, not an independent external
+   review; no completed external-review artifact is present.
 9. **Governance and release engineering:** current lightweight governance and RC tooling are
    functional but not standard-mature or repackaged for a new RC. Routed to M68/M69.
 10. **External adoption:** no real external submission is present. Plugfest readiness is
@@ -143,6 +145,10 @@ as Make’s shell; that environment limitation is not counted as repository evid
 
 - `make validate`
 - `make conformance-all`
+- `make conformance-security`
+- `make conformance-ops`
+- `make security-coverage-validate`
+- `make security-coverage-test`
 - `make conformance-profiles`
 - `make test`
 - `make conformance-iut-smoke`

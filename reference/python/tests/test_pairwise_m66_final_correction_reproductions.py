@@ -26,10 +26,11 @@ def _issued_report() -> dict[str, Any]:
     return _load(ISSUED_VECTOR / "joint.json")
 
 
-def _assert_issued_evaluator_still_accepts(report: dict[str, Any]) -> None:
+def _assert_issued_evaluator_rejects_mutable_source_drift(report: dict[str, Any]) -> None:
     result = evaluate_issued_1_2(report, base_dir=ISSUED_VECTOR)
-    assert result["status"] == "eligible", result
-    assert len(result["eligible_pairwise_relations"]) == 1
+    assert result["status"] == "rejected", result
+    assert result["errors"][0]["code"] == "PAIRWISE_RELEASE_ARTIFACT_DRIFT"
+    assert result["eligible_pairwise_relations"] == []
     assert result["eligible_marks"] == []
 
 
@@ -83,7 +84,7 @@ def test_issued_1_2_reproduces_raw_client_descriptor_summary_trust() -> None:
         "implementation_id"
     ] = "substituted-client-build"
 
-    _assert_issued_evaluator_still_accepts(report)
+    _assert_issued_evaluator_rejects_mutable_source_drift(report)
 
 
 def test_issued_1_2_reproduces_raw_server_descriptor_summary_trust() -> None:
@@ -93,7 +94,7 @@ def test_issued_1_2_reproduces_raw_server_descriptor_summary_trust() -> None:
         "implementation_id"
     ] = "substituted-server-build"
 
-    _assert_issued_evaluator_still_accepts(report)
+    _assert_issued_evaluator_rejects_mutable_source_drift(report)
 
 
 def _preseed_future_direction_value(report: dict[str, Any], *, value_kind: str) -> None:
@@ -117,14 +118,14 @@ def test_issued_1_2_reproduces_cross_direction_future_peer_hash_preseed() -> Non
     report = _issued_report()
     _preseed_future_direction_value(report, value_kind="peer_hash")
 
-    _assert_issued_evaluator_still_accepts(report)
+    _assert_issued_evaluator_rejects_mutable_source_drift(report)
 
 
 def test_issued_1_2_reproduces_cross_direction_future_challenge_preseed() -> None:
     report = _issued_report()
     _preseed_future_direction_value(report, value_kind="challenge")
 
-    _assert_issued_evaluator_still_accepts(report)
+    _assert_issued_evaluator_rejects_mutable_source_drift(report)
 
 
 def test_issued_1_2_reproduces_historical_transition_rejection(tmp_path: Path) -> None:

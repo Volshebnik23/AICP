@@ -294,6 +294,12 @@ def _freeze_errors() -> list[str]:
         **FROZEN_1_1_REPOSITORY_SHA256,
         **FROZEN_1_2_REPOSITORY_SHA256,
     }.items():
+        # Historical freeze manifests record the source checkout that produced the
+        # release, but later Evidence/IUT releases are allowed to advance those mutable
+        # source paths. Issued Pairwise bytes and copied authority roots remain under
+        # interop/pairwise and are the load-bearing historical freeze surface.
+        if not ref.startswith("interop/pairwise/"):
+            continue
         path = ROOT / ref
         actual = repository_sha256(path) if path.is_file() else "missing"
         if actual != expected_hash:
