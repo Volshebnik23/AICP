@@ -1,0 +1,32 @@
+{
+  "vector_format_version": "1.0",
+  "pairwise_tck_release": "AICP-PAIRWISE-TCK-1.3.0",
+  "classification": "repository-owned-current-clean-room-test-vector",
+  "files": [
+    {
+      "path": "a-binding.json",
+      "sha256": "9e877741c3ec67623fc9663e71f706a94b884e2d3e31dec99fd545f266b85ad4"
+    },
+    {
+      "path": "a-profile.json",
+      "sha256": "7724657747a4c48d9dd3777233e7a4d29855b45c43164a72fa7c3b3f3e706f6c"
+    },
+    {
+      "path": "b-binding.json",
+      "sha256": "9c2e03997a89fe4b5ab5c58f85752ca2e3ffc924c2d37ef672a4359e79fcb5fc"
+    },
+    {
+      "path": "b-profile.json",
+      "sha256": "23c039cba2b77fc1e57005bc8819397295ff85ff52298dec792251237f8fa845"
+    },
+    {
+      "path": "joint.json",
+      "sha256": "3fde87164979390363ade06e239d791541cdf9e5f2afdada598f5ce3cdaafbb0"
+    }
+  ],
+  "notes": [
+    "Generated with Pairwise TCK 1.3 from the repository-owned Python and Node clean-room peers.",
+    "Raw per-run roles, run-global causality, and exact continuation cursors are independently evaluated.",
+    "This vector is reproducible test evidence, not genuine external adoption."
+  ]
+}

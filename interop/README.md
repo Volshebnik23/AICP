@@ -88,7 +88,7 @@ For single-implementation claims, the builder copies supplied reports into
 `<out-root>/<submission-id>/reports/`, writes `submission.json`, and can produce
 `bundle-integrity.json`. For the old pairwise example, deterministic validation failure is
 intentional: two independent reports do not establish a shared bidirectional run. A real
-M66 package requires four eligible side reports plus one `AICP-PAIRWISE-TCK-1.2.0` joint
+M66 package requires four eligible side reports plus one `AICP-PAIRWISE-TCK-1.3.0` joint
 report and never receives a pairwise compatibility mark.
 
 The command above demonstrates package assembly with fictional instructional reports; it

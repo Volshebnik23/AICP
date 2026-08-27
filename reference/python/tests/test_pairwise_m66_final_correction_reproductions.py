@@ -62,6 +62,20 @@ def _dispatch_issued(isolated_root: Path, isolated_pairwise: Path) -> dict[str, 
     return json.loads(completed.stdout)
 
 
+def _evaluate_issued_isolated(isolated_root: Path, isolated_pairwise: Path) -> dict[str, Any]:
+    joint = isolated_pairwise / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0" / "joint.json"
+    completed = subprocess.run(
+        [sys.executable, str(isolated_pairwise / "pairwise_report_evaluator_v1_2.py"), str(joint)],
+        cwd=isolated_root,
+        text=True,
+        capture_output=True,
+        shell=False,
+        timeout=120,
+    )
+    assert completed.stdout, completed.stderr
+    return json.loads(completed.stdout)
+
+
 def test_issued_1_2_reproduces_raw_client_descriptor_summary_trust() -> None:
     report = _issued_report()
     participant_a = next(item for item in report["participants"] if item["side"] == "A")
@@ -123,6 +137,7 @@ def test_issued_1_2_reproduces_historical_transition_rejection(tmp_path: Path) -
         if item["release_id"] == "AICP-PAIRWISE-TCK-1.2.0"
     )
     policy_1_2["lifecycle"] = "historical"
+    policy_1_2["strong_eligible"] = True
     future_release = copy.deepcopy(registry["releases"][-1])
     future_release["release_id"] = "AICP-PAIRWISE-TCK-1.3.0-hypothetical"
     registry["releases"].append(future_release)
@@ -148,7 +163,7 @@ def test_issued_1_2_reproduces_false_mutable_source_dependency(tmp_path: Path) -
     unrelated = isolated_root / "conformance" / "evidence" / "live_bindings" / "live_http_capture.py"
     unrelated.write_text(unrelated.read_text(encoding="utf-8") + "\n# unrelated current mutation\n", encoding="utf-8")
 
-    result = _dispatch_issued(isolated_root, isolated_pairwise)
+    result = _evaluate_issued_isolated(isolated_root, isolated_pairwise)
     assert result["status"] == "rejected", result
     assert any(item["code"] == "PAIRWISE_RELEASE_ARTIFACT_DRIFT" for item in result["errors"])
     assert result["eligible_pairwise_relations"] == []

@@ -7,8 +7,13 @@ All notable repo-backed release metadata changes should be recorded here.
 ### Added
 - Canonical repository-truth baseline plus a machine-checked profile/evidence, binding,
   security, governance, release, and registered-message status companion.
-- Completed M58 Repo-Truth Rebaseline through M65 Registered Message Surface Completion;
-  M66–M70 remain planned.
+- Completed M58 Repo-Truth Rebaseline through M66 Clean-Room Pairwise Interop Harness;
+  M67–M70 remain planned.
+- Registered current `AICP-PAIRWISE-TCK-1.3.0` with authoritative raw per-run client/server
+  role evidence, run-global first-seen causality, exact MCP cursor progression, a generic
+  release router outside immutable evaluator bundles, and separate in-process/frozen-side
+  authority closures; issued Pairwise TCK 1.0–1.2 bytes remain frozen and
+  historical/strong-ineligible.
 - Registered experimental `AICP-IUT-TCK-1.1.0` while preserving the frozen
   `AICP-IUT-TCK-1.0.0` metadata.
 - Added separate experimental Core v0.2 schemas, exact-agreement conformance, 9 positive

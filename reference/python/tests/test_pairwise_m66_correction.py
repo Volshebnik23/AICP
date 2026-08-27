@@ -12,24 +12,27 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 PAIRWISE = ROOT / "interop" / "pairwise"
-CURRENT_VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0"
+CURRENT_VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.3.0"
 ISSUED_1_1_VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.1.0"
+ISSUED_1_2_VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0"
 HISTORICAL_1_0_VECTOR = PAIRWISE / "historical_vectors" / "AICP-PAIRWISE-TCK-1.0.0"
 for path in (PAIRWISE, ROOT / "scripts", ROOT / "reference" / "python"):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from aicp_pairwise_runner_v1_2 import verify_runner_bundle  # noqa: E402
+from aicp_pairwise_runner_v1_3 import verify_runner_bundle  # noqa: E402
 from aicp_ref.hashing import message_hash_from_body, object_hash  # noqa: E402
 from aicp_ref.jcs import canonicalize_json  # noqa: E402
 from generate_pairwise_tck import (  # noqa: E402
     FROZEN_1_0_REPOSITORY_SHA256,
     FROZEN_1_1_MANIFEST_SHA256,
     FROZEN_1_1_REPOSITORY_SHA256,
+    FROZEN_1_2_MANIFEST_SHA256,
+    FROZEN_1_2_REPOSITORY_SHA256,
     discover_import_closure,
     repository_sha256,
 )
-from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402
+from pairwise_release_router import evaluate_pairwise_report  # noqa: E402
 from pairwise_side_report_evaluator_v1_1 import (  # noqa: E402
     evaluate_side_report,
     frozen_hash,
@@ -49,7 +52,7 @@ def _copy_isolated_pairwise(tmp_path: Path) -> tuple[Path, Path]:
     isolated_root = tmp_path / "repo"
     isolated_pairwise = isolated_root / "interop" / "pairwise"
     shutil.copytree(PAIRWISE, isolated_pairwise, ignore=shutil.ignore_patterns("__pycache__"))
-    evaluator_bundle = _load(PAIRWISE / "pairwise_evaluator_bundle_v1_2.json")
+    evaluator_bundle = _load(PAIRWISE / "pairwise_evaluator_bundle_v1_3.json")
     for entry in evaluator_bundle["entries"]:
         relative = Path(entry["path"])
         if relative.parts[:2] == ("interop", "pairwise"):
@@ -61,8 +64,8 @@ def _copy_isolated_pairwise(tmp_path: Path) -> tuple[Path, Path]:
 
 
 def _dispatch_isolated(isolated_root: Path, isolated_pairwise: Path) -> dict[str, Any]:
-    joint = isolated_pairwise / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0" / "joint.json"
-    result = _run([sys.executable, str(isolated_pairwise / "pairwise_report_dispatcher.py"), str(joint)], cwd=isolated_root)
+    joint = isolated_pairwise / "current_vectors" / "AICP-PAIRWISE-TCK-1.3.0" / "joint.json"
+    result = _run([sys.executable, str(isolated_pairwise / "pairwise_release_router.py"), str(joint)], cwd=isolated_root)
     assert result.stdout, result.stderr
     return json.loads(result.stdout)
 
@@ -72,15 +75,23 @@ def _dispatch_isolated(isolated_root: Path, isolated_pairwise: Path) -> dict[str
     (
         (HISTORICAL_1_0_VECTOR, "AICP-PAIRWISE-TCK-1.0.0"),
         (ISSUED_1_1_VECTOR, "AICP-PAIRWISE-TCK-1.1.0"),
+        (ISSUED_1_2_VECTOR, "AICP-PAIRWISE-TCK-1.2.0"),
     ),
 )
 def test_old_pairwise_releases_are_byte_frozen_and_historical(vector: Path, release_id: str) -> None:
-    frozen = FROZEN_1_0_REPOSITORY_SHA256 if release_id.endswith("1.0.0") else FROZEN_1_1_REPOSITORY_SHA256
+    frozen = {
+        "AICP-PAIRWISE-TCK-1.0.0": FROZEN_1_0_REPOSITORY_SHA256,
+        "AICP-PAIRWISE-TCK-1.1.0": FROZEN_1_1_REPOSITORY_SHA256,
+        "AICP-PAIRWISE-TCK-1.2.0": FROZEN_1_2_REPOSITORY_SHA256,
+    }[release_id]
     for relative, expected in frozen.items():
         assert repository_sha256(ROOT / relative) == expected
     if release_id.endswith("1.1.0"):
         freeze = PAIRWISE / "release_freezes" / "AICP-PAIRWISE-TCK-1.1.0.json"
         assert repository_sha256(freeze) == FROZEN_1_1_MANIFEST_SHA256
+    if release_id.endswith("1.2.0"):
+        freeze = PAIRWISE / "release_freezes" / "AICP-PAIRWISE-TCK-1.2.0.json"
+        assert repository_sha256(freeze) == FROZEN_1_2_MANIFEST_SHA256
     result = evaluate_pairwise_report(_load(vector / "joint.json"), base_dir=vector)
     assert result["status"] == "ineligible"
     assert result["errors"][0]["code"] == "PAIRWISE_RELEASE_HISTORICAL_INELIGIBLE"
@@ -88,7 +99,7 @@ def test_old_pairwise_releases_are_byte_frozen_and_historical(vector: Path, rele
     assert result["eligible_marks"] == []
 
 
-def test_pairwise_1_2_vector_and_frozen_side_authorities_are_eligible() -> None:
+def test_pairwise_1_3_vector_and_frozen_side_authorities_are_eligible() -> None:
     report = _load(CURRENT_VECTOR / "joint.json")
     result = evaluate_pairwise_report(report, base_dir=CURRENT_VECTOR)
     assert result["status"] == "eligible"
@@ -122,6 +133,7 @@ def test_exact_role_paths_core_and_client_first_seen_are_load_bearing() -> None:
     for run in report["runs"]:
         semantic_digests.append(run["semantic_digest"])
         instances = {item["side"]: item for item in run["role_instances"]}
+        visible = {"A": [], "B": []}
         for direction in run["directions"]:
             producer = direction["producer_side"]
             consumer = direction["consumer_side"]
@@ -146,8 +158,17 @@ def test_exact_role_paths_core_and_client_first_seen_are_load_bearing() -> None:
                 assert exchange["response_json"] == exchange["delivered_response_json"]
             proposal, acceptance, attestation = direction["messages"]
             assert proposal["message"]["payload"]["contract"]["goal"] == direction["challenge"]
-            assert proposal["client_visible_hashes_before"] == []
-            assert proposal["message"]["message_hash"] in proposal["client_visible_hashes_after"]
+            for evidence, consuming_side in (
+                (proposal, consumer),
+                (acceptance, producer),
+                (attestation, consumer),
+            ):
+                assert evidence["client_visible_hashes_before"] == visible[consuming_side]
+                visible[consuming_side] = [
+                    *visible[consuming_side],
+                    evidence["message"]["message_hash"],
+                ]
+                assert evidence["client_visible_hashes_after"] == visible[consuming_side]
             assert acceptance["message"]["prev_msg_hash"] == proposal["message"]["message_hash"]
             assert attestation["message"]["prev_msg_hash"] == acceptance["message"]["message_hash"]
             assert attestation["consume_exchange_sequence"] == 6
@@ -164,7 +185,7 @@ def test_exact_role_paths_core_and_client_first_seen_are_load_bearing() -> None:
         "future_top_level_registry_schema",
     ),
 )
-def test_future_current_registry_changes_do_not_invalidate_1_2(mutation: str, tmp_path: Path) -> None:
+def test_future_current_registry_changes_do_not_invalidate_1_3(mutation: str, tmp_path: Path) -> None:
     isolated_root, isolated_pairwise = _copy_isolated_pairwise(tmp_path)
     if mutation == "future_pairwise_target":
         path = isolated_pairwise / "targets.json"
@@ -175,7 +196,7 @@ def test_future_current_registry_changes_do_not_invalidate_1_2(mutation: str, tm
         value = _load(path)
         value["future_scenarios"] = [{"scenario_id": "PAIRWISE-FUTURE-UNRELATED-99"}]
     elif mutation == "future_top_level_registry_schema":
-        path = isolated_pairwise / "tck_releases_v3.schema.json"
+        path = isolated_pairwise / "tck_releases_v4.schema.json"
         value = _load(path)
         value["title"] = "future mutable top-level schema"
     else:
@@ -186,7 +207,7 @@ def test_future_current_registry_changes_do_not_invalidate_1_2(mutation: str, tm
             future["release_id"] = "AICP-PAIRWISE-TCK-9.9.9"
             value["releases"].append(future)
             value["release_policies"].append(
-                {"release_id": future["release_id"], "lifecycle": "planned", "strong_eligible": False, "reason": "hypothetical"}
+                {"release_id": future["release_id"], "lifecycle": "historical", "strong_eligible": False, "reason": "hypothetical"}
             )
         else:
             value["releases"] = list(reversed(value["releases"][:-1])) + [value["releases"][-1]]
@@ -199,16 +220,16 @@ def test_future_current_registry_changes_do_not_invalidate_1_2(mutation: str, tm
 @pytest.mark.parametrize(
     "relative",
     (
-        "pairwise_joint_report_v1_2.schema.json",
-        "pairwise_report_evaluator_v1_2.py",
-        "pairwise_semantic_normalizer_v1_2.py",
-        "release_artifacts/AICP-PAIRWISE-TCK-1.2.0/targets.json",
-        "release_artifacts/AICP-PAIRWISE-TCK-1.2.0/scenarios.json",
-        "release_artifacts/AICP-PAIRWISE-TCK-1.2.0/tck_releases_v3.schema.json",
+        "pairwise_joint_report_v1_3.schema.json",
+        "pairwise_report_evaluator_v1_3.py",
+        "pairwise_semantic_normalizer_v1_3.py",
+        "release_artifacts/AICP-PAIRWISE-TCK-1.3.0/targets.json",
+        "release_artifacts/AICP-PAIRWISE-TCK-1.3.0/scenarios.json",
+        "release_artifacts/AICP-PAIRWISE-TCK-1.3.0/tck_releases_v4.schema.json",
         "release_artifacts/AICP-PAIRWISE-TCK-1.1.0/authority_root/pairwise_side_authorities.json",
     ),
 )
-def test_immutable_1_2_artifact_or_reused_authority_mutation_fails_closed(relative: str, tmp_path: Path) -> None:
+def test_immutable_1_3_artifact_or_reused_authority_mutation_fails_closed(relative: str, tmp_path: Path) -> None:
     isolated_root, isolated_pairwise = _copy_isolated_pairwise(tmp_path)
     path = isolated_pairwise / relative
     if path.suffix == ".py":
@@ -240,10 +261,10 @@ def test_normative_jcs_and_hash_parity() -> None:
 
 def test_runner_bundle_matches_runtime_import_closure() -> None:
     verify_runner_bundle()
-    manifest = _load(PAIRWISE / "pairwise_runner_bundle_v1_2.json")
+    manifest = _load(PAIRWISE / "pairwise_runner_bundle_v1_3.json")
     discovered = {
         path.relative_to(ROOT).as_posix()
-        for path in discover_import_closure([PAIRWISE / "aicp_pairwise_runner_v1_2.py"])
+        for path in discover_import_closure([PAIRWISE / "aicp_pairwise_runner_v1_3.py"])
     }
     assert {item["path"] for item in manifest["entries"]} == discovered
 

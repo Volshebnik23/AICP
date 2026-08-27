@@ -13,7 +13,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 PAIRWISE = ROOT / "interop" / "pairwise"
-VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0"
+VECTOR = PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.3.0"
 for import_path in (PAIRWISE, ROOT / "scripts"):
     if str(import_path) not in sys.path:
         sys.path.insert(0, str(import_path))
@@ -28,7 +28,7 @@ from pairwise_process_v1_2 import (  # noqa: E402
     ProcessBoundaryError,
     allowlisted_environment,
 )
-from pairwise_report_dispatcher import evaluate_pairwise_report  # noqa: E402
+from pairwise_release_router import evaluate_pairwise_report  # noqa: E402
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -187,6 +187,7 @@ def test_public_pairwise_evaluator_and_reciprocal_identity(pairwise_artifacts: d
     (
         PAIRWISE / "historical_vectors" / "AICP-PAIRWISE-TCK-1.0.0",
         PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.1.0",
+        PAIRWISE / "current_vectors" / "AICP-PAIRWISE-TCK-1.2.0",
     ),
 )
 def test_public_old_pairwise_reports_are_historical_strong_ineligible(vector: Path) -> None:
@@ -238,7 +239,10 @@ def test_missing_joint_report_keeps_deterministic_fail_closed_error(pairwise_art
 
 
 def test_cleanroom_sources_do_not_import_repository_semantic_or_answer_code() -> None:
-    sources = [PAIRWISE / "cleanroom" / "peer_a" / "peer_a.py", PAIRWISE / "cleanroom" / "peer_b" / "peer_b.mjs"]
+    sources = [
+        PAIRWISE / "cleanroom" / "peer_a" / "peer_a_v1_3.py",
+        PAIRWISE / "cleanroom" / "peer_b" / "peer_b_v1_3.mjs",
+    ]
     forbidden = ("aicp_ref", "reference/python", "conformance/", "fixtures/", "expected_result")
     for source in sources:
         lowered = source.read_text(encoding="utf-8").lower()

@@ -3,9 +3,10 @@
 - **Status:** Accepted
 - **Milestone:** M66
 - **First target:** `AICP-BASE@0.1+BIND-MCP@0.1`
-- **Current evidence release:** `AICP-PAIRWISE-TCK-1.2.0`
-- **Historical evidence releases:** `AICP-PAIRWISE-TCK-1.0.0` and
-  `AICP-PAIRWISE-TCK-1.1.0` (strong-ineligible)
+- **Current evidence release:** `AICP-PAIRWISE-TCK-1.3.0`
+- **Historical evidence releases:** `AICP-PAIRWISE-TCK-1.0.0`,
+  `AICP-PAIRWISE-TCK-1.1.0`, and `AICP-PAIRWISE-TCK-1.2.0`
+  (strong-ineligible)
 
 ## Decision
 
@@ -21,29 +22,38 @@ run preserves directional `A_TO_B` and `B_TO_A` evidence over real MCP
 JSON-RPC stdio child-process I/O. Each exact participant build supplies two
 load-bearing processes: a client that authors requests and consumes responses, and a
 server that produces responses. Client describe output and an atomic server-ready
-descriptor must both equal the participant and the two side-report subjects.
+descriptor must both equal the participant and the two side-report subjects. TCK 1.3
+derives that identity independently from every raw per-run client describe response and
+server-ready descriptor; retained summaries must equal the raw evidence exactly.
 
 The causal proof is a three-message Core chain: proposal, acceptance, and
 attestation. The acceptance is constructed only after the responder receives
 the proposal hash; the attestation is constructed only after the originator
 receives the acceptance hash. First-seen visibility sets, exact poll results,
 message hashes, sessions, contracts, and JSON-RPC correlations are retained in
-the report and independently recomputed by the evaluator. TCK 1.2 independently
+the report and independently recomputed by the evaluator. TCK 1.3 independently
 validates each exchanged transcript as exact Core v0.1, uses the normative frozen
 AICP-JCS/hash implementation, binds each participant-authored MCP request and
 server-produced response to opaque process-instance IDs, and requires the proposal
 contract goal to equal the unpredictable runtime challenge. The consumer does not receive
 that challenge or the peer hash through test control; it first learns them in its own poll
-response. A final consumer poll must retrieve the attestation. Two runs use fresh raw
+response. Client-control and relay events use exact contiguous run-global sequences, so an
+artifact or challenge disclosed during A_TO_B is part of first-seen analysis during B_TO_A.
+Every poll uses the exact direction session, `limit=1`, and the continuation returned by
+the same client/server flow; the final consumer poll cannot reuse `c0`. A final consumer
+poll must retrieve the attestation. Two runs use fresh raw
 IDs/challenges/process IDs but must normalize to the same role-routing semantics.
 
-Ordinary conformance remains mandatory. The TCK 1.2 joint evaluator executes
+Ordinary conformance remains mandatory. The TCK 1.3 joint evaluator executes
 release-frozen Base and binding report-level authorities resolved mechanically from the
 four side reports; it does not call mutable current public-submission or generalized
 evidence validators, construct a public submission recursively, or trust `passed` or
 reported marks. Its complete local executable import closure and runtime runner closure are
-generated and digest-bound. The 1.2 release-local registry schema and snapshot keep its
-evaluation independent of unrelated future top-level registry changes.
+generated and digest-bound. The mutable registry router is outside the release evaluator
+bundle and resolves the exact digest-bound evaluator through the registry for both current
+and historical strong-eligible policies. The in-process evaluator closure is separated from
+the frozen side-authority subprocess closure, so unrelated mutable current sources do not
+change the release semantics.
 
 The repository harness is a transparent bounded relay and independent evaluator, not
 either peer. It records and forwards exact participant-produced request JSON to the selected
@@ -61,7 +71,11 @@ traffic was not independently validated, and its runtime challenge was not load-
 Issued TCK 1.1 files and vector are also byte-frozen and historical/strong-ineligible because
 the repository harness constructed its joint MCP requests and its server processes were not
 bound to participant builds. TCK 1.2 reuses the unchanged frozen 1.1 IUT/Core/Evidence
-authority bytes by exact digest rather than duplicating their tree. Published relation
+authority bytes by exact digest rather than duplicating their tree. Issued TCK 1.2 files
+and vector are byte-frozen and historical/strong-ineligible because raw per-run roles were
+not independently load-bearing, first-seen causality was direction-local, and evaluator
+eligibility depended on mutable dispatcher/current-source provenance. TCK 1.3 corrects
+those evidence properties without changing AICP wire semantics. Published relation
 identity sorts the two exact build tuples; directional process routing inside the joint
 report is never normalized away.
 

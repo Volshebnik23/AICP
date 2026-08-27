@@ -179,7 +179,7 @@ pairwise-base-mcp-external-test:
 	$(PYTHON) scripts/run_pairwise_cleanroom.py
 
 pairwise-negative:
-	$(PYTHON) -m pytest reference/python/tests/test_pairwise_m66.py reference/python/tests/test_pairwise_m66_correction_reproductions.py reference/python/tests/test_pairwise_m66_role_binding_reproductions.py reference/python/tests/test_pairwise_m66_correction.py reference/python/tests/test_pairwise_m66_role_binding.py -q
+	$(PYTHON) -m pytest reference/python/tests/test_pairwise_m66.py reference/python/tests/test_pairwise_m66_correction_reproductions.py reference/python/tests/test_pairwise_m66_role_binding_reproductions.py reference/python/tests/test_pairwise_m66_final_correction_reproductions.py reference/python/tests/test_pairwise_m66_correction.py reference/python/tests/test_pairwise_m66_final_correction.py reference/python/tests/test_pairwise_m66_role_binding.py -q
 
 pairwise-submission-examples:
 	$(PYTHON) scripts/validate_interop_submission_examples.py

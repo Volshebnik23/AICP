@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicp.dev/interop/pairwise/pairwise_scenario_v1_3.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenario_version", "scenario_id", "target_id", "message_flow", "transport_roles", "mcp_flow", "freshness", "challenge_binding", "role_evidence", "run_global_chronology", "cursor_progression", "final_consumption_required"],
+  "properties": {
+    "scenario_version": { "const": "1.3" },
+    "scenario_id": { "const": "PAIRWISE-MCP-RAW-ROLE-GLOBAL-CAUSALITY-03" },
+    "target_id": { "const": "AICP-BASE@0.1+BIND-MCP@0.1" },
+    "message_flow": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "CONTRACT_PROPOSE" },
+        { "const": "CONTRACT_ACCEPT" },
+        { "const": "ATTEST_ACTION" }
+      ],
+      "items": false
+    },
+    "transport_roles": {
+      "type": "array",
+      "prefixItems": [{ "const": "client" }, { "const": "server" }],
+      "items": false
+    },
+    "mcp_flow": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "producer_client_send_to_consumer_server" },
+        { "const": "consumer_client_poll_consumer_server" },
+        { "const": "consumer_client_send_to_producer_server" },
+        { "const": "producer_client_poll_producer_server" },
+        { "const": "producer_client_send_to_consumer_server" },
+        { "const": "consumer_client_final_poll_consumer_server" }
+      ],
+      "items": false
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_count", "fresh_fields", "semantic_equivalence_required"],
+      "properties": {
+        "run_count": { "const": 2 },
+        "fresh_fields": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "run_id" },
+            { "const": "challenge" },
+            { "const": "session_id" },
+            { "const": "contract_id" },
+            { "const": "message_id" },
+            { "const": "jsonrpc_id" },
+            { "const": "process_instance_id" },
+            { "const": "cursor" }
+          ],
+          "items": false
+        },
+        "semantic_equivalence_required": { "const": true }
+      }
+    },
+    "challenge_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposal_contract_goal", "consumer_discovery", "acceptance_peer_message", "attestation_peer_message"],
+      "properties": {
+        "proposal_contract_goal": { "const": "direction.challenge" },
+        "consumer_discovery": { "const": "participant_client_poll_response_only" },
+        "acceptance_peer_message": { "const": "client_consumed_proposal" },
+        "attestation_peer_message": { "const": "client_consumed_acceptance" }
+      }
+    },
+    "role_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client", "server", "summary"],
+      "properties": {
+        "client": { "const": "raw_describe_exchange_per_run" },
+        "server": { "const": "raw_ready_descriptor_per_run" },
+        "summary": { "const": "exactly_derived_from_raw_runs" }
+      }
+    },
+    "run_global_chronology": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_events", "relay_exchanges", "first_seen_scope"],
+      "properties": {
+        "client_events": { "const": "exact_contiguous_global_event_sequence" },
+        "relay_exchanges": { "const": "exact_contiguous_global_exchange_sequence" },
+        "first_seen_scope": { "const": "complete_client_process_lifetime_per_run" }
+      }
+    },
+    "cursor_progression": {
+      "type": "object", "additionalProperties": false,
+      "required": ["initial_cursor", "poll_limit", "final_consumer_poll"],
+      "properties": {
+        "initial_cursor": { "const": "c0" },
+        "poll_limit": { "const": 1 },
+        "final_consumer_poll": { "const": "prior_exact_continuation_cursor" }
+      }
+    },
+    "final_consumption_required": { "const": true }
+  }
+}
