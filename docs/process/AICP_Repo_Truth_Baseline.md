@@ -57,7 +57,7 @@ mature.
 | Rejected/ineligible real packages | 0 | `interop/interop_matrix.json` |
 | Externally demonstrated profiles | 0: None | eligible profile-specific `computed_profile_marks` only |
 | Pairwise publication / demonstration | Yes / No | joint-evidence validator status |
-| Pairwise TCK / target reachability | `AICP-PAIRWISE-TCK-1.1.0`; 1 registered / 1 reachable | `interop/pairwise/tck_releases.json`, `interop/pairwise/targets.json` |
+| Pairwise TCK / target reachability | current `AICP-PAIRWISE-TCK-1.2.0`; historical/ineligible `AICP-PAIRWISE-TCK-1.0.0`, `AICP-PAIRWISE-TCK-1.1.0`; 1 registered / 1 reachable | `interop/pairwise/tck_releases.json`, `interop/pairwise/targets.json` |
 | Pairwise demonstrated relations | 0 | eligible orientation-independent `computed_pairwise_relations` only |
 | Live binding paths | 2: `BIND-HTTP@0.1`, `BIND-MCP@0.1` | binding evidence map |
 | Independent external security review | No | `security_review/external_reviews/README.md` |
@@ -92,7 +92,7 @@ mature.
 | Profiles | 16 shipped catalogs; 5 external targets (2 `profile_iut_v1`, 3 `generalized_evidence_v2_1`) | 0 externally demonstrated profiles | M70 |
 | Capability evidence | 1 external targets; 1 reachable marks | 0 externally demonstrated capabilities | M70 |
 | External submissions | 0 real packages; 0 eligible | Only valid `artifact_kind=submission` rows with `evidence_validation_status=eligible` and typed expected marks/targets count | M70 |
-| Pairwise | publication=true, TCK=`AICP-PAIRWISE-TCK-1.1.0`, targets=1 registered/1 reachable | 0 externally demonstrated relations; clean-room repository peers do not count | None (M66 shipped) |
+| Pairwise | publication=true, TCK=`AICP-PAIRWISE-TCK-1.2.0`, targets=1 registered/1 reachable | 0 externally demonstrated relations; clean-room repository peers do not count | None (M66 shipped) |
 | Bindings | 25 static cases; 2 external targets; 4 live role paths; 2 reachable marks | 0 externally demonstrated bindings; reference evidence is not external evidence | M70 |
 | Security review | internal self-review=true, external completed=false | Only contracted artifacts under `security_review/external_reviews/completed/` may support completion | M67 |
 | Governance | `maintainer_steward` | No external standards body is recorded | M68 |
