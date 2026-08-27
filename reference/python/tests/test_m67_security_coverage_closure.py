@@ -128,6 +128,161 @@ def test_existing_but_unreferenced_fixture_cannot_fake_suite_evidence() -> None:
     assert any("not referenced" in error for error in _validate(manifest))
 
 
+def test_validator_real_check_unrelated_case() -> None:
+    manifest = _canonical_manifest()
+    threat = next(item for item in manifest["threats"] if item["threat_id"] == "SEC-008")
+    threat["executable_evidence"] = [
+        {
+            "kind": "suite",
+            "suite": "conformance/extensions/AL_ALERTS_0.1.json",
+            "check_ids": ["AL-ALERT-ACTIONS-01"],
+            "fixtures": ["fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl"],
+            "case_ids": ["AL-02"],
+        }
+    ]
+    assert any("expected failure" in error for error in _validate(manifest))
+
+
+def test_validator_positive_case_cannot_prove_rejection() -> None:
+    manifest = _canonical_manifest()
+    threat = next(item for item in manifest["threats"] if item["threat_id"] == "SEC-008")
+    threat["executable_evidence"] = [
+        {
+            "kind": "suite",
+            "suite": "conformance/extensions/AL_ALERTS_0.1.json",
+            "check_ids": ["AL-ALERT-ACTIONS-01"],
+            "fixtures": ["fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl"],
+            "case_ids": ["AL-01"],
+        }
+    ]
+    assert any("positive" in error for error in _validate(manifest))
+
+
+def test_validator_extra_check_on_negative() -> None:
+    manifest = _canonical_manifest()
+    threat = next(item for item in manifest["threats"] if item["threat_id"] == "SEC-008")
+    threat["executable_evidence"] = [
+        {
+            "kind": "suite",
+            "suite": "conformance/extensions/AL_ALERTS_0.1.json",
+            "check_ids": ["AL-ALERT-CODES-01", "AL-ALERT-ACTIONS-01"],
+            "fixtures": ["fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl"],
+            "case_ids": ["AL-02"],
+        }
+    ]
+    assert any("expected failure" in error for error in _validate(manifest))
+
+
+def test_validator_wrong_fixture_for_case() -> None:
+    manifest = _canonical_manifest()
+    threat = next(item for item in manifest["threats"] if item["threat_id"] == "SEC-008")
+    threat["executable_evidence"] = [
+        {
+            "kind": "suite",
+            "suite": "conformance/extensions/AL_ALERTS_0.1.json",
+            "check_ids": ["AL-ALERT-CODES-01"],
+            "fixtures": ["fixtures/extensions/alerts/AL-01_warning_resync_required.jsonl"],
+            "case_ids": ["AL-02"],
+        }
+    ]
+    assert any("not referenced by claimed suite cases" in error for error in _validate(manifest))
+
+
+def _isolated_direct_test_manifest(
+    tmp_path: Path, *, source: str, test_id: str
+) -> tuple[Path, dict[str, Any]]:
+    root = tmp_path / "coverage-root"
+    (root / "security_review").mkdir(parents=True)
+    (root / "docs/process").mkdir(parents=True)
+    (root / "tests").mkdir(parents=True)
+    (root / "security_review/threat_coverage.schema.json").write_text(
+        SCHEMA_PATH.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    (root / "docs/process/repo_truth_status.json").write_text(
+        json.dumps(
+            {
+                "security_review": {
+                    "external_independent_review_completed": False,
+                    "external_review_artifacts": [],
+                },
+                "interop_evidence": {"pairwise_demonstrated_relations": 0},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "normative.md").write_text("# Normative test boundary\n", encoding="utf-8")
+    (root / "tests/test_claim.py").write_text(source, encoding="utf-8")
+    manifest = {
+        "schema_version": _canonical_manifest()["schema_version"],
+        "review_scope": "isolated direct-test validation",
+        "generated_map": "security_review/COVERAGE_MAP.md",
+        "repository_truth": {
+            "external_independent_review_completed": False,
+            "external_review_artifacts": [],
+            "pairwise_demonstrated_relations": 0,
+        },
+        "threats": [
+            {
+                "threat_id": "SEC-999",
+                "title": "Isolated validator regression",
+                "description": "Proves structural direct-test identity validation.",
+                "scope_class": "protocol_observable",
+                "status": "covered",
+                "normative_refs": ["normative.md"],
+                "executable_evidence": [
+                    {
+                        "kind": "direct_test",
+                        "test_file": "tests/test_claim.py",
+                        "test_ids": [test_id],
+                    }
+                ],
+                "residual_boundary": "AST identity does not prove arbitrary semantic intent.",
+                "remediation_ref": None,
+            }
+        ],
+    }
+    return root, manifest
+
+
+def test_validator_comment_only_test_name(tmp_path: Path) -> None:
+    root, manifest = _isolated_direct_test_manifest(
+        tmp_path,
+        source="# def test_security_claim_is_proven(): pass\n",
+        test_id="test_security_claim_is_proven",
+    )
+    errors = _validator_module().validate_manifest(manifest, root=root, m67_final=True)
+    assert any("actual pytest test" in error for error in errors)
+
+
+def test_validator_string_only_test_name(tmp_path: Path) -> None:
+    root, manifest = _isolated_direct_test_manifest(
+        tmp_path,
+        source='FAKE = "test_security_claim_is_proven"\n',
+        test_id="test_security_claim_is_proven",
+    )
+    errors = _validator_module().validate_manifest(manifest, root=root, m67_final=True)
+    assert any("actual pytest test" in error for error in errors)
+
+
+def test_validator_helper_not_test(tmp_path: Path) -> None:
+    root, manifest = _isolated_direct_test_manifest(
+        tmp_path,
+        source="def helper_security_claim():\n    return True\n",
+        test_id="helper_security_claim",
+    )
+    errors = _validator_module().validate_manifest(manifest, root=root, m67_final=True)
+    assert any("actual pytest test" in error for error in errors)
+
+
+def test_validator_real_pytest_function(tmp_path: Path) -> None:
+    root, manifest = _isolated_direct_test_manifest(
+        tmp_path,
+        source="def test_security_claim_is_proven():\n    assert True\n",
+        test_id="test_security_claim_is_proven",
+    )
+    assert not _validator_module().validate_manifest(manifest, root=root, m67_final=True)
+
+
 def test_documentation_only_protocol_observable_coverage_is_rejected() -> None:
     manifest = _canonical_manifest()
     covered = next(item for item in manifest["threats"] if item["status"] == "covered")
