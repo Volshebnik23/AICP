@@ -144,7 +144,10 @@ def test_historical_1_0_reproduces_actual_traffic_bypasses(
         base_dir=joint_path.parent,
         profile_validator=lambda *args, **kwargs: [],
     )
-    assert result["status"] == "eligible", (behavior, result["errors"])
+    assert result["status"] == "rejected", (behavior, result["errors"])
+    assert {
+        item["code"] for item in result["errors"]
+    } == {"PAIRWISE_TCK_UNDERLYING_AUTHORITY_DRIFT"}
     proposal = joint["runs"][0]["directions"][0]["messages"][0]["message"]
     if behavior == "missing_contract_goal":
         assert "goal" not in proposal["payload"]["contract"]

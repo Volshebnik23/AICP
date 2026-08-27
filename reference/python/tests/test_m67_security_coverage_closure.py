@@ -191,6 +191,10 @@ def test_signed_truncation_retains_exact_valid_prefix() -> None:
     ).splitlines()
     assert truncated == source[: len(truncated)]
     assert len(truncated) == 5
+    suite = _load(ROOT / "conformance/security/SIG_SIGNED_PATHS_0.1.json")
+    case = next(item for item in suite["transcripts"] if item["id"] == "SP-03")
+    assert case["expect_pass"] is False
+    assert case["expected_failures"] == [{"test_id": "CT-SEQUENCE-01", "min_count": 1}]
 
 
 def test_object_resync_security_status_mechanisms_are_positive() -> None:
@@ -310,3 +314,18 @@ def test_product_iut_and_pairwise_release_lines_are_byte_frozen() -> None:
     assert _directory_digest("interop/pairwise") == (
         "98601e50e9478adab46260a9af481ad503f27b04dac7368ef4bc003767a0675b"
     )
+
+
+def test_pairwise_validation_uses_immutable_release_local_authorities() -> None:
+    for command in (
+        [sys.executable, "scripts/validate_pairwise_targets.py"],
+        [sys.executable, "scripts/generate_pairwise_tck.py", "--check"],
+    ):
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            shell=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr

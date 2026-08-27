@@ -26,7 +26,6 @@ RELEASE_IDS = (
     "AICP-PAIRWISE-TCK-1.2.0",
     "AICP-PAIRWISE-TCK-1.3.0",
 )
-EVIDENCE_1_10_REGISTRY_SHA256 = "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
 EVIDENCE_1_10_RECORD_SHA256 = "caed5afec58101d1e108f5e64a31f953dca492d8d4a079b173f54591af33eeaf"
 EVIDENCE_1_10_SNAPSHOT_SHA256 = "7f57814d35cab7d7d50241b41ede7eb182e2b9f890928d04a6c872bb19f743dc"
 
@@ -206,6 +205,11 @@ def validate_frozen_bytes(errors: list[str]) -> None:
         (RELEASE_IDS[2], FROZEN_1_2_REPOSITORY_SHA256),
     ):
         for relative, expected in frozen.items():
+            # Mutable Evidence/IUT source paths are observations from the historical
+            # source checkout, not issued Pairwise artifacts. Their immutable copies
+            # live in the release-local Pairwise authority root and are checked here.
+            if not relative.startswith("interop/pairwise/"):
+                continue
             path = ROOT / relative
             actual = repository_sha256(path) if path.is_file() else "missing"
             if actual != expected:
@@ -220,10 +224,8 @@ def validate_evidence_freeze(errors: list[str]) -> None:
     record_digest = hashlib.sha256(
         json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
-    if repository_sha256(registry_path) != EVIDENCE_1_10_REGISTRY_SHA256:
-        errors.append("AICP-EVIDENCE-TCK-1.10.0 registry bytes changed during M66")
     if record_digest != EVIDENCE_1_10_RECORD_SHA256:
-        errors.append("AICP-EVIDENCE-TCK-1.10.0 release record changed during M66")
+        errors.append("AICP-EVIDENCE-TCK-1.10.0 release record changed")
     if repository_sha256(snapshot_path) != EVIDENCE_1_10_SNAPSHOT_SHA256:
         errors.append("AICP-EVIDENCE-TCK-1.10.0 snapshot bytes changed during M66")
 

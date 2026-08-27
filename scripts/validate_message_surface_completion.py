@@ -77,7 +77,15 @@ def completion_errors(root: Path = ROOT) -> list[str]:
             ):
                 continue
             actual = _fixture_message_sequence(root / fixture_ref)
-            if actual != expected:
+            expected_sequence_failure = (
+                case.get("expect_pass") is False
+                and any(
+                    isinstance(failure, dict)
+                    and failure.get("test_id") == "CT-SEQUENCE-01"
+                    for failure in case.get("expected_failures", [])
+                )
+            )
+            if actual != expected and not expected_sequence_failure:
                 suite_ref = suite_path.relative_to(root).as_posix()
                 errors.append(
                     f"{suite_ref}::{case.get('id', '<unknown>')}: "
