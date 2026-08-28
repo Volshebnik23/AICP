@@ -1,7 +1,7 @@
 {
   "artifact_sets": {
     "conformance": {
-      "combined_sha256": "f0213ff209672f993fdde03090515f952894f0f884212b8261bac4816920f3e4",
+      "combined_sha256": "0a403d781d014f615b1af20f10006ed3451277733fd6c75acb5da4dca813933f",
       "files": [
         {
           "path": "conformance/bindings/TB_HTTP_WS_0.1.json",
@@ -106,6 +106,18 @@
         {
           "path": "conformance/evidence/historical_reports/AICP-EVIDENCE-TCK-1.8.0-session-state-projection.json",
           "sha256": "8569bd2f403740a785ee6963f8aa8d6e507f5a11c0b8044c62cdf8021344b6d1"
+        },
+        {
+          "path": "conformance/evidence/historical_vectors/AICP-EVIDENCE-TCK-1.10.0/manifest.json",
+          "sha256": "9740811af197415145bc6bd2e9580d8fee1d9950de4f6d250b6e6d930c72b298"
+        },
+        {
+          "path": "conformance/evidence/historical_vectors/AICP-EVIDENCE-TCK-1.10.0/mediated-blocking.json",
+          "sha256": "8a0be70a86ca8764da7597857a831c02367f08e809a73212d897d716f7a6e91b"
+        },
+        {
+          "path": "conformance/evidence/historical_vectors/AICP-EVIDENCE-TCK-1.10.0/resumable-sessions.json",
+          "sha256": "35bba90676fb677b15ba3f6595e7c925d59f384188b60e9011ed3a6d43f0483d"
         },
         {
           "path": "conformance/evidence/live_bindings/http_v01_scenarios.json",
@@ -281,7 +293,7 @@
         },
         {
           "path": "conformance/extensions/AL_ALERTS_0.1.json",
-          "sha256": "0cdc4e818385b772d5a0a194dfee0e6324e7d0850a1bc3f3553461c39446b211"
+          "sha256": "413366f50e2c63936b818d1b6ca03890e2a64dc0aa3df7c5de2e7ff3743556a2"
         },
         {
           "path": "conformance/extensions/AM_ARTIFACT_MANIFESTS_PINNING_0.1.json",
@@ -553,7 +565,7 @@
         },
         {
           "path": "conformance/security/SIG_SIGNED_PATHS_0.1.json",
-          "sha256": "168ac33c66569c69fad960206fc34aab1e0bd80886de4de3550aaab5d95089f0"
+          "sha256": "3c83d7aa2f79e26277a109bfb82448056e1350b7f666e55f3049908056b9b0c3"
         },
         {
           "path": "conformance/vectors/rfc8785_float64_vectors.json",
@@ -566,7 +578,7 @@
       ]
     },
     "fixtures": {
-      "combined_sha256": "b34b2926b56c043a6f074dc44a1d6da89f58f32e2406a6787748d447f9a73609",
+      "combined_sha256": "1a851c9b8aed6af70e70a5bbe2d349d06db4a4cb6c2e9d9b9b33f966283babef",
       "files": [
         {
           "path": "fixtures/bindings/http-ws/TB-HTTP-01_sendMessage.json",
@@ -971,6 +983,10 @@
         {
           "path": "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
           "sha256": "dab290347a0898dc7eb8b9618f772a83158a2433795035b4cbd274222059d563"
+        },
+        {
+          "path": "fixtures/extensions/alerts/AL-03_unknown_recommended_action_expected_fail.jsonl",
+          "sha256": "2db424295ce063c9a353d2039431565a3be7dca1fad3681f01fbc64733166929"
         },
         {
           "path": "fixtures/extensions/capneg/CN-01_basic_negotiation.jsonl",
@@ -2075,6 +2091,10 @@
         {
           "path": "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
           "sha256": "e389832f39227116c6a65aebac629685541473d0fd8134c53bd3ff03cc9f1b8f"
+        },
+        {
+          "path": "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl",
+          "sha256": "7ddd7c65c2a20a7f523b82c275ccf4212427d088b6a6e109104a2bb99c8dd59a"
         }
       ]
     },

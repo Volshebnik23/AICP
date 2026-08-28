@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "classification": "historical-regression-vector",
+  "tck_release": "AICP-EVIDENCE-TCK-1.10.0",
+  "source_commit": "f3a7ea279575da9ea675997850b33483548c013b",
+  "generation": {
+    "mediated_blocking": "make evidence-profile-mediated-full-external-test",
+    "resumable_sessions": "make evidence-profile-resumable-full-external-test"
+  },
+  "reports": [
+    {
+      "target": "AICP-MEDIATED-BLOCKING@0.1",
+      "path": "mediated-blocking.json",
+      "sha256": "8d83ea15e8787170f6181e2e5ff3a1e242bd70ae6c52ceb28ee8bd7f942a0c46",
+      "expected_current_evaluation": "eligible"
+    },
+    {
+      "target": "AICP-RESUMABLE-SESSIONS@0.1",
+      "path": "resumable-sessions.json",
+      "sha256": "ffa81932f8330c47b9fe78d54ae2708457678c4a58db6f0f30f8998ea9295980",
+      "expected_current_evaluation": "eligible"
+    }
+  ],
+  "adoption_status": "test-vector-only; generated with repository external-test adapters; not independent external adoption"
+}

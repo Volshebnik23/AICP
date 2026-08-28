@@ -86,6 +86,17 @@ All notable repo-backed release metadata changes should be recorded here.
   and Pairwise TCK 1.3 remain unchanged.
 - Added a reproducible external-review handoff without claiming a completed external review,
   reviewer, finding, date, or external adoption.
+- Corrected M67 coverage authority with manifest schema 1.1: suite evidence now binds one
+  exact case, fixture, expectation, and expected-failure set, while direct evidence resolves
+  to an actual top-level pytest definition. All ten former parallel multi-check records were
+  replaced with exact relations or direct semantic regressions.
+- Added generator-owned `AL-03` and `SP-04` negatives. Their exact raw failures are
+  `AL-ALERT-ACTIONS-01` and `CT-SIGNATURE-VERIFY-01`, respectively; the latter preserves the
+  ALERT message/object hashes, chain, and all non-ALERT signatures.
+- Added exact Mediated Blocking and Resumable Sessions Evidence 1.10 historical regression
+  reports generated at pre-M67 commit `f3a7ea279575da9ea675997850b33483548c013b` and verified
+  as eligible by the current generalized evaluator. These external-test vectors are not
+  independent adoption. Evidence 1.11, Product-IUT, and Pairwise TCK 1.3 bytes remain frozen.
 ### Changed
 - Reconciled product, UAT, profile, interoperability, security, governance, and release
   wording so repository presence/internal conformance is not presented as independent

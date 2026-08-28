@@ -33,6 +33,22 @@
           "min_count": 1
         }
       ]
+    },
+    {
+      "id": "AL-03",
+      "path": "fixtures/extensions/alerts/AL-03_unknown_recommended_action_expected_fail.jsonl",
+      "expected_message_types": [
+        "CONTRACT_PROPOSE",
+        "CONTRACT_ACCEPT",
+        "ALERT"
+      ],
+      "expect_pass": false,
+      "expected_failures": [
+        {
+          "test_id": "AL-ALERT-ACTIONS-01",
+          "min_count": 1
+        }
+      ]
     }
   ],
   "checks": [

@@ -799,8 +799,10 @@
         ],
         "negative_fixtures": [
           "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "fixtures/extensions/alerts/AL-03_unknown_recommended_action_expected_fail.jsonl",
           "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -1657,7 +1659,8 @@
           "fixtures/extensions/enforcement/EF-04_wrong_verdict_reference_expected_fail.jsonl",
           "fixtures/extensions/reception_chat/RC-02_content_deliver_not_from_mediator_expected_fail.jsonl",
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -1708,7 +1711,8 @@
           "fixtures/extensions/redaction/RD-09_invalid_delete_semantics_expected_fail.jsonl",
           "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -1952,6 +1956,7 @@
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
           "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "fixtures/extensions/alerts/AL-03_unknown_recommended_action_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "fixtures/extensions/capneg_v0_2/negative_cases.json",
           "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
@@ -2024,7 +2029,8 @@
           "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
           "fixtures/ops/OPS-03_alert_verbosity_expected_fail.jsonl",
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null,
@@ -2224,6 +2230,7 @@
           "fixtures/demos/enforcement_behavioral/07_spoofed_verdict_sender_expected_fail.jsonl",
           "fixtures/demos/enforcement_behavioral/08_duplicate_message_id_replay_expected_fail.jsonl",
           "fixtures/extensions/alerts/AL-02_unknown_code_expected_fail.jsonl",
+          "fixtures/extensions/alerts/AL-03_unknown_recommended_action_expected_fail.jsonl",
           "fixtures/extensions/capneg/CN-08_missing_or_mismatched_contract_binding_expected_fail.jsonl",
           "fixtures/extensions/capneg_v0_2/negative_cases.json",
           "fixtures/extensions/confidentiality/CF-05_redacted_missing_artifacts_expected_fail.jsonl",
@@ -2315,7 +2322,8 @@
           "fixtures/security/authenticated_base/AB-13_copied_signature_expected_fail.jsonl",
           "fixtures/security/authenticated_base/AB-14_invalid_signature_among_valid_expected_fail.jsonl",
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null,
@@ -2496,7 +2504,8 @@
           "fixtures/ops/OPS-02_verdict_storm_expected_fail.jsonl",
           "fixtures/profiles/commerce_acp/CM-06_policy_deny_or_mismatch_expected_fail.jsonl",
           "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-03_truncated_mediated_flow_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -3478,7 +3487,8 @@
           "fixtures/extensions/resume/RS-03_missing_response_expected_fail.jsonl",
           "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
           "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null
@@ -3506,7 +3516,8 @@
         "negative_fixtures": [
           "fixtures/extensions/resume/RS-NEG-01_forced_resync_loop_expected_fail.jsonl",
           "fixtures/ops/OPS-01_resume_probing_expected_fail.jsonl",
-          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl"
+          "fixtures/security/signed_paths/SP-02_invalid_signature_expected_fail.jsonl",
+          "fixtures/security/signed_paths/SP-04_invalid_alert_signature_expected_fail.jsonl"
         ],
         "coverage_status": "complete",
         "gap_milestone": null

@@ -19,10 +19,19 @@ def _link(reference: str) -> str:
 
 
 def _evidence(item: dict[str, Any]) -> str:
-    if item["kind"] == "suite":
-        checks = ", ".join(f"`{value}`" for value in item["check_ids"])
-        fixtures = ", ".join(_link(value) for value in item["fixtures"])
-        return f"{_link(item['suite'])}: {checks}; fixtures: {fixtures}"
+    if item["kind"] == "suite_case":
+        relation = (
+            f"`{item['case_id']}` → {_link(item['fixture'])} → "
+            f"**{item['expectation']}**"
+        )
+        if item["expectation"] == "fail":
+            failures = ", ".join(
+                f"`{value}`" for value in item["expected_failure_ids"]
+            )
+            relation += f" ({failures})"
+        else:
+            relation += " (positive mechanism)"
+        return f"{_link(item['suite'])}: {relation}"
     tests = ", ".join(f"`{value}`" for value in item["test_ids"])
     return f"{_link(item['test_file'])}: {tests}"
 

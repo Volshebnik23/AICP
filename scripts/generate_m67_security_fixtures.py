@@ -19,6 +19,7 @@ from aicp_ref.validate import message_body_without_hash_and_signatures  # noqa: 
 
 
 SIGNED_DIR = ROOT / "fixtures" / "security" / "signed_paths"
+ALERT_DIR = ROOT / "fixtures" / "extensions" / "alerts"
 CAPNEG_DIR = ROOT / "fixtures" / "extensions" / "capneg"
 ENFORCEMENT_DIR = ROOT / "fixtures" / "extensions" / "enforcement"
 OBJECT_RESYNC_DIR = ROOT / "fixtures" / "extensions" / "object_resync"
@@ -166,6 +167,24 @@ def _enforcement_mutations() -> tuple[list[dict[str, Any]], list[dict[str, Any]]
     return _finalize(target_mismatch), _finalize(wrong_reference)
 
 
+def _alert_unknown_action() -> list[dict[str, Any]]:
+    rows = copy.deepcopy(
+        _load_jsonl(ALERT_DIR / "AL-01_warning_resync_required.jsonl")
+    )
+    alert = next(item for item in rows if item["message_type"] == "ALERT")
+    alert["payload"]["recommended_actions"] = ["RETRY", "NOT-REGISTERED"]
+    return _finalize(rows)
+
+
+def _invalid_alert_signature(
+    source: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    rows = copy.deepcopy(source)
+    alert = next(item for item in rows if item["message_type"] == "ALERT")
+    alert["signatures"][0]["sig_b64url"] = "A" * 86
+    return rows
+
+
 def _object_resync_case(
     *,
     case: str,
@@ -236,6 +255,12 @@ def generated() -> dict[Path, str]:
     return {
         SIGNED_DIR / "SP-03_truncated_mediated_flow_expected_fail.jsonl": _render_jsonl(
             signed_source[:5]
+        ),
+        SIGNED_DIR / "SP-04_invalid_alert_signature_expected_fail.jsonl": _render_jsonl(
+            _invalid_alert_signature(signed_source)
+        ),
+        ALERT_DIR / "AL-03_unknown_recommended_action_expected_fail.jsonl": _render_jsonl(
+            _alert_unknown_action()
         ),
         CAPNEG_DIR / "CN-13_stale_declaration_rollback_expected_fail.jsonl": _render_jsonl(
             _capneg_stale_declaration()

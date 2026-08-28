@@ -47,9 +47,11 @@ probing/loops, misleading evidence provenance, and accidental secret publication
 
 ## Mitigation classes
 
-Protocol-observable mitigations are linked from covered manifest rows to exact suites, check
-IDs, case IDs, and fixtures. Deployment and ecosystem risks are deferred with an explicit
-class and rationale. Operator guidance appears in
+Protocol-observable mitigations are linked from covered manifest rows to exact suite-case
+relations, including the fixture, pass/fail expectation, and exact negative failure set, or
+to exact top-level pytest definitions. Positive mechanisms establish representability and
+interoperability only; they do not imply a universal policy obligation. Deployment and
+ecosystem risks are deferred with an explicit class and rationale. Operator guidance appears in
 [`OPS_HARDENING_GUIDE.md`](OPS_HARDENING_GUIDE.md) and is not converted into a protocol MUST.
 
 The generated [`COVERAGE_MAP.md`](COVERAGE_MAP.md) is the review index for the complete set of

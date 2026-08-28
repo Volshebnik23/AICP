@@ -7,8 +7,10 @@ This directory is the review entry point for AICP's protocol security surface.
 M67 completed the internal security-coverage closure recorded in the canonical
 [`threat_coverage.json`](threat_coverage.json) manifest. Its generated
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md) contains 36 threat components: 24 are `covered`,
-12 are `deferred`, and none are `partial`. Covered rows resolve to registered checks,
-suites, cases, and fixtures; deferred rows state their scope class, rationale, and owner.
+12 are `deferred`, and none are `partial`. Under manifest schema 1.1, covered suite rows
+resolve as exact suite/case/fixture/expectation/failure-set relations, while direct-test rows
+resolve to exact top-level pytest definitions. Deferred rows state their scope class,
+rationale, and owner.
 
 This is internal repository evidence, not an independent security assessment.
 `repository_truth.external_independent_review_completed` remains `false`, and the completed
@@ -21,6 +23,7 @@ machine-checked [`external_reviews/README.md`](external_reviews/README.md) contr
 - [`threat_coverage.schema.json`](threat_coverage.schema.json): manifest schema.
 - [`COVERAGE_MAP.md`](COVERAGE_MAP.md): generated human-readable view; do not edit it directly.
 - [`M67_SECURITY_CLOSURE.md`](M67_SECURITY_CLOSURE.md): internal closure record.
+- [`../conformance/evidence/historical_vectors/AICP-EVIDENCE-TCK-1.10.0/`](../conformance/evidence/historical_vectors/AICP-EVIDENCE-TCK-1.10.0/): exact pre-M67 historical evaluator regression vectors; not external adoption.
 - [`THREAT_MODEL.md`](THREAT_MODEL.md): protocol-scope threats and trust boundaries.
 - [`SECURITY_ASSUMPTIONS.md`](SECURITY_ASSUMPTIONS.md): explicit assurance boundaries.
 - [`REVIEW_CHECKLIST.md`](REVIEW_CHECKLIST.md): reusable review procedure.

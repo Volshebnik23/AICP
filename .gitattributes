@@ -1,1 +1,3 @@
 *.docx binary
+conformance/evidence/historical_vectors/**/mediated-blocking.json binary
+conformance/evidence/historical_vectors/**/resumable-sessions.json binary

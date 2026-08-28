@@ -27,6 +27,12 @@ tag, package publication, GA declaration, or final RC repackaging.
   Product-IUT and Pairwise TCK 1.3 are unchanged.
 - The M67 external-review handoff is reproducible preparation, not a completed independent
   security review or evidence of external adoption.
+- The M67 load-bearing correction upgrades the threat manifest to schema 1.1, where each
+  suite claim binds an exact case, fixture, pass/fail expectation, and expected-failure set;
+  direct evidence must identify an actual top-level pytest definition. New AL-03 and SP-04
+  negatives close the ALERT action-registration and selected signed-ALERT gaps without a new
+  wire rule. Exact pre-M67 Mediated and Resumable Evidence 1.10 reports remain eligible under
+  the current evaluator. Evidence 1.11, Product-IUT, and Pairwise TCK 1.3 are unchanged.
 - Experimental `AICP-IUT-TCK-1.1.0` introduces explicit case-local execution accounting and
   structured consumer observations; the historical 1.0.0 registry record remains frozen.
 - Experimental post-UAT Core v0.2 adds exact contract artifact and active-head agreement

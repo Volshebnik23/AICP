@@ -129,8 +129,12 @@ mature.
    exact builds, directions, side evidence, and cross-consumed artifacts. No genuine
    external relation is present; repository clean-room peers do not count as adoption.
 8. **Security:** M67 records 36 canonical threat components: 24 covered, 12 deferred, and
-   0 partial. This is internally validated repository evidence, not an independent external
-   review; no completed external-review artifact is present.
+   0 partial. Schema 1.1 binds suite claims to exact case/fixture/expectation/failure-set
+   relations and direct claims to exact pytest definitions. Historical Evidence 1.10
+   regression vectors generated from pre-M67 commit
+   `f3a7ea279575da9ea675997850b33483548c013b` remain eligible under the current evaluator;
+   they are repository external-test vectors, not independent adoption. No completed
+   external-review artifact is present.
 9. **Governance and release engineering:** current lightweight governance and RC tooling are
    functional but not standard-mature or repackaged for a new RC. Routed to M68/M69.
 10. **External adoption:** no real external submission is present. Plugfest readiness is

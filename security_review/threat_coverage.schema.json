@@ -12,7 +12,7 @@
     "threats"
   ],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"const": "1.1"},
     "review_scope": {"type": "string", "minLength": 1},
     "generated_map": {"const": "security_review/COVERAGE_MAP.md"},
     "repository_truth": {
@@ -44,29 +44,36 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "suite", "check_ids", "fixtures"],
+          "required": [
+            "kind",
+            "suite",
+            "case_id",
+            "fixture",
+            "expectation",
+            "expected_failure_ids"
+          ],
           "properties": {
-            "kind": {"const": "suite"},
+            "kind": {"const": "suite_case"},
             "suite": {"type": "string", "minLength": 1},
-            "check_ids": {
+            "case_id": {"type": "string", "minLength": 1},
+            "fixture": {"type": "string", "minLength": 1},
+            "expectation": {"enum": ["pass", "fail"]},
+            "expected_failure_ids": {
               "type": "array",
-              "minItems": 1,
-              "uniqueItems": true,
-              "items": {"type": "string", "minLength": 1}
-            },
-            "fixtures": {
-              "type": "array",
-              "minItems": 1,
-              "uniqueItems": true,
-              "items": {"type": "string", "minLength": 1}
-            },
-            "case_ids": {
-              "type": "array",
-              "minItems": 1,
               "uniqueItems": true,
               "items": {"type": "string", "minLength": 1}
             }
-          }
+          },
+          "allOf": [
+            {
+              "if": {"properties": {"expectation": {"const": "pass"}}},
+              "then": {"properties": {"expected_failure_ids": {"maxItems": 0}}}
+            },
+            {
+              "if": {"properties": {"expectation": {"const": "fail"}}},
+              "then": {"properties": {"expected_failure_ids": {"minItems": 1}}}
+            }
+          ]
         },
         {
           "type": "object",
